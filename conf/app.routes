@@ -1,3 +1,8 @@
 # microservice specific routes
 
-GET        /hello-world             uk.gov.hmrc.incometaxviewchangefrontend.controllers.HelloWorld.helloWorld
+GET         /hello-world                controllers.HelloWorld.helloWorld
+
+#Feedback Routes
+GET         /feedback                   controllers.FeedbackController.show
+POST        /feedback                   controllers.FeedbackController.submit
+GET         /thankyou                   controllers.FeedbackController.thankyou
