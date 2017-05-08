@@ -11,23 +11,38 @@ object FrontendBuild extends Build with MicroService {
 
   override lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
+
+  val frontendBootstrapVersion  = "7.23.0"
+  val playPartialsVersion       = "5.3.0"
+  val playAuthFrontendVersion   = "6.3.0"
+  val playConfigVersion         = "4.3.0"
+  val logbackVersion            = "3.1.0"
+  val govTemplateVersion        = "5.2.0"
+  val playHealthVersion         = "2.1.0"
+  val playUiVersion             = "7.2.1"
+
+  val hmrcTestVesrion           = "2.3.0"
+  val scalatestVersion          = "3.0.0"
+  val pegdownVersion            = "1.6.0"
+  val jsoupVersion              = "1.10.2"
+
   val compile = Seq(
     ws,
-    "uk.gov.hmrc" %% "frontend-bootstrap" % "7.23.0",
-    "uk.gov.hmrc" %% "play-partials" % "5.3.0",
-    "uk.gov.hmrc" %% "play-authorised-frontend" % "6.3.0",
-    "uk.gov.hmrc" %% "play-config" % "4.3.0",
-    "uk.gov.hmrc" %% "logback-json-logger" % "3.1.0",
-    "uk.gov.hmrc" %% "govuk-template" % "5.2.0",
-    "uk.gov.hmrc" %% "play-health" % "2.1.0",
-    "uk.gov.hmrc" %% "play-ui" % "7.2.1"
+    "uk.gov.hmrc" %% "frontend-bootstrap" % frontendBootstrapVersion,
+    "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
+    "uk.gov.hmrc" %% "play-authorised-frontend" % playAuthFrontendVersion,
+    "uk.gov.hmrc" %% "play-config" % playConfigVersion,
+    "uk.gov.hmrc" %% "logback-json-logger" % logbackVersion,
+    "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
+    "uk.gov.hmrc" %% "play-health" % playHealthVersion,
+    "uk.gov.hmrc" %% "play-ui" % playUiVersion
   )
 
   def test(scope: String = "test") = Seq(
-    "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % scope,
-    "org.scalatest" %% "scalatest" % "2.2.6" % scope,
-    "org.pegdown" % "pegdown" % "1.6.0" % scope,
-    "org.jsoup" % "jsoup" % "1.8.1" % scope,
+    "uk.gov.hmrc" %% "hmrctest" % hmrcTestVesrion % scope,
+    "org.scalatest" %% "scalatest" % scalatestVersion % scope,
+    "org.pegdown" % "pegdown" % pegdownVersion % scope,
+    "org.jsoup" % "jsoup" % jsoupVersion % scope,
     "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
   )
 
