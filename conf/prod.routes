@@ -1,6 +1,6 @@
 # Add all the application routes to the app.routes file
-->         /income-tax-view-change-frontend              app.Routes
-->         /                          health.Routes
-->     	   /template                  template.Routes
+->         /check-your-income-and-expenses          app.Routes
+->         /                                        health.Routes
+->     	   /template                                template.Routes
 
-GET        /admin/metrics             @com.kenshoo.play.metrics.MetricsController.metrics
+GET        /admin/metrics                           @com.kenshoo.play.metrics.MetricsController.metrics

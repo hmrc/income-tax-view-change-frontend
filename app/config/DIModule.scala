@@ -17,6 +17,10 @@
 package config
 
 import com.google.inject.AbstractModule
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.play.http.ws._
+import uk.gov.hmrc.play.http._
 
 class DIModule extends AbstractModule{
   def configure(): Unit = {

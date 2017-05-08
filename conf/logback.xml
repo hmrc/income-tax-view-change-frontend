@@ -49,6 +49,10 @@
 
     <logger name="application" level="DEBUG"/>
 
+    <logger name="org.asynchttpclient.netty" level="WARN"/>
+
+    <logger name="play.core.netty.utils.ServerCookieDecoder" level="WARN"/>
+
     <logger name="connector" level="TRACE">
         <appender-ref ref="STDOUT"/>
     </logger>
