@@ -24,11 +24,10 @@ import play.api.http.{Status => HttpStatus}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
-import config.AppConfig
+import config.{AppConfig, WSHttp}
 import uk.gov.hmrc.play.frontend.controller.{FrontendController, UnauthorisedAction}
 import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
 import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.partials._
 import views.html.feedback.feedback_thankyou
 

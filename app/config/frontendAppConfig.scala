@@ -37,7 +37,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private lazy val baseUrl = ""
+  private lazy val baseUrl = "check-your-income-and-expenses"
   private lazy val contactHost = configuration.getString(s"contact-frontend.host").getOrElse("")
 
   //Feedback Config
