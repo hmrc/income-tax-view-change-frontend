@@ -1,5 +1,5 @@
 import sbt.Keys._
-import sbt.Tests.{SubProcess, Group}
+import sbt.Tests.{Group, SubProcess}
 import sbt._
 import play.routes.compiler.StaticRoutesGenerator
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
@@ -22,6 +22,17 @@ trait MicroService {
   lazy val appDependencies : Seq[ModuleID] = ???
   lazy val plugins : Seq[Plugins] = Seq.empty
   lazy val playSettings : Seq[Setting[_]] = Seq.empty
+
+  lazy val scoverageSettings = {
+    import scoverage.ScoverageKeys
+    Seq(
+      ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;models/.data/..*;" +
+        "filters.*;.handlers.*;components.*;.*BuildInfo.*;.*FrontendAuditConnector.*;.*Routes.*;views.html.*;config.*;",
+      ScoverageKeys.coverageMinimum := 90,
+      ScoverageKeys.coverageFailOnMinimum := false,
+      ScoverageKeys.coverageHighlighting := true
+    )
+  }
 
 
   lazy val microservice = Project(appName, file("."))
