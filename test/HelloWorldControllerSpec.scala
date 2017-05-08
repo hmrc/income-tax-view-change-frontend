@@ -1,14 +1,9 @@
 
-package uk.gov.hmrc.incometaxviewchangefrontend.controllers
-
 import play.api.http.Status
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import play.api.http._
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.play.test.{WithFakeApplication, UnitSpec}
+import play.api.test.Helpers.{contentType, _}
+import uk.gov.hmrc.incometaxviewchangefrontend.controllers.HelloWorld
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 
 class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication{
