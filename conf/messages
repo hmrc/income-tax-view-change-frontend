@@ -1,4 +1,5 @@
 #Base
-base.service_name = "Check your income and expenses"
+base.back = Back
+base.service_name = Check your income and expenses
 
-base.phase = "BETA"
+base.phase = BETA
