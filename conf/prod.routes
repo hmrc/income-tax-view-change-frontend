@@ -1,5 +1,5 @@
 # Add all the application routes to the app.routes file
-->         /check-your-income-and-expenses          app.Routes
+->         /check-your-income-tax-and-expenses      app.Routes
 ->         /                                        health.Routes
 ->     	   /template                                template.Routes
 

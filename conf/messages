@@ -1,5 +1,5 @@
 #Base
 base.back = Back
-base.service_name = Check your income and expenses
+base.service_name = Check your income tax and expenses
 
 base.phase = BETA
