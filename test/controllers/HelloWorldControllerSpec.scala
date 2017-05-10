@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
+package controllers
+
+import config.MockAppConfig
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
-import controllers.HelloWorld
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 
 class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication{
 
-  object TestHelloWorldController extends HelloWorld
+  object TestHelloWorldController extends HelloWorld()(MockAppConfig)
 
   val fakeRequest = FakeRequest("GET", "/")
 
