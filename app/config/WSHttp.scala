@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.AppConfig
-@(pageTitle: String, heading: String, message: String, appConfig: AppConfig)(implicit request: Request[_], messages: Messages)
+package config
 
-@contentHeader = {
-  <h1>@heading</h1>
+import javax.inject.{Inject, Singleton}
+
+import uk.gov.hmrc.play.audit.http.HttpAuditing
+import uk.gov.hmrc.play.config.{AppName, RunMode}
+import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost, WSPut}
+
+@Singleton
+class WSHttp @Inject()(override val auditConnector: FrontendAuditConnector)
+  extends WSGet with WSPut with WSPost with WSDelete with AppName with RunMode with HttpAuditing {
+  override val hooks = Seq(AuditingHook)
 }
-
-@mainContent = {
-  <p>@message</p>
-}
-
-@govuk_wrapper(appConfig = appConfig, title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)

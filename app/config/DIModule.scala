@@ -17,23 +17,9 @@
 package config
 
 import com.google.inject.AbstractModule
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.play.http.ws._
 
 class DIModule extends AbstractModule{
   def configure(): Unit = {
     bind(classOf[AppConfig]) to classOf[FrontendAppConfig]
-    bind(classOf[AuditConnector]) to classOf[FrontendAuditConnector]
-    bind(classOf[AuthConnector]) to classOf[FrontendAuthConnector]
-    bind(classOf[WSGet]).to(classOf[config.WSHttp]).asEagerSingleton()
-    bind(classOf[HttpGet]).to(classOf[config.WSHttp]).asEagerSingleton()
-    bind(classOf[WSPost]).to(classOf[config.WSHttp]).asEagerSingleton()
-    bind(classOf[HttpPost]).to(classOf[config.WSHttp]).asEagerSingleton()
-    bind(classOf[WSDelete]).to(classOf[config.WSHttp]).asEagerSingleton()
-    bind(classOf[HttpDelete]).to(classOf[config.WSHttp]).asEagerSingleton()
-    bind(classOf[WSPut]).to(classOf[config.WSHttp]).asEagerSingleton()
-    bind(classOf[HttpPut]).to(classOf[config.WSHttp]).asEagerSingleton()
   }
 }
