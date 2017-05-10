@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(appConfig: uk.gov.hmrc.incometaxviewchangefrontend.AppConfig,
+@(appConfig: config.AppConfig,
   title: String,
   mainClass: Option[String] = None,
   mainDataAttributes: Option[Html] = None,
@@ -28,6 +28,8 @@
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
+@import views.html.helpers.phaseBanner
+
 
 @head = {
     @uiLayouts.head(
@@ -43,7 +45,7 @@
 
 @insideHeader = {
     @uiLayouts.header_nav(
-      navTitle = Some("income-tax-view-change-frontend"),
+      navTitle = Some(Messages("base.service_name")),
       navTitleLink = None,
       showBetaLink = false,
       navLinks = Some(headerNavLinks))
@@ -65,7 +67,7 @@
 
 @serviceInfo = {
     @uiLayouts.serviceInfo(
-      betaBanner = HtmlFormat.empty,
+      betaBanner = phaseBanner(Messages("base.phase")),
       includeGridWrapper = false,
       serviceInfoContent = Some(serviceInfoContent))
 }

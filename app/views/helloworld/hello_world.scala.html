@@ -14,8 +14,12 @@
  * limitations under the License.
  *@
 
-@()(implicit request: Request[_], messages: Messages))
+ @import views.html.main_template
 
-@uk.gov.hmrc.incometaxviewchangefrontend.views.html.main_template(title = "Hello from income-tax-view-change-frontend", bodyClasses = None) {
-    <h1>Hello from income-tax-view-change-frontend !</h1>
-}
+
+ @(appConfig: config.AppConfig)(implicit request: Request[_], messages: Messages)
+  @main_template(title = messages("helloWorld.title"), bodyClasses = None, appConfig = appConfig) {
+
+    <h1>Hello, World!</h1>
+
+ }

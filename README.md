@@ -21,7 +21,7 @@ sm --start ITVC_ALL -f
 ```
 
 
-##To run the application locally execute the following:
+### To run the application locally execute the following:
 
 Kill the service ```sm --stop INCOME_TAX_VIEW_CHANGE``` and run:
 ```
@@ -37,13 +37,6 @@ To test the application execute
 ```
 sbt test
 ```
-
-
-
-
-### License
-
-This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
 
 
 

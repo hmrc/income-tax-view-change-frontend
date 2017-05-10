@@ -1,0 +1,5 @@
+#Base
+base.back = Back
+base.service_name = Check your income and expenses
+
+base.phase = BETA

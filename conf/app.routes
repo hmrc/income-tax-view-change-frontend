@@ -1,3 +1,9 @@
 # microservice specific routes
+GET        /assets/*file              controllers.Assets.at(path="/public", file)
 
-GET        /hello-world             uk.gov.hmrc.incometaxviewchangefrontend.controllers.HelloWorld.helloWorld
+GET         /                           controllers.HelloWorld.helloWorld
+
+#Feedback Routes
+GET         /feedback                   controllers.FeedbackController.show
+POST        /feedback                   controllers.FeedbackController.submit
+GET         /thankyou                   controllers.FeedbackController.thankyou
