@@ -45,6 +45,10 @@
 
     <logger name="com.google.inject" level="INFO"/>
 
+    <logger name="org.asynchttpclient.netty" level="INFO"/>
+    <logger name="io.netty.buffer" level="INFO"/>
+    <logger name="play.core.netty" level="INFO"/>
+
     <logger name="uk.gov" level="INFO"/>
 
     <logger name="application" level="DEBUG"/>
