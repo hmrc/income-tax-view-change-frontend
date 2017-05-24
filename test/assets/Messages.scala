@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package assets
 
-import com.google.inject.Inject
-import config.AppConfig
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import play.api.mvc._
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+object Messages {
 
-import scala.concurrent.Future
-
-
-class HelloWorld @Inject()(implicit val config: AppConfig) extends FrontendController {
-  val helloWorld = Action.async { implicit request =>
-    Future.successful(Ok(views.html.helloworld.hello_world(config)))
+  // Timeout Messages
+  object Timeout {
+    val title = "Your session has timed out"
+    val heading = "Your session has timed out"
+    val signIn = "To view your quarterly reporting details, you'll have to sign in using your Government Gateway ID."
   }
 }

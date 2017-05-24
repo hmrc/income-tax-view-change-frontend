@@ -20,7 +20,7 @@ object FrontendBuild extends Build with MicroService {
   val govTemplateVersion        = "5.2.0"
   val playHealthVersion         = "2.1.0"
   val playUiVersion             = "7.2.1"
-
+  val scalaTestPlusVersion = "2.0.0"
   val hmrcTestVesrion           = "2.3.0"
   val scalatestVersion          = "3.0.0"
   val pegdownVersion            = "1.6.0"
@@ -41,6 +41,7 @@ object FrontendBuild extends Build with MicroService {
   def test(scope: String = "test") = Seq(
     "uk.gov.hmrc" %% "hmrctest" % hmrcTestVesrion % scope,
     "org.scalatest" %% "scalatest" % scalatestVersion % scope,
+    "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
     "org.pegdown" % "pegdown" % pegdownVersion % scope,
     "org.jsoup" % "jsoup" % jsoupVersion % scope,
     "com.typesafe.play" %% "play-test" % PlayVersion.current % scope

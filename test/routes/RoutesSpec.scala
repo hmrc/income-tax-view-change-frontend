@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package routes
 
-import com.google.inject.Inject
-import config.AppConfig
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import play.api.mvc._
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import org.scalatestplus.play.{OneAppPerTest, PlaySpec}
 
-import scala.concurrent.Future
+class RoutesSpec extends PlaySpec with OneAppPerTest {
 
+  val contextRoute: String = "/check-your-income-tax-and-expenses"
 
-class HelloWorld @Inject()(implicit val config: AppConfig) extends FrontendController {
-  val helloWorld = Action.async { implicit request =>
-    Future.successful(Ok(views.html.helloworld.hello_world(config)))
+  // Timeout routes
+  "The URL for the SessionTimeoutController.timeout action" should {
+    s"be equal to $contextRoute/session-timeout" in {
+      controllers.routes.SessionTimeoutController.timeout().url must be(s"$contextRoute/session-timeout")
+    }
   }
 }

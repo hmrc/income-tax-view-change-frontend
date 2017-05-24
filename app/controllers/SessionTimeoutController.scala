@@ -16,18 +16,19 @@
 
 package controllers
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import config.AppConfig
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
-
-class HelloWorld @Inject()(implicit val config: AppConfig) extends FrontendController {
-  val helloWorld = Action.async { implicit request =>
-    Future.successful(Ok(views.html.helloworld.hello_world(config)))
+@Singleton
+class SessionTimeoutController @Inject()(implicit val config: AppConfig,
+                                          val messagesApi: MessagesApi
+                                        ) extends FrontendController with I18nSupport {
+  val timeout: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(views.html.timeout.timeout()))
   }
 }

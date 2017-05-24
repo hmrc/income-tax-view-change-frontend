@@ -7,3 +7,6 @@ GET         /                           controllers.HelloWorld.helloWorld
 GET         /feedback                   controllers.FeedbackController.show
 POST        /feedback                   controllers.FeedbackController.submit
 GET         /thankyou                   controllers.FeedbackController.thankyou
+
+#Timeout Routes
+GET         /session-timeout            controllers.SessionTimeoutController.timeout
