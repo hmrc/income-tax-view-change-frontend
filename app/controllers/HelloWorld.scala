@@ -20,14 +20,15 @@ import com.google.inject.Inject
 import config.AppConfig
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.mvc._
-import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
 
-class HelloWorld @Inject()(implicit val config: AppConfig) extends FrontendController {
-  val helloWorld = Action.async { implicit request =>
+class HelloWorld @Inject()( implicit val config: AppConfig,
+                            val authorisedAction: AuthorisedAction
+                          ) extends BaseController {
+
+  val helloWorld = authorisedAction.async{ implicit request =>
     Future.successful(Ok(views.html.helloworld.hello_world(config)))
   }
 }
