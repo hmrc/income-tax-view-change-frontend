@@ -12,9 +12,9 @@ object FrontendBuild extends Build with MicroService {
   override lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 
-  val frontendBootstrapVersion  = "7.23.0"
+  val frontendBootstrapVersion  = "7.25.0"
   val playPartialsVersion       = "5.3.0"
-  val playAuthFrontendVersion   = "6.3.0"
+  val playAuthVersion           = "1.0.0"
   val playConfigVersion         = "4.3.0"
   val logbackVersion            = "3.1.0"
   val govTemplateVersion        = "5.2.0"
@@ -30,7 +30,7 @@ object FrontendBuild extends Build with MicroService {
     ws,
     "uk.gov.hmrc" %% "frontend-bootstrap" % frontendBootstrapVersion,
     "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
-    "uk.gov.hmrc" %% "play-authorised-frontend" % playAuthFrontendVersion,
+    "uk.gov.hmrc" %% "play-auth" % playAuthVersion,
     "uk.gov.hmrc" %% "play-config" % playConfigVersion,
     "uk.gov.hmrc" %% "logback-json-logger" % logbackVersion,
     "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
