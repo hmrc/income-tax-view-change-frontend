@@ -16,10 +16,19 @@
 
 package controllers
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
+import config.AppConfig
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-class SessionTimeoutController @Inject() extends FrontendController {
-  val timeout: Action[AnyContent] = TODO
+import scala.concurrent.Future
+
+@Singleton
+class SessionTimeoutController @Inject()(implicit val config: AppConfig,
+                                          val messagesApi: MessagesApi
+                                        ) extends FrontendController with I18nSupport {
+  val timeout: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(views.html.timeout.timeout()))
+  }
 }
