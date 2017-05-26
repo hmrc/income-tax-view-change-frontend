@@ -16,33 +16,40 @@
 
 package controllers
 
+import auth.{MockAuthorisedUser, MockUnauthorisedUser}
 import config.MockAppConfig
+import controllers.predicates.AuthenticationPredicate
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
+class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication {
 
-class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication{
+  "Unauthorised Tests" should {
 
-  object TestHelloWorldController extends HelloWorld()(MockAppConfig)
+    object TestHelloWorldController extends HelloWorld()(MockAppConfig, new AuthenticationPredicate(MockUnauthorisedUser))
 
-  val fakeRequest = FakeRequest("GET", "/")
+    "return 401" in {
+      val result = TestHelloWorldController.helloWorld()(FakeRequest())
+      status(result) shouldBe Status.UNAUTHORIZED
+    }
+  }
 
+  "Authorised Tests" should {
 
-  "GET /" should {
+    object TestHelloWorldController extends HelloWorld()(MockAppConfig, new AuthenticationPredicate(MockAuthorisedUser))
+
     "return 200" in {
-      val result = TestHelloWorldController.helloWorld(fakeRequest)
+      val result = TestHelloWorldController.helloWorld()(FakeRequest())
       status(result) shouldBe Status.OK
     }
 
     "return HTML" in {
-      val result = TestHelloWorldController.helloWorld(fakeRequest)
+      val result = TestHelloWorldController.helloWorld()(FakeRequest())
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }
-
-
   }
 
 
