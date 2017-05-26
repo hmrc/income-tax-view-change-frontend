@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.predicates
 
 import javax.inject.Inject
 
 import config.{FrontendAppConfig, FrontendAuthConnector}
-import play.api.mvc._
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import play.api.Logger
+import play.api.mvc.{Action, AnyContent, Request, Result}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, MissingBearerToken}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
-trait BaseController extends FrontendController
-
-class AuthorisedAction @Inject()(config: FrontendAppConfig,
-                       val authConnector: FrontendAuthConnector) extends BaseController with AuthorisedFunctions {
+class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunctions) extends FrontendController {
 
   private type PlayRequest  = Request[AnyContent] => Result
   private type AsyncRequest = Request[AnyContent] => Future[Result]
 
   def async(action: AsyncRequest): Action[AnyContent] = {
     Action.async { implicit request =>
-      authorised() {
+      authorisedFunctions.authorised() {
         action(request)
+      }.recover {
+        case e: MissingBearerToken =>
+          Logger.debug("[AuthenticationPredicate][async] Unauthorised request to Frontend.  Propagating Unauthorised Response")
+          Unauthorized
       }
     }
   }

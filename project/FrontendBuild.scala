@@ -26,13 +26,15 @@ object FrontendBuild extends Build with MicroService {
   val scalatestVersion          = "3.0.0"
   val pegdownVersion            = "1.6.0"
   val jsoupVersion              = "1.10.2"
+  val mockitoVersion            = "2.7.6"
+  val scalaMockVersion          = "3.5.0"
 
   val compile = Seq(
     ws,
     "uk.gov.hmrc" %% "frontend-bootstrap" % frontendBootstrapVersion,
     "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
     "uk.gov.hmrc" %% "play-auth" % playAuthVersion,
-    "uk.gov.hmrc" %% "play-authorised-frontend" % playAuthFrontendVersion,
+//    "uk.gov.hmrc" %% "play-authorised-frontend" % playAuthFrontendVersion,
     "uk.gov.hmrc" %% "play-config" % playConfigVersion,
     "uk.gov.hmrc" %% "logback-json-logger" % logbackVersion,
     "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
@@ -44,9 +46,11 @@ object FrontendBuild extends Build with MicroService {
     "uk.gov.hmrc" %% "hmrctest" % hmrcTestVesrion % scope,
     "org.scalatest" %% "scalatest" % scalatestVersion % scope,
     "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
+    "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
     "org.pegdown" % "pegdown" % pegdownVersion % scope,
     "org.jsoup" % "jsoup" % jsoupVersion % scope,
-    "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
+    "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+    "org.mockito" % "mockito-core" % mockitoVersion % scope
   )
 
 }

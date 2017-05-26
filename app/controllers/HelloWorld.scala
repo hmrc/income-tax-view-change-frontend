@@ -18,17 +18,21 @@ package controllers
 
 import com.google.inject.Inject
 import config.AppConfig
+import controllers.predicates.AuthenticationPredicate
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
 
 class HelloWorld @Inject()( implicit val config: AppConfig,
-                            val authorisedAction: AuthorisedAction
-                          ) extends BaseController {
+                            val authorisedAction: AuthenticationPredicate
+                          ) extends FrontendController {
 
-  val helloWorld = authorisedAction.async{ implicit request =>
-    Future.successful(Ok(views.html.helloworld.hello_world(config)))
-  }
+  def helloWorld(): Action[AnyContent] = authorisedAction.async { implicit request =>
+      Future.successful(Ok(views.html.helloworld.hello_world(config)))
+    }
+
 }
