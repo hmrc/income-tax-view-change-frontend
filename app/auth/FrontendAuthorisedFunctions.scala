@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package config
+package auth
 
 import javax.inject.{Inject, Singleton}
 
-import uk.gov.hmrc.play.audit.http.HttpAuditing
-import uk.gov.hmrc.play.config.{AppName, RunMode}
-import uk.gov.hmrc.play.http.ws._
+import config.FrontendAuthConnector
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 @Singleton
-class WSHttp @Inject()(override val auditConnector: FrontendAuditConnector)
-  extends WSGet with WSPut with WSPost with WSDelete with WSPatch with AppName with RunMode with HttpAuditing {
-  override val hooks = Seq(AuditingHook)
-}
-object WSHttp extends WSHttp(FrontendAuditConnector)
+class FrontendAuthorisedFunctions @Inject()(val authConnector: FrontendAuthConnector) extends AuthorisedFunctions
