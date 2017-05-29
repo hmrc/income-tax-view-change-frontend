@@ -44,7 +44,8 @@ object FrontendBuild extends Build with MicroService {
     "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
     "org.pegdown" % "pegdown" % pegdownVersion % scope,
     "org.jsoup" % "jsoup" % jsoupVersion % scope,
-    "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
+    "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+    "org.mockito" % "mockito-core" % "2.7.17" % scope
   )
 
 }
