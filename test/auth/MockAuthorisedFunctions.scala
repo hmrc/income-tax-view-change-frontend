@@ -18,7 +18,7 @@ package auth
 
 import config.FrontendAuthConnector
 import org.scalatest.mockito.MockitoSugar
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, BearerTokenExpired, EmptyPredicate, MissingBearerToken}
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -30,17 +30,28 @@ trait MockAuthorisedFunctions extends MockitoSugar with AuthorisedFunctions {
 object MockAuthorisedUser extends MockAuthorisedFunctions {
   override def authorised(): AuthorisedFunction = new AuthorisedFunction(EmptyPredicate) {
     override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier): Future[A] = body
+    override def retrieve[A](retrieval: Retrieval[A]): AuthorisedFunctionWithResult[A] = new AuthorisedFunctionWithResult(EmptyPredicate, retrieval) {
+      override def apply[B](body: (A) => Future[B])(implicit hc: HeaderCarrier): Future[B] = {
+        body(Enrolments(Set(Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", "XAITSA000123456")), "activated", ConfidenceLevel.L0))).asInstanceOf[A])
+      }
+    }
   }
 }
 
 object MockUnauthorisedUser extends MockAuthorisedFunctions {
   override def authorised(): AuthorisedFunction = new AuthorisedFunction(EmptyPredicate) {
     override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier): Future[A] = Future.failed(new MissingBearerToken)
+    override def retrieve[A](retrieval: Retrieval[A]): AuthorisedFunctionWithResult[A] = new AuthorisedFunctionWithResult(EmptyPredicate, retrieval) {
+      override def apply[B](body: (A) => Future[B])(implicit hc: HeaderCarrier): Future[B] = Future.failed(new MissingBearerToken)
+    }
   }
 }
 
 object MockTimeoutUser extends MockAuthorisedFunctions {
   override def authorised(): AuthorisedFunction = new AuthorisedFunction(EmptyPredicate) {
     override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier): Future[A] = Future.failed(new BearerTokenExpired)
+    override def retrieve[A](retrieval: Retrieval[A]): AuthorisedFunctionWithResult[A] = new AuthorisedFunctionWithResult(EmptyPredicate, retrieval) {
+      override def apply[B](body: (A) => Future[B])(implicit hc: HeaderCarrier): Future[B] = Future.failed(new BearerTokenExpired)
+    }
   }
 }

@@ -32,7 +32,7 @@ class AuthenticationPredicateSpec extends UnitSpec with MockitoSugar with WithFa
   "The authentication async method" when {
 
     def result(authenticationPredicate: AuthenticationPredicate): Future[Result] = authenticationPredicate.async {
-      implicit request =>
+      implicit request => implicit mtditid =>
         Future.successful(Ok)
     } apply FakeRequest()
 

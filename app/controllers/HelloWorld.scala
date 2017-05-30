@@ -19,6 +19,7 @@ package controllers
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.predicates.AuthenticationPredicate
+import play.api.Logger
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{Action, AnyContent}
@@ -31,7 +32,9 @@ class HelloWorld @Inject()( implicit val config: AppConfig,
                             val authorisedAction: AuthenticationPredicate
                           ) extends FrontendController {
 
-  def helloWorld(): Action[AnyContent] = authorisedAction.async { implicit request =>
+  def helloWorld(): Action[AnyContent] = authorisedAction.async { implicit request => implicit mtditid =>
+      // TODO: Update with call to service to retrieve real Estimated Amount
+      Logger.debug(s"[HelloWorld][helloWorld] MTDITID is: $mtditid")
       Future.successful(Ok(views.html.helloworld.hello_world(config)))
     }
 

@@ -21,7 +21,8 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import play.api.{Configuration, Environment, Logger}
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, BearerTokenExpired}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, BearerTokenExpired, Enrolments}
+import uk.gov.hmrc.auth.core.Retrievals.authorisedEnrolments
 import uk.gov.hmrc.auth.frontend.Redirects
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
@@ -34,14 +35,17 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
                                        ) extends FrontendController with Redirects {
 
   private type PlayRequest  = Request[AnyContent] => Result
-  private type AsyncRequest = Request[AnyContent] => Future[Result]
+  private type AsyncRequest = Request[AnyContent] => String => Future[Result]
 
   lazy val ggSignInRedirect: Result =  toGGLogin(appConfig.ggSignInContinueUrl)
 
+  lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
+  lazy val mtdItIdentifierKey: String = appConfig.mtdItIdentifierKey
+
   def async(action: AsyncRequest): Action[AnyContent] = {
     Action.async { implicit request =>
-      authorisedFunctions.authorised() {
-        action(request)
+      authorisedFunctions.authorised().retrieve(authorisedEnrolments) { authorisedEnrolments =>
+        action(request)(getMtdItID(authorisedEnrolments))
       }.recoverWith {
         case _ :BearerTokenExpired =>
           Logger.debug("[AuthenticationPredicate][async] Session Time Out.")
@@ -52,4 +56,8 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
       }
     }
   }
+
+  private[AuthenticationPredicate] def getMtdItID(activeEnrolments: Enrolments) =
+    activeEnrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value)
+      .getOrElse(throw new RuntimeException("Cannot Retrieve MTDITID"))
 }
