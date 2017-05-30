@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.timeout
 
 import com.google.inject.{Inject, Singleton}
 import config.AppConfig

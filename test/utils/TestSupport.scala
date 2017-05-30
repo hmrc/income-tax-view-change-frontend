@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.helptosavefrontend
+package utils
 
 import com.typesafe.config.Config
 import org.scalamock.scalatest.MockFactory

@@ -16,13 +16,12 @@
 
 package auth
 
-import auth.{MockAuthorisedUser, MockTimeoutUser, MockUnauthorisedUser}
 import config.FrontendAppConfig
 import controllers.predicates.AuthenticationPredicate
-import play.api.{Configuration, Environment, Play}
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import play.api.{Configuration, Environment}
+import utils.TestSupport
 
-trait MockAuthenticationPredicate extends UnitSpec with WithFakeApplication {
+trait MockAuthenticationPredicate extends TestSupport {
 
   object MockAuthenticated extends AuthenticationPredicate(
     MockAuthorisedUser,

@@ -16,16 +16,16 @@
 
 package routes
 
-import org.scalatestplus.play.{OneAppPerTest, PlaySpec}
+import utils.TestSupport
 
-class RoutesSpec extends PlaySpec with OneAppPerTest {
+class RoutesSpec extends TestSupport {
 
   val contextRoute: String = "/check-your-income-tax-and-expenses"
 
   // Timeout routes
   "The URL for the SessionTimeoutController.timeout action" should {
     s"be equal to $contextRoute/session-timeout" in {
-      controllers.routes.SessionTimeoutController.timeout().url must be(s"$contextRoute/session-timeout")
+      controllers.timeout.routes.SessionTimeoutController.timeout().url shouldBe s"$contextRoute/session-timeout"
     }
   }
 }

@@ -23,11 +23,11 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import utils.TestSupport
 
 import scala.concurrent.Future
 
-class AuthenticationPredicateSpec extends UnitSpec with MockitoSugar with WithFakeApplication with MockAuthenticationPredicate {
+class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with MockAuthenticationPredicate {
 
   "The authentication async method" when {
 
@@ -59,7 +59,7 @@ class AuthenticationPredicateSpec extends UnitSpec with MockitoSugar with WithFa
       }
 
       "should redirect to GG Sign In" in {
-        redirectLocation(result(MockTimeout)) shouldBe Some(controllers.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result(MockTimeout)) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
   }

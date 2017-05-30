@@ -20,10 +20,10 @@ import models.{ErrorResponse, SuccessResponse}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import utils.TestSupport
 
 
-class EstimatedTaxLiabilityConnectorSpec extends UnitSpec with WithFakeApplication with MockHttp {
+class EstimatedTaxLiabilityConnectorSpec extends TestSupport with MockHttp {
 
   implicit val hc = HeaderCarrier()
 

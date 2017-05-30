@@ -19,11 +19,11 @@ package views
 import assets.Messages.{Timeout => messages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
-import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.helptosavefrontend.TestSupport
+import utils.TestSupport
 
 class SessionTimeoutViewSpec extends TestSupport {
 

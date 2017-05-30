@@ -21,9 +21,9 @@ import config.FrontendAppConfig
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import utils.TestSupport
 
-class HomeControllerSpec extends UnitSpec with WithFakeApplication with MockAuthenticationPredicate {
+class HomeControllerSpec extends TestSupport with MockAuthenticationPredicate {
 
   "Unauthorised Tests" should {
 

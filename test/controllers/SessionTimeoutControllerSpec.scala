@@ -16,18 +16,17 @@
 
 package controllers
 
-import play.api.http.Status
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
 import assets.Messages.{Timeout => messages}
 import config.FrontendAppConfig
+import controllers.timeout.SessionTimeoutController
 import org.jsoup.Jsoup
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.http.Status
 import play.api.i18n.MessagesApi
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import utils.TestSupport
 
-class SessionTimeoutControllerSpec extends UnitSpec with WithFakeApplication {
+class SessionTimeoutControllerSpec extends TestSupport {
 
   object TestSessionTimeoutController extends SessionTimeoutController()(
     fakeApplication.injector.instanceOf[FrontendAppConfig],
