@@ -16,9 +16,7 @@
 
 package utils
 
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-
-class CurrencyFormatterSpec extends UnitSpec with WithFakeApplication with ImplicitCurrencyFormatter {
+class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
 
   "The implicit currency formatter" should {
 

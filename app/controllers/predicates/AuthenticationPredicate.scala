@@ -49,7 +49,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
       }.recoverWith {
         case _ :BearerTokenExpired =>
           Logger.debug("[AuthenticationPredicate][async] Session Time Out.")
-          Future.successful(Redirect(controllers.routes.SessionTimeoutController.timeout()))
+          Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
         case _ =>
           Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to GG Sign In")
           Future.successful(ggSignInRedirect)

@@ -29,3 +29,5 @@ trait ImplicitCurrencyFormatter {
     }
   }
 }
+
+object ImplicitCurrencyFormatter extends ImplicitCurrencyFormatter

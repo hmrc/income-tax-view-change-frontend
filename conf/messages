@@ -1,8 +1,18 @@
 #Base
 base.back                                                       = Back
 base.service_name                                               = Check your income tax and expenses
-
 base.phase                                                      = BETA
+
+
+## Home Page ##
+home.title                                                      = Quarterly reporting details
+home.heading                                                    = Quarterly reporting details
+home.pre-heading.tax-year                                       = 2017/18
+home.quarterly-reporting.p1                                     = You must submit a report once every quarter and pay any tax you owe for the whole tax year by 31 January 2019.
+home.estimated-tax.h2                                           = Your estimated tax amount
+home.estimated-tax.p1                                           = These amounts include your Income Tax and National Insurance figures.
+home.estimated-tax.to-date                                      = Estimate to date
+
 
 ## Timeout page ##
 timeout.title                                                   = Your session has timed out
