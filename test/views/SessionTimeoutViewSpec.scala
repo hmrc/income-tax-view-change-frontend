@@ -17,38 +17,40 @@
 package views
 
 import assets.Messages.{Timeout => messages}
-import config.MockAppConfig
+import config.FrontendAppConfig
 import org.jsoup.Jsoup
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.i18n.Messages.Implicits._
+import play.api.Play.current
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.helptosavefrontend.TestSupport
 
-class SessionTimeoutViewSpec extends PlaySpec with GuiceOneServerPerSuite {
+class SessionTimeoutViewSpec extends TestSupport {
 
-  lazy val page = views.html.timeout.timeout()(FakeRequest(), applicationMessages, MockAppConfig)
+  lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
+
+  lazy val page = views.html.timeout.timeout()(FakeRequest(), applicationMessages, mockAppConfig)
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The Session timeout view" should {
 
     s"have the title '${messages.title}'" in {
-      document.title() mustBe messages.title
+      document.title() shouldBe messages.title
     }
 
     s"have the H1 '${messages.heading}'" in {
-      document.getElementsByTag("H1").text() mustBe messages.heading
+      document.getElementsByTag("H1").text() shouldBe messages.heading
     }
 
     s"have a paragraph" which {
 
       "has the text" in {
-        document.getElementById("sign-in").text() mustBe messages.signIn
+        document.getElementById("sign-in").text() shouldBe messages.signIn
       }
 
       // TODO: Update with the Home Controller route which will re-direct to Sign-In
       "has a link to sign-in page" in {
-        document.getElementById("sign-in-link").attr("href") mustBe controllers.routes.HelloWorld.helloWorld().url
+        document.getElementById("sign-in-link").attr("href") shouldBe controllers.routes.HelloWorld.helloWorld().url
       }
 
     }

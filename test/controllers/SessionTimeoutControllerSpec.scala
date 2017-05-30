@@ -20,17 +20,18 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import assets.Messages.{Timeout => messages}
-import config.MockAppConfig
+import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.i18n.MessagesApi
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-class SessionTimeoutControllerSpec extends PlaySpec with GuiceOneServerPerSuite {
+class SessionTimeoutControllerSpec extends UnitSpec with WithFakeApplication {
 
   object TestSessionTimeoutController extends SessionTimeoutController()(
-    MockAppConfig,
-    app.injector.instanceOf[MessagesApi]
+    fakeApplication.injector.instanceOf[FrontendAppConfig],
+    fakeApplication.injector.instanceOf[MessagesApi]
   )
 
   "Calling the timeout action of the SessionTimeoutController" should {
@@ -39,16 +40,16 @@ class SessionTimeoutControllerSpec extends PlaySpec with GuiceOneServerPerSuite 
     lazy val document = Jsoup.parse(contentAsString(result))
 
     "return OK (200)" in {
-      status(result) mustBe Status.OK
+      status(result) shouldBe Status.OK
     }
 
     "return HTML" in {
-      contentType(result) mustBe Some("text/html")
-      charset(result) mustBe Some("utf-8")
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
     }
 
     s"have the title '${messages.title}'" in {
-      document.title() mustBe messages.title
+      document.title() shouldBe messages.title
     }
   }
 }

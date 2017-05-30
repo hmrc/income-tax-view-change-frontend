@@ -18,9 +18,8 @@ package auth
 
 import config.FrontendAuthConnector
 import org.scalatest.mockito.MockitoSugar
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, EmptyPredicate, MissingBearerToken}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, BearerTokenExpired, EmptyPredicate, MissingBearerToken}
 import uk.gov.hmrc.play.http.HeaderCarrier
-
 
 import scala.concurrent.Future
 
@@ -37,5 +36,11 @@ object MockAuthorisedUser extends MockAuthorisedFunctions {
 object MockUnauthorisedUser extends MockAuthorisedFunctions {
   override def authorised(): AuthorisedFunction = new AuthorisedFunction(EmptyPredicate) {
     override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier): Future[A] = Future.failed(new MissingBearerToken)
+  }
+}
+
+object MockTimeoutUser extends MockAuthorisedFunctions {
+  override def authorised(): AuthorisedFunction = new AuthorisedFunction(EmptyPredicate) {
+    override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier): Future[A] = Future.failed(new BearerTokenExpired)
   }
 }

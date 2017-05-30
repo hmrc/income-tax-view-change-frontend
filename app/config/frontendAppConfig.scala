@@ -30,6 +30,7 @@ trait AppConfig {
   val reportAProblemNonJSUrl: String
   val betaFeedbackUrl: String
   val betaFeedbackUnauthenticatedUrl: String
+  val ggSignInContinueUrl: String
 }
 
 @Singleton
@@ -52,4 +53,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
   //GA
   override lazy val analyticsToken = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost = loadConfig(s"google-analytics.host")
+
+  //GG Sign In via Company Auth Fronetned
+  override lazy val ggSignInContinueUrl = loadConfig("government-gateway.continue.url")
 }
