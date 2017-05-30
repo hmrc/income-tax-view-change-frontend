@@ -31,16 +31,11 @@ class SignOutControllerSpec extends UnitSpec with WithFakeApplication {
     fakeApplication.injector.instanceOf[MessagesApi]
   )
 
-  "navigating to signout page without existing session" should {
+  "navigating to signout page" should {
     lazy val result = TestSignOutController.signOut(FakeRequest())
 
-    "return OK (200)" in {
-      status(result) shouldBe Status.OK
-    }
-
-    "return HTML" in {
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+    "return OK (303)" in {
+      status(result) shouldBe Status.SEE_OTHER
     }
 
   }

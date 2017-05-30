@@ -8,7 +8,3 @@ base.phase                                                      = BETA
 timeout.title                                                   = Your session has timed out
 timeout.heading                                                 = Your session has timed out
 timeout.signIn                                                  = To view your quarterly reporting details, you''ll have to <a id="sign-in-link" href="{0}" rel="external">sign in</a> using your Government Gateway ID.
-
-## Sign Out ##
-signout.title                                                   = Sign Out
-signout.heading                                                 = THIS IS SIGN OUT

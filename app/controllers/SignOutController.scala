@@ -29,6 +29,6 @@ class SignOutController @Inject()(implicit val config: AppConfig,
                                    ) extends FrontendController with I18nSupport {
 
   val signOut:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.html.signout.signOut()).withNewSession)
+    Future.successful(Redirect(config.ggSignOutUrl))
   }
 }

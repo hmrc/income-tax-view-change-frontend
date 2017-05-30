@@ -31,6 +31,8 @@ trait AppConfig {
   val betaFeedbackUrl: String
   val betaFeedbackUnauthenticatedUrl: String
   val ggSignInContinueUrl: String
+  val ggUrl: String
+  val ggSignOutUrl: String
 }
 
 @Singleton
@@ -56,4 +58,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
 
   //GG Sign In via Company Auth Fronetned
   override lazy val ggSignInContinueUrl = loadConfig("government-gateway.continue.url")
+
+  //Sign out
+  override lazy val ggUrl = loadConfig(s"government-gateway.url")
+  override lazy val ggSignOutUrl = s"$ggUrl/gg/sign-out?continue=$ggSignInContinueUrl"
 }
