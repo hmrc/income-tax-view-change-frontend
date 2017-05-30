@@ -19,30 +19,39 @@ package controllers.predicates
 import javax.inject.Inject
 
 import config.FrontendAppConfig
+import controllers.BaseController
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import play.api.{Configuration, Environment, Logger}
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, BearerTokenExpired}
+import uk.gov.hmrc.auth.core.Retrievals.authorisedEnrolments
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.frontend.Redirects
-import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
 class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                         val appConfig: FrontendAppConfig,
                                         override val config: Configuration,
-                                        override val env: Environment
-                                       ) extends FrontendController with Redirects {
+                                        override val env: Environment,
+                                        implicit val messagesApi: MessagesApi
+                                       ) extends BaseController with Redirects {
 
   private type PlayRequest  = Request[AnyContent] => Result
-  private type AsyncRequest = Request[AnyContent] => Future[Result]
+  private type AsyncRequest = Request[AnyContent] => String => Future[Result]
 
   lazy val ggSignInRedirect: Result =  toGGLogin(appConfig.ggSignInContinueUrl)
 
+  lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
+  lazy val mtdItIdentifierKey: String = appConfig.mtdItIdentifierKey
+
   def async(action: AsyncRequest): Action[AnyContent] = {
     Action.async { implicit request =>
-      authorisedFunctions.authorised() {
-        action(request)
+      authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey)).retrieve(authorisedEnrolments) { authorisedEnrolments =>
+        action(request)(getMtdItID(authorisedEnrolments))
       }.recoverWith {
+        case _ :InsufficientEnrolments =>
+          Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment.")
+          Future.successful(showInternalServerError)
         case _ :BearerTokenExpired =>
           Logger.debug("[AuthenticationPredicate][async] Session Time Out.")
           Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
@@ -52,4 +61,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
       }
     }
   }
+
+  private[AuthenticationPredicate] def getMtdItID(activeEnrolments: Enrolments) =
+    activeEnrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value).get
 }

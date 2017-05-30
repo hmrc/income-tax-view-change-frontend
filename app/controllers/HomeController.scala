@@ -19,21 +19,28 @@ package controllers
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.predicates.AuthenticationPredicate
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
+import models.{EstimatedTaxLiability, EstimatedTaxLiabilityError}
+import play.api.Logger
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.frontend.controller.FrontendController
-
-import scala.concurrent.Future
+import services.EstimatedTaxLiabilityService
 
 
 class HomeController @Inject()(implicit val config: AppConfig,
-                               val authorisedAction: AuthenticationPredicate
-                          ) extends FrontendController {
+                               val authorisedAction: AuthenticationPredicate,
+                               val estimatedTaxLiabilityService: EstimatedTaxLiabilityService,
+                               implicit val messagesApi: MessagesApi
+                              ) extends BaseController {
 
-  def home(): Action[AnyContent] = authorisedAction.async { implicit request =>
-      // TODO: Update with call to service to retrieve real Estimated Amount
-      Future.successful(Ok(views.html.home(12345.99)))
+  def home(): Action[AnyContent] = authorisedAction.async { implicit request => implicit mtditid =>
+    Logger.debug(s"[HomeController][home] Calling Estimated Tax Liability Service with MTDITID: $mtditid")
+    estimatedTaxLiabilityService.getEstimatedTaxLiability(mtditid) map {
+      case success: EstimatedTaxLiability =>
+        Logger.debug(s"[HomeController][home] Success Response: $success")
+        Ok(views.html.home(success.total))
+      case failure: EstimatedTaxLiabilityError =>
+        Logger.debug(s"[HomeController][home] Error Response: Status=${failure.status}, Message=${failure.message}")
+        showInternalServerError
     }
-
+  }
 }

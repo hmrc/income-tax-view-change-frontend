@@ -32,13 +32,24 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
   "The authentication async method" when {
 
     def result(authenticationPredicate: AuthenticationPredicate): Future[Result] = authenticationPredicate.async {
-      implicit request =>
+      implicit request => implicit mtditid =>
         Future.successful(Ok)
     } apply FakeRequest()
 
-    "called with an authenticated user" should {
-      "should return Ok (200)" in {
-        status(result(MockAuthenticated)) shouldBe Status.OK
+    "called with an authenticated user" when {
+
+      "a HMRC-MTD-IT enrolment exists" should {
+
+        "return Ok (200)" in {
+          status(result(MockAuthenticated)) shouldBe Status.OK
+        }
+      }
+
+      "a HMRC-MTD-IT enrolment does NOT exist" should {
+
+        "return Internal Server Error (500)" in {
+          status(result(MockAuthenticatedNoEnrolment)) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
       }
     }
 
