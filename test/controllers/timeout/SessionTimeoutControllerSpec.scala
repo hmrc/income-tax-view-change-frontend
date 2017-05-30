@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.timeout
 
 import assets.Messages.{Timeout => messages}
 import config.FrontendAppConfig
-import controllers.timeout.SessionTimeoutController
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi

@@ -4,9 +4,9 @@ GET        /assets/*file                controllers.Assets.at(path="/public", fi
 GET         /                           controllers.HomeController.home
 
 #Feedback Routes
-GET         /feedback                   controllers.FeedbackController.show
-POST        /feedback                   controllers.FeedbackController.submit
-GET         /thankyou                   controllers.FeedbackController.thankyou
+GET         /feedback                   controllers.feedback.FeedbackController.show
+POST        /feedback                   controllers.feedback.FeedbackController.submit
+GET         /thankyou                   controllers.feedback.FeedbackController.thankyou
 
 #Timeout Routes
 GET         /session-timeout            controllers.timeout.SessionTimeoutController.timeout
