@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package views
+package views.timeout
 
 import assets.Messages.{Timeout => messages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
-import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.helptosavefrontend.TestSupport
+import utils.TestSupport
 
 class SessionTimeoutViewSpec extends TestSupport {
 
@@ -48,9 +48,8 @@ class SessionTimeoutViewSpec extends TestSupport {
         document.getElementById("sign-in").text() shouldBe messages.signIn
       }
 
-      // TODO: Update with the Home Controller route which will re-direct to Sign-In
       "has a link to sign-in page" in {
-        document.getElementById("sign-in-link").attr("href") shouldBe controllers.routes.HelloWorld.helloWorld().url
+        document.getElementById("sign-in-link").attr("href") shouldBe controllers.routes.HomeController.home().url
       }
 
     }

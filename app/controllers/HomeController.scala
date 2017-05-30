@@ -16,19 +16,24 @@
 
 package controllers
 
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.Inject
 import config.AppConfig
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
+import controllers.predicates.AuthenticationPredicate
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
-@Singleton
-class SessionTimeoutController @Inject()(implicit val config: AppConfig,
-                                          val messagesApi: MessagesApi
-                                        ) extends FrontendController with I18nSupport {
-  val timeout: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.html.timeout.timeout()))
-  }
+
+class HomeController @Inject()(implicit val config: AppConfig,
+                               val authorisedAction: AuthenticationPredicate
+                          ) extends FrontendController {
+
+  def home(): Action[AnyContent] = authorisedAction.async { implicit request =>
+      // TODO: Update with call to service to retrieve real Estimated Amount
+      Future.successful(Ok(views.html.home(12345.99)))
+    }
+
 }

@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.timeout
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import config.AppConfig
-import controllers.predicates.AuthenticationPredicate
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import play.api.mvc.{Action, AnyContent}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc._
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
-
-class HelloWorld @Inject()( implicit val config: AppConfig,
-                            val authorisedAction: AuthenticationPredicate
-                          ) extends FrontendController {
-
-  def helloWorld(): Action[AnyContent] = authorisedAction.async { implicit request =>
-      Future.successful(Ok(views.html.helloworld.hello_world(config)))
-    }
-
+@Singleton
+class SessionTimeoutController @Inject()(implicit val config: AppConfig,
+                                          val messagesApi: MessagesApi
+                                        ) extends FrontendController with I18nSupport {
+  val timeout: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(views.html.timeout.timeout()))
+  }
 }
