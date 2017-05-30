@@ -16,29 +16,28 @@
 
 package controllers
 
-import auth.{MockAuthorisedUser, MockUnauthorisedUser}
-import config.MockAppConfig
-import controllers.predicates.AuthenticationPredicate
+import auth.MockAuthenticationPredicate
+import config.FrontendAppConfig
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication {
+class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication with MockAuthenticationPredicate {
 
   "Unauthorised Tests" should {
 
-    object TestHelloWorldController extends HelloWorld()(MockAppConfig, new AuthenticationPredicate(MockUnauthorisedUser))
+    object TestHelloWorldController extends HelloWorld()(fakeApplication.injector.instanceOf[FrontendAppConfig], MockUnauthorised)
 
-    "return 401" in {
+    "return redirect SEE_OTHER (303)" in {
       val result = TestHelloWorldController.helloWorld()(FakeRequest())
-      status(result) shouldBe Status.UNAUTHORIZED
+      status(result) shouldBe Status.SEE_OTHER
     }
   }
 
   "Authorised Tests" should {
 
-    object TestHelloWorldController extends HelloWorld()(MockAppConfig, new AuthenticationPredicate(MockAuthorisedUser))
+    object TestHelloWorldController extends HelloWorld()(fakeApplication.injector.instanceOf[FrontendAppConfig], MockAuthenticated)
 
     "return 200" in {
       val result = TestHelloWorldController.helloWorld()(FakeRequest())
@@ -51,6 +50,4 @@ class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication {
       charset(result) shouldBe Some("utf-8")
     }
   }
-
-
 }

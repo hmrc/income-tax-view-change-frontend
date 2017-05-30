@@ -18,27 +18,37 @@ package controllers.predicates
 
 import javax.inject.Inject
 
-import config.{FrontendAppConfig, FrontendAuthConnector}
-import play.api.Logger
+import config.FrontendAppConfig
 import play.api.mvc.{Action, AnyContent, Request, Result}
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, MissingBearerToken}
+import play.api.{Configuration, Environment, Logger}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, BearerTokenExpired}
+import uk.gov.hmrc.auth.frontend.Redirects
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
-class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunctions) extends FrontendController {
+class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                        val appConfig: FrontendAppConfig,
+                                        override val config: Configuration,
+                                        override val env: Environment
+                                       ) extends FrontendController with Redirects {
 
   private type PlayRequest  = Request[AnyContent] => Result
   private type AsyncRequest = Request[AnyContent] => Future[Result]
+
+  lazy val ggSignInRedirect: Result =  toGGLogin(appConfig.ggSignInContinueUrl)
 
   def async(action: AsyncRequest): Action[AnyContent] = {
     Action.async { implicit request =>
       authorisedFunctions.authorised() {
         action(request)
-      }.recover {
-        case e: MissingBearerToken =>
-          Logger.debug("[AuthenticationPredicate][async] Unauthorised request to Frontend.  Propagating Unauthorised Response")
-          Unauthorized
+      }.recoverWith {
+        case _ :BearerTokenExpired =>
+          Logger.debug("[AuthenticationPredicate][async] Session Time Out.")
+          Future.successful(Redirect(controllers.routes.SessionTimeoutController.timeout()))
+        case _ =>
+          Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to GG Sign In")
+          Future.successful(ggSignInRedirect)
       }
     }
   }
