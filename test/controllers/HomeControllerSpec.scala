@@ -23,29 +23,29 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication with MockAuthenticationPredicate {
+class HomeControllerSpec extends UnitSpec with WithFakeApplication with MockAuthenticationPredicate {
 
   "Unauthorised Tests" should {
 
-    object TestHelloWorldController extends HelloWorld()(fakeApplication.injector.instanceOf[FrontendAppConfig], MockUnauthorised)
+    object TestHomeController extends HomeController()(fakeApplication.injector.instanceOf[FrontendAppConfig], MockUnauthorised)
 
     "return redirect SEE_OTHER (303)" in {
-      val result = TestHelloWorldController.helloWorld()(FakeRequest())
+      val result = TestHomeController.home()(FakeRequest())
       status(result) shouldBe Status.SEE_OTHER
     }
   }
 
   "Authorised Tests" should {
 
-    object TestHelloWorldController extends HelloWorld()(fakeApplication.injector.instanceOf[FrontendAppConfig], MockAuthenticated)
+    object TestHomeController extends HomeController()(fakeApplication.injector.instanceOf[FrontendAppConfig], MockAuthenticated)
 
     "return 200" in {
-      val result = TestHelloWorldController.helloWorld()(FakeRequest())
+      val result = TestHomeController.home()(FakeRequest())
       status(result) shouldBe Status.OK
     }
 
     "return HTML" in {
-      val result = TestHelloWorldController.helloWorld()(FakeRequest())
+      val result = TestHomeController.home()(FakeRequest())
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }

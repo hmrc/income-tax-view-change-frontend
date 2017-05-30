@@ -16,7 +16,7 @@
 
 package config
 
-import views.html.error_template
+import views.html.templates.error_template
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
 import play.api.mvc.Request

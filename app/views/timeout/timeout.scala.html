@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.main_template
+@import views.html.templates.main_template
 @import config.AppConfig
 
 @()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
@@ -22,6 +22,6 @@
 @main_template(title = messages("timeout.title"), bodyClasses = None, appConfig = appConfig) {
 
  <h1>@Messages("timeout.heading")</h1>
- <p id="sign-in">@Html(Messages("timeout.signIn", controllers.routes.HelloWorld.helloWorld().url))</p>
+ <p id="sign-in">@Html(Messages("timeout.signIn", controllers.routes.HomeController.home().url))</p>
 
 }

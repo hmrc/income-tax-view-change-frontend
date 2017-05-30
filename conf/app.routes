@@ -1,7 +1,7 @@
 # microservice specific routes
-GET        /assets/*file              controllers.Assets.at(path="/public", file)
+GET        /assets/*file                controllers.Assets.at(path="/public", file)
 
-GET         /                           controllers.HelloWorld.helloWorld
+GET         /                           controllers.HomeController.home
 
 #Feedback Routes
 GET         /feedback                   controllers.FeedbackController.show

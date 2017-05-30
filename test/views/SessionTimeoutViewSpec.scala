@@ -48,9 +48,8 @@ class SessionTimeoutViewSpec extends TestSupport {
         document.getElementById("sign-in").text() shouldBe messages.signIn
       }
 
-      // TODO: Update with the Home Controller route which will re-direct to Sign-In
       "has a link to sign-in page" in {
-        document.getElementById("sign-in-link").attr("href") shouldBe controllers.routes.HelloWorld.helloWorld().url
+        document.getElementById("sign-in-link").attr("href") shouldBe controllers.routes.HomeController.home().url
       }
 
     }

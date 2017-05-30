@@ -27,12 +27,12 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import scala.concurrent.Future
 
 
-class HelloWorld @Inject()( implicit val config: AppConfig,
-                            val authorisedAction: AuthenticationPredicate
+class HomeController @Inject()(implicit val config: AppConfig,
+                               val authorisedAction: AuthenticationPredicate
                           ) extends FrontendController {
 
-  def helloWorld(): Action[AnyContent] = authorisedAction.async { implicit request =>
-      Future.successful(Ok(views.html.helloworld.hello_world(config)))
+  def home(): Action[AnyContent] = authorisedAction.async { implicit request =>
+      Future.successful(Ok(views.html.home(config)))
     }
 
 }
