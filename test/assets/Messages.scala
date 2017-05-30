@@ -18,6 +18,21 @@ package assets
 
 object Messages {
 
+  // Home Page Messages
+  object Home {
+    val title = "Quarterly reporting details"
+    val heading = "Quarterly reporting details"
+    val preheading = "2017/18"
+    object QuarterlyReporting {
+      val p1 = "You must submit a report once every quarter and pay any tax you owe for the whole tax year by 31 January 2019."
+    }
+    object EstimateTax {
+      val h2 = "Your estimated tax amount"
+      val p1 = "These amounts include your Income Tax and National Insurance figures."
+      val toDate = "Estimate to date"
+    }
+  }
+
   // Timeout Messages
   object Timeout {
     val title = "Your session has timed out"

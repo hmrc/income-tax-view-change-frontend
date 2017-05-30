@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.timeout
 
 import assets.Messages.{Timeout => messages}
 import config.FrontendAppConfig

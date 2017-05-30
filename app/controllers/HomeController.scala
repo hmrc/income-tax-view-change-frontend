@@ -32,7 +32,8 @@ class HomeController @Inject()(implicit val config: AppConfig,
                           ) extends FrontendController {
 
   def home(): Action[AnyContent] = authorisedAction.async { implicit request =>
-      Future.successful(Ok(views.html.home(config)))
+      // TODO: Update with call to service to retrieve real Estimated Amount
+      Future.successful(Ok(views.html.home(12345.99)))
     }
 
 }
