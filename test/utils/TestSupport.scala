@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext
 
-trait TestSupport extends UnitSpec with MockFactory with BeforeAndAfterAll {
+trait TestSupport extends UnitSpec with MockFactory with BeforeAndAfterAll with MaterializerSupport {
   this: Suite =>
 
   lazy val fakeApplication: Application =

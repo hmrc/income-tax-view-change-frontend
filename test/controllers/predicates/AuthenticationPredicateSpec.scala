@@ -36,9 +36,20 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
         Future.successful(Ok)
     } apply FakeRequest()
 
-    "called with an authenticated user" should {
-      "should return Ok (200)" in {
-        status(result(MockAuthenticated)) shouldBe Status.OK
+    "called with an authenticated user" when {
+
+      "a HMRC-MTD-IT enrolment exists" should {
+
+        "return Ok (200)" in {
+          status(result(MockAuthenticated)) shouldBe Status.OK
+        }
+      }
+
+      "a HMRC-MTD-IT enrolment does NOT exist" should {
+
+        "return Internal Server Error (500)" in {
+          status(result(MockAuthenticatedNoEnrolment)) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
       }
     }
 
