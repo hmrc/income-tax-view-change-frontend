@@ -10,3 +10,6 @@ GET         /thankyou                   controllers.feedback.FeedbackController.
 
 #Timeout Routes
 GET         /session-timeout            controllers.timeout.SessionTimeoutController.timeout
+
+#Sign Out Routes
+GET         /sign-out                   controllers.SignOutController.signOut
