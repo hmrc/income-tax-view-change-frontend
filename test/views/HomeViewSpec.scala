@@ -31,6 +31,7 @@ class HomeViewSpec extends TestSupport {
   lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
 
   val testAmount: BigDecimal = 12345.99
+  val testAmountOutput: String = "£12,345.99"
 
   lazy val page = views.html.home(testAmount)(FakeRequest(), applicationMessages, mockAppConfig)
   lazy val document = Jsoup.parse(contentAsString(page))
@@ -67,7 +68,7 @@ class HomeViewSpec extends TestSupport {
       }
 
       s"has the correct Estimated Tax Amount of '$testAmount'" in {
-        estimateSection.getElementById("estimate-amount").text() shouldBe testAmount.toCurrency + " " + messages.EstimateTax.toDate
+        estimateSection.getElementById("estimate-amount").text() shouldBe testAmountOutput + " " + messages.EstimateTax.toDate
       }
     }
 
