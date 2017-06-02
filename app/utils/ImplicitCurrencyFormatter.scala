@@ -16,17 +16,14 @@
 
 package utils
 
-import java.text.NumberFormat
-import java.util.{Currency, Locale}
+import java.text.DecimalFormat
+
+import play.twirl.api.Html
 
 trait ImplicitCurrencyFormatter {
   implicit class CurrencyFormatter(x: BigDecimal) {
-    def toCurrency: String = {
-      val currency: NumberFormat = java.text.NumberFormat.getCurrencyInstance
-      val uk: Currency = Currency.getInstance(new Locale("gb", "GB"))
-      currency.setCurrency(uk)
-      currency.format(x)
-    }
+    val f = new DecimalFormat("#,###.00")
+    def toCurrency: Html = Html("&pound;" + f.format(x))
   }
 }
 
