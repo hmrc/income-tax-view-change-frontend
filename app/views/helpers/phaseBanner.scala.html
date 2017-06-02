@@ -16,7 +16,7 @@
 
 @(phaseId: String)(implicit messages: Messages)
 
-<div class="phase-banner">
+<div class="@{phaseId.toLowerCase}-banner">
   <p>
     <strong id="phase" class="phase-tag">@phaseId</strong>
     <span>This is a new service – your <a href="@controllers.feedback.routes.FeedbackController.show()">feedback</a> will help us to improve it.</span>
