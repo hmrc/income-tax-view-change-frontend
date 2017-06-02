@@ -1,7 +1,8 @@
 #Base
 base.back                                                       = Back
-base.service_name                                               = Check your income tax and expenses
+base.service_name                                               = Business tax account
 base.phase                                                      = BETA
+base.sign-out                                                   = Sign out
 
 
 ## Home Page ##
