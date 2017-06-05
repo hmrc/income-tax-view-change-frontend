@@ -46,6 +46,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
 
   def async(action: AsyncRequest): Action[AnyContent] = {
     Action.async { implicit request =>
+
       authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey)).retrieve(authorisedEnrolments) { authorisedEnrolments =>
         action(request)(getMtdItID(authorisedEnrolments))
       }.recoverWith {
