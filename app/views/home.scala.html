@@ -38,8 +38,8 @@
 
         <p id="p1">@messages("home.estimated-tax.p1")</p>
 
-        <p id="estimate-amount">
-            <span class="bold-medium">@estimatedTaxAmount.toCurrency</span>
+        <p id="estimate-to-date">
+            <span class="bold-medium" id="estimate-amount">@estimatedTaxAmount.toCurrency</span>
             <br>
             @messages("home.estimated-tax.to-date")
         </p>

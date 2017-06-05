@@ -20,21 +20,21 @@ object FrontendBuild extends Build with MicroService {
   val govTemplateVersion        = "5.2.0"
   val playHealthVersion         = "2.1.0"
   val playUiVersion             = "7.2.1"
+
   val scalaTestPlusVersion      = "2.0.0"
-  val playAuthFrontendVersion   = "6.3.0"
   val hmrcTestVesrion           = "2.3.0"
   val scalatestVersion          = "3.0.0"
   val pegdownVersion            = "1.6.0"
   val jsoupVersion              = "1.10.2"
-  val mockitoVersion            = "2.7.6"
+  val mockitoVersion            = "2.7.17"
   val scalaMockVersion          = "3.5.0"
+  val wiremockVersion           = "2.5.1"
 
   val compile = Seq(
     ws,
     "uk.gov.hmrc" %% "frontend-bootstrap" % frontendBootstrapVersion,
     "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
     "uk.gov.hmrc" %% "play-auth" % playAuthVersion,
-//    "uk.gov.hmrc" %% "play-authorised-frontend" % playAuthFrontendVersion,
     "uk.gov.hmrc" %% "play-config" % playConfigVersion,
     "uk.gov.hmrc" %% "logback-json-logger" % logbackVersion,
     "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
@@ -42,7 +42,7 @@ object FrontendBuild extends Build with MicroService {
     "uk.gov.hmrc" %% "play-ui" % playUiVersion
   )
 
-  def test(scope: String = "test") = Seq(
+  def test(scope: String = "test,it") = Seq(
     "uk.gov.hmrc" %% "hmrctest" % hmrcTestVesrion % scope,
     "org.scalatest" %% "scalatest" % scalatestVersion % scope,
     "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
@@ -50,7 +50,8 @@ object FrontendBuild extends Build with MicroService {
     "org.pegdown" % "pegdown" % pegdownVersion % scope,
     "org.jsoup" % "jsoup" % jsoupVersion % scope,
     "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-    "org.mockito" % "mockito-core" % mockitoVersion % scope
+    "org.mockito" % "mockito-core" % mockitoVersion % scope,
+    "com.github.tomakehurst" % "wiremock" % wiremockVersion % scope
   )
 
 }
