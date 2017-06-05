@@ -30,12 +30,30 @@ import scala.concurrent.Future
 @Singleton
 class ObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
+  lazy val businessListUrl: String = baseUrl("self-assessment-api")
+  lazy val getBusinessListUrl: String => String = nino => s"$businessListUrl/self-assessment/ni/$nino/self-employments"
+
+  def getBusinessList(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ConnectorResponseModel] = {
+
+    val url = getBusinessListUrl(nino)
+
+    http.GET[HttpResponse](url) flatMap {
+      response =>
+        response.status match {
+          case OK => Logger.debug(s"[ObligationDataConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Future.successful(SuccessResponse(response.json))
+          case _ => Logger.warn(s"[ObligationDataConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Future.successful(ErrorResponse(response.status, response.body))
+        }
+    }
+  }
+
   lazy val obligationDataUrl: String = baseUrl("self-assessment-api")
-  lazy val getObligationDataUrl: String => String = nino => s"$obligationDataUrl/self-assessment/ni/$nino/self-employments"
+  lazy val getObligationDataUrl: (String, String) => String = (nino, selfEmploymentId) => s"$obligationDataUrl/self-assessment/ni/$nino/self-employments/$selfEmploymentId"
 
-  def getObligationData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ConnectorResponseModel] = {
+  def getObligationData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ConnectorResponseModel] = {
 
-    val url = getObligationDataUrl(nino)
+    val url = getObligationDataUrl(nino, selfEmploymentId)
 
     http.GET[HttpResponse](url) flatMap {
       response =>
@@ -46,7 +64,6 @@ class ObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfi
             Future.successful(ErrorResponse(response.status, response.body))
         }
     }
-
   }
 
 }
