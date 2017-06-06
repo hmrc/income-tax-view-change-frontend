@@ -41,7 +41,7 @@
 
 @headerNavLinks = {
   @if(showLogout) {<li><a id="sign-out" href="@routes.SignOutController.signOut"
-         data-journey-click="primary-navigation:Click:Signout">Sign Out</a></li>}
+         data-journey-click="primary-navigation:Click:Signout">@messages("base.sign-out")</a></li>}
 }
 
 @insideHeader = {
@@ -92,4 +92,4 @@
       sidebar = sidebar)
 }
 
-@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()))(content)
+@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), nav=true)(content)
