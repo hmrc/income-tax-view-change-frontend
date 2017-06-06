@@ -63,7 +63,7 @@ class ObligationsModelSpec extends UnitSpec with Matchers{
       met = false
     )
 
-    val obligations = ObligationsModel(Seq(obligation1, obligation2))
+    val obligations = ObligationsModel(List(obligation1, obligation2))
 
     "for the 1st Obligation" should {
 

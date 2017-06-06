@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 
 sealed trait ObligationsResponseModel
 
-case class ObligationsModel(obligations: Seq[ObligationModel]) extends ObligationsResponseModel
+case class ObligationsModel(obligations: List[ObligationModel]) extends ObligationsResponseModel
 
 case class ObligationModel(start: LocalDate,
                            end: LocalDate,
