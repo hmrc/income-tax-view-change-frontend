@@ -16,11 +16,14 @@
 
 package services
 
+import java.io.Serializable
 import javax.inject.{Inject, Singleton}
 
 import connectors.ObligationDataConnector
-import models.{ErrorResponse, SuccessResponse}
+import models._
 import play.api.Logger
+import play.api.libs.json.JsValue
+import play.api.mvc.Results.InternalServerError
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -28,27 +31,37 @@ import scala.concurrent.Future
 @Singleton
 class ObligationsService @Inject()(val obligationDataConnector: ObligationDataConnector) {
 
-  def getObligations(nino: String)(implicit hc: HeaderCarrier) = Future {
+  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[Any] = {
 
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
 
     for {
+      selfEmploymentId <- getSelfEmploymentId(nino)
+      obligations <-
+        obligationDataConnector.getObligationData(nino, selfEmploymentId)
 
-      selfEmploymentId <- obligationDataConnector.getBusinessList(nino).map {
-        case success: SuccessResponse =>
-          Logger.debug(s"[ObligationsService][getObligations] - Retrieved business details for user with NINO: $nino")
-          //retrieve the business ID .map
-            //success
-            Logger.debug(s"[ObligationsService][getObligations] - Found Self Employment ID")
+    } yield "thing"
+  }.recoverWith {
+    case s: Exception =>Future(InternalServerError(s.getMessage))
+  }
 
-            //error
-            Logger.debug(s"[ObligationsService][getObligations] - Could not find Self Employment ID")
-        case error: ErrorResponse =>
-      }
+
+
+  private[ObligationsService] def getSelfEmploymentId(nino: String): String = {
+    val s: Future[Serializable] = obligationDataConnector.getBusinessList(nino).map {
+      case success: SuccessResponse =>
+        Logger.debug(s"[ObligationsService][getObligations] - Retrieved business details for user with NINO: $nino")
+        success.json.as[BusinessListModel].business.map {
+          _.id match {
+            case Some(id) => id
+            case _ => "999"
+          }
+        }
+      case error: ErrorResponse =>
+        Logger.debug(s"[ObligationsService][getObligations] Could not retrieve business details for user with NINO: $nino")
+        //TODO what do we do here?
+        "999"
     }
-
-      Future.successful(Ok)
-
   }
 
 }
