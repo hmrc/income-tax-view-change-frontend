@@ -23,6 +23,7 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
 import utils.TestSupport
 import utils.ImplicitCurrencyFormatter._
 
@@ -68,7 +69,7 @@ class HomeViewSpec extends TestSupport {
       }
 
       s"has the correct Estimated Tax Amount of '$testAmount'" in {
-        estimateSection.getElementById("estimate-to-date").text() shouldBe testAmount.toCurrency + " " + messages.EstimateTax.toDate
+        estimateSection.getElementById("estimate-to-date").text shouldBe testAmountOutput + " " + messages.EstimateTax.toDate
       }
     }
 
