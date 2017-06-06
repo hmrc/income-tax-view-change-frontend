@@ -68,7 +68,7 @@ class HomeViewSpec extends TestSupport {
       }
 
       s"has the correct Estimated Tax Amount of '$testAmount'" in {
-        estimateSection.getElementById("estimate-amount").text() shouldBe testAmountOutput + " " + messages.EstimateTax.toDate
+        estimateSection.getElementById("estimate-to-date").text() shouldBe testAmount.toCurrency + " " + messages.EstimateTax.toDate
       }
     }
 
