@@ -37,30 +37,41 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
 
     for {
       selfEmploymentId <- getSelfEmploymentId(nino)
-      obligations <-
-        obligationDataConnector.getObligationData(nino, selfEmploymentId)
-
-    } yield "thing"
+      obligations <-  obligationDataConnector.getObligationData(nino, selfEmploymentId)
+    } yield obligations
   }.recoverWith {
+    //TODO catch appropriate set of exceptions here
     case s: Exception =>Future(InternalServerError(s.getMessage))
   }
 
 
 
-  private[ObligationsService] def getSelfEmploymentId(nino: String): String = {
-    val s: Future[Serializable] = obligationDataConnector.getBusinessList(nino).map {
+  private[ObligationsService] def getSelfEmploymentId(nino: String) = {
+
+    obligationDataConnector.getBusinessList(nino).map {
       case success: SuccessResponse =>
         Logger.debug(s"[ObligationsService][getObligations] - Retrieved business details for user with NINO: $nino")
         success.json.as[BusinessListModel].business.map {
           _.id match {
-            case Some(id) => id
-            case _ => "999"
+            case Some(id) =>
+              Logger.debug("[ObligationsService][getObligations] - Retrieved Self Employment ID")
+              id
+            case _ =>
+              //TODO handle no ID found for business exception and log appropriate message
+              Logger.debug("[ObligationsService][getObligations] - Self employment ID not present.  Throwing exception")
+              throw new Exception("")
           }
-        }
+        }.head
       case error: ErrorResponse =>
+        //TODO handle no ID found for business exception and log appropriate message
         Logger.debug(s"[ObligationsService][getObligations] Could not retrieve business details for user with NINO: $nino")
-        //TODO what do we do here?
-        "999"
+        throw new Exception("")
+    }
+  }
+
+  private def getObligationData(nino: String, selfEmploymentId: String) = {
+    obligationDataConnector.getObligationData(nino, selfEmploymentId).map {
+
     }
   }
 
