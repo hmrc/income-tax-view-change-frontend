@@ -33,6 +33,7 @@ class HomeController @Inject()(implicit val config: AppConfig,
                               ) extends BaseController {
 
   def home(): Action[AnyContent] = authorisedAction.async { implicit request => implicit mtditid =>
+
     Logger.debug(s"[HomeController][home] Calling Estimated Tax Liability Service with MTDITID: $mtditid")
     estimatedTaxLiabilityService.getEstimatedTaxLiability(mtditid) map {
       case success: EstimatedTaxLiability =>
