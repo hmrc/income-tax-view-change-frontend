@@ -29,7 +29,7 @@ import services.EstimatedTaxLiabilityService
 class HomeController @Inject()(implicit val config: AppConfig,
                                val authorisedAction: AuthenticationPredicate,
                                val estimatedTaxLiabilityService: EstimatedTaxLiabilityService,
-                               val messagesApi: MessagesApi
+                               implicit val messagesApi: MessagesApi
                               ) extends BaseController {
 
   def home(): Action[AnyContent] = authorisedAction.async { implicit request => implicit mtditid =>

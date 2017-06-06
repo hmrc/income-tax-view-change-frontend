@@ -28,7 +28,7 @@ trait MicroService {
     Seq(
       ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;models/.data/..*;" +
         "filters.*;.handlers.*;components.*;.*BuildInfo.*;.*FrontendAuditConnector.*;.*Routes.*;views.html.templates.*;views.html.feedback.*;config.*;" +
-        "controllers.feedback.*;;app.*;prod.*;config.*;com.*;testOnly.*;\"",
+        "controllers.feedback.*;app.*;prod.*;config.*;com.*;testOnly.*;\"",
       ScoverageKeys.coverageMinimum := 90,
       ScoverageKeys.coverageFailOnMinimum := false,
       ScoverageKeys.coverageHighlighting := true
