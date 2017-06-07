@@ -45,7 +45,6 @@ case class AccountingPeriod(
                             end: String
                              )
 
-
 case class BusinessListError(code: Int, message: String) extends BusinessListResponseModel
 
 object AccountingPeriod {

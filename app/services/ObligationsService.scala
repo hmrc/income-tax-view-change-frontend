@@ -16,7 +16,6 @@
 
 package services
 
-
 import javax.inject.{Inject, Singleton}
 
 import connectors.ObligationDataConnector
@@ -77,7 +76,7 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
         }
       case error: ErrorResponse =>
         Logger.debug(
-          s"""[ObligationsService][getObligations] - Cound not retriece obligations.
+          s"""[ObligationsService][getObligations] - Cound not retrievgite obligations.
              |Error Response Status: ${error.status}, Message ${error.message}""".stripMargin)
         throw new InternalServerException("")
     }
