@@ -34,7 +34,7 @@ class HomeController @Inject()(implicit val config: AppConfig,
 
   def home(): Action[AnyContent] = authorisedAction.async { implicit request => implicit user =>
 
-    Logger.debug(s"[HomeController][home] Calling Estimated Tax Liability Service with MTDITID: $user.mtditid")
+    Logger.debug(s"[HomeController][home] Calling Estimated Tax Liability Service with MTDITID: ${user.mtditid}")
     estimatedTaxLiabilityService.getEstimatedTaxLiability(user.mtditid) map {
       case success: EstimatedTaxLiability =>
         Logger.debug(s"[HomeController][home] Success Response: $success")

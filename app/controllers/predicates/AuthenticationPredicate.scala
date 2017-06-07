@@ -51,8 +51,8 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
     authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) { authorisedEnrolments =>
       action(request)(
         MtdItUser(
-          mtditid = getMtdItID(authorisedEnrolments),
-          nino = getNino(authorisedEnrolments)
+          mtditid = getEnrolmentIdentifierValue(mtdItEnrolmentKey, mtdItIdentifierKey)(authorisedEnrolments),
+          nino = getEnrolmentIdentifierValue(ninoEnrolmentKey, ninoIdentifierKey)(authorisedEnrolments)
         )
       )
     }.recoverWith {
@@ -68,12 +68,8 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
     }
   }
 
-  // The following private functions use get on the value as the auth predicate should have already established
-  // that the enrolments exists.
-  private[AuthenticationPredicate] def getMtdItID(activeEnrolments: Enrolments) =
-    activeEnrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value).get
-
-  private[AuthenticationPredicate] def getNino(activeEnrolments: Enrolments) =
-    activeEnrolments.getEnrolment(ninoEnrolmentKey).flatMap(_.getIdentifier(ninoIdentifierKey)).map(_.value).get
+  // The following private function uses get on the value as the auth predicate should have already established the enrolments exists.
+  private[AuthenticationPredicate] def getEnrolmentIdentifierValue(enrolment: String, identifier: String)(enrolments: Enrolments)  =
+    enrolments.getEnrolment(enrolment).flatMap(_.getIdentifier(identifier)).map(_.value).get
 
 }
