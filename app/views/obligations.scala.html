@@ -27,11 +27,23 @@
         <h1>@messages("obligations.heading")</h1>
 
         @obligations.obligations.zipWithIndex.map { obligation =>
-            <h2>@obligation._2</h2>
-            <p>@obligation._1.start</p>
-            <p>@obligation._1.end</p>
-            <p>@obligation._1.due</p>
-            <p>@obligation._1.met</p>
+            <table>
+                <tr>
+                    <th colspan="2">Quarter @{obligation._2 +1}</th>
+                </tr>
+                <tr>
+                    <td>@messages("obligations.start")</td><td>@obligation._1.start</td>
+                </tr>
+                <tr>
+                    <td>@messages("obligations.end")</td><td>@obligation._1.end</td>
+                </tr>
+                <tr>
+                    <td>@messages("obligations.due")</td><td>@obligation._1.due</td>
+                </tr>
+                <tr>
+                    <td>@messages("obligations.met")</td><td>@obligation._1.met</td>
+                </tr>
+            </table>
         }
     </section>
 }
