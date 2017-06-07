@@ -27,13 +27,12 @@ import services.EstimatedTaxLiabilityService
 
 
 class HomeController @Inject()(implicit val config: AppConfig,
-                               val authorisedAction: AuthenticationPredicate,
+                               val authentication: AuthenticationPredicate,
                                val estimatedTaxLiabilityService: EstimatedTaxLiabilityService,
                                implicit val messagesApi: MessagesApi
                               ) extends BaseController {
 
-  def home(): Action[AnyContent] = authorisedAction.async { implicit request => implicit user =>
-
+  def home(): Action[AnyContent] = authentication.async { implicit request => implicit user =>
     Logger.debug(s"[HomeController][home] Calling Estimated Tax Liability Service with MTDITID: ${user.mtditid}")
     estimatedTaxLiabilityService.getEstimatedTaxLiability(user.mtditid) map {
       case success: EstimatedTaxLiability =>

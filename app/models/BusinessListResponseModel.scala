@@ -26,7 +26,7 @@ case class BusinessListModel(
                               ) extends BusinessListResponseModel
 
 case class BusinessModel(
-                          id: Option[String],
+                          id: String,
                           accountingPeriod: AccountingPeriod,
                           accountingType: String,
                           commencementDate: Option[String],
@@ -45,7 +45,7 @@ case class AccountingPeriod(
                             end: String
                              )
 
-case class BusinessListError(code: String, message: String) extends BusinessListResponseModel
+case class BusinessListError(code: Int, message: String) extends BusinessListResponseModel
 
 object AccountingPeriod {
   implicit val format = Json.format[AccountingPeriod]
