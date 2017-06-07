@@ -106,7 +106,7 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
 
     "for the 2nd Business" should {
 
-      "have the start date as 1st July 2017" in {
+      "have the id set as 5678" in {
         businesses.business.last.id shouldBe "5678"
       }
     }
