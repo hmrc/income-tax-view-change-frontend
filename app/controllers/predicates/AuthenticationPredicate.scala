@@ -18,6 +18,7 @@ package controllers.predicates
 
 import javax.inject.Inject
 
+import auth.MtdItUser
 import config.FrontendAppConfig
 import controllers.BaseController
 import play.api.i18n.MessagesApi
@@ -36,33 +37,43 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
                                         implicit val messagesApi: MessagesApi
                                        ) extends BaseController with Redirects {
 
-  private type PlayRequest  = Request[AnyContent] => Result
-  private type AsyncRequest = Request[AnyContent] => String => Future[Result]
+  private type AsyncUserRequest = Request[AnyContent] => MtdItUser => Future[Result]
 
-  lazy val ggSignInRedirect: Result =  toGGLogin(appConfig.ggSignInContinueUrl)
+  lazy val ggSignInRedirect: Result = toGGLogin(appConfig.ggSignInContinueUrl)
 
   lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
   lazy val mtdItIdentifierKey: String = appConfig.mtdItIdentifierKey
 
-  def async(action: AsyncRequest): Action[AnyContent] = {
-    Action.async { implicit request =>
+  lazy val ninoEnrolmentKey: String = appConfig.ninoEnrolmentKey
+  lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
 
-      authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey)).retrieve(authorisedEnrolments) { authorisedEnrolments =>
-        action(request)(getMtdItID(authorisedEnrolments))
-      }.recoverWith {
-        case _ :InsufficientEnrolments =>
-          Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment.")
-          Future.successful(showInternalServerError)
-        case _ :BearerTokenExpired =>
-          Logger.debug("[AuthenticationPredicate][async] Session Time Out.")
-          Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
-        case _ =>
-          Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to GG Sign In")
-          Future.successful(ggSignInRedirect)
-      }
+  def async(action: AsyncUserRequest): Action[AnyContent] = Action.async { implicit request =>
+    authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) { authorisedEnrolments =>
+      action(request)(
+        MtdItUser(
+          mtditid = getMtdItID(authorisedEnrolments),
+          nino = getNino(authorisedEnrolments)
+        )
+      )
+    }.recoverWith {
+      case _: InsufficientEnrolments =>
+        Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
+        Future.successful(showInternalServerError)
+      case _: BearerTokenExpired =>
+        Logger.debug("[AuthenticationPredicate][async] Session Time Out.")
+        Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
+      case _ =>
+        Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to GG Sign In.")
+        Future.successful(ggSignInRedirect)
     }
   }
 
+  // The following private functions use get on the value as the auth predicate should have already established
+  // that the enrolments exists.
   private[AuthenticationPredicate] def getMtdItID(activeEnrolments: Enrolments) =
     activeEnrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value).get
+
+  private[AuthenticationPredicate] def getNino(activeEnrolments: Enrolments) =
+    activeEnrolments.getEnrolment(ninoEnrolmentKey).flatMap(_.getIdentifier(ninoIdentifierKey)).map(_.value).get
+
 }

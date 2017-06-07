@@ -33,7 +33,10 @@ object MockAuthorisedUserWithEnrolment extends MockAuthorisedFunctions {
     override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier): Future[A] = body
     override def retrieve[A](retrieval: Retrieval[A]): AuthorisedFunctionWithResult[A] = new AuthorisedFunctionWithResult(EmptyPredicate, retrieval) {
       override def apply[B](body: (A) => Future[B])(implicit hc: HeaderCarrier): Future[B] = {
-        body(Enrolments(Set(Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", "XAITSA000123456")), "activated", ConfidenceLevel.L0))).asInstanceOf[A])
+        body(Enrolments(Set(
+          Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", "XAITSA000123456")), "activated", ConfidenceLevel.L0),
+          Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", "AB123456C")), "activated", ConfidenceLevel.L0)
+        )).asInstanceOf[A])
       }
     }
   }
