@@ -16,62 +16,70 @@
 
 package services
 
-import java.io.Serializable
+
 import javax.inject.{Inject, Singleton}
 
 import connectors.ObligationDataConnector
 import models._
 import play.api.Logger
-import play.api.libs.json.JsValue
-import play.api.mvc.Results.InternalServerError
-import uk.gov.hmrc.play.http.HeaderCarrier
+import play.api.libs.json.JsResultException
+import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class ObligationsService @Inject()(val obligationDataConnector: ObligationDataConnector) {
 
-  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[Any] = {
+  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsModel] = {
 
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
-
     for {
       selfEmploymentId <- getSelfEmploymentId(nino)
-      obligations <-  obligationDataConnector.getObligationData(nino, selfEmploymentId)
+      obligations <-  getObligationData(nino, selfEmploymentId)
     } yield obligations
-  }.recoverWith {
-    //TODO catch appropriate set of exceptions here
-    case s: Exception =>Future(InternalServerError(s.getMessage))
   }
 
-
-
-  private[ObligationsService] def getSelfEmploymentId(nino: String) = {
+  private[ObligationsService] def getSelfEmploymentId(nino: String)(implicit hc: HeaderCarrier) = {
 
     obligationDataConnector.getBusinessList(nino).map {
       case success: SuccessResponse =>
-        Logger.debug(s"[ObligationsService][getObligations] - Retrieved business details for user with NINO: $nino")
-        success.json.as[BusinessListModel].business.map {
-          _.id match {
-            case Some(id) =>
+        Logger.debug("[ObligationsService][getObligations] - Retrieved business details")
+        try {
+          success.json.as[BusinessListModel].business.map {
+            businessModel =>
               Logger.debug("[ObligationsService][getObligations] - Retrieved Self Employment ID")
-              id
-            case _ =>
-              //TODO handle no ID found for business exception and log appropriate message
-              Logger.debug("[ObligationsService][getObligations] - Self employment ID not present.  Throwing exception")
-              throw new Exception("")
-          }
-        }.head
+              businessModel.id
+          }.head
+        } catch {
+          case js: JsResultException =>
+            Logger.debug("[ObligationService][getObligations] - Could not parse Json response into BusinessListModel")
+            throw js
+        }
       case error: ErrorResponse =>
-        //TODO handle no ID found for business exception and log appropriate message
-        Logger.debug(s"[ObligationsService][getObligations] Could not retrieve business details for user with NINO: $nino")
-        throw new Exception("")
+        Logger.debug(
+          s"""[ObligationsService][getObligations] Could not retrieve business details.
+             |Error Response Status: ${error.status}, Message: ${error.message}""".stripMargin)
+        throw new InternalServerException("")
     }
   }
 
-  private def getObligationData(nino: String, selfEmploymentId: String) = {
+  private[ObligationsService] def getObligationData(nino: String, selfEmploymentId: String)(implicit hc: HeaderCarrier) = {
     obligationDataConnector.getObligationData(nino, selfEmploymentId).map {
-
+      case success: SuccessResponse =>
+        Logger.debug("[ObligationsService][getObligations] - Retrieved obligations")
+        try{
+          success.json.as[ObligationsModel]
+        } catch {
+          case js: JsResultException =>
+            Logger.debug("[ObligationService][getObligations] - Could not parse Json response into ObligationsModel")
+            throw js
+        }
+      case error: ErrorResponse =>
+        Logger.debug(
+          s"""[ObligationsService][getObligations] - Cound not retriece obligations.
+             |Error Response Status: ${error.status}, Message ${error.message}""".stripMargin)
+        throw new InternalServerException("")
     }
   }
 

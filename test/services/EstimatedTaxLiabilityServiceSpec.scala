@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.TestSupport
 
 
-class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockFinancialDataConnector {
+class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockEstimatedTaxLiabilityConnector {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
