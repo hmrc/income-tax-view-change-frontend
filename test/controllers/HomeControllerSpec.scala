@@ -26,10 +26,9 @@ import utils.TestSupport
 import assets.Messages.{Home => messages}
 import models.{EstimatedTaxLiability, EstimatedTaxLiabilityError}
 import play.api.i18n.MessagesApi
+import assets.TestConstants._
 
 class HomeControllerSpec extends TestSupport with MockAuthenticationPredicate with MockEstimatedLiabilityService {
-
-  val testMtditid = "XAITSA000123456"
 
   "The HomeController.home action" when {
 

@@ -24,6 +24,7 @@ import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.TestSupport
+import assets.TestConstants._
 
 import scala.concurrent.Future
 
@@ -32,16 +33,20 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
   "The authentication async method" when {
 
     def result(authenticationPredicate: AuthenticationPredicate): Future[Result] = authenticationPredicate.async {
-      implicit request => implicit mtditid =>
-        Future.successful(Ok)
+      implicit request => implicit user =>
+        Future.successful(Ok(user.mtditid + " " + user.nino))
     } apply FakeRequest()
 
     "called with an authenticated user" when {
 
-      "a HMRC-MTD-IT enrolment exists" should {
+      "a HMRC-MTD-IT enrolment exists with a NINO" should {
 
         "return Ok (200)" in {
           status(result(MockAuthenticated)) shouldBe Status.OK
+        }
+
+        "should have a body with the expected user details" in {
+          bodyOf(await(result(MockAuthenticated))) shouldBe testMtditid + " " + testNino
         }
       }
 
