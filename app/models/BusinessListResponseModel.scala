@@ -16,6 +16,8 @@
 
 package models
 
+import java.time.LocalDate
+
 import play.api.libs.json.Json
 
 
@@ -29,8 +31,8 @@ case class BusinessModel(
                           id: String,
                           accountingPeriod: AccountingPeriod,
                           accountingType: String,
-                          commencementDate: Option[String],
-                          cessationDate: Option[String],
+                          commencementDate: Option[LocalDate],
+                          cessationDate: Option[LocalDate],
                           tradingName: String,
                           businessDescription: Option[String],
                           businessAddressLineOne: Option[String],
@@ -41,8 +43,8 @@ case class BusinessModel(
                           )
 
 case class AccountingPeriod(
-                            start: String,
-                            end: String
+                            start: LocalDate,
+                            end: LocalDate
                              )
 
 case class BusinessListError(code: Int, message: String) extends BusinessListResponseModel
