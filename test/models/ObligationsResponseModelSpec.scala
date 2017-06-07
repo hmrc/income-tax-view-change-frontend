@@ -24,7 +24,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 
-class ObligationsModelSpec extends UnitSpec with Matchers{
+class ObligationsResponseModelSpec extends UnitSpec with Matchers{
 
   val localDate: String => LocalDate = date => LocalDate.parse(date, DateTimeFormatter.ofPattern("uuuu-M-d"))
 

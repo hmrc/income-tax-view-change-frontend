@@ -35,6 +35,8 @@ trait AppConfig {
   val ggSignOutUrl: String
   val mtdItEnrolmentKey: String
   val mtdItIdentifierKey: String
+  val ninoEnrolmentKey: String
+  val ninoIdentifierKey: String
 }
 
 @Singleton
@@ -65,7 +67,11 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val ggUrl = loadConfig(s"government-gateway.url")
   override lazy val ggSignOutUrl = s"$ggUrl/gg/sign-out?continue=$ggSignInContinueUrl"
 
-  //MTD Incoe Tax Enrolment
-  override lazy val mtdItEnrolmentKey: String = loadConfig("enrolment.key")
-  override lazy val mtdItIdentifierKey: String = loadConfig("enrolment.identifier")
+  //MTD Income Tax Enrolment
+  override lazy val mtdItEnrolmentKey: String = loadConfig("enrolments.mtd.key")
+  override lazy val mtdItIdentifierKey: String = loadConfig("enrolments.mtd.identifier")
+
+  //NINO Enrolment
+  override lazy val ninoEnrolmentKey: String = loadConfig("enrolments.nino.key")
+  override lazy val ninoIdentifierKey: String = loadConfig("enrolments.nino.identifier")
 }
