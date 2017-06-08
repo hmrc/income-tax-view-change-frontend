@@ -33,6 +33,11 @@ object Messages {
     }
   }
 
+  //Obligations Page Messages
+  object Obligations {
+    val title = "Obligations"
+  }
+
   // Timeout Messages
   object Timeout {
     val title = "Your session has timed out"

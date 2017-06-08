@@ -3,6 +3,9 @@ GET        /assets/*file                controllers.Assets.at(path="/public", fi
 
 GET         /                           controllers.HomeController.home
 
+#Obligations
+GET         /obligations                controllers.ObligationsController.getObligations()
+
 #Feedback Routes
 GET         /feedback                   controllers.feedback.FeedbackController.show
 POST        /feedback                   controllers.feedback.FeedbackController.submit

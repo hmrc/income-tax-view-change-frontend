@@ -1,0 +1,52 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.main_template
+@import utils.ImplicitCurrencyFormatter._
+
+
+
+@(obligations: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+<!-- TODO pass in the correct Obligation Display model with dates and statuses// -->
+
+@main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig) {
+
+
+    <!-- obligation display -->
+    <section id="obligations">
+        <h1>@messages("obligations.heading")</h1>
+
+        @obligations.obligations.zipWithIndex.map { obligation =>
+            <table>
+                <tr>
+                    <th colspan="2">Quarter @{obligation._2 +1}</th>
+                </tr>
+                <tr>
+                    <td>@messages("obligations.start")</td><td>@obligation._1.start</td>
+                </tr>
+                <tr>
+                    <td>@messages("obligations.end")</td><td>@obligation._1.end</td>
+                </tr>
+                <tr>
+                    <td>@messages("obligations.due")</td><td>@obligation._1.due</td>
+                </tr>
+                <tr>
+                    <td>@messages("obligations.met")</td><td>@obligation._1.met</td>
+                </tr>
+            </table>
+        }
+    </section>
+}
