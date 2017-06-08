@@ -41,7 +41,7 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
       try {
         obligationsService.getObligations(user.nino).map {
           obligations =>
-            Logger.debug("")
+            Logger.debug("[ObligationsController][getObligations] Obligations retrieved.  Serving HTML page")
             Ok(views.html.obligations(obligations))
         }
       } catch {

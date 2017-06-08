@@ -35,7 +35,7 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
     for {
       selfEmploymentId <- getSelfEmploymentId(nino)
-      obligations <-  getObligationData(nino, selfEmploymentId)(hc)
+      obligations <-  getObligationData(nino, selfEmploymentId)
     } yield obligations
   }
 
