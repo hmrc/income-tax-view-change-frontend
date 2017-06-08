@@ -15,6 +15,14 @@ home.estimated-tax.p1                                           = These amounts 
 home.estimated-tax.to-date                                      = Estimate to date
 
 
+## Obligations Page ##
+obligations.title                                               = Your Income Tax reports
+obligations.heading                                             = Your Income Tax reports
+obligations.info                                                = You must submit a report once every quarter using your accounting software.
+obligations.accountingPeriod                                    = Accounting period
+obligations.reportDueDate                                       = Report due date
+
+
 ## Timeout page ##
 timeout.title                                                   = Your session has timed out
 timeout.heading                                                 = Your session has timed out

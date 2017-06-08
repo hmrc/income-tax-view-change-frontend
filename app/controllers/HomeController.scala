@@ -25,7 +25,6 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.EstimatedTaxLiabilityService
 
-
 class HomeController @Inject()(implicit val config: AppConfig,
                                val authentication: AuthenticationPredicate,
                                val estimatedTaxLiabilityService: EstimatedTaxLiabilityService,

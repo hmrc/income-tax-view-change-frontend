@@ -31,7 +31,7 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
 
   def getObligations(): Action[AnyContent] = authentication.async { implicit request => implicit mtditid =>
 
-    Future.successful(Ok)
+    Future.successful(Ok(views.html.obligations()))
   }
 
 }
