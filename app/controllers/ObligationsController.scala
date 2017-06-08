@@ -19,8 +19,10 @@ package controllers
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.predicates.AuthenticationPredicate
+import models.{ObligationModel, ObligationsModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import utils.ImplicitDateFormatter._
 
 import scala.concurrent.Future
 
@@ -31,7 +33,33 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
 
   def getObligations(): Action[AnyContent] = authentication.async { implicit request => implicit mtditid =>
 
-    Future.successful(Ok(views.html.obligations()))
+    val dummyObligations =
+      ObligationsModel(
+        List(
+        ObligationModel(
+          start = localDate("2017-04-06"),
+          end = localDate("2017-07-05"),
+          due = localDate("2017-08-05"),
+          met = true
+        ), ObligationModel(
+          start = localDate("2017-07-06"),
+          end = localDate("2017-10-05"),
+          due = localDate("2017-11-05"),
+          met = true
+        ), ObligationModel(
+          start = localDate("2017-10-06"),
+          end = localDate("2018-01-05"),
+          due = localDate("2018-02-05"),
+          met = false
+        ), ObligationModel(
+          start = localDate("2018-01-06"),
+          end = localDate("2018-04-05"),
+          due = localDate("2018-05-06"),
+          met = false
+        )
+      )
+    )
+    Future.successful(Ok(views.html.obligations(dummyObligations)))
   }
 
 }

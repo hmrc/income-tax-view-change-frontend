@@ -14,13 +14,17 @@ home.estimated-tax.h2                                           = Your estimated
 home.estimated-tax.p1                                           = These amounts include your Income Tax and National Insurance figures.
 home.estimated-tax.to-date                                      = Estimate to date
 
-
 ## Obligations Page ##
 obligations.title                                               = Your Income Tax reports
 obligations.heading                                             = Your Income Tax reports
 obligations.info                                                = You must submit a report once every quarter using your accounting software.
 obligations.accountingPeriod                                    = Accounting period
 obligations.reportDueDate                                       = Report due date
+
+obligations.start                                               = Start Date
+obligations.end                                                 = End Date
+obligations.due                                                 = Due Date
+obligations.met                                                 = Met
 
 
 ## Timeout page ##

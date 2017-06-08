@@ -17,54 +17,36 @@
 @import views.html.templates.main_template
 @import utils.ImplicitCurrencyFormatter._
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@(obligations: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+<!-- TODO pass in the correct Obligation Display model with dates and statuses// -->
 
 @main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig) {
 
-<!-- Quaterly Reporting -->
-<section id="tax-reports" class="form-group">
-    <h1 class="heading-large">
-        @messages("obligations.heading")
-    </h1>
 
-    <p>@messages("obligations.info")</p>
-</section>
+    <!-- obligation display -->
+    <section id="obligations">
+        <h1>@messages("obligations.heading")</h1>
 
+        <p>@messages("obligations.info")</p>
 
-<!-- Estimated Tax -->
-<section id="obligation-table">
-    <div>
-        <table>
-            <thead>
+        @obligations.obligations.zipWithIndex.map { obligation =>
+            <table>
                 <tr>
-                    <th>@messages("obligations.accountingPeriod")</th>
-                    <th>@messages("obligations.reportDueDate")</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-
-                    </td>
+                    <th colspan="2">Quarter @{obligation._2 +1}</th>
                 </tr>
                 <tr>
-                    <td>
-
-                    </td>
+                    <td>@messages("obligations.start")</td><td>@obligation._1.start</td>
                 </tr>
                 <tr>
-                    <td>
-
-                    </td>
+                    <td>@messages("obligations.end")</td><td>@obligation._1.end</td>
                 </tr>
                 <tr>
-                    <td>
-
-                    </td>
+                    <td>@messages("obligations.due")</td><td>@obligation._1.due</td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-
+                <tr>
+                    <td>@messages("obligations.met")</td><td>@obligation._1.met</td>
+                </tr>
+            </table>
+        }
+    </section>
 }

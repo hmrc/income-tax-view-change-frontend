@@ -32,37 +32,38 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
 
   val nino = "AA123456A"
   val selfEmploymentId = "5318008"
+  val businessListResponse = SuccessResponse(Json.parse(
+    s"""
+       |{"business": [
+       | {
+       |   "id": "5318008",
+       |   "accountingPeriod": {
+       |     "start": "2017-04-06",
+       |     "end": "2018-04-05"
+       |   },
+       |   "accountingType": "CASH",
+       |   "commencementDate": "2015-01-01",
+       |   "cessationDate": "2018-04-05",
+       |   "tradingName": "Test Ltd",
+       |   "businessDescription": "Testing services",
+       |   "businessAddressLineOne": "1 Test Road",
+       |   "businessAddressLineTwo": "Test City",
+       |   "businessAddressLineThree": "Test County",
+       |   "businessAddressLineSFour": "Test Country",
+       |   "businessPostcode": "A9 9AA"
+       | }
+       |]
+       |}
+        """.stripMargin
+  ))
 
   object TestObligationsService extends ObligationsService(mockObligationDataConnector)
 
   "The ObligationsService.getObligations method" when {
 
-    "a successful single business and single list of obligations is returned from the connector" should {
+    //Business Details
 
-      val businessListResponse = SuccessResponse(Json.parse(
-        s"""
-          |{"business": [
-          | {
-          |   "id": "5318008",
-          |   "accountingPeriod": {
-          |     "start": "2017-04-06",
-          |     "end": "2018-04-05"
-          |   },
-          |   "accountingType": "CASH",
-          |   "commencementDate": "2015-01-01",
-          |   "cessationDate": "2018-04-05",
-          |   "tradingName": "Test Ltd",
-          |   "businessDescription": "Testing services",
-          |   "businessAddressLineOne": "1 Test Road",
-          |   "businessAddressLineTwo": "Test City",
-          |   "businessAddressLineThree": "Test County",
-          |   "businessAddressLineSFour": "Test Country",
-          |   "businessPostcode": "A9 9AA"
-            | }
-            |]
-          |}
-        """.stripMargin
-      ))
+    "a successful single business and single list of obligations is returned from the connector" should {
 
       val obligationsDataResponse = SuccessResponse(Json.parse(
         s"""{
@@ -150,32 +151,8 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
       }
     }
 
+    //Obligations Data
     "no obligations are returned" should {
-
-      val businessListResponse = SuccessResponse(Json.parse(
-        s"""
-           |{"business": [
-           | {
-           |   "id": "5318008",
-           |   "accountingPeriod": {
-           |     "start": "2017-04-06",
-           |     "end": "2018-04-05"
-           |   },
-           |   "accountingType": "CASH",
-           |   "commencementDate": "2015-01-01",
-           |   "cessationDate": "2018-04-05",
-           |   "tradingName": "Test Ltd",
-           |   "businessDescription": "Testing services",
-           |   "businessAddressLineOne": "1 Test Road",
-           |   "businessAddressLineTwo": "Test City",
-           |   "businessAddressLineThree": "Test County",
-           |   "businessAddressLineSFour": "Test Country",
-           |   "businessPostcode": "A9 9AA"
-           | }
-           |]
-           |}
-        """.stripMargin
-      ))
 
       val noObligationsErrorResponse = ErrorResponse(Status.BAD_REQUEST, "Error Message")
 
@@ -187,6 +164,32 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
         }
         thrown.isInstanceOf[InternalServerException]
       }
+    }
+
+    "an invalid Obligations model is returned" should {
+
+      val invalidObligationsResponse = SuccessResponse(Json.parse(
+        s"""{
+           |  "obligations" : [
+           |    {
+           |      "invalidKey": "Bad things"
+           |    }
+           |  ]
+           |}""".stripMargin
+      ))
+
+
+
+      "throw an appropriate Exception" in {
+        setupMockBusinesslistResult(nino)(businessListResponse)
+        setupMockObligation(nino, selfEmploymentId)(invalidObligationsResponse)
+
+        val thrown = intercept[Exception]{
+          await(TestObligationsService.getObligations(nino))
+        }
+        thrown.isInstanceOf[JsResultException]
+      }
+
     }
   }
 
