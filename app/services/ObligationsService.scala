@@ -35,7 +35,7 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
     for {
       selfEmploymentId <- getSelfEmploymentId(nino)
-      obligations <-  getObligationData(nino, selfEmploymentId)
+      obligations <-  getObligationData(nino, selfEmploymentId)(hc)
     } yield obligations
   }
 
@@ -59,7 +59,7 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
         Logger.debug(
           s"""[ObligationsService][getObligations] Could not retrieve business details.
              |Error Response Status: ${error.status}, Message: ${error.message}""".stripMargin)
-        throw new InternalServerException("")
+        throw new Exception("")
     }
   }
 

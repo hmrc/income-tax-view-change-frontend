@@ -38,13 +38,14 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
       object TestObligationsController extends ObligationsController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         fakeApplication.injector.instanceOf[MessagesApi],
-        MockAuthenticated
+        MockAuthenticated,
+        mockObligationsService
       )
 
       "successfully retrieves a list of Obligations from the Obligations service" should {
 
         lazy val result = TestObligationsController.getObligations()(FakeRequest())
-        val document = Jsoup.parse(bodyOf(result))
+        lazy val document = Jsoup.parse(bodyOf(result))
 
         def mockSuccess(): Unit = setupMockObligationsResult(testNino)(
           ObligationsModel(
