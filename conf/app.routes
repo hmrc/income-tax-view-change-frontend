@@ -2,10 +2,9 @@
 GET        /assets/*file                controllers.Assets.at(path="/public", file)
 
 GET         /                           controllers.HomeController.home
-GET         /obligations                controllers.ObligationsController.getObligations
 
 #Obligations
-GET         /obligations                controllers.ObligationsController.getObligations()
+GET         /obligations                controllers.ObligationsController.getObligations
 
 #Feedback Routes
 GET         /feedback                   controllers.feedback.FeedbackController.show
