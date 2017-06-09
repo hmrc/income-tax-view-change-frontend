@@ -16,13 +16,16 @@
 
 package services
 
+import java.util.Calendar
 import javax.inject.{Inject, Singleton}
 
 import connectors.ObligationDataConnector
 import models._
 import play.api.Logger
 import play.api.libs.json.JsResultException
+import play.twirl.api.Html
 import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
+import utils.ImplicitLongDate._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -79,6 +82,19 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
           s"""[ObligationsService][getObligations] - Cound not retrievgite obligations.
              |Error Response Status: ${error.status}, Message ${error.message}""".stripMargin)
         throw new InternalServerException("")
+    }
+  }
+
+  def createStatus(obligation: ObligationModel) = {
+    val currentDate = Calendar.getInstance()
+    if(obligation.met) {
+      "status.received"
+    } else {
+      if(currentDate.after(obligation.end)){
+        "status.dueBy"
+      } else {
+        "status.overdue"
+      }
     }
   }
 
