@@ -15,38 +15,43 @@
  *@
 
 @import views.html.templates.main_template
-@import utils.ImplicitCurrencyFormatter._
-
-
+@import utils.ImplicitLongDate._
 
 @(obligations: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 <!-- TODO pass in the correct Obligation Display model with dates and statuses// -->
 
 @main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig) {
 
+<section id="obligations">
+    <h1>@messages("obligations.heading")</h1>
 
-    <!-- obligation display -->
-    <section id="obligations">
-        <h1>@messages("obligations.heading")</h1>
+    <p>@messages("obligations.info")</p>
 
-        @obligations.obligations.zipWithIndex.map { obligation =>
-            <table>
+    <table>
+        <thead>
+            <tr>
+                <th>@Messages("obligations.accountingPeriod")</th>
+                <th>@Messages("obligations.reportDueDate")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @obligations.obligations.zipWithIndex.map { case (model: ObligationModel, index: Int) =>
                 <tr>
-                    <th colspan="2">Quarter @{obligation._2 +1}</th>
+                    <td>
+                        <span class="bold-small">Quarter @{index + 1}</span>
+                        <p>@model.start.toLongDate to @model.end.toLongDate</p>
+                    </td>
+                    <td>
+                        @if(model.met){
+                            <p>Received</p>
+                        } else {
+                            <p>Due by @model.due.toLongDate</p>
+                        }
+                    </td>
                 </tr>
-                <tr>
-                    <td>@messages("obligations.start")</td><td>@obligation._1.start</td>
-                </tr>
-                <tr>
-                    <td>@messages("obligations.end")</td><td>@obligation._1.end</td>
-                </tr>
-                <tr>
-                    <td>@messages("obligations.due")</td><td>@obligation._1.due</td>
-                </tr>
-                <tr>
-                    <td>@messages("obligations.met")</td><td>@obligation._1.met</td>
-                </tr>
-            </table>
-        }
-    </section>
+            }
+        </tbody>
+    </table>
+</section>
+
 }
