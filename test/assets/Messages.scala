@@ -35,7 +35,7 @@ object Messages {
 
   //Obligations Page Messages
   object Obligations {
-    val title = "Obligations"
+    val title = "Your Income Tax reports"
   }
 
   // Timeout Messages

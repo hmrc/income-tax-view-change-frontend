@@ -15,7 +15,7 @@
  *@
 
 @import views.html.templates.main_template
-@import utils.ImplicitCurrencyFormatter._
+@import utils.ImplicitLongDate._
 
 @(obligations: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 <!-- TODO pass in the correct Obligation Display model with dates and statuses// -->
@@ -26,8 +26,6 @@
     <h1>@messages("obligations.heading")</h1>
 
     <p>@messages("obligations.info")</p>
-
-    <div class="grid-wrapper"></div>
 
     <table>
         <thead>
@@ -41,13 +39,13 @@
                 <tr>
                     <td>
                         <span class="bold-small">Quarter @{index + 1}</span>
-                        <p>@model.start to @model.end</p>
+                        <p>@model.start.toLongDate to @model.end.toLongDate</p>
                     </td>
                     <td>
                         @if(model.met){
                             <p>Received</p>
                         } else {
-                            <p>Due by @model.due</p>
+                            <p>Due by @model.due.toLongDate</p>
                         }
                     </td>
                 </tr>

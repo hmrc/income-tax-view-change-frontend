@@ -21,11 +21,6 @@ obligations.info                                                = You must submi
 obligations.accountingPeriod                                    = Accounting period
 obligations.reportDueDate                                       = Report due date
 
-obligations.start                                               = Start Date
-obligations.end                                                 = End Date
-obligations.due                                                 = Due Date
-obligations.met                                                 = Met
-
 
 ## Timeout page ##
 timeout.title                                                   = Your session has timed out
