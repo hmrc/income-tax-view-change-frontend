@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.main_template
 @import utils.ImplicitLongDate._
-@import views.Helpers._
+@import views.html.templates.main_template
+@import views.Helpers
 
-@(obligations: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@(obligationsModel: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, helpers: Helpers)
 <!-- TODO pass in the correct Obligation Display model with dates and statuses// -->
 
 @main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig) {
@@ -36,14 +36,14 @@
             </tr>
         </thead>
         <tbody>
-            @obligations.obligations.view.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
+            @obligationsModel.obligations.view.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
                 <tr id="@{s"quarter$index-obligation"}">
                     <td id=@{s"quarter$index-accounting-period"}>
                         <span class="bold-small">Quarter @{index + 1}</span>
                         <p>@obligation.start.toLongDate to @obligation.end.toLongDate</p>
                     </td>
                     <td id=@{s"quarter$index-obligation-status"}>
-                        @getObligationStatus(obligation)
+                        @helpers.getObligationStatus(obligation)
                     </td>
                 </tr>
             }

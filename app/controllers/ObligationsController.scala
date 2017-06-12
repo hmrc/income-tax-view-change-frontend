@@ -25,11 +25,13 @@ import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import services.ObligationsService
 import uk.gov.hmrc.play.http.InternalServerException
+import views.Helpers
 
 import scala.concurrent.Future
 
 class ObligationsController @Inject()(implicit val config: AppConfig,
                                       implicit val messagesApi: MessagesApi,
+                                      implicit val helpers: Helpers,
                                       val authentication: AuthenticationPredicate,
                                       val obligationsService: ObligationsService
                                      ) extends BaseController {

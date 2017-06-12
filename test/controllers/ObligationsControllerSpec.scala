@@ -16,18 +16,21 @@
 
 package controllers
 
+import java.time.LocalDate
+
+import assets.Messages.{Obligations => messages}
+import assets.TestConstants._
 import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
+import models._
 import org.jsoup.Jsoup
+import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.TestSupport
-import assets.TestConstants._
-import models._
-import play.api.http.Status
 import utils.ImplicitDateFormatter.localDate
-import assets.Messages.{Obligations => messages}
+import utils.TestSupport
+import views.Helpers
 
 class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockObligationsService {
 
@@ -35,12 +38,21 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
 
     "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
+      val testDate = localDate("2018-05-05")
+
+      object MockHelpers extends Helpers()(fakeApplication.injector.instanceOf[MessagesApi]) {
+        override def currentTime(): LocalDate = testDate
+      }
+
       object TestObligationsController extends ObligationsController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         fakeApplication.injector.instanceOf[MessagesApi],
+        MockHelpers,
         MockAuthenticated,
         mockObligationsService
       )
+
+      object TestHelpers extends Helpers()(fakeApplication.injector.instanceOf[MessagesApi])
 
       "successfully retrieves a list of Obligations from the Obligations service" should {
 

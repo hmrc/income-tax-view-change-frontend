@@ -17,18 +17,22 @@
 package views
 
 import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 
 import models.ObligationModel
 import play.api.Play.current
-import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
+import play.api.i18n.{Messages, MessagesApi}
 import play.twirl.api.Html
 import utils.ImplicitLongDate._
 
-object Helpers {
+@Singleton
+class Helpers @Inject()(implicit val messagesApi: MessagesApi) {
+
+  def currentTime(): LocalDate = LocalDate.now()
 
   def getObligationStatus(obligation: ObligationModel): Html = {
-    val now = LocalDate.now()
+    val now = currentTime()
           (obligation.met, obligation.due) match {
             case (true, _)                                => Html(Messages("status.received"))
             case (false, date) if now.isBefore(date)      => Html(Messages("status.open", obligation.due.toLongDate))
