@@ -36,14 +36,20 @@
             </tr>
         </thead>
         <tbody>
-            @obligationsModel.obligations.view.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
-                <tr id="@{s"quarter$index-obligation"}">
-                    <td id=@{s"quarter$index-accounting-period"}>
-                        <span class="bold-small">Quarter @{index + 1}</span>
-                        <p>@obligation.start.toLongDate to @obligation.end.toLongDate</p>
+            @obligationsModel.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
+                <tr id="@{s"quarter-$index-obligation"}">
+                    <td id=@{s"quarter-$index-accounting-period"}>
+                        <p>
+                            <span class="bold-small">Quarter @{index + 1}</span></br>
+                            @obligation.start.toLongDate to @obligation.end.toLongDate
+                        </p>
                     </td>
-                    <td id=@{s"quarter$index-obligation-status"}>
-                        @helpers.getObligationStatus(obligation)
+                    <td id=@{s"quarter-$index-obligation-status"}>
+                        <p class="flush--bottom  alert  soft-half--ends soft--right">
+                            @defining(helpers.getObligationStatus(obligation)){ status =>
+                                <strong class="bold-xsmall">@status</strong>
+                            }
+                    </p>
                     </td>
                 </tr>
             }
