@@ -33,13 +33,14 @@ import scala.concurrent.Future
 @Singleton
 class ObligationsService @Inject()(val obligationDataConnector: ObligationDataConnector) {
 
-  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsModel] = {
+  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsStatusModel] = {
 
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
     for {
       selfEmploymentId <- getSelfEmploymentId(nino)
       obligations <-  getObligationData(nino, selfEmploymentId)
-    } yield obligations
+      withStatus = ObligationsStatusModel(addStatus(obligations))
+    } yield withStatus
   }
 
   private[ObligationsService] def getSelfEmploymentId(nino: String)(implicit hc: HeaderCarrier) = {
@@ -85,17 +86,15 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
     }
   }
 
-  def createStatus(obligation: ObligationModel) = {
+  def addStatus(obligations: ObligationsModel) = {
     val currentDate = Calendar.getInstance()
-    if(obligation.met) {
-      "status.received"
-    } else {
-      if(currentDate.after(obligation.end)){
-        "status.dueBy"
-      } else {
-        "status.overdue"
+    obligations.obligations.map(obligation =>
+      (obligation.met, obligation.end) match {
+        case (true, _)                                => ObligationStatusModel(obligation, ObligationStatus.RECEIVED)
+        case (false, date) if currentDate.after(date) => ObligationStatusModel(obligation, ObligationStatus.OVERDUE)
+        case (false, _)                               => ObligationStatusModel(obligation, ObligationStatus.OPEN)
       }
-    }
+    )
   }
 
 }

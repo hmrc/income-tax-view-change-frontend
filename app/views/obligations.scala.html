@@ -17,7 +17,7 @@
 @import views.html.templates.main_template
 @import utils.ImplicitLongDate._
 
-@(obligations: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@(obligations: ObligationsStatusModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 <!-- TODO pass in the correct Obligation Display model with dates and statuses// -->
 
 @main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig) {
@@ -35,17 +35,17 @@
             </tr>
         </thead>
         <tbody>
-            @obligations.obligations.zipWithIndex.map { case (model: ObligationModel, index: Int) =>
+            @obligations.obligations.zipWithIndex.map { case (model: ObligationStatusModel, index: Int) =>
                 <tr>
                     <td>
                         <span class="bold-small">Quarter @{index + 1}</span>
-                        <p>@model.start.toLongDate to @model.end.toLongDate</p>
+                        <p>@model.obligation.start.toLongDate to @model.obligation.end.toLongDate</p>
                     </td>
                     <td>
-                        @if(model.met){
+                        @if(model.obligation.met){
                             <p>Received</p>
                         } else {
-                            <p>Due by @model.due.toLongDate</p>
+                            <p></p>
                         }
                     </td>
                 </tr>
