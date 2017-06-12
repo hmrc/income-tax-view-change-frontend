@@ -25,9 +25,7 @@ class LongDateSpec extends TestSupport with ImplicitDateFormatter {
   "The implicit date formatter" should {
 
     "change localDate's to full dates" in {
-      val date = localDate("2017-04-01").toLongDate
-      val longDate: Html = Html("1 April 2017")
-      date shouldBe longDate
+      localDate("2017-04-01").toLongDate shouldBe Html("1 April 2017")
     }
   }
 }
