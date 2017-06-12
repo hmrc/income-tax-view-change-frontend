@@ -36,7 +36,9 @@ trait ComponentSpecBase extends UnitSpec
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.income-tax-view-change.host" -> mockHost,
-    "microservice.services.income-tax-view-change.port" -> mockPort
+    "microservice.services.income-tax-view-change.port" -> mockPort,
+    "microservice.services.self-assessment-api.host" -> mockHost,
+    "microservice.services.self-assessment-api.port" -> mockPort
   )
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
@@ -58,6 +60,7 @@ trait ComponentSpecBase extends UnitSpec
     def get(uri: String): WSResponse = await(buildClient(uri).get())
 
     def getEstimatedTaxLiability: WSResponse = get(s"/")
+    def getObligations: WSResponse = get(s"/obligations")
   }
 }
 

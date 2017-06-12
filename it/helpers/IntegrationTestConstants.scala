@@ -16,15 +16,23 @@
 
 package helpers
 
-import models.ErrorResponse
+import models.{ErrorResponse, ObligationsModel, SuccessResponse}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 
 object IntegrationTestConstants {
 
-  val testEnrolmentKey = "HMRC-MTD-IT"
-  val testEnrolmentIdentifier = "MTDITID"
+  val testMtditidEnrolmentKey = "HMRC-MTD-IT"
+  val testMtditidEnrolmentIdentifier = "MTDITID"
   val testMtditid = "XAITSA123456"
+
+  val testNinoEnrolmentKey = "HMRC-NI"
+  val testNinoEnrolmentIdentifier = "NINO"
+  val testNino = "AA123456A"
+
+  //TODO change this to the correct format
+  val testSelfEmploymentId = "ABC123456789"
+
   val testErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "Internal Server Error Message")
 
   object GetFinancialDataResponse {
@@ -45,5 +53,51 @@ object IntegrationTestConstants {
          |   "reason":"$reason"
          |}
       """.stripMargin)
+  }
+
+  object GetBusinessDetails {
+    def successResponse(selfEmploymentId: String): JsValue =
+      Json.parse(
+        s"""
+          {
+            "business":[
+            {
+              "id": "$selfEmploymentId",
+              "accountingPeriod":{"start":"2017-01-01","end":"2017-12-31"},
+              "accountingType":"CASH",
+              "commencementDate":"2017-01-01",
+              "cessationDate":"2017-12-31",
+              "tradingName":"business",
+              "businessDescription":"a business",
+              "businessAddressLineOne":"64 Zoo Lane",
+              "businessAddressLineTwo":"Happy Place",
+              "businessAddressLineThree":"Magical Land",
+              "businessAddressLineFour":"England",
+              "businessPostcode":"ZL1 064"
+            }
+              ]
+            }""".stripMargin)
+    def failureResponse(code: String, reason: String): JsValue =
+      Json.parse(s"""
+                    |{
+                    |   "code": "$code",
+                    |   "reason":"$reason"
+                    |}
+      """.stripMargin)
+  }
+
+  object GetObligationsData {
+    def successResponse(obligationsModel: ObligationsModel): JsValue = {
+      Json.toJson(obligationsModel)
+    }
+
+    def failureResponse(code: String, reason: String): JsValue =
+      Json.parse(
+        s"""
+           |{
+           |  "code": $code,
+           |  "reason": $reason
+           |}
+         """.stripMargin)
   }
 }

@@ -30,9 +30,14 @@ object AuthStub {
       Json.parse(
           s"""{
           | "authorisedEnrolments": [{
-          | "key":"$testEnrolmentKey",
-          | "identifiers": [{"key":"$testEnrolmentIdentifier", "value":"$testMtditid"}]
-          | }]
+          | "key":"$testMtditidEnrolmentKey",
+          | "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
+          | },
+          | {
+          | "key":"$testNinoEnrolmentKey",
+          | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
+          | }
+          | ]
           |}""".stripMargin).toString())
   }
 
