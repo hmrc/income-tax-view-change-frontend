@@ -89,7 +89,7 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
   def addStatus(obligations: ObligationsModel) = {
     val currentDate = Calendar.getInstance()
     obligations.obligations.map(obligation =>
-      (obligation.met, obligation.end) match {
+      (obligation.met, obligation.due) match {
         case (true, _)                                => ObligationStatusModel(obligation, ObligationStatus.RECEIVED)
         case (false, date) if currentDate.after(date) => ObligationStatusModel(obligation, ObligationStatus.OVERDUE)
         case (false, _)                               => ObligationStatusModel(obligation, ObligationStatus.OPEN)
