@@ -22,6 +22,7 @@ import models.ObligationStatus.ObligationStatus
 import play.api.libs.json.Json
 
 sealed trait ObligationsResponseModel
+sealed trait ObligationsDisplayModel
 
 case class ObligationsModel(obligations: List[ObligationModel]) extends ObligationsResponseModel
 
@@ -30,13 +31,13 @@ case class ObligationModel(start: LocalDate,
                            due: LocalDate,
                            met: Boolean
                           )
-
-case class ObligationsStatusModel(obligations: List[ObligationStatusModel])
-
-case class ObligationStatusModel(
-                                  obligation: ObligationModel,
-                                  status: String
-                                  )
+//
+//case class ObligationsStatusModel(obligations: List[ObligationStatusModel])
+//
+//case class ObligationStatusModel(
+//                                  obligation: ObligationModel,
+//                                  status: String
+//                                  )
 
 case class ObligationsErrorModel(code: Int, message: String) extends ObligationsResponseModel
 
@@ -47,14 +48,14 @@ object ObligationModel {
 object ObligationsModel {
   implicit val format = Json.format[ObligationsModel]
 }
-
-object ObligationStatusModel {
-  implicit val format = Json.format[ObligationStatusModel]
-}
-
-object ObligationsStatusModel {
-  implicit val format = Json.format[ObligationsStatusModel]
-}
+//
+//object ObligationStatusModel {
+//  implicit val format = Json.format[ObligationStatusModel]
+//}
+//
+//object ObligationsStatusModel {
+//  implicit val format = Json.format[ObligationsStatusModel]
+//}
 
 object ObligationsErrorModel {
   implicit val format = Json.format[ObligationsErrorModel]

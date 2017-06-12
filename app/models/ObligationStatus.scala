@@ -22,8 +22,9 @@ import play.api.libs.json.Json
 object ObligationStatus extends Enumeration {
 
   type ObligationStatus = Value
-  val OPEN = ("Open")
-  val RECEIVED = ("Received")
-  val OVERDUE = ("Overdue")
+  val OPEN = Value("Open")
+  val RECEIVED = Value("Received")
+  val OVERDUE = Value("Overdue")
+
 }
 

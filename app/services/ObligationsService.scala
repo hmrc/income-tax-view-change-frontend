@@ -33,14 +33,13 @@ import scala.concurrent.Future
 @Singleton
 class ObligationsService @Inject()(val obligationDataConnector: ObligationDataConnector) {
 
-  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsStatusModel] = {
+  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsModel] = {
 
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
     for {
       selfEmploymentId <- getSelfEmploymentId(nino)
       obligations <-  getObligationData(nino, selfEmploymentId)
-      withStatus = ObligationsStatusModel(addStatus(obligations))
-    } yield withStatus
+    } yield obligations
   }
 
   private[ObligationsService] def getSelfEmploymentId(nino: String)(implicit hc: HeaderCarrier) = {
@@ -86,15 +85,15 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
     }
   }
 
-  def addStatus(obligations: ObligationsModel) = {
-    val currentDate = Calendar.getInstance()
-    obligations.obligations.map(obligation =>
-      (obligation.met, obligation.end) match {
-        case (true, _)                                => ObligationStatusModel(obligation, ObligationStatus.RECEIVED)
-        case (false, date) if currentDate.after(date) => ObligationStatusModel(obligation, ObligationStatus.OVERDUE)
-        case (false, _)                               => ObligationStatusModel(obligation, ObligationStatus.OPEN)
-      }
-    )
-  }
+//  def withStatus(obligations: ObligationsModel) = {
+//    val currentDate = Calendar.getInstance()
+//    obligations.obligations.map( obligation =>
+//      (obligation.met, obligation.end) match {
+//        case (true, _)                                => obligation.copy().withStatus(ObligationStatus.RECEIVED)
+//        case (false, date) if currentDate.after(date) => obligation.copy().withStatus(ObligationStatus.OVERDUE)
+//        case (false, _)                               => obligation.copy().withStatus(ObligationStatus.OPEN)
+//      }
+//    )
+//  }
 
 }
