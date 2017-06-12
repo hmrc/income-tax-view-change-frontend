@@ -84,16 +84,13 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
         setupMockObligation(nino, selfEmploymentId)(obligationsDataResponse)
 
         val successfulObligationsResponse =
-          ObligationsStatusModel(
+          ObligationsModel(
             List(
-              ObligationStatusModel(
                 ObligationModel(
                   start = localDate("2017-04-06"),
                   end = localDate("2017-07-05"),
                   due = localDate("2017-08-05"),
                   met = true
-                ),
-                ObligationStatus.RECEIVED
               )
             )
           )
@@ -197,5 +194,49 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
 
     }
   }
+
+//  "The addStatus method" when {
+//
+//    "passed an 'overdue' ObligationsModel" should {
+//
+//      val obligationsOverdue =
+//        ObligationsModel(List(
+//        ObligationModel(
+//        start = localDate("2017-01-01"),
+//        end = localDate("2017-4-30"),
+//        due = localDate("2017-5-31"),
+//        met = false
+//      )))
+//
+//      val obligationsOpen = ObligationsModel(List(ObligationModel(
+//        start = localDate("2017-6-1"),
+//        end = localDate("2100-9-30"),
+//        due = localDate("2100-10-31"),
+//        met = false
+//      )))
+//
+//      val obligationReceived = ObligationModel(
+//        start = localDate("2017-6-1"),
+//        end = localDate("2017-9-30"),
+//        due = localDate("2017-10-31"),
+//        met = true
+//      )
+//      val obligationsReceived = ObligationsModel(List(obligationReceived))
+//
+//      "return an ObligationStatusModel with an 'overdue' status" in {
+//        TestObligationsService.addStatus(obligationsOver) shouldBe List(ObligationModel(obligationOver, ObligationStatus.OVERDUE))
+//      }
+//
+//      "return an ObligationStatusModel with an 'open' status" in {
+//        TestObligationsService.addStatus(obligationsOpen) shouldBe List(ObligationStatusModel(obligationOpen, ObligationStatus.OPEN))
+//      }
+//
+//      "return an ObligationStatusModel with a 'received' status" in {
+//        TestObligationsService.addStatus(obligationsReceived) shouldBe List(ObligationStatusModel(obligationReceived, ObligationStatus.RECEIVED))
+//      }
+//
+//    }
+//
+//  }
 
 }

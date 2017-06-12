@@ -16,7 +16,7 @@
 
 package views
 
-import java.util.Calendar
+import java.time.LocalDate
 
 import models.ObligationModel
 import play.api.Play.current
@@ -28,13 +28,12 @@ import utils.ImplicitLongDate._
 object Helpers {
 
   def getObligationStatus(obligation: ObligationModel): Html = {
-    val currentDate = Calendar.getInstance()
+    val now = LocalDate.now()
           (obligation.met, obligation.due) match {
-            case (true, _)                                => Html(Messages("obligations.received"))
-            case (false, date) if currentDate.after(date) => Html(Messages("obligations.open", obligation.due.toLongDate))
-            case (false, _)                               => Html(currentDate+" "+obligation.due + "" + Messages("obligations.overdue"))
+            case (true, _)                                => Html(Messages("status.received"))
+            case (false, date) if now.isBefore(date)      => Html(Messages("status.open", obligation.due.toLongDate))
+            case (false, _)                               => Html(Messages("status.overdue"))
           }
 
   }
-
 }

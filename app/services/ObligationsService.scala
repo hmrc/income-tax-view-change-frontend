@@ -79,7 +79,7 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
         }
       case error: ErrorResponse =>
         Logger.debug(
-          s"""[ObligationsService][getObligations] - Cound not retrievgite obligations.
+          s"""[ObligationsService][getObligations] - Cound not retrieve obligations.
              |Error Response Status: ${error.status}, Message ${error.message}""".stripMargin)
         throw new InternalServerException("")
     }
@@ -95,5 +95,6 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
 //      }
 //    )
 //  }
+
 
 }

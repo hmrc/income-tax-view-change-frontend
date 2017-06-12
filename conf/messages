@@ -24,7 +24,7 @@ obligations.reportDueDate                                       = Report due dat
 ## Statuses ##
 status.received                                                 = Received
 status.overdue                                                  = Overdue
-status.dueBy                                                    = Due by {0}
+status.open                                                    = Due by {0}
 
 ## Timeout page ##
 timeout.title                                                   = Your session has timed out

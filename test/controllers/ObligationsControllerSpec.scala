@@ -48,28 +48,31 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
         lazy val document = Jsoup.parse(bodyOf(result))
 
         def mockSuccess(): Unit = setupMockObligationsResult(testNino)(
-          ObligationsStatusModel(
+          ObligationsModel(
             List(
-              ObligationStatusModel(
-                ObligationModel(start = localDate("2017-04-06"),
+              ObligationModel(
+                start = localDate("2017-04-06"),
                 end = localDate("2017-07-05"),
                 due = localDate("2017-08-05"),
-                met = true), ObligationStatus.RECEIVED
-              ), ObligationStatusModel(
-                ObligationModel(start = localDate("2017-07-06"),
+                met = true
+              ),
+              ObligationModel(
+                start = localDate("2017-07-06"),
                 end = localDate("2017-10-05"),
                 due = localDate("2017-11-05"),
-                met = true), ObligationStatus.RECEIVED
-              ), ObligationStatusModel(
-                  ObligationModel(start = localDate("2017-10-06"),
+                met = true
+              ),
+              ObligationModel(
+                start = localDate("2017-10-06"),
                 end = localDate("2018-01-05"),
                 due = localDate("2018-02-05"),
-                met = false), ObligationStatus.OPEN
-              ), ObligationStatusModel(
-                    ObligationModel(start = localDate("2018-01-06"),
+                met = false
+              ),
+              ObligationModel(
+                start = localDate("2018-01-06"),
                 end = localDate("2018-04-05"),
                 due = localDate("2018-05-06"),
-                met = false), ObligationStatus.OPEN
+                met = false
               )
             )
           )
