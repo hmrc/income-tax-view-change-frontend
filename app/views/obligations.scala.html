@@ -42,10 +42,10 @@
                         <p>@model.obligation.start.toLongDate to @model.obligation.end.toLongDate</p>
                     </td>
                     <td>
-                        @if(model.obligation.met){
-                            <p>Received</p>
+                        @if(model.status == "Open"){
+                            <p>@Messages("status.dueBy", model.obligation.due.toLongDate)</p>
                         } else {
-                            <p></p>
+                            <p>@model.status</p>
                         }
                     </td>
                 </tr>
