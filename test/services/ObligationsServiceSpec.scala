@@ -84,14 +84,17 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
         setupMockObligation(nino, selfEmploymentId)(obligationsDataResponse)
 
         val successfulObligationsResponse =
-          ObligationsModel(
+          ObligationsStatusModel(
             List(
-              ObligationModel(
-                start = localDate("2017-04-06"),
-                end = localDate("2017-07-05"),
-                due = localDate("2017-08-05"),
-                met = true,
-                status = Some(Messages("status.received")))
+              ObligationStatusModel(
+                ObligationModel(
+                  start = localDate("2017-04-06"),
+                  end = localDate("2017-07-05"),
+                  due = localDate("2017-08-05"),
+                  met = true
+                ),
+                ObligationStatus.RECEIVED
+              )
             )
           )
 
