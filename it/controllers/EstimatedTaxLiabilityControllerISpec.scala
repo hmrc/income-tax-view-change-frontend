@@ -21,7 +21,7 @@ import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
 import org.jsoup.Jsoup
 import play.api.http.Status
 
-class HomeControllerISpec extends ComponentSpecBase {
+class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
 
   "Calling the EstimatedTaxLiabilityController" when {
     "authorised with an active enrolment" should {

@@ -16,7 +16,7 @@
 
 @import utils.ImplicitLongDate._
 @import views.html.templates.main_template
-@import views.constructors.ObligationStatusConstructor
+@import views.helpers.ObligationStatusHelper
 
 @(obligationsModel: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
@@ -44,7 +44,7 @@
                         </p>
                     </td>
                     <td id=@{s"quarter-${index+1}-obligation-status"}>
-                        @ObligationStatusConstructor.statusHtml(obligation.getObligationStatus)
+                        @ObligationStatusHelper.statusHtml(obligation.getObligationStatus)
                     </td>
                 </tr>
             }

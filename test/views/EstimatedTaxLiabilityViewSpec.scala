@@ -32,7 +32,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
   val testAmount: BigDecimal = 12345.99
   val testAmountOutput: String = "£12,345.99"
 
-  lazy val page = views.html.home(testAmount)(FakeRequest(), applicationMessages, mockAppConfig)
+  lazy val page = views.html.estimatedTaxLiability(testAmount)(FakeRequest(), applicationMessages, mockAppConfig)
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The Home view" should {
