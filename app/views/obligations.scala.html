@@ -37,14 +37,14 @@
         </thead>
         <tbody>
             @obligationsModel.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
-                <tr id="@{s"quarter-$index-obligation"}">
-                    <td id=@{s"quarter-$index-accounting-period"}>
+                <tr class="obligation" id="@{s"quarter-${index+1}-obligation"}">
+                    <td id=@{s"quarter-${index+1}-accounting-period"}>
                         <p>
                             <span class="bold-small">Quarter @{index + 1}</span></br>
-                            @obligation.start.toLongDate to @obligation.end.toLongDate
+                            <span id="@{s"quarter-${index+1}-accounting-period-dates"}">@obligation.start.toLongDate to @obligation.end.toLongDate</span>
                         </p>
                     </td>
-                    <td id=@{s"quarter-$index-obligation-status"}>
+                    <td id=@{s"quarter-${index+1}-obligation-status"}>
                         @Helpers.statusHtml(obligation.getObligationStatus)
                     </td>
                 </tr>

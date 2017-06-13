@@ -21,7 +21,7 @@ import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
 import org.jsoup.Jsoup
 import play.api.http.Status
 
-class HomeControllerSpec extends ComponentSpecBase {
+class HomeControllerISpec extends ComponentSpecBase {
 
   "Calling the HomeController" when {
     "authorised with an active enrolment" should {

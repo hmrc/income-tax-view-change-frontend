@@ -18,7 +18,8 @@ package models
 
 import java.time.LocalDate
 
-import play.api.libs.json.Json
+import play.api.Logger
+import play.api.libs.json.{Json, OFormat}
 
 sealed trait ObligationsResponseModel
 
@@ -41,14 +42,14 @@ case class ObligationModel(start: LocalDate,
 case class ObligationsErrorModel(code: Int, message: String) extends ObligationsResponseModel
 
 object ObligationModel {
-  implicit val format = Json.format[ObligationModel]
+  implicit val format: OFormat[ObligationModel] = Json.format[ObligationModel]
 }
 
 object ObligationsModel {
-  implicit val format = Json.format[ObligationsModel]
+  implicit val format: OFormat[ObligationsModel] = Json.format[ObligationsModel]
 }
 
 object ObligationsErrorModel {
-  implicit val format = Json.format[ObligationsErrorModel]
+  implicit val format: OFormat[ObligationsErrorModel] = Json.format[ObligationsErrorModel]
 }
 
