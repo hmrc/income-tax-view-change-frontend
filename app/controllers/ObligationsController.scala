@@ -31,7 +31,6 @@ import scala.concurrent.Future
 
 class ObligationsController @Inject()(implicit val config: AppConfig,
                                       implicit val messagesApi: MessagesApi,
-                                      implicit val helpers: Helpers,
                                       val authentication: AuthenticationPredicate,
                                       val obligationsService: ObligationsService
                                      ) extends BaseController {

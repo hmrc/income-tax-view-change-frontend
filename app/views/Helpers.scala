@@ -16,28 +16,44 @@
 
 package views
 
-import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
-
-import models.ObligationModel
+import models.{ObligationStatus, Open, Overdue, Received}
+import play.api.i18n.Messages
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import play.api.i18n.{Messages, MessagesApi}
-import play.twirl.api.Html
+
 import utils.ImplicitLongDate._
+import play.twirl.api.Html
 
-@Singleton
-class Helpers @Inject()(implicit val messagesApi: MessagesApi) {
+object Helpers {
 
-  def currentTime(): LocalDate = LocalDate.now()
-
-  def getObligationStatus(obligation: ObligationModel): Html = {
-    val now = currentTime()
-          (obligation.met, obligation.due) match {
-            case (true, _)                                => Html(Messages("status.received"))
-            case (false, date) if now.isBefore(date)      => Html(Messages("status.open", obligation.due.toLongDate))
-            case (false, _)                               => Html(Messages("status.overdue"))
-          }
-
+  def statusHtml(status: ObligationStatus): Html = status match {
+    case open: Open         =>
+      Html(
+      s"""
+         |<p class="flush--bottom  alert  soft-half--ends soft--right">
+         |  <span class='bold-xsmall'>
+         |    ${Messages("status.open", open.dueDate.toLongDate)}
+         |  </span>
+         |</p>
+         """.stripMargin)
+    case received: Received.type =>
+      Html(
+        s"""
+           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #005ea5;">
+           |  <span class='bold-xsmall'>
+           |    ${Messages("status.received")}
+           |  </span>
+           |</p>
+           """.stripMargin)
+    case overdue: Overdue.type   =>
+      Html(
+        s"""
+           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #b10e1e;">
+           |  <span class='bold-xsmall'>
+           |    ${Messages("status.overdue")}
+           |  </span>
+           |</p>
+           """.stripMargin)
   }
+
 }

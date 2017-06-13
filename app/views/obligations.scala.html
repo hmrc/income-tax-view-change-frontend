@@ -18,7 +18,7 @@
 @import views.html.templates.main_template
 @import views.Helpers
 
-@(obligationsModel: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, helpers: Helpers)
+@(obligationsModel: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 <!-- TODO pass in the correct Obligation Display model with dates and statuses// -->
 
 @main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig) {
@@ -45,11 +45,7 @@
                         </p>
                     </td>
                     <td id=@{s"quarter-$index-obligation-status"}>
-                        <p class="flush--bottom  alert  soft-half--ends soft--right">
-                            @defining(helpers.getObligationStatus(obligation)){ status =>
-                                <strong class="bold-xsmall">@status</strong>
-                            }
-                    </p>
+                        @Helpers.statusHtml(obligation.getObligationStatus)
                     </td>
                 </tr>
             }
