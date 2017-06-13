@@ -16,7 +16,8 @@
 
 package controllers
 
-import com.google.inject.Inject
+import javax.inject.{Inject, Singleton}
+
 import config.AppConfig
 import controllers.predicates.AuthenticationPredicate
 import play.api.Logger
@@ -28,6 +29,7 @@ import uk.gov.hmrc.play.http.InternalServerException
 
 import scala.concurrent.Future
 
+@Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,
                                       implicit val messagesApi: MessagesApi,
                                       val authentication: AuthenticationPredicate,

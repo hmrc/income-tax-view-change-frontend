@@ -23,7 +23,7 @@ import play.api.http.Status
 
 class HomeControllerISpec extends ComponentSpecBase {
 
-  "Calling the HomeController" when {
+  "Calling the EstimatedTaxLiabilityController" when {
     "authorised with an active enrolment" should {
 
       "return the correct page with a valid total" in {

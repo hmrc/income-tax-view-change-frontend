@@ -23,11 +23,9 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import utils.TestSupport
-import utils.ImplicitCurrencyFormatter._
 
-class HomeViewSpec extends TestSupport {
+class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
   lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
 

@@ -25,7 +25,7 @@ import utils.TestSupport
 
 class ObligationsStatusHelperSpec extends TestSupport {
 
-  "The Helpers.statusHtml" should {
+  "The ObligationStatusHelper.statusHtml" should {
     "return Html corresponding to the ObligationStatus" when {
 
       val openHtml = Html(
