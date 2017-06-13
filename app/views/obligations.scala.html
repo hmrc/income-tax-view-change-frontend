@@ -19,7 +19,6 @@
 @import views.constructors.ObligationStatusConstructor
 
 @(obligationsModel: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
-<!-- TODO pass in the correct Obligation Display model with dates and statuses// -->
 
 @main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig) {
 
