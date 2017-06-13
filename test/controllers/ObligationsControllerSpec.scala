@@ -40,19 +40,19 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
 
       val testDate = localDate("2018-05-05")
 
-      object MockHelpers extends Helpers()(fakeApplication.injector.instanceOf[MessagesApi]) {
-        override def currentTime(): LocalDate = testDate
+      object MockHelpers {
+        def fakeObligationsModel(start: LocalDate, end: LocalDate, due: LocalDate, met: Boolean): ObligationModel = {
+          ObligationModel(start,end,due,met)
+//          Mockito.when()
+        }
       }
 
       object TestObligationsController extends ObligationsController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         fakeApplication.injector.instanceOf[MessagesApi],
-        MockHelpers,
         MockAuthenticated,
         mockObligationsService
       )
-
-      object TestHelpers extends Helpers()(fakeApplication.injector.instanceOf[MessagesApi])
 
       "successfully retrieves a list of Obligations from the Obligations service" should {
 

@@ -16,7 +16,6 @@
 
 package services
 
-import java.util.Calendar
 import javax.inject.{Inject, Singleton}
 
 import connectors.ObligationDataConnector

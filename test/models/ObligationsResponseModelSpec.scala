@@ -63,6 +63,24 @@ class ObligationsResponseModelSpec extends UnitSpec with Matchers{
       met = false
     )
 
+    object overdueObligation extends ObligationModel(
+      start = localDate("2017-7-1"),
+      end = localDate("2017-9-30"),
+      due = localDate("2017-10-30"),
+      met = false
+    ){
+      override def currentTime() = localDate("2017-10-31")
+    }
+
+    object openObligation extends ObligationModel(
+      start = localDate("2017-7-1"),
+      end = localDate("2017-9-30"),
+      due = localDate("2017-10-31"),
+      met = false
+    ){
+      override def currentTime() = localDate("2017-10-31")
+    }
+
     val obligations = ObligationsModel(List(obligation1, obligation2))
 
     "for the 1st Obligation" should {
@@ -81,6 +99,10 @@ class ObligationsResponseModelSpec extends UnitSpec with Matchers{
 
       "have the obligation met status as 'true'" in {
         obligations.obligations.head.met shouldBe true
+      }
+
+      "return 'Received' with getObligationStatus" in {
+        obligation1.getObligationStatus shouldBe Received
       }
     }
 
@@ -101,6 +123,14 @@ class ObligationsResponseModelSpec extends UnitSpec with Matchers{
       "have the obligation met status as 'false'" in {
         obligations.obligations.last.met shouldBe false
       }
+    }
+
+    "return 'Overdue' with getObligationStatus on overdueObligation" in {
+      overdueObligation.getObligationStatus shouldBe Overdue
+    }
+
+    "return 'Open' with getObligationStatus on openObligation" in {
+      openObligation.getObligationStatus shouldBe Open(localDate("2017-10-31"))
     }
 
     "be formatted to JSON correctly" in {

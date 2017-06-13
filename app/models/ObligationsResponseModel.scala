@@ -34,7 +34,7 @@ case class ObligationModel(start: LocalDate,
 
   def getObligationStatus: ObligationStatus = (met, due) match {
       case (true, _)                                          => Received
-      case (false, date) if currentTime().isBefore(date)      => Open(date)
+      case (false, date) if !currentTime().isAfter(date)      => Open(date)
       case (false, _)                                         => Overdue
     }
 }
