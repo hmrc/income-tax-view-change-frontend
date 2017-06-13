@@ -38,15 +38,6 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
 
     "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
-      val testDate = localDate("2018-05-05")
-
-      object MockHelpers {
-        def fakeObligationsModel(start: LocalDate, end: LocalDate, due: LocalDate, met: Boolean): ObligationModel = {
-          ObligationModel(start,end,due,met)
-//          Mockito.when()
-        }
-      }
-
       object TestObligationsController extends ObligationsController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         fakeApplication.injector.instanceOf[MessagesApi],

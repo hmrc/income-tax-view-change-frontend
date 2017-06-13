@@ -23,12 +23,19 @@ import org.scalatest.Matchers
 import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.ImplicitDateFormatter._
 
 class ObligationsResponseModelSpec extends UnitSpec with Matchers{
 
   val localDate: String => LocalDate = date => LocalDate.parse(date, DateTimeFormatter.ofPattern("uuuu-M-d"))
 
   "The ObligationsModel" should {
+
+    val testDate = localDate("2017-10-31")
+
+    def fakeObligationsModel(m: ObligationModel) = new ObligationModel(m.start,m.end,m.due,m.met) {
+      override def currentTime = testDate
+    }
 
     val jsonString =
       """
@@ -50,36 +57,32 @@ class ObligationsResponseModelSpec extends UnitSpec with Matchers{
         }
         """.stripMargin.split("\\s+").mkString
 
-    val obligation1 = ObligationModel(
+    val obligation1 = fakeObligationsModel(ObligationModel(
       start = localDate("2017-04-01"),
       end = localDate("2017-6-30"),
       due = localDate("2017-7-31"),
       met = true
-    )
-    val obligation2 = ObligationModel(
+    ))
+    val obligation2 = fakeObligationsModel(ObligationModel(
       start = localDate("2017-7-1"),
       end = localDate("2017-9-30"),
       due = localDate("2017-10-31"),
       met = false
-    )
+    ))
 
-    object overdueObligation extends ObligationModel(
+    val overdueObligation = fakeObligationsModel(ObligationModel(
       start = localDate("2017-7-1"),
       end = localDate("2017-9-30"),
       due = localDate("2017-10-30"),
       met = false
-    ){
-      override def currentTime() = localDate("2017-10-31")
-    }
+    ))
 
-    object openObligation extends ObligationModel(
+    val openObligation = fakeObligationsModel(ObligationModel(
       start = localDate("2017-7-1"),
       end = localDate("2017-9-30"),
       due = localDate("2017-10-31"),
       met = false
-    ){
-      override def currentTime() = localDate("2017-10-31")
-    }
+    ))
 
     val obligations = ObligationsModel(List(obligation1, obligation2))
 

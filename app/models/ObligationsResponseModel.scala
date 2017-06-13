@@ -21,7 +21,6 @@ import java.time.LocalDate
 import play.api.libs.json.Json
 
 sealed trait ObligationsResponseModel
-sealed trait ObligationsDisplayModel
 
 case class ObligationsModel(obligations: List[ObligationModel]) extends ObligationsResponseModel
 
