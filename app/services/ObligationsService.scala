@@ -16,7 +16,6 @@
 
 package services
 
-import java.util.Calendar
 import javax.inject.{Inject, Singleton}
 
 import connectors.ObligationDataConnector
@@ -84,17 +83,4 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
         throw new InternalServerException("")
     }
   }
-
-//  def withStatus(obligations: ObligationsModel) = {
-//    val currentDate = Calendar.getInstance()
-//    obligations.obligations.map( obligation =>
-//      (obligation.met, obligation.end) match {
-//        case (true, _)                                => obligation.copy().withStatus(ObligationStatus.RECEIVED)
-//        case (false, date) if currentDate.after(date) => obligation.copy().withStatus(ObligationStatus.OVERDUE)
-//        case (false, _)                               => obligation.copy().withStatus(ObligationStatus.OPEN)
-//      }
-//    )
-//  }
-
-
 }

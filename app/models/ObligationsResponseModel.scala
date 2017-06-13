@@ -22,7 +22,6 @@ import play.api.Logger
 import play.api.libs.json.{Json, OFormat}
 
 sealed trait ObligationsResponseModel
-sealed trait ObligationsDisplayModel
 
 case class ObligationsModel(obligations: List[ObligationModel]) extends ObligationsResponseModel
 
@@ -35,7 +34,7 @@ case class ObligationModel(start: LocalDate,
 
   def getObligationStatus: ObligationStatus = (met, due) match {
       case (true, _)                                          => Received
-      case (false, date) if !currentTime().isAfter(date)        => Open(date)
+      case (false, date) if !currentTime().isAfter(date)      => Open(date)
       case (false, _)                                         => Overdue
     }
 }

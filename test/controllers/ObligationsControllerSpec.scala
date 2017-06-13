@@ -38,21 +38,12 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
 
     "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
-      val testDate = localDate("2018-05-05")
-
-      object MockHelpers extends Helpers()(fakeApplication.injector.instanceOf[MessagesApi]) {
-        override def currentTime(): LocalDate = testDate
-      }
-
       object TestObligationsController extends ObligationsController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         fakeApplication.injector.instanceOf[MessagesApi],
-        MockHelpers,
         MockAuthenticated,
         mockObligationsService
       )
-
-      object TestHelpers extends Helpers()(fakeApplication.injector.instanceOf[MessagesApi])
 
       "successfully retrieves a list of Obligations from the Obligations service" should {
 
