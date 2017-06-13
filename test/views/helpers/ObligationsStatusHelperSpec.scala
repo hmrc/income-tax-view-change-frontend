@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package views
+package views.helpers
 
-import java.time.LocalDate
-
-import assets.Messages
-import models.{Received, Overdue, Open, ObligationModel}
-import org.mockito.ArgumentMatchers
-import play.api.i18n.MessagesApi
+import models.{Open, Overdue, Received}
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter.localDate
-import utils.ImplicitLongDate._
 import utils.TestSupport
 
-class HelpersSpec extends TestSupport {
+class ObligationsStatusHelperSpec extends TestSupport {
 
   "The Helpers.statusHtml" should {
     "return Html corresponding to the ObligationStatus" when {
@@ -61,15 +57,13 @@ class HelpersSpec extends TestSupport {
 
 
       "passed 'Open' the Open Html is returned" in {
-        Helpers.statusHtml(Open("2017-12-25")) shouldBe openHtml
+        ObligationStatusHelper.statusHtml(Open("2017-12-25")) shouldBe openHtml
       }
       "passed 'Overdue' the Overdue Html is returned" in {
-        Helpers.statusHtml(Overdue) shouldBe overdueHtml
-        //      TestHelpers.currentTime() shouldBe LocalDate.now
-        //      override def currentTime(): LocalDate = testDate
+        ObligationStatusHelper.statusHtml(Overdue) shouldBe overdueHtml
       }
       "passed 'Received' the Received Html is returned" in {
-        Helpers.statusHtml(Received) shouldBe receivedHtml
+        ObligationStatusHelper.statusHtml(Received) shouldBe receivedHtml
       }
     }
   }

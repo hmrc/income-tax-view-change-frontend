@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import assets.Messages.{Obligations => messages}
 import assets.TestConstants._
 import auth.MockAuthenticationPredicate
@@ -30,7 +28,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.ImplicitDateFormatter.localDate
 import utils.TestSupport
-import views.Helpers
 
 class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockObligationsService {
 

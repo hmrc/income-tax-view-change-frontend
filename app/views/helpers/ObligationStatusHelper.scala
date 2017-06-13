@@ -14,43 +14,40 @@
  * limitations under the License.
  */
 
-package views
+package views.helpers
 
 import models.{ObligationStatus, Open, Overdue, Received}
 import play.api.i18n.Messages
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-
-import utils.ImplicitLongDate._
 import play.twirl.api.Html
+import utils.ImplicitLongDate._
 
-object Helpers {
+object ObligationStatusHelper {
 
-  def statusHtml(status: ObligationStatus): Html = status match {
-    case open: Open         =>
+  def statusHtml(status: ObligationStatus)(implicit messages: Messages): Html = status match {
+    case open: Open =>
       Html(
-      s"""
-         |<p class="flush--bottom  alert  soft-half--ends soft--right">
-         |  <span class='bold-xsmall'>
-         |    ${Messages("status.open", open.dueDate.toLongDate)}
-         |  </span>
-         |</p>
+        s"""
+           |<p class="flush--bottom  alert  soft-half--ends soft--right">
+           |  <span class='bold-xsmall'>
+           |    ${messages("status.open", open.dueDate.toLongDate)}
+           |  </span>
+           |</p>
          """.stripMargin)
-    case received: Received.type =>
+    case _: Received.type =>
       Html(
         s"""
            |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #005ea5;">
            |  <span class='bold-xsmall'>
-           |    ${Messages("status.received")}
+           |    ${messages("status.received")}
            |  </span>
            |</p>
            """.stripMargin)
-    case overdue: Overdue.type   =>
+    case _: Overdue.type   =>
       Html(
         s"""
            |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #b10e1e;">
            |  <span class='bold-xsmall'>
-           |    ${Messages("status.overdue")}
+           |    ${messages("status.overdue")}
            |  </span>
            |</p>
            """.stripMargin)
