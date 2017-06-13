@@ -23,7 +23,7 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
-import assets.Messages.{Home => messages}
+import assets.Messages.{EstimatedTaxLiability => messages}
 import models.{EstimatedTaxLiability, EstimatedTaxLiabilityError}
 import play.api.i18n.MessagesApi
 import assets.TestConstants._
@@ -63,7 +63,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the Home page" in {
+        "render the EstimatedTaxLiability page" in {
           mockSuccess()
           document.title() shouldBe messages.title
         }

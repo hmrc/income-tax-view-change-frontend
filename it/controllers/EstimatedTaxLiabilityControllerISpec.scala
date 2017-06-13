@@ -35,7 +35,7 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
         res.status shouldBe Status.OK
 
         val document = Jsoup.parse(res.body)
-        document.title shouldBe "Quarterly reporting details"
+        document.title shouldBe "Your estimated tax amount"
         document.getElementById("estimate-amount").html shouldBe "£1,800.00"
       }
     }

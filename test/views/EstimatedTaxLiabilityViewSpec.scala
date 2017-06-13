@@ -16,7 +16,9 @@
 
 package views
 
-import assets.Messages.{Home => messages}
+import assets.Messages.{EstimatedTaxLiability => messages}
+import assets.Messages.{Sidebar => sidebarMessages}
+import auth.MtdItUser
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.Play.current
@@ -24,6 +26,7 @@ import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.TestSupport
+import assets.TestConstants._
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
@@ -31,11 +34,12 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
   val testAmount: BigDecimal = 12345.99
   val testAmountOutput: String = "£12,345.99"
+  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
 
-  lazy val page = views.html.estimatedTaxLiability(testAmount)(FakeRequest(), applicationMessages, mockAppConfig)
+  lazy val page = views.html.estimatedTaxLiability(testAmount)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
   lazy val document = Jsoup.parse(contentAsString(page))
 
-  "The Home view" should {
+  "The EstimatedTaxLiability view" should {
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
@@ -49,26 +53,51 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       document.getElementsByClass("pre-heading").text() shouldBe messages.preheading
     }
 
-    s"have a Quarterly Reporting section" which {
-
-      lazy val quarterlySection = document.getElementById("quarterly-reporting")
-
-      s"has a parapgraph with '${messages.QuarterlyReporting.p1}'" in {
-        quarterlySection.getElementsByTag("p").text() shouldBe messages.QuarterlyReporting.p1
-      }
-    }
-
     s"have an Estimated Tax Liability section" which {
 
       lazy val estimateSection = document.getElementById("estimated-tax")
 
-      s"has a parapgraph with '${messages.QuarterlyReporting.p1}'" in {
+      s"has a parapgraph with '${messages.EstimateTax.p1}'" in {
         estimateSection.getElementById("p1").text() shouldBe messages.EstimateTax.p1
       }
 
       s"has the correct Estimated Tax Amount of '$testAmount'" in {
         estimateSection.getElementById("estimate-to-date").text shouldBe testAmountOutput + " " + messages.EstimateTax.toDate
       }
+
+      s"has a payment parapgraph with '${messages.EstimateTax.payment}'" in {
+        estimateSection.getElementById("payment").text() shouldBe messages.EstimateTax.payment
+      }
+    }
+
+    "have sidebar section " which {
+
+      lazy val sidebarSection = document.getElementById("sidebar")
+
+      "has a heading for the MTDITID" in {
+        sidebarSection.getElementById("mtditid-heading").text() shouldBe sidebarMessages.mtditidHeading
+      }
+
+      "has the correct value for the MTDITID" in {
+        sidebarSection.getElementById("mtditid").text() shouldBe testMtdItUser.mtditid
+      }
+
+      "has a heading for viewing your reports" in {
+        sidebarSection.getElementById("obligations-heading").text() shouldBe sidebarMessages.reportsHeading
+      }
+
+      "has a link to view your reports" which {
+
+        s"has the correct href to '${controllers.routes.ObligationsController.getObligations().url}'" in {
+          sidebarSection.getElementById("obligations-link").attr("href") shouldBe controllers.routes.ObligationsController.getObligations().url
+        }
+
+        s"has the correct link wording of '${sidebarMessages.reportsLink}'" in {
+          sidebarSection.getElementById("obligations-link").text() shouldBe sidebarMessages.reportsLink
+        }
+
+      }
+
     }
 
   }

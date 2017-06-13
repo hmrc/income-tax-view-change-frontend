@@ -18,17 +18,16 @@ package assets
 
 object Messages {
 
-  // Home Page Messages
-  object Home {
-    val title = "Quarterly reporting details"
-    val heading = "Quarterly reporting details"
+  // Estimated Tax Liability Page Messages
+  object EstimatedTaxLiability {
+    val title = "Your estimated tax amount"
+    val heading = "Your estimated tax amount"
     val preheading = "2017/18"
-    object QuarterlyReporting {
-      val p1 = "You must submit a report once every quarter and pay any tax you owe for the whole tax year by 31 January 2019."
-    }
     object EstimateTax {
       val h2 = "Your estimated tax amount"
-      val p1 = "These amounts include your Income Tax and National Insurance figures."
+      val p1 = "This estimate is calculated using the figures you've submitted using your accounting software. " +
+        "The amount includes both your Income Tax and National Insurance."
+      val payment = "You must pay any tax you owe for the whole tax year by 31 January 2019."
       val toDate = "Estimate to date"
     }
   }
@@ -48,5 +47,13 @@ object Messages {
     val overdue = "Overdue"
     val received = "Received"
     val due: String => String = duedate => s"Due by $duedate"
+  }
+
+  object Sidebar {
+    val mtditidHeading = "Quarterly reporting reference:"
+    val reportsHeading = "Reports"
+    val reportsLink = "View your Income Tax reports"
+    val estimatesHeading = "Estimates"
+    val estimatesLink = "View your estimated tax amount"
   }
 }

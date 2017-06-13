@@ -17,31 +17,45 @@
 @import views.html.templates.main_template
 @import utils.ImplicitCurrencyFormatter._
 
-@(estimatedTaxAmount: BigDecimal)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@(estimatedTaxAmount: BigDecimal)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
 
-@main_template(title = messages("home.title"), bodyClasses = None, appConfig = appConfig) {
+@sidebar = {
+    <section id="sidebar" class="section section--blue-top">
 
-    <!-- Quarterly Reporting -->
-    <section id="quarterly-reporting" class="form-group">
-        <h1 class="heading-large">
-            <span class="pre-heading">@messages("home.pre-heading.tax-year")</span>
-            @messages("home.heading")
+        <div class="form-group">
+            <h3 id="mtditid-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
+            <ul>
+                <li id="mtditid" class="font-xsmall">@user.mtditid</li>
+            </ul>
+        </div>
+
+        <div class="form-group">
+            <h3 id="obligations-heading">@messages("sidebar.view_obligations.h3")</h3>
+            <ul>
+                <li class="font-xsmall">
+                    <a id="obligations-link" href="@{controllers.routes.ObligationsController.getObligations().url}">@messages("sidebar.view_obligations.link")</a>
+                </li>
+            </ul>
+        </div>
+    </section>
+}
+
+@main_template(title = messages("estimated_tax_liability.title"), bodyClasses = None, appConfig = appConfig, sidebarLinks = Some(sidebar)) {
+
+    <section id="estimated-tax">
+        <h1>
+            <span class="pre-heading">@messages("base.tax-year")</span>
+            @messages("estimated_tax_liability.heading")
         </h1>
 
-        <p>@messages("home.quarterly-reporting.p1")</p>
-    </section>
-
-
-    <!-- Estimated Tax -->
-    <section id="estimated-tax">
-        <h2>@messages("home.estimated-tax.h2")</h2>
-
-        <p id="p1">@messages("home.estimated-tax.p1")</p>
+        <p id="p1">@messages("estimated_tax_liability.estimated-tax.p1")</p>
 
         <p id="estimate-to-date">
             <span class="bold-medium" id="estimate-amount">@estimatedTaxAmount.toCurrency</span>
             <br>
-            @messages("home.estimated-tax.to-date")
+            @messages("estimated_tax_liability.estimated-tax.to-date")
         </p>
+
+        <p id="payment">@messages("estimated_tax_liability.estimated-tax.payment")</p>
     </section>
  }
