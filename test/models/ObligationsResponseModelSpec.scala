@@ -23,12 +23,19 @@ import org.scalatest.Matchers
 import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.ImplicitDateFormatter._
 
 class ObligationsResponseModelSpec extends UnitSpec with Matchers{
 
   val localDate: String => LocalDate = date => LocalDate.parse(date, DateTimeFormatter.ofPattern("uuuu-M-d"))
 
   "The ObligationsModel" should {
+
+    val testDate = localDate("2017-10-31")
+
+    def fakeObligationsModel(m: ObligationModel) = new ObligationModel(m.start,m.end,m.due,m.met) {
+      override def currentTime = testDate
+    }
 
     val jsonString =
       """
@@ -50,18 +57,32 @@ class ObligationsResponseModelSpec extends UnitSpec with Matchers{
         }
         """.stripMargin.split("\\s+").mkString
 
-    val obligation1 = ObligationModel(
+    val obligation1 = fakeObligationsModel(ObligationModel(
       start = localDate("2017-04-01"),
       end = localDate("2017-6-30"),
       due = localDate("2017-7-31"),
       met = true
-    )
-    val obligation2 = ObligationModel(
+    ))
+    val obligation2 = fakeObligationsModel(ObligationModel(
       start = localDate("2017-7-1"),
       end = localDate("2017-9-30"),
       due = localDate("2017-10-31"),
       met = false
-    )
+    ))
+
+    val overdueObligation = fakeObligationsModel(ObligationModel(
+      start = localDate("2017-7-1"),
+      end = localDate("2017-9-30"),
+      due = localDate("2017-10-30"),
+      met = false
+    ))
+
+    val openObligation = fakeObligationsModel(ObligationModel(
+      start = localDate("2017-7-1"),
+      end = localDate("2017-9-30"),
+      due = localDate("2017-10-31"),
+      met = false
+    ))
 
     val obligations = ObligationsModel(List(obligation1, obligation2))
 
@@ -82,6 +103,10 @@ class ObligationsResponseModelSpec extends UnitSpec with Matchers{
       "have the obligation met status as 'true'" in {
         obligations.obligations.head.met shouldBe true
       }
+
+      "return 'Received' with getObligationStatus" in {
+        obligation1.getObligationStatus shouldBe Received
+      }
     }
 
     "for the 2nd Obligation" should {
@@ -101,6 +126,14 @@ class ObligationsResponseModelSpec extends UnitSpec with Matchers{
       "have the obligation met status as 'false'" in {
         obligations.obligations.last.met shouldBe false
       }
+    }
+
+    "return 'Overdue' with getObligationStatus on overdueObligation" in {
+      overdueObligation.getObligationStatus shouldBe Overdue
+    }
+
+    "return 'Open' with getObligationStatus on openObligation" in {
+      openObligation.getObligationStatus shouldBe Open(localDate("2017-10-31"))
     }
 
     "be formatted to JSON correctly" in {

@@ -22,7 +22,9 @@ import connectors.ObligationDataConnector
 import models._
 import play.api.Logger
 import play.api.libs.json.JsResultException
+import play.twirl.api.Html
 import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
+import utils.ImplicitLongDate._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -76,10 +78,9 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
         }
       case error: ErrorResponse =>
         Logger.debug(
-          s"""[ObligationsService][getObligations] - Cound not retrievgite obligations.
+          s"""[ObligationsService][getObligations] - Cound not retrieve obligations.
              |Error Response Status: ${error.status}, Message ${error.message}""".stripMargin)
         throw new InternalServerException("")
     }
   }
-
 }

@@ -16,18 +16,21 @@
 
 package controllers
 
+import java.time.LocalDate
+
+import assets.Messages.{Obligations => messages}
+import assets.TestConstants._
 import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
+import models._
 import org.jsoup.Jsoup
+import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.TestSupport
-import assets.TestConstants._
-import models.{ObligationModel, ObligationsModel}
-import play.api.http.Status
 import utils.ImplicitDateFormatter.localDate
-import assets.Messages.{Obligations => messages}
+import utils.TestSupport
+import views.Helpers
 
 class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockObligationsService {
 
@@ -55,17 +58,20 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
                 end = localDate("2017-07-05"),
                 due = localDate("2017-08-05"),
                 met = true
-              ), ObligationModel(
+              ),
+              ObligationModel(
                 start = localDate("2017-07-06"),
                 end = localDate("2017-10-05"),
                 due = localDate("2017-11-05"),
                 met = true
-              ), ObligationModel(
+              ),
+              ObligationModel(
                 start = localDate("2017-10-06"),
                 end = localDate("2018-01-05"),
                 due = localDate("2018-02-05"),
                 met = false
-              ), ObligationModel(
+              ),
+              ObligationModel(
                 start = localDate("2018-01-06"),
                 end = localDate("2018-04-05"),
                 due = localDate("2018-05-06"),

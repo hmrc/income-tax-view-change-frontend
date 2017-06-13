@@ -44,4 +44,9 @@ object Messages {
     val heading = "Your session has timed out"
     val signIn = "To view your quarterly reporting details, you'll have to sign in using your Government Gateway ID."
   }
+  object Helpers {
+    val overdue = "Overdue"
+    val received = "Received"
+    val due: String => String = duedate => s"Due by $duedate"
+  }
 }

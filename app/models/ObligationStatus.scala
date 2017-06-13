@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-import play.twirl.api.Html
-import utils.ImplicitLongDate._
+import java.time.LocalDate
 
-
-class LongDateSpec extends TestSupport with ImplicitDateFormatter {
-
-  "The implicit date formatter" should {
-
-    "change localDate's to full dates" in {
-      localDate("2017-04-01").toLongDate shouldBe "1 April 2017"
-    }
-  }
-}
+sealed trait ObligationStatus
+case object Received extends ObligationStatus
+case object Overdue extends ObligationStatus
+case class Open(dueDate: LocalDate) extends ObligationStatus
 

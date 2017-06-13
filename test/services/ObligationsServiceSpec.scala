@@ -20,6 +20,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import models._
+import play.api.i18n.Messages
 import play.api.libs.json.{JsResultException, Json}
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
@@ -85,11 +86,12 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
         val successfulObligationsResponse =
           ObligationsModel(
             List(
-              ObligationModel(
-                start = localDate("2017-04-06"),
-                end = localDate("2017-07-05"),
-                due = localDate("2017-08-05"),
-                met = true)
+                ObligationModel(
+                  start = localDate("2017-04-06"),
+                  end = localDate("2017-07-05"),
+                  due = localDate("2017-08-05"),
+                  met = true
+              )
             )
           )
 

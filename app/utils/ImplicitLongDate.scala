@@ -23,7 +23,7 @@ import java.util.Locale._
 
 trait ImplicitLongDate {
   implicit class longDate(d: LocalDate) {
-    def toLongDate: Html = Html(d.getDayOfMonth + " " + d.getMonth.getDisplayName(FULL, UK) + " " + d.getYear)
+    def toLongDate: String = d.getDayOfMonth + " " + d.getMonth.getDisplayName(FULL, UK) + " " + d.getYear
   }
 }
 

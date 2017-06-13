@@ -28,7 +28,15 @@ case class ObligationModel(start: LocalDate,
                            end: LocalDate,
                            due: LocalDate,
                            met: Boolean
-                          )
+                          ) {
+  def currentTime(): LocalDate = LocalDate.now()
+
+  def getObligationStatus: ObligationStatus = (met, due) match {
+      case (true, _)                                          => Received
+      case (false, date) if !currentTime().isAfter(date)      => Open(date)
+      case (false, _)                                         => Overdue
+    }
+}
 
 case class ObligationsErrorModel(code: Int, message: String) extends ObligationsResponseModel
 
@@ -43,3 +51,4 @@ object ObligationsModel {
 object ObligationsErrorModel {
   implicit val format = Json.format[ObligationsErrorModel]
 }
+

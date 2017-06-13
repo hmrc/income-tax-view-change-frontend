@@ -21,6 +21,10 @@ obligations.info                                                = You must submi
 obligations.accountingPeriod                                    = Accounting period
 obligations.reportDueDate                                       = Report due date
 
+## Statuses ##
+status.received                                                 = Received
+status.overdue                                                  = Overdue
+status.open                                                     = Due by {0}
 
 ## Timeout page ##
 timeout.title                                                   = Your session has timed out

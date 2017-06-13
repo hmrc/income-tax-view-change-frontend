@@ -14,10 +14,11 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.main_template
 @import utils.ImplicitLongDate._
+@import views.html.templates.main_template
+@import views.Helpers
 
-@(obligations: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@(obligationsModel: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 <!-- TODO pass in the correct Obligation Display model with dates and statuses// -->
 
 @main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig) {
@@ -35,18 +36,16 @@
             </tr>
         </thead>
         <tbody>
-            @obligations.obligations.zipWithIndex.map { case (model: ObligationModel, index: Int) =>
-                <tr>
-                    <td>
-                        <span class="bold-small">Quarter @{index + 1}</span>
-                        <p>@model.start.toLongDate to @model.end.toLongDate</p>
+            @obligationsModel.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
+                <tr id="@{s"quarter-$index-obligation"}">
+                    <td id=@{s"quarter-$index-accounting-period"}>
+                        <p>
+                            <span class="bold-small">Quarter @{index + 1}</span></br>
+                            @obligation.start.toLongDate to @obligation.end.toLongDate
+                        </p>
                     </td>
-                    <td>
-                        @if(model.met){
-                            <p>Received</p>
-                        } else {
-                            <p>Due by @model.due.toLongDate</p>
-                        }
+                    <td id=@{s"quarter-$index-obligation-status"}>
+                        @Helpers.statusHtml(obligation.getObligationStatus)
                     </td>
                 </tr>
             }
