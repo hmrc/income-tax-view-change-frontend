@@ -46,13 +46,18 @@ class ObligationsViewSpec extends TestSupport{
     }
 
     s"have the an intro para '${messages.info}'" in {
-      document.getElementsByAttributeValue("id", "obligation-intro").text() shouldBe messages.info
+      document.getElementById("obligation-intro").text() shouldBe messages.info
     }
 
     "have a table containing the obligations" should {
 
-      "" in {
-        
+      "contain the first row and have the start date as '1 January 2017' and status 'Received'" in {
+        document.getElementById("bi-ob-1-start").text() shouldBe "1 January 2017"
+        document.getElementById("bi-ob-1-status").text() shouldBe "Received"
+      }
+
+      "not contain a second row" in {
+        document.getElementById("bi-ob-2-status") shouldBe null
       }
 
     }
