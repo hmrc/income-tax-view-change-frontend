@@ -36,21 +36,6 @@ class ObligationDataConnectorSpec extends TestSupport with MockHttp {
 
   object TestObligationDataConnector extends ObligationDataConnector(mockHttpGet)
 
-  "ObligationDataConnector.getBusinessList" should {
-
-    "return a SuccessResponse with JSON in case of sucess" in {
-      setupMockHttpGet(TestObligationDataConnector.getBusinessListUrl(testNino))(successResponse)
-      val result = TestObligationDataConnector.getBusinessList(testNino)
-      await(result) shouldBe SuccessResponse(Json.parse("{}"))
-    }
-
-    "return ErrorResponse model in case of failure" in {
-      setupMockHttpGet(TestObligationDataConnector.getBusinessListUrl(testNino))(badResponse)
-      val result = TestObligationDataConnector.getBusinessList(testNino)
-      await(result) shouldBe ErrorResponse(Status.BAD_REQUEST, "Error Message")
-    }
-  }
-
   "ObligationDataConnector.getObligationData" should {
 
     "return a SuccessResponse with JSON in case of sucess" in {

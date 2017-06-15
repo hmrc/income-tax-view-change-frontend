@@ -16,91 +16,21 @@
 
 package models
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
+import assets.TestConstants.BusinessDetails._
 import org.scalatest.Matchers
 import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
+import assets.TestConstants._
 
 class BusinessListResponseModelSpec extends UnitSpec with Matchers {
 
-  val localDate: String => LocalDate = date => LocalDate.parse(date, DateTimeFormatter.ofPattern("uuuu-M-d"))
-
   "The BusinessListModel" should {
-
-    val jsonString =
-      """
-        {
-          "business":[
-            {
-              "id":"1234",
-              "accountingPeriod":{"start":"2017-01-01","end":"2017-12-31"},
-              "accountingType":"CASH",
-              "commencementDate":"2017-01-01",
-              "cessationDate":"2017-12-31",
-              "tradingName":"business",
-              "businessDescription":"a business",
-              "businessAddressLineOne":"64 Zoo Lane",
-              "businessAddressLineTwo":"Happy Place",
-              "businessAddressLineThree":"Magical Land",
-              "businessAddressLineFour":"England",
-              "businessPostcode":"ZL1 064"
-            },
-            {
-              "id":"5678",
-              "accountingPeriod":{"start":"2017-01-01","end":"2017-12-31"},
-              "accountingType":"CASH",
-              "commencementDate":"2017-01-01",
-              "cessationDate":"2017-12-31",
-              "tradingName":"otherBusiness",
-              "businessDescription":"some business",
-              "businessAddressLineOne":"65 Zoo Lane",
-              "businessAddressLineTwo":"Happy Place",
-              "businessAddressLineThree":"Magical Land",
-              "businessAddressLineFour":"England",
-              "businessPostcode":"ZL1 064"
-            }
-          ]
-        }
-      """.stripMargin.split("\\s{2,}").mkString
-
-    val business1 = BusinessModel(
-      id = "1234",
-      accountingPeriod = AccountingPeriod(start = localDate("2017-1-1"), end = localDate("2017-12-31")),
-      accountingType = "CASH",
-      commencementDate = Some(localDate("2017-1-1")),
-      cessationDate = Some(localDate("2017-12-31")),
-      tradingName = "business",
-      businessDescription = Some("a business"),
-      businessAddressLineOne = Some("64 Zoo Lane"),
-      businessAddressLineTwo = Some("Happy Place"),
-      businessAddressLineThree = Some("Magical Land"),
-      businessAddressLineFour = Some("England"),
-      businessPostcode = Some("ZL1 064")
-    )
-    val business2 = BusinessModel(
-      id = "5678",
-      accountingPeriod = AccountingPeriod(start = localDate("2017-1-1"), end = localDate("2017-12-31")),
-      accountingType = "CASH",
-      commencementDate = Some(localDate("2017-1-1")),
-      cessationDate = Some(localDate("2017-12-31")),
-      tradingName = "otherBusiness",
-      businessDescription = Some("some business"),
-      businessAddressLineOne = Some("65 Zoo Lane"),
-      businessAddressLineTwo = Some("Happy Place"),
-      businessAddressLineThree = Some("Magical Land"),
-      businessAddressLineFour = Some("England"),
-      businessPostcode = Some("ZL1 064")
-    )
-
-    val businesses = BusinessListModel(List(business1, business2))
 
     "for the 1st Business" should {
 
-      "have the id set as 1234" in {
-        businesses.business.head.id shouldBe "1234"
+      s"have the id set as ${testSelfEmploymentId}" in {
+        businesses.business.head.id shouldBe testSelfEmploymentId
       }
     }
 

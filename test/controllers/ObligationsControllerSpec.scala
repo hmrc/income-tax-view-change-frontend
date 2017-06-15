@@ -17,6 +17,7 @@
 package controllers
 
 import assets.Messages.{Obligations => messages}
+import assets.Messages.{ISE => errorMessages}
 import assets.TestConstants._
 import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
@@ -93,6 +94,31 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
           document.title shouldBe messages.title
         }
       }
+
+      "doesn't retrieve a list of Obligations from the Obligations service" should {
+
+        lazy val result = TestObligationsController.getObligations()(FakeRequest())
+        lazy val document = Jsoup.parse(bodyOf(result))
+
+        def mockFail(): Unit = setupMockObligationsResult(testNino)(
+          ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Error Message")
+        )
+
+        "return Status INTERNAL_SERVER_ERROR (500)" in {
+          mockFail()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the ISE page" in {
+          document.title shouldBe errorMessages.title
+        }
+      }
+
     }
   }
 

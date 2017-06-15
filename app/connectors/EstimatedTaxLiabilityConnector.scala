@@ -18,8 +18,9 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
-import models.{ConnectorResponseModel, ErrorResponse, SuccessResponse}
+import models._
 import play.api.Logger
+import play.api.http.Status
 import play.api.http.Status._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, _}
@@ -31,9 +32,9 @@ import scala.concurrent.Future
 class EstimatedTaxLiabilityConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
   lazy val protectedMicroserviceUrl: String = baseUrl("income-tax-view-change")
-  val getEstimatedTaxLiabilityUrl: String => String = mtditid => s"$protectedMicroserviceUrl/income-tax-view-change/estimated-tax-liability/$mtditid"
+  lazy val getEstimatedTaxLiabilityUrl: String => String = mtditid => s"$protectedMicroserviceUrl/income-tax-view-change/estimated-tax-liability/$mtditid"
 
-  def getEstimatedTaxLiability(mtditid: String)(implicit headerCarrier: HeaderCarrier): Future[ConnectorResponseModel] = {
+  def getEstimatedTaxLiability(mtditid: String)(implicit headerCarrier: HeaderCarrier): Future[EstimatedTaxLiabilityResponseModel] = {
 
     val url = getEstimatedTaxLiabilityUrl(mtditid)
     Logger.debug(s"[EstimatedTaxLiabilityConnector][getEstimatedTaxLiability] - GET $url")
@@ -42,12 +43,21 @@ class EstimatedTaxLiabilityConnector @Inject()(val http: HttpGet) extends Servic
       response =>
         response.status match {
           case OK =>
-            Logger.debug(s"[EstimatedTaxLiabilityConnector][getEstimatedTaxLiability] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Future.successful(SuccessResponse(response.json))
+            Future.successful(response.json.validate[EstimatedTaxLiability].fold(
+              invalid => {
+                Logger.warn(s"[EstimatedTaxLiabilityConnector][getEstimatedTaxLiability] - Json Validation Error. Parsing Estimated Tax Liability Response.")
+                EstimatedTaxLiabilityError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Estimated Tax Liability Response.")
+              },
+              valid => valid
+            ))
           case _ =>
             Logger.warn(s"[EstimatedTaxLiabilityConnector][getEstimatedTaxLiability] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Future.successful(ErrorResponse(response.status, response.body))
+            Future.successful(EstimatedTaxLiabilityError(response.status, response.body))
         }
+    } recoverWith {
+      case _ =>
+        Logger.warn(s"[EstimatedTaxLiabilityConnector][getEstimatedTaxLiability] - Unexpected failed future on call to $url")
+        Future.successful(EstimatedTaxLiabilityError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failed future on call to $url"))
     }
   }
 }

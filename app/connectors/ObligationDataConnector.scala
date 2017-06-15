@@ -16,37 +16,20 @@
 
 package connectors
 
-import javax.inject.{Singleton, Inject}
+import javax.inject.{Inject, Singleton}
 
-import models.{ErrorResponse, SuccessResponse, ConnectorResponseModel}
+import models._
 import play.api.Logger
+import play.api.http.Status
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HttpResponse, HeaderCarrier, HttpGet}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import play.api.http.Status.OK
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class ObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
-
-  lazy val businessListUrl: String = baseUrl("self-assessment-api")
-  lazy val getBusinessListUrl: String => String = nino => s"$businessListUrl/self-assessment/ni/$nino/self-employments"
-
-  def getBusinessList(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ConnectorResponseModel] = {
-
-    val url = getBusinessListUrl(nino)
-
-    http.GET[HttpResponse](url) flatMap {
-      response =>
-        response.status match {
-          case OK => Logger.debug(s"[ObligationDataConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Future.successful(SuccessResponse(response.json))
-          case _ => Logger.warn(s"[ObligationDataConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Future.successful(ErrorResponse(response.status, response.body))
-        }
-    }
-  }
 
   lazy val obligationDataUrl: String = baseUrl("self-assessment-api")
   lazy val getObligationDataUrl: (String, String) => String = (nino, selfEmploymentId) => s"$obligationDataUrl/self-assessment/ni/$nino/self-employments/$selfEmploymentId"

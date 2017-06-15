@@ -18,7 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.ObligationDataConnector
+import connectors.{BusinessDetailsConnector, ObligationDataConnector}
 import models._
 import play.api.Logger
 import play.api.libs.json.JsResultException
@@ -30,38 +30,19 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ObligationsService @Inject()(val obligationDataConnector: ObligationDataConnector) {
+class ObligationsService @Inject()(val obligationDataConnector: ObligationDataConnector,
+                                  val businessDetailsConnector: BusinessDetailsConnector
+                                  ) {
 
-  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsModel] = {
+  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
-    for {
-      selfEmploymentId <- getSelfEmploymentId(nino)
-      obligations <-  getObligationData(nino, selfEmploymentId)
-    } yield obligations
-  }
-
-  private[ObligationsService] def getSelfEmploymentId(nino: String)(implicit hc: HeaderCarrier) = {
-
-    obligationDataConnector.getBusinessList(nino).map {
-      case success: SuccessResponse =>
-        Logger.debug("[ObligationsService][getObligations] - Retrieved business details")
-        try {
-          success.json.as[BusinessListModel].business.map {
-            businessModel =>
-              Logger.debug("[ObligationsService][getObligations] - Retrieved Self Employment ID")
-              businessModel.id
-          }.head
-        } catch {
-          case js: JsResultException =>
-            Logger.debug("[ObligationService][getObligations] - Could not parse Json response into BusinessListModel")
-            throw js
-        }
-      case error: ErrorResponse =>
-        Logger.debug(
-          s"""[ObligationsService][getObligations] Could not retrieve business details.
-             |Error Response Status: ${error.status}, Message: ${error.message}""".stripMargin)
-        throw new Exception("")
+    businessDetailsConnector.getBusinessList(nino).flatMap {
+      case success: BusinessListModel =>
+        // Only one business is returned for MVP hence .head to obtain ID.
+        getObligationData(nino, success.business.head.id)
+      case error: BusinessListError =>
+        Future.successful(ObligationsErrorModel(error.code, error.message))
     }
   }
 

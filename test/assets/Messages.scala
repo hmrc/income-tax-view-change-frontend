@@ -57,4 +57,8 @@ object Messages {
     val estimatesHeading = "Estimates"
     val estimatesLink = "View your estimated tax amount"
   }
+
+  object ISE {
+    val title = "Sorry, we are experiencing technical difficulties - 500"
+  }
 }
