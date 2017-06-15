@@ -19,7 +19,7 @@ package services
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-import mocks.{MockObligationDataConnector, MockBusinessDetilsConnector}
+import mocks.{MockObligationDataConnector, MockBusinessDetailsConnector}
 import models._
 import play.api.i18n.Messages
 import play.api.libs.json.{JsResultException, Json}
@@ -29,7 +29,7 @@ import utils.TestSupport
 import assets.TestConstants._
 import assets.TestConstants.BusinessDetails._
 
-class ObligationsServiceSpec extends TestSupport with MockObligationDataConnector with MockBusinessDetilsConnector {
+class ObligationsServiceSpec extends TestSupport with MockObligationDataConnector with MockBusinessDetailsConnector {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

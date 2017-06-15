@@ -58,7 +58,7 @@ trait MockObligationDataConnector extends MockConnectors {
 
 }
 
-trait MockBusinessDetilsConnector extends MockConnectors {
+trait MockBusinessDetailsConnector extends MockConnectors {
 
   val mockBusinessDetailsConnector: BusinessDetailsConnector = mock[BusinessDetailsConnector]
 
