@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package mocks
 
 import models.{EstimatedTaxLiabilityResponseModel, ObligationsModel}
 import org.mockito.ArgumentMatchers

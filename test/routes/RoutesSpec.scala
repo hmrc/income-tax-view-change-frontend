@@ -28,4 +28,18 @@ class RoutesSpec extends TestSupport {
       controllers.timeout.routes.SessionTimeoutController.timeout().url shouldBe s"$contextRoute/session-timeout"
     }
   }
+
+  //Obligation route
+  "The URL for the ObligationsController.getObligations action" should {
+    s"be equal tp $contextRoute/obligations" in {
+      controllers.routes.ObligationsController.getObligations().url shouldBe s"$contextRoute/obligations"
+    }
+  }
+
+  //Estimated Tax Liability
+  "The URL for the EstimatedTaxLiabilityController.getEstimatedTaxLiability action" should {
+    s"be equal to $contextRoute/estimated-tax-liability" in {
+      controllers.routes.EstimatedTaxLiabilityController.getEstimatedTaxLiability().url shouldBe s"$contextRoute/estimated-tax-liability"
+    }
+  }
 }
