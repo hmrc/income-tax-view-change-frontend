@@ -64,7 +64,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
       }
 
       "should redirect to GG Sign In" in {
-        redirectLocation(result(MockUnauthorised)) shouldBe Some("/gg/sign-in?continue=http%3A%2F%2Flocalhost%3A9081%2Fcheck-your-income-tax-and-expenses&origin=income-tax-view-change-frontend")
+        redirectLocation(result(MockUnauthorised)) shouldBe Some("/gg/sign-in?continue=http%3A%2F%2Flocalhost%3A9081%2Fcheck-your-income-tax-and-expenses%2Fobligations&origin=income-tax-view-change-frontend")
       }
     }
 
