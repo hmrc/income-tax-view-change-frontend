@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package mocks
 
 import connectors.{EstimatedTaxLiabilityConnector, ObligationDataConnector}
 import models.ConnectorResponseModel
