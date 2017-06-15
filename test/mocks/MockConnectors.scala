@@ -16,8 +16,8 @@
 
 package mocks
 
-import connectors.{EstimatedTaxLiabilityConnector, ObligationDataConnector}
-import models.ConnectorResponseModel
+import connectors.{BusinessDetailsConnector, EstimatedTaxLiabilityConnector, ObligationDataConnector}
+import models.{BusinessListResponseModel, ConnectorResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -51,13 +51,24 @@ trait MockObligationDataConnector extends MockConnectors {
     reset(mockObligationDataConnector)
   }
 
-  def setupMockBusinesslistResult(nino: String)(response: ConnectorResponseModel): Unit ={
-    when(mockObligationDataConnector.getBusinessList(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+  def setupMockObligation(nino: String, selfEmploymentId: String)(response: ConnectorResponseModel): Unit = {
+    when(mockObligationDataConnector.getObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockObligation(nino: String, selfEmploymentId: String)(response: ConnectorResponseModel): Unit = {
-    when(mockObligationDataConnector.getObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
+}
+
+trait MockBusinessDetilsConnector extends MockConnectors {
+
+  val mockBusinessDetailsConnector: BusinessDetailsConnector = mock[BusinessDetailsConnector]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockBusinessDetailsConnector)
+  }
+
+  def setupMockBusinesslistResult(nino: String)(response: BusinessListResponseModel): Unit ={
+    when(mockBusinessDetailsConnector.getBusinessList(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 

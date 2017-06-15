@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
 import controllers.predicates.AuthenticationPredicate
+import models.{ObligationsErrorModel, ObligationsModel}
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.libs.json.JsResultException
@@ -38,24 +39,14 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
 
   val getObligations: Action[AnyContent] = authentication.async { implicit request =>
     implicit user =>
-
       Logger.debug(s"[ObligationsController][getObligations] Calling Obligations Service for user with NINO: ${user.nino}")
-      try {
-        obligationsService.getObligations(user.nino).map {
-          obligations =>
-            Logger.debug("[ObligationsController][getObligations] Obligations retrieved.  Serving HTML page")
-            Ok(views.html.obligations(obligations))
-        }
-      } catch {
-        case js: JsResultException =>
-          Logger.debug(s"[ObligationsController][getObligations] Threw a JsResultException: $js")
-          Future.successful(showInternalServerError)
-        case ise: InternalServerException =>
-          Logger.debug(s"[ObligationsController][getObligations] Threw a JsResultException: $ise")
-          Future.successful(showInternalServerError)
-        case _: Exception =>
-          Logger.debug(s"[ObligationsController][getObligations] Threw an exception.  Do the bad things.")
-          Future.successful(showInternalServerError)
+      obligationsService.getObligations(user.nino).map {
+        case obligations: ObligationsModel =>
+          Logger.debug("[ObligationsController][getObligations] Obligations retrieved.  Serving HTML page")
+          Ok(views.html.obligations(obligations))
+        case error: ObligationsErrorModel =>
+          Logger.warn("[ObligationsController][getObligations] No obligations retrieved. Rendering ISE")
+          showInternalServerError
       }
   }
 }
