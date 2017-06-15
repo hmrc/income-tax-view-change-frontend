@@ -53,11 +53,13 @@ class ObligationsControllerISpec extends ComponentSpecBase {
           val document = Jsoup.parse(res.body)
           //Check obligation details
           document.title() shouldBe "Your Income Tax reports"
-          document.getElementById("quarter-1-accounting-period-dates").text shouldBe "6 April 2017 to 5 July 2017"
+          document.getElementById("bi-ob-1-start").text shouldBe "6 April 2017"
+          document.getElementById("bi-ob-1-end").text shouldBe "5 July 2017"
           document.getElementsByAttributeValue("class", "obligation").size() shouldBe 1
-          document.getElementById("quarter-1-obligation-status").text() shouldBe "Received"
+          document.getElementById("bi-ob-1-status").text shouldBe "Received"
         }
       }
+
       "has multiple obligations" should {
         "display the correct amount of obligations with the correct statuses" in {
           val testObligationModelList = List(ObligationModel(
@@ -89,14 +91,17 @@ class ObligationsControllerISpec extends ComponentSpecBase {
           document.title() shouldBe "Your Income Tax reports"
           document.getElementsByAttributeValue("class", "obligation").size() shouldBe 3
           //Quarter 1
-          document.getElementById("quarter-1-accounting-period-dates").text shouldBe "6 April 2017 to 5 July 2017"
-          document.getElementById("quarter-1-obligation-status").text shouldBe "Received"
+          document.getElementById("bi-ob-1-start").text shouldBe "6 April 2017"
+          document.getElementById("bi-ob-1-end").text shouldBe "5 July 2017"
+          document.getElementById("bi-ob-1-status").text shouldBe "Received"
           //Quarter 2
-          document.getElementById("quarter-2-accounting-period-dates").text shouldBe "6 July 2017 to 5 October 2017"
-          document.getElementById("quarter-2-obligation-status").text shouldBe "Due by " + LocalDate.now().plusDays(1).toLongDate
+          document.getElementById("bi-ob-2-start").text shouldBe "6 July 2017"
+          document.getElementById("bi-ob-2-end").text shouldBe "5 October 2017"
+          document.getElementById("bi-ob-2-status").text shouldBe "Due by " + LocalDate.now().plusDays(1).toLongDate
           //Quarter 3
-          document.getElementById("quarter-3-accounting-period-dates").text shouldBe "6 October 2017 to 5 January 2018"
-          document.getElementById("quarter-3-obligation-status").text shouldBe "Overdue"
+          document.getElementById("bi-ob-3-start").text shouldBe "6 October 2017"
+          document.getElementById("bi-ob-3-end").text shouldBe "5 January 2018"
+          document.getElementById("bi-ob-3-status").text shouldBe "Overdue"
         }
       }
     }
