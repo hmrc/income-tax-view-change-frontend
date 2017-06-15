@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
 import controllers.predicates.AuthenticationPredicate
-import models.{EstimatedTaxLiability, EstimatedTaxLiabilityError}
+import models.{LastTaxCalculation, LastTaxCalculationError}
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
@@ -35,12 +35,13 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
 
   val getEstimatedTaxLiability: Action[AnyContent] = authentication.async { implicit request => implicit user =>
 
-    Logger.debug(s"[EstimatedTaxLiabilityController][home] Calling Estimated Tax Liability Service with MTDITID: ${user.mtditid}")
-    estimatedTaxLiabilityService.getEstimatedTaxLiability(user.mtditid) map {
-      case success: EstimatedTaxLiability =>
+    Logger.debug(s"[EstimatedTaxLiabilityController][home] Calling Estimated Tax Liability Service with MTDITID: ${user.nino}")
+    estimatedTaxLiabilityService.getLastEstimatedTaxCalculation(user.nino) map {
+      case success: LastTaxCalculation =>
         Logger.debug(s"[EstimatedTaxLiabilityController][home] Success Response: $success")
-        Ok(views.html.estimatedTaxLiability(success.total))
-      case failure: EstimatedTaxLiabilityError =>
+        //Can do a .get here as pattern match in service checks if the calc amount os present
+        Ok(views.html.estimatedTaxLiability(success.calcAmount.get))
+      case failure: LastTaxCalculationError =>
         Logger.debug(s"[EstimatedTaxLiabilityController][home] Error Response: Status=${failure.status}, Message=${failure.message}")
         showInternalServerError
     }
