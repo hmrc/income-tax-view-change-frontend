@@ -59,7 +59,7 @@ trait ComponentSpecBase extends UnitSpec
   object IncomeTaxViewChangeFrontend {
     def get(uri: String): WSResponse = await(buildClient(uri).get())
 
-    def getEstimatedTaxLiability: WSResponse = get(s"/")
+    def getEstimatedTaxLiability: WSResponse = get(s"/estimated-tax-liability")
     def getObligations: WSResponse = get(s"/obligations")
   }
 }

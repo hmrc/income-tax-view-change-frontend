@@ -21,9 +21,9 @@ import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
 import org.jsoup.Jsoup
 import play.api.http.Status
 
-class HomeControllerISpec extends ComponentSpecBase {
+class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
 
-  "Calling the HomeController" when {
+  "Calling the EstimatedTaxLiabilityController" when {
     "authorised with an active enrolment" should {
 
       "return the correct page with a valid total" in {
@@ -35,7 +35,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         res.status shouldBe Status.OK
 
         val document = Jsoup.parse(res.body)
-        document.title shouldBe "Quarterly reporting details"
+        document.title shouldBe "Your estimated tax amount"
         document.getElementById("estimate-amount").html shouldBe "£1,800.00"
       }
     }

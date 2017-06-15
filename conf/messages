@@ -3,16 +3,16 @@ base.back                                                       = Back
 base.service_name                                               = Business tax account
 base.phase                                                      = BETA
 base.sign-out                                                   = Sign out
+base.tax-year                                                   = 2017/18
 
-
-## Home Page ##
-home.title                                                      = Quarterly reporting details
-home.heading                                                    = Quarterly reporting details
-home.pre-heading.tax-year                                       = 2017/18
-home.quarterly-reporting.p1                                     = You must submit a report once every quarter and pay any tax you owe for the whole tax year by 31 January 2019.
-home.estimated-tax.h2                                           = Your estimated tax amount
-home.estimated-tax.p1                                           = These amounts include your Income Tax and National Insurance figures.
-home.estimated-tax.to-date                                      = Estimate to date
+## Estimated Tax Liability Page ##
+estimated_tax_liability.title                                   = Your estimated tax amount
+estimated_tax_liability.heading                                 = Your estimated tax amount
+estimated_tax_liability.pre-heading.tax-year                    = 2017/18
+estimated_tax_liability.estimated-tax.h2                        = Your estimated tax amount
+estimated_tax_liability.estimated-tax.p1                        = This estimate is calculated using the figures you''ve submitted using your accounting software. The amount includes both your Income Tax and National Insurance.
+estimated_tax_liability.estimated-tax.to-date                   = Estimate to date
+estimated_tax_liability.estimated-tax.payment                   = You must pay any tax you owe for the whole tax year by 31 January 2019.
 
 ## Obligations Page ##
 obligations.title                                               = Your Income Tax reports
@@ -30,3 +30,11 @@ status.open                                                     = Due by {0}
 timeout.title                                                   = Your session has timed out
 timeout.heading                                                 = Your session has timed out
 timeout.signIn                                                  = To view your quarterly reporting details, you''ll have to <a id="sign-in-link" href="{0}" rel="external">sign in</a> using your Government Gateway ID.
+
+
+## Sidebar ##
+sidebar.quarterly_reporting_reference.h3                        = Quarterly reporting reference:
+sidebar.view_estimated_liability.h3                             = Estimates
+sidebar.view_estimated_liability.link                           = View your estimated tax amount
+sidebar.view_obligations.h3                                     = Reports
+sidebar.view_obligations.link                                   = View your Income Tax reports

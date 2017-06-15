@@ -23,18 +23,18 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
-import assets.Messages.{Home => messages}
+import assets.Messages.{EstimatedTaxLiability => messages}
 import models.{EstimatedTaxLiability, EstimatedTaxLiabilityError}
 import play.api.i18n.MessagesApi
 import assets.TestConstants._
 
-class HomeControllerSpec extends TestSupport with MockAuthenticationPredicate with MockEstimatedLiabilityService {
+class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthenticationPredicate with MockEstimatedLiabilityService {
 
-  "The HomeController.home action" when {
+  "The EstimatedTaxLiabilityController.home action" when {
 
     "Called with an Authenticated HMRC-MTD-IT User" which {
 
-      object TestHomeController extends HomeController()(
+      object TestEstimatedLiabilityController extends EstimatedTaxLiabilityController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         MockAuthenticated,
         mockEstimatedLiabilityService,
@@ -43,7 +43,7 @@ class HomeControllerSpec extends TestSupport with MockAuthenticationPredicate wi
 
       "successfully retrieves an Estimated Tax Liability amount from the EstimatedTaxLiability Service" should {
 
-        lazy val result = TestHomeController.home()(FakeRequest())
+        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
         lazy val document = Jsoup.parse(bodyOf(result))
         def mockSuccess(): Unit = setupMockEstimatedTaxLiabilityResult(testMtditid)(EstimatedTaxLiability(
           total = 1000.0,
@@ -63,7 +63,7 @@ class HomeControllerSpec extends TestSupport with MockAuthenticationPredicate wi
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the Home page" in {
+        "render the EstimatedTaxLiability page" in {
           mockSuccess()
           document.title() shouldBe messages.title
         }
@@ -71,7 +71,7 @@ class HomeControllerSpec extends TestSupport with MockAuthenticationPredicate wi
 
       "receives an Error from the EstimatedTaxLiability Service" should {
 
-        lazy val result = TestHomeController.home()(FakeRequest())
+        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
         def mockError(): Unit = setupMockEstimatedTaxLiabilityResult(testMtditid)(EstimatedTaxLiabilityError(
           status = Status.INTERNAL_SERVER_ERROR,
           message = "Internal Server Error Message"
@@ -94,14 +94,14 @@ class HomeControllerSpec extends TestSupport with MockAuthenticationPredicate wi
 
     "Called with an Unauthenticated User" should {
 
-      object TestHomeController extends HomeController()(
+      object TestEstimatedLiabilityController extends EstimatedTaxLiabilityController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         MockUnauthorised,
         mockEstimatedLiabilityService,
         fakeApplication.injector.instanceOf[MessagesApi]
       )
       "return redirect SEE_OTHER (303)" in {
-        val result = TestHomeController.home()(FakeRequest())
+        val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
         status(result) shouldBe Status.SEE_OTHER
       }
     }

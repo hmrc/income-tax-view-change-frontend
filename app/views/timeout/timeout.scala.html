@@ -22,6 +22,6 @@
 @main_template(title = messages("timeout.title"), bodyClasses = None, appConfig = appConfig, showLogout = false) {
 
  <h1>@Messages("timeout.heading")</h1>
- <p id="sign-in">@Html(Messages("timeout.signIn", controllers.routes.HomeController.home().url))</p>
+ <p id="sign-in">@Html(Messages("timeout.signIn", controllers.routes.ObligationsController.getObligations().url))</p>
 
 }

@@ -1,7 +1,8 @@
 # microservice specific routes
 GET        /assets/*file                controllers.Assets.at(path="/public", file)
 
-GET         /                           controllers.HomeController.home
+#Estimated Tax Liability
+GET         /estimated-tax-liability    controllers.EstimatedTaxLiabilityController.getEstimatedTaxLiability
 
 #Obligations
 GET         /obligations                controllers.ObligationsController.getObligations
