@@ -31,13 +31,13 @@ class EstimatedTaxLiabilityService @Inject()(val estimatedTaxLiabilityConnector:
 
   def getEstimatedTaxLiability(mtditid: String)(implicit headerCarrier: HeaderCarrier): Future[EstimatedTaxLiabilityResponseModel] = {
     Logger.debug("[EstimatedTaxLiabilityService][getEstimateTaxLiability] - Requesting Estimate Liability from Backend via Connector")
-    estimatedTaxLiabilityConnector.getEstimatedTaxLiability(mtditid).map[EstimatedTaxLiabilityResponseModel] {
-      case success: SuccessResponse =>
-        Logger.debug(s"[EstimatedTaxLiabilityService][getEstimateTaxLiability] - Retrieved Estimated Tax Liability: ${success.json}")
-        success.json.as[EstimatedTaxLiability]
-      case error: ErrorResponse =>
+    estimatedTaxLiabilityConnector.getEstimatedTaxLiability(mtditid).map {
+      case success: EstimatedTaxLiability =>
+        Logger.debug(s"[EstimatedTaxLiabilityService][getEstimateTaxLiability] - Retrieved Estimated Tax Liability: \n\n$success")
+        success
+      case error: EstimatedTaxLiabilityError =>
         Logger.debug(s"[EstimatedTaxLiabilityService][getEstimateTaxLiability] - Error Response Status: ${error.status}, Message: ${error.message}")
-        EstimatedTaxLiabilityError(error.status, error.message)
+        error
     }
   }
 }

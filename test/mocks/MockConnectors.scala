@@ -17,7 +17,7 @@
 package mocks
 
 import connectors.{BusinessDetailsConnector, EstimatedTaxLiabilityConnector, ObligationDataConnector}
-import models.{BusinessListResponseModel, ConnectorResponseModel}
+import models.{BusinessListResponseModel, ConnectorResponseModel, EstimatedTaxLiabilityResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -37,7 +37,7 @@ trait MockEstimatedTaxLiabilityConnector extends MockConnectors {
       reset(mockEstimatedTaxLiabilityConnector)
     }
 
-    def setupMockFinancialDataResult(mtditid: String)(response: ConnectorResponseModel): Unit =
+    def setupGetEstimatedTaxLiabilityResult(mtditid: String)(response: EstimatedTaxLiabilityResponseModel): Unit =
       when(mockEstimatedTaxLiabilityConnector.getEstimatedTaxLiability(ArgumentMatchers.eq(mtditid))(ArgumentMatchers.any()))
         .thenReturn(Future.successful(response))
 }

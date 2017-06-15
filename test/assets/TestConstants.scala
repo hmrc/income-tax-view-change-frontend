@@ -16,9 +16,9 @@
 
 package assets
 
-import models.{AccountingPeriod, BusinessListModel, BusinessModel}
+import models.{EstimatedTaxLiability, _}
+import play.api.http.Status
 import utils.ImplicitDateFormatter
-
 
 object TestConstants extends ImplicitDateFormatter {
 
@@ -97,4 +97,18 @@ object TestConstants extends ImplicitDateFormatter {
 
   }
 
+  object Estimates {
+
+    val successModel = EstimatedTaxLiability(
+      total = 1000.0,
+      nic2 = 200.0,
+      nic4 = 500.0,
+      incomeTax = 300.0
+    )
+
+    val errorModel = EstimatedTaxLiabilityError(
+      Status.INTERNAL_SERVER_ERROR,
+      "Error Message"
+    )
+  }
 }

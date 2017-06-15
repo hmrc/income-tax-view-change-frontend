@@ -16,19 +16,14 @@
 
 package services
 
+import assets.TestConstants.{Estimates, _}
 import mocks.MockEstimatedTaxLiabilityConnector
-import models.{ErrorResponse, EstimatedTaxLiability, EstimatedTaxLiabilityError, SuccessResponse}
-import play.api.libs.json.Json
-import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.TestSupport
-
 
 class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockEstimatedTaxLiabilityConnector {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  val mtditid = "1234"
 
   object TestEstimatedTaxLiabilityService extends EstimatedTaxLiabilityService(mockEstimatedTaxLiabilityConnector)
 
@@ -36,30 +31,17 @@ class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockEstimatedTax
 
     "a successful response is returned from the EstimatedTaxLiabilityConnector" should {
 
-      val estimatedTaxLiabilityResponse = SuccessResponse(Json.parse(
-        """
-          |{
-          |  "total":"1000",
-          |  "nic2":"200",
-          |  "nic4":"500",
-          |  "incomeTax":"300"
-          |}
-        """.stripMargin
-      ))
-
       "return a correctly formatted EstimateTaxLiability model" in {
-        setupMockFinancialDataResult(mtditid)(estimatedTaxLiabilityResponse)
-        await(TestEstimatedTaxLiabilityService.getEstimatedTaxLiability(mtditid)) shouldBe EstimatedTaxLiability(1000.0,200.0,500.0,300.0)
+        setupGetEstimatedTaxLiabilityResult(testMtditid)(Estimates.successModel)
+        await(TestEstimatedTaxLiabilityService.getEstimatedTaxLiability(testMtditid)) shouldBe Estimates.successModel
       }
     }
 
     "an Error Response is returned from the FinancialDataConnector" should {
 
       "return a correctly formatted EstimateTaxLiability model" in {
-        val financialDataError = ErrorResponse(Status.INTERNAL_SERVER_ERROR, "Error Message")
-        setupMockFinancialDataResult(mtditid)(financialDataError)
-        await(TestEstimatedTaxLiabilityService.getEstimatedTaxLiability(mtditid)) shouldBe
-          EstimatedTaxLiabilityError(Status.INTERNAL_SERVER_ERROR, "Error Message")
+        setupGetEstimatedTaxLiabilityResult(testMtditid)(Estimates.errorModel)
+        await(TestEstimatedTaxLiabilityService.getEstimatedTaxLiability(testMtditid)) shouldBe Estimates.errorModel
       }
     }
   }

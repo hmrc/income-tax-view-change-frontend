@@ -16,37 +16,43 @@
 
 package connectors
 
+import assets.TestConstants.Estimates.successModel
+import assets.TestConstants._
 import mocks.MockHttp
-import models.{ErrorResponse, SuccessResponse}
+import models.{ErrorResponse, EstimatedTaxLiabilityError}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import utils.TestSupport
 
-
 class EstimatedTaxLiabilityConnectorSpec extends TestSupport with MockHttp {
 
   implicit val hc = HeaderCarrier()
 
-  val testMtditid = "XAITSA0000123456"
-
-  val successResponse = HttpResponse(Status.OK, Some(Json.parse("{}")))
+  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(successModel)))
+  val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
   object TestEstimatedTaxLiabilityConnector extends EstimatedTaxLiabilityConnector(mockHttpGet)
 
   "EstimatedTaxLiabilityConnector.getEstimatedTaxLiability" should {
 
-    "return a SuccessResponse with JSON in case of sucess" in {
+    "return a EstimatedTaxLiability model when successful JSON is received" in {
       setupMockHttpGet(TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiabilityUrl(testMtditid))(successResponse)
       val result = TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiability(testMtditid)
-      await(result) shouldBe SuccessResponse(Json.parse("{}"))
+      await(result) shouldBe successModel
     }
 
-    "return ErrorResponse model in case of failure" in {
+    "return EstimatedTaxLiabilityError model in case of bad/malformed JSON response" in {
+      setupMockHttpGet(TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiabilityUrl(testMtditid))(successResponseBadJson)
+      val result = TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiability(testMtditid)
+      await(result) shouldBe EstimatedTaxLiabilityError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Estimated Tax Liability Response.")
+    }
+
+    "return EstimatedTaxLiabilityError model in case of failure" in {
       setupMockHttpGet(TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiabilityUrl(testMtditid))(badResponse)
       val result = TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiability(testMtditid)
-      await(result) shouldBe ErrorResponse(Status.BAD_REQUEST, "Error Message")
+      await(result) shouldBe EstimatedTaxLiabilityError(Status.BAD_REQUEST, "Error Message")
     }
   }
 }
