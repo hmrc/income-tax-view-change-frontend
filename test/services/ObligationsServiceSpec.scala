@@ -19,6 +19,7 @@ package services
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import assets.TestConstants
 import mocks.{MockObligationDataConnector, MockBusinessDetailsConnector}
 import models._
 import play.api.i18n.Messages
@@ -56,7 +57,7 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
 
       "return a valid list of obligations" in {
         setupMockBusinesslistResult(testNino)(businesses)
-        setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataResponse)
+        setupMockObligation(testNino, testSelfEmploymentId)(TestConstants.Obligations.obligationsDataResponse)
 
         val successfulObligationsResponse =
           ObligationsModel(
@@ -92,7 +93,7 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
 
       "throw an appropriate exception" in {
         setupMockBusinesslistResult(testNino)(businesses)
-        setupMockObligation(testNino, testSelfEmploymentId)(noObligationsErrorResponse)
+        setupMockObligation(testNino, testSelfEmploymentId)(TestConstants.Obligations.noObligationsErrorResponse)
         val thrown = intercept[Exception] {
           await(TestObligationsService.getObligations(testNino))
         }
