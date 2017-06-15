@@ -16,6 +16,7 @@
 
 package connectors
 
+import mocks.MockHttp
 import models.{ErrorResponse, SuccessResponse}
 import play.api.libs.json.Json
 import play.mvc.Http.Status

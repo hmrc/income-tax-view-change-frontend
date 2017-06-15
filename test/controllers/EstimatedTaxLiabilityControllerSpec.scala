@@ -27,6 +27,7 @@ import assets.Messages.{EstimatedTaxLiability => messages}
 import models.{EstimatedTaxLiability, EstimatedTaxLiabilityError}
 import play.api.i18n.MessagesApi
 import assets.TestConstants._
+import mocks.MockEstimatedLiabilityService
 
 class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthenticationPredicate with MockEstimatedLiabilityService {
 

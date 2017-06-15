@@ -20,6 +20,7 @@ import assets.Messages.{Obligations => messages}
 import assets.TestConstants._
 import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
+import mocks.MockObligationsService
 import models._
 import org.jsoup.Jsoup
 import play.api.http.Status

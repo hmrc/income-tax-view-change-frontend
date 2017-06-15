@@ -24,9 +24,9 @@
     <section id="sidebar" class="section section--blue-top">
 
         <div class="form-group">
-            <h3 id="mtditid-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
+            <h3 id="reporting-ref-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
             <ul>
-                <li id="mtditid" class="font-xsmall">@user.mtditid</li>
+                <li id="reporting-ref" class="font-xsmall">@user.mtditid</li>
             </ul>
         </div>
 
@@ -44,34 +44,35 @@
 @main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig, sidebarLinks = Some(sidebar)) {
 
 <section id="obligations">
-
-    <h1>@messages("obligations.heading")</h1>
+    <h1 id="page-heading">@messages("obligations.heading")</h1>
 
     <p id="obligation-intro">@messages("obligations.info")</p>
 
-    <table>
-        <thead>
-            <tr>
-                <th>@Messages("obligations.accountingPeriod")</th>
-                <th>@Messages("obligations.reportDueDate")</th>
-            </tr>
-        </thead>
-        <tbody>
-            @obligationsModel.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
-                <tr class="obligation" id="@{s"quarter-${index+1}-obligation"}">
-                    <td id=@{s"quarter-${index+1}-accounting-period"}>
-                        <p>
-                            <span class="bold-small">Quarter @{index + 1}</span></br>
-                            <span id="@{s"quarter-${index+1}-accounting-period-dates"}">@obligation.start.toLongDate to @obligation.end.toLongDate</span>
-                        </p>
-                    </td>
-                    <td id=@{s"quarter-${index+1}-obligation-status"}>
-                        @ObligationStatusHelper.statusHtml(obligation.getObligationStatus)
-                    </td>
+    <section>
+        <h2 id="bi-section">@Messages("obligations.bi.subheading")</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>@Messages("obligations.accountingPeriod")</th>
+                    <th>@Messages("obligations.reportDueDate")</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @obligationsModel.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
+                    <tr class="obligation">
+                        <td>
+                            <p>
+                                <span id="bi-ob-@{index+1}-start">@obligation.start.toLongDate</span> to <span id="bi-ob-@{index+1}-end">@obligation.end.toLongDate</span>
+                            </p>
+                        </td>
+                        <td id=@{s"bi-ob-${index+1}-status"}>
+                            @ObligationStatusHelper.statusHtml(obligation.getObligationStatus)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
 </section>
 
 }
