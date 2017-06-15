@@ -35,6 +35,7 @@ object Messages {
   //Obligations Page Messages
   object Obligations {
     val title = "Your Income Tax reports"
+    val info  = "You must submit a report once every quarter using your accounting software."
   }
 
   // Timeout Messages
