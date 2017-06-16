@@ -22,13 +22,13 @@ import play.api.i18n.I18nSupport
 
 object IncomeTaxViewChangeStub {
 
-  val url: String => String = mtditid => s"/income-tax-view-change/estimated-tax-liability/$mtditid"
+  val url: String => String = nino => s"/income-tax-view-change/estimated-tax-liability/$nino"
 
-  def stubGetFinancialData(mtditid: String, total: BigDecimal, incomeTax: BigDecimal, nic2: BigDecimal, nic4: BigDecimal): Unit = {
-    val financialDataResponse = IntegrationTestConstants.GetFinancialDataResponse.successResponse(total, incomeTax, nic2, nic4).toString()
-    WiremockHelper.stubGet(url(mtditid), Status.OK, financialDataResponse)
+  def stubGetLastTaxCalc(nino: String, calcId: String, calcTimestamp: String, calcAmount: BigDecimal): Unit = {
+    val financialDataResponse = IntegrationTestConstants.GetLastCalculation.successResponse(calcId, calcTimestamp, calcAmount).toString()
+    WiremockHelper.stubGet(url(nino), Status.OK, financialDataResponse)
   }
 
-  def verifyGetFinancialData(mtditid: String): Unit =
-    WiremockHelper.verifyGet(url(mtditid))
+  def verifyGetLastTaxCalc(nino: String): Unit =
+    WiremockHelper.verifyGet(url(nino))
 }
