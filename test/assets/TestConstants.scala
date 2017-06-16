@@ -127,7 +127,9 @@ object TestConstants extends ImplicitDateFormatter {
 
     val noObligationsErrorResponse = ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
 
-    val invalidObligationsResponse =
+    val invalidObligationModel = ObligationModel(start = "2017-1-1", end = null, due = "2017-1-1", met = false)
+
+    val invalidObligationsResponse = ObligationsModel(List())
 
   }
 }

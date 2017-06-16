@@ -49,9 +49,14 @@ class ObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfi
               },
               valid => valid
             ))
-          case _ => Logger.warn(s"[ObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Future.successful(ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
+          case _ =>
+            Logger.warn(s"[ObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Future.successful(ObligationsErrorModel(response.status, response.body))
         }
+    } recoverWith {
+      case _ =>
+        Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Unexpected future failed error when calling $url.")
+        Future.successful(ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
     }
   }
 
