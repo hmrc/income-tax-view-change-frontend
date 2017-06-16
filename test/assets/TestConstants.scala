@@ -111,4 +111,25 @@ object TestConstants extends ImplicitDateFormatter {
       "Error Message"
     )
   }
+
+  object Obligations {
+
+    val obligation1: ObligationModel = ObligationModel(
+      start = "2017-04-06",
+      end = "2017-07-05",
+      due = "2017-08-05",
+      met = true
+    )
+
+    val obligationsDataResponse: ObligationsModel = ObligationsModel(
+      List(obligation1)
+    )
+
+    val noObligationsErrorResponse = ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
+
+    val invalidObligationModel = ObligationModel(start = "2017-1-1", end = null, due = "2017-1-1", met = false)
+
+    val invalidObligationsResponse = ObligationsModel(List())
+
+  }
 }

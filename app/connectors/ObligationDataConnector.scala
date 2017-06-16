@@ -34,7 +34,7 @@ class ObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfi
   lazy val obligationDataUrl: String = baseUrl("self-assessment-api")
   lazy val getObligationDataUrl: (String, String) => String = (nino, selfEmploymentId) => s"$obligationDataUrl/self-assessment/ni/$nino/self-employments/$selfEmploymentId"
 
-  def getObligationData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ConnectorResponseModel] = {
+  def getObligationData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     val url = getObligationDataUrl(nino, selfEmploymentId)
 
@@ -42,10 +42,21 @@ class ObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfi
       response =>
         response.status match {
           case OK => Logger.debug(s"[ObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Future.successful(SuccessResponse(response.json))
-          case _ => Logger.warn(s"[ObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Future.successful(ErrorResponse(response.status, response.body))
+            Future.successful(response.json.validate[ObligationsModel].fold(
+              invalid => {
+                Logger.warn(s"[ObligationDataConnector][getObligationData] - Json Validation Error. Parsing Obligation Data Response")
+                ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response.")
+              },
+              valid => valid
+            ))
+          case _ =>
+            Logger.warn(s"[ObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Future.successful(ObligationsErrorModel(response.status, response.body))
         }
+    } recoverWith {
+      case _ =>
+        Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Unexpected future failed error when calling $url.")
+        Future.successful(ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
     }
   }
 
