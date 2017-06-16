@@ -24,11 +24,9 @@ import helpers.servicemocks.{AuthStub, SelfAssessmentStub}
 import models.{ObligationModel, ObligationsModel}
 import org.jsoup.Jsoup
 import play.api.http.Status
-import utils.ImplicitLongDate._
+import utils.ImplicitDateFormatter
 
-class ObligationsControllerISpec extends ComponentSpecBase {
-
-  val localDate: String => LocalDate = date => LocalDate.parse(date, DateTimeFormatter.ofPattern("uuuu-M-d"))
+class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
   "Calling the ObligationsController" when {
 
@@ -37,8 +35,8 @@ class ObligationsControllerISpec extends ComponentSpecBase {
         "display a single obligation with the correct dates and status" in {
 
           val testObligation = ObligationModel(
-            start = localDate("2017-04-06"),
-            end = localDate("2017-07-05"),
+            start = "2017-04-06".toLocalDate,
+            end = "2017-07-05".toLocalDate,
             due = LocalDate.now(),
             met = true)
 
@@ -63,18 +61,18 @@ class ObligationsControllerISpec extends ComponentSpecBase {
       "has multiple obligations" should {
         "display the correct amount of obligations with the correct statuses" in {
           val testObligationModelList = List(ObligationModel(
-            start = localDate("2017-04-06"),
-            end = localDate("2017-07-05"),
+            start = "2017-04-06".toLocalDate,
+            end = "2017-07-05".toLocalDate,
             due = LocalDate.now(),
             met = true
           ), ObligationModel(
-            start = localDate("2017-07-06"),
-            end = localDate("2017-10-05"),
+            start = "2017-07-06".toLocalDate,
+            end = "2017-10-05".toLocalDate,
             due = LocalDate.now().plusDays(1),
             met = false
           ), ObligationModel(
-            start = localDate("2017-10-06"),
-            end = localDate("2018-01-05"),
+            start = "2017-10-06",
+            end = "2018-01-05",
             due = LocalDate.now().minusDays(1),
             met = false
           ))

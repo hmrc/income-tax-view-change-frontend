@@ -16,72 +16,45 @@
 
 package services
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
-import assets.TestConstants
-import mocks.{MockObligationDataConnector, MockBusinessDetailsConnector}
-import models._
-import play.api.i18n.Messages
-import play.api.libs.json.{JsResultException, Json}
-import play.mvc.Http.Status
-import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
-import utils.TestSupport
-import assets.TestConstants._
 import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.Obligations._
+import assets.TestConstants._
+import mocks.{MockBusinessDetailsConnector, MockBusinessObligationDataConnector}
+import utils.TestSupport
 
-class ObligationsServiceSpec extends TestSupport with MockObligationDataConnector with MockBusinessDetailsConnector {
-
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector with MockBusinessDetailsConnector {
 
   object TestObligationsService extends ObligationsService(mockObligationDataConnector, mockBusinessDetailsConnector)
 
   "The ObligationsService.getObligations method" when {
 
-    //Business Details
+    "a successful single business" which {
 
-    "a successful single business and single list of obligations is returned from the connector" should {
+      "has a valid list of obligations returned from the connector" should {
 
-      val obligationsDataResponse = SuccessResponse(Json.parse(
-        s"""{
-           |  "obligations" : [
-           |    {
-           |      "start": "2017-04-06",
-           |      "end": "2017-07-05",
-           |      "due": "2017-08-05",
-           |      "met": true
-           |    }
-           |  ]
-           |}""".stripMargin
-      ))
+        "return a valid list of obligations" in {
+          setupMockBusinesslistResult(testNino)(businessesSuccessModel)
+          setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
+          await(TestObligationsService.getObligations(testNino)) shouldBe obligationsDataSuccessModel
+        }
+      }
 
-      "return a valid list of obligations" in {
-        setupMockBusinesslistResult(testNino)(businesses)
-        setupMockObligation(testNino, testSelfEmploymentId)(TestConstants.Obligations.obligationsDataResponse)
+      "does not have a valid list of obligations returned from the connector" should {
 
-        val successfulObligationsResponse =
-          ObligationsModel(
-            List(
-                ObligationModel(
-                  start = localDate("2017-04-06"),
-                  end = localDate("2017-07-05"),
-                  due = localDate("2017-08-05"),
-                  met = true
-              )
-            )
-          )
-
-        await(TestObligationsService.getObligations(testNino)) shouldBe successfulObligationsResponse
+        "return a valid list of obligations" in {
+          setupMockBusinesslistResult(testNino)(businessesSuccessModel)
+          setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataErrorModel)
+          await(TestObligationsService.getObligations(testNino)) shouldBe obligationsDataErrorModel
+        }
       }
     }
 
+
     "no business list is found" should {
 
-      val businessListErrorResponse = BusinessListError(Status.BAD_REQUEST, "Error Message")
-
       "return an obligations error model" in {
-        setupMockBusinesslistResult(testNino)(businessListErrorResponse)
-        await(TestObligationsService.getObligations(testNino)) shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
+        setupMockBusinesslistResult(testNino)(businessListErrorModel)
+        await(TestObligationsService.getObligations(testNino)) shouldBe obligationsDataErrorModel
       }
     }
   }

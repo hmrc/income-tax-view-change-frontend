@@ -16,7 +16,7 @@
 
 package mocks
 
-import connectors.{BusinessDetailsConnector, LastTaxCalculationConnector, ObligationDataConnector}
+import connectors.{BusinessDetailsConnector, LastTaxCalculationConnector, BusinessObligationDataConnector}
 import models.{BusinessListResponseModel, LastTaxCalculationResponseModel, ObligationsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -42,9 +42,9 @@ trait MockLastTaxCalculationConnector extends MockConnectors {
         .thenReturn(Future.successful(response))
 }
 
-trait MockObligationDataConnector extends MockConnectors {
+trait MockBusinessObligationDataConnector extends MockConnectors {
 
-  val mockObligationDataConnector: ObligationDataConnector = mock[ObligationDataConnector]
+  val mockObligationDataConnector: BusinessObligationDataConnector = mock[BusinessObligationDataConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

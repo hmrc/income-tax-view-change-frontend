@@ -46,7 +46,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
 
         lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
         lazy val document = Jsoup.parse(bodyOf(result))
-        def mockSuccess(): Unit = setupMockLastTaxCalculationResult(testNino)(lastTaxCalcSuccess)
+        def mockSuccess(): Unit = setupMockLastTaxCalculationResult(testNino)(lastTaxCalcSuccessModel)
 
         "return Status OK (200)" in {
           mockSuccess()
@@ -68,7 +68,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
       "receives an Error from the EstimatedTaxLiability Service" should {
 
         lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
-        def mockError(): Unit = setupMockLastTaxCalculationResult(testNino)(lastTaxCalcError)
+        def mockError(): Unit = setupMockLastTaxCalculationResult(testNino)(lastTaxCalcErrorModel)
 
         "return Internal Server Error (500)" in {
           mockError()

@@ -18,9 +18,20 @@ package utils
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle._
+import java.util.Locale._
 
 trait ImplicitDateFormatter {
-  implicit val localDate: String => LocalDate = date => LocalDate.parse(date, DateTimeFormatter.ofPattern("uuuu-M-d"))
+
+  implicit def toLocalDate(s: String): LocalDate = localData(s).toLocalDate
+
+  implicit class localData(s: String) {
+    def toLocalDate: LocalDate = LocalDate.parse(s, DateTimeFormatter.ofPattern("uuuu-M-d"))
+  }
+
+  implicit class longDate(d: LocalDate) {
+    def toLongDate: String = d.getDayOfMonth + " " + d.getMonth.getDisplayName(FULL, UK) + " " + d.getYear
+  }
 }
 
 object ImplicitDateFormatter extends ImplicitDateFormatter

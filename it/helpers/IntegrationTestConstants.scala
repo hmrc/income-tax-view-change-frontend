@@ -16,14 +16,14 @@
 
 package helpers
 
-import models.{ErrorResponse, ObligationsModel, SuccessResponse}
+import models.{ErrorResponse, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import utils.ImplicitDateFormatter.localDate
+import utils.ImplicitDateFormatter
 
-object IntegrationTestConstants {
+object IntegrationTestConstants extends ImplicitDateFormatter {
 
-  val testDate = localDate("2018-05-05")
+  val testDate = "2018-05-05".toLocalDate
 
   val testMtditidEnrolmentKey = "HMRC-MTD-IT"
   val testMtditidEnrolmentIdentifier = "MTDITID"

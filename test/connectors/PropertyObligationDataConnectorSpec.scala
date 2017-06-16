@@ -16,43 +16,41 @@
 
 package connectors
 
+import assets.TestConstants.Obligations._
+import assets.TestConstants._
 import mocks.MockHttp
 import models.ObligationsErrorModel
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.HttpResponse
 import utils.TestSupport
-import assets.TestConstants._
-import assets.TestConstants.Obligations._
 
 
-class PropertyDataConnectorSpec extends TestSupport with MockHttp {
+class PropertyObligationDataConnectorSpec extends TestSupport with MockHttp {
 
-  implicit val hc = HeaderCarrier()
-
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(obligationsDataResponse)))
+  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(obligationsDataSuccessModel)))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestPropertyDataConnector extends PropertyDataConnector(mockHttpGet)
+  object TestPropertyObligationDataConnector extends PropertyObligationDataConnector(mockHttpGet)
 
-  "PropertyDataConnector.getPropertyData" should {
+  "PropertyObligationDataConnector.getPropertyData" should {
 
     "return a SuccessResponse with JSON in case of sucess" in {
-      setupMockHttpGet(TestPropertyDataConnector.getPropertyDataUrl(testNino))(successResponse)
-      val result = TestPropertyDataConnector.getPropertyData(testNino)
-      await(result) shouldBe obligationsDataResponse
+      setupMockHttpGet(TestPropertyObligationDataConnector.getPropertyDataUrl(testNino))(successResponse)
+      val result = TestPropertyObligationDataConnector.getPropertyData(testNino)
+      await(result) shouldBe obligationsDataSuccessModel
     }
 
     "return ErrorResponse model in case of failure" in {
-      setupMockHttpGet(TestPropertyDataConnector.getPropertyDataUrl(testNino))(badResponse)
-      val result = TestPropertyDataConnector.getPropertyData(testNino)
+      setupMockHttpGet(TestPropertyObligationDataConnector.getPropertyDataUrl(testNino))(badResponse)
+      val result = TestPropertyObligationDataConnector.getPropertyData(testNino)
       await(result) shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return ObligationsErrorModel when bad JSON is received" in {
-      setupMockHttpGet(TestPropertyDataConnector.getPropertyDataUrl(testNino))(successResponseBadJson)
-      val result = TestPropertyDataConnector.getPropertyData(testNino)
+      setupMockHttpGet(TestPropertyObligationDataConnector.getPropertyDataUrl(testNino))(successResponseBadJson)
+      val result = TestPropertyObligationDataConnector.getPropertyData(testNino)
       await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response.")
     }
   }

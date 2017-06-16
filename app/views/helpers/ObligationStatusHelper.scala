@@ -19,7 +19,7 @@ package views.helpers
 import models.{ObligationStatus, Open, Overdue, Received}
 import play.api.i18n.Messages
 import play.twirl.api.Html
-import utils.ImplicitLongDate._
+import utils.ImplicitDateFormatter._
 
 object ObligationStatusHelper {
 
