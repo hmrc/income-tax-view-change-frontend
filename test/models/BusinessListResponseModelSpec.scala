@@ -42,7 +42,7 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson(businesses).toString() shouldBe jsonString
+      Json.toJson(businesses).toString() shouldBe ""
     }
 
     "be able to parse a JSON to string into the Model" in {

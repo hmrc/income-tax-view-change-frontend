@@ -55,7 +55,7 @@ object AccountingPeriod {
 
 object BusinessModel {
   implicit val format = Json.format[BusinessModel]
-  implicit val apFormat = AccountingPeriod.format
+//  implicit val apFormat = AccountingPeriod.format
 }
 
 object BusinessListModel {
