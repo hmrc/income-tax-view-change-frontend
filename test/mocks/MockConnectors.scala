@@ -17,7 +17,7 @@
 package mocks
 
 import connectors.{BusinessDetailsConnector, LastTaxCalculationConnector, ObligationDataConnector}
-import models.{BusinessListResponseModel, ConnectorResponseModel, LastTaxCalculationResponseModel}
+import models.{BusinessListResponseModel, LastTaxCalculationResponseModel, ObligationsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -51,7 +51,7 @@ trait MockObligationDataConnector extends MockConnectors {
     reset(mockObligationDataConnector)
   }
 
-  def setupMockObligation(nino: String, selfEmploymentId: String)(response: ConnectorResponseModel): Unit = {
+  def setupMockObligation(nino: String, selfEmploymentId: String)(response: ObligationsResponseModel): Unit = {
     when(mockObligationDataConnector.getObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }

@@ -19,6 +19,7 @@ package services
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import assets.TestConstants
 import mocks.{MockObligationDataConnector, MockBusinessDetailsConnector}
 import models._
 import play.api.i18n.Messages
@@ -56,7 +57,7 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
 
       "return a valid list of obligations" in {
         setupMockBusinesslistResult(testNino)(businesses)
-        setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataResponse)
+        setupMockObligation(testNino, testSelfEmploymentId)(TestConstants.Obligations.obligationsDataResponse)
 
         val successfulObligationsResponse =
           ObligationsModel(
@@ -82,48 +83,6 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
         setupMockBusinesslistResult(testNino)(businessListErrorResponse)
         await(TestObligationsService.getObligations(testNino)) shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
       }
-    }
-
-
-    //Obligations Data
-    "no obligations are returned" should {
-
-      val noObligationsErrorResponse = ErrorResponse(Status.BAD_REQUEST, "Error Message")
-
-      "throw an appropriate exception" in {
-        setupMockBusinesslistResult(testNino)(businesses)
-        setupMockObligation(testNino, testSelfEmploymentId)(noObligationsErrorResponse)
-        val thrown = intercept[Exception] {
-          await(TestObligationsService.getObligations(testNino))
-        }
-        thrown.isInstanceOf[InternalServerException]
-      }
-    }
-
-    "an invalid Obligations model is returned" should {
-
-      val invalidObligationsResponse = SuccessResponse(Json.parse(
-        s"""{
-           |  "obligations" : [
-           |    {
-           |      "invalidKey": "Bad things"
-           |    }
-           |  ]
-           |}""".stripMargin
-      ))
-
-
-
-      "throw an appropriate Exception" in {
-        setupMockBusinesslistResult(testNino)(businesses)
-        setupMockObligation(testNino, testSelfEmploymentId)(invalidObligationsResponse)
-
-        val thrown = intercept[Exception]{
-          await(TestObligationsService.getObligations(testNino))
-        }
-        thrown.isInstanceOf[JsResultException]
-      }
-
     }
   }
 

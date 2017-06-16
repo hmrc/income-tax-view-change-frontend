@@ -40,28 +40,11 @@ class ObligationsService @Inject()(val obligationDataConnector: ObligationDataCo
     businessDetailsConnector.getBusinessList(nino).flatMap {
       case success: BusinessListModel =>
         // Only one business is returned for MVP hence .head to obtain ID.
-        getObligationData(nino, success.business.head.id)
+        Logger.debug(s"[ObligationsService][getObligations] - Retrieved Obligation: \n\n$success")
+        obligationDataConnector.getObligationData(nino, success.business.head.id)
       case error: BusinessListError =>
+        Logger.debug(s"[ObligationService][getObligations] - Error Response Status: ${error.code}, Message: ${error.message}")
         Future.successful(ObligationsErrorModel(error.code, error.message))
-    }
-  }
-
-  private[ObligationsService] def getObligationData(nino: String, selfEmploymentId: String)(implicit hc: HeaderCarrier) = {
-    obligationDataConnector.getObligationData(nino, selfEmploymentId).map {
-      case success: SuccessResponse =>
-        Logger.debug("[ObligationsService][getObligations] - Retrieved obligations")
-        try{
-          success.json.as[ObligationsModel]
-        } catch {
-          case js: JsResultException =>
-            Logger.debug("[ObligationService][getObligations] - Could not parse Json response into ObligationsModel")
-            throw js
-        }
-      case error: ErrorResponse =>
-        Logger.debug(
-          s"""[ObligationsService][getObligations] - Cound not retrieve obligations.
-             |Error Response Status: ${error.status}, Message ${error.message}""".stripMargin)
-        throw new InternalServerException("")
     }
   }
 }
