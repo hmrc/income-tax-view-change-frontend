@@ -33,7 +33,7 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
                                                 implicit val messagesApi: MessagesApi
                               ) extends BaseController {
 
-  val c: Action[AnyContent] = authentication.async { implicit request => implicit user =>
+  val getEstimatedTaxLiability: Action[AnyContent] = authentication.async { implicit request => implicit user =>
 
     Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
     estimatedTaxLiabilityService.getLastEstimatedTaxCalculation(user.nino) map {
