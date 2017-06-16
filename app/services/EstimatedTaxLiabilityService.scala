@@ -21,7 +21,6 @@ import javax.inject.{Inject, Singleton}
 import connectors.LastTaxCalculationConnector
 import models._
 import play.api.Logger
-import play.api.http.Status
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,14 +34,9 @@ class EstimatedTaxLiabilityService @Inject()(val lastTaxCalculationConnector: La
     lastTaxCalculationConnector.getLastEstimatedTax(nino).map {
       case success: LastTaxCalculation =>
         Logger.debug(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n\n$success")
-        success match {
-          case LastTaxCalculation(_,_,Some(amount)) => success
-          case LastTaxCalculation(_,_,None) =>
-            Logger.debug(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - LastTaxCalculation returned an empty calculation amount")
-            LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "LastTaxCalculation returned an empty calculation amount")
-        }
+        success
       case error: LastTaxCalculationError =>
-        Logger.debug(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
+        Logger.warn(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
         error
     }
   }

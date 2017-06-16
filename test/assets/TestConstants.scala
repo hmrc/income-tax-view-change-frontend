@@ -102,7 +102,7 @@ object TestConstants extends ImplicitDateFormatter {
     val lastTaxCalcSuccess = LastTaxCalculation(
       calcId = "01234567",
       calcTimestamp = "2017-07-06 12:34:56.789",
-      calcAmount = Some(543.21)
+      calcAmount = 543.21
     )
 
     val lastTaxCalcError = LastTaxCalculationError(

@@ -29,7 +29,7 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
 
     "for the 1st Business" should {
 
-      s"have the id set as ${testSelfEmploymentId}" in {
+      s"have the id set as $testSelfEmploymentId" in {
         businesses.business.head.id shouldBe testSelfEmploymentId
       }
     }

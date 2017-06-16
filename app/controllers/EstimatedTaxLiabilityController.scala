@@ -33,16 +33,15 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
                                                 implicit val messagesApi: MessagesApi
                               ) extends BaseController {
 
-  val getEstimatedTaxLiability: Action[AnyContent] = authentication.async { implicit request => implicit user =>
+  val c: Action[AnyContent] = authentication.async { implicit request => implicit user =>
 
-    Logger.debug(s"[EstimatedTaxLiabilityController][home] Calling Estimated Tax Liability Service with MTDITID: ${user.nino}")
+    Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
     estimatedTaxLiabilityService.getLastEstimatedTaxCalculation(user.nino) map {
       case success: LastTaxCalculation =>
-        Logger.debug(s"[EstimatedTaxLiabilityController][home] Success Response: $success")
-        //Can do a .get here as pattern match in service checks if the calc amount os present
-        Ok(views.html.estimatedTaxLiability(success.calcAmount.get))
+        Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Success Response: $success")
+        Ok(views.html.estimatedTaxLiability(success.calcAmount))
       case failure: LastTaxCalculationError =>
-        Logger.debug(s"[EstimatedTaxLiabilityController][home] Error Response: Status=${failure.status}, Message=${failure.message}")
+        Logger.warn(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Error Response: Status=${failure.status}, Message=${failure.message}")
         showInternalServerError
     }
   }
