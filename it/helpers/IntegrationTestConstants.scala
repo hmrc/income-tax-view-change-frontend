@@ -33,19 +33,17 @@ object IntegrationTestConstants {
   val testNinoEnrolmentIdentifier = "NINO"
   val testNino = "AA123456A"
 
-  //TODO change this to the correct format
   val testSelfEmploymentId = "ABC123456789"
 
   val testErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "Internal Server Error Message")
 
-  object GetFinancialDataResponse {
-    def successResponse(total: BigDecimal, incomeTax: BigDecimal, nic2: BigDecimal, nic4: BigDecimal): JsValue =
+  object GetLastCalculation {
+    def successResponse(calcId: String, calcTimestamp: String, calcAmount: BigDecimal): JsValue =
       Json.parse(s"""
          |{
-         |   "total": $total,
-         |   "nic2": $nic2,
-         |   "nic4": $nic4,
-         |   "incomeTax": $incomeTax
+         |   "calcId": "$calcId",
+         |   "calcTimestamp": "$calcTimestamp",
+         |   "calcAmount": $calcAmount
          |}
          |""".stripMargin)
 

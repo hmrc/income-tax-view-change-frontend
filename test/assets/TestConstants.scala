@@ -16,7 +16,7 @@
 
 package assets
 
-import models.{EstimatedTaxLiability, _}
+import models._
 import play.api.http.Status
 import utils.ImplicitDateFormatter
 
@@ -99,14 +99,13 @@ object TestConstants extends ImplicitDateFormatter {
 
   object Estimates {
 
-    val successModel = EstimatedTaxLiability(
-      total = 1000.0,
-      nic2 = 200.0,
-      nic4 = 500.0,
-      incomeTax = 300.0
+    val lastTaxCalcSuccess = LastTaxCalculation(
+      calcId = "01234567",
+      calcTimestamp = "2017-07-06 12:34:56.789",
+      calcAmount = 543.21
     )
 
-    val errorModel = EstimatedTaxLiabilityError(
+    val lastTaxCalcError = LastTaxCalculationError(
       Status.INTERNAL_SERVER_ERROR,
       "Error Message"
     )

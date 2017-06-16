@@ -17,31 +17,31 @@
 package services
 
 import assets.TestConstants.{Estimates, _}
-import mocks.MockEstimatedTaxLiabilityConnector
+import mocks.MockLastTaxCalculationConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.TestSupport
 
-class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockEstimatedTaxLiabilityConnector {
+class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockLastTaxCalculationConnector {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  object TestEstimatedTaxLiabilityService extends EstimatedTaxLiabilityService(mockEstimatedTaxLiabilityConnector)
+  object TestEstimatedTaxLiabilityService extends EstimatedTaxLiabilityService(mockLastTaxCalculationConnector)
 
   "The EstimatedTaxLiabilityService.getEstimatedTaxLiability method" when {
 
     "a successful response is returned from the EstimatedTaxLiabilityConnector" should {
 
       "return a correctly formatted EstimateTaxLiability model" in {
-        setupGetEstimatedTaxLiabilityResult(testMtditid)(Estimates.successModel)
-        await(TestEstimatedTaxLiabilityService.getEstimatedTaxLiability(testMtditid)) shouldBe Estimates.successModel
+        setupLastTaxCalculationResponse(testNino)(Estimates.lastTaxCalcSuccess)
+        await(TestEstimatedTaxLiabilityService.getLastEstimatedTaxCalculation(testNino)) shouldBe Estimates.lastTaxCalcSuccess
       }
     }
 
     "an Error Response is returned from the FinancialDataConnector" should {
 
       "return a correctly formatted EstimateTaxLiability model" in {
-        setupGetEstimatedTaxLiabilityResult(testMtditid)(Estimates.errorModel)
-        await(TestEstimatedTaxLiabilityService.getEstimatedTaxLiability(testMtditid)) shouldBe Estimates.errorModel
+        setupLastTaxCalculationResponse(testNino)(Estimates.lastTaxCalcError)
+        await(TestEstimatedTaxLiabilityService.getLastEstimatedTaxCalculation(testNino)) shouldBe Estimates.lastTaxCalcError
       }
     }
   }

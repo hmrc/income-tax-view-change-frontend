@@ -16,43 +16,43 @@
 
 package connectors
 
-import assets.TestConstants.Estimates.successModel
+import assets.TestConstants.Estimates.lastTaxCalcSuccess
 import assets.TestConstants._
 import mocks.MockHttp
-import models.{ErrorResponse, EstimatedTaxLiabilityError}
+import models.LastTaxCalculationError
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import utils.TestSupport
 
-class EstimatedTaxLiabilityConnectorSpec extends TestSupport with MockHttp {
+class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
 
   implicit val hc = HeaderCarrier()
 
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(successModel)))
+  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(lastTaxCalcSuccess)))
   val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestEstimatedTaxLiabilityConnector extends EstimatedTaxLiabilityConnector(mockHttpGet)
+  object TestLastTaxCalculationConnector extends LastTaxCalculationConnector(mockHttpGet)
 
   "EstimatedTaxLiabilityConnector.getEstimatedTaxLiability" should {
 
     "return a EstimatedTaxLiability model when successful JSON is received" in {
-      setupMockHttpGet(TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiabilityUrl(testMtditid))(successResponse)
-      val result = TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiability(testMtditid)
-      await(result) shouldBe successModel
+      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testMtditid))(successResponse)
+      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testMtditid)
+      await(result) shouldBe lastTaxCalcSuccess
     }
 
     "return EstimatedTaxLiabilityError model in case of bad/malformed JSON response" in {
-      setupMockHttpGet(TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiabilityUrl(testMtditid))(successResponseBadJson)
-      val result = TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiability(testMtditid)
-      await(result) shouldBe EstimatedTaxLiabilityError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Estimated Tax Liability Response.")
+      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testMtditid))(successResponseBadJson)
+      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testMtditid)
+      await(result) shouldBe LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Estimated Tax Liability Response.")
     }
 
     "return EstimatedTaxLiabilityError model in case of failure" in {
-      setupMockHttpGet(TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiabilityUrl(testMtditid))(badResponse)
-      val result = TestEstimatedTaxLiabilityConnector.getEstimatedTaxLiability(testMtditid)
-      await(result) shouldBe EstimatedTaxLiabilityError(Status.BAD_REQUEST, "Error Message")
+      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testMtditid))(badResponse)
+      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testMtditid)
+      await(result) shouldBe LastTaxCalculationError(Status.BAD_REQUEST, "Error Message")
     }
   }
 }

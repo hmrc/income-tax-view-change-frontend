@@ -18,7 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.EstimatedTaxLiabilityConnector
+import connectors.LastTaxCalculationConnector
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -27,16 +27,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class EstimatedTaxLiabilityService @Inject()(val estimatedTaxLiabilityConnector: EstimatedTaxLiabilityConnector) {
+class EstimatedTaxLiabilityService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector) {
 
-  def getEstimatedTaxLiability(mtditid: String)(implicit headerCarrier: HeaderCarrier): Future[EstimatedTaxLiabilityResponseModel] = {
-    Logger.debug("[EstimatedTaxLiabilityService][getEstimateTaxLiability] - Requesting Estimate Liability from Backend via Connector")
-    estimatedTaxLiabilityConnector.getEstimatedTaxLiability(mtditid).map {
-      case success: EstimatedTaxLiability =>
-        Logger.debug(s"[EstimatedTaxLiabilityService][getEstimateTaxLiability] - Retrieved Estimated Tax Liability: \n\n$success")
+  def getLastEstimatedTaxCalculation(nino: String)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
+    Logger.debug("[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")
+    lastTaxCalculationConnector.getLastEstimatedTax(nino).map {
+      case success: LastTaxCalculation =>
+        Logger.debug(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n\n$success")
         success
-      case error: EstimatedTaxLiabilityError =>
-        Logger.debug(s"[EstimatedTaxLiabilityService][getEstimateTaxLiability] - Error Response Status: ${error.status}, Message: ${error.message}")
+      case error: LastTaxCalculationError =>
+        Logger.warn(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
         error
     }
   }

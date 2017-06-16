@@ -16,8 +16,8 @@
 
 package mocks
 
-import connectors.{BusinessDetailsConnector, EstimatedTaxLiabilityConnector, ObligationDataConnector}
-import models.{ObligationsResponseModel, BusinessListResponseModel, ConnectorResponseModel, EstimatedTaxLiabilityResponseModel}
+import connectors.{BusinessDetailsConnector, LastTaxCalculationConnector, ObligationDataConnector}
+import models.{BusinessListResponseModel, LastTaxCalculationResponseModel, ObligationsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -28,17 +28,17 @@ import scala.concurrent.Future
 
 sealed trait MockConnectors extends UnitSpec with MockitoSugar with BeforeAndAfterEach
 
-trait MockEstimatedTaxLiabilityConnector extends MockConnectors {
+trait MockLastTaxCalculationConnector extends MockConnectors {
 
-    val mockEstimatedTaxLiabilityConnector: EstimatedTaxLiabilityConnector = mock[EstimatedTaxLiabilityConnector]
+    val mockLastTaxCalculationConnector: LastTaxCalculationConnector = mock[LastTaxCalculationConnector]
 
     override def beforeEach(): Unit = {
       super.beforeEach()
-      reset(mockEstimatedTaxLiabilityConnector)
+      reset(mockLastTaxCalculationConnector)
     }
 
-    def setupGetEstimatedTaxLiabilityResult(mtditid: String)(response: EstimatedTaxLiabilityResponseModel): Unit =
-      when(mockEstimatedTaxLiabilityConnector.getEstimatedTaxLiability(ArgumentMatchers.eq(mtditid))(ArgumentMatchers.any()))
+    def setupLastTaxCalculationResponse(nino: String)(response: LastTaxCalculationResponseModel): Unit =
+      when(mockLastTaxCalculationConnector.getLastEstimatedTax(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
         .thenReturn(Future.successful(response))
 }
 
