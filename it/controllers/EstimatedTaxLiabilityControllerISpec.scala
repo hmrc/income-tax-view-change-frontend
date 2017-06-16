@@ -28,9 +28,9 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
 
       "return the correct page with a valid total" in {
         AuthStub.stubAuthorised()
-        IncomeTaxViewChangeStub.stubGetFinancialData(testMtditid, 1800.00, 1000.00, 300.00, 500.00)
+        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, "01234567", "2017-07-06 12:34:56.789", 1800.00)
         val res = IncomeTaxViewChangeFrontend.getEstimatedTaxLiability
-        IncomeTaxViewChangeStub.verifyGetFinancialData(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino)
 
         res.status shouldBe Status.OK
 

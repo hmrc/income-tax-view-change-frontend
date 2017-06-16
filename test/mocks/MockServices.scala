@@ -16,7 +16,7 @@
 
 package mocks
 
-import models.{EstimatedTaxLiabilityResponseModel, ObligationsModel, ObligationsResponseModel}
+import models.{LastTaxCalculationResponseModel, ObligationsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -37,8 +37,8 @@ trait MockEstimatedLiabilityService extends MockServices {
     reset(mockEstimatedLiabilityService)
   }
 
-  def setupMockEstimatedTaxLiabilityResult(mtditid: String)(response: EstimatedTaxLiabilityResponseModel): Unit =
-    when(mockEstimatedLiabilityService.getEstimatedTaxLiability(ArgumentMatchers.eq(mtditid))(ArgumentMatchers.any()))
+  def setupMockLastTaxCalculationResult(mtditid: String)(response: LastTaxCalculationResponseModel): Unit =
+    when(mockEstimatedLiabilityService.getLastEstimatedTaxCalculation(ArgumentMatchers.eq(mtditid))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 }
 

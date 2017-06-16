@@ -23,12 +23,8 @@ import controllers.predicates.AuthenticationPredicate
 import models.{ObligationsErrorModel, ObligationsModel}
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import services.ObligationsService
-import uk.gov.hmrc.play.http.InternalServerException
-
-import scala.concurrent.Future
 
 @Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,
