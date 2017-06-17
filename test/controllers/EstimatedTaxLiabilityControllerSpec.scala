@@ -20,7 +20,6 @@ import assets.Messages.{EstimatedTaxLiability => messages}
 import assets.TestConstants._
 import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
-import mocks.MockEstimatedLiabilityService
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
@@ -28,6 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
 import assets.TestConstants.Estimates._
+import mocks.services.MockEstimatedLiabilityService
 
 class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthenticationPredicate with MockEstimatedLiabilityService {
 

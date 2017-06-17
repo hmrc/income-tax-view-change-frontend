@@ -19,7 +19,7 @@ package services
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Obligations._
 import assets.TestConstants._
-import mocks.{MockBusinessDetailsConnector, MockBusinessObligationDataConnector}
+import mocks.connectors.{MockBusinessDetailsConnector, MockBusinessObligationDataConnector}
 import utils.TestSupport
 
 class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector with MockBusinessDetailsConnector {

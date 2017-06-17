@@ -18,7 +18,7 @@ package services
 
 import assets.TestConstants.Estimates._
 import assets.TestConstants._
-import mocks.MockLastTaxCalculationConnector
+import mocks.connectors.MockLastTaxCalculationConnector
 import utils.TestSupport
 
 class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockLastTaxCalculationConnector {
