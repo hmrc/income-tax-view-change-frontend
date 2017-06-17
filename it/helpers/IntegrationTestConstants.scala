@@ -103,31 +103,32 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
            |}
          """.stripMargin)
 
-    def fakeObligationsModel(m: ObligationModel): ObligationModel = new ObligationModel(m.start,m.end,m.due,m.met) {
-      override def currentTime() = "2017-10-31"
-    }
+    val multipleObligationsDataSuccessModel = ObligationsModel(List(
+      ObligationModel(
+        start = "2017-04-06",
+        end = "2017-07-05",
+        due = LocalDate.now(),
+        met = true
+      ), ObligationModel(
+        start = "2017-07-06",
+        end = "2017-10-05",
+        due = LocalDate.now().plusDays(1),
+        met = false
+      ), ObligationModel(
+        start = "2017-10-06",
+        end = "2018-01-05",
+        due = LocalDate.now().minusDays(1),
+        met = false
+      ))
+    )
 
-    val receivedObligation = fakeObligationsModel(ObligationModel(
-      start = "2017-04-01",
-      end = "2017-6-30",
-      due = "2017-7-31",
-      met = true
+    val singleObligationsDataSuccessModel = ObligationsModel(List(
+      ObligationModel(
+        start = "2017-04-06",
+        end = "2017-07-05",
+        due = LocalDate.now(),
+        met = true
+      )
     ))
-
-    val overdueObligation = fakeObligationsModel(ObligationModel(
-      start = "2017-7-1",
-      end = "2017-9-30",
-      due = "2017-10-30",
-      met = false
-    ))
-
-    val openObligation = fakeObligationsModel(ObligationModel(
-      start = "2017-7-1",
-      end = "2017-9-30",
-      due = "2017-10-31",
-      met = false
-    ))
-
-    val obligationsDataSuccessModel = ObligationsModel(List(receivedObligation, overdueObligation, openObligation))
   }
 }

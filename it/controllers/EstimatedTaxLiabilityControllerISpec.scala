@@ -18,35 +18,59 @@ package controllers
 import helpers.ComponentSpecBase
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
-import org.jsoup.Jsoup
-import play.api.http.Status
+import play.api.http.Status._
 
 class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
 
   "Calling the EstimatedTaxLiabilityController" when {
+
     "authorised with an active enrolment" should {
 
       "return the correct page with a valid total" in {
+
+        Given("I wiremock stub an authorised user response")
         AuthStub.stubAuthorised()
+
+        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, "01234567", "2017-07-06 12:34:56.789", 1800.00)
+
+        When("I call GET /check-your-income-tax-and-expenses/estimated-tax-liability")
         val res = IncomeTaxViewChangeFrontend.getEstimatedTaxLiability
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino)
 
-        res.status shouldBe Status.OK
+        Then("a successful response is returned with the correct estimate")
 
-        val document = Jsoup.parse(res.body)
-        document.title shouldBe "Your estimated tax amount"
-        document.getElementById("estimate-amount").html shouldBe "£1,800.00"
+        res should have(
+
+          //Check for a Status OK response (200)
+          httpStatus(OK),
+
+          //Check the Page Title
+          pageTitle("Your estimated tax amount"),
+
+          //Check the estimated tax amount is correct
+          elementTextByID("estimate-amount")("£1,800.00")
+        )
       }
     }
     "unauthorised" should {
+
       "redirect to sign in" in {
+
+        Given("I wiremock stub an unatuhorised user response")
         AuthStub.stubUnauthorised()
+
+        When("I call GET /check-your-income-tax-and-expenses/estimated-tax-liability")
         val res = IncomeTaxViewChangeFrontend.getEstimatedTaxLiability
 
-        res.status shouldBe Status.SEE_OTHER
-        res.header("Location").getOrElse("") should include ("/gg/sign-in?continue")
-       }
+        res should have(
+
+          //Check for a Redirect response SEE_OTHER (303)
+          httpStatus(SEE_OTHER),
+
+          //Check redirect location of response
+          redirectURI("http://localhost:9025/gg/sign-in?continue=http%3A%2F%2Flocalhost%3A9081%2Fcheck-your-income-tax-and-expenses%2Fobligations&origin=income-tax-view-change-frontend")
+        )
+      }
     }
   }
 }

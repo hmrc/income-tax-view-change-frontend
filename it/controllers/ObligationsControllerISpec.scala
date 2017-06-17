@@ -16,14 +16,12 @@
 package controllers
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 import helpers.ComponentSpecBase
+import helpers.IntegrationTestConstants.GetObligationsData._
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks.{AuthStub, SelfAssessmentStub}
-import models.{ObligationModel, ObligationsModel}
-import org.jsoup.Jsoup
-import play.api.http.Status
+import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
 class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
@@ -31,77 +29,102 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
   "Calling the ObligationsController" when {
 
     "authorised with an active enrolment" which {
+
       "has a single obligation" should {
+
         "display a single obligation with the correct dates and status" in {
 
-          val testObligation = ObligationModel(
-            start = "2017-04-06",
-            end = "2017-07-05",
-            due = LocalDate.now(),
-            met = true
-          )
-
+          Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
-          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, ObligationsModel(List(testObligation)))
+
+          And("I wiremock stub a single business obligation response")
+          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
+
+          When("I call GET /check-your-income-tax-and-expenses/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
-          SelfAssessmentStub.verifyGetObligations(testNino, testSelfEmploymentId)
 
-          //Check status
-          res.status shouldBe Status.OK
+          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          res should have(
 
-          val document = Jsoup.parse(res.body)
-          //Check obligation details
-          document.title() shouldBe "Your Income Tax reports"
-          document.getElementById("bi-ob-1-start").text shouldBe "6 April 2017"
-          document.getElementById("bi-ob-1-end").text shouldBe "5 July 2017"
-          document.getElementsByAttributeValue("class", "obligation").size() shouldBe 1
-          document.getElementById("bi-ob-1-status").text shouldBe "Received"
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your Income Tax reports"),
+
+            //Check one obligation section is returned
+            nElementsWithClass("obligation")(1),
+
+            //Check the 1st obligation data
+            elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "bi-ob-1-status")("Received")
+          )
         }
       }
 
       "has multiple obligations" should {
+
         "display the correct amount of obligations with the correct statuses" in {
-          val testObligationModelList = List(ObligationModel(
-            start = "2017-04-06",
-            end = "2017-07-05",
-            due = LocalDate.now(),
-            met = true
-          ), ObligationModel(
-            start = "2017-07-06",
-            end = "2017-10-05",
-            due = LocalDate.now().plusDays(1),
-            met = false
-          ), ObligationModel(
-            start = "2017-10-06",
-            end = "2018-01-05",
-            due = LocalDate.now().minusDays(1),
-            met = false
-          ))
+
+          Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
-          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, ObligationsModel(testObligationModelList))
+
+          And("I wiremock stub multiple business obligations response")
+          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, multipleObligationsDataSuccessModel)
+
+          When("I call GET /check-your-income-tax-and-expenses/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
-          SelfAssessmentStub.verifyGetObligations(testNino, testSelfEmploymentId)
 
-          //Check Status
-          res.status shouldBe Status.OK
+          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          res should have(
 
-          val document = Jsoup.parse(res.body)
-          //Check obligation details
-          document.title() shouldBe "Your Income Tax reports"
-          document.getElementsByAttributeValue("class", "obligation").size() shouldBe 3
-          //Quarter 1
-          document.getElementById("bi-ob-1-start").text shouldBe "6 April 2017"
-          document.getElementById("bi-ob-1-end").text shouldBe "5 July 2017"
-          document.getElementById("bi-ob-1-status").text shouldBe "Received"
-          //Quarter 2
-          document.getElementById("bi-ob-2-start").text shouldBe "6 July 2017"
-          document.getElementById("bi-ob-2-end").text shouldBe "5 October 2017"
-          document.getElementById("bi-ob-2-status").text shouldBe "Due by " + LocalDate.now().plusDays(1).toLongDate
-          //Quarter 3
-          document.getElementById("bi-ob-3-start").text shouldBe "6 October 2017"
-          document.getElementById("bi-ob-3-end").text shouldBe "5 January 2018"
-          document.getElementById("bi-ob-3-status").text shouldBe "Overdue"
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your Income Tax reports"),
+
+            //Check three Obligation sections are returned
+            nElementsWithClass("obligation")(3),
+
+            //Check first obligation
+            elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "bi-ob-1-status")("Received"),
+
+            //Check second obligation
+            elementTextByID(id = "bi-ob-2-start")("6 July 2017"),
+            elementTextByID(id = "bi-ob-2-end")("5 October 2017"),
+            elementTextByID(id = "bi-ob-2-status")("Due by " + LocalDate.now().plusDays(1).toLongDate),
+
+            //Check third obligation
+            elementTextByID(id = "bi-ob-3-start")("6 October 2017"),
+            elementTextByID(id = "bi-ob-3-end")("5 January 2018"),
+            elementTextByID(id = "bi-ob-3-status")("Overdue")
+          )
         }
+      }
+    }
+
+    "unauthorised" should {
+
+      "redirect to sign in" in {
+
+        Given("I wiremock stub an unatuhorised user response")
+        AuthStub.stubUnauthorised()
+
+        When("I call GET /check-your-income-tax-and-expenses/obligations")
+        val res = IncomeTaxViewChangeFrontend.getObligations
+
+        res should have(
+
+          //Check for a Redirect response SEE_OTHER (303)
+          httpStatus(SEE_OTHER),
+
+          //Check redirect location of response
+          redirectURI("http://localhost:9025/gg/sign-in?continue=http%3A%2F%2Flocalhost%3A9081%2Fcheck-your-income-tax-and-expenses%2Fobligations&origin=income-tax-view-change-frontend")
+        )
       }
     }
   }
