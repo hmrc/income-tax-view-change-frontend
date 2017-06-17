@@ -16,7 +16,9 @@
 
 package helpers
 
-import models.{ErrorResponse, ObligationsModel}
+import java.time.LocalDate
+
+import models.{ErrorResponse, ObligationModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter
@@ -100,5 +102,32 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
            |  "reason": $reason
            |}
          """.stripMargin)
+
+    def fakeObligationsModel(m: ObligationModel): ObligationModel = new ObligationModel(m.start,m.end,m.due,m.met) {
+      override def currentTime() = "2017-10-31"
+    }
+
+    val receivedObligation = fakeObligationsModel(ObligationModel(
+      start = "2017-04-01",
+      end = "2017-6-30",
+      due = "2017-7-31",
+      met = true
+    ))
+
+    val overdueObligation = fakeObligationsModel(ObligationModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-30",
+      met = false
+    ))
+
+    val openObligation = fakeObligationsModel(ObligationModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-31",
+      met = false
+    ))
+
+    val obligationsDataSuccessModel = ObligationsModel(List(receivedObligation, overdueObligation, openObligation))
   }
 }

@@ -35,10 +35,11 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
         "display a single obligation with the correct dates and status" in {
 
           val testObligation = ObligationModel(
-            start = "2017-04-06".toLocalDate,
-            end = "2017-07-05".toLocalDate,
+            start = "2017-04-06",
+            end = "2017-07-05",
             due = LocalDate.now(),
-            met = true)
+            met = true
+          )
 
           AuthStub.stubAuthorised()
           SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, ObligationsModel(List(testObligation)))
@@ -61,13 +62,13 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
       "has multiple obligations" should {
         "display the correct amount of obligations with the correct statuses" in {
           val testObligationModelList = List(ObligationModel(
-            start = "2017-04-06".toLocalDate,
-            end = "2017-07-05".toLocalDate,
+            start = "2017-04-06",
+            end = "2017-07-05",
             due = LocalDate.now(),
             met = true
           ), ObligationModel(
-            start = "2017-07-06".toLocalDate,
-            end = "2017-10-05".toLocalDate,
+            start = "2017-07-06",
+            end = "2017-10-05",
             due = LocalDate.now().plusDays(1),
             met = false
           ), ObligationModel(
