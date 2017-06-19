@@ -30,54 +30,42 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
     "for the 1st Business" should {
 
       s"have the id set as $testSelfEmploymentId" in {
-        businesses.business.head.id shouldBe testSelfEmploymentId
+        businessesSuccessModel.business.head.id shouldBe testSelfEmploymentId
       }
     }
 
     "for the 2nd Business" should {
 
       "have the id set as 5678" in {
-        businesses.business.last.id shouldBe "5678"
+        businessesSuccessModel.business.last.id shouldBe "5678"
       }
     }
 
     "be formatted to JSON correctly" in {
-//      Json.toJson(businesses) shouldBe jsonString
+      Json.toJson[BusinessListModel](businessesSuccessModel) shouldBe businessSuccessJson
     }
 
-    "be able to parse a JSON to string into the Model" in {
-      Json.parse(jsonString).as[BusinessListModel] shouldBe businesses
+    "be able to parse a JSON input as a string into the Model" in {
+      Json.parse(businessSuccessString).as[BusinessListModel] shouldBe businessesSuccessModel
     }
   }
 
   "The BusinessListError" should {
 
-    val code = Status.INTERNAL_SERVER_ERROR
-    val message = "InternalServerError"
-    val jsonString =
-      s"""
-        {
-          "code": $code,
-          "message": "$message"
-        }
-        """.stripMargin.split("\\s+").mkString
-
-    val errorModel = BusinessListError(code, message)
-
     "have the correct status code in the model" in {
-      errorModel.code shouldBe 500
+      businessListErrorModel.code shouldBe testErrorStatus
     }
 
     "have the correct Error Message in the model" in {
-      errorModel.message shouldBe message
+      businessListErrorModel.message shouldBe testErrorMessage
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson(errorModel).toString() shouldBe jsonString
+      Json.toJson[BusinessListError](businessListErrorModel) shouldBe businessListErrorJson
     }
 
     "be able to parse a JSON to string into the Model" in {
-      Json.parse(jsonString).as[BusinessListError] shouldBe errorModel
+      Json.parse(businessListErrorString).as[BusinessListError] shouldBe businessListErrorModel
     }
   }
 }

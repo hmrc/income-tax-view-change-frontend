@@ -16,20 +16,18 @@
 
 package connectors
 
-import assets.TestConstants.Estimates.lastTaxCalcSuccess
+import assets.TestConstants.Estimates.lastTaxCalcSuccessModel
 import assets.TestConstants._
 import mocks.MockHttp
 import models.LastTaxCalculationError
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.HttpResponse
 import utils.TestSupport
 
 class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
 
-  implicit val hc = HeaderCarrier()
-
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(lastTaxCalcSuccess)))
+  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(lastTaxCalcSuccessModel)))
   val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
@@ -40,7 +38,7 @@ class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
     "return a EstimatedTaxLiability model when successful JSON is received" in {
       setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testMtditid))(successResponse)
       val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testMtditid)
-      await(result) shouldBe lastTaxCalcSuccess
+      await(result) shouldBe lastTaxCalcSuccessModel
     }
 
     "return EstimatedTaxLiabilityError model in case of bad/malformed JSON response" in {
