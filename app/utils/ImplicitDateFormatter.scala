@@ -23,9 +23,9 @@ import java.util.Locale._
 
 trait ImplicitDateFormatter {
 
-  implicit def toLocalDate(s: String): LocalDate = localData(s).toLocalDate
+  implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
 
-  implicit class localData(s: String) {
+  implicit class localDate(s: String) {
     def toLocalDate: LocalDate = LocalDate.parse(s, DateTimeFormatter.ofPattern("uuuu-M-d"))
   }
 
