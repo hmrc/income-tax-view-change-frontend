@@ -37,8 +37,12 @@ trait MockLastTaxCalculationConnector extends MockConnectors {
       reset(mockLastTaxCalculationConnector)
     }
 
-    def setupLastTaxCalculationResponse(nino: String)(response: LastTaxCalculationResponseModel): Unit =
-      when(mockLastTaxCalculationConnector.getLastEstimatedTax(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+    def setupLastTaxCalculationResponse(nino: String, year: String, calcType: String)(response: LastTaxCalculationResponseModel): Unit =
+      when(mockLastTaxCalculationConnector
+        .getLastEstimatedTax(
+          ArgumentMatchers.eq(nino),
+          ArgumentMatchers.eq(year),
+          ArgumentMatchers.eq(calcType))(ArgumentMatchers.any()))
         .thenReturn(Future.successful(response))
 }
 

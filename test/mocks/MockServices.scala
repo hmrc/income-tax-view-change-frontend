@@ -23,6 +23,9 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import services.{EstimatedTaxLiabilityService, ObligationsService}
 import uk.gov.hmrc.play.test.UnitSpec
+import assets.TestConstants.Estimates._
+import assets.TestConstants.Estimates
+import assets.TestConstants._
 
 import scala.concurrent.Future
 
@@ -37,8 +40,13 @@ trait MockEstimatedLiabilityService extends MockServices {
     reset(mockEstimatedLiabilityService)
   }
 
-  def setupMockLastTaxCalculationResult(mtditid: String)(response: LastTaxCalculationResponseModel): Unit =
-    when(mockEstimatedLiabilityService.getLastEstimatedTaxCalculation(ArgumentMatchers.eq(mtditid))(ArgumentMatchers.any()))
+  def setupMockLastTaxCalculationResult(nino: String, year: String, calcType: String)(response: LastTaxCalculationResponseModel): Unit =
+    when(mockEstimatedLiabilityService
+      .getLastEstimatedTaxCalculation(
+        ArgumentMatchers.eq(nino),
+        ArgumentMatchers.eq(year),
+        ArgumentMatchers.eq(calcType)
+      )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 }
 

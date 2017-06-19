@@ -99,6 +99,9 @@ object TestConstants extends ImplicitDateFormatter {
 
   object Estimates {
 
+    val testYear = "2018"
+    val testCalcType = "it"
+
     val lastTaxCalcSuccess = LastTaxCalculation(
       calcId = "01234567",
       calcTimestamp = "2017-07-06 12:34:56.789",

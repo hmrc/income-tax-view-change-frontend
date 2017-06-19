@@ -29,9 +29,13 @@ import scala.concurrent.Future
 @Singleton
 class EstimatedTaxLiabilityService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector) {
 
-  def getLastEstimatedTaxCalculation(nino: String)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
+  def getLastEstimatedTaxCalculation(nino: String,
+                                     year: String,
+                                     calcType: String)
+                                    (implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
+
     Logger.debug("[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")
-    lastTaxCalculationConnector.getLastEstimatedTax(nino).map {
+    lastTaxCalculationConnector.getLastEstimatedTax(nino, year, calcType).map {
       case success: LastTaxCalculation =>
         Logger.debug(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n\n$success")
         success
