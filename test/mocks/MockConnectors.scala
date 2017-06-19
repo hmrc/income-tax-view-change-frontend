@@ -16,7 +16,7 @@
 
 package mocks
 
-import connectors.{BusinessDetailsConnector, LastTaxCalculationConnector, ObligationDataConnector}
+import connectors.{PropertyDataConnector, BusinessDetailsConnector, LastTaxCalculationConnector, ObligationDataConnector}
 import models.{BusinessListResponseModel, LastTaxCalculationResponseModel, ObligationsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -53,6 +53,22 @@ trait MockObligationDataConnector extends MockConnectors {
 
   def setupMockObligation(nino: String, selfEmploymentId: String)(response: ObligationsResponseModel): Unit = {
     when(mockObligationDataConnector.getObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
+  }
+
+}
+
+trait MockPropertyDataConnector extends MockConnectors {
+
+  val mockPropertyDataConnector: PropertyDataConnector = mock[PropertyDataConnector]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockPropertyDataConnector)
+  }
+
+  def setupMockPropertyObligation(nino: String)(response: ObligationsResponseModel): Unit = {
+    when(mockPropertyDataConnector.getPropertyData(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 

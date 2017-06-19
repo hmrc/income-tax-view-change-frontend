@@ -20,7 +20,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import assets.TestConstants
-import mocks.{MockObligationDataConnector, MockBusinessDetailsConnector}
+import mocks.{MockObligationDataConnector, MockBusinessDetailsConnector, MockPropertyDataConnector}
 import models._
 import play.api.i18n.Messages
 import play.api.libs.json.{JsResultException, Json}
@@ -30,11 +30,11 @@ import utils.TestSupport
 import assets.TestConstants._
 import assets.TestConstants.BusinessDetails._
 
-class ObligationsServiceSpec extends TestSupport with MockObligationDataConnector with MockBusinessDetailsConnector {
+class ObligationsServiceSpec extends TestSupport with MockObligationDataConnector with MockBusinessDetailsConnector with MockPropertyDataConnector {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  object TestObligationsService extends ObligationsService(mockObligationDataConnector, mockBusinessDetailsConnector)
+  object TestObligationsService extends ObligationsService(mockObligationDataConnector, mockBusinessDetailsConnector, mockPropertyDataConnector)
 
   "The ObligationsService.getObligations method" when {
 
@@ -86,4 +86,27 @@ class ObligationsServiceSpec extends TestSupport with MockObligationDataConnecto
     }
   }
 
+  "The ObligationsService.getPropertyObligations method" when {
+
+    "a single list of obligations is returned from the connector" should {
+
+      "return a valid list of obligations" in {
+
+        setupMockPropertyObligation(testNino)(TestConstants.Obligations.obligationsDataResponse)
+
+        val successfulObligationsResponse =
+          ObligationsModel(
+            List(
+              ObligationModel(
+                start = localDate("2017-04-06"),
+                end = localDate("2017-07-05"),
+                due = localDate("2017-08-05"),
+                met = true
+              )
+            )
+          )
+        await(TestObligationsService.getPropertyObligations(testNino)) shouldBe successfulObligationsResponse
+      }
+    }
+  }
 }
