@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package mocks
+package mocks.services
 
-import models.{LastTaxCalculationResponseModel, ObligationsResponseModel}
+import models.LastTaxCalculationResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import services.{EstimatedTaxLiabilityService, ObligationsService}
+import services.EstimatedTaxLiabilityService
 import uk.gov.hmrc.play.test.UnitSpec
 import assets.TestConstants.Estimates._
 import assets.TestConstants.Estimates
@@ -29,9 +29,8 @@ import assets.TestConstants._
 
 import scala.concurrent.Future
 
-sealed trait MockServices extends UnitSpec with MockitoSugar with BeforeAndAfterEach
 
-trait MockEstimatedLiabilityService extends MockServices {
+trait MockEstimatedLiabilityService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   val mockEstimatedLiabilityService: EstimatedTaxLiabilityService = mock[EstimatedTaxLiabilityService]
 
@@ -48,20 +47,4 @@ trait MockEstimatedLiabilityService extends MockServices {
         ArgumentMatchers.eq(calcType)
       )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
-}
-
-
-trait MockObligationsService extends MockServices {
-
-  val mockObligationsService: ObligationsService = mock[ObligationsService]
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockObligationsService)
-  }
-
-  def setupMockObligationsResult(nino: String)(response: ObligationsResponseModel): Unit = {
-    when(mockObligationsService.getObligations(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
-  }
 }

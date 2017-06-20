@@ -16,15 +16,14 @@
 
 package services
 
-import assets.TestConstants.{Estimates, _}
+
 import assets.TestConstants.Estimates._
-import mocks.MockLastTaxCalculationConnector
-import uk.gov.hmrc.play.http.HeaderCarrier
+import assets.TestConstants.Estimates
+import assets.TestConstants._
+import mocks.connectors.MockLastTaxCalculationConnector
 import utils.TestSupport
 
 class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockLastTaxCalculationConnector {
-
-  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   object TestEstimatedTaxLiabilityService extends EstimatedTaxLiabilityService(mockLastTaxCalculationConnector)
 
@@ -33,7 +32,7 @@ class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockLastTaxCalcu
     "a successful response is returned from the EstimatedTaxLiabilityConnector" should {
 
       "return a correctly formatted EstimateTaxLiability model" in {
-        setupLastTaxCalculationResponse(testNino, testYear, testCalcType)(Estimates.lastTaxCalcSuccess)
+        setupLastTaxCalculationResponse(testNino, testYear, testCalcType)(lastTaxCalcSuccess)
         await(TestEstimatedTaxLiabilityService.getLastEstimatedTaxCalculation(testNino, testYear, testCalcType)) shouldBe Estimates.lastTaxCalcSuccess
       }
     }

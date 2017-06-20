@@ -18,20 +18,17 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{BusinessDetailsConnector, ObligationDataConnector}
+import connectors.{BusinessDetailsConnector, BusinessObligationDataConnector}
 import models._
 import play.api.Logger
-import play.api.libs.json.JsResultException
-import play.twirl.api.Html
-import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
-import utils.ImplicitLongDate._
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ObligationsService @Inject()(val obligationDataConnector: ObligationDataConnector,
-                                  val businessDetailsConnector: BusinessDetailsConnector
+class ObligationsService @Inject()(val obligationDataConnector: BusinessObligationDataConnector,
+                                   val businessDetailsConnector: BusinessDetailsConnector
                                   ) {
 
   def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {

@@ -16,18 +16,18 @@
 
 package connectors
 
+
 import assets.TestConstants.Estimates._
+
 import assets.TestConstants._
 import mocks.MockHttp
 import models.LastTaxCalculationError
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.HttpResponse
 import utils.TestSupport
 
 class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
-
-  implicit val hc = HeaderCarrier()
 
   val successResponse = HttpResponse(Status.OK, Some(Json.toJson(lastTaxCalcSuccess)))
   val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
@@ -41,6 +41,7 @@ class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
       setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear, testCalcType))(successResponse)
       val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear, testCalcType)
       await(result) shouldBe lastTaxCalcSuccess
+
     }
 
     "return EstimatedTaxLiabilityError model in case of bad/malformed JSON response" in {

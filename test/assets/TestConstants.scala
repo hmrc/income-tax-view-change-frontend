@@ -18,6 +18,7 @@ package assets
 
 import models._
 import play.api.http.Status
+import play.api.libs.json.Json
 import utils.ImplicitDateFormatter
 
 object TestConstants extends ImplicitDateFormatter {
@@ -25,51 +26,17 @@ object TestConstants extends ImplicitDateFormatter {
   val testMtditid = "XAIT0000123456"
   val testNino = "AB123456C"
   val testSelfEmploymentId = "XA00001234"
+  val testErrorStatus = Status.INTERNAL_SERVER_ERROR
+  val testErrorMessage = "Dummy Error Message"
 
   object BusinessDetails {
 
-    val jsonString =
-      s"""
-        {
-          "business":[
-            {
-              "id":"$testSelfEmploymentId",
-              "accountingPeriod":{"start":"2017-01-01","end":"2017-12-31"},
-              "accountingType":"CASH",
-              "commencementDate":"2017-01-01",
-              "cessationDate":"2017-12-31",
-              "tradingName":"business",
-              "businessDescription":"a business",
-              "businessAddressLineOne":"64 Zoo Lane",
-              "businessAddressLineTwo":"Happy Place",
-              "businessAddressLineThree":"Magical Land",
-              "businessAddressLineFour":"England",
-              "businessPostcode":"ZL1 064"
-            },
-            {
-              "id":"5678",
-              "accountingPeriod":{"start":"2017-01-01","end":"2017-12-31"},
-              "accountingType":"CASH",
-              "commencementDate":"2017-01-01",
-              "cessationDate":"2017-12-31",
-              "tradingName":"otherBusiness",
-              "businessDescription":"some business",
-              "businessAddressLineOne":"65 Zoo Lane",
-              "businessAddressLineTwo":"Happy Place",
-              "businessAddressLineThree":"Magical Land",
-              "businessAddressLineFour":"England",
-              "businessPostcode":"ZL1 064"
-            }
-          ]
-        }
-      """.stripMargin.split("\\s{2,}").mkString
-
     val business1 = BusinessModel(
       id = testSelfEmploymentId,
-      accountingPeriod = AccountingPeriod(start = localDate("2017-1-1"), end = localDate("2017-12-31")),
+      accountingPeriod = AccountingPeriod(start = "2017-1-1", end = "2017-12-31"),
       accountingType = "CASH",
-      commencementDate = Some(localDate("2017-1-1")),
-      cessationDate = Some(localDate("2017-12-31")),
+      commencementDate = Some("2017-1-1"),
+      cessationDate = Some("2017-12-31"),
       tradingName = "business",
       businessDescription = Some("a business"),
       businessAddressLineOne = Some("64 Zoo Lane"),
@@ -80,10 +47,10 @@ object TestConstants extends ImplicitDateFormatter {
     )
     val business2 = BusinessModel(
       id = "5678",
-      accountingPeriod = AccountingPeriod(start = localDate("2017-1-1"), end = localDate("2017-12-31")),
+      accountingPeriod = AccountingPeriod(start = "2017-1-1", end = "2017-12-31"),
       accountingType = "CASH",
-      commencementDate = Some(localDate("2017-1-1")),
-      cessationDate = Some(localDate("2017-12-31")),
+      commencementDate = Some("2017-1-1"),
+      cessationDate = Some("2017-12-31"),
       tradingName = "otherBusiness",
       businessDescription = Some("some business"),
       businessAddressLineOne = Some("65 Zoo Lane"),
@@ -93,8 +60,60 @@ object TestConstants extends ImplicitDateFormatter {
       businessPostcode = Some("ZL1 064")
     )
 
-    val businesses = BusinessListModel(List(business1, business2))
+    val businessesSuccessModel = BusinessListModel(List(business1, business2))
+    val businessSuccessString =
+      s"""
+          {
+             "business":[
+                {
+                   "id":"$testSelfEmploymentId",
+                   "accountingPeriod":{
+                      "start":"2017-01-01",
+                      "end":"2017-12-31"
+                   },
+                   "accountingType":"CASH",
+                   "commencementDate":"2017-01-01",
+                   "cessationDate":"2017-12-31",
+                   "tradingName":"business",
+                   "businessDescription":"a business",
+                   "businessAddressLineOne":"64 Zoo Lane",
+                   "businessAddressLineTwo":"Happy Place",
+                   "businessAddressLineThree":"Magical Land",
+                   "businessAddressLineFour":"England",
+                   "businessPostcode":"ZL1 064"
+                },
+                {
+                   "id":"5678",
+                   "accountingPeriod":{
+                      "start":"2017-01-01",
+                      "end":"2017-12-31"
+                   },
+                   "accountingType":"CASH",
+                   "commencementDate":"2017-01-01",
+                   "cessationDate":"2017-12-31",
+                   "tradingName":"otherBusiness",
+                   "businessDescription":"some business",
+                   "businessAddressLineOne":"65 Zoo Lane",
+                   "businessAddressLineTwo":"Happy Place",
+                   "businessAddressLineThree":"Magical Land",
+                   "businessAddressLineFour":"England",
+                   "businessPostcode":"ZL1 064"
+                }
+             ]
+          }
+      """.stripMargin
+    val businessSuccessJson = Json.parse(businessSuccessString)
 
+
+    val businessListErrorModel = BusinessListError(testErrorStatus, testErrorMessage)
+    val businessListErrorString =
+      s"""
+        |{
+        |  "code":$testErrorStatus,
+        |  "message":"$testErrorMessage"
+        |}
+      """.stripMargin
+    val businessListErrorJson = Json.parse(businessListErrorString)
   }
 
   object Estimates {
@@ -108,30 +127,73 @@ object TestConstants extends ImplicitDateFormatter {
       calcAmount = 543.21
     )
 
-    val lastTaxCalcError = LastTaxCalculationError(
-      Status.INTERNAL_SERVER_ERROR,
-      "Error Message"
-    )
+    val lastTaxCalcError = LastTaxCalculationError(testErrorStatus, testErrorMessage)
   }
 
   object Obligations {
 
-    val obligation1: ObligationModel = ObligationModel(
-      start = "2017-04-06",
-      end = "2017-07-05",
-      due = "2017-08-05",
+    def fakeObligationsModel(m: ObligationModel): ObligationModel = new ObligationModel(m.start,m.end,m.due,m.met) {
+      override def currentTime() = "2017-10-31"
+    }
+
+    val receivedObligation = fakeObligationsModel(ObligationModel(
+      start = "2017-04-01",
+      end = "2017-6-30",
+      due = "2017-7-31",
       met = true
-    )
+    ))
 
-    val obligationsDataResponse: ObligationsModel = ObligationsModel(
-      List(obligation1)
-    )
+    val overdueObligation = fakeObligationsModel(ObligationModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-30",
+      met = false
+    ))
 
-    val noObligationsErrorResponse = ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
+    val openObligation = fakeObligationsModel(ObligationModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-31",
+      met = false
+    ))
 
-    val invalidObligationModel = ObligationModel(start = "2017-1-1", end = null, due = "2017-1-1", met = false)
+    val obligationsDataSuccessModel = ObligationsModel(List(receivedObligation, overdueObligation, openObligation))
+    val obligationsDataSuccessString =
+      """
+        |{
+        |  "obligations": [
+        |    {
+        |      "start": "2017-04-01",
+        |      "end": "2017-06-30",
+        |      "due": "2017-07-31",
+        |      "met": true
+        |    },
+        |    {
+        |      "start": "2017-07-01",
+        |      "end": "2017-09-30",
+        |      "due": "2017-10-30",
+        |      "met": false
+        |    },
+        |    {
+        |      "start": "2017-07-01",
+        |      "end": "2017-09-30",
+        |      "due": "2017-10-31",
+        |      "met": false
+        |    }
+        |  ]
+        |}
+      """.stripMargin
+    val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
 
-    val invalidObligationsResponse = ObligationsModel(List())
+    val obligationsDataErrorModel = ObligationsErrorModel(testErrorStatus, testErrorMessage)
+    val obligationsDataErrorString =
+      s"""
+        |{
+        |  "code":$testErrorStatus,
+        |  "message":"$testErrorMessage"
+        |}
+      """.stripMargin
+    val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
 
   }
 }

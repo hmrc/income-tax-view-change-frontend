@@ -21,7 +21,7 @@ import assets.TestConstants.Estimates._
 import assets.TestConstants._
 import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
-import mocks.MockEstimatedLiabilityService
+import mocks.services.MockEstimatedLiabilityService
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
