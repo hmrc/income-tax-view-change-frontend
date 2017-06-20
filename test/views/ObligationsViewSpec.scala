@@ -26,6 +26,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.TestSupport
 import assets.Messages.{Obligations => messages}
+import assets.Messages.{Sidebar => sidebarMessages}
+import assets.TestConstants.{testMtditid, testNino}
 import utils.ImplicitDateFormatter._
 
 class ObligationsViewSpec extends TestSupport{
@@ -33,10 +35,12 @@ class ObligationsViewSpec extends TestSupport{
   lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
 
   val model = ObligationModel(start = "2017-1-1".toLocalDate, end = "2017-3-31".toLocalDate, due = "2017-4-5".toLocalDate, true)
+  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
+
 
   val dummymodel = ObligationsModel(List(model))
 
-  lazy val page = views.html.obligations(dummymodel)(FakeRequest(), applicationMessages, mockAppConfig, user = MtdItUser("BobTheRaccoon", "AA111111A"))
+  lazy val page = views.html.obligations(dummymodel)(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The Obligations view" should {
@@ -59,8 +63,50 @@ class ObligationsViewSpec extends TestSupport{
       "not contain a second row" in {
         document.getElementById("bi-ob-2-status") shouldBe null
       }
-
     }
+    "have sidebar section " which {
+
+      lazy val sidebarSection = document.getElementById("sidebar")
+
+      "has a heading for the MTDITID" in {
+        sidebarSection.getElementById("reporting-ref-heading").text() shouldBe sidebarMessages.mtditidHeading
+      }
+
+      "has the correct value for the MTDITID/reporting ref" in {
+        sidebarSection.getElementById("reporting-ref").text() shouldBe testMtdItUser.mtditid
+      }
+
+      "has a heading for viewing your estimates" in {
+        sidebarSection.getElementById("estimates-heading").text() shouldBe sidebarMessages.estimatesHeading
+      }
+
+      "has a link to view your estimates" which {
+
+        s"has the correct href to '${controllers.routes.EstimatedTaxLiabilityController.getEstimatedTaxLiability().url}'" in {
+          sidebarSection.getElementById("estimates-link").attr("href") shouldBe controllers.routes.EstimatedTaxLiabilityController.getEstimatedTaxLiability().url
+        }
+
+        s"has the correct link wording of '${sidebarMessages.estimatesLink}'" in {
+          sidebarSection.getElementById("estimates-link").text() shouldBe sidebarMessages.estimatesLink
+        }
+
+      }
+
+      "has a link to view self assessment details" which {
+        "has a heading for viewing self assessment details" in {
+          sidebarSection.getElementById("sa-link-heading").text shouldBe sidebarMessages.selfAssessmentHeading
+        }
+
+        s"has the correct href to ''" in {
+          sidebarSection.getElementById("sa-link").attr("href") shouldBe ""
+        }
+
+        "has the correct link wording" in {
+          sidebarSection.getElementById("sa-link").text shouldBe sidebarMessages.selfAssessmentLink
+        }
+      }
+    }
+
 
   }
 

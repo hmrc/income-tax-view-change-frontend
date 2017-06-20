@@ -75,7 +75,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       lazy val sidebarSection = document.getElementById("sidebar")
 
       "has a heading for the MTDITID" in {
-        sidebarSection.getElementById("mtditid-heading").text() shouldBe sidebarMessages.mtditidHeading
+        sidebarSection.getElementById("reporting-ref-heading").text() shouldBe sidebarMessages.mtditidHeading
       }
 
       "has the correct value for the MTDITID/reporting ref" in {
@@ -98,8 +98,20 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       }
 
-    }
+      "has a link to view self assessment details" which {
+        "has a heading for viewing self assessment details" in {
+          sidebarSection.getElementById("sa-link-heading").text shouldBe sidebarMessages.selfAssessmentHeading
+        }
 
+        s"has the correct href to ''" in {
+          sidebarSection.getElementById("sa-link").attr("href") shouldBe ""
+        }
+
+        "has the correct link wording" in {
+          sidebarSection.getElementById("sa-link").text shouldBe sidebarMessages.selfAssessmentLink
+        }
+      }
+    }
   }
 
 }

@@ -16,6 +16,7 @@
 
 package assets
 
+import auth.MtdItUser
 import models._
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -25,6 +26,7 @@ object TestConstants extends ImplicitDateFormatter {
 
   val testMtditid = "XAIT0000123456"
   val testNino = "AB123456C"
+  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
   val testSelfEmploymentId = "XA00001234"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"

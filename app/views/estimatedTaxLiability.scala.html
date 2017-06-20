@@ -23,7 +23,7 @@
     <section id="sidebar" class="section section--blue-top">
 
         <div class="form-group">
-            <h3 id="mtditid-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
+            <h3 id="reporting-ref-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
             <ul>
                 <li id="reporting-ref" class="font-xsmall">@user.mtditid</li>
             </ul>
@@ -34,6 +34,16 @@
             <ul>
                 <li class="font-xsmall">
                     <a id="obligations-link" href="@{controllers.routes.ObligationsController.getObligations().url}">@messages("sidebar.view_obligations.link")</a>
+                </li>
+            </ul>
+        </div>
+        <div class="form-group">
+            <h3 id="sa-link-heading">@messages("sidebar.self_assessment.h3")</h3>
+            <ul>
+                <li class="font-xsmall">
+                    <a id="sa-link" href="">
+                        @messages("sidebar.self_assessment.link")
+                    </a>
                 </li>
             </ul>
         </div>
@@ -55,8 +65,7 @@
 
         <p id="p1">@messages("estimated_tax_liability.estimated-tax.p1")</p>
 
-        <p class="bold-medium" id="in-year-estimate">@lastTaxAmount.toCurrency
-        </p>
+        <p><span class="bold-medium" id="in-year-estimate">@lastTaxAmount.toCurrency</span></p>
 
         <p id="payment">
             @messages(s"estimated_tax_liability.estimated-tax.payment")

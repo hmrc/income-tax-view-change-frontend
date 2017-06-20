@@ -38,3 +38,5 @@ sidebar.view_estimated_liability.h3                             = Estimates
 sidebar.view_estimated_liability.link                           = View your estimated tax amount
 sidebar.view_obligations.h3                                     = Reports
 sidebar.view_obligations.link                                   = View your Income Tax reports
+sidebar.self_assessment.h3                                      = Previous tax years
+sidebar.self_assessment.link                                    = View your self assessment details
