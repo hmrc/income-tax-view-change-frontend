@@ -62,7 +62,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       }
 
       s"has the correct Estimated Tax Amount of '$testAmount'" in {
-        estimateSection.getElementById("estimate-to-date").text shouldBe testAmountOutput
+        estimateSection.getElementById("in-year-estimate").text shouldBe testAmountOutput
       }
 
       s"has a payment paragraph with '${messages.EstimateTax.payment}'" in {
