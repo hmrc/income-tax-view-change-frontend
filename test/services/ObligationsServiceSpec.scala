@@ -17,20 +17,13 @@
 package services
 
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 import assets.TestConstants
 
 import models._
 import play.api.i18n.Messages
 import play.api.libs.json.{JsResultException, Json}
-import play.mvc.Http.Status
-import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
 import utils.TestSupport
-import assets.TestConstants._
-
-
 
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Obligations._
@@ -39,7 +32,6 @@ import mocks.connectors.{MockBusinessDetailsConnector, MockBusinessObligationDat
 import utils.TestSupport
 
 class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector with MockBusinessDetailsConnector with MockPropertyObligationDataConnector{
-
 
   object TestObligationsService extends ObligationsService(mockBusinessObligationDataConnector, mockBusinessDetailsConnector, mockPropertyObligationDataConnector)
 
@@ -89,8 +81,8 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
             List(
               ObligationModel(
                 start = "2017-04-01",
-                end = "2017-06-30",
-                due = "2017-07-31",
+                end = "2017-6-30",
+                due = "2017-7-31",
                 met = true
               ),
               ObligationModel(

@@ -43,7 +43,7 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
         property <- obligationsService.getPropertyObligations(user.nino)
       } yield (business,property)).map {
         case error: (ObligationsErrorModel, ObligationsErrorModel) =>
-          Logger.debug("[ObligationsController][getObligations] No Obligations retrieved. Rendering ISE")
+          Logger.warn("[ObligationsController][getObligations] No Obligations retrieved. Rendering ISE")
           showInternalServerError
         case business: (ObligationsModel, ObligationsErrorModel) =>
           Logger.debug("[ObligationsController][getObligations] Business Obligations retrieved. Serving HTML page")
@@ -52,7 +52,7 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
           Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
           Ok(views.html.obligations(property._2))
         case _ =>
-          Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
+          Logger.warn("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
           showInternalServerError
       }
   }
