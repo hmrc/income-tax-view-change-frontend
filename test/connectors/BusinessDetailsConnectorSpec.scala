@@ -19,21 +19,16 @@ package connectors
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.{BusinessListError, SuccessResponse}
+import models.BusinessListError
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.HttpResponse
 import utils.TestSupport
 
 
 class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
 
-  implicit val hc = HeaderCarrier()
-
-  val testNino = "AB123456C"
-  val testSelfEmploymentId = "5318008"
-
-  val successResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson(businesses)))
+  val successResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson(businessesSuccessModel)))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
@@ -44,7 +39,7 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
     "return a BusinessListModel with JSON in case of success" in {
       setupMockHttpGet(TestBusinessDetailsConnector.getBusinessListUrl(testNino))(successResponse)
       val result = TestBusinessDetailsConnector.getBusinessList(testNino)
-      await(result) shouldBe businesses
+      await(result) shouldBe businessesSuccessModel
     }
 
     "return BusinessListError model in case of failure" in {

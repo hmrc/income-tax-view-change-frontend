@@ -23,21 +23,21 @@ class DateFormatterSpec extends TestSupport with ImplicitDateFormatter {
   "The implicit date formatter" should {
 
     "format string dates" in {
-     val date = LocalDate.of(2017, 4, 1)
-
-      date shouldBe localDate("2017-04-01")
+      "2017-04-01".toLocalDate shouldBe LocalDate.of(2017, 4, 1)
     }
 
     "format months with single digit values" in {
-      val date = LocalDate.of(2017, 6, 30)
-
-      date shouldBe localDate("2017-6-30")
+      "2017-6-30".toLocalDate shouldBe LocalDate.of(2017, 6, 30)
     }
 
     "format days with single digit values" in {
-      val date = LocalDate.of(2017, 6, 1)
+      "2017-6-1".toLocalDate shouldBe LocalDate.of(2017, 6, 1)
+    }
+  }
 
-      date shouldBe localDate("2017-6-1")
+  "The implicit date formatter" should {
+    "change localDate's to full dates" in {
+      "2017-04-01".toLocalDate.toLongDate shouldBe "1 April 2017"
     }
   }
 }

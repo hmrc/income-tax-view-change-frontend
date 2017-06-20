@@ -16,14 +16,16 @@
 
 package helpers
 
-import models.{ErrorResponse, ObligationsModel, SuccessResponse}
+import java.time.LocalDate
+
+import models.{ErrorResponse, ObligationModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import utils.ImplicitDateFormatter.localDate
+import utils.ImplicitDateFormatter
 
-object IntegrationTestConstants {
+object IntegrationTestConstants extends ImplicitDateFormatter {
 
-  val testDate = localDate("2018-05-05")
+  val testDate = "2018-05-05".toLocalDate
 
   val testMtditidEnrolmentKey = "HMRC-MTD-IT"
   val testMtditidEnrolmentIdentifier = "MTDITID"
@@ -100,5 +102,33 @@ object IntegrationTestConstants {
            |  "reason": $reason
            |}
          """.stripMargin)
+
+    val multipleObligationsDataSuccessModel = ObligationsModel(List(
+      ObligationModel(
+        start = "2017-04-06",
+        end = "2017-07-05",
+        due = LocalDate.now(),
+        met = true
+      ), ObligationModel(
+        start = "2017-07-06",
+        end = "2017-10-05",
+        due = LocalDate.now().plusDays(1),
+        met = false
+      ), ObligationModel(
+        start = "2017-10-06",
+        end = "2018-01-05",
+        due = LocalDate.now().minusDays(1),
+        met = false
+      ))
+    )
+
+    val singleObligationsDataSuccessModel = ObligationsModel(List(
+      ObligationModel(
+        start = "2017-04-06",
+        end = "2017-07-05",
+        due = LocalDate.now(),
+        met = true
+      )
+    ))
   }
 }
