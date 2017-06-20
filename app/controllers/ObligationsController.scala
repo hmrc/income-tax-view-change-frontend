@@ -20,11 +20,13 @@ import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
 import controllers.predicates.AuthenticationPredicate
-import models.{ObligationsErrorModel, ObligationsModel}
+import models.{ObligationsResponseModel, ObligationsErrorModel, ObligationsModel}
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.ObligationsService
+
+import scala.concurrent.Future
 
 @Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,
@@ -35,14 +37,24 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
 
   val getObligations: Action[AnyContent] = authentication.async { implicit request =>
     implicit user =>
-      Logger.debug(s"[ObligationsController][getObligations] Calling Obligations Service for user with NINO: ${user.nino}")
-      obligationsService.getObligations(user.nino).map {
-        case obligations: ObligationsModel =>
-          Logger.debug("[ObligationsController][getObligations] Obligations retrieved.  Serving HTML page")
-          Ok(views.html.obligations(obligations))
-        case error: ObligationsErrorModel =>
-          Logger.warn("[ObligationsController][getObligations] No obligations retrieved. Rendering ISE")
+
+      (for{
+        business <- obligationsService.getObligations(user.nino)
+        property <- obligationsService.getPropertyObligations(user.nino)
+      } yield (business,property)).map {
+        case error: (ObligationsErrorModel, ObligationsErrorModel) =>
+          Logger.debug("[ObligationsController][getObligations] No Obligations retrieved. Rendering ISE")
+          showInternalServerError
+        case business: (ObligationsModel, ObligationsErrorModel) =>
+          Logger.debug("[ObligationsController][getObligations] Business Obligations retrieved. Serving HTML page")
+          Ok(views.html.obligations(business._1))
+        case property: (ObligationsErrorModel, ObligationsModel) =>
+          Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
+          Ok(views.html.obligations(property._2))
+        case _ =>
+          Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
           showInternalServerError
       }
   }
 }
+

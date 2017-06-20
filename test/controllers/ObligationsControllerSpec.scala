@@ -16,22 +16,20 @@
 
 package controllers
 
-import assets.Messages.{Obligations => messages}
-import assets.Messages.{ISE => errorMessages}
+import assets.Messages.{ISE => errorMessages, Obligations => messages}
 import assets.TestConstants._
 import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
-import mocks.MockObligationsService
+import mocks.services.MockObligationsService
 import models._
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.ImplicitDateFormatter.localDate
-import utils.TestSupport
+import utils.{ImplicitDateFormatter, TestSupport}
 
-class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockObligationsService {
+class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockObligationsService with ImplicitDateFormatter {
 
   "The ObligationsController.getObligations function" when {
 
@@ -53,27 +51,27 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
           ObligationsModel(
             List(
               ObligationModel(
-                start = localDate("2017-04-06"),
-                end = localDate("2017-07-05"),
-                due = localDate("2017-08-05"),
+                start = "2017-04-06",
+                end = "2017-07-05",
+                due = "2017-08-05",
                 met = true
               ),
               ObligationModel(
-                start = localDate("2017-07-06"),
-                end = localDate("2017-10-05"),
-                due = localDate("2017-11-05"),
+                start = "2017-07-06",
+                end = "2017-10-05",
+                due = "2017-11-05",
                 met = true
               ),
               ObligationModel(
-                start = localDate("2017-10-06"),
-                end = localDate("2018-01-05"),
-                due = localDate("2018-02-05"),
+                start = "2017-10-06",
+                end = "2018-01-05",
+                due = "2018-02-05",
                 met = false
               ),
               ObligationModel(
-                start = localDate("2018-01-06"),
-                end = localDate("2018-04-05"),
-                due = localDate("2018-05-06"),
+                start = "2018-01-06",
+                end = "2018-04-05",
+                due = "2018-05-06",
                 met = false
               )
             )

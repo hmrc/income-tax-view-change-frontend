@@ -26,13 +26,13 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.TestSupport
 import assets.Messages.{Obligations => messages}
-import utils.ImplicitDateFormatter.localDate
+import utils.ImplicitDateFormatter._
 
 class ObligationsViewSpec extends TestSupport{
 
   lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
 
-  val model = ObligationModel(start = localDate("2017-1-1"), end = localDate("2017-3-31"), due = localDate("2017-4-5"), true)
+  val model = ObligationModel(start = "2017-1-1".toLocalDate, end = "2017-3-31".toLocalDate, due = "2017-4-5".toLocalDate, true)
 
   val dummymodel = ObligationsModel(List(model))
 
