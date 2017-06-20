@@ -57,7 +57,7 @@ object Messages {
     val estimatesHeading = "Estimates"
     val estimatesLink = "View your estimated tax amount"
     val selfAssessmentHeading = "Previous tax years"
-    val selfAssessmentLink = "View your self assessment details"
+    val selfAssessmentLink = "View your Self Assessment details"
   }
 
   object ISE {
