@@ -18,7 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.LastTaxCalculationConnector
+import connectors.{BusinessDetailsConnector, LastTaxCalculationConnector}
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -37,7 +37,7 @@ class EstimatedTaxLiabilityService @Inject()(val lastTaxCalculationConnector: La
     Logger.debug("[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")
     lastTaxCalculationConnector.getLastEstimatedTax(nino, year, calcType).map {
       case success: LastTaxCalculation =>
-        Logger.debug(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n\n$success")
+        Logger.debug(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n$success")
         success
       case error: LastTaxCalculationError =>
         Logger.warn(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")

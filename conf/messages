@@ -3,16 +3,14 @@ base.back                                                       = Back
 base.service_name                                               = Business tax account
 base.phase                                                      = BETA
 base.sign-out                                                   = Sign out
-base.tax-year                                                   = 2017/18
 
 ## Estimated Tax Liability Page ##
-estimated_tax_liability.title                                   = Your estimated tax amount
-estimated_tax_liability.heading                                 = Your estimated tax amount
+estimated_tax_liability.title                                   = 2017/18 - Business Tax Account
+estimated_tax_liability.heading                                 = Your tax estimate
 estimated_tax_liability.pre-heading.tax-year                    = 2017/18
-estimated_tax_liability.estimated-tax.h2                        = Your estimated tax amount
-estimated_tax_liability.estimated-tax.p1                        = This estimate is calculated using the figures you''ve submitted using your accounting software. The amount includes both your Income Tax and National Insurance.
-estimated_tax_liability.estimated-tax.to-date                   = Estimate to date
-estimated_tax_liability.estimated-tax.payment                   = You must pay any tax you owe for the whole tax year by 31 January 2019.
+estimated_tax_liability.estimated-tax.p1                        = We''ve calculated this estimate using the figures and dates you''ve reported in your accounting software. The amount includes both your Income Tax and National Insurance.
+estimated_tax_liability.estimated-tax.payment                   = You must pay any tax you owe for the whole tax year by
+estimated_tax_liability.due-date                                = 31 January 2019.
 
 ## Obligations Page ##
 obligations.title                                               = Your Income Tax reports

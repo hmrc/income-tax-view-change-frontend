@@ -38,7 +38,6 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
   final val `type` = "it"
 
   val getEstimatedTaxLiability: Action[AnyContent] = authentication.async { implicit request => implicit user =>
-
     Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
     estimatedTaxLiabilityService.getLastEstimatedTaxCalculation(user.nino, taxYear, `type`) map {
       case success: LastTaxCalculation =>
