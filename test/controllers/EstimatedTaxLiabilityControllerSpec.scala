@@ -17,17 +17,17 @@
 package controllers
 
 import assets.Messages.{EstimatedTaxLiability => messages}
+import assets.TestConstants.Estimates._
 import assets.TestConstants._
 import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
+import mocks.services.MockEstimatedLiabilityService
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
-import assets.TestConstants.Estimates._
-import mocks.services.MockEstimatedLiabilityService
 
 class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthenticationPredicate with MockEstimatedLiabilityService {
 
@@ -46,7 +46,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
 
         lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
         lazy val document = Jsoup.parse(bodyOf(result))
-        def mockSuccess(): Unit = setupMockLastTaxCalculationResult(testNino)(lastTaxCalcSuccessModel)
+        def mockSuccess(): Unit = setupMockLastTaxCalculationResult(testNino, testYear, testCalcType)(lastTaxCalcSuccess)
 
         "return Status OK (200)" in {
           mockSuccess()
@@ -68,7 +68,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
       "receives an Error from the EstimatedTaxLiability Service" should {
 
         lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
-        def mockError(): Unit = setupMockLastTaxCalculationResult(testNino)(lastTaxCalcErrorModel)
+        def mockError(): Unit = setupMockLastTaxCalculationResult(testNino, testYear, testCalcType)(lastTaxCalcError)
 
         "return Internal Server Error (500)" in {
           mockError()
