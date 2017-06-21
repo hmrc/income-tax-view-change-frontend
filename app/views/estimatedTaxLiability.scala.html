@@ -23,9 +23,9 @@
     <section id="sidebar" class="section section--blue-top">
 
         <div class="form-group">
-            <h3 id="mtditid-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
+            <h3 id="reporting-ref-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
             <ul>
-                <li id="mtditid" class="font-xsmall">@user.mtditid</li>
+                <li id="reporting-ref" class="font-xsmall">@user.mtditid</li>
             </ul>
         </div>
 
@@ -37,25 +37,39 @@
                 </li>
             </ul>
         </div>
+        <div class="form-group">
+            <h3 id="sa-link-heading">@messages("sidebar.self_assessment.h3")</h3>
+            <ul>
+                <li class="font-xsmall">
+                    <a id="sa-link" href="">
+                        @messages("sidebar.self_assessment.link")
+                    </a>
+                </li>
+            </ul>
+        </div>
     </section>
 }
 
-@main_template(title = messages("estimated_tax_liability.title"), bodyClasses = None, appConfig = appConfig, sidebarLinks = Some(sidebar)) {
+@main_template(
+    title = messages("estimated_tax_liability.title"),
+    bodyClasses = None,
+    scriptElem = None,
+    appConfig = appConfig,
+    sidebarLinks = Some(sidebar)) {
 
     <section id="estimated-tax">
-        <h1>
-            <span class="pre-heading">@messages("base.tax-year")</span>
+        <h1><span id="tax-year">@messages("estimated_tax_liability.pre-heading.tax-year")</span></h1>
+        <h1 id="page-heading">
             @messages("estimated_tax_liability.heading")
         </h1>
 
         <p id="p1">@messages("estimated_tax_liability.estimated-tax.p1")</p>
 
-        <p id="estimate-to-date">
-            <span class="bold-medium" id="estimate-amount">@lastTaxAmount.toCurrency</span>
-            <br>
-            @messages("estimated_tax_liability.estimated-tax.to-date")
-        </p>
+        <p><span class="bold-medium" id="in-year-estimate">@lastTaxAmount.toCurrency</span></p>
 
-        <p id="payment">@messages("estimated_tax_liability.estimated-tax.payment")</p>
+        <p id="payment">
+            @messages(s"estimated_tax_liability.estimated-tax.payment")
+            <span id="pyt-due-date">@messages("estimated_tax_liability.due-date")</span>
+        </p>
     </section>
  }

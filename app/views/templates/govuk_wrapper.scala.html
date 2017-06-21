@@ -31,10 +31,13 @@
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
 @import views.html.helpers.phaseBanner
 
+@linksElem = {
+    <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc.css")'>
+}
 
 @head = {
     @uiLayouts.head(
-      linkElem = None,
+      linkElem = Some(linksElem),
       headScripts = None)
     <meta name="format-detection" content="telephone=no" />
 }

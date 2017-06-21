@@ -32,8 +32,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
   lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
 
-  val testAmount: BigDecimal = 12345.99
-  val testAmountOutput: String = "£12,345.99"
+  val testAmount: BigDecimal = 2345.67
+  val testAmountOutput: String = "£2,345.67"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
 
   lazy val page = views.html.estimatedTaxLiability(testAmount)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -45,27 +45,27 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       document.title() shouldBe messages.title
     }
 
-    s"have the H1 '${messages.heading}'" in {
-      document.getElementsByTag("H1").text() shouldBe messages.preheading + " " + messages.heading
+    s"have the tax year '${messages.taxYear}'" in {
+      document.getElementById("tax-year").text() shouldBe messages.taxYear
     }
 
-    s"have the pre-heading '${messages.preheading}'" in {
-      document.getElementsByClass("pre-heading").text() shouldBe messages.preheading
+    s"have the page heading '${messages.pageHeading}'" in {
+      document.getElementById("page-heading").text() shouldBe messages.pageHeading
     }
 
     s"have an Estimated Tax Liability section" which {
 
       lazy val estimateSection = document.getElementById("estimated-tax")
 
-      s"has a parapgraph with '${messages.EstimateTax.p1}'" in {
+      s"has a paragraph with '${messages.EstimateTax.p1}'" in {
         estimateSection.getElementById("p1").text() shouldBe messages.EstimateTax.p1
       }
 
       s"has the correct Estimated Tax Amount of '$testAmount'" in {
-        estimateSection.getElementById("estimate-to-date").text shouldBe testAmountOutput + " " + messages.EstimateTax.toDate
+        estimateSection.getElementById("in-year-estimate").text shouldBe testAmountOutput
       }
 
-      s"has a payment parapgraph with '${messages.EstimateTax.payment}'" in {
+      s"has a payment paragraph with '${messages.EstimateTax.payment}'" in {
         estimateSection.getElementById("payment").text() shouldBe messages.EstimateTax.payment
       }
     }
@@ -75,11 +75,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       lazy val sidebarSection = document.getElementById("sidebar")
 
       "has a heading for the MTDITID" in {
-        sidebarSection.getElementById("mtditid-heading").text() shouldBe sidebarMessages.mtditidHeading
+        sidebarSection.getElementById("reporting-ref-heading").text() shouldBe sidebarMessages.mtditidHeading
       }
 
-      "has the correct value for the MTDITID" in {
-        sidebarSection.getElementById("mtditid").text() shouldBe testMtdItUser.mtditid
+      "has the correct value for the MTDITID/reporting ref" in {
+        sidebarSection.getElementById("reporting-ref").text() shouldBe testMtdItUser.mtditid
       }
 
       "has a heading for viewing your reports" in {
@@ -98,8 +98,20 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       }
 
-    }
+      "has a link to view self assessment details" which {
+        "has a heading for viewing self assessment details" in {
+          sidebarSection.getElementById("sa-link-heading").text shouldBe sidebarMessages.selfAssessmentHeading
+        }
 
+        s"has the correct href to ''" in {
+          sidebarSection.getElementById("sa-link").attr("href") shouldBe ""
+        }
+
+        "has the correct link wording" in {
+          sidebarSection.getElementById("sa-link").text shouldBe sidebarMessages.selfAssessmentLink
+        }
+      }
+    }
   }
 
 }

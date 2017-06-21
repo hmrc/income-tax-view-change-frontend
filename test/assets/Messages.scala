@@ -20,12 +20,12 @@ object Messages {
 
   // Estimated Tax Liability Page Messages
   object EstimatedTaxLiability {
-    val title = "Your estimated tax amount"
-    val heading = "Your estimated tax amount"
-    val preheading = "2017/18"
+    val title = "2017/18 - Business Tax Account"
+    val pageHeading = "Your tax estimate"
+    val taxYear = "2017/18"
     object EstimateTax {
-      val h2 = "Your estimated tax amount"
-      val p1 = "This estimate is calculated using the figures you've submitted using your accounting software. " +
+      val h2 = "2017/18 - Business Tax Account"
+      val p1 = "We've calculated this estimate using the figures and dates you've reported in your accounting software. " +
         "The amount includes both your Income Tax and National Insurance."
       val payment = "You must pay any tax you owe for the whole tax year by 31 January 2019."
       val toDate = "Estimate to date"
@@ -56,6 +56,8 @@ object Messages {
     val reportsLink = "View your Income Tax reports"
     val estimatesHeading = "Estimates"
     val estimatesLink = "View your estimated tax amount"
+    val selfAssessmentHeading = "Previous tax years"
+    val selfAssessmentLink = "View your Self Assessment details"
   }
 
   object ISE {

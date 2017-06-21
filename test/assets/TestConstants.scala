@@ -16,6 +16,7 @@
 
 package assets
 
+import auth.MtdItUser
 import models._
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -25,6 +26,7 @@ object TestConstants extends ImplicitDateFormatter {
 
   val testMtditid = "XAIT0000123456"
   val testNino = "AB123456C"
+  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
   val testSelfEmploymentId = "XA00001234"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
@@ -118,13 +120,16 @@ object TestConstants extends ImplicitDateFormatter {
 
   object Estimates {
 
-    val lastTaxCalcSuccessModel = LastTaxCalculation(
+    val testYear = "2018"
+    val testCalcType = "it"
+
+    val lastTaxCalcSuccess = LastTaxCalculation(
       calcId = "01234567",
       calcTimestamp = "2017-07-06 12:34:56.789",
       calcAmount = 543.21
     )
 
-    val lastTaxCalcErrorModel = LastTaxCalculationError(testErrorStatus, testErrorMessage)
+    val lastTaxCalcError = LastTaxCalculationError(testErrorStatus, testErrorMessage)
   }
 
   object Obligations {
