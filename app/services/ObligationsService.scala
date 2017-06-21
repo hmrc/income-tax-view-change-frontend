@@ -18,7 +18,9 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{BusinessDetailsConnector, BusinessObligationDataConnector}
+
+import connectors.{PropertyObligationDataConnector, BusinessDetailsConnector, BusinessObligationDataConnector}
+
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -27,21 +29,27 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ObligationsService @Inject()(val obligationDataConnector: BusinessObligationDataConnector,
-                                   val businessDetailsConnector: BusinessDetailsConnector
+class ObligationsService @Inject()(val businessObligationDataConnector: BusinessObligationDataConnector,
+                                  val businessDetailsConnector: BusinessDetailsConnector,
+                                  val propertyObligationDataConnector: PropertyObligationDataConnector
                                   ) {
 
-  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getBusinessObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
     businessDetailsConnector.getBusinessList(nino).flatMap {
       case success: BusinessListModel =>
         // Only one business is returned for MVP hence .head to obtain ID.
-        Logger.debug(s"[ObligationsService][getObligations] - Retrieved Obligation: \n\n$success")
-        obligationDataConnector.getObligationData(nino, success.business.head.id)
+        Logger.debug(s"[ObligationsService][getObligations] - Retrieved BusinessListModel: \n\n$success")
+        businessObligationDataConnector.getBusinessObligationData(nino, success.business.head.id)
       case error: BusinessListError =>
         Logger.debug(s"[ObligationService][getObligations] - Error Response Status: ${error.code}, Message: ${error.message}")
         Future.successful(ObligationsErrorModel(error.code, error.message))
     }
+  }
+
+  def getPropertyObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+    Logger.debug(s"[ObligationsService][getPropertyObligations] - Requesting Property Obligation details from connectors for user with NINO: $nino")
+    propertyObligationDataConnector.getPropertyObligationData(nino)
   }
 }

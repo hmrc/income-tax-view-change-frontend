@@ -34,7 +34,7 @@ class BusinessObligationDataConnector @Inject()(val http: HttpGet) extends Servi
   lazy val obligationDataUrl: String = baseUrl("self-assessment-api")
   lazy val getObligationDataUrl: (String, String) => String = (nino, selfEmploymentId) => s"$obligationDataUrl/self-assessment/ni/$nino/self-employments/$selfEmploymentId"
 
-  def getObligationData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getBusinessObligationData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     val url = getObligationDataUrl(nino, selfEmploymentId)
 

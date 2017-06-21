@@ -38,19 +38,19 @@ class PropertyObligationDataConnectorSpec extends TestSupport with MockHttp {
 
     "return a SuccessResponse with JSON in case of sucess" in {
       setupMockHttpGet(TestPropertyObligationDataConnector.getPropertyDataUrl(testNino))(successResponse)
-      val result = TestPropertyObligationDataConnector.getPropertyData(testNino)
+      val result = TestPropertyObligationDataConnector.getPropertyObligationData(testNino)
       await(result) shouldBe obligationsDataSuccessModel
     }
 
     "return ErrorResponse model in case of failure" in {
       setupMockHttpGet(TestPropertyObligationDataConnector.getPropertyDataUrl(testNino))(badResponse)
-      val result = TestPropertyObligationDataConnector.getPropertyData(testNino)
+      val result = TestPropertyObligationDataConnector.getPropertyObligationData(testNino)
       await(result) shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return ObligationsErrorModel when bad JSON is received" in {
       setupMockHttpGet(TestPropertyObligationDataConnector.getPropertyDataUrl(testNino))(successResponseBadJson)
-      val result = TestPropertyObligationDataConnector.getPropertyData(testNino)
+      val result = TestPropertyObligationDataConnector.getPropertyObligationData(testNino)
       await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response.")
     }
   }

@@ -36,7 +36,7 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
   val getObligations: Action[AnyContent] = authentication.async { implicit request =>
     implicit user =>
       Logger.debug(s"[ObligationsController][getObligations] Calling Obligations Service for user with NINO: ${user.nino}")
-      obligationsService.getObligations(user.nino).map {
+      obligationsService.getBusinessObligations(user.nino).map {
         case obligations: ObligationsModel =>
           Logger.debug("[ObligationsController][getObligations] Obligations retrieved.  Serving HTML page")
           Ok(views.html.obligations(obligations))

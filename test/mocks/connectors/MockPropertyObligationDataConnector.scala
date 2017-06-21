@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.BusinessObligationDataConnector
+import connectors.PropertyObligationDataConnector
 import models.ObligationsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -27,18 +27,19 @@ import uk.gov.hmrc.play.test.UnitSpec
 import scala.concurrent.Future
 
 
-trait MockBusinessObligationDataConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockPropertyObligationDataConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockObligationDataConnector: BusinessObligationDataConnector = mock[BusinessObligationDataConnector]
+  val mockPropertyObligationDataConnector: PropertyObligationDataConnector = mock[PropertyObligationDataConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockObligationDataConnector)
+    reset(mockPropertyObligationDataConnector)
   }
 
-  def setupMockObligation(nino: String, selfEmploymentId: String)(response: ObligationsResponseModel): Unit = {
-    when(mockObligationDataConnector.getBusinessObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
+  def setupMockPropertyObligation(nino: String)(response: ObligationsResponseModel): Unit = {
+    when(mockPropertyObligationDataConnector.getPropertyObligationData(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
 }
+

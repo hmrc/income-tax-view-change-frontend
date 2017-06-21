@@ -38,19 +38,19 @@ class BusinessObligationDataConnectorSpec extends TestSupport with MockHttp {
 
     "return a SuccessResponse with JSON in case of sucess" in {
       setupMockHttpGet(TestBusinessObligationDataConnector.getObligationDataUrl(testNino, testSelfEmploymentId))(successResponse)
-      val result = TestBusinessObligationDataConnector.getObligationData(testNino, testSelfEmploymentId)
+      val result = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
       await(result) shouldBe obligationsDataSuccessModel
     }
 
     "return ErrorResponse model in case of failure" in {
       setupMockHttpGet(TestBusinessObligationDataConnector.getObligationDataUrl(testNino, testSelfEmploymentId))(badResponse)
-      val result = TestBusinessObligationDataConnector.getObligationData(testNino, testSelfEmploymentId)
+      val result = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
       await(result) shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return BusinessListError model when bad JSON is received" in {
       setupMockHttpGet(TestBusinessObligationDataConnector.getObligationDataUrl(testNino, testSelfEmploymentId))(successResponseBadJson)
-      val result = TestBusinessObligationDataConnector.getObligationData(testNino, testSelfEmploymentId)
+      val result = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
       await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response.")
     }
   }
