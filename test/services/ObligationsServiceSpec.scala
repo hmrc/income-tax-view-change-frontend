@@ -50,7 +50,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
         "return a valid list of obligations" in {
           setupMockBusinesslistResult(testNino)(businessesSuccessModel)
           setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
-          await(TestObligationsService.getObligations(testNino)) shouldBe obligationsDataSuccessModel
+          await(TestObligationsService.getBusinessObligations(testNino)) shouldBe obligationsDataSuccessModel
         }
       }
 
@@ -59,7 +59,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
         "return a valid list of obligations" in {
           setupMockBusinesslistResult(testNino)(businessesSuccessModel)
           setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataErrorModel)
-          await(TestObligationsService.getObligations(testNino)) shouldBe obligationsDataErrorModel
+          await(TestObligationsService.getBusinessObligations(testNino)) shouldBe obligationsDataErrorModel
         }
       }
     }
@@ -69,7 +69,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
 
       "return an obligations error model" in {
         setupMockBusinesslistResult(testNino)(businessListErrorModel)
-        await(TestObligationsService.getObligations(testNino)) shouldBe obligationsDataErrorModel
+        await(TestObligationsService.getBusinessObligations(testNino)) shouldBe obligationsDataErrorModel
       }
     }
   }

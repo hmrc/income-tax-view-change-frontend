@@ -37,7 +37,7 @@ trait MockPropertyObligationDataConnector extends UnitSpec with MockitoSugar wit
   }
 
   def setupMockPropertyObligation(nino: String)(response: ObligationsResponseModel): Unit = {
-    when(mockPropertyObligationDataConnector.getPropertyData(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+    when(mockPropertyObligationDataConnector.getPropertyObligationData(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 

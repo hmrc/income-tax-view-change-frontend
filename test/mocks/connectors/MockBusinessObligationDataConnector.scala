@@ -37,7 +37,7 @@ trait MockBusinessObligationDataConnector extends UnitSpec with MockitoSugar wit
   }
 
   def setupMockObligation(nino: String, selfEmploymentId: String)(response: ObligationsResponseModel): Unit = {
-    when(mockObligationDataConnector.getObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
+    when(mockObligationDataConnector.getBusinessObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
