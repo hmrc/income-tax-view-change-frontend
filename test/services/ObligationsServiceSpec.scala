@@ -17,29 +17,20 @@
 package services
 
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
 import assets.TestConstants
-import models._
-import play.api.i18n.Messages
-import play.api.libs.json.{JsResultException, Json}
-import play.mvc.Http.Status
-import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
-import utils.TestSupport
-
-
-
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Obligations._
 import assets.TestConstants._
-import mocks.connectors.{MockBusinessDetailsConnector, MockBusinessObligationDataConnector, MockPropertyObligationDataConnector}
+import mocks.connectors.{MockBusinessObligationDataConnector, MockPropertyObligationDataConnector}
+import mocks.services.MockBusinessDetailsService
+import models._
 import utils.TestSupport
 
 
-class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector with MockBusinessDetailsConnector with MockPropertyObligationDataConnector {
+class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector
+  with MockBusinessDetailsService with MockPropertyObligationDataConnector {
 
-  object TestObligationsService extends ObligationsService(mockObligationDataConnector, mockBusinessDetailsConnector, mockPropertyObligationDataConnector)
+  object TestObligationsService extends ObligationsService(mockObligationDataConnector, mockBusinessDetailsService, mockPropertyObligationDataConnector)
 
   "The ObligationsService.getObligations method" when {
 
@@ -48,7 +39,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
       "has a valid list of obligations returned from the connector" should {
 
         "return a valid list of obligations" in {
-          setupMockBusinesslistResult(testNino)(businessesSuccessModel)
+          setupMockBusinessDetailsResult(testNino)(businessesSuccessModel)
           setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
           await(TestObligationsService.getBusinessObligations(testNino)) shouldBe obligationsDataSuccessModel
         }
@@ -57,7 +48,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
       "does not have a valid list of obligations returned from the connector" should {
 
         "return a valid list of obligations" in {
-          setupMockBusinesslistResult(testNino)(businessesSuccessModel)
+          setupMockBusinessDetailsResult(testNino)(businessesSuccessModel)
           setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataErrorModel)
           await(TestObligationsService.getBusinessObligations(testNino)) shouldBe obligationsDataErrorModel
         }
@@ -68,7 +59,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
     "no business list is found" should {
 
       "return an obligations error model" in {
-        setupMockBusinesslistResult(testNino)(businessListErrorModel)
+        setupMockBusinessDetailsResult(testNino)(businessListErrorModel)
         await(TestObligationsService.getBusinessObligations(testNino)) shouldBe obligationsDataErrorModel
       }
     }

@@ -30,14 +30,14 @@ import scala.concurrent.Future
 
 @Singleton
 class ObligationsService @Inject()(val businessObligationDataConnector: BusinessObligationDataConnector,
-                                  val businessDetailsConnector: BusinessDetailsConnector,
+                                  val businessDetailsService: BusinessDetailsService,
                                   val propertyObligationDataConnector: PropertyObligationDataConnector
                                   ) {
 
   def getBusinessObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
-    businessDetailsConnector.getBusinessList(nino).flatMap {
+    businessDetailsService.getBusinessDetails(nino).flatMap {
       case success: BusinessListModel =>
         // Only one business is returned for MVP hence .head to obtain ID.
         Logger.debug(s"[ObligationsService][getObligations] - Retrieved BusinessListModel: \n\n$success")
