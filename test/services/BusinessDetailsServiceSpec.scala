@@ -40,8 +40,8 @@ class BusinessDetailsServiceSpec extends TestSupport with MockBusinessDetailsCon
     "a non-successful response is returned from the connector" should {
 
       "return a Business Details Error Model" in {
-        setupMockBusinesslistResult(testNino)(businessListErrorModel)
-        await(TestBusinessDetailsService.getBusinessDetails(testNino)) shouldBe businessListErrorModel
+        setupMockBusinesslistResult(testNino)(businessErrorModel)
+        await(TestBusinessDetailsService.getBusinessDetails(testNino)) shouldBe businessErrorModel
       }
     }
   }

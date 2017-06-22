@@ -19,7 +19,7 @@ package connectors
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.BusinessListError
+import models.BusinessDetailsErrorModel
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
@@ -28,7 +28,7 @@ import utils.TestSupport
 
 class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
 
-  val successResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson(businessesSuccessModel)))
+  val successResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson(businessesSuccessResponse)))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
@@ -36,7 +36,7 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
 
   "BusinessDetailsConnector.getBusinessList" should {
 
-    "return a BusinessListModel with JSON in case of success" in {
+    "return a BusinessDetailsModel with JSON in case of success" in {
       setupMockHttpGet(TestBusinessDetailsConnector.getBusinessListUrl(testNino))(successResponse)
       val result = TestBusinessDetailsConnector.getBusinessList(testNino)
       await(result) shouldBe businessesSuccessModel
@@ -45,13 +45,13 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
     "return BusinessListError model in case of failure" in {
       setupMockHttpGet(TestBusinessDetailsConnector.getBusinessListUrl(testNino))(badResponse)
       val result = TestBusinessDetailsConnector.getBusinessList(testNino)
-      await(result) shouldBe BusinessListError(Status.BAD_REQUEST, "Error Message")
+      await(result) shouldBe BusinessDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return BusinessListError model when bad JSON is received" in {
       setupMockHttpGet(TestBusinessDetailsConnector.getBusinessListUrl(testNino))(successResponseBadJson)
       val result = TestBusinessDetailsConnector.getBusinessList(testNino)
-      await(result) shouldBe BusinessListError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Business Details Response.")
+      await(result) shouldBe BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Business Details Response.")
     }
   }
 }

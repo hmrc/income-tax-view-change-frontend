@@ -30,12 +30,15 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
     "authorised with an active enrolment" which {
 
-      "has a single obligation" should {
+      "has a single business and single obligation" should {
 
         "display a single obligation with the correct dates and status" in {
 
           Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub a single business obligation response")
           SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
@@ -69,6 +72,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
           Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub multiple business obligations response")
           SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, multipleObligationsDataSuccessModel)

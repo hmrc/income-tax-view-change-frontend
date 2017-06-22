@@ -17,31 +17,29 @@
 package helpers.servicemocks
 
 import helpers.{IntegrationTestConstants, WiremockHelper}
-import models.ObligationsModel
+import models.{BusinessDetailsModel, BusinessModel, ObligationsModel}
 import play.api.http.Status
+import play.api.libs.json.{JsValue, Json}
 
 object SelfAssessmentStub {
 
   val businessDetailsUrl: String => String = nino => s"/self-assessment/ni/$nino/self-employments"
   val obligationsDataUrl: (String, String) => String = (nino, selfEmploymentId) => s"/self-assessment/ni/$nino/self-employments/$selfEmploymentId"
 
-
-  //TODO change the stubbed response to return a business details model
+  def stubGetBusinessDetails(nino: String, businessDetails: JsValue) : Unit = {
+    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetails.toString)
+  }
 
   def stubGetObligations(nino: String, selfEmploymentId: String, obligations: ObligationsModel): Unit = {
-    val businessDetailsResponse = IntegrationTestConstants.GetBusinessDetails.successResponse(selfEmploymentId).toString()
-    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetailsResponse)
-
-    val obligationsDataResponse = IntegrationTestConstants.GetObligationsData.successResponse(obligations).toString()
-    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, obligationsDataResponse)
+    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.toJson(obligations).toString)
   }
 
   def verifyGetObligations(nino: String, selfEmploymentId: String): Unit = {
-    WiremockHelper.verifyGet(businessDetailsUrl(nino))
     WiremockHelper.verifyGet(obligationsDataUrl(nino, selfEmploymentId))
   }
 
-
-
+  def verifyGetBusinessDetails(nino: String): Unit = {
+    WiremockHelper.verifyGet(businessDetailsUrl(nino))
+  }
 }
 

@@ -18,9 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-
-import connectors.{PropertyObligationDataConnector, BusinessDetailsConnector, BusinessObligationDataConnector}
-
+import connectors.{BusinessObligationDataConnector, PropertyObligationDataConnector}
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -38,11 +36,11 @@ class ObligationsService @Inject()(val businessObligationDataConnector: Business
 
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
     businessDetailsService.getBusinessDetails(nino).flatMap {
-      case success: BusinessListModel =>
+      case success: BusinessDetailsModel =>
         // Only one business is returned for MVP hence .head to obtain ID.
         Logger.debug(s"[ObligationsService][getObligations] - Retrieved BusinessListModel: \n\n$success")
         businessObligationDataConnector.getBusinessObligationData(nino, success.business.head.id)
-      case error: BusinessListError =>
+      case error: BusinessDetailsErrorModel =>
         Logger.debug(s"[ObligationService][getObligations] - Error Response Status: ${error.code}, Message: ${error.message}")
         Future.successful(ObligationsErrorModel(error.code, error.message))
     }

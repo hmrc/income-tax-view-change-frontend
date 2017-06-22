@@ -42,21 +42,21 @@ class BusinessDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
       response =>
         response.status match {
           case OK => Logger.debug(s"[BusinessDetailsConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Future.successful(response.json.validate[BusinessListModel].fold(
+            Future.successful(response.json.validate[List[BusinessModel]].fold(
               invalid => {
                 Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Json Validation Error. Parsing Business Details Response")
-                BusinessListError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Business Details Response.")
+                BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Business Details Response.")
               },
-              valid => valid
+              valid => BusinessDetailsModel(valid)
             ))
           case _ =>
             Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Future.successful(BusinessListError(response.status, response.body))
+            Future.successful(BusinessDetailsErrorModel(response.status, response.body))
         }
     } recoverWith {
       case _ =>
         Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Unexpected future failed error when calling $url.")
-        Future.successful(BusinessListError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
+        Future.successful(BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
     }
   }
 

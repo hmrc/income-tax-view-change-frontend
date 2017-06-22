@@ -65,8 +65,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
     def successResponse(selfEmploymentId: String): JsValue =
       Json.parse(
         s"""
-          {
-            "business":[
+          [
             {
               "id": "$selfEmploymentId",
               "accountingPeriod":{"start":"2017-01-01","end":"2017-12-31"},
@@ -81,8 +80,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "businessAddressLineFour":"England",
               "businessPostcode":"ZL1 064"
             }
-              ]
-            }""".stripMargin)
+          ]
+          """.stripMargin)
     def failureResponse(code: String, reason: String): JsValue =
       Json.parse(s"""
                     |{

@@ -17,7 +17,7 @@ package controllers
 
 import helpers.ComponentSpecBase
 import helpers.IntegrationTestConstants._
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub}
 import models.LastTaxCalculation
 import play.api.http.Status._
 
@@ -34,13 +34,21 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val calculationResponse = LastTaxCalculation("01234567", "2017-07-06 12:34:56.789", 1800.00)
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, testCalcType, calculationResponse)
+        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, calculationResponse)
+
+        And("I wiremock stub a successful Business Details response")
+        SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
         When("I call GET /check-your-income-tax-and-expenses/estimated-tax-liability")
         val res = IncomeTaxViewChangeFrontend.getEstimatedTaxLiability
 
+        And("I verify the Business Details response has been wiremocked")
+        SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+        Then("I verify the Estimated Tax Liability response has been wiremocked")
+        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+
         Then("a successful response is returned with the correct estimate")
-        println(s"\n\n$res\n\n")
         res should have(
 
           //Check for a Status OK response (200)

@@ -22,14 +22,12 @@ import play.api.libs.json.Json
 
 
 sealed trait BusinessListResponseModel
-
-case class BusinessListModel(
-                              business: List[BusinessModel]
-                              ) extends BusinessListResponseModel
+case class BusinessDetailsModel(business: List[BusinessModel]) extends BusinessListResponseModel
+case class BusinessDetailsErrorModel(code: Int, message: String) extends BusinessListResponseModel
 
 case class BusinessModel(
                           id: String,
-                          accountingPeriod: AccountingPeriod,
+                          accountingPeriod: AccountingPeriodModel,
                           accountingType: String,
                           commencementDate: Option[LocalDate],
                           cessationDate: Option[LocalDate],
@@ -42,30 +40,25 @@ case class BusinessModel(
                           businessPostcode: Option[String]
                           )
 
-case class AccountingPeriod(
-                            start: LocalDate,
-                            end: LocalDate
-                             ) {
-  val determineTaxYear = end match {
+case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
+  val determineTaxYear = (end match {
     case x if x.getDayOfMonth > 5 && x.getMonthValue >= 4 => x.getYear + 1
     case x => x.getYear
-  }
+  }).toString
 }
 
-case class BusinessListError(code: Int, message: String) extends BusinessListResponseModel
-
-object AccountingPeriod {
-  implicit val format = Json.format[AccountingPeriod]
+object AccountingPeriodModel {
+  implicit val format = Json.format[AccountingPeriodModel]
 }
 
 object BusinessModel {
   implicit val format = Json.format[BusinessModel]
 }
 
-object BusinessListModel {
-  implicit val format = Json.format[BusinessListModel]
+object BusinessDetailsErrorModel {
+  implicit val format = Json.format[BusinessDetailsErrorModel]
 }
 
-object BusinessListError {
-  implicit val format = Json.format[BusinessListError]
+object BusinessDetailsModel {
+  implicit val format = Json.format[BusinessDetailsModel]
 }

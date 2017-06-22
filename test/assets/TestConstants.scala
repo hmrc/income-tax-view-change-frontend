@@ -35,7 +35,7 @@ object TestConstants extends ImplicitDateFormatter {
 
     val business1 = BusinessModel(
       id = testSelfEmploymentId,
-      accountingPeriod = AccountingPeriod(start = "2017-1-1", end = "2017-12-31"),
+      accountingPeriod = AccountingPeriodModel(start = "2017-1-1", end = "2017-12-31"),
       accountingType = "CASH",
       commencementDate = Some("2017-1-1"),
       cessationDate = Some("2017-12-31"),
@@ -49,7 +49,7 @@ object TestConstants extends ImplicitDateFormatter {
     )
     val business2 = BusinessModel(
       id = "5678",
-      accountingPeriod = AccountingPeriod(start = "2017-1-1", end = "2017-12-31"),
+      accountingPeriod = AccountingPeriodModel(start = "2017-1-1", end = "2017-12-31"),
       accountingType = "CASH",
       commencementDate = Some("2017-1-1"),
       cessationDate = Some("2017-12-31"),
@@ -62,7 +62,9 @@ object TestConstants extends ImplicitDateFormatter {
       businessPostcode = Some("ZL1 064")
     )
 
-    val businessesSuccessModel = BusinessListModel(List(business1, business2))
+    val businessesSuccessResponse = List(business1, business2)
+    val businessesSuccessModel = BusinessDetailsModel(businessesSuccessResponse)
+    val businessSuccessEmptyModel = BusinessDetailsModel(List.empty)
     val businessSuccessString =
       s"""
           {
@@ -107,15 +109,15 @@ object TestConstants extends ImplicitDateFormatter {
     val businessSuccessJson = Json.parse(businessSuccessString)
 
 
-    val businessListErrorModel = BusinessListError(testErrorStatus, testErrorMessage)
-    val businessListErrorString =
+    val businessErrorModel = BusinessDetailsErrorModel(testErrorStatus, testErrorMessage)
+    val businessErrorString =
       s"""
         |{
         |  "code":$testErrorStatus,
         |  "message":"$testErrorMessage"
         |}
       """.stripMargin
-    val businessListErrorJson = Json.parse(businessListErrorString)
+    val businessListErrorJson = Json.parse(businessErrorString)
   }
 
   object Estimates {

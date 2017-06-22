@@ -18,25 +18,50 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import auth.MtdItUser
 import config.AppConfig
 import controllers.predicates.AuthenticationPredicate
-import models.{LastTaxCalculation, LastTaxCalculationError}
+import models.{BusinessDetailsErrorModel, BusinessDetailsModel, LastTaxCalculation, LastTaxCalculationError}
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
-import services.EstimatedTaxLiabilityService
+import play.api.mvc.{Action, AnyContent, Request, Result}
+import services.{BusinessDetailsService, EstimatedTaxLiabilityService}
+import uk.gov.hmrc.play.http.HeaderCarrier
+
+import scala.concurrent.Future
 
 @Singleton
 class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
+                                                implicit val messagesApi: MessagesApi,
                                                 val authentication: AuthenticationPredicate,
                                                 val estimatedTaxLiabilityService: EstimatedTaxLiabilityService,
-                                                implicit val messagesApi: MessagesApi
-                              ) extends BaseController {
+                                                val businessDetailsService: BusinessDetailsService
+                                               ) extends BaseController {
 
   //Static values will always be these for MVP
-  final val taxYear = "2018"
+  private final val propertiesTaxYear = "2018"
 
-  val getEstimatedTaxLiability: Action[AnyContent] = authentication.async { implicit request => implicit user =>
+  val getEstimatedTaxLiability: Action[AnyContent] = authentication.async {
+    implicit request => implicit user => {
+      Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Business Details Service with NINO: ${user.nino}")
+      businessDetailsService.getBusinessDetails(user.nino) flatMap {
+        case success: BusinessDetailsModel if success.business.nonEmpty => {
+          Logger.debug("[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Business Details found, using Tax Year.")
+          getAndRenderEstimatedLiability(success.business.head.accountingPeriod.determineTaxYear)
+        }
+        case success: BusinessDetailsModel => {
+          Logger.debug("[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Business Details not found, assumed property - fixed Tax Year.")
+          getAndRenderEstimatedLiability(propertiesTaxYear)
+        }
+        case error: BusinessDetailsErrorModel => {
+          Logger.debug("[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Business Details not found, assumed property - fixed Tax Year.")
+          Future.successful(showInternalServerError)
+        }
+      }
+    }
+  }
+
+  private def getAndRenderEstimatedLiability(taxYear: String)(implicit hc: HeaderCarrier, request: Request[AnyContent], user: MtdItUser): Future[Result] = {
     Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
     estimatedTaxLiabilityService.getLastEstimatedTaxCalculation(user.nino, taxYear) map {
       case success: LastTaxCalculation =>

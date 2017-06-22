@@ -18,9 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-
-import connectors.{PropertyObligationDataConnector, BusinessDetailsConnector, BusinessObligationDataConnector}
-
+import connectors.BusinessDetailsConnector
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -34,8 +32,8 @@ class BusinessDetailsService @Inject()(val businessDetailsConnector: BusinessDet
   def getBusinessDetails(nino: String)(implicit hc: HeaderCarrier): Future[BusinessListResponseModel] = {
     Logger.debug(s"[BusinessDetailsService][getBusinessDetails] - Requesting Business Details from connector for user with NINO: $nino")
     businessDetailsConnector.getBusinessList(nino).flatMap {
-      case success: BusinessListModel => Future.successful(success)
-      case error: BusinessListError =>
+      case success: BusinessDetailsModel => Future.successful(success)
+      case error: BusinessDetailsErrorModel =>
         Logger.debug(s"[BusinessDetailsService][getBusinessDetails] - Error Response Status: ${error.code}, Message: ${error.message}")
         Future.successful(error)
     }

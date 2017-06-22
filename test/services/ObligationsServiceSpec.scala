@@ -59,7 +59,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
     "no business list is found" should {
 
       "return an obligations error model" in {
-        setupMockBusinessDetailsResult(testNino)(businessListErrorModel)
+        setupMockBusinessDetailsResult(testNino)(businessErrorModel)
         await(TestObligationsService.getBusinessObligations(testNino)) shouldBe obligationsDataErrorModel
       }
     }

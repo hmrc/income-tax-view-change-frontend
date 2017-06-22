@@ -17,14 +17,17 @@
 package utils
 
 import com.typesafe.config.Config
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterAll, Suite}
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.Result
 import play.api.{Application, Play}
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 trait TestSupport extends UnitSpec with MockFactory with BeforeAndAfterAll with MaterializerSupport {
   this: Suite =>
@@ -48,6 +51,10 @@ trait TestSupport extends UnitSpec with MockFactory with BeforeAndAfterAll with 
   override def afterAll() {
     super.afterAll()
     Play.stop(fakeApplication)
+  }
+
+  implicit class JsoupParse(x: Future[Result]) {
+    def toHtmlDocument: Document = Jsoup.parse(bodyOf(x))
   }
 
 }
