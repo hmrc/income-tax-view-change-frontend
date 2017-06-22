@@ -35,6 +35,9 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testNinoEnrolmentIdentifier = "NINO"
   val testNino = "AA123456A"
 
+  val testYear = "2018"
+  val testCalcType = "it"
+
   val testSelfEmploymentId = "ABC123456789"
 
   val testErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "Internal Server Error Message")
