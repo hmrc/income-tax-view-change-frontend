@@ -39,7 +39,7 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
                                                ) extends BaseController {
 
   //Static values will always be these for MVP
-  private final val propertiesTaxYear = "2018"
+  private final val propertiesTaxYear = 2018
 
   val getEstimatedTaxLiability: Action[AnyContent] = authentication.async {
     implicit request => implicit user => {
@@ -61,12 +61,12 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
     }
   }
 
-  private def getAndRenderEstimatedLiability(taxYear: String)(implicit hc: HeaderCarrier, request: Request[AnyContent], user: MtdItUser): Future[Result] = {
+  private def getAndRenderEstimatedLiability(taxYear: Int)(implicit hc: HeaderCarrier, request: Request[AnyContent], user: MtdItUser): Future[Result] = {
     Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
     estimatedTaxLiabilityService.getLastEstimatedTaxCalculation(user.nino, taxYear) map {
       case success: LastTaxCalculation =>
         Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Success Response: $success")
-        Ok(views.html.estimatedTaxLiability(success.calcAmount))
+        Ok(views.html.estimatedTaxLiability(success.calcAmount, taxYear))
       case failure: LastTaxCalculationError =>
         Logger.warn(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Error Response: Status=${failure.status}, Message=${failure.message}")
         showInternalServerError

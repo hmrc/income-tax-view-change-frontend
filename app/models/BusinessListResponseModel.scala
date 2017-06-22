@@ -41,10 +41,10 @@ case class BusinessModel(
                           )
 
 case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
-  val determineTaxYear = (end match {
+  val determineTaxYear = end match {
     case x if x.getDayOfMonth > 5 && x.getMonthValue >= 4 => x.getYear + 1
     case x => x.getYear
-  }).toString
+  }
 }
 
 object AccountingPeriodModel {

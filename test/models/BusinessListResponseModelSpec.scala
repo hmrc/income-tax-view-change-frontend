@@ -33,7 +33,7 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
       }
 
       "when calling the method to detrmine the Tax Year to which the accounting periods" in {
-        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe "2018"
+        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2018
       }
     }
 
@@ -44,7 +44,7 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
       }
 
       "when calling the method to detrmine the Tax Year to which the accounting periods" in {
-        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe "2018"
+        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2018
       }
     }
 
@@ -79,17 +79,17 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
   "The AccountingPeriodModel Model" when {
     "the end date is before the Start of the next Tax Year" should {
       "return the current Tax Year" in {
-        AccountingPeriodModel("2017-04-06", "2018-04-05").determineTaxYear shouldBe "2018"
+        AccountingPeriodModel("2017-04-06", "2018-04-05").determineTaxYear shouldBe 2018
       }
     }
     "the end date is on the Start of the next Tax Year" should {
       "return the next Tax Year" in {
-        AccountingPeriodModel("2017-04-07", "2018-04-06").determineTaxYear shouldBe "2019"
+        AccountingPeriodModel("2017-04-07", "2018-04-06").determineTaxYear shouldBe 2019
       }
     }
     "the end date is after the Start of the next Tax Year" should {
       "return the next Tax Year" in {
-        AccountingPeriodModel("2017-04-08", "2018-04-07").determineTaxYear shouldBe "2019"
+        AccountingPeriodModel("2017-04-08", "2018-04-07").determineTaxYear shouldBe 2019
       }
     }
   }

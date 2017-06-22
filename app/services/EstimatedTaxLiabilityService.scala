@@ -30,7 +30,7 @@ import scala.concurrent.Future
 class EstimatedTaxLiabilityService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector) {
 
   def getLastEstimatedTaxCalculation(nino: String,
-                                     year: String
+                                     year: Int
                                     )(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 
     Logger.debug("[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")

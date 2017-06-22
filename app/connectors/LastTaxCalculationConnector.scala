@@ -35,9 +35,9 @@ class LastTaxCalculationConnector @Inject()(val http: HttpGet) extends ServicesC
   lazy val getEstimatedTaxLiabilityUrl: (String, String) => String = (nino, year) =>
     s"$protectedMicroserviceUrl/income-tax-view-change/estimated-tax-liability/$nino/$year/it"
 
-  def getLastEstimatedTax(nino: String, year: String)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
+  def getLastEstimatedTax(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 
-    val url = getEstimatedTaxLiabilityUrl(nino, year)
+    val url = getEstimatedTaxLiabilityUrl(nino, year.toString)
 
     Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - GET $url")
 

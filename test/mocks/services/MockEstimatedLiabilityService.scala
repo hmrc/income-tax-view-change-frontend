@@ -39,7 +39,7 @@ trait MockEstimatedLiabilityService extends UnitSpec with MockitoSugar with Befo
     reset(mockEstimatedLiabilityService)
   }
 
-  def setupMockLastTaxCalculationResult(nino: String, year: String)(response: LastTaxCalculationResponseModel): Unit =
+  def setupMockLastTaxCalculationResult(nino: String, year: Int)(response: LastTaxCalculationResponseModel): Unit =
     when(mockEstimatedLiabilityService
       .getLastEstimatedTaxCalculation(
         ArgumentMatchers.eq(nino),

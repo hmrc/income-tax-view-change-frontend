@@ -36,7 +36,7 @@ trait MockLastTaxCalculationConnector extends UnitSpec with MockitoSugar with Be
       reset(mockLastTaxCalculationConnector)
     }
 
-    def setupLastTaxCalculationResponse(nino: String, year: String)(response: LastTaxCalculationResponseModel): Unit =
+    def setupLastTaxCalculationResponse(nino: String, year: Int)(response: LastTaxCalculationResponseModel): Unit =
       when(mockLastTaxCalculationConnector
           .getLastEstimatedTax(
             ArgumentMatchers.eq(nino),
