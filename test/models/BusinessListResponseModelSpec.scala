@@ -32,12 +32,20 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
       s"have the id set as $testSelfEmploymentId" in {
         businessesSuccessModel.business.head.id shouldBe testSelfEmploymentId
       }
+
+      "when calling the method to detrmine the Tax Year to which the accounting periods" in {
+        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2018
+      }
     }
 
     "for the 2nd Business" should {
 
       "have the id set as 5678" in {
         businessesSuccessModel.business.last.id shouldBe "5678"
+      }
+
+      "when calling the method to detrmine the Tax Year to which the accounting periods" in {
+        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2018
       }
     }
 
@@ -66,6 +74,24 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
 
     "be able to parse a JSON to string into the Model" in {
       Json.parse(businessListErrorString).as[BusinessListError] shouldBe businessListErrorModel
+    }
+  }
+
+  "The AccountingPeriod Model" when {
+    "the end date is before the Start of the next Tax Year" should {
+      "return the current Tax Year" in {
+        AccountingPeriod("2017-04-06", "2018-04-05").determineTaxYear shouldBe 2018
+      }
+    }
+    "the end date is on the Start of the next Tax Year" should {
+      "return the next Tax Year" in {
+        AccountingPeriod("2017-04-07", "2018-04-06").determineTaxYear shouldBe 2019
+      }
+    }
+    "the end date is after the Start of the next Tax Year" should {
+      "return the next Tax Year" in {
+        AccountingPeriod("2017-04-08", "2018-04-07").determineTaxYear shouldBe 2019
+      }
     }
   }
 }

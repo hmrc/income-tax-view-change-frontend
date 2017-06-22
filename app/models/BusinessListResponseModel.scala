@@ -45,7 +45,12 @@ case class BusinessModel(
 case class AccountingPeriod(
                             start: LocalDate,
                             end: LocalDate
-                             )
+                             ) {
+  val determineTaxYear = end match {
+    case x if x.getDayOfMonth > 5 && x.getMonthValue >= 4 => x.getYear + 1
+    case x => x.getYear
+  }
+}
 
 case class BusinessListError(code: Int, message: String) extends BusinessListResponseModel
 
