@@ -19,30 +19,30 @@
 @import views.helpers.ObligationStatusHelper
 
 @(model: Option[ObligationsModel], id: String)(implicit messages: Messages)
-
-<section>
-    <h2 id="@{id}-section">@Messages("obligations." + id + ".subheading")</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>@Messages("obligations.accountingPeriod")</th>
-                <th>@Messages("obligations.reportDueDate")</th>
-            </tr>
-        </thead>
-        <tbody>
-            @model.get.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
-                <tr class="obligation">
-                    <td>
-                        <p>
-                            <span id="@{id}-ob-@{index + 1}-start">@obligation.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@obligation.end.toLongDate</span>
-                        </p>
-                    </td>
-                    <td id="@{id}-ob-@{index+1}-status">
-                        @ObligationStatusHelper.statusHtml(obligation.getObligationStatus)
-                    </td>
+@if(model.isDefined){
+    <section>
+        <h2 id="@{id}-section">@Messages("obligations." + id + ".subheading")</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>@Messages("obligations.accountingPeriod")</th>
+                    <th>@Messages("obligations.reportDueDate")</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</section>
-
+            </thead>
+            <tbody>
+                @model.get.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
+                    <tr class="obligation">
+                        <td>
+                            <p>
+                                <span id="@{id}-ob-@{index + 1}-start">@obligation.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@obligation.end.toLongDate</span>
+                            </p>
+                        </td>
+                        <td id="@{id}-ob-@{index+1}-status">
+                            @ObligationStatusHelper.statusHtml(obligation.getObligationStatus)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+}

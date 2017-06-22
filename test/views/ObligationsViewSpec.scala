@@ -40,8 +40,10 @@ class ObligationsViewSpec extends TestSupport{
 
   val dummymodel = ObligationsModel(List(model))
 
-  lazy val page = views.html.obligations(dummymodel)(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
-  lazy val document = Jsoup.parse(contentAsString(page))
+  lazy val bothPage = views.html.obligations(Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
+  lazy val bizPage  = views.html.obligations(Some(dummymodel), None)(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
+  lazy val propPage = views.html.obligations(None, Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
+  lazy val document = Jsoup.parse(contentAsString(bothPage))
 
   "The Obligations view" should {
 
@@ -107,7 +109,31 @@ class ObligationsViewSpec extends TestSupport{
       }
     }
 
+    "when only business obligations are returned" should {
 
+      lazy val bizDocument = Jsoup.parse(contentAsString(bizPage))
+
+      "contain a section for Business Obligations" in {
+        bizDocument.getElementById("bi-section").text() shouldBe messages.businessHeading
+      }
+
+      "not contain Property Obligations section" in {
+        bizDocument.getElementById("pi-section") shouldBe null
+      }
+    }
+
+    "when only property obligations are returned" should {
+
+      lazy val propDocument = Jsoup.parse(contentAsString(propPage))
+
+      "contain a section for Business Obligations" in {
+        propDocument.getElementById("pi-section").text() shouldBe messages.propertyHeading
+      }
+
+      "not contain Property Obligations section" in {
+        propDocument.getElementById("bi-section") shouldBe null
+      }
+    }
   }
 
 }
