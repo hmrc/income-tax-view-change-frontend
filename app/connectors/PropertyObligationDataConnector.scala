@@ -34,7 +34,7 @@ class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends Servi
   lazy val propertyDataUrl: String = baseUrl("self-assessment-api")
   lazy val getPropertyDataUrl: String => String = nino => s"$propertyDataUrl/self-assessment/ni/$nino/uk-properties/obligations"
 
-  def getPropertyData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getPropertyObligationData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     val url = getPropertyDataUrl(nino)
 

@@ -33,14 +33,14 @@ class ObligationsService @Inject()(val businessObligationDataConnector: Business
                                   val propertyObligationDataConnector: PropertyObligationDataConnector
                                   ) {
 
-  def getObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getBusinessObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
     businessDetailsConnector.getBusinessList(nino).flatMap {
       case success: BusinessListModel =>
         // Only one business is returned for MVP hence .head to obtain ID.
         Logger.debug(s"[ObligationsService][getObligations] - Retrieved BusinessListModel: \n\n$success")
-        businessObligationDataConnector.getObligationData(nino, success.business.head.id)
+        businessObligationDataConnector.getBusinessObligationData(nino, success.business.head.id)
       case error: BusinessListError =>
         Logger.debug(s"[ObligationService][getObligations] - Error Response Status: ${error.code}, Message: ${error.message}")
         Future.successful(ObligationsErrorModel(error.code, error.message))
@@ -49,6 +49,6 @@ class ObligationsService @Inject()(val businessObligationDataConnector: Business
 
   def getPropertyObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
     Logger.debug(s"[ObligationsService][getPropertyObligations] - Requesting Property Obligation details from connectors for user with NINO: $nino")
-    propertyObligationDataConnector.getPropertyData(nino)
+    propertyObligationDataConnector.getPropertyObligationData(nino)
   }
 }

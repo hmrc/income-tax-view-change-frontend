@@ -35,11 +35,11 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
 
   val getObligations: Action[AnyContent] = authentication.async { implicit request =>
     implicit user =>
+
       for {
-        business <- obligationsService.getObligations(user.nino)
+        business <- obligationsService.getBusinessObligations(user.nino)
         property <- obligationsService.getPropertyObligations(user.nino)
       } yield (business, property) match {
-
         case (businessSuccess: ObligationsModel, propertySuccess: ObligationsModel) =>
           Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
           //TODO refactor to send both obligations through to the view
@@ -51,7 +51,7 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
           Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
           Ok(views.html.obligations(propertySuccess))
         case (_,_) =>
-          Logger.warn("[ObligationsController][getObligations] No Obligations retrieved. Throwing ISE")
+          Logger.warn("[ObligationsController][getObligations] No obligations retrieved. Throwing ISE")
           showInternalServerError
       }
   }
