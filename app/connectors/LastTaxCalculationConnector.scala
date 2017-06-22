@@ -32,12 +32,12 @@ import scala.concurrent.Future
 class LastTaxCalculationConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
   lazy val protectedMicroserviceUrl: String = baseUrl("income-tax-view-change")
-  lazy val getEstimatedTaxLiabilityUrl: (String, String, String) => String =
-    (nino, year, calcType) => s"$protectedMicroserviceUrl/income-tax-view-change/estimated-tax-liability/$nino/$year/$calcType"
+  lazy val getEstimatedTaxLiabilityUrl: (String, String) => String = (nino, year) =>
+    s"$protectedMicroserviceUrl/income-tax-view-change/estimated-tax-liability/$nino/$year/it"
 
-  def getLastEstimatedTax(nino: String, year: String, calcType: String)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
+  def getLastEstimatedTax(nino: String, year: String)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 
-    val url = getEstimatedTaxLiabilityUrl(nino, year, calcType)
+    val url = getEstimatedTaxLiabilityUrl(nino, year)
 
     Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - GET $url")
 

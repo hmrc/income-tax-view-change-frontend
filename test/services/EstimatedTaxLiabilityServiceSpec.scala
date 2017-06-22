@@ -32,16 +32,16 @@ class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockLastTaxCalcu
     "a successful response is returned from the EstimatedTaxLiabilityConnector" should {
 
       "return a correctly formatted EstimateTaxLiability model" in {
-        setupLastTaxCalculationResponse(testNino, testYear, testCalcType)(lastTaxCalcSuccess)
-        await(TestEstimatedTaxLiabilityService.getLastEstimatedTaxCalculation(testNino, testYear, testCalcType)) shouldBe Estimates.lastTaxCalcSuccess
+        setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
+        await(TestEstimatedTaxLiabilityService.getLastEstimatedTaxCalculation(testNino, testYear)) shouldBe Estimates.lastTaxCalcSuccess
       }
     }
 
     "an Error Response is returned from the FinancialDataConnector" should {
 
       "return a correctly formatted EstimateTaxLiability model" in {
-        setupLastTaxCalculationResponse(testNino, testYear, testCalcType)(Estimates.lastTaxCalcError)
-        await(TestEstimatedTaxLiabilityService.getLastEstimatedTaxCalculation(testNino, testYear, testCalcType)) shouldBe Estimates.lastTaxCalcError
+        setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
+        await(TestEstimatedTaxLiabilityService.getLastEstimatedTaxCalculation(testNino, testYear)) shouldBe Estimates.lastTaxCalcError
       }
     }
   }
