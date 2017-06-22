@@ -18,6 +18,7 @@ package controllers
 import helpers.ComponentSpecBase
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
+import models.LastTaxCalculation
 import play.api.http.Status._
 
 class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
@@ -32,23 +33,24 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
         AuthStub.stubAuthorised()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, "01234567", "2017-07-06 12:34:56.789", 1800.00)
+        val calculationResponse = LastTaxCalculation("01234567", "2017-07-06 12:34:56.789", 1800.00)
+        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, testCalcType, calculationResponse)
 
         When("I call GET /check-your-income-tax-and-expenses/estimated-tax-liability")
         val res = IncomeTaxViewChangeFrontend.getEstimatedTaxLiability
 
         Then("a successful response is returned with the correct estimate")
-
+        println(s"\n\n$res\n\n")
         res should have(
 
           //Check for a Status OK response (200)
           httpStatus(OK),
 
           //Check the Page Title
-          pageTitle("Your estimated tax amount"),
+          pageTitle("2017/18 - Business Tax Account"),
 
           //Check the estimated tax amount is correct
-          elementTextByID("estimate-amount")("£1,800.00")
+          elementTextByID("in-year-estimate")("£1,800.00")
         )
       }
     }
@@ -56,7 +58,7 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
 
       "redirect to sign in" in {
 
-        Given("I wiremock stub an unatuhorised user response")
+        Given("I wiremock stub an unauthorised user response")
         AuthStub.stubUnauthorised()
 
         When("I call GET /check-your-income-tax-and-expenses/estimated-tax-liability")
