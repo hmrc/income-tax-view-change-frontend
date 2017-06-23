@@ -19,8 +19,7 @@ package services
 import javax.inject.{Inject, Singleton}
 
 
-import connectors.{PropertyObligationDataConnector, BusinessDetailsConnector, BusinessObligationDataConnector}
-
+import connectors._
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier

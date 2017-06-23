@@ -17,18 +17,13 @@
 package services
 
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 import assets.TestConstants
+
 import models._
 import play.api.i18n.Messages
 import play.api.libs.json.{JsResultException, Json}
-import play.mvc.Http.Status
-import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
 import utils.TestSupport
-
-
 
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Obligations._
@@ -36,10 +31,9 @@ import assets.TestConstants._
 import mocks.connectors.{MockBusinessDetailsConnector, MockBusinessObligationDataConnector, MockPropertyObligationDataConnector}
 import utils.TestSupport
 
+class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector with MockBusinessDetailsConnector with MockPropertyObligationDataConnector{
 
-class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector with MockBusinessDetailsConnector with MockPropertyObligationDataConnector {
-
-  object TestObligationsService extends ObligationsService(mockObligationDataConnector, mockBusinessDetailsConnector, mockPropertyObligationDataConnector)
+  object TestObligationsService extends ObligationsService(mockBusinessObligationDataConnector, mockBusinessDetailsConnector, mockPropertyObligationDataConnector)
 
   "The ObligationsService.getObligations method" when {
 
