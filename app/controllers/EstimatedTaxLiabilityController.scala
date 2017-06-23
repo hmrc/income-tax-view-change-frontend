@@ -54,7 +54,7 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
           getAndRenderEstimatedLiability(propertiesTaxYear)
         }
         case error: BusinessDetailsErrorModel => {
-          Logger.debug("[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Business Details not found, assumed property - fixed Tax Year.")
+          Logger.debug("[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Business Details Error.")
           Future.successful(showInternalServerError)
         }
       }
