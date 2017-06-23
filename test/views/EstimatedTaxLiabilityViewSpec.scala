@@ -27,6 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.TestSupport
 import assets.TestConstants._
+import assets.TestConstants.Estimates._
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
@@ -36,7 +37,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
   val testAmountOutput: String = "£2,345.67"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
 
-  lazy val page = views.html.estimatedTaxLiability(testAmount)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val page = views.html.estimatedTaxLiability(testAmount, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The EstimatedTaxLiability view" should {
@@ -46,7 +47,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
     }
 
     s"have the tax year '${messages.taxYear}'" in {
-      document.getElementById("tax-year").text() shouldBe messages.taxYear
+      document.getElementById("tax-year").text() shouldBe "2017/18"
     }
 
     s"have the page heading '${messages.pageHeading}'" in {

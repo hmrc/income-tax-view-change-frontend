@@ -17,11 +17,10 @@
 package models
 
 import assets.TestConstants.BusinessDetails._
+import assets.TestConstants._
 import org.scalatest.Matchers
-import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
-import assets.TestConstants._
 
 class BusinessListResponseModelSpec extends UnitSpec with Matchers {
 
@@ -32,6 +31,10 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
       s"have the id set as $testSelfEmploymentId" in {
         businessesSuccessModel.business.head.id shouldBe testSelfEmploymentId
       }
+
+      "when calling the method to detrmine the Tax Year to which the accounting periods" in {
+        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2018
+      }
     }
 
     "for the 2nd Business" should {
@@ -39,33 +42,55 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
       "have the id set as 5678" in {
         businessesSuccessModel.business.last.id shouldBe "5678"
       }
+
+      "when calling the method to detrmine the Tax Year to which the accounting periods" in {
+        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2018
+      }
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson[BusinessListModel](businessesSuccessModel) shouldBe businessSuccessJson
+      Json.toJson[BusinessDetailsModel](businessesSuccessModel) shouldBe businessSuccessJson
     }
 
     "be able to parse a JSON input as a string into the Model" in {
-      Json.parse(businessSuccessString).as[BusinessListModel] shouldBe businessesSuccessModel
+      Json.parse(businessSuccessString).as[BusinessDetailsModel] shouldBe businessesSuccessModel
     }
   }
 
   "The BusinessListError" should {
 
     "have the correct status code in the model" in {
-      businessListErrorModel.code shouldBe testErrorStatus
+      businessErrorModel.code shouldBe testErrorStatus
     }
 
     "have the correct Error Message in the model" in {
-      businessListErrorModel.message shouldBe testErrorMessage
+      businessErrorModel.message shouldBe testErrorMessage
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson[BusinessListError](businessListErrorModel) shouldBe businessListErrorJson
+      Json.toJson(businessErrorModel) shouldBe businessListErrorJson
     }
 
     "be able to parse a JSON to string into the Model" in {
-      Json.parse(businessListErrorString).as[BusinessListError] shouldBe businessListErrorModel
+      Json.parse(businessErrorString).as[BusinessDetailsErrorModel] shouldBe businessErrorModel
+    }
+  }
+
+  "The AccountingPeriodModel Model" when {
+    "the end date is before the Start of the next Tax Year" should {
+      "return the current Tax Year" in {
+        AccountingPeriodModel("2017-04-06", "2018-04-05").determineTaxYear shouldBe 2018
+      }
+    }
+    "the end date is on the Start of the next Tax Year" should {
+      "return the next Tax Year" in {
+        AccountingPeriodModel("2017-04-07", "2018-04-06").determineTaxYear shouldBe 2019
+      }
+    }
+    "the end date is after the Start of the next Tax Year" should {
+      "return the next Tax Year" in {
+        AccountingPeriodModel("2017-04-08", "2018-04-07").determineTaxYear shouldBe 2019
+      }
     }
   }
 }

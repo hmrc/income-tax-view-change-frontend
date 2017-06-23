@@ -18,7 +18,6 @@ package connectors
 
 
 import assets.TestConstants.Estimates._
-
 import assets.TestConstants._
 import mocks.MockHttp
 import models.LastTaxCalculationError
@@ -38,21 +37,21 @@ class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
   "EstimatedTaxLiabilityConnector.getEstimatedTaxLiability" should {
 
     "return a EstimatedTaxLiability model when successful JSON is received" in {
-      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear, testCalcType))(successResponse)
-      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear, testCalcType)
+      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear.toString))(successResponse)
+      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear)
       await(result) shouldBe lastTaxCalcSuccess
 
     }
 
     "return EstimatedTaxLiabilityError model in case of bad/malformed JSON response" in {
-      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear, testCalcType))(successResponseBadJson)
-      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear, testCalcType)
+      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear.toString))(successResponseBadJson)
+      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear)
       await(result) shouldBe LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Estimated Tax Liability Response.")
     }
 
     "return EstimatedTaxLiabilityError model in case of failure" in {
-      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear, testCalcType))(badResponse)
-      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear, testCalcType)
+      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear.toString))(badResponse)
+      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear)
       await(result) shouldBe LastTaxCalculationError(Status.BAD_REQUEST, "Error Message")
     }
   }

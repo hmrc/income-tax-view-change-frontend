@@ -18,8 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-
-import connectors._
+import connectors.{BusinessObligationDataConnector, PropertyObligationDataConnector}
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -29,19 +28,19 @@ import scala.concurrent.Future
 
 @Singleton
 class ObligationsService @Inject()(val businessObligationDataConnector: BusinessObligationDataConnector,
-                                  val businessDetailsConnector: BusinessDetailsConnector,
+                                  val businessDetailsService: BusinessDetailsService,
                                   val propertyObligationDataConnector: PropertyObligationDataConnector
                                   ) {
 
   def getBusinessObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
-    businessDetailsConnector.getBusinessList(nino).flatMap {
-      case success: BusinessListModel =>
+    businessDetailsService.getBusinessDetails(nino).flatMap {
+      case success: BusinessDetailsModel =>
         // Only one business is returned for MVP hence .head to obtain ID.
         Logger.debug(s"[ObligationsService][getObligations] - Retrieved BusinessListModel: \n\n$success")
         businessObligationDataConnector.getBusinessObligationData(nino, success.business.head.id)
-      case error: BusinessListError =>
+      case error: BusinessDetailsErrorModel =>
         Logger.debug(s"[ObligationService][getObligations] - Error Response Status: ${error.code}, Message: ${error.message}")
         Future.successful(ObligationsErrorModel(error.code, error.message))
     }

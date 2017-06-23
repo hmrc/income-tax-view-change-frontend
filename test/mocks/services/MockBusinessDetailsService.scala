@@ -16,34 +16,28 @@
 
 package mocks.services
 
-import models.LastTaxCalculationResponseModel
+import models.BusinessListResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import services.EstimatedTaxLiabilityService
+import services.BusinessDetailsService
 import uk.gov.hmrc.play.test.UnitSpec
-import assets.TestConstants.Estimates._
-import assets.TestConstants.Estimates
-import assets.TestConstants._
 
 import scala.concurrent.Future
 
 
-trait MockEstimatedLiabilityService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockBusinessDetailsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockEstimatedLiabilityService: EstimatedTaxLiabilityService = mock[EstimatedTaxLiabilityService]
+  val mockBusinessDetailsService: BusinessDetailsService = mock[BusinessDetailsService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockEstimatedLiabilityService)
+    reset(mockBusinessDetailsService)
   }
 
-  def setupMockLastTaxCalculationResult(nino: String, year: Int)(response: LastTaxCalculationResponseModel): Unit =
-    when(mockEstimatedLiabilityService
-      .getLastEstimatedTaxCalculation(
-        ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(year)
-      )(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
+  def setupMockBusinessDetailsResult(nino: String)(response: BusinessListResponseModel): Unit =
+    when(mockBusinessDetailsService
+      .getBusinessDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any())
+    ).thenReturn(Future.successful(response))
 }
