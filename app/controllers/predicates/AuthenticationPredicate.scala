@@ -27,6 +27,7 @@ import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.Retrievals.authorisedEnrolments
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.frontend.Redirects
+import uk.gov.hmrc.play.http.SessionKeys
 
 import scala.concurrent.Future
 
@@ -48,23 +49,38 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
   lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
 
   def async(action: AsyncUserRequest): Action[AnyContent] = Action.async { implicit request =>
-    authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) { authorisedEnrolments =>
-      action(request)(
-        MtdItUser(
-          mtditid = getEnrolmentIdentifierValue(mtdItEnrolmentKey, mtdItIdentifierKey)(authorisedEnrolments),
-          nino = getEnrolmentIdentifierValue(ninoEnrolmentKey, ninoIdentifierKey)(authorisedEnrolments)
-        )
-      )
-    }.recoverWith {
-      case _: InsufficientEnrolments =>
-        Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
-        Future.successful(showInternalServerError)
-      case _: BearerTokenExpired =>
-        Logger.debug("[AuthenticationPredicate][async] Session Time Out.")
+    checkSessionTimeout(request) {
+      authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {
+        authorisedEnrolments => {
+          action(request)(
+            MtdItUser(
+              mtditid = getEnrolmentIdentifierValue(mtdItEnrolmentKey, mtdItIdentifierKey)(authorisedEnrolments),
+              nino = getEnrolmentIdentifierValue(ninoEnrolmentKey, ninoIdentifierKey)(authorisedEnrolments)
+            )
+          )
+        }
+      }.recoverWith {
+        case _: InsufficientEnrolments =>
+          Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
+          Future.successful(showInternalServerError)
+        case _: BearerTokenExpired =>
+          Logger.debug("[AuthenticationPredicate][async] Bearer Token Timed Out.")
+          Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
+        case _ =>
+          Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
+          Future.successful(Redirect(controllers.routes.SignInController.signIn()))
+      }
+    }
+  }
+
+  private[AuthenticationPredicate] def checkSessionTimeout(request: Request[AnyContent])(f: => Future[Result]) = {
+    (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {
+      case (Some(x), None) =>
+        // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
+        Logger.debug("[AuthenticationPredicate][handleSessionTimeout] Session Time Out.")
         Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
-      case _ =>
-        Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to GG Sign In.")
-        Future.successful(ggSignInRedirect)
+      case (_, _) =>
+        f
     }
   }
 

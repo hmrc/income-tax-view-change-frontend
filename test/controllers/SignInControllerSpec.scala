@@ -14,40 +14,37 @@
  * limitations under the License.
  */
 
-package controllers.timeout
+package controllers
 
-import assets.Messages.{Timeout => messages}
 import config.FrontendAppConfig
-import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.{Configuration, Environment}
 import utils.TestSupport
+import play.api.test.Helpers._
 
-class SessionTimeoutControllerSpec extends TestSupport {
+class SignInControllerSpec extends TestSupport {
 
-  object TestSessionTimeoutController extends SessionTimeoutController()(
+  object TestSignInController extends SignInController(
     fakeApplication.injector.instanceOf[FrontendAppConfig],
+    fakeApplication.injector.instanceOf[Configuration],
+    fakeApplication.injector.instanceOf[Environment],
     fakeApplication.injector.instanceOf[MessagesApi]
   )
 
-  "Calling the timeout action of the SessionTimeoutController" should {
+  "navigating to SignIn page" should {
+    lazy val result = TestSignInController.signIn(fakeRequestNoSession)
 
-    lazy val result = TestSessionTimeoutController.timeout(fakeRequestNoSession)
-    lazy val document = Jsoup.parse(contentAsString(result))
-
-    "return OK (200)" in {
-      status(result) shouldBe Status.OK
+    "return OK (303)" in {
+      status(result) shouldBe Status.SEE_OTHER
     }
 
-    "return HTML" in {
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+    "Redirect to GG Sign In on Company Auth Frontend" in {
+      redirectLocation(result) shouldBe Some(
+        "/gg/sign-in?continue=http%3A%2F%2Flocalhost%3A9081%2Fcheck-your-income-tax-and-expenses%2Fobligations&origin=income-tax-view-change-frontend"
+      )
     }
 
-    s"have the title '${messages.title}'" in {
-      document.title() shouldBe messages.title
-    }
   }
+
 }
