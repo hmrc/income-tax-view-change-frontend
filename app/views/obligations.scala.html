@@ -16,9 +16,10 @@
 
 @import utils.ImplicitDateFormatter._
 @import views.html.templates.main_template
-@import views.helpers.ObligationStatusHelper
+@import views.helpers.{ObligationStatusHelper}
+@import views.html.helpers.ObSecHelper
 
-@(obligationsModel: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
+@(bizObs: Option[ObligationsModel], propObs: Option[ObligationsModel])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
 
 @sidebar = {
     <section id="sidebar" class="section section--blue-top">
@@ -58,31 +59,9 @@
 
     <p id="obligation-intro">@messages("obligations.info")</p>
 
-    <section>
-        <h2 id="bi-section">@Messages("obligations.bi.subheading")</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>@Messages("obligations.accountingPeriod")</th>
-                    <th>@Messages("obligations.reportDueDate")</th>
-                </tr>
-            </thead>
-            <tbody>
-                @obligationsModel.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
-                    <tr class="obligation">
-                        <td>
-                            <p>
-                                <span id="bi-ob-@{index+1}-start">@obligation.start.toLongDate</span> to <span id="bi-ob-@{index+1}-end">@obligation.end.toLongDate</span>
-                            </p>
-                        </td>
-                        <td id=@{s"bi-ob-${index+1}-status"}>
-                            @ObligationStatusHelper.statusHtml(obligation.getObligationStatus)
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </section>
+    @ObSecHelper(bizObs, "bi")
+    @ObSecHelper(propObs, "pi")
+
 </section>
 
 }
