@@ -40,4 +40,9 @@ trait MockObligationsService extends UnitSpec with MockitoSugar with BeforeAndAf
     when(mockObligationsService.getBusinessObligations(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
+
+  def setupMockPropertyObligationsResult(nino: String)(response: ObligationsResponseModel): Unit = {
+    when(mockObligationsService.getPropertyObligations(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
+  }
 }

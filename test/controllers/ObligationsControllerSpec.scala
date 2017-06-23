@@ -78,8 +78,40 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
           )
         )
 
+        def mockPropertySuccess(): Unit = setupMockPropertyObligationsResult(testNino)(
+          ObligationsModel(
+            List(
+              ObligationModel(
+                start = "2017-04-06",
+                end = "2017-07-05",
+                due = "2017-08-05",
+                met = true
+              ),
+              ObligationModel(
+                start = "2017-07-06",
+                end = "2017-10-05",
+                due = "2017-11-05",
+                met = true
+              ),
+              ObligationModel(
+                start = "2017-10-06",
+                end = "2018-01-05",
+                due = "2018-02-05",
+                met = false
+              ),
+              ObligationModel(
+                start = "2018-01-06",
+                end = "2018-04-05",
+                due = "2018-05-06",
+                met = false
+              )
+            )
+          )
+        )
+
         "return Status OK (200)" in {
           mockSuccess()
+          mockPropertySuccess()
           status(result) shouldBe Status.OK
         }
 
@@ -98,12 +130,16 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
         lazy val result = TestObligationsController.getObligations()(FakeRequest())
         lazy val document = Jsoup.parse(bodyOf(result))
 
-        def mockFail(): Unit = setupMockObligationsResult(testNino)(
+        def mockBusinessObligationsFail(): Unit = setupMockObligationsResult(testNino)(
+          ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Error Message")
+        )
+        def mockPropertyObligationsFail(): Unit = setupMockPropertyObligationsResult(testNino)(
           ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Error Message")
         )
 
         "return Status INTERNAL_SERVER_ERROR (500)" in {
-          mockFail()
+          mockBusinessObligationsFail()
+          mockPropertyObligationsFail()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 

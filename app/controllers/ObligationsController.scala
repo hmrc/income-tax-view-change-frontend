@@ -20,11 +20,11 @@ import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
 import controllers.predicates.AuthenticationPredicate
-import models.{ObligationsErrorModel, ObligationsModel}
-import play.api.Logger
+import models.ObligationsModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.ObligationsService
+import play.api.Logger
 
 @Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,
@@ -35,14 +35,25 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
 
   val getObligations: Action[AnyContent] = authentication.async { implicit request =>
     implicit user =>
-      Logger.debug(s"[ObligationsController][getObligations] Calling Obligations Service for user with NINO: ${user.nino}")
-      obligationsService.getBusinessObligations(user.nino).map {
-        case obligations: ObligationsModel =>
-          Logger.debug("[ObligationsController][getObligations] Obligations retrieved.  Serving HTML page")
-          Ok(views.html.obligations(obligations))
-        case error: ObligationsErrorModel =>
-          Logger.warn("[ObligationsController][getObligations] No obligations retrieved. Rendering ISE")
+
+      for {
+        business <- obligationsService.getBusinessObligations(user.nino)
+        property <- obligationsService.getPropertyObligations(user.nino)
+      } yield (business, property) match {
+        case (businessSuccess: ObligationsModel, propertySuccess: ObligationsModel) =>
+          Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
+          //TODO refactor to send both obligations through to the view
+          Ok(views.html.obligations(Some(businessSuccess), Some(propertySuccess)))
+        case (businessSuccess: ObligationsModel, _) =>
+          Logger.debug ("[ObligationsController][getObligations] Business Obligations retrieved. Serving HTML page")
+          Ok(views.html.obligations(Some(businessSuccess), None))
+        case (_, propertySuccess: ObligationsModel) =>
+          Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
+          Ok(views.html.obligations(None, Some(propertySuccess)))
+        case (_,_) =>
+          Logger.warn("[ObligationsController][getObligations] No obligations retrieved. Throwing ISE")
           showInternalServerError
       }
   }
 }
+

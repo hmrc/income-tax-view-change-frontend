@@ -18,6 +18,7 @@ obligations.accountingPeriod                                    = Accounting per
 obligations.reportDueDate                                       = Report due date
 
 obligations.bi.subheading                                       = Business income
+obligations.pi.subheading                                       = Property income
 
 ## Statuses ##
 status.received                                                 = Received

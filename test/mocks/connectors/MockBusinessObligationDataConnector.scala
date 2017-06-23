@@ -29,15 +29,15 @@ import scala.concurrent.Future
 
 trait MockBusinessObligationDataConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockObligationDataConnector: BusinessObligationDataConnector = mock[BusinessObligationDataConnector]
+  val mockBusinessObligationDataConnector: BusinessObligationDataConnector = mock[BusinessObligationDataConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockObligationDataConnector)
+    reset(mockBusinessObligationDataConnector)
   }
 
   def setupMockObligation(nino: String, selfEmploymentId: String)(response: ObligationsResponseModel): Unit = {
-    when(mockObligationDataConnector.getBusinessObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
+    when(mockBusinessObligationDataConnector.getBusinessObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 

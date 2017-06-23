@@ -26,11 +26,10 @@ import mocks.services.MockBusinessDetailsService
 import models._
 import utils.TestSupport
 
-
 class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector
   with MockBusinessDetailsService with MockPropertyObligationDataConnector {
 
-  object TestObligationsService extends ObligationsService(mockObligationDataConnector, mockBusinessDetailsService, mockPropertyObligationDataConnector)
+  object TestObligationsService extends ObligationsService(mockBusinessObligationDataConnector, mockBusinessDetailsService, mockPropertyObligationDataConnector)
 
   "The ObligationsService.getObligations method" when {
 
