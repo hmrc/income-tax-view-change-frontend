@@ -41,7 +41,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub a single business obligation response")
-          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
 
           When("I call GET /check-your-income-tax-and-expenses/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
@@ -61,7 +61,8 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             //Check the 1st obligation data
             elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
             elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
-            elementTextByID(id = "bi-ob-1-status")("Received")
+            elementTextByID(id = "bi-ob-1-status")("Received"),
+            isElementVisibleById("pi-ob")(false)
           )
         }
       }
@@ -77,7 +78,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub multiple business obligations response")
-          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, multipleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, multipleObligationsDataSuccessModel)
 
           When("I call GET /check-your-income-tax-and-expenses/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
@@ -108,6 +109,78 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             elementTextByID(id = "bi-ob-3-start")("6 October 2017"),
             elementTextByID(id = "bi-ob-3-end")("5 January 2018"),
             elementTextByID(id = "bi-ob-3-status")("Overdue")
+          )
+        }
+      }
+
+      "has a single property obligation" should {
+
+        "display a single obligation with the correct dates and status" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a single business obligation response")
+          SelfAssessmentStub.stubGetOnlyPropObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
+
+          When("I call GET /check-your-income-tax-and-expenses/obligations")
+          val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your Income Tax reports"),
+
+            //Check one obligation section is returned
+            nElementsWithClass("obligation")(1),
+
+            //Check the 1st obligation data
+            elementTextByID(id = "pi-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "pi-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "pi-ob-1-status")("Received"),
+            isElementVisibleById("bi-ob")(false)
+          )
+        }
+      }
+
+      "has business and property obligations" should {
+
+        "display one obligation each for business and property with the correct dates and statuses" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a single business and property obligation response")
+          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel, singleObligationsDataSuccessModel)
+
+          When("I call GET /check-your-income-tax-and-expenses/obligations")
+          val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("the result should have a HTTP status of OK and a body containing one obligation for both property and business")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your Income Tax reports"),
+
+            //Check two obligation sections are returned
+            nElementsWithClass("obligation")(2),
+
+            //Check the business obligation data
+            elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "bi-ob-1-status")("Received"),
+
+            //Check the business obligation data
+            elementTextByID(id = "pi-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "pi-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "pi-ob-1-status")("Received")
           )
         }
       }

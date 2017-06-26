@@ -96,6 +96,12 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       Json.toJson(obligationsModel)
     }
 
+    def emptyResponse(): JsValue = {
+      Json.parse(
+        """[]"""
+      )
+    }
+
     def failureResponse(code: String, reason: String): JsValue =
       Json.parse(
         s"""
@@ -132,5 +138,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         met = true
       )
     ))
+
+    val emptyModel = ObligationsModel(List())
   }
 }

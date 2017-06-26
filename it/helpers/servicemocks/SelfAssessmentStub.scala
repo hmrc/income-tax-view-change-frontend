@@ -25,13 +25,25 @@ object SelfAssessmentStub {
 
   val businessDetailsUrl: String => String = nino => s"/self-assessment/ni/$nino/self-employments"
   val obligationsDataUrl: (String, String) => String = (nino, selfEmploymentId) => s"/self-assessment/ni/$nino/self-employments/$selfEmploymentId"
+  val propertyObligationsUrl: String => String = nino => s"/self-assessment/ni/$nino/uk-properties/obligations"
 
   def stubGetBusinessDetails(nino: String, businessDetails: JsValue) : Unit = {
-    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetails.toString)
+    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetails.toString())
   }
 
-  def stubGetObligations(nino: String, selfEmploymentId: String, obligations: ObligationsModel): Unit = {
-    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.toJson(obligations).toString)
+  def stubGetObligations(nino: String, selfEmploymentId: String, business: ObligationsModel, property: ObligationsModel): Unit = {
+    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
+    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, Json.toJson(property).toString())
+  }
+
+  def stubGetOnlyBizObs(nino: String, selfEmploymentId: String, business: ObligationsModel): Unit = {
+    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
+    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, Json.parse( """[]""").toString())
+  }
+
+  def stubGetOnlyPropObs(nino: String, selfEmploymentId: String, property: ObligationsModel): Unit = {
+    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.parse( """[]""").toString())
+    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, Json.toJson(property).toString())
   }
 
   def verifyGetObligations(nino: String, selfEmploymentId: String): Unit = {
