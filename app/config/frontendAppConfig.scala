@@ -77,5 +77,5 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val ninoIdentifierKey: String = loadConfig("enrolments.nino.identifier")
 
   //Business Tax Account
-  override lazy val businessTaxAccount: String = configuration.getString("business-tax-account.url").getOrElse("")
+  override lazy val businessTaxAccount: String = s"${baseUrl("business-tax-account")}/business-account"
 }
