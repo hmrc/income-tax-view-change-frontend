@@ -17,3 +17,6 @@ GET         /session-timeout            controllers.timeout.SessionTimeoutContro
 
 #Sign Out Routes
 GET         /sign-out                   controllers.SignOutController.signOut
+
+#Sign In Routes
+GET         /sign-in                    controllers.SignInController.signIn

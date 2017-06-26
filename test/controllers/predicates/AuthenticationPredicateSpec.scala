@@ -19,7 +19,7 @@ package controllers.predicates
 import auth.MockAuthenticationPredicate
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
-import play.api.mvc.Result
+import play.api.mvc.{Action, AnyContent, Result}
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -32,50 +32,72 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
 
   "The authentication async method" when {
 
-    def result(authenticationPredicate: AuthenticationPredicate): Future[Result] = authenticationPredicate.async {
+    def setupResult(authenticationPredicate: AuthenticationPredicate): Action[AnyContent] = authenticationPredicate.async {
       implicit request => implicit user =>
         Future.successful(Ok(user.mtditid + " " + user.nino))
-    } apply FakeRequest()
+    }
 
     "called with an authenticated user" when {
 
       "a HMRC-MTD-IT enrolment exists with a NINO" should {
 
+        lazy val result = setupResult(MockAuthenticated)(fakeRequestWithActiveSession)
+
         "return Ok (200)" in {
-          status(result(MockAuthenticated)) shouldBe Status.OK
+          status(result) shouldBe Status.OK
         }
 
         "should have a body with the expected user details" in {
-          bodyOf(await(result(MockAuthenticated))) shouldBe testMtditid + " " + testNino
+          bodyOf(await(result)) shouldBe testMtditid + " " + testNino
         }
       }
 
       "a HMRC-MTD-IT enrolment does NOT exist" should {
 
+        lazy val result = setupResult(MockAuthenticatedNoEnrolment)(fakeRequestWithActiveSession)
+
         "return Internal Server Error (500)" in {
-          status(result(MockAuthenticatedNoEnrolment)) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
     }
 
-    "called with an unauthenticated user (No Bearer Token in header)" should {
+    "called with an unauthenticated user (Bearer Token Expired response from Auth)" should {
+
+      lazy val result = setupResult(MockUnauthorised)(fakeRequestWithActiveSession)
+
       "should be a rerdirect (303)" in {
-        status(result(MockUnauthorised)) shouldBe Status.SEE_OTHER
+        status(result) shouldBe Status.SEE_OTHER
       }
 
       "should redirect to GG Sign In" in {
-        redirectLocation(result(MockUnauthorised)) shouldBe Some("/gg/sign-in?continue=http%3A%2F%2Flocalhost%3A9081%2Fcheck-your-income-tax-and-expenses%2Fobligations&origin=income-tax-view-change-frontend")
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
 
-    "called with a Timed Out user (Bearer Token Exprired)" should {
+    "called with an Authenticated User with a Timed Out session (Session Expired)" should {
+
+      lazy val result = setupResult(MockAuthenticated)(fakeRequestWithTimeoutSession)
 
       "should be a rerdirect (303)" in {
-        status(result(MockTimeout)) shouldBe Status.SEE_OTHER
+        status(result) shouldBe Status.SEE_OTHER
       }
 
       "should redirect to GG Sign In" in {
-        redirectLocation(result(MockTimeout)) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+      }
+    }
+
+    "called with a user with no session" should {
+
+      lazy val result = setupResult(MockUnauthorised)(fakeRequestNoSession)
+
+      "should be a rerdirect (303)" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "should redirect to GG Sign In" in {
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
   }

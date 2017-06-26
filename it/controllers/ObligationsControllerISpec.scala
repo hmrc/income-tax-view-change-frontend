@@ -129,7 +129,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           httpStatus(SEE_OTHER),
 
           //Check redirect location of response
-          redirectURI("http://localhost:9025/gg/sign-in?continue=http%3A%2F%2Flocalhost%3A9081%2Fcheck-your-income-tax-and-expenses%2Fobligations&origin=income-tax-view-change-frontend")
+          redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
     }

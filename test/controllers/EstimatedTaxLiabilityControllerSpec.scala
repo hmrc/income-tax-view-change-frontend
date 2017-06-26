@@ -57,7 +57,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
       "successfully retrieves a Business from the Business Details service" +
         "and an Estimated Tax Liability amount from the EstimatedTaxLiability Service" should {
 
-        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
+        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
@@ -83,7 +83,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
       "receives no businesses from the BusinessDetails Service" +
         "and an Estimated Tax Liability amount from the EstimatedTaxLiability Service" should {
 
-        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
+        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
@@ -109,7 +109,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
       "receives no businesses from the BusinessDetails Service" +
         "and  an error from the Last Calculation Service" should {
 
-        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
+        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
           mockBusinessDetailsEmpty()
@@ -126,7 +126,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
 
       "receives an error from the BusinessDetails Service" should {
 
-        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
+        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
           mockBusinessDetailsError()
@@ -153,7 +153,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
       )
 
       "return redirect SEE_OTHER (303)" in {
-        val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(FakeRequest())
+        val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestNoSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
