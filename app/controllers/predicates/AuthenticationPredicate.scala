@@ -65,9 +65,11 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
           Future.successful(showInternalServerError)
         case _: BearerTokenExpired =>
           Logger.debug("[AuthenticationPredicate][async] Bearer Token Timed Out.")
+          println(s"\n\nBearer token expired\n\n")
           Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
         case _ =>
           Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
+          println(s"\n\nUnauthorised\n\n")
           Future.successful(Redirect(controllers.routes.SignInController.signIn()))
       }
     }
@@ -78,6 +80,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
       case (Some(x), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
         Logger.debug("[AuthenticationPredicate][handleSessionTimeout] Session Time Out.")
+        println(s"\n\n\n########\n$x\n\n\n")
         Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
       case (_, _) =>
         f

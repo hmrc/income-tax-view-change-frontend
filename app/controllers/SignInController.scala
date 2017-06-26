@@ -23,6 +23,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.frontend.Redirects
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -34,6 +35,7 @@ class SignInController @Inject()(val appConfig: FrontendAppConfig,
                                 ) extends BaseController with Redirects {
 
   val signIn: Action[AnyContent] = Action.async { implicit request =>
+    implicit def hc(implicit request: Request[_]): HeaderCarrier = HeaderCarrier()
     Future.successful(toGGLogin(appConfig.ggSignInContinueUrl))
   }
 }

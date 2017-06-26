@@ -31,6 +31,7 @@ trait AppConfig {
   val betaFeedbackUrl: String
   val betaFeedbackUnauthenticatedUrl: String
   val ggSignInContinueUrl: String
+  val signInUrl: String
   val ggUrl: String
   val ggSignOutUrl: String
   val mtdItEnrolmentKey: String
@@ -55,18 +56,19 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val reportAProblemPartialUrl: String = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl: String = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   override lazy val betaFeedbackUrl = s"$baseUrl/feedback"
-  override lazy val betaFeedbackUnauthenticatedUrl = betaFeedbackUrl
+  override lazy val betaFeedbackUnauthenticatedUrl: String = betaFeedbackUrl
 
   //GA
-  override lazy val analyticsToken = loadConfig(s"google-analytics.token")
-  override lazy val analyticsHost = loadConfig(s"google-analytics.host")
+  override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
+  override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
 
   //GG Sign In via Company Auth Fronetned
-  override lazy val ggSignInContinueUrl = loadConfig("government-gateway.continue.url")
+  override lazy val ggSignInContinueUrl: String = loadConfig("government-gateway.continue.url")
+  override lazy val signInUrl: String = loadConfig("base.sign-in")
 
   //Sign out
-  override lazy val ggUrl = loadConfig(s"government-gateway.url")
-  override lazy val ggSignOutUrl = s"$ggUrl/gg/sign-out?continue=$ggSignInContinueUrl"
+  override lazy val ggUrl: String = loadConfig(s"government-gateway.url")
+  override lazy val ggSignOutUrl = s"$ggUrl/gg/sign-out?continue=$signInUrl"
 
   //MTD Income Tax Enrolment
   override lazy val mtdItEnrolmentKey: String = loadConfig("enrolments.mtd.key")
