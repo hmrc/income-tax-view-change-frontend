@@ -37,6 +37,7 @@ trait AppConfig {
   val mtdItIdentifierKey: String
   val ninoEnrolmentKey: String
   val ninoIdentifierKey: String
+  val businessTaxAccount: String
 }
 
 @Singleton
@@ -74,4 +75,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
   //NINO Enrolment
   override lazy val ninoEnrolmentKey: String = loadConfig("enrolments.nino.key")
   override lazy val ninoIdentifierKey: String = loadConfig("enrolments.nino.identifier")
+
+  //Business Tax Account
+  override lazy val businessTaxAccount: String = s"${baseUrl("business-tax-account")}/business-account"
 }
