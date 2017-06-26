@@ -44,7 +44,7 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
 
       "successfully retrieves a list of Obligations from the Obligations service" should {
 
-        lazy val result = TestObligationsController.getObligations()(FakeRequest())
+        lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
         def mockSuccess(): Unit = setupMockObligationsResult(testNino)(
@@ -127,7 +127,7 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
 
       "doesn't retrieve a list of Obligations from the Obligations service" should {
 
-        lazy val result = TestObligationsController.getObligations()(FakeRequest())
+        lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
         def mockBusinessObligationsFail(): Unit = setupMockObligationsResult(testNino)(
@@ -153,6 +153,21 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
         }
       }
 
+    }
+
+    "Called with an Unauthenticated User" should {
+
+      object TestObligationsController extends ObligationsController()(
+        fakeApplication.injector.instanceOf[FrontendAppConfig],
+        fakeApplication.injector.instanceOf[MessagesApi],
+        MockUnauthorised,
+        mockObligationsService
+      )
+
+      "return redirect SEE_OTHER (303)" in {
+        val result = TestObligationsController.getObligations()(fakeRequestNoSession)
+        status(result) shouldBe Status.SEE_OTHER
+      }
     }
   }
 

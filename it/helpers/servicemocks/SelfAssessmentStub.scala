@@ -17,8 +17,9 @@
 package helpers.servicemocks
 
 import helpers.{IntegrationTestConstants, WiremockHelper}
-import models.ObligationsModel
+import models.{BusinessDetailsModel, BusinessModel, ObligationsModel}
 import play.api.http.Status
+import play.api.libs.json.{JsValue, Json}
 
 object SelfAssessmentStub {
 
@@ -26,49 +27,31 @@ object SelfAssessmentStub {
   val obligationsDataUrl: (String, String) => String = (nino, selfEmploymentId) => s"/self-assessment/ni/$nino/self-employments/$selfEmploymentId"
   val propertyObligationsUrl: String => String = nino => s"/self-assessment/ni/$nino/uk-properties/obligations"
 
-
-  //TODO change the stubbed response to return a business details model
+  def stubGetBusinessDetails(nino: String, businessDetails: JsValue) : Unit = {
+    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetails.toString())
+  }
 
   def stubGetObligations(nino: String, selfEmploymentId: String, business: ObligationsModel, property: ObligationsModel): Unit = {
-    val businessDetailsResponse = IntegrationTestConstants.GetBusinessDetails.successResponse(selfEmploymentId).toString()
-    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetailsResponse)
-
-    val businessObligationResponse = IntegrationTestConstants.GetObligationsData.successResponse(business).toString()
-    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, businessObligationResponse)
-
-    val propertyObligationResponse = IntegrationTestConstants.GetObligationsData.successResponse(property).toString()
-    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, propertyObligationResponse)
+    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
+    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, Json.toJson(property).toString())
   }
 
   def stubGetOnlyBizObs(nino: String, selfEmploymentId: String, business: ObligationsModel): Unit = {
-    val businessDetailsResponse = IntegrationTestConstants.GetBusinessDetails.successResponse(selfEmploymentId).toString()
-    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetailsResponse)
-
-    val businessObligationResponse = IntegrationTestConstants.GetObligationsData.successResponse(business).toString()
-    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, businessObligationResponse)
-
-    val propertyObligationResponse = IntegrationTestConstants.GetObligationsData.emptyResponse().toString()
-    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, propertyObligationResponse)
+    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
+    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, Json.parse( """[]""").toString())
   }
 
   def stubGetOnlyPropObs(nino: String, selfEmploymentId: String, property: ObligationsModel): Unit = {
-
-    val businessDetailsResponse = IntegrationTestConstants.GetBusinessDetails.successResponse(selfEmploymentId).toString()
-    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetailsResponse)
-
-    val businessObligationResponse = IntegrationTestConstants.GetObligationsData.emptyResponse().toString()
-    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, businessObligationResponse)
-
-    val propertyObligationResponse = IntegrationTestConstants.GetObligationsData.successResponse(property).toString()
-    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, propertyObligationResponse)
+    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.parse( """[]""").toString())
+    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, Json.toJson(property).toString())
   }
 
   def verifyGetObligations(nino: String, selfEmploymentId: String): Unit = {
-    WiremockHelper.verifyGet(businessDetailsUrl(nino))
     WiremockHelper.verifyGet(obligationsDataUrl(nino, selfEmploymentId))
   }
 
-
-
+  def verifyGetBusinessDetails(nino: String): Unit = {
+    WiremockHelper.verifyGet(businessDetailsUrl(nino))
+  }
 }
 

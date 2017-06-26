@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-package controllers
+package views.helpers
 
-import config.FrontendAppConfig
-import play.api.http.Status
-import play.api.i18n.MessagesApi
+import models.{Open, Overdue, Received}
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
+import play.twirl.api.Html
+import utils.ImplicitDateFormatter._
 import utils.TestSupport
 
-class SignOutControllerSpec extends TestSupport {
+class TaxYearRenderHelperSpec extends TestSupport {
 
-  object TestSignOutController extends SignOutController()(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[MessagesApi]
-  )
-
-  "navigating to signout page" should {
-    lazy val result = TestSignOutController.signOut(fakeRequestWithActiveSession)
-
-    "return OK (303)" in {
-      status(result) shouldBe Status.SEE_OTHER
+  "The TaxYearRenderHelper.renderTaxYear method" should {
+    "Render the 2018 Tax Year as 2017/18" in {
+      TaxYearRenderHelper.renderTaxYear(2018) shouldBe "2017/18"
     }
 
+    "Render the 2018 Payment Date as 31 January 2019" in {
+      TaxYearRenderHelper.renderPaymentDueDate(2018) shouldBe "31 January 2019"
+    }
   }
-
 }

@@ -30,12 +30,15 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
     "authorised with an active enrolment" which {
 
-      "has a single obligation" should {
+      "has a single business and single obligation" should {
 
         "display a single obligation with the correct dates and status" in {
 
           Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub a single business obligation response")
           SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
@@ -70,6 +73,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
           Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub multiple business obligations response")
           SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, multipleObligationsDataSuccessModel)
@@ -196,7 +202,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           httpStatus(SEE_OTHER),
 
           //Check redirect location of response
-          redirectURI("http://localhost:9025/gg/sign-in?continue=http%3A%2F%2Flocalhost%3A9081%2Fcheck-your-income-tax-and-expenses%2Fobligations&origin=income-tax-view-change-frontend")
+          redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
     }

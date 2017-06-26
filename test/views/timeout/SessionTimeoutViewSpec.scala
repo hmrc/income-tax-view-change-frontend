@@ -49,7 +49,7 @@ class SessionTimeoutViewSpec extends TestSupport {
       }
 
       "has a link to sign-in page" in {
-        document.getElementById("sign-in-link").attr("href") shouldBe controllers.routes.ObligationsController.getObligations().url
+        document.getElementById("sign-in-link").attr("href") shouldBe controllers.routes.SignInController.signIn().url
       }
 
     }

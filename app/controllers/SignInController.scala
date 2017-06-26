@@ -16,25 +16,24 @@
 
 package controllers
 
+import javax.inject.{Inject, Singleton}
+
 import config.FrontendAppConfig
-import play.api.http.Status
 import play.api.i18n.MessagesApi
-import utils.TestSupport
+import play.api.mvc._
+import play.api.{Configuration, Environment}
+import uk.gov.hmrc.auth.frontend.Redirects
 
-class SignOutControllerSpec extends TestSupport {
+import scala.concurrent.Future
 
-  object TestSignOutController extends SignOutController()(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[MessagesApi]
-  )
+@Singleton
+class SignInController @Inject()(val appConfig: FrontendAppConfig,
+                                 override val config: Configuration,
+                                 override val env: Environment,
+                                 implicit val messagesApi: MessagesApi
+                                ) extends BaseController with Redirects {
 
-  "navigating to signout page" should {
-    lazy val result = TestSignOutController.signOut(fakeRequestWithActiveSession)
-
-    "return OK (303)" in {
-      status(result) shouldBe Status.SEE_OTHER
-    }
-
+  val signIn: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(toGGLogin(appConfig.ggSignInContinueUrl))
   }
-
 }

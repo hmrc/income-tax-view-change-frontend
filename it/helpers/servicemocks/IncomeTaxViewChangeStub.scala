@@ -17,16 +17,16 @@
 package helpers.servicemocks
 
 import helpers.{IntegrationTestConstants, WiremockHelper}
-import models.LastTaxCalculation
+import models.{BusinessDetailsModel, LastTaxCalculation}
 import play.api.http.Status
 import play.api.i18n.I18nSupport
 
 object IncomeTaxViewChangeStub {
 
-  val url: (String,String,String) => String = (nino, year, calcType) =>
-    s"/income-tax-view-change/estimated-tax-liability/$nino/$year/$calcType"
+  val url: (String,String) => String = (nino, year) =>
+    s"/income-tax-view-change/estimated-tax-liability/$nino/$year/it"
 
-  def stubGetLastTaxCalc(nino: String, year: String, calcType: String, lastCalc: LastTaxCalculation): Unit = {
+  def stubGetLastTaxCalc(nino: String, year: String, lastCalc: LastTaxCalculation): Unit = {
     val financialDataResponse =
       IntegrationTestConstants
         .GetLastCalculation.successResponse(
@@ -34,9 +34,9 @@ object IncomeTaxViewChangeStub {
         lastCalc.calcTimestamp,
         lastCalc.calcAmount)
         .toString()
-    WiremockHelper.stubGet(url(nino, year, calcType), Status.OK, financialDataResponse)
+    WiremockHelper.stubGet(url(nino, year), Status.OK, financialDataResponse)
   }
 
-  def verifyGetLastTaxCalc(nino: String, year: String, calcType: String): Unit =
-    WiremockHelper.verifyGet(url(nino, year, calcType))
+  def verifyGetLastTaxCalc(nino: String, year: String): Unit =
+    WiremockHelper.verifyGet(url(nino, year))
 }

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.templates.main_template
-@import config.AppConfig
+package views.helpers
 
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+import utils.ImplicitDateFormatter._
 
-@main_template(title = messages("timeout.title"), bodyClasses = None, appConfig = appConfig, showLogout = false) {
+object TaxYearRenderHelper {
 
- <h1>@Messages("timeout.heading")</h1>
- <p id="sign-in">@Html(Messages("timeout.signIn", controllers.routes.SignInController.signIn().url))</p>
+  def renderTaxYear(taxYear: Int): String = {
+    s"${taxYear - 1}/${taxYear.toString.substring(2,4)}"
+  }
 
+  def renderPaymentDueDate(taxYear: Int): String = {
+    s"${taxYear + 1}-01-31".toLocalDate.toLongDate
+  }
 }
