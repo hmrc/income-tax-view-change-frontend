@@ -104,8 +104,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           sidebarSection.getElementById("sa-link-heading").text shouldBe sidebarMessages.selfAssessmentHeading
         }
 
-        s"has the correct href to ''" in {
-          sidebarSection.getElementById("sa-link").attr("href") shouldBe ""
+        s"has the correct href to 'business-tax-account/self-assessment'" in {
+          sidebarSection.getElementById("sa-link").attr("href") should endWith("/business-account/self-assessment")
         }
 
         "has the correct link wording" in {
