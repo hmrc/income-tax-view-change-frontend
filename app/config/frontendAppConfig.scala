@@ -62,7 +62,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
 
-  //GG Sign In via Company Auth Fronetned
+  //GG Sign In via Company Auth Frontend
   override lazy val ggSignInContinueUrl: String = loadConfig("government-gateway.continue.url")
   override lazy val signInUrl: String = loadConfig("base.sign-in")
 

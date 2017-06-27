@@ -35,7 +35,6 @@ class SignInController @Inject()(val appConfig: FrontendAppConfig,
                                 ) extends BaseController with Redirects {
 
   val signIn: Action[AnyContent] = Action.async { implicit request =>
-    implicit def hc(implicit request: Request[_]): HeaderCarrier = HeaderCarrier()
     Future.successful(toGGLogin(appConfig.ggSignInContinueUrl))
   }
 }
