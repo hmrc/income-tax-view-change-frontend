@@ -33,7 +33,7 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
         AuthStub.stubAuthorised()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val calculationResponse = LastTaxCalculation("01234567", "2017-07-06 12:34:56.789", 1800.00)
+        val calculationResponse = LastTaxCalculation("01234567", "2017-07-06T12:34:56.789Z", 1800.00)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, calculationResponse)
 
         And("I wiremock stub a successful Business Details response")
@@ -47,6 +47,8 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+
+        println(s"\n\n\n$res\n\n\n")
 
         Then("a successful response is returned with the correct estimate")
         res should have(

@@ -47,6 +47,9 @@
     <logger name="org.asynchttpclient.netty" level="OFF"/>
     <logger name="io.netty.buffer" level="OFF"/>
     <logger name="play.core.netty" level="OFF"/>
+    <logger name="akka" level="ERROR" />
+    <logger name="akka" level="ERROR" />
+    <logger name="actor.default-dispatcher" level="ERROR" />
 
     <logger name="uk.gov" level="OFF"/>
 

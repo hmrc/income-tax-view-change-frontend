@@ -43,10 +43,10 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "Internal Server Error Message")
 
   object GetLastCalculation {
-    def successResponse(calcId: String, calcTimestamp: String, calcAmount: BigDecimal): JsValue =
+    def successResponse(calcID: String, calcTimestamp: String, calcAmount: BigDecimal): JsValue =
       Json.parse(s"""
          |{
-         |   "calcId": "$calcId",
+         |   "calcID": "$calcID",
          |   "calcTimestamp": "$calcTimestamp",
          |   "calcAmount": $calcAmount
          |}

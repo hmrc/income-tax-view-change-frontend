@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 sealed trait LastTaxCalculationResponseModel
 
-case class LastTaxCalculation(calcId: String,
+case class LastTaxCalculation(calcID: String,
                               calcTimestamp: String,
                               calcAmount: BigDecimal) extends LastTaxCalculationResponseModel
 
