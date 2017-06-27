@@ -23,6 +23,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.frontend.Redirects
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 

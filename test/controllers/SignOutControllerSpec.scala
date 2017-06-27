@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import utils.TestSupport
+import play.api.test.Helpers._
 
 class SignOutControllerSpec extends TestSupport {
 
@@ -33,6 +34,9 @@ class SignOutControllerSpec extends TestSupport {
 
     "return OK (303)" in {
       status(result) shouldBe Status.SEE_OTHER
+    }
+    "redirect to the application sign in page" in {
+      redirectLocation(await(result)).head should endWith(controllers.routes.SignInController.signIn().url)
     }
 
   }

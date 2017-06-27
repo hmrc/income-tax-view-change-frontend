@@ -20,8 +20,10 @@ import config.AppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.mvc._
+
 import scala.concurrent.Future
 import com.google.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 @Singleton
 class SignOutController @Inject()(implicit val config: AppConfig,
