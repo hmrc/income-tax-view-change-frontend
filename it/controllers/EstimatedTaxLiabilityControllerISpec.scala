@@ -47,9 +47,7 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-
-        println(s"\n\n\n$res\n\n\n")
-
+        
         Then("a successful response is returned with the correct estimate")
         res should have(
 
