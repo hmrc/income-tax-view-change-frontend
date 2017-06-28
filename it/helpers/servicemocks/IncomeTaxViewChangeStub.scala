@@ -30,7 +30,7 @@ object IncomeTaxViewChangeStub {
     val financialDataResponse =
       IntegrationTestConstants
         .GetLastCalculation.successResponse(
-        lastCalc.calcId,
+        lastCalc.calcID,
         lastCalc.calcTimestamp,
         lastCalc.calcAmount)
         .toString()
