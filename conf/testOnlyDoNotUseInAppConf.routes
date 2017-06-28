@@ -10,4 +10,13 @@
 # Failing to follow this rule may result in test routes deployed in production.
 
 # Add all the application routes to the prod.routes file
-->         /                          prod.Routes
+
+
+GET         /test-only/itvc/stub-schema    @testOnly.controllers.StubSchemaController.show
+POST        /test-only/itvc/stub-schema    @testOnly.controllers.StubSchemaController.submit
+
+GET         /test-only/itvc/stub-data      @testOnly.controllers.StubDataController.show
+POST        /test-only/itvc/stub-data      @testOnly.controllers.StubDataController.submit
+
+
+->         /                            prod.Routes
