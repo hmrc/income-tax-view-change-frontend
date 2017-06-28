@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-//$COVERAGE-OFF$Disabling scoverage on this test only connector as it is only required by our acceptance test
-
 package testOnly.connectors
 
 import javax.inject.{Inject, Singleton}
@@ -42,5 +40,3 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
   }
 
 }
-
-// $COVERAGE-ON$
