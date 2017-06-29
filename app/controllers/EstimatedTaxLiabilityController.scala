@@ -38,8 +38,8 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
                                                 val businessDetailsService: BusinessDetailsService
                                                ) extends BaseController {
 
-  //Static values will always be these for MVP
-  private final val propertiesTaxYear = 2018
+  // TODO: Properties will always be 2017/18 for MVP. This needs to be enhanced post-MVP.
+  val propertiesTaxYear = 2018
 
   val getEstimatedTaxLiability: Action[AnyContent] = authentication.async {
     implicit request => implicit user => {
