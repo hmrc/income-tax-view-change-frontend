@@ -19,11 +19,13 @@ package connectors
 import assets.TestConstants.Obligations._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.ObligationsErrorModel
+import models.{ObligationsErrorModel, ObligationsResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
 import utils.TestSupport
+
+import scala.concurrent.Future
 
 
 class BusinessObligationDataConnectorSpec extends TestSupport with MockHttp {
@@ -36,22 +38,27 @@ class BusinessObligationDataConnectorSpec extends TestSupport with MockHttp {
 
   "BusinessObligationDataConnector.getObligationData" should {
 
+    lazy val testUrl = TestBusinessObligationDataConnector.getObligationDataUrl(testNino, testSelfEmploymentId)
+    def result: Future[ObligationsResponseModel] = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
+
     "return a SuccessResponse with JSON in case of sucess" in {
-      setupMockHttpGet(TestBusinessObligationDataConnector.getObligationDataUrl(testNino, testSelfEmploymentId))(successResponse)
-      val result = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
+      setupMockHttpGet(testUrl)(successResponse)
       await(result) shouldBe obligationsDataSuccessModel
     }
 
     "return ErrorResponse model in case of failure" in {
-      setupMockHttpGet(TestBusinessObligationDataConnector.getObligationDataUrl(testNino, testSelfEmploymentId))(badResponse)
-      val result = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
+      setupMockHttpGet(testUrl)(badResponse)
       await(result) shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return BusinessListError model when bad JSON is received" in {
-      setupMockHttpGet(TestBusinessObligationDataConnector.getObligationDataUrl(testNino, testSelfEmploymentId))(successResponseBadJson)
-      val result = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
+      setupMockHttpGet(testUrl)(successResponseBadJson)
       await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response.")
+    }
+
+    "return ObligationsErrorModel model in case of future failed scenario" in {
+      setupMockFailedHttpGet(testUrl)(badResponse)
+      await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $testUrl.")
     }
   }
 }
