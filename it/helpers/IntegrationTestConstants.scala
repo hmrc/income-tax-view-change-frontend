@@ -18,8 +18,7 @@ package helpers
 
 import java.time.LocalDate
 
-import models.{ErrorResponse, ObligationModel, ObligationsModel}
-import play.api.http.Status._
+import models.{ObligationModel, ObligationsModel}
 import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter
 
@@ -39,8 +38,6 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testCalcType = "it"
 
   val testSelfEmploymentId = "ABC123456789"
-
-  val testErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "Internal Server Error Message")
 
   object GetLastCalculation {
     def successResponse(calcID: String, calcTimestamp: String, calcAmount: BigDecimal): JsValue =
