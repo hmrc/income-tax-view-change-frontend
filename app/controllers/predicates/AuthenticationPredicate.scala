@@ -16,7 +16,7 @@
 
 package controllers.predicates
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
 import config.FrontendAppConfig
@@ -31,11 +31,13 @@ import uk.gov.hmrc.play.http.SessionKeys
 
 import scala.concurrent.Future
 
+@Singleton
 class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                         val appConfig: FrontendAppConfig,
                                         override val config: Configuration,
                                         override val env: Environment,
-                                        implicit val messagesApi: MessagesApi
+                                        implicit val messagesApi: MessagesApi,
+                                        val sessionTimeoutPredicate: SessionTimeoutPredicate
                                        ) extends BaseController with Redirects {
 
   private type AsyncUserRequest = Request[AnyContent] => MtdItUser => Future[Result]
@@ -48,24 +50,16 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
 
   def async(action: AsyncUserRequest): Action[AnyContent] =
     Action.async { implicit request =>
-      checkSessionTimeout {
+      sessionTimeoutPredicate.checkSessionTimeout {
         authorisedUser { implicit user =>
           action(request)(user)
       }
     }
   }
 
-  private[AuthenticationPredicate] def checkSessionTimeout(f: => Future[Result])(implicit request: Request[AnyContent]) = {
-    (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {
-      case (Some(x), None) =>
-        // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
-        Logger.debug("[AuthenticationPredicate][handleSessionTimeout] Session Time Out.")
-        Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
-      case (_, _) => f
-    }
-  }
 
-  private[AuthenticationPredicate] def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+
+  def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {
       enrolments => {
         f(MtdItUser(
