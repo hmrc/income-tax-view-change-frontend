@@ -200,4 +200,20 @@ object TestConstants extends ImplicitDateFormatter {
     val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
 
   }
+
+  object IncomeSourceDetails {
+
+    val accountingPeriodModel = AccountingPeriodModel(start = "2017-1-1", end = "2017-12-31")
+
+    val businessDetailsUserModel =
+      BusinessDetailsUserModel(
+        selfEmploymentId = testSelfEmploymentId,
+        accountingPeriod = accountingPeriodModel,
+        tradingName = "Test Business"
+      )
+    val propertyDetailsUserModel = PropertyDetailsUserModel(accountingPeriodModel)
+
+    val incomeSourceDetails = IncomeSourceDetailsModel(businessDetailsUserModel,propertyDetailsUserModel)
+
+  }
 }
