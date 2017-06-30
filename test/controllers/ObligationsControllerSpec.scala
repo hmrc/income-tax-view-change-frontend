@@ -18,18 +18,17 @@ package controllers
 
 import assets.Messages.{ISE => errorMessages, Obligations => messages}
 import assets.TestConstants._
-import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
+import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockObligationsService
 import models._
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.{ImplicitDateFormatter, TestSupport}
 
-class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockObligationsService with ImplicitDateFormatter {
+class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicate with MockObligationsService with ImplicitDateFormatter {
 
   "The ObligationsController.getObligations function" when {
 
@@ -38,7 +37,7 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
       object TestObligationsController extends ObligationsController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         fakeApplication.injector.instanceOf[MessagesApi],
-        MockAuthenticated,
+        AuthorisedAction,
         mockObligationsService
       )
 
@@ -160,7 +159,7 @@ class ObligationsControllerSpec extends TestSupport with MockAuthenticationPredi
       object TestObligationsController extends ObligationsController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         fakeApplication.injector.instanceOf[MessagesApi],
-        MockUnauthorised,
+        UnauthorisedAction,
         mockObligationsService
       )
 

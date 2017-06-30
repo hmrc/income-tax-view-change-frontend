@@ -36,28 +36,13 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
                                         val appConfig: FrontendAppConfig,
                                         override val config: Configuration,
                                         override val env: Environment,
-                                        implicit val messagesApi: MessagesApi,
-                                        val sessionTimeoutPredicate: SessionTimeoutPredicate
+                                        implicit val messagesApi: MessagesApi
                                        ) extends BaseController with Redirects {
-
-  private type AsyncUserRequest = Request[AnyContent] => MtdItUser => Future[Result]
 
   lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
   lazy val mtdItIdentifierKey: String = appConfig.mtdItIdentifierKey
   lazy val ninoEnrolmentKey: String = appConfig.ninoEnrolmentKey
   lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
-
-
-  def async(action: AsyncUserRequest): Action[AnyContent] =
-    Action.async { implicit request =>
-      sessionTimeoutPredicate.checkSessionTimeout {
-        authorisedUser { implicit user =>
-          action(request)(user)
-      }
-    }
-  }
-
-
 
   def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {

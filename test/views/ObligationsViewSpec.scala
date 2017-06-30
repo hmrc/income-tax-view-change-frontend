@@ -16,7 +16,6 @@
 
 package views
 
-import auth.MtdItUser
 import config.FrontendAppConfig
 import models.{ObligationModel, ObligationsModel}
 import org.jsoup.Jsoup
@@ -28,6 +27,7 @@ import utils.TestSupport
 import assets.Messages.{Obligations => messages}
 import assets.Messages.{Sidebar => sidebarMessages}
 import assets.TestConstants.{testMtditid, testNino}
+import auth.MtdItUser
 import utils.ImplicitDateFormatter._
 
 class ObligationsViewSpec extends TestSupport{

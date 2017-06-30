@@ -16,26 +16,31 @@
 
 package controllers.predicates
 
-import auth.MockAuthenticationPredicate
+import assets.TestConstants._
+import mocks.controllers.predicates.MockAuthenticationPredicate
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Ok
-import play.api.test.FakeRequest
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers._
 import utils.TestSupport
-import assets.TestConstants._
 
 import scala.concurrent.Future
 
-class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with MockAuthenticationPredicate {
+class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAuthenticationPredicate {
 
   "The authentication async method" when {
 
-    def setupResult(authenticationPredicate: AuthenticationPredicate): Action[AnyContent] = authenticationPredicate.async {
-      implicit request => implicit user =>
-        Future.successful(Ok(user.mtditid + " " + user.nino))
-    }
+    def setupResult(authenticationPredicate: AuthenticationPredicate): Action[AnyContent] =
+      new AsyncActionPredicate()(
+        fakeApplication.injector.instanceOf[MessagesApi],
+        fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
+        authenticationPredicate
+      ).async {
+        implicit request => implicit user =>
+          Future.successful(Ok(user.mtditid + " " + user.nino))
+      }
 
     "called with an authenticated user" when {
 

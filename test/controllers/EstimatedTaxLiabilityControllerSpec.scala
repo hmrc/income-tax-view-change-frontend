@@ -20,17 +20,16 @@ import assets.Messages.{EstimatedTaxLiability => messages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants._
-import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
+import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.{MockBusinessDetailsService, MockEstimatedLiabilityService}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
 
-class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockBusinessDetailsService with MockEstimatedLiabilityService {
+class EstimatedTaxLiabilityControllerSpec extends TestSupport
+  with MockBusinessDetailsService with MockEstimatedLiabilityService with MockAsyncActionPredicate {
 
   // Last Calculation Service mocks
   def mockLastCalculationSuccess(): Unit = setupMockLastTaxCalculationResult(testNino, testYear)(lastTaxCalcSuccess)
@@ -49,7 +48,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
       object TestEstimatedLiabilityController extends EstimatedTaxLiabilityController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         fakeApplication.injector.instanceOf[MessagesApi],
-        MockAuthenticated,
+        AuthorisedAction,
         mockEstimatedLiabilityService,
         mockBusinessDetailsService
       )
@@ -147,7 +146,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
       object TestEstimatedLiabilityController extends EstimatedTaxLiabilityController()(
         fakeApplication.injector.instanceOf[FrontendAppConfig],
         fakeApplication.injector.instanceOf[MessagesApi],
-        MockUnauthorised,
+        UnauthorisedAction,
         mockEstimatedLiabilityService,
         mockBusinessDetailsService
       )

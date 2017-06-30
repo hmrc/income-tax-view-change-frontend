@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package auth
+package mocks.controllers.predicates
 
+import mocks.auth._
 import config.FrontendAppConfig
-import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
+import controllers.predicates.AuthenticationPredicate
 import play.api.i18n.MessagesApi
 import play.api.{Configuration, Environment}
 import utils.TestSupport
@@ -29,8 +30,7 @@ trait MockAuthenticationPredicate extends TestSupport {
     fakeApplication.injector.instanceOf[FrontendAppConfig],
     fakeApplication.injector.instanceOf[Configuration],
     fakeApplication.injector.instanceOf[Environment],
-    fakeApplication.injector.instanceOf[MessagesApi],
-    fakeApplication.injector.instanceOf[SessionTimeoutPredicate]
+    fakeApplication.injector.instanceOf[MessagesApi]
   )
 
   object MockAuthenticated extends authBuilder(MockAuthorisedUserWithEnrolment)

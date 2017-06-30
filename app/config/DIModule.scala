@@ -18,7 +18,6 @@ package config
 
 import auth.FrontendAuthorisedFunctions
 import com.google.inject.AbstractModule
-import controllers.predicates.SessionTimeoutPredicate
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost, WSPut}

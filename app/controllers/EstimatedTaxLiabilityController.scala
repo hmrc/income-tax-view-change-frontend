@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
 import config.AppConfig
-import controllers.predicates.AuthenticationPredicate
+import controllers.predicates.{AsyncActionPredicate, AuthenticationPredicate}
 import models.{BusinessDetailsErrorModel, BusinessDetailsModel, LastTaxCalculation, LastTaxCalculationError}
 import play.api.Logger
 import play.api.i18n.MessagesApi
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 @Singleton
 class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
                                                 implicit val messagesApi: MessagesApi,
-                                                val authentication: AuthenticationPredicate,
+                                                val actionPredicate: AsyncActionPredicate,
                                                 val estimatedTaxLiabilityService: EstimatedTaxLiabilityService,
                                                 val businessDetailsService: BusinessDetailsService
                                                ) extends BaseController {
@@ -41,7 +41,7 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
   // TODO: Properties will always be 2017/18 for MVP. This needs to be enhanced post-MVP.
   val propertiesTaxYear = 2018
 
-  val getEstimatedTaxLiability: Action[AnyContent] = authentication.async {
+  val getEstimatedTaxLiability: Action[AnyContent] = actionPredicate.async {
     implicit request => implicit user => {
       Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Business Details Service with NINO: ${user.nino}")
       businessDetailsService.getBusinessDetails(user.nino) flatMap {

@@ -19,7 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
-import controllers.predicates.AuthenticationPredicate
+import controllers.predicates.{AsyncActionPredicate, AuthenticationPredicate}
 import models.ObligationsModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
@@ -29,20 +29,18 @@ import play.api.Logger
 @Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,
                                       implicit val messagesApi: MessagesApi,
-                                      val authentication: AuthenticationPredicate,
+                                      val actionPredicate: AsyncActionPredicate,
                                       val obligationsService: ObligationsService
                                      ) extends BaseController {
 
-  val getObligations: Action[AnyContent] = authentication.async { implicit request =>
+  val getObligations: Action[AnyContent] = actionPredicate.async { implicit request =>
     implicit user =>
-
       for {
         business <- obligationsService.getBusinessObligations(user.nino)
         property <- obligationsService.getPropertyObligations(user.nino)
       } yield (business, property) match {
         case (businessSuccess: ObligationsModel, propertySuccess: ObligationsModel) =>
           Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
-          //TODO refactor to send both obligations through to the view
           Ok(views.html.obligations(Some(businessSuccess), Some(propertySuccess)))
         case (businessSuccess: ObligationsModel, _) =>
           Logger.debug ("[ObligationsController][getObligations] Business Obligations retrieved. Serving HTML page")
