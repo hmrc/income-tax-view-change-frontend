@@ -42,48 +42,48 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
 
   lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
   lazy val mtdItIdentifierKey: String = appConfig.mtdItIdentifierKey
-
   lazy val ninoEnrolmentKey: String = appConfig.ninoEnrolmentKey
   lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
 
-  def async(action: AsyncUserRequest): Action[AnyContent] = Action.async { implicit request =>
-    checkSessionTimeout(request) {
-      authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {
-        authorisedEnrolments => {
-          action(request)(
-            MtdItUser(
-              mtditid = getEnrolmentIdentifierValue(mtdItEnrolmentKey, mtdItIdentifierKey)(authorisedEnrolments),
-              nino = getEnrolmentIdentifierValue(ninoEnrolmentKey, ninoIdentifierKey)(authorisedEnrolments)
-            )
-          )
-        }
-      }.recoverWith {
-        case _: InsufficientEnrolments =>
-          Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
-          Future.successful(showInternalServerError)
-        case _: BearerTokenExpired =>
-          Logger.debug("[AuthenticationPredicate][async] Bearer Token Timed Out.")
-          Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
-        case _ =>
-          Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
-          Future.successful(Redirect(controllers.routes.SignInController.signIn()))
+
+  def async(action: AsyncUserRequest): Action[AnyContent] =
+    Action.async { implicit request =>
+      checkSessionTimeout {
+        authorisedUser { implicit user =>
+          action(request)(user)
       }
     }
   }
 
-  private[AuthenticationPredicate] def checkSessionTimeout(request: Request[AnyContent])(f: => Future[Result]) = {
+  private[AuthenticationPredicate] def checkSessionTimeout(f: => Future[Result])(implicit request: Request[AnyContent]) = {
     (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {
       case (Some(x), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
         Logger.debug("[AuthenticationPredicate][handleSessionTimeout] Session Time Out.")
         Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
-      case (_, _) =>
-        f
+      case (_, _) => f
     }
   }
 
-  // The following private function uses get on the value as the auth predicate should have already established the enrolments exists.
-  private[AuthenticationPredicate] def getEnrolmentIdentifierValue(enrolment: String, identifier: String)(enrolments: Enrolments)  =
-    enrolments.getEnrolment(enrolment).flatMap(_.getIdentifier(identifier)).map(_.value).get
+  private[AuthenticationPredicate] def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+    authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {
+      enrolments => {
+        f(MtdItUser(
+          mtditid = enrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value).get,
+          nino = enrolments.getEnrolment(ninoEnrolmentKey).flatMap(_.getIdentifier(ninoIdentifierKey)).map(_.value).get
+        ))
+      }
+    }.recoverWith {
+      case _: InsufficientEnrolments =>
+        Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
+        Future.successful(showInternalServerError)
+      case _: BearerTokenExpired =>
+        Logger.debug("[AuthenticationPredicate][async] Bearer Token Timed Out.")
+        Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
+      case _ =>
+        Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
+        Future.successful(Redirect(controllers.routes.SignInController.signIn()))
+    }
+  }
 
 }
