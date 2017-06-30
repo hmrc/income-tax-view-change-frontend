@@ -40,8 +40,6 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
 
   private type AsyncUserRequest = Request[AnyContent] => MtdItUser => Future[Result]
 
-  lazy val ggSignInRedirect: Result = toGGLogin(appConfig.ggSignInContinueUrl)
-
   lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
   lazy val mtdItIdentifierKey: String = appConfig.mtdItIdentifierKey
 

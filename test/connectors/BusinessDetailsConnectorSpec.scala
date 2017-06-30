@@ -19,11 +19,13 @@ package connectors
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.BusinessDetailsErrorModel
+import models.{BusinessDetailsErrorModel, BusinessListResponseModel, PropertyDetailsErrorModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
 import utils.TestSupport
+
+import scala.concurrent.Future
 
 
 class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
@@ -36,22 +38,27 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
 
   "BusinessDetailsConnector.getBusinessList" should {
 
+    lazy val testUrl = TestBusinessDetailsConnector.getBusinessListUrl(testNino)
+    def result: Future[BusinessListResponseModel] = TestBusinessDetailsConnector.getBusinessList(testNino)
+
     "return a BusinessDetailsModel with JSON in case of success" in {
-      setupMockHttpGet(TestBusinessDetailsConnector.getBusinessListUrl(testNino))(successResponse)
-      val result = TestBusinessDetailsConnector.getBusinessList(testNino)
+      setupMockHttpGet(testUrl)(successResponse)
       await(result) shouldBe businessesSuccessModel
     }
 
     "return BusinessListError model in case of failure" in {
-      setupMockHttpGet(TestBusinessDetailsConnector.getBusinessListUrl(testNino))(badResponse)
-      val result = TestBusinessDetailsConnector.getBusinessList(testNino)
+      setupMockHttpGet(testUrl)(badResponse)
       await(result) shouldBe BusinessDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return BusinessListError model when bad JSON is received" in {
-      setupMockHttpGet(TestBusinessDetailsConnector.getBusinessListUrl(testNino))(successResponseBadJson)
-      val result = TestBusinessDetailsConnector.getBusinessList(testNino)
+      setupMockHttpGet(testUrl)(successResponseBadJson)
       await(result) shouldBe BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Business Details Response.")
+    }
+
+    "return BusinessDetailsErrorModel model in case of future failed scenario" in {
+      setupMockFailedHttpGet(testUrl)(badResponse)
+      await(result) shouldBe BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $testUrl.")
     }
   }
 }

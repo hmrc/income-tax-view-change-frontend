@@ -19,11 +19,13 @@ package connectors
 import assets.TestConstants.Obligations._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.ObligationsErrorModel
+import models.{LastTaxCalculationError, ObligationsErrorModel, ObligationsResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
 import utils.TestSupport
+
+import scala.concurrent.Future
 
 
 class PropertyObligationDataConnectorSpec extends TestSupport with MockHttp {
@@ -36,22 +38,27 @@ class PropertyObligationDataConnectorSpec extends TestSupport with MockHttp {
 
   "PropertyObligationDataConnector.getPropertyData" should {
 
+    lazy val testUrl = TestPropertyObligationDataConnector.getPropertyDataUrl(testNino)
+    def result: Future[ObligationsResponseModel] = TestPropertyObligationDataConnector.getPropertyObligationData(testNino)
+
     "return a SuccessResponse with JSON in case of sucess" in {
-      setupMockHttpGet(TestPropertyObligationDataConnector.getPropertyDataUrl(testNino))(successResponse)
-      val result = TestPropertyObligationDataConnector.getPropertyObligationData(testNino)
+      setupMockHttpGet(testUrl)(successResponse)
       await(result) shouldBe obligationsDataSuccessModel
     }
 
     "return ErrorResponse model in case of failure" in {
-      setupMockHttpGet(TestPropertyObligationDataConnector.getPropertyDataUrl(testNino))(badResponse)
-      val result = TestPropertyObligationDataConnector.getPropertyObligationData(testNino)
+      setupMockHttpGet(testUrl)(badResponse)
       await(result) shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return ObligationsErrorModel when bad JSON is received" in {
-      setupMockHttpGet(TestPropertyObligationDataConnector.getPropertyDataUrl(testNino))(successResponseBadJson)
-      val result = TestPropertyObligationDataConnector.getPropertyObligationData(testNino)
+      setupMockHttpGet(testUrl)(successResponseBadJson)
       await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response.")
+    }
+
+    "return ObligationsErrorModel model in case of future failed scenario" in {
+      setupMockFailedHttpGet(testUrl)(badResponse)
+      await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $testUrl.")
     }
   }
 }

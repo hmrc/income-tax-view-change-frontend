@@ -16,8 +16,17 @@
 
 package models
 
-import play.api.libs.json.JsValue
+import play.api.libs.json.Json
 
-sealed trait ConnectorResponseModel
-case class SuccessResponse(json: JsValue) extends ConnectorResponseModel
-case class ErrorResponse(status: Int, message: String) extends ConnectorResponseModel
+
+sealed trait PropertyDetailsResponseModel
+case class PropertyDetailsModel(accountingPeriod: AccountingPeriodModel) extends PropertyDetailsResponseModel
+case class PropertyDetailsErrorModel(code: Int, message: String) extends PropertyDetailsResponseModel
+
+object PropertyDetailsModel {
+  implicit val format = Json.format[PropertyDetailsModel]
+}
+
+object PropertyDetailsErrorModel {
+  implicit val format = Json.format[PropertyDetailsErrorModel]
+}
