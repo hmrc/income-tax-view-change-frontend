@@ -16,19 +16,18 @@
 
 package mocks.controllers.predicates
 
-import controllers.predicates.{AsyncActionPredicate, AuthenticationPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AsyncActionPredicate, AuthenticationPredicate, IncomeSourceDetailsPredicate, SessionTimeoutPredicate}
 import play.api.i18n.MessagesApi
 import utils.TestSupport
 
-trait MockAsyncActionPredicate extends TestSupport with MockAuthenticationPredicate {
+trait MockAsyncActionPredicate extends TestSupport {
 
-  class asyncActionBuilder(authMock: AuthenticationPredicate) extends AsyncActionPredicate()(
-    fakeApplication.injector.instanceOf[MessagesApi],
-    fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
-    authMock
-  )
-
-  object AuthorisedAction extends asyncActionBuilder(MockAuthenticated)
-  object UnauthorisedAction extends asyncActionBuilder(MockUnauthorised)
+  class asyncActionBuilder(mockAuthentication: AuthenticationPredicate, mockIncomeSources: IncomeSourceDetailsPredicate)
+    extends AsyncActionPredicate()(
+      fakeApplication.injector.instanceOf[MessagesApi],
+      fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
+      mockAuthentication,
+      mockIncomeSources
+    )
 
 }

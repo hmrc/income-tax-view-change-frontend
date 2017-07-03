@@ -18,15 +18,21 @@ package models
 
 import play.api.libs.json.Json
 
+case class BusinessIncomeModel(
+                                businessId: String,
+                                accountingPeriod: AccountingPeriodModel,
+                                tradingName: String
+                              )
 
-sealed trait PropertyDetailsResponseModel
-case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel) extends PropertyDetailsResponseModel
-case class PropertyDetailsErrorModel(code: Int, message: String) extends PropertyDetailsResponseModel
-
-object PropertyIncomeModel {
-  implicit val format = Json.format[PropertyIncomeModel]
+object BusinessIncomeModel {
+  implicit val format = Json.format[BusinessIncomeModel]
 }
 
-object PropertyDetailsErrorModel {
-  implicit val format = Json.format[PropertyDetailsErrorModel]
+case class IncomeSources(
+                          propertyDetails: Option[PropertyIncomeModel],
+                          businessDetails: Option[BusinessIncomeModel]
+                        )
+
+object IncomeSources {
+  implicit val format = Json.format[IncomeSources]
 }

@@ -20,7 +20,6 @@ import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
 
 import config.{AppConfig, WSHttp}
-import controllers.routes
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
 import play.api.i18n.{I18nSupport, MessagesApi}

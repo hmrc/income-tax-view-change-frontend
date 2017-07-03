@@ -18,7 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.BusinessDetailsConnector
+import connectors.{BusinessDetailsConnector, PropertyDetailsConnector}
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -27,15 +27,18 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class BusinessDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector) {
+class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector) {
 
   def getBusinessDetails(nino: String)(implicit hc: HeaderCarrier): Future[BusinessListResponseModel] = {
-    Logger.debug(s"[BusinessDetailsService][getBusinessDetails] - Requesting Business Details from connector for user with NINO: $nino")
+    Logger.debug(s"[IncomeSourceDetailsService][getBusinessDetails] - Requesting Business Details from connector for user with NINO: $nino")
     businessDetailsConnector.getBusinessList(nino).flatMap {
-      case success: BusinessDetailsModel => Future.successful(success)
+      case success: BusinessDetailsModel =>
+        Future.successful(success)
       case error: BusinessDetailsErrorModel =>
-        Logger.debug(s"[BusinessDetailsService][getBusinessDetails] - Error Response Status: ${error.code}, Message: ${error.message}")
+        Logger.debug(s"[IncomeSourceDetailsService][getBusinessDetails] - Error Response Status: ${error.code}, Message: ${error.message}")
         Future.successful(error)
     }
   }
+
+  def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSources] = ???
 }

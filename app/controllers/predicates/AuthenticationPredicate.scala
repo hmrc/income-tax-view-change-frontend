@@ -27,7 +27,7 @@ import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.Retrievals.authorisedEnrolments
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.frontend.Redirects
-import uk.gov.hmrc.play.http.SessionKeys
+import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
 
 import scala.concurrent.Future
 
@@ -44,7 +44,8 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
   lazy val ninoEnrolmentKey: String = appConfig.ninoEnrolmentKey
   lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
 
-  def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+  def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent], hc: HeaderCarrier): Future[Result] = {
+    println(s"\n\n\n\n\n#########$hc\n\n\n\n######")
     authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {
       enrolments => {
         f(MtdItUser(

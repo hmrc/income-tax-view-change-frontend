@@ -25,15 +25,15 @@ import utils.TestSupport
 
 class BusinessDetailsServiceSpec extends TestSupport with MockBusinessDetailsConnector {
 
-  object TestBusinessDetailsService extends BusinessDetailsService(mockBusinessDetailsConnector)
+  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector)
 
-  "The BusinessDetailsService.getObligations method" when {
+  "The IncomeSourceDetailsService.getBusinessDetails method" when {
 
     "a successful response is returned from the connector" should {
 
       "return the expected BusinessDetails success model" in {
         setupMockBusinesslistResult(testNino)(businessesSuccessModel)
-        await(TestBusinessDetailsService.getBusinessDetails(testNino)) shouldBe businessesSuccessModel
+        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino)) shouldBe businessesSuccessModel
       }
     }
 
@@ -41,7 +41,7 @@ class BusinessDetailsServiceSpec extends TestSupport with MockBusinessDetailsCon
 
       "return a Business Details Error Model" in {
         setupMockBusinesslistResult(testNino)(businessErrorModel)
-        await(TestBusinessDetailsService.getBusinessDetails(testNino)) shouldBe businessErrorModel
+        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino)) shouldBe businessErrorModel
       }
     }
   }

@@ -36,7 +36,7 @@ class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
   lazy val getPropertyDetailsUrl: String => String = nino => s"$apiContextRoute/self-assessment/ni/$nino/uk-properties"
 
   // TODO: For MVP the only accounting period for Property is 2017/18. This needs to be enhanced post-MVP
-  val defaultSuccessResponse = PropertyDetailsModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
+  val defaultSuccessResponse = PropertyIncomeModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
 
   def getPropertyDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[PropertyDetailsResponseModel] = {
 

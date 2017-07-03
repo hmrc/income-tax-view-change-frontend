@@ -18,8 +18,10 @@ package controllers
 
 import assets.Messages.{ISE => errorMessages, Obligations => messages}
 import assets.TestConstants._
+import assets.TestConstants.BusinessDetails._
 import config.FrontendAppConfig
-import mocks.controllers.predicates.MockAsyncActionPredicate
+import controllers.predicates.AuthenticationPredicate
+import mocks.controllers.predicates.{MockAsyncActionPredicate, MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockObligationsService
 import models._
 import org.jsoup.Jsoup
@@ -28,25 +30,29 @@ import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import utils.{ImplicitDateFormatter, TestSupport}
 
-class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicate with MockObligationsService with ImplicitDateFormatter {
+class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicate with MockObligationsService
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter {
+
+  class setupTestController(authentication: AuthenticationPredicate)
+    extends ObligationsController()(
+      fakeApplication.injector.instanceOf[FrontendAppConfig],
+      fakeApplication.injector.instanceOf[MessagesApi],
+      new asyncActionBuilder(authentication, BusinessIncome),
+      mockObligationsService
+    )
 
   "The ObligationsController.getObligations function" when {
 
     "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
-      object TestObligationsController extends ObligationsController()(
-        fakeApplication.injector.instanceOf[FrontendAppConfig],
-        fakeApplication.injector.instanceOf[MessagesApi],
-        AuthorisedAction,
-        mockObligationsService
-      )
+      object TestObligationsController extends setupTestController(MockAuthenticated)
 
       "successfully retrieves a list of Obligations from the Obligations service" should {
 
         lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
-        def mockSuccess(): Unit = setupMockObligationsResult(testNino)(
+        def mockSuccess(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
           ObligationsModel(
             List(
               ObligationModel(
@@ -129,7 +135,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
-        def mockBusinessObligationsFail(): Unit = setupMockObligationsResult(testNino)(
+        def mockBusinessObligationsFail(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
           ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Error Message")
         )
         def mockPropertyObligationsFail(): Unit = setupMockPropertyObligationsResult(testNino)(
@@ -156,12 +162,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
 
     "Called with an Unauthenticated User" should {
 
-      object TestObligationsController extends ObligationsController()(
-        fakeApplication.injector.instanceOf[FrontendAppConfig],
-        fakeApplication.injector.instanceOf[MessagesApi],
-        UnauthorisedAction,
-        mockObligationsService
-      )
+      object TestObligationsController extends setupTestController(MockUnauthorised)
 
       "return redirect SEE_OTHER (303)" in {
         val result = TestObligationsController.getObligations()(fakeRequestNoSession)

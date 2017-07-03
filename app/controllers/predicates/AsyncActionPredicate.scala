@@ -19,29 +19,28 @@ package controllers.predicates
 import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
-import config.FrontendAppConfig
 import controllers.BaseController
+import models.IncomeSources
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Request, Result}
-import play.api.{Configuration, Environment, Logger}
-import uk.gov.hmrc.auth.core.Retrievals.authorisedEnrolments
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.frontend.Redirects
-import uk.gov.hmrc.play.http.SessionKeys
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
 @Singleton
 class AsyncActionPredicate @Inject()(implicit val messagesApi: MessagesApi,
                                      val sessionTimeoutPredicate: SessionTimeoutPredicate,
-                                     val authenticationPredicate: AuthenticationPredicate
+                                     val authenticationPredicate: AuthenticationPredicate,
+                                     val incomeSourceDetailsPredicate: IncomeSourceDetailsPredicate
                                     ) extends BaseController {
 
-  def async(action: Request[AnyContent] => MtdItUser => Future[Result]): Action[AnyContent] =
+  def async(action: Request[AnyContent] => MtdItUser => IncomeSources => Future[Result]): Action[AnyContent] =
     Action.async { implicit request =>
       sessionTimeoutPredicate.checkSessionTimeout {
         authenticationPredicate.authorisedUser { implicit user =>
-          action(request)(user)
+          incomeSourceDetailsPredicate.retrieveIncomeSources { implicit sources =>
+            action(request)(user)(sources)
+          }
         }
       }
     }

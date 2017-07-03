@@ -18,7 +18,7 @@ package connectors
 
 import assets.TestConstants._
 import mocks.MockHttp
-import models.{AccountingPeriodModel, PropertyDetailsErrorModel, PropertyDetailsModel, PropertyDetailsResponseModel}
+import models.{AccountingPeriodModel, PropertyDetailsErrorModel, PropertyIncomeModel, PropertyDetailsResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 class PropertyDetailsConnectorSpec extends TestSupport with MockHttp {
 
-  val propertySuccessModel = PropertyDetailsModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
+  val propertySuccessModel = PropertyIncomeModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
   val successResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
@@ -40,7 +40,7 @@ class PropertyDetailsConnectorSpec extends TestSupport with MockHttp {
     lazy val testUrl = TestPropertyDetailsConnector.getPropertyDetailsUrl(testNino)
     def result: Future[PropertyDetailsResponseModel] = TestPropertyDetailsConnector.getPropertyDetails(testNino)
 
-    "return a PropertyDetailsModel with JSON in case of success" in {
+    "return a PropertyIncomeModel with JSON in case of success" in {
       setupMockHttpGet(testUrl)(successResponse)
       await(result) shouldBe propertySuccessModel
     }

@@ -33,13 +33,16 @@ object TestConstants extends ImplicitDateFormatter {
 
   object BusinessDetails {
 
+    val testBusinessAccountingPeriod = AccountingPeriodModel(start = "2017-1-1", end = "2017-12-31")
+    val testTradeName = "business"
+
     val business1 = BusinessModel(
       id = testSelfEmploymentId,
-      accountingPeriod = AccountingPeriodModel(start = "2017-1-1", end = "2017-12-31"),
+      accountingPeriod = testBusinessAccountingPeriod,
       accountingType = "CASH",
       commencementDate = Some("2017-1-1"),
       cessationDate = Some("2017-12-31"),
-      tradingName = "business",
+      tradingName = testTradeName,
       businessDescription = Some("a business"),
       businessAddressLineOne = Some("64 Zoo Lane"),
       businessAddressLineTwo = Some("Happy Place"),
@@ -72,13 +75,13 @@ object TestConstants extends ImplicitDateFormatter {
                 {
                    "id":"$testSelfEmploymentId",
                    "accountingPeriod":{
-                      "start":"2017-01-01",
-                      "end":"2017-12-31"
+                     "start":"${testBusinessAccountingPeriod.start}",
+                     "end":"${testBusinessAccountingPeriod.end}"
                    },
                    "accountingType":"CASH",
                    "commencementDate":"2017-01-01",
                    "cessationDate":"2017-12-31",
-                   "tradingName":"business",
+                   "tradingName":"$testTradeName",
                    "businessDescription":"a business",
                    "businessAddressLineOne":"64 Zoo Lane",
                    "businessAddressLineTwo":"Happy Place",
@@ -118,6 +121,14 @@ object TestConstants extends ImplicitDateFormatter {
         |}
       """.stripMargin
     val businessListErrorJson = Json.parse(businessErrorString)
+
+    val businessIncomeModel = BusinessIncomeModel(testSelfEmploymentId, testBusinessAccountingPeriod, testTradeName)
+  }
+
+  object PropertyIncome {
+    val propertyIncomeModel = PropertyIncomeModel(
+      accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05")
+    )
   }
 
   object Estimates {

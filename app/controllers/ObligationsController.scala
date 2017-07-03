@@ -19,12 +19,12 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
-import controllers.predicates.{AsyncActionPredicate, AuthenticationPredicate}
+import controllers.predicates.AsyncActionPredicate
 import models.ObligationsModel
+import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.ObligationsService
-import play.api.Logger
 
 @Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,
@@ -33,25 +33,27 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
                                       val obligationsService: ObligationsService
                                      ) extends BaseController {
 
-  val getObligations: Action[AnyContent] = actionPredicate.async { implicit request =>
-    implicit user =>
-      for {
-        business <- obligationsService.getBusinessObligations(user.nino)
-        property <- obligationsService.getPropertyObligations(user.nino)
-      } yield (business, property) match {
-        case (businessSuccess: ObligationsModel, propertySuccess: ObligationsModel) =>
-          Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
-          Ok(views.html.obligations(Some(businessSuccess), Some(propertySuccess)))
-        case (businessSuccess: ObligationsModel, _) =>
-          Logger.debug ("[ObligationsController][getObligations] Business Obligations retrieved. Serving HTML page")
-          Ok(views.html.obligations(Some(businessSuccess), None))
-        case (_, propertySuccess: ObligationsModel) =>
-          Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
-          Ok(views.html.obligations(None, Some(propertySuccess)))
-        case (_,_) =>
-          Logger.warn("[ObligationsController][getObligations] No obligations retrieved. Throwing ISE")
-          showInternalServerError
-      }
+  val getObligations: Action[AnyContent] = actionPredicate.async {
+    implicit request =>
+      implicit user =>
+        implicit sources =>
+          for {
+            business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
+            property <- obligationsService.getPropertyObligations(user.nino)
+          } yield (business, property) match {
+            case (businessSuccess: ObligationsModel, propertySuccess: ObligationsModel) =>
+              Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
+              Ok(views.html.obligations(Some(businessSuccess), Some(propertySuccess)))
+            case (businessSuccess: ObligationsModel, _) =>
+              Logger.debug("[ObligationsController][getObligations] Business Obligations retrieved. Serving HTML page")
+              Ok(views.html.obligations(Some(businessSuccess), None))
+            case (_, propertySuccess: ObligationsModel) =>
+              Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
+              Ok(views.html.obligations(None, Some(propertySuccess)))
+            case (_, _) =>
+              Logger.warn("[ObligationsController][getObligations] No obligations retrieved. Throwing ISE")
+              showInternalServerError
+          }
   }
 }
 
