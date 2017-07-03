@@ -3,3 +3,22 @@
 #tax-year {
     color: #6f777b;
 }
+.itvc-table td {
+     font-size: inherit;
+ }
+
+.no-border-bottom td{
+    border-bottom: 0px;
+}
+
+.summary-data {
+    text-align: right !important;
+ }
+
+.total-section td {
+    font-weight: 700;
+}
+
+
+
+
