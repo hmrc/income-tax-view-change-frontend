@@ -71,11 +71,11 @@ class ObligationsViewSpec extends TestSupport{
       lazy val sidebarSection = document.getElementById("sidebar")
 
       "has a heading for the MTDITID" in {
-        sidebarSection.getElementById("reporting-ref-heading").text() shouldBe sidebarMessages.mtditidHeading
+        sidebarSection.getElementById("it-reference-heading").text() shouldBe sidebarMessages.mtditidHeading
       }
 
       "has the correct value for the MTDITID/reporting ref" in {
-        sidebarSection.getElementById("reporting-ref").text() shouldBe testMtdItUser.mtditid
+        sidebarSection.getElementById("it-reference").text() shouldBe testMtdItUser.mtditid
       }
 
       "has a heading for viewing your estimates" in {

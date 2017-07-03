@@ -47,7 +47,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
     }
 
     s"have the tax year '${messages.taxYear}'" in {
-      document.getElementById("tax-year").text() shouldBe "2017/18"
+      document.getElementById("tax-year").text() shouldBe messages.taxYear
     }
 
     s"have the page heading '${messages.pageHeading}'" in {
@@ -76,11 +76,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       lazy val sidebarSection = document.getElementById("sidebar")
 
       "has a heading for the MTDITID" in {
-        sidebarSection.getElementById("reporting-ref-heading").text() shouldBe sidebarMessages.mtditidHeading
+        sidebarSection.getElementById("it-reference-heading").text() shouldBe sidebarMessages.mtditidHeading
       }
 
       "has the correct value for the MTDITID/reporting ref" in {
-        sidebarSection.getElementById("reporting-ref").text() shouldBe testMtdItUser.mtditid
+        sidebarSection.getElementById("it-reference").text() shouldBe testMtdItUser.mtditid
       }
 
       "has a heading for viewing your reports" in {
