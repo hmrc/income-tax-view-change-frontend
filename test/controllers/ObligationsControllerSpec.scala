@@ -41,81 +41,108 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
       mockObligationsService
     )
 
+  def mockBusinessSuccess(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
+    ObligationsModel(
+      List(
+        ObligationModel(
+          start = "2017-04-06",
+          end = "2017-07-05",
+          due = "2017-08-05",
+          met = true
+        ),
+        ObligationModel(
+          start = "2017-07-06",
+          end = "2017-10-05",
+          due = "2017-11-05",
+          met = true
+        ),
+        ObligationModel(
+          start = "2017-10-06",
+          end = "2018-01-05",
+          due = "2018-02-05",
+          met = false
+        ),
+        ObligationModel(
+          start = "2018-01-06",
+          end = "2018-04-05",
+          due = "2018-05-06",
+          met = false
+        )
+      )
+    )
+  )
+  def mockBusinessError(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
+    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
+  )
+
+  def mockPropertySuccess(): Unit = setupMockPropertyObligationsResult(testNino)(
+    ObligationsModel(
+      List(
+        ObligationModel(
+          start = "2017-04-06",
+          end = "2017-07-05",
+          due = "2017-08-05",
+          met = true
+        ),
+        ObligationModel(
+          start = "2017-07-06",
+          end = "2017-10-05",
+          due = "2017-11-05",
+          met = true
+        ),
+        ObligationModel(
+          start = "2017-10-06",
+          end = "2018-01-05",
+          due = "2018-02-05",
+          met = false
+        ),
+        ObligationModel(
+          start = "2018-01-06",
+          end = "2018-04-05",
+          due = "2018-05-06",
+          met = false
+        )
+      )
+    )
+  )
+  def mockPropertyError(): Unit = setupMockPropertyObligationsResult(testNino)(
+    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
+  )
+
   "The ObligationsController.getObligations function" when {
 
     "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
       object TestObligationsController extends setupTestController(MockAuthenticated)
 
-      "successfully retrieves a list of Obligations from the Obligations service" should {
+      "successfully retrieves a set of Business Obligations from the Obligations service" should {
 
         lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
-        def mockSuccess(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
-          ObligationsModel(
-            List(
-              ObligationModel(
-                start = "2017-04-06",
-                end = "2017-07-05",
-                due = "2017-08-05",
-                met = true
-              ),
-              ObligationModel(
-                start = "2017-07-06",
-                end = "2017-10-05",
-                due = "2017-11-05",
-                met = true
-              ),
-              ObligationModel(
-                start = "2017-10-06",
-                end = "2018-01-05",
-                due = "2018-02-05",
-                met = false
-              ),
-              ObligationModel(
-                start = "2018-01-06",
-                end = "2018-04-05",
-                due = "2018-05-06",
-                met = false
-              )
-            )
-          )
-        )
+        "return Status OK (200)" in {
+          mockBusinessSuccess()
+          mockPropertyError()
+          status(result) shouldBe Status.OK
+        }
 
-        def mockPropertySuccess(): Unit = setupMockPropertyObligationsResult(testNino)(
-          ObligationsModel(
-            List(
-              ObligationModel(
-                start = "2017-04-06",
-                end = "2017-07-05",
-                due = "2017-08-05",
-                met = true
-              ),
-              ObligationModel(
-                start = "2017-07-06",
-                end = "2017-10-05",
-                due = "2017-11-05",
-                met = true
-              ),
-              ObligationModel(
-                start = "2017-10-06",
-                end = "2018-01-05",
-                due = "2018-02-05",
-                met = false
-              ),
-              ObligationModel(
-                start = "2018-01-06",
-                end = "2018-04-05",
-                due = "2018-05-06",
-                met = false
-              )
-            )
-          )
-        )
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the Obligations page" in {
+          document.title shouldBe messages.title
+        }
+      }
+
+      "successfully retrieves a set of Property Obligations from the Obligations service" should {
+
+        lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
+        lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockSuccess()
+          mockBusinessError()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
         }
@@ -130,21 +157,35 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         }
       }
 
-      "doesn't retrieve a list of Obligations from the Obligations service" should {
+      "successfully retrieves a set of both Business & Property Obligations from the Obligations service" should {
 
         lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
-        def mockBusinessObligationsFail(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
-          ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Error Message")
-        )
-        def mockPropertyObligationsFail(): Unit = setupMockPropertyObligationsResult(testNino)(
-          ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Error Message")
-        )
+        "return Status OK (200)" in {
+          mockBusinessSuccess()
+          mockPropertySuccess()
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the Obligations page" in {
+          document.title shouldBe messages.title
+        }
+      }
+
+      "doesn't retrieve any Obligations from the Obligations service" should {
+
+        lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
+        lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status INTERNAL_SERVER_ERROR (500)" in {
-          mockBusinessObligationsFail()
-          mockPropertyObligationsFail()
+          mockBusinessError()
+          mockPropertyError()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 

@@ -97,6 +97,24 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport
         }
       }
 
+      "receives Business Income source from the Income Sources predicate" +
+        "and an error from the Last Calculation Service" should {
+
+        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, BusinessIncome)
+
+        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestWithActiveSession)
+
+        "return Internal Server Error (500)" in {
+          mockLastCalculationError()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+      }
+
       "receives No Income sources from the Income Sources predicate" +
         "and  an error from the Last Calculation Service" should {
 
@@ -105,7 +123,6 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport
         lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
-          mockLastCalculationError()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 

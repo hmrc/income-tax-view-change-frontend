@@ -44,8 +44,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
   lazy val ninoEnrolmentKey: String = appConfig.ninoEnrolmentKey
   lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
 
-  def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent], hc: HeaderCarrier): Future[Result] = {
-    println(s"\n\n\n\n\n#########$hc\n\n\n\n######")
+  def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {
       enrolments => {
         f(MtdItUser(
