@@ -16,32 +16,38 @@
 
 package controllers.predicates
 
-import auth.MockAuthenticationPredicate
+import assets.TestConstants._
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Ok
-import play.api.test.FakeRequest
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers._
 import utils.TestSupport
-import assets.TestConstants._
 
 import scala.concurrent.Future
 
-class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with MockAuthenticationPredicate {
+class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
   "The authentication async method" when {
 
-    def setupResult(authenticationPredicate: AuthenticationPredicate): Action[AnyContent] = authenticationPredicate.async {
-      implicit request => implicit user =>
-        Future.successful(Ok(user.mtditid + " " + user.nino))
-    }
+    def setupResult(authenticationPredicate: AuthenticationPredicate, incomeSourceDetailsPredicate: IncomeSourceDetailsPredicate): Action[AnyContent] =
+      new AsyncActionPredicate()(
+        fakeApplication.injector.instanceOf[MessagesApi],
+        fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
+        authenticationPredicate,
+        incomeSourceDetailsPredicate
+      ).async {
+        implicit request => implicit user => implicit sources =>
+          Future.successful(Ok(user.mtditid + " " + user.nino))
+      }
 
     "called with an authenticated user" when {
 
       "a HMRC-MTD-IT enrolment exists with a NINO" should {
 
-        lazy val result = setupResult(MockAuthenticated)(fakeRequestWithActiveSession)
+        lazy val result = setupResult(MockAuthenticated, BusinessIncome)(fakeRequestWithActiveSession)
 
         "return Ok (200)" in {
           status(result) shouldBe Status.OK
@@ -54,7 +60,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
 
       "a HMRC-MTD-IT enrolment does NOT exist" should {
 
-        lazy val result = setupResult(MockAuthenticatedNoEnrolment)(fakeRequestWithActiveSession)
+        lazy val result = setupResult(MockAuthenticatedNoEnrolment, BusinessIncome)(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -64,7 +70,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
 
     "called with a Bearer Token Expired response from Auth" should {
 
-      lazy val result = setupResult(MockTimeout)(fakeRequestWithActiveSession)
+      lazy val result = setupResult(MockTimeout, BusinessIncome)(fakeRequestWithActiveSession)
 
       "should be a rerdirect (303)" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -77,7 +83,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
 
     "called with an Authenticated User with a Timed Out session (Session Expired)" should {
 
-      lazy val result = setupResult(MockAuthenticated)(fakeRequestWithTimeoutSession)
+      lazy val result = setupResult(MockAuthenticated, BusinessIncome)(fakeRequestWithTimeoutSession)
 
       "should be a rerdirect (303)" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -90,7 +96,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
 
     "called with a user with no session" should {
 
-      lazy val result = setupResult(MockUnauthorised)(fakeRequestNoSession)
+      lazy val result = setupResult(MockUnauthorised, BusinessIncome)(fakeRequestNoSession)
 
       "should be a rerdirect (303)" in {
         status(result) shouldBe Status.SEE_OTHER

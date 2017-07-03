@@ -17,102 +17,94 @@
 package controllers
 
 import assets.Messages.{EstimatedTaxLiability => messages}
-import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants._
-import auth.MockAuthenticationPredicate
 import config.FrontendAppConfig
-import mocks.services.{MockBusinessDetailsService, MockEstimatedLiabilityService}
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate}
+import mocks.controllers.predicates.{MockAsyncActionPredicate, MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockEstimatedLiabilityService
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
 
-class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockBusinessDetailsService with MockEstimatedLiabilityService {
+class EstimatedTaxLiabilityControllerSpec extends TestSupport
+  with MockEstimatedLiabilityService with MockAsyncActionPredicate with MockIncomeSourceDetailsPredicate with MockAuthenticationPredicate {
 
   // Last Calculation Service mocks
   def mockLastCalculationSuccess(): Unit = setupMockLastTaxCalculationResult(testNino, testYear)(lastTaxCalcSuccess)
   def mockLastCalculationError(): Unit = setupMockLastTaxCalculationResult(testNino, testYear)(lastTaxCalcError)
 
-  // Business Details Service mocks
-  def mockBusinessDetailsSuccess(): Unit = setupMockBusinessDetailsResult(testNino)(businessesSuccessModel)
-  def mockBusinessDetailsEmpty(): Unit = setupMockBusinessDetailsResult(testNino)(businessSuccessEmptyModel)
-  def mockBusinessDetailsError(): Unit = setupMockBusinessDetailsResult(testNino)(businessErrorModel)
-
+  class setupTestController(authentication: AuthenticationPredicate, incomeSources: IncomeSourceDetailsPredicate)
+    extends EstimatedTaxLiabilityController()(
+      fakeApplication.injector.instanceOf[FrontendAppConfig],
+      fakeApplication.injector.instanceOf[MessagesApi],
+      new asyncActionBuilder(authentication, incomeSources),
+      mockEstimatedLiabilityService
+    )
 
   "The EstimatedTaxLiabilityController.home action" when {
 
     "Called with an Authenticated HMRC-MTD-IT User" which {
 
-      object TestEstimatedLiabilityController extends EstimatedTaxLiabilityController()(
-        fakeApplication.injector.instanceOf[FrontendAppConfig],
-        fakeApplication.injector.instanceOf[MessagesApi],
-        MockAuthenticated,
-        mockEstimatedLiabilityService,
-        mockBusinessDetailsService
-      )
-
-      "successfully retrieves a Business from the Business Details service" +
+      "successfully retrieves Business only income from the Income Sources predicate" +
         "and an Estimated Tax Liability amount from the EstimatedTaxLiability Service" should {
+
+        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, BusinessIncome)
 
         lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
           mockLastCalculationSuccess()
-          mockBusinessDetailsSuccess()
           status(result) shouldBe Status.OK
         }
 
         "return HTML" in {
           mockLastCalculationSuccess()
-          mockBusinessDetailsSuccess()
           contentType(result) shouldBe Some("text/html")
           charset(result) shouldBe Some("utf-8")
         }
 
         "render the EstimatedTaxLiability page" in {
           mockLastCalculationSuccess()
-          mockBusinessDetailsSuccess()
           document.title() shouldBe messages.title
         }
       }
 
-      "receives no businesses from the BusinessDetails Service" +
+      "receives Property only income from the Income Sources predicate" +
         "and an Estimated Tax Liability amount from the EstimatedTaxLiability Service" should {
+
+        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, PropertyIncome)
 
         lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
           mockLastCalculationSuccess()
-          mockBusinessDetailsEmpty()
           status(result) shouldBe Status.OK
         }
 
         "return HTML" in {
           mockLastCalculationSuccess()
-          mockBusinessDetailsEmpty()
           contentType(result) shouldBe Some("text/html")
           charset(result) shouldBe Some("utf-8")
         }
 
         "render the EstimatedTaxLiability page" in {
           mockLastCalculationSuccess()
-          mockBusinessDetailsEmpty()
           document.title() shouldBe messages.title
         }
       }
 
-      "receives no businesses from the BusinessDetails Service" +
-        "and  an error from the Last Calculation Service" should {
+      "receives Business Income source from the Income Sources predicate" +
+        "and an error from the Last Calculation Service" should {
+
+        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, BusinessIncome)
 
         lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
-          mockBusinessDetailsEmpty()
           mockLastCalculationError()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -123,13 +115,14 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
         }
       }
 
+      "receives No Income sources from the Income Sources predicate" +
+        "and  an error from the Last Calculation Service" should {
 
-      "receives an error from the BusinessDetails Service" should {
+        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, NoIncome)
 
         lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
-          mockBusinessDetailsError()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -139,18 +132,11 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport with MockAuthentic
         }
       }
 
-
     }
 
     "Called with an Unauthenticated User" should {
 
-      object TestEstimatedLiabilityController extends EstimatedTaxLiabilityController()(
-        fakeApplication.injector.instanceOf[FrontendAppConfig],
-        fakeApplication.injector.instanceOf[MessagesApi],
-        MockUnauthorised,
-        mockEstimatedLiabilityService,
-        mockBusinessDetailsService
-      )
+      object TestEstimatedLiabilityController extends setupTestController(MockUnauthorised, PropertyIncome)
 
       "return redirect SEE_OTHER (303)" in {
         val result = TestEstimatedLiabilityController.getEstimatedTaxLiability()(fakeRequestNoSession)
