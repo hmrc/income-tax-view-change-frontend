@@ -18,7 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{BusinessDetailsConnector, LastTaxCalculationConnector}
+import connectors.{CalculationDataConnector, BusinessDetailsConnector, LastTaxCalculationConnector}
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -27,20 +27,31 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class EstimatedTaxLiabilityService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector) {
+class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector,
+                                      val calculationDataConnector: CalculationDataConnector) {
 
   def getLastEstimatedTaxCalculation(nino: String,
                                      year: Int
                                     )(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 
-    Logger.debug("[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")
+    Logger.debug("[FinancialDataService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")
     lastTaxCalculationConnector.getLastEstimatedTax(nino, year).map {
       case success: LastTaxCalculation =>
-        Logger.debug(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n$success")
+        Logger.debug(s"[FinancialDataService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n$success")
         success
       case error: LastTaxCalculationError =>
-        Logger.warn(s"[EstimatedTaxLiabilityService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
+        Logger.warn(s"[FinancialDataService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
         error
     }
+  }
+
+  def getCalculationData(nino: String, taxCalculationId: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
+
+    Logger.debug("[FinancialDataService][getCalculationData] - Requesting calculation data from self-assessment api via Connector")
+    calculationDataConnector.getCalculationData(nino, taxCalculationId).map {
+      case success: CalculationDataModel => success
+      case error: CalculationDataErrorModel => error
+    }
+
   }
 }

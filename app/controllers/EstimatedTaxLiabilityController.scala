@@ -25,7 +25,7 @@ import models.{BusinessDetailsErrorModel, BusinessDetailsModel, LastTaxCalculati
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Request, Result}
-import services.{BusinessDetailsService, EstimatedTaxLiabilityService}
+import services.{BusinessDetailsService, FinancialDataService}
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
                                                 implicit val messagesApi: MessagesApi,
                                                 val authentication: AuthenticationPredicate,
-                                                val estimatedTaxLiabilityService: EstimatedTaxLiabilityService,
+                                                val estimatedTaxLiabilityService: FinancialDataService,
                                                 val businessDetailsService: BusinessDetailsService
                                                ) extends BaseController {
 

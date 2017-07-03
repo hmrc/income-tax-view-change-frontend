@@ -21,7 +21,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import services.EstimatedTaxLiabilityService
+import services.FinancialDataService
 import uk.gov.hmrc.play.test.UnitSpec
 import assets.TestConstants.Estimates._
 import assets.TestConstants.Estimates
@@ -30,17 +30,17 @@ import assets.TestConstants._
 import scala.concurrent.Future
 
 
-trait MockEstimatedLiabilityService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockFinancialDataService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockEstimatedLiabilityService: EstimatedTaxLiabilityService = mock[EstimatedTaxLiabilityService]
+  val mockFinancialDataService: FinancialDataService = mock[FinancialDataService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockEstimatedLiabilityService)
+    reset(mockFinancialDataService)
   }
 
   def setupMockLastTaxCalculationResult(nino: String, year: Int)(response: LastTaxCalculationResponseModel): Unit =
-    when(mockEstimatedLiabilityService
+    when(mockFinancialDataService
       .getLastEstimatedTaxCalculation(
         ArgumentMatchers.eq(nino),
         ArgumentMatchers.eq(year)

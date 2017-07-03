@@ -20,20 +20,20 @@ package services
 import assets.TestConstants.Estimates._
 import assets.TestConstants.Estimates
 import assets.TestConstants._
-import mocks.connectors.MockLastTaxCalculationConnector
+import mocks.connectors.{MockLastTaxCalculationConnector, MockCalculationDataConnector}
 import utils.TestSupport
 
-class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockLastTaxCalculationConnector {
+class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationConnector with MockCalculationDataConnector {
 
-  object TestEstimatedTaxLiabilityService extends EstimatedTaxLiabilityService(mockLastTaxCalculationConnector)
+  object TestFinancialDataService extends FinancialDataService(mockLastTaxCalculationConnector, mockCalculationDataConnector)
 
-  "The EstimatedTaxLiabilityService.getEstimatedTaxLiability method" when {
+  "The FinancialDataService.getEstimatedTaxLiability method" when {
 
     "a successful response is returned from the EstimatedTaxLiabilityConnector" should {
 
       "return a correctly formatted EstimateTaxLiability model" in {
         setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
-        await(TestEstimatedTaxLiabilityService.getLastEstimatedTaxCalculation(testNino, testYear)) shouldBe Estimates.lastTaxCalcSuccess
+        await(TestFinancialDataService.getLastEstimatedTaxCalculation(testNino, testYear)) shouldBe Estimates.lastTaxCalcSuccess
       }
     }
 
@@ -41,7 +41,7 @@ class EstimatedTaxLiabilityServiceSpec extends TestSupport with MockLastTaxCalcu
 
       "return a correctly formatted EstimateTaxLiability model" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
-        await(TestEstimatedTaxLiabilityService.getLastEstimatedTaxCalculation(testNino, testYear)) shouldBe Estimates.lastTaxCalcError
+        await(TestFinancialDataService.getLastEstimatedTaxCalculation(testNino, testYear)) shouldBe Estimates.lastTaxCalcError
       }
     }
   }
