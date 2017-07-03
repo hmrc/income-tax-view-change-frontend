@@ -19,6 +19,7 @@ package services
 
 import assets.TestConstants.Estimates._
 import assets.TestConstants.Estimates
+import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants._
 import mocks.connectors.{MockLastTaxCalculationConnector, MockCalculationDataConnector}
 import utils.TestSupport
@@ -37,11 +38,30 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
       }
     }
 
-    "an Error Response is returned from the FinancialDataConnector" should {
+    "an Error Response is returned from the EstimatedTaxLiabilityConnector" should {
 
       "return a correctly formatted EstimateTaxLiability model" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
         await(TestFinancialDataService.getLastEstimatedTaxCalculation(testNino, testYear)) shouldBe Estimates.lastTaxCalcError
+      }
+    }
+  }
+
+  "The FinancialDataService.getCalculationData method" when {
+
+    "a successful response is returned from the CalculationDataConnector" should {
+
+      "return a correctly formatted CalculationData model" in {
+        setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
+        await(TestFinancialDataService.getCalculationData(testNino, testTaxCalculationId)) shouldBe calculationDataSuccessModel
+      }
+    }
+
+    "an Error Response is returned from the CalculationDataConnector" should {
+
+      "return a correctly formatted CalculationDataError model" in {
+        setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataErrorModel)
+        await(TestFinancialDataService.getCalculationData(testNino, testTaxCalculationId)) shouldBe calculationDataErrorModel
       }
     }
   }

@@ -49,8 +49,12 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
 
     Logger.debug("[FinancialDataService][getCalculationData] - Requesting calculation data from self-assessment api via Connector")
     calculationDataConnector.getCalculationData(nino, taxCalculationId).map {
-      case success: CalculationDataModel => success
-      case error: CalculationDataErrorModel => error
+      case success: CalculationDataModel =>
+        Logger.debug(s"[FinancialDataService][getCalculationData] - Retrieved Calculation data: \n$success")
+        success
+      case error: CalculationDataErrorModel =>
+        Logger.warn(s"[FinancialDataService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
+        error
     }
 
   }

@@ -35,7 +35,7 @@ trait MockCalculationDataConnector extends UnitSpec with MockitoSugar with Befor
     reset(mockCalculationDataConnector)
   }
 
-  def setupLastTaxCalculationResponse(nino: String, taxCalculationId: String)(response: CalculationDataResponseModel): Unit =
+  def setupCalculationDataResponse(nino: String, taxCalculationId: String)(response: CalculationDataResponseModel): Unit =
     when(mockCalculationDataConnector
       .getCalculationData(
         ArgumentMatchers.eq(nino),

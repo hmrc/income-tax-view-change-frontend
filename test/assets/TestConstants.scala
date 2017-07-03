@@ -28,7 +28,7 @@ object TestConstants extends ImplicitDateFormatter {
   val testNino = "AB123456C"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
   val testSelfEmploymentId = "XA00001234"
-  val testTaxCalculationId = ""
+  val testTaxCalculationId = "CALCID"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
 
