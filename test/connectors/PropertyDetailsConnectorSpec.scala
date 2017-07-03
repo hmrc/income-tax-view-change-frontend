@@ -17,8 +17,9 @@
 package connectors
 
 import assets.TestConstants._
+import assets.TestConstants.PropertyDetails._
 import mocks.MockHttp
-import models.{AccountingPeriodModel, PropertyDetailsErrorModel, PropertyDetailsModel, PropertyDetailsResponseModel}
+import models.{PropertyDetailsErrorModel, PropertyDetailsResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
@@ -29,7 +30,6 @@ import scala.concurrent.Future
 
 class PropertyDetailsConnectorSpec extends TestSupport with MockHttp {
 
-  val propertySuccessModel = PropertyDetailsModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
   val successResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
