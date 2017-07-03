@@ -41,7 +41,8 @@ class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends Servi
     http.GET[HttpResponse](url) flatMap {
       response =>
         response.status match {
-          case OK => Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, body: ${response.body}")
+          case OK =>
+            Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, body: ${response.body}")
             Future.successful(response.json.validate[ObligationsModel].fold(
               invalid => {
                 Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Json Validation Error. Parsing Property Obligation Data Response")
@@ -59,5 +60,4 @@ class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends Servi
         Future.successful(ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
     }
   }
-
 }

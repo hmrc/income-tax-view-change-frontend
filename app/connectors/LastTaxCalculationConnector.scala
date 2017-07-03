@@ -59,8 +59,8 @@ class LastTaxCalculationConnector @Inject()(val http: HttpGet) extends ServicesC
         }
     } recoverWith {
       case _ =>
-        Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Unexpected failed future on call to $url")
-        Future.successful(LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failed future on call to $url"))
+        Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Unexpected future failed error when calling $url.")
+        Future.successful(LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
     }
   }
 }

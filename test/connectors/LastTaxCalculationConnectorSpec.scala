@@ -20,11 +20,13 @@ package connectors
 import assets.TestConstants.Estimates._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.LastTaxCalculationError
+import models.{LastTaxCalculationError, LastTaxCalculationResponseModel, ObligationsErrorModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
 import utils.TestSupport
+
+import scala.concurrent.Future
 
 class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
 
@@ -36,23 +38,27 @@ class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
 
   "EstimatedTaxLiabilityConnector.getEstimatedTaxLiability" should {
 
-    "return a EstimatedTaxLiability model when successful JSON is received" in {
-      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear.toString))(successResponse)
-      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear)
-      await(result) shouldBe lastTaxCalcSuccess
+    lazy val testUrl = TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear.toString)
+    def result: Future[LastTaxCalculationResponseModel] = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear)
 
+    "return a EstimatedTaxLiability model when successful JSON is received" in {
+      setupMockHttpGet(testUrl)(successResponse)
+      await(result) shouldBe lastTaxCalcSuccess
     }
 
     "return EstimatedTaxLiabilityError model in case of bad/malformed JSON response" in {
-      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear.toString))(successResponseBadJson)
-      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear)
+      setupMockHttpGet(testUrl)(successResponseBadJson)
       await(result) shouldBe LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Estimated Tax Liability Response.")
     }
 
     "return EstimatedTaxLiabilityError model in case of failure" in {
-      setupMockHttpGet(TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear.toString))(badResponse)
-      val result = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear)
+      setupMockHttpGet(testUrl)(badResponse)
       await(result) shouldBe LastTaxCalculationError(Status.BAD_REQUEST, "Error Message")
+    }
+
+    "return LastTaxCalculationError model in case of future failed scenario" in {
+      setupMockFailedHttpGet(testUrl)(badResponse)
+      await(result) shouldBe LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $testUrl.")
     }
   }
 }

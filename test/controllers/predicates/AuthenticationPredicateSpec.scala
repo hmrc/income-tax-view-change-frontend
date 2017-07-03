@@ -62,16 +62,16 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
       }
     }
 
-    "called with an unauthenticated user (Bearer Token Expired response from Auth)" should {
+    "called with a Bearer Token Expired response from Auth" should {
 
-      lazy val result = setupResult(MockUnauthorised)(fakeRequestWithActiveSession)
+      lazy val result = setupResult(MockTimeout)(fakeRequestWithActiveSession)
 
       "should be a rerdirect (303)" in {
         status(result) shouldBe Status.SEE_OTHER
       }
 
       "should redirect to GG Sign In" in {
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
 
