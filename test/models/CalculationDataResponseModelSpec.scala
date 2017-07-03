@@ -32,7 +32,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
     "for the test response" should {
 
       "have the same values as the calculationDataSuccessModel" in {
-        calculationDataSuccessModel.incomeTaxYTD.getOrElse("fail") shouldBe 1
+        calculationDataSuccessModel.incomeTaxYTD.getOrElse("fail") shouldBe 90500
         calculationDataSuccessModel.incomeTaxThisPeriod.getOrElse("fail") shouldBe 2000
         calculationDataSuccessModel.profitFromSelfEmployment.getOrElse("fail") shouldBe 200000
         calculationDataSuccessModel.profitFromUkLandAndProperty.getOrElse("fail") shouldBe 10000

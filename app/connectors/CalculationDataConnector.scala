@@ -53,7 +53,7 @@ class CalculationDataConnector @Inject()(val http: HttpGet) extends ServicesConf
         }
     } recoverWith {
       case _ =>
-        Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Unexpected future failed error when calling $url.")
+        Logger.warn(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error when calling $url.")
         Future.successful(CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
     }
   }

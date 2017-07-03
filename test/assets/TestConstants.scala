@@ -28,7 +28,7 @@ object TestConstants extends ImplicitDateFormatter {
   val testNino = "AB123456C"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
   val testSelfEmploymentId = "XA00001234"
-  val testTaxCalculationId = ""
+  val testTaxCalculationId = "CALCID"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
 
@@ -203,7 +203,7 @@ object TestConstants extends ImplicitDateFormatter {
   }
 
   object CalcBreakdown {
-    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = Some(1),
+    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = Some(90500),
       incomeTaxThisPeriod = Some(2000),
       profitFromSelfEmployment = Some(200000),
       profitFromUkLandAndProperty = Some(10000),
@@ -225,7 +225,7 @@ object TestConstants extends ImplicitDateFormatter {
     val calculationDataSuccessString =
       """
         |{
-        | "incomeTaxYTD": 1,
+        | "incomeTaxYTD": 90500,
         | "incomeTaxThisPeriod": 2000,
         | "profitFromSelfEmployment": 200000,
         | "profitFromUkLandAndProperty": 10000,
