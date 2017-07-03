@@ -25,9 +25,9 @@
     <section id="sidebar" class="section section--blue-top">
 
         <div class="form-group">
-            <h3 id="reporting-ref-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
+            <h3 id="it-reference-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
             <ul>
-                <li id="reporting-ref" class="font-xsmall">@user.mtditid</li>
+                <li id="it-reference" class="font-xsmall">@user.mtditid</li>
             </ul>
         </div>
 
@@ -66,7 +66,7 @@
             <span id="page-heading">@messages("estimated_tax_liability.heading")</span>
         </h1>
 
-        <p id="p1">@messages("estimated_tax_liability.estimated-tax.p1")</p>
+        <p id="p1" class="panel-indent">@messages("estimated_tax_liability.estimated-tax.p1")</p>
 
         <p><span class="bold-medium" id="in-year-estimate">@lastTaxAmount.toCurrency</span></p>
 
@@ -74,5 +74,56 @@
             @messages(s"estimated_tax_liability.estimated-tax.payment")
             <span id="pyt-due-date">@renderPaymentDueDate(taxYear)</span>.
         </p>
+
+        <details role ="group">
+            <summary id="calc-breakdown-inner-link" role="button">
+                <span class="summary">@messages("estimated_tax_liability.calc-breakdown.link")</span>
+            </summary>
+            <div>
+                <table class="itvc-table">
+                    <tbody>
+                    <tr id="business-profit-section" class="no-border-bottom">
+                        <td>@messages("estimated_tax_liability.calc-breakdown.business-profit")</td>
+                        <td class="summary-data">@{BigDecimal(1234.00).toCurrency}</td>
+                    </tr>
+                    <tr id="property-profit-section" class="no-border-bottom">
+                        <td>@messages("estimated_tax_liability.calc-breakdown.property-profit")</td>
+                        <td class="summary-data">£1234</td>
+                    </tr>
+                    <tr id="personal-allowance-section">
+                        <td>@messages("estimated_tax_liability.calc-breakdown.personal-allowance")</td>
+                        <td class="summary-data">£1234</td>
+                    </tr>
+                    <tr id="taxable-income-section" class="total-section">
+                        <td>@messages("estimated_tax_liability.calc-breakdown.taxable-income")</td>
+                        <td class="summary-data">£1234</td>
+                    </tr>
+                    <tr class="no-border-bottom">
+                        <td>@messages("estimated_tax_liability.calc-breakdown.income-tax")</td>
+                    </tr>
+                    <tr id="brt-section" class="no-border-bottom">
+                        <td>@messages("estimated_tax_liability.calc-breakdown.tax-rate", "1234", "20")</td>
+                        <td class="summary-data">£1234</td>
+                    </tr>
+                    <tr id="hrt-section" class="no-border-bottom">
+                        <td>@messages("estimated_tax_liability.calc-breakdown.tax-rate", "1234", "40")</td>
+                        <td class="summary-data">£1234</td>
+                    </tr>
+                    <tr id="art-section" class="no-border-bottom">
+                        <td>@messages("estimated_tax_liability.calc-breakdown.tax-rate", "1234", "45")</td>
+                        <td class="summary-data">£1234</td>
+                    </tr>
+                    <tr id ="ni-section">
+                        <td>@messages("estimated_tax_liability.calc-breakdown.national-insurance")</td>
+                        <td class="summary-data">£1234</td>
+                    </tr>
+                    <tr id ="total-estimate-section" class="total-section">
+                        <td>@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
+                        <td class="summary-data">£1234</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </details>
     </section>
  }
