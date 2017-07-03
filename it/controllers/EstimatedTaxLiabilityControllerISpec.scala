@@ -23,7 +23,7 @@ import play.api.http.Status._
 
 class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
 
-  "Calling the EstimatedTaxLiabilityController" when {
+  "Calling the EstimatedTaxLiabilityController.getEstimatedTaxLiability(year)" when {
 
     "authorised with an active enrolment" should {
 
@@ -39,8 +39,8 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Business Details response")
         SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-        When("I call GET /check-your-income-tax-and-expenses/estimated-tax-liability")
-        val res = IncomeTaxViewChangeFrontend.getEstimatedTaxLiability
+        When(s"I call GET /check-your-income-tax-and-expenses/estimated-tax-liability/$testYear")
+        val res = IncomeTaxViewChangeFrontend.getEstimatedTaxLiability(testYear)
 
         And("I verify the Business Details response has been wiremocked")
         SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -70,7 +70,7 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
         AuthStub.stubUnauthorised()
 
         When("I call GET /check-your-income-tax-and-expenses/estimated-tax-liability")
-        val res = IncomeTaxViewChangeFrontend.getEstimatedTaxLiability
+        val res = IncomeTaxViewChangeFrontend.getEstimatedTaxLiability(testYear)
 
         res should have(
 

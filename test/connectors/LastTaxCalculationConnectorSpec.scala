@@ -36,7 +36,7 @@ class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
 
   object TestLastTaxCalculationConnector extends LastTaxCalculationConnector(mockHttpGet)
 
-  "EstimatedTaxLiabilityConnector.getEstimatedTaxLiability" should {
+  "EstimatedTaxLiabilityConnector.redirectToEarliestEstimatedTaxLiability" should {
 
     lazy val testUrl = TestLastTaxCalculationConnector.getEstimatedTaxLiabilityUrl(testNino, testYear.toString)
     def result: Future[LastTaxCalculationResponseModel] = TestLastTaxCalculationConnector.getLastEstimatedTax(testNino, testYear)

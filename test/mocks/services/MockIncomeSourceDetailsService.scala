@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import assets.TestConstants.BusinessDetails.businessIncomeModel
+import assets.TestConstants.BusinessDetails.{businessIncomeModel, businessIncomeModelAlignedTaxYear}
 import assets.TestConstants.PropertyIncome.propertyIncomeModel
 import connectors.{BusinessDetailsConnector, PropertyDetailsConnector}
 import models.IncomeSourcesModel
@@ -50,6 +50,14 @@ trait MockIncomeSourceDetailsService extends MockitoSugar {
       Future.successful(IncomeSourcesModel(
         propertyDetails = Some(propertyIncomeModel),
         businessDetails = Some(businessIncomeModel)
+      ))
+  }
+
+  object BothBusinessAndPropertyIncomeAlignedTaxYear extends IncomeSourceDetailsService(mock[BusinessDetailsConnector], mock[PropertyDetailsConnector]) {
+    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] =
+      Future.successful(IncomeSourcesModel(
+        propertyDetails = Some(propertyIncomeModel),
+        businessDetails = Some(businessIncomeModelAlignedTaxYear)
       ))
   }
 

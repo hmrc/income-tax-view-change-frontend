@@ -84,8 +84,8 @@ class ObligationsViewSpec extends TestSupport{
 
       "has a link to view your estimates" which {
 
-        s"has the correct href to '${controllers.routes.EstimatedTaxLiabilityController.getEstimatedTaxLiability().url}'" in {
-          sidebarSection.getElementById("estimates-link").attr("href") shouldBe controllers.routes.EstimatedTaxLiabilityController.getEstimatedTaxLiability().url
+        s"has the correct href to '${controllers.routes.EstimatedTaxLiabilityController.redirectToEarliestEstimatedTaxLiability().url}'" in {
+          sidebarSection.getElementById("estimates-link").attr("href") shouldBe controllers.routes.EstimatedTaxLiabilityController.redirectToEarliestEstimatedTaxLiability().url
         }
 
         s"has the correct link wording of '${sidebarMessages.estimatesLink}'" in {
