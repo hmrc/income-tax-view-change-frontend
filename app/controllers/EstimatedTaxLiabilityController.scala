@@ -18,15 +18,13 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import auth.MtdItUser
 import config.AppConfig
 import controllers.predicates.AsyncActionPredicate
-import models.{BusinessIncomeModel, LastTaxCalculation, LastTaxCalculationError}
+import models.{LastTaxCalculation, LastTaxCalculationError}
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.EstimatedTaxLiabilityService
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -56,24 +54,18 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
 
   val getEstimatedTaxLiability: Int => Action[AnyContent] = taxYear => actionPredicate.async {
     implicit request => implicit user => implicit sources =>
-      getAndRenderEstimatedLiability(taxYear)
+      Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
+      estimatedTaxLiabilityService.getLastEstimatedTaxCalculation(user.nino, taxYear) map {
+        case success: LastTaxCalculation =>
+          Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Success Response: $success")
+          Ok(views.html.estimatedTaxLiability(success.calcAmount, taxYear))
+        case failure: LastTaxCalculationError =>
+          Logger.warn(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] " +
+            s"Error Response: Status=${failure.status}, Message=${failure.message}")
+          showInternalServerError
+      }
   }
 
   private[EstimatedTaxLiabilityController] def redirectToYear(year: Int): Future[Result] =
     Future.successful(Redirect(controllers.routes.EstimatedTaxLiabilityController.getEstimatedTaxLiability(year)))
-
-  private[EstimatedTaxLiabilityController] def getAndRenderEstimatedLiability(taxYear: Int)(implicit hc: HeaderCarrier,
-                                                                                            request: Request[AnyContent],
-                                                                                            user: MtdItUser): Future[Result] = {
-    Logger.debug(s"[EstimatedTaxLiabilityController][redirectToEarliestEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
-    estimatedTaxLiabilityService.getLastEstimatedTaxCalculation(user.nino, taxYear) map {
-      case success: LastTaxCalculation =>
-        Logger.debug(s"[EstimatedTaxLiabilityController][redirectToEarliestEstimatedTaxLiability] Success Response: $success")
-        Ok(views.html.estimatedTaxLiability(success.calcAmount, taxYear))
-      case failure: LastTaxCalculationError =>
-        Logger.warn(s"[EstimatedTaxLiabilityController][redirectToEarliestEstimatedTaxLiability] " +
-          s"Error Response: Status=${failure.status}, Message=${failure.message}")
-        showInternalServerError
-    }
-  }
 }
