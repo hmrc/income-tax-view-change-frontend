@@ -27,18 +27,42 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector) {
+class IncomeSourceDetailsService @Inject()( val businessDetailsConnector: BusinessDetailsConnector,
+                                            val propertyDetailsConnector: PropertyDetailsConnector) {
 
-  def getBusinessDetails(nino: String)(implicit hc: HeaderCarrier): Future[BusinessListResponseModel] = {
+  def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] = {
+    for {
+      businessDetails <- getBusinessDetails(nino).map {
+        case businessList: BusinessDetailsModel =>
+          val business = businessList.business.head
+          Some(BusinessIncomeModel(business.id, business.accountingPeriod, business.tradingName))
+        case _: BusinessDetailsErrorModel =>
+          None
+      }
+      propertyDetails <- getPropertyDetails(nino).map {
+        case property: PropertyDetailsModel => Some(PropertyIncomeModel(property.accountingPeriod))
+        case _: PropertyDetailsErrorModel => None
+      }
+    } yield IncomeSourcesModel(businessDetails, propertyDetails)
+  }
+
+  private[IncomeSourceDetailsService] def getBusinessDetails(nino: String)(implicit hc: HeaderCarrier): Future[BusinessListResponseModel] = {
     Logger.debug(s"[IncomeSourceDetailsService][getBusinessDetails] - Requesting Business Details from connector for user with NINO: $nino")
     businessDetailsConnector.getBusinessList(nino).flatMap {
-      case success: BusinessDetailsModel =>
-        Future.successful(success)
+      case success: BusinessDetailsModel => Future.successful(success)
       case error: BusinessDetailsErrorModel =>
         Logger.debug(s"[IncomeSourceDetailsService][getBusinessDetails] - Error Response Status: ${error.code}, Message: ${error.message}")
         Future.successful(error)
     }
   }
 
-  def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSources] = ???
+  private[IncomeSourceDetailsService]def getPropertyDetails(nino: String)(implicit hc: HeaderCarrier): Future[PropertyDetailsResponseModel] = {
+    Logger.debug(s"[IncomeSourceDetailsService][getPropertyDetails] - Requesting Property Details from connector for user with NINO: $nino")
+    propertyDetailsConnector.getPropertyDetails(nino).flatMap {
+      case success: PropertyDetailsModel => Future.successful(success)
+      case error: PropertyDetailsErrorModel =>
+        Logger.debug(s"[IncomeSourceDetailsService][getPropertyDetails] - Error Response Status: ${error.code}, Message: ${error.message}")
+        Future.successful(error)
+    }
+  }
 }

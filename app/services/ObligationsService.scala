@@ -33,7 +33,7 @@ class ObligationsService @Inject()(val businessObligationDataConnector: Business
 
   def getBusinessObligations(nino: String, businessIncomeSource: Option[BusinessIncomeModel])(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
     businessIncomeSource match {
-      case Some(incomeSource) => businessObligationDataConnector.getBusinessObligationData(nino, incomeSource.businessId)
+      case Some(incomeSource) => businessObligationDataConnector.getBusinessObligationData(nino, incomeSource.selfEmploymentId)
       case _ => Future.successful(ObligationsErrorModel(Status.NOT_FOUND, "No business income source"))
     }
   }

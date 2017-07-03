@@ -20,10 +20,9 @@ import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
 import controllers.BaseController
-import models.IncomeSources
+import models.IncomeSourcesModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Request, Result}
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -34,7 +33,7 @@ class AsyncActionPredicate @Inject()(implicit val messagesApi: MessagesApi,
                                      val incomeSourceDetailsPredicate: IncomeSourceDetailsPredicate
                                     ) extends BaseController {
 
-  def async(action: Request[AnyContent] => MtdItUser => IncomeSources => Future[Result]): Action[AnyContent] =
+  def async(action: Request[AnyContent] => MtdItUser => IncomeSourcesModel => Future[Result]): Action[AnyContent] =
     Action.async { implicit request =>
       sessionTimeoutPredicate.checkSessionTimeout {
         authenticationPredicate.authorisedUser { implicit user =>

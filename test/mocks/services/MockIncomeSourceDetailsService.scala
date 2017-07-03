@@ -18,8 +18,8 @@ package mocks.services
 
 import assets.TestConstants.BusinessDetails.businessIncomeModel
 import assets.TestConstants.PropertyIncome.propertyIncomeModel
-import connectors.BusinessDetailsConnector
-import models.IncomeSources
+import connectors.{BusinessDetailsConnector, PropertyDetailsConnector}
+import models.IncomeSourcesModel
 import org.scalatest.mockito.MockitoSugar
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -29,33 +29,33 @@ import scala.concurrent.Future
 
 trait MockIncomeSourceDetailsService extends MockitoSugar {
 
-  object BusinessIncomeOnly extends IncomeSourceDetailsService(mock[BusinessDetailsConnector]) {
-    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSources] =
-      Future.successful(IncomeSources(
+  object BusinessIncomeOnly extends IncomeSourceDetailsService(mock[BusinessDetailsConnector], mock[PropertyDetailsConnector]) {
+    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] =
+      Future.successful(IncomeSourcesModel(
         propertyDetails = None,
         businessDetails = Some(businessIncomeModel)
       ))
   }
 
-  object PropertyIncomeOnly extends IncomeSourceDetailsService(mock[BusinessDetailsConnector]) {
-    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSources] =
-      Future.successful(IncomeSources(
+  object PropertyIncomeOnly extends IncomeSourceDetailsService(mock[BusinessDetailsConnector], mock[PropertyDetailsConnector]) {
+    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] =
+      Future.successful(IncomeSourcesModel(
         propertyDetails = Some(propertyIncomeModel),
         businessDetails = None
       ))
   }
 
-  object BothBusinessAndPropertyIncome extends IncomeSourceDetailsService(mock[BusinessDetailsConnector]) {
-    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSources] =
-      Future.successful(IncomeSources(
+  object BothBusinessAndPropertyIncome extends IncomeSourceDetailsService(mock[BusinessDetailsConnector], mock[PropertyDetailsConnector]) {
+    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] =
+      Future.successful(IncomeSourcesModel(
         propertyDetails = Some(propertyIncomeModel),
         businessDetails = Some(businessIncomeModel)
       ))
   }
 
-  object NoIncomeSources extends IncomeSourceDetailsService(mock[BusinessDetailsConnector]) {
-    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSources] =
-      Future.successful(IncomeSources(
+  object NoIncomeSources extends IncomeSourceDetailsService(mock[BusinessDetailsConnector], mock[PropertyDetailsConnector]) {
+    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] =
+      Future.successful(IncomeSourcesModel(
         propertyDetails = None,
         businessDetails = None
       ))

@@ -68,7 +68,7 @@ object TestConstants extends ImplicitDateFormatter {
     val businessesSuccessResponse = List(business1, business2)
     val businessesSuccessModel = BusinessDetailsModel(businessesSuccessResponse)
     val businessSuccessEmptyModel = BusinessDetailsModel(List.empty)
-    val businessSuccessString =
+    val businessSuccessString: String =
       s"""
           {
              "business":[
@@ -129,6 +129,12 @@ object TestConstants extends ImplicitDateFormatter {
     val propertyIncomeModel = PropertyIncomeModel(
       accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05")
     )
+  }
+
+  object PropertyDetails {
+    val testPropertyAccountingPeriod = AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5")
+    val propertySuccessModel = PropertyDetailsModel(testPropertyAccountingPeriod)
+    val propertyErrorModel = PropertyDetailsErrorModel(testErrorStatus, testErrorMessage)
   }
 
   object Estimates {
@@ -209,6 +215,16 @@ object TestConstants extends ImplicitDateFormatter {
         |}
       """.stripMargin
     val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
+
+  }
+
+  object IncomeSourceDetails {
+
+    //Outputs
+    val bothIncomeSourceSuccess = IncomeSourcesModel(Some(BusinessDetails.businessIncomeModel), Some(PropertyIncome.propertyIncomeModel))
+    val businessIncomeSourceSuccess = IncomeSourcesModel(Some(BusinessDetails.businessIncomeModel),None)
+    val propertyIncomeSourceSuccess = IncomeSourcesModel(None,Some(PropertyIncome.propertyIncomeModel))
+    val noIncomeSourceSuccess = IncomeSourcesModel(None, None)
 
   }
 }

@@ -22,12 +22,11 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import controllers.BaseController
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.mvc.{AnyContent, Request, Result}
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.Retrievals.authorisedEnrolments
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.frontend.Redirects
-import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
 
 import scala.concurrent.Future
 
