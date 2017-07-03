@@ -28,6 +28,7 @@ object TestConstants extends ImplicitDateFormatter {
   val testNino = "AB123456C"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
   val testSelfEmploymentId = "XA00001234"
+  val testTaxCalculationId = "CALCID"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
 
@@ -199,5 +200,61 @@ object TestConstants extends ImplicitDateFormatter {
       """.stripMargin
     val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
 
+  }
+
+  object CalcBreakdown {
+    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = Some(90500),
+      incomeTaxThisPeriod = Some(2000),
+      profitFromSelfEmployment = Some(200000),
+      profitFromUkLandAndProperty = Some(10000),
+      totalIncomeReceived = Some(230000),
+      personalAllowance = Some(11500),
+      totalIncomeOnWhichTaxIsDue = Some(198500),
+      payPensionsProfitAtBRT = Some(20000),
+      incomeTaxOnPayPensionsProfitAtBRT = Some(4000),
+      payPensionsProfitAtHRT = Some(100000),
+      incomeTaxOnPayPensionsProfitAtHRT = Some(40000),
+      payPensionsProfitAtART = Some(50000),
+      incomeTaxOnPayPensionsProfitAtART = Some(22500),
+      incomeTaxDue = Some(66500),
+      nicTotal = Some(24000),
+      rateBRT = Some(20),
+      rateHRT = Some(40),
+      rateART = Some(45)
+    )
+    val calculationDataSuccessString =
+      """
+        |{
+        | "incomeTaxYTD": 90500,
+        | "incomeTaxThisPeriod": 2000,
+        | "profitFromSelfEmployment": 200000,
+        | "profitFromUkLandAndProperty": 10000,
+        | "totalIncomeReceived": 230000,
+        | "personalAllowance": 11500,
+        | "totalIncomeOnWhichTaxIsDue": 198500,
+        | "payPensionsProfitAtBRT": 20000,
+        | "incomeTaxOnPayPensionsProfitAtBRT": 4000,
+        | "payPensionsProfitAtHRT": 100000,
+        | "incomeTaxOnPayPensionsProfitAtHRT": 40000,
+        | "payPensionsProfitAtART": 50000,
+        | "incomeTaxOnPayPensionsProfitAtART": 22500,
+        | "incomeTaxDue": 66500,
+        | "nicTotal": 24000,
+        | "rateBRT": 20,
+        | "rateHRT": 40,
+        | "rateART": 45
+        |}
+      """.stripMargin
+    val calculationDataSuccessJson = Json.parse(calculationDataSuccessString)
+
+    val calculationDataErrorModel = CalculationDataErrorModel(testErrorStatus, testErrorMessage)
+    val calculationDataErrorString =
+      s"""
+         |{
+         |  "code":$testErrorStatus,
+         |  "message":"$testErrorMessage"
+         |}
+       """.stripMargin
+    val calculationDataErrorJson = Json.parse(calculationDataErrorString)
   }
 }
