@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package auth
+package mocks.auth
 
 import assets.TestConstants._
 import config.FrontendAuthConnector

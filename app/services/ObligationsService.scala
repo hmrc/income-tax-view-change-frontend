@@ -21,28 +21,20 @@ import javax.inject.{Inject, Singleton}
 import connectors.{BusinessObligationDataConnector, PropertyObligationDataConnector}
 import models._
 import play.api.Logger
+import play.api.http.Status
 import uk.gov.hmrc.play.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class ObligationsService @Inject()(val businessObligationDataConnector: BusinessObligationDataConnector,
-                                  val businessDetailsService: BusinessDetailsService,
-                                  val propertyObligationDataConnector: PropertyObligationDataConnector
+                                   val propertyObligationDataConnector: PropertyObligationDataConnector
                                   ) {
 
-  def getBusinessObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
-
-    Logger.debug(s"[ObligationsService][getObligations] - Requesting Obligation details from connectors for user with NINO: $nino")
-    businessDetailsService.getBusinessDetails(nino).flatMap {
-      case success: BusinessDetailsModel =>
-        // Only one business is returned for MVP hence .head to obtain ID.
-        Logger.debug(s"[ObligationsService][getObligations] - Retrieved BusinessListModel: \n\n$success")
-        businessObligationDataConnector.getBusinessObligationData(nino, success.business.head.id)
-      case error: BusinessDetailsErrorModel =>
-        Logger.debug(s"[ObligationService][getObligations] - Error Response Status: ${error.code}, Message: ${error.message}")
-        Future.successful(ObligationsErrorModel(error.code, error.message))
+  def getBusinessObligations(nino: String, businessIncomeSource: Option[BusinessIncomeModel])(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+    businessIncomeSource match {
+      case Some(incomeSource) => businessObligationDataConnector.getBusinessObligationData(nino, incomeSource.selfEmploymentId)
+      case _ => Future.successful(ObligationsErrorModel(Status.NOT_FOUND, "No business income source"))
     }
   }
 

@@ -18,7 +18,6 @@ package views
 
 import assets.Messages.{EstimatedTaxLiability => messages}
 import assets.Messages.{Sidebar => sidebarMessages}
-import auth.MtdItUser
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.Play.current
@@ -28,6 +27,7 @@ import play.api.test.Helpers._
 import utils.TestSupport
 import assets.TestConstants._
 import assets.TestConstants.Estimates._
+import auth.MtdItUser
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport {
 

@@ -22,14 +22,13 @@ import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Obligations._
 import assets.TestConstants._
 import mocks.connectors.{MockBusinessObligationDataConnector, MockPropertyObligationDataConnector}
-import mocks.services.MockBusinessDetailsService
 import models._
+import play.api.http.Status
 import utils.TestSupport
 
-class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector
-  with MockBusinessDetailsService with MockPropertyObligationDataConnector {
+class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector with MockPropertyObligationDataConnector {
 
-  object TestObligationsService extends ObligationsService(mockBusinessObligationDataConnector, mockBusinessDetailsService, mockPropertyObligationDataConnector)
+  object TestObligationsService extends ObligationsService(mockBusinessObligationDataConnector, mockPropertyObligationDataConnector)
 
   "The ObligationsService.getObligations method" when {
 
@@ -38,28 +37,26 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
       "has a valid list of obligations returned from the connector" should {
 
         "return a valid list of obligations" in {
-          setupMockBusinessDetailsResult(testNino)(businessesSuccessModel)
           setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
-          await(TestObligationsService.getBusinessObligations(testNino)) shouldBe obligationsDataSuccessModel
+          await(TestObligationsService.getBusinessObligations(testNino, Some(businessIncomeModel))) shouldBe obligationsDataSuccessModel
         }
       }
 
       "does not have a valid list of obligations returned from the connector" should {
 
         "return a valid list of obligations" in {
-          setupMockBusinessDetailsResult(testNino)(businessesSuccessModel)
           setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataErrorModel)
-          await(TestObligationsService.getBusinessObligations(testNino)) shouldBe obligationsDataErrorModel
+          await(TestObligationsService.getBusinessObligations(testNino, Some(businessIncomeModel))) shouldBe obligationsDataErrorModel
         }
       }
     }
 
 
-    "no business list is found" should {
+    "no business income source passed in" should {
 
       "return an obligations error model" in {
-        setupMockBusinessDetailsResult(testNino)(businessErrorModel)
-        await(TestObligationsService.getBusinessObligations(testNino)) shouldBe obligationsDataErrorModel
+        await(TestObligationsService.getBusinessObligations(testNino, None)) shouldBe
+          ObligationsErrorModel(Status.NOT_FOUND, "No business income source")
       }
     }
   }

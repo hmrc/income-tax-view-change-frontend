@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package auth
+package mocks.controllers.predicates
 
+import mocks.auth._
 import config.FrontendAppConfig
 import controllers.predicates.AuthenticationPredicate
 import play.api.i18n.MessagesApi
