@@ -33,7 +33,7 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
       }
 
       "when calling the method to detrmine the Tax Year to which the accounting periods" in {
-        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2018
+        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2019
       }
     }
 
@@ -44,7 +44,7 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
       }
 
       "when calling the method to detrmine the Tax Year to which the accounting periods" in {
-        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2018
+        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2019
       }
     }
 
