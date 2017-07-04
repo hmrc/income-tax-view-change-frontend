@@ -14,36 +14,32 @@
  * limitations under the License.
  */
 
-package mocks.services
+package mocks.connectors
 
-import models.LastTaxCalculationResponseModel
+import connectors.CalculationDataConnector
+import models.CalculationDataResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import services.EstimatedTaxLiabilityService
 import uk.gov.hmrc.play.test.UnitSpec
-import assets.TestConstants.Estimates._
-import assets.TestConstants.Estimates
-import assets.TestConstants._
 
 import scala.concurrent.Future
 
+trait MockCalculationDataConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-trait MockEstimatedLiabilityService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
-
-  val mockEstimatedLiabilityService: EstimatedTaxLiabilityService = mock[EstimatedTaxLiabilityService]
+  val mockCalculationDataConnector: CalculationDataConnector = mock[CalculationDataConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockEstimatedLiabilityService)
+    reset(mockCalculationDataConnector)
   }
 
-  def setupMockLastTaxCalculationResult(nino: String, year: Int)(response: LastTaxCalculationResponseModel): Unit =
-    when(mockEstimatedLiabilityService
-      .getLastEstimatedTaxCalculation(
+  def setupCalculationDataResponse(nino: String, taxCalculationId: String)(response: CalculationDataResponseModel): Unit =
+    when(mockCalculationDataConnector
+      .getCalculationData(
         ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(year)
-      )(ArgumentMatchers.any()))
+        ArgumentMatchers.eq(taxCalculationId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
+
 }

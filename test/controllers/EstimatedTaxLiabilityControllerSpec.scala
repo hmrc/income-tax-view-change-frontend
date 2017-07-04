@@ -22,16 +22,17 @@ import assets.TestConstants._
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.PropertyDetails._
 import config.FrontendAppConfig
+import mocks.services.MockFinancialDataService
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate}
 import mocks.controllers.predicates.{MockAsyncActionPredicate, MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockEstimatedLiabilityService
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
 
+
 class EstimatedTaxLiabilityControllerSpec extends TestSupport
-  with MockEstimatedLiabilityService with MockAsyncActionPredicate with MockIncomeSourceDetailsPredicate with MockAuthenticationPredicate {
+  with MockFinancialDataService with MockAsyncActionPredicate with MockIncomeSourceDetailsPredicate with MockAuthenticationPredicate {
 
   // Last Calculation Service mocks
   def mockLastCalculationSuccess(): Unit = setupMockLastTaxCalculationResult(testNino, testYear)(lastTaxCalcSuccess)
@@ -42,7 +43,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport
       fakeApplication.injector.instanceOf[FrontendAppConfig],
       fakeApplication.injector.instanceOf[MessagesApi],
       new asyncActionBuilder(authentication, incomeSources),
-      mockEstimatedLiabilityService
+      mockFinancialDataService
     )
 
   "The EstimatedTaxLiabilityController.getEstimatedTaxLiability(year) action" when {
