@@ -32,13 +32,13 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
                                       val calculationDataConnector: CalculationDataConnector) {
 
 
-  def getFinancialData(nino: String, taxYear: Int): Future[Option[CalcDisplayModel]] = {
+  def getFinancialData(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[Option[CalcDisplayModel]] = {
     for {
       lastCalc <- getLastEstimatedTaxCalculation(nino, taxYear)
-      calcBreakdown <- { lastCalc match {
+      calcBreakdown <- lastCalc match {
         case calculationData: LastTaxCalculation => getCalculationData(nino, calculationData.calcID)
-        case _: LastTaxCalculationError => CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "")
-      }}
+        case _: LastTaxCalculationError => Future.successful(CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, ""))
+      }
     } yield (lastCalc, calcBreakdown) match {
       case (calc: LastTaxCalculation, breakdown: CalculationDataModel) =>
         Logger.debug("[FinancialDataService] Retrieved all Financial Data")
@@ -46,7 +46,7 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
       case (calc: LastTaxCalculation, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
         Some(CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None))
-      case (calc: LastTaxCalculationError, _) =>
+      case (_: LastTaxCalculationError, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Returning nothing.")
         None
     }

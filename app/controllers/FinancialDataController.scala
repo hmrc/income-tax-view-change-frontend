@@ -52,41 +52,19 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
       }
   }
 
-//  val getFinancialData: Int => Action[AnyContent] = taxYear => actionPredicate.async {
-//    implicit request => implicit user => implicit sources =>
-//      Logger.debug(s"[FinancialDataController][getFinancialData] Calling Financial Data Service with NINO: ${user.nino}")
-//      for{
-//        eTL <- financialDataService.getLastEstimatedTaxCalculation(user.nino, taxYear)
-//        calc <- {
-//          eTL match {
-//            case eTLSuccess: LastTaxCalculation =>
-//              Logger.debug(s"[FinancialDataController][getFinancialData] eTLSuccess Response: $eTLSuccess")
-//              val a: Future[CalculationDataResponseModel] = financialDataService.getCalculationData(user.nino, eTLSuccess.calcID)
-//            case eTLFailure: LastTaxCalculationError =>
-//              Logger.warn(s"[FinancialDataController][getEstimatedTaxLiability] Error Response: Status=${eTLFailure.status}, Message=${eTLFailure.message}")
-//              Future.successful(CalculationDataErrorModel())
-//          }
-//        }
-//      } yield (eTL, calc) match {
-//        case (eTLSuccess: LastTaxCalculation, calcSuccess: CalculationDataModel) =>
-//          Logger.debug("[EstimatedTaxLiabilityController][getFinancialData] Successfully retrieved CalcDataModel & LastTaxCalc model - serving Html page")
-//          Ok(views.html.estimatedTaxLiability(eTLSuccess.calcAmount, calcSuccess, taxYear))
-//        case (eTLSuccess: LastTaxCalculation, calcFailure: CalculationDataErrorModel) =>
-//          Logger.warn(s"[FinancialDataController][getFinancialData] Error Response: Status=${calcFailure.code}, Message=${calcFailure.message}")
-//          showInternalServerError
-//        case (eTLFailure: LastTaxCalculationError, _) =>
-//          Logger.warn(s"[FinancialDataController][getFinancialData] Error Response: Status=${eTLFailure.status}, Message=${eTLFailure.message}")
-//          showInternalServerError
-//        case _ =>
-//          Logger.warn("[FinancialDataController][getFinancialData] Unexpected Error!!")
-//          showInternalServerError
-//      }
-//  }
-
   val getFinancialData: Int => Action[AnyContent] = taxYear => actionPredicate.async {
     implicit request => implicit user => implicit sources =>
-      financialDataService.getFinancialData(user.nino, taxYear) map { (a,b) =>
-        case (model: Some())  =>
+      financialDataService.getFinancialData(user.nino, taxYear).map {
+        case Some(calcDisplayModel: CalcDisplayModel) if calcDisplayModel.calcDataModel.nonEmpty =>
+          Ok(views.html.estimatedTaxLiability(calcDisplayModel.calcAmount,calcDisplayModel.calcDataModel.get, taxYear))
+          //Should be here if the Calc Breakdown data returned as None within the display model.
+          //TODO: handle this gracefully, for now serve ISE
+        case Some(_: CalcDisplayModel) =>
+          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No calculation breakdown information was returned")
+          showInternalServerError
+        case None =>
+          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved.")
+          showInternalServerError
       }
   }
 
