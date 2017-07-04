@@ -29,7 +29,7 @@ import services.FinancialDataService
 import scala.concurrent.Future
 
 @Singleton
-class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
+class FinancialDataController @Inject()(implicit val config: AppConfig,
                                                 implicit val messagesApi: MessagesApi,
                                                 val actionPredicate: AsyncActionPredicate,
                                                 val financialDataService: FinancialDataService
@@ -47,25 +47,25 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
         case (Some(business), None) => redirectToYear(business.accountingPeriod.determineTaxYear)
         case (None, Some(property)) => redirectToYear(property.accountingPeriod.determineTaxYear)
         case (_, _) =>
-          Logger.debug("[EstimatedTaxLiabilityController][redirectToEarliestEstimatedTaxLiability] No Income Sources.")
+          Logger.debug("[FinancialDataController][redirectToEarliestEstimatedTaxLiability] No Income Sources.")
           Future.successful(showInternalServerError)
       }
   }
 
   val getEstimatedTaxLiability: Int => Action[AnyContent] = taxYear => actionPredicate.async {
     implicit request => implicit user => implicit sources =>
-      Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
+      Logger.debug(s"[FinancialDataController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
       financialDataService.getLastEstimatedTaxCalculation(user.nino, taxYear) map {
         case success: LastTaxCalculation =>
-          Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Success Response: $success")
+          Logger.debug(s"[FinancialDataController][getEstimatedTaxLiability] Success Response: $success")
           Ok(views.html.estimatedTaxLiability(success.calcAmount, taxYear))
         case failure: LastTaxCalculationError =>
-          Logger.warn(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] " +
+          Logger.warn(s"[FinancialDataController][getEstimatedTaxLiability] " +
             s"Error Response: Status=${failure.status}, Message=${failure.message}")
           showInternalServerError
       }
   }
 
-  private[EstimatedTaxLiabilityController] def redirectToYear(year: Int): Future[Result] =
-    Future.successful(Redirect(controllers.routes.EstimatedTaxLiabilityController.getEstimatedTaxLiability(year)))
+  private[FinancialDataController] def redirectToYear(year: Int): Future[Result] =
+    Future.successful(Redirect(controllers.routes.FinancialDataController.getEstimatedTaxLiability(year)))
 }

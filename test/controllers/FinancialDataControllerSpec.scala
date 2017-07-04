@@ -31,7 +31,7 @@ import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
 
 
-class EstimatedTaxLiabilityControllerSpec extends TestSupport
+class FinancialDataControllerSpec extends TestSupport
   with MockFinancialDataService with MockAsyncActionPredicate with MockIncomeSourceDetailsPredicate with MockAuthenticationPredicate {
 
   // Last Calculation Service mocks
@@ -39,14 +39,14 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport
   def mockLastCalculationError(): Unit = setupMockLastTaxCalculationResult(testNino, testYear)(lastTaxCalcError)
 
   class setupTestController(authentication: AuthenticationPredicate, incomeSources: IncomeSourceDetailsPredicate)
-    extends EstimatedTaxLiabilityController()(
+    extends FinancialDataController()(
       fakeApplication.injector.instanceOf[FrontendAppConfig],
       fakeApplication.injector.instanceOf[MessagesApi],
       new asyncActionBuilder(authentication, incomeSources),
       mockFinancialDataService
     )
 
-  "The EstimatedTaxLiabilityController.getEstimatedTaxLiability(year) action" when {
+  "The FinancialDataController.getEstimatedTaxLiability(year) action" when {
 
     "Called with an Authenticated HMRC-MTD-IT User" which {
 
@@ -148,7 +148,7 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport
   }
 
 
-  "The EstimatedTaxLiabilityController.redirectToEarliestEstimatedTaxLiability() action" when {
+  "The FinancialDataController.redirectToEarliestEstimatedTaxLiability() action" when {
 
     "Called with an Authenticated HMRC-MTD-IT User" which {
 
@@ -163,10 +163,10 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport
         }
 
         s"redirect to ${
-          controllers.routes.EstimatedTaxLiabilityController
+          controllers.routes.FinancialDataController
             .getEstimatedTaxLiability(businessIncomeModel.accountingPeriod.determineTaxYear)
         }" in {
-          redirectLocation(result) shouldBe Some(controllers.routes.EstimatedTaxLiabilityController
+          redirectLocation(result) shouldBe Some(controllers.routes.FinancialDataController
             .getEstimatedTaxLiability(businessIncomeModel.accountingPeriod.determineTaxYear).url)
         }
       }
@@ -182,10 +182,10 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport
         }
 
         s"redirect to ${
-          controllers.routes.EstimatedTaxLiabilityController
+          controllers.routes.FinancialDataController
             .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear)
         }" in {
-          redirectLocation(result) shouldBe Some(controllers.routes.EstimatedTaxLiabilityController
+          redirectLocation(result) shouldBe Some(controllers.routes.FinancialDataController
             .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear).url)
         }
       }
@@ -203,10 +203,10 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport
           }
 
           s"redirect to ${
-            controllers.routes.EstimatedTaxLiabilityController
+            controllers.routes.FinancialDataController
               .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear)
           }" in {
-            redirectLocation(result) shouldBe Some(controllers.routes.EstimatedTaxLiabilityController
+            redirectLocation(result) shouldBe Some(controllers.routes.FinancialDataController
               .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear).url)
           }
 
@@ -223,10 +223,10 @@ class EstimatedTaxLiabilityControllerSpec extends TestSupport
           }
 
           s"redirect to ${
-            controllers.routes.EstimatedTaxLiabilityController
+            controllers.routes.FinancialDataController
               .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear)
           }" in {
-            redirectLocation(result) shouldBe Some(controllers.routes.EstimatedTaxLiabilityController
+            redirectLocation(result) shouldBe Some(controllers.routes.FinancialDataController
               .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear).url)
           }
 

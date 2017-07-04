@@ -37,15 +37,15 @@ class RoutesSpec extends TestSupport {
   }
 
   //Estimated Tax Liability
-  "The URL for the EstimatedTaxLiabilityController.redirectToEarliestEstimatedTaxLiability action" should {
+  "The URL for the FinancialDataController.redirectToEarliestEstimatedTaxLiability action" should {
     s"be equal to $contextRoute/estimated-tax-liability" in {
-      controllers.routes.EstimatedTaxLiabilityController.redirectToEarliestEstimatedTaxLiability().url shouldBe s"$contextRoute/estimated-tax-liability"
+      controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url shouldBe s"$contextRoute/estimated-tax-liability"
     }
   }
 
-  "The URL for the EstimatedTaxLiabilityController.redirectToEarliestEstimatedTaxLiability(year) action" should {
+  "The URL for the FinancialDataController.redirectToEarliestEstimatedTaxLiability(year) action" should {
     s"be equal to $contextRoute/estimated-tax-liability/2018" in {
-      controllers.routes.EstimatedTaxLiabilityController.getEstimatedTaxLiability(2018).url shouldBe s"$contextRoute/estimated-tax-liability/2018"
+      controllers.routes.FinancialDataController.getEstimatedTaxLiability(2018).url shouldBe s"$contextRoute/estimated-tax-liability/2018"
     }
   }
 }

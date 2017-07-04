@@ -23,7 +23,7 @@ import play.api.http.Status._
 
 class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
 
-  "Calling the EstimatedTaxLiabilityController.getEstimatedTaxLiability(year)" when {
+  "Calling the FinancialDataController.getEstimatedTaxLiability(year)" when {
 
     "authorised with an active enrolment" should {
 
