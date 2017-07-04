@@ -17,13 +17,15 @@
 package connectors
 
 import mocks.MockHttp
-import models.CalculationDataErrorModel
+import models.{BusinessListResponseModel, CalculationDataErrorModel, CalculationDataResponseModel}
 import utils.TestSupport
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
 import assets.TestConstants._
 import assets.TestConstants.CalcBreakdown._
+
+import scala.concurrent.Future
 
 class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
@@ -35,22 +37,27 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
   "BusinessObligationDataConnector.getObligationData" should {
 
-    "return a SuccessResponse with JSON in case of sucess" in {
-      setupMockHttpGet(TestCalculationDataConnector.getCalculationDataUrl(testNino, testTaxCalculationId))(successResponse)
-      val result = TestCalculationDataConnector.getCalculationData(testNino, testTaxCalculationId)
+    lazy val url = TestCalculationDataConnector.getCalculationDataUrl(testNino, testTaxCalculationId)
+    def result: Future[CalculationDataResponseModel] = TestCalculationDataConnector.getCalculationData(testNino, testTaxCalculationId)
+
+    "return a CalculationDataModel with JSON in case of success" in {
+      setupMockHttpGet(url)(successResponse)
       await(result) shouldBe calculationDataSuccessModel
     }
 
-    "return ErrorResponse model in case of failure" in {
-      setupMockHttpGet(TestCalculationDataConnector.getCalculationDataUrl(testNino, testTaxCalculationId))(badResponse)
-      val result = TestCalculationDataConnector.getCalculationData(testNino, testTaxCalculationId)
+    "return CalculationDataErrorModel model in case of failure" in {
+      setupMockHttpGet(url)(badResponse)
       await(result) shouldBe CalculationDataErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
-    "return CalculationDataError model when bad JSON is received" in {
-      setupMockHttpGet(TestCalculationDataConnector.getCalculationDataUrl(testNino, testTaxCalculationId))(successResponseBadJson)
-      val result = TestCalculationDataConnector.getCalculationData(testNino, testTaxCalculationId)
+    "return CalculationDataErrorModel model when bad JSON is received" in {
+      setupMockHttpGet(url)(successResponseBadJson)
       await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response.")
+    }
+
+    "return CalculationDataErrorModel model in case of future failed scenario" in {
+      setupMockFailedHttpGet(url)(badResponse)
+      await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url.")
     }
   }
 }

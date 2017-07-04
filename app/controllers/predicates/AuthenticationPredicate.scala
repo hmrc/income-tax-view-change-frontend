@@ -16,21 +16,21 @@
 
 package controllers.predicates
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
 import config.FrontendAppConfig
 import controllers.BaseController
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.mvc.{AnyContent, Request, Result}
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.Retrievals.authorisedEnrolments
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.frontend.Redirects
-import uk.gov.hmrc.play.http.SessionKeys
 
 import scala.concurrent.Future
 
+@Singleton
 class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                         val appConfig: FrontendAppConfig,
                                         override val config: Configuration,
@@ -38,34 +38,12 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
                                         implicit val messagesApi: MessagesApi
                                        ) extends BaseController with Redirects {
 
-  private type AsyncUserRequest = Request[AnyContent] => MtdItUser => Future[Result]
-
   lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
   lazy val mtdItIdentifierKey: String = appConfig.mtdItIdentifierKey
   lazy val ninoEnrolmentKey: String = appConfig.ninoEnrolmentKey
   lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
 
-
-  def async(action: AsyncUserRequest): Action[AnyContent] =
-    Action.async { implicit request =>
-      checkSessionTimeout {
-        authorisedUser { implicit user =>
-          action(request)(user)
-      }
-    }
-  }
-
-  private[AuthenticationPredicate] def checkSessionTimeout(f: => Future[Result])(implicit request: Request[AnyContent]) = {
-    (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {
-      case (Some(x), None) =>
-        // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
-        Logger.debug("[AuthenticationPredicate][handleSessionTimeout] Session Time Out.")
-        Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
-      case (_, _) => f
-    }
-  }
-
-  private[AuthenticationPredicate] def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+  def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
     authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {
       enrolments => {
         f(MtdItUser(

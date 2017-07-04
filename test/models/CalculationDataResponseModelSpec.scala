@@ -22,9 +22,6 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 import assets.TestConstants.CalcBreakdown._
 
-/**
- * Created by sam on 03/07/17.
- */
 class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
 
   "The CalculationDataResponseModel" should {

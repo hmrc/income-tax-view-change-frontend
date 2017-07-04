@@ -14,30 +14,31 @@
  * limitations under the License.
  */
 
-package mocks.services
+package mocks.connectors
 
-import models.BusinessListResponseModel
+import connectors.PropertyDetailsConnector
+import models.PropertyDetailsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import services.BusinessDetailsService
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
 
-trait MockBusinessDetailsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockPropertyDetailsConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockBusinessDetailsService: BusinessDetailsService = mock[BusinessDetailsService]
+  val mockPropertysDetailsConnector: PropertyDetailsConnector = mock[PropertyDetailsConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockBusinessDetailsService)
+    reset(mockPropertysDetailsConnector)
   }
 
-  def setupMockBusinessDetailsResult(nino: String)(response: BusinessListResponseModel): Unit =
-    when(mockBusinessDetailsService
-      .getBusinessDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any())
-    ).thenReturn(Future.successful(response))
+  def setupMockPropertyDetailsResult(nino: String)(response: PropertyDetailsResponseModel): Unit ={
+    when(mockPropertysDetailsConnector.getPropertyDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
+  }
+
 }

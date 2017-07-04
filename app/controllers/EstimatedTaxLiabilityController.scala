@@ -20,12 +20,12 @@ import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
 import config.AppConfig
-import controllers.predicates.AuthenticationPredicate
-import models.{BusinessDetailsErrorModel, BusinessDetailsModel, LastTaxCalculation, LastTaxCalculationError}
+import controllers.predicates.AsyncActionPredicate
+import models.{LastTaxCalculation, LastTaxCalculationError}
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Request, Result}
-import services.{BusinessDetailsService, EstimatedTaxLiabilityService}
+import services.EstimatedTaxLiabilityService
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -33,32 +33,21 @@ import scala.concurrent.Future
 @Singleton
 class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
                                                 implicit val messagesApi: MessagesApi,
-                                                val authentication: AuthenticationPredicate,
-                                                val estimatedTaxLiabilityService: EstimatedTaxLiabilityService,
-                                                val businessDetailsService: BusinessDetailsService
+                                                val actionPredicate: AsyncActionPredicate,
+                                                val estimatedTaxLiabilityService: EstimatedTaxLiabilityService
                                                ) extends BaseController {
 
-  // TODO: Properties will always be 2017/18 for MVP. This needs to be enhanced post-MVP.
-  val propertiesTaxYear = 2018
-
-  val getEstimatedTaxLiability: Action[AnyContent] = authentication.async {
-    implicit request => implicit user => {
-      Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Business Details Service with NINO: ${user.nino}")
-      businessDetailsService.getBusinessDetails(user.nino) flatMap {
-        case success: BusinessDetailsModel if success.business.nonEmpty => {
-          Logger.debug("[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Business Details found, using Tax Year.")
-          getAndRenderEstimatedLiability(success.business.head.accountingPeriod.determineTaxYear)
-        }
-        case success: BusinessDetailsModel => {
-          Logger.debug("[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Business Details not found, assumed property - fixed Tax Year.")
-          getAndRenderEstimatedLiability(propertiesTaxYear)
-        }
-        case error: BusinessDetailsErrorModel => {
-          Logger.debug("[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Business Details Error.")
-          Future.successful(showInternalServerError)
-        }
-      }
-    }
+  val getEstimatedTaxLiability: Action[AnyContent] = actionPredicate.async {
+    implicit request =>
+      implicit user =>
+        implicit sources =>
+          (sources.businessDetails, sources.propertyDetails) match {
+            case (Some(business), _) => getAndRenderEstimatedLiability(business.accountingPeriod.determineTaxYear)
+            case (_, Some(property)) => getAndRenderEstimatedLiability(property.accountingPeriod.determineTaxYear)
+            case (_, _) =>
+              Logger.debug("[EstimatedTaxLiabilityController][getEstimatedTaxLiability] No Income Sources.")
+              Future.successful(showInternalServerError)
+          }
   }
 
   private def getAndRenderEstimatedLiability(taxYear: Int)(implicit hc: HeaderCarrier, request: Request[AnyContent], user: MtdItUser): Future[Result] = {

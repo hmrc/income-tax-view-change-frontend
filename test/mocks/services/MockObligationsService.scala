@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.ObligationsResponseModel
+import models.{BusinessIncomeModel, ObligationsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -36,8 +36,8 @@ trait MockObligationsService extends UnitSpec with MockitoSugar with BeforeAndAf
     reset(mockObligationsService)
   }
 
-  def setupMockObligationsResult(nino: String)(response: ObligationsResponseModel): Unit = {
-    when(mockObligationsService.getBusinessObligations(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+  def setupMockBusinessObligationsResult(nino: String, businessIncome: Option[BusinessIncomeModel])(response: ObligationsResponseModel): Unit = {
+    when(mockObligationsService.getBusinessObligations(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(businessIncome))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
