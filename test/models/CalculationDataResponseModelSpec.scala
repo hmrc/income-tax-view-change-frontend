@@ -58,8 +58,8 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
       Json.toJson[CalculationDataModel](calculationDataSuccessModel) shouldBe calculationDataSuccessJson
     }
 
-    "be able to parse a JSON to string into the Model" in {
-      Json.parse(calculationDataSuccessString).as[CalculationDataModel] shouldBe calculationDataSuccessModel
+    "be able to parse a full JSON string into the Model" in {
+      Json.parse(calculationDataFullString).as[CalculationDataModel] shouldBe calculationDataSuccessModel
     }
   }
 
