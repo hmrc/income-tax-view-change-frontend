@@ -20,6 +20,11 @@ import play.api.libs.json.{OFormat, Json}
 
 sealed trait CalculationDataResponseModel
 
+case class CalcDisplayModel(calcTimestamp: String,
+                            calcAmount: BigDecimal,
+                            calcDataModel: Option[CalculationDataModel]
+                             ) extends CalculationDataResponseModel
+
 case class CalculationDataModel(
                                  incomeTaxYTD: Option[BigDecimal],
                                  incomeTaxThisPeriod: Option[BigDecimal],
@@ -227,6 +232,9 @@ case class CalculationDataErrorModel(code: Int, message: String) extends Calcula
 
 object CalculationDataModel {
   implicit val format: OFormat[CalculationDataModel] = Json.format[CalculationDataModel]
+}
+object CalcDisplayModel {
+  implicit val format: OFormat[CalcDisplayModel] = Json.format[CalcDisplayModel]
 }
 
 object CalculationDataErrorModel {

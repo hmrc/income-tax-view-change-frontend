@@ -45,7 +45,7 @@ class RoutesSpec extends TestSupport {
 
   "The URL for the FinancialDataController.redirectToEarliestEstimatedTaxLiability(year) action" should {
     s"be equal to $contextRoute/estimated-tax-liability/2018" in {
-      controllers.routes.FinancialDataController.getEstimatedTaxLiability(2018).url shouldBe s"$contextRoute/estimated-tax-liability/2018"
+      controllers.routes.FinancialDataController.getFinancialData(2018).url shouldBe s"$contextRoute/estimated-tax-liability/2018"
     }
   }
 }

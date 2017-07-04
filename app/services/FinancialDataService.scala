@@ -30,7 +30,7 @@ import scala.concurrent.Future
 class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector,
                                       val calculationDataConnector: CalculationDataConnector) {
 
-  def getLastEstimatedTaxCalculation(nino: String,
+  private[FinancialDataService] def getLastEstimatedTaxCalculation(nino: String,
                                      year: Int
                                     )(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 
@@ -45,7 +45,9 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
     }
   }
 
-  def getCalculationData(nino: String, taxCalculationId: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
+  private[FinancialDataService] def getCalculationData(nino: String,
+                                                       taxCalculationId: String
+                                                        )(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
 
     Logger.debug("[FinancialDataService][getCalculationData] - Requesting calculation data from self-assessment api via Connector")
     calculationDataConnector.getCalculationData(nino, taxCalculationId).map {
@@ -57,5 +59,26 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
         error
     }
 
+  }
+
+  def getFinancialData(nino: String, taxYear: Int): Option[CalcDisplayModel] = {
+    for{
+      lastCalc <- getLastEstimatedTaxCalculation(nino, taxYear) map {
+        case lastCalcSuccess: LastTaxCalculation =>
+          Some(lastCalcSuccess)
+        case lastCalcFailure: LastTaxCalculationError =>
+          None
+      }
+      calc <- {
+        lastCalc match {
+          case Some(model) => Some(getCalculationData(nino,model.calcID))
+          case None => None
+        }
+      }
+      model <- calc match {
+        case Some(a) =>
+        case None => None
+      }
+    } yield (lastCalc, calc)
   }
 }

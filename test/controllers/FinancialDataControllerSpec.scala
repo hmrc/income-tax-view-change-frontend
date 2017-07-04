@@ -55,7 +55,7 @@ class FinancialDataControllerSpec extends TestSupport
 
         object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, BusinessIncome)
 
-        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
@@ -80,7 +80,7 @@ class FinancialDataControllerSpec extends TestSupport
 
         object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, PropertyIncome)
 
-        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
@@ -104,7 +104,7 @@ class FinancialDataControllerSpec extends TestSupport
 
         object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, BusinessIncome)
 
-        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
           mockLastCalculationError()
@@ -121,7 +121,7 @@ class FinancialDataControllerSpec extends TestSupport
 
         object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, NoIncome)
 
-        lazy val result = TestEstimatedLiabilityController.getEstimatedTaxLiability(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
           mockLastCalculationError()
@@ -141,7 +141,7 @@ class FinancialDataControllerSpec extends TestSupport
       object TestEstimatedLiabilityController extends setupTestController(MockUnauthorised, PropertyIncome)
 
       "return redirect SEE_OTHER (303)" in {
-        val result = TestEstimatedLiabilityController.getEstimatedTaxLiability(testYear)(fakeRequestNoSession)
+        val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestNoSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -164,10 +164,10 @@ class FinancialDataControllerSpec extends TestSupport
 
         s"redirect to ${
           controllers.routes.FinancialDataController
-            .getEstimatedTaxLiability(businessIncomeModel.accountingPeriod.determineTaxYear)
+            .getFinancialData(businessIncomeModel.accountingPeriod.determineTaxYear)
         }" in {
           redirectLocation(result) shouldBe Some(controllers.routes.FinancialDataController
-            .getEstimatedTaxLiability(businessIncomeModel.accountingPeriod.determineTaxYear).url)
+            .getFinancialData(businessIncomeModel.accountingPeriod.determineTaxYear).url)
         }
       }
 
@@ -183,10 +183,10 @@ class FinancialDataControllerSpec extends TestSupport
 
         s"redirect to ${
           controllers.routes.FinancialDataController
-            .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear)
+            .getFinancialData(propertySuccessModel.accountingPeriod.determineTaxYear)
         }" in {
           redirectLocation(result) shouldBe Some(controllers.routes.FinancialDataController
-            .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear).url)
+            .getFinancialData(propertySuccessModel.accountingPeriod.determineTaxYear).url)
         }
       }
 
@@ -204,10 +204,10 @@ class FinancialDataControllerSpec extends TestSupport
 
           s"redirect to ${
             controllers.routes.FinancialDataController
-              .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear)
+              .getFinancialData(propertySuccessModel.accountingPeriod.determineTaxYear)
           }" in {
             redirectLocation(result) shouldBe Some(controllers.routes.FinancialDataController
-              .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear).url)
+              .getFinancialData(propertySuccessModel.accountingPeriod.determineTaxYear).url)
           }
 
         }
@@ -224,10 +224,10 @@ class FinancialDataControllerSpec extends TestSupport
 
           s"redirect to ${
             controllers.routes.FinancialDataController
-              .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear)
+              .getFinancialData(propertySuccessModel.accountingPeriod.determineTaxYear)
           }" in {
             redirectLocation(result) shouldBe Some(controllers.routes.FinancialDataController
-              .getEstimatedTaxLiability(propertySuccessModel.accountingPeriod.determineTaxYear).url)
+              .getFinancialData(propertySuccessModel.accountingPeriod.determineTaxYear).url)
           }
 
         }
@@ -250,7 +250,7 @@ class FinancialDataControllerSpec extends TestSupport
       object TestEstimatedLiabilityController extends setupTestController(MockUnauthorised, PropertyIncome)
 
       "return redirect SEE_OTHER (303)" in {
-        val result = TestEstimatedLiabilityController.getEstimatedTaxLiability(testYear)(fakeRequestNoSession)
+        val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestNoSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }

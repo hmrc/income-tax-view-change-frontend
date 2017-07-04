@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
 import controllers.predicates.AsyncActionPredicate
-import models.{LastTaxCalculation, LastTaxCalculationError}
+import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
@@ -52,20 +52,44 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
       }
   }
 
-  val getEstimatedTaxLiability: Int => Action[AnyContent] = taxYear => actionPredicate.async {
+//  val getFinancialData: Int => Action[AnyContent] = taxYear => actionPredicate.async {
+//    implicit request => implicit user => implicit sources =>
+//      Logger.debug(s"[FinancialDataController][getFinancialData] Calling Financial Data Service with NINO: ${user.nino}")
+//      for{
+//        eTL <- financialDataService.getLastEstimatedTaxCalculation(user.nino, taxYear)
+//        calc <- {
+//          eTL match {
+//            case eTLSuccess: LastTaxCalculation =>
+//              Logger.debug(s"[FinancialDataController][getFinancialData] eTLSuccess Response: $eTLSuccess")
+//              val a: Future[CalculationDataResponseModel] = financialDataService.getCalculationData(user.nino, eTLSuccess.calcID)
+//            case eTLFailure: LastTaxCalculationError =>
+//              Logger.warn(s"[FinancialDataController][getEstimatedTaxLiability] Error Response: Status=${eTLFailure.status}, Message=${eTLFailure.message}")
+//              Future.successful(CalculationDataErrorModel())
+//          }
+//        }
+//      } yield (eTL, calc) match {
+//        case (eTLSuccess: LastTaxCalculation, calcSuccess: CalculationDataModel) =>
+//          Logger.debug("[EstimatedTaxLiabilityController][getFinancialData] Successfully retrieved CalcDataModel & LastTaxCalc model - serving Html page")
+//          Ok(views.html.estimatedTaxLiability(eTLSuccess.calcAmount, calcSuccess, taxYear))
+//        case (eTLSuccess: LastTaxCalculation, calcFailure: CalculationDataErrorModel) =>
+//          Logger.warn(s"[FinancialDataController][getFinancialData] Error Response: Status=${calcFailure.code}, Message=${calcFailure.message}")
+//          showInternalServerError
+//        case (eTLFailure: LastTaxCalculationError, _) =>
+//          Logger.warn(s"[FinancialDataController][getFinancialData] Error Response: Status=${eTLFailure.status}, Message=${eTLFailure.message}")
+//          showInternalServerError
+//        case _ =>
+//          Logger.warn("[FinancialDataController][getFinancialData] Unexpected Error!!")
+//          showInternalServerError
+//      }
+//  }
+
+  val getFinancialData: Int => Action[AnyContent] = taxYear => actionPredicate.async {
     implicit request => implicit user => implicit sources =>
-      Logger.debug(s"[FinancialDataController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
-      financialDataService.getLastEstimatedTaxCalculation(user.nino, taxYear) map {
-        case success: LastTaxCalculation =>
-          Logger.debug(s"[FinancialDataController][getEstimatedTaxLiability] Success Response: $success")
-          Ok(views.html.estimatedTaxLiability(success.calcAmount, taxYear))
-        case failure: LastTaxCalculationError =>
-          Logger.warn(s"[FinancialDataController][getEstimatedTaxLiability] " +
-            s"Error Response: Status=${failure.status}, Message=${failure.message}")
-          showInternalServerError
+      financialDataService.getFinancialData(user.nino, taxYear) map { (a,b) =>
+        case (model: Some())  =>
       }
   }
 
   private[FinancialDataController] def redirectToYear(year: Int): Future[Result] =
-    Future.successful(Redirect(controllers.routes.FinancialDataController.getEstimatedTaxLiability(year)))
+    Future.successful(Redirect(controllers.routes.FinancialDataController.getFinancialData(year)))
 }

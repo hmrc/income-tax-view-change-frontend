@@ -3,7 +3,7 @@ GET        /assets/*file                            controllers.Assets.at(path="
 
 #Estimated Tax Liability
 GET         /estimated-tax-liability                controllers.FinancialDataController.redirectToEarliestEstimatedTaxLiability
-GET         /estimated-tax-liability/:taxYear       controllers.FinancialDataController.getEstimatedTaxLiability(taxYear: Int)
+GET         /estimated-tax-liability/:taxYear       controllers.FinancialDataController.getFinancialData(taxYear: Int)
 
 #Obligations
 GET         /obligations                            controllers.ObligationsController.getObligations
