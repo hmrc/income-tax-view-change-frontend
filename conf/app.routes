@@ -1,22 +1,23 @@
 # microservice specific routes
-GET        /assets/*file                controllers.Assets.at(path="/public", file)
+GET        /assets/*file                            controllers.Assets.at(path="/public", file)
 
 #Estimated Tax Liability
-GET         /estimated-tax-liability    controllers.EstimatedTaxLiabilityController.getEstimatedTaxLiability
+GET         /estimated-tax-liability                controllers.EstimatedTaxLiabilityController.redirectToEarliestEstimatedTaxLiability
+GET         /estimated-tax-liability/:taxYear       controllers.EstimatedTaxLiabilityController.getEstimatedTaxLiability(taxYear: Int)
 
 #Obligations
-GET         /obligations                controllers.ObligationsController.getObligations
+GET         /obligations                            controllers.ObligationsController.getObligations
 
 #Feedback Routes
-GET         /feedback                   controllers.feedback.FeedbackController.show
-POST        /feedback                   controllers.feedback.FeedbackController.submit
-GET         /thankyou                   controllers.feedback.FeedbackController.thankyou
+GET         /feedback                               controllers.feedback.FeedbackController.show
+POST        /feedback                               controllers.feedback.FeedbackController.submit
+GET         /thankyou                               controllers.feedback.FeedbackController.thankyou
 
 #Timeout Routes
-GET         /session-timeout            controllers.timeout.SessionTimeoutController.timeout
+GET         /session-timeout                        controllers.timeout.SessionTimeoutController.timeout
 
 #Sign Out Routes
-GET         /sign-out                   controllers.SignOutController.signOut
+GET         /sign-out                               controllers.SignOutController.signOut
 
 #Sign In Routes
-GET         /sign-in                    controllers.SignInController.signIn
+GET         /sign-in                                controllers.SignInController.signIn

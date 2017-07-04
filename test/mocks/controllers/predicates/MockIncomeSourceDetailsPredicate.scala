@@ -32,6 +32,7 @@ trait MockIncomeSourceDetailsPredicate extends TestSupport with MockIncomeSource
   object BusinessIncome extends incomeSourceDetailsBuilder(BusinessIncomeOnly)
   object PropertyIncome extends incomeSourceDetailsBuilder(PropertyIncomeOnly)
   object BothIncome extends incomeSourceDetailsBuilder(BothBusinessAndPropertyIncome)
+  object BothIncomeAlignedTaxYear extends incomeSourceDetailsBuilder(BothBusinessAndPropertyIncomeAlignedTaxYear)
   object NoIncome extends incomeSourceDetailsBuilder(NoIncomeSources)
 
 
