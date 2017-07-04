@@ -38,6 +38,10 @@ object WiremockHelper extends Eventually with IntegrationPatience {
      verify(getRequestedFor(urlEqualTo(uri)))
   }
 
+  def verifyGetWithHeader(uri: String, headerKey: String, headerValue: String): Unit = {
+    verify(getRequestedFor(urlEqualTo(uri)).withHeader(headerKey, equalTo(headerValue)))
+  }
+
   def stubGet(url: String, status: Integer, body: String): StubMapping =
     stubFor(get(urlMatching(url))
       .willReturn(
