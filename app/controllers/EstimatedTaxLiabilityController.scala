@@ -32,7 +32,7 @@ import scala.concurrent.Future
 class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
                                                 implicit val messagesApi: MessagesApi,
                                                 val actionPredicate: AsyncActionPredicate,
-                                                val estimatedTaxLiabilityService: FinancialDataService
+                                                val financialDataService: FinancialDataService
                                                ) extends BaseController {
 
   val redirectToEarliestEstimatedTaxLiability: Action[AnyContent] = actionPredicate.async {
@@ -55,7 +55,7 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
   val getEstimatedTaxLiability: Int => Action[AnyContent] = taxYear => actionPredicate.async {
     implicit request => implicit user => implicit sources =>
       Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
-      estimatedTaxLiabilityService.getLastEstimatedTaxCalculation(user.nino, taxYear) map {
+      financialDataService.getLastEstimatedTaxCalculation(user.nino, taxYear) map {
         case success: LastTaxCalculation =>
           Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Success Response: $success")
           Ok(views.html.estimatedTaxLiability(success.calcAmount, taxYear))

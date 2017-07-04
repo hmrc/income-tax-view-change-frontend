@@ -28,7 +28,7 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
 
   object TestFinancialDataService extends FinancialDataService(mockLastTaxCalculationConnector, mockCalculationDataConnector)
 
-  "The FinancialDataService.getEstimatedTaxLiability method" when {
+  "The FinancialDataService.getLastEstimatedTaxCalculation method" when {
 
     "a successful response is returned from the EstimatedTaxLiabilityConnector" should {
 
