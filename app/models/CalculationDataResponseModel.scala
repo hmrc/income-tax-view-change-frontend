@@ -22,8 +22,7 @@ sealed trait CalculationDataResponseModel
 
 case class CalcDisplayModel(calcTimestamp: String,
                             calcAmount: BigDecimal,
-                            calcDataModel: Option[CalculationDataModel]
-                             ) extends CalculationDataResponseModel
+                            calcDataModel: Option[CalculationDataModel])
 
 case class CalculationDataModel(
                                  incomeTaxYTD: Option[BigDecimal],

@@ -18,9 +18,10 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{CalculationDataConnector, BusinessDetailsConnector, LastTaxCalculationConnector}
+import connectors.{CalculationDataConnector, LastTaxCalculationConnector}
 import models._
 import play.api.Logger
+import play.api.http.Status
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -29,6 +30,28 @@ import scala.concurrent.Future
 @Singleton
 class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector,
                                       val calculationDataConnector: CalculationDataConnector) {
+
+
+  def getFinancialData(nino: String, taxYear: Int): Future[Option[CalcDisplayModel]] = {
+    for {
+      lastCalc <- getLastEstimatedTaxCalculation(nino, taxYear)
+      calcBreakdown <- { lastCalc match {
+        case calculationData: LastTaxCalculation => getCalculationData(nino, calculationData.calcID)
+        case _: LastTaxCalculationError => CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "")
+      }}
+    } yield (lastCalc, calcBreakdown) match {
+      case (calc: LastTaxCalculation, breakdown: CalculationDataModel) =>
+        Logger.debug("[FinancialDataService] Retrieved all Financial Data")
+        Some(CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown)))
+      case (calc: LastTaxCalculation, _) =>
+        Logger.debug("[FinancialDataService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
+        Some(CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None))
+      case (calc: LastTaxCalculationError, _) =>
+        Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Returning nothing.")
+        None
+    }
+  }
+
 
   private[FinancialDataService] def getLastEstimatedTaxCalculation(nino: String,
                                      year: Int
@@ -58,27 +81,5 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
         Logger.warn(s"[FinancialDataService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
         error
     }
-
-  }
-
-  def getFinancialData(nino: String, taxYear: Int): Option[CalcDisplayModel] = {
-    for{
-      lastCalc <- getLastEstimatedTaxCalculation(nino, taxYear) map {
-        case lastCalcSuccess: LastTaxCalculation =>
-          Some(lastCalcSuccess)
-        case lastCalcFailure: LastTaxCalculationError =>
-          None
-      }
-      calc <- {
-        lastCalc match {
-          case Some(model) => Some(getCalculationData(nino,model.calcID))
-          case None => None
-        }
-      }
-      model <- calc match {
-        case Some(a) =>
-        case None => None
-      }
-    } yield (lastCalc, calc)
   }
 }
