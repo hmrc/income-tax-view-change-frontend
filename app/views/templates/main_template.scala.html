@@ -31,6 +31,11 @@
 
 @serviceInfoContent = {}
 
+@defaultScriptElem = {
+    <script type="text/javascript" src=@routes.Assets.at("javascripts/ga-reporting.js")></script>
+    @scriptElem.fold(HtmlFormat.empty)(x => x)
+}
+
 @sidebar = {
     @if(sidebarLinks.isDefined) {
         @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
@@ -46,6 +51,6 @@
                contentHeader = contentHeader,
                mainContent = layouts.article(mainContent),
                serviceInfoContent = serviceInfoContent,
-               scriptElem = scriptElem,
+               scriptElem = Some(defaultScriptElem),
                showLogout = showLogout
 )
