@@ -18,9 +18,10 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{CalculationDataConnector, BusinessDetailsConnector, LastTaxCalculationConnector}
+import connectors.{CalculationDataConnector, LastTaxCalculationConnector}
 import models._
 import play.api.Logger
+import play.api.http.Status
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,7 +31,29 @@ import scala.concurrent.Future
 class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector,
                                       val calculationDataConnector: CalculationDataConnector) {
 
-  def getLastEstimatedTaxCalculation(nino: String,
+
+  def getFinancialData(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[Option[CalcDisplayModel]] = {
+    for {
+      lastCalc <- getLastEstimatedTaxCalculation(nino, taxYear)
+      calcBreakdown <- lastCalc match {
+        case calculationData: LastTaxCalculation => getCalculationData(nino, calculationData.calcID)
+        case _: LastTaxCalculationError => Future.successful(CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "getCalculationData call failed"))
+      }
+    } yield (lastCalc, calcBreakdown) match {
+      case (calc: LastTaxCalculation, breakdown: CalculationDataModel) =>
+        Logger.debug("[FinancialDataService] Retrieved all Financial Data")
+        Some(CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown)))
+      case (calc: LastTaxCalculation, _) =>
+        Logger.debug("[FinancialDataService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
+        Some(CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None))
+      case (_: LastTaxCalculationError, _) =>
+        Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Returning nothing.")
+        None
+    }
+  }
+
+
+  private[FinancialDataService] def getLastEstimatedTaxCalculation(nino: String,
                                      year: Int
                                     )(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 
@@ -45,7 +68,9 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
     }
   }
 
-  def getCalculationData(nino: String, taxCalculationId: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
+  private[FinancialDataService] def getCalculationData(nino: String,
+                                                       taxCalculationId: String
+                                                        )(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
 
     Logger.debug("[FinancialDataService][getCalculationData] - Requesting calculation data from self-assessment api via Connector")
     calculationDataConnector.getCalculationData(nino, taxCalculationId).map {
@@ -56,6 +81,5 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
         Logger.warn(s"[FinancialDataService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
         error
     }
-
   }
 }

@@ -28,40 +28,35 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
 
   object TestFinancialDataService extends FinancialDataService(mockLastTaxCalculationConnector, mockCalculationDataConnector)
 
-  "The FinancialDataService.getLastEstimatedTaxCalculation method" when {
+  "The FinancialDataService.getCalculationData method" when {
 
-    "a successful response is returned from the EstimatedTaxLiabilityConnector" should {
+    "successful responses are returned from the CalculationDataConnector & EstimatedTaxLiabilityConnector" should {
 
-      "return a correctly formatted EstimateTaxLiability model" in {
+      "return a correctly formatted CalculationData model" in {
         setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
-        await(TestFinancialDataService.getLastEstimatedTaxCalculation(testNino, testYear)) shouldBe Estimates.lastTaxCalcSuccess
+        setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
+
+        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe Some(financialDataSuccessModel)
       }
     }
 
     "an Error Response is returned from the EstimatedTaxLiabilityConnector" should {
 
-      "return a correctly formatted EstimateTaxLiability model" in {
+      "return a correctly formatted CalculationDataError model" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
-        await(TestFinancialDataService.getLastEstimatedTaxCalculation(testNino, testYear)) shouldBe Estimates.lastTaxCalcError
-      }
-    }
-  }
-
-  "The FinancialDataService.getCalculationData method" when {
-
-    "a successful response is returned from the CalculationDataConnector" should {
-
-      "return a correctly formatted CalculationData model" in {
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
-        await(TestFinancialDataService.getCalculationData(testNino, testTaxCalculationId)) shouldBe calculationDataSuccessModel
+
+        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe None
       }
     }
 
     "an Error Response is returned from the CalculationDataConnector" should {
 
-      "return a correctly formatted CalculationDataError model" in {
+      "return a correctly formatted CalcDisplayModel model with calcDataModel = None" in {
+        setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataErrorModel)
-        await(TestFinancialDataService.getCalculationData(testNino, testTaxCalculationId)) shouldBe calculationDataErrorModel
+
+        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe Some(financialDataNoBreakdownModel)
       }
     }
   }

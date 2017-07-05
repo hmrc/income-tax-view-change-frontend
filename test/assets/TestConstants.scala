@@ -146,7 +146,7 @@ object TestConstants extends ImplicitDateFormatter {
     val testCalcType = "it"
 
     val lastTaxCalcSuccess = LastTaxCalculation(
-      calcID = "01234567",
+      calcID = testTaxCalculationId,
       calcTimestamp = "2017-07-06T12:34:56.789Z",
       calcAmount = 543.21
     )
@@ -496,5 +496,17 @@ object TestConstants extends ImplicitDateFormatter {
          |}
        """.stripMargin
     val calculationDataErrorJson = Json.parse(calculationDataErrorString)
+
+    val financialDataSuccessModel = CalcDisplayModel(
+      calcTimestamp = Estimates.lastTaxCalcSuccess.calcTimestamp,
+      calcAmount = Estimates.lastTaxCalcSuccess.calcAmount,
+      calcDataModel = Some(calculationDataSuccessModel)
+    )
+
+    val financialDataNoBreakdownModel = CalcDisplayModel(
+      calcTimestamp = Estimates.lastTaxCalcSuccess.calcTimestamp,
+      calcAmount = Estimates.lastTaxCalcSuccess.calcAmount,
+      calcDataModel = None
+    )
   }
 }

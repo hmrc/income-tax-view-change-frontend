@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
 import controllers.predicates.AsyncActionPredicate
-import models.{LastTaxCalculation, LastTaxCalculationError}
+import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
@@ -29,7 +29,7 @@ import services.FinancialDataService
 import scala.concurrent.Future
 
 @Singleton
-class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
+class FinancialDataController @Inject()(implicit val config: AppConfig,
                                                 implicit val messagesApi: MessagesApi,
                                                 val actionPredicate: AsyncActionPredicate,
                                                 val financialDataService: FinancialDataService
@@ -47,25 +47,27 @@ class EstimatedTaxLiabilityController @Inject()(implicit val config: AppConfig,
         case (Some(business), None) => redirectToYear(business.accountingPeriod.determineTaxYear)
         case (None, Some(property)) => redirectToYear(property.accountingPeriod.determineTaxYear)
         case (_, _) =>
-          Logger.debug("[EstimatedTaxLiabilityController][redirectToEarliestEstimatedTaxLiability] No Income Sources.")
+          Logger.debug("[FinancialDataController][redirectToEarliestEstimatedTaxLiability] No Income Sources.")
           Future.successful(showInternalServerError)
       }
   }
 
-  val getEstimatedTaxLiability: Int => Action[AnyContent] = taxYear => actionPredicate.async {
+  val getFinancialData: Int => Action[AnyContent] = taxYear => actionPredicate.async {
     implicit request => implicit user => implicit sources =>
-      Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Calling Estimated Tax Liability Service with NINO: ${user.nino}")
-      financialDataService.getLastEstimatedTaxCalculation(user.nino, taxYear) map {
-        case success: LastTaxCalculation =>
-          Logger.debug(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] Success Response: $success")
-          Ok(views.html.estimatedTaxLiability(success.calcAmount, taxYear))
-        case failure: LastTaxCalculationError =>
-          Logger.warn(s"[EstimatedTaxLiabilityController][getEstimatedTaxLiability] " +
-            s"Error Response: Status=${failure.status}, Message=${failure.message}")
+      financialDataService.getFinancialData(user.nino, taxYear).map {
+        case Some(calcDisplayModel: CalcDisplayModel) if calcDisplayModel.calcDataModel.nonEmpty =>
+          Ok(views.html.estimatedTaxLiability(calcDisplayModel.calcAmount,calcDisplayModel.calcDataModel.get, taxYear))
+          //Should be here if the Calc Breakdown data returned as None within the display model.
+          //TODO: handle this gracefully, for now serve ISE
+        case Some(_: CalcDisplayModel) =>
+          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No calculation breakdown information was returned")
+          showInternalServerError
+        case None =>
+          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved.")
           showInternalServerError
       }
   }
 
-  private[EstimatedTaxLiabilityController] def redirectToYear(year: Int): Future[Result] =
-    Future.successful(Redirect(controllers.routes.EstimatedTaxLiabilityController.getEstimatedTaxLiability(year)))
+  private[FinancialDataController] def redirectToYear(year: Int): Future[Result] =
+    Future.successful(Redirect(controllers.routes.FinancialDataController.getFinancialData(year)))
 }
