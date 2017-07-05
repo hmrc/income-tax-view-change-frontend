@@ -19,7 +19,7 @@
 @import views.helpers.TaxYearRenderHelper._
 @import models.CalculationDataResponseModel
 
-@(lastTaxAmount: BigDecimal, calcModel:CalculationDataModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
+@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
 
 @sidebar = {
     <section id="sidebar" class="section section--blue-top">
@@ -68,62 +68,97 @@
 
         <p id="p1" class="panel-indent">@messages("estimated_tax_liability.estimated-tax.p1")</p>
 
-        <p><span class="bold-medium" id="in-year-estimate">@lastTaxAmount.toCurrency</span></p>
+        <p><span class="bold-medium" id="in-year-estimate">@calcModel.calcAmount.toCurrency</span></p>
 
         <p id="payment">
             @messages(s"estimated_tax_liability.estimated-tax.payment")
             <span id="pyt-due-date">@renderPaymentDueDate(taxYear)</span>.
         </p>
 
-        <details role ="group">
-            <summary id="calc-breakdown-inner-link" role="button">
-                <span class="summary">@messages("estimated_tax_liability.calc-breakdown.link")</span>
-            </summary>
-            <div>
-                <table class="itvc-table">
-                    <tbody>
-                    <tr id="business-profit-section" class="no-border-bottom">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.business-profit")</td>
-                        <td class="summary-data">@{BigDecimal(1234.00).toCurrency}</td>
-                    </tr>
-                    <tr id="property-profit-section" class="no-border-bottom">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.property-profit")</td>
-                        <td class="summary-data">£1234</td>
-                    </tr>
-                    <tr id="personal-allowance-section">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.personal-allowance")</td>
-                        <td class="summary-data">£1234</td>
-                    </tr>
-                    <tr id="taxable-income-section" class="total-section">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.taxable-income")</td>
-                        <td class="summary-data">£1234</td>
-                    </tr>
-                    <tr class="no-border-bottom">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.income-tax")</td>
-                    </tr>
-                    <tr id="brt-section" class="no-border-bottom">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.tax-rate", "1234", "20")</td>
-                        <td class="summary-data">£1234</td>
-                    </tr>
-                    <tr id="hrt-section" class="no-border-bottom">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.tax-rate", "1234", "40")</td>
-                        <td class="summary-data">£1234</td>
-                    </tr>
-                    <tr id="art-section" class="no-border-bottom">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.tax-rate", "1234", "45")</td>
-                        <td class="summary-data">£1234</td>
-                    </tr>
-                    <tr id ="ni-section">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.national-insurance")</td>
-                        <td class="summary-data">£1234</td>
-                    </tr>
-                    <tr id ="total-estimate-section" class="total-section">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
-                        <td class="summary-data">£1234</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </details>
+        @if(calcModel.breakdownNonEmpty){
+            @defining(calcModel.calcDataModel.get) { breakdown =>
+
+            <details role ="group">
+                <summary id="calc-breakdown-inner-link" role="button">
+                    <span class="summary">@messages("estimated_tax_liability.calc-breakdown.link")</span>
+                </summary>
+                <div>
+                    <table class="itvc-table">
+                        <tbody>
+                        @if(sources.businessDetails.nonEmpty){
+                            <tr id="business-profit-section" class="no-border-bottom">
+                                <td>@messages("estimated_tax_liability.calc-breakdown.business-profit")</td>
+                                <td class="summary-data">@{breakdown.profitFromSelfEmployment.toCurrency}</td>
+                            </tr>
+                        }
+                        @if(sources.propertyDetails.nonEmpty){
+                            <tr id="property-profit-section" class="no-border-bottom">
+                                <td>@messages("estimated_tax_liability.calc-breakdown.property-profit")</td>
+                                <td class="summary-data">@{breakdown.profitFromUkLandAndProperty.toCurrency}</td>
+                            </tr>
+                        }
+
+                        <tr id="personal-allowance-section">
+                            <td>@messages("estimated_tax_liability.calc-breakdown.personal-allowance")</td>
+                            <td class="summary-data">@breakdown.personalAllowance.toCurrency</td>
+                        </tr>
+                        <tr id="taxable-income-section" class="total-section">
+                            <td>@messages("estimated_tax_liability.calc-breakdown.taxable-income")</td>
+                            <td class="summary-data">@breakdown.totalIncomeOnWhichTaxIsDue.toCurrency</td>
+                        </tr>
+
+                        @if(calcModel.hasBRTSection) {
+
+                        <tr class="no-border-bottom">
+                            <td>@messages("estimated_tax_liability.calc-breakdown.income-tax")</td>
+                        </tr>
+
+                        <tr id="brt-section" class="no-border-bottom">
+                            <td>@messages(
+                                s"estimated_tax_liability.calc-breakdown.tax-rate",
+                                breakdown.payPensionsProfitAtBRT.toCurrencyString,
+                                breakdown.rateBRT)</td>
+                            <td class="summary-data">@breakdown.incomeTaxOnPayPensionsProfitAtBRT.toCurrency</td>
+                        </tr>
+
+                            @if(calcModel.hasHRTSection){
+
+                            <tr id="hrt-section" class="no-border-bottom">
+                                <td>@messages(
+                                    s"estimated_tax_liability.calc-breakdown.tax-rate",
+                                    breakdown.payPensionsProfitAtHRT.toCurrencyString,
+                                    breakdown.rateHRT)</td>
+                                <td class="summary-data">@breakdown.incomeTaxOnPayPensionsProfitAtHRT.toCurrency</td>
+                            </tr>
+
+                                @if(calcModel.hasARTSection){
+
+                                <tr id="art-section" class="no-border-bottom">
+                                    <td>@messages(
+                                        s"estimated_tax_liability.calc-breakdown.tax-rate",
+                                        breakdown.payPensionsProfitAtART.toCurrencyString,
+                                        breakdown.rateART)</td>
+                                    <td class="summary-data">@breakdown.incomeTaxOnPayPensionsProfitAtART.toCurrency</td>
+                                </tr>
+                                }
+                            }
+                        }
+                        @if(calcModel.hasNISection) {
+
+                        <tr id ="ni-section">
+                            <td>@messages("estimated_tax_liability.calc-breakdown.national-insurance")</td>
+                            <td class="summary-data">@breakdown.nicTotal.toCurrency</td>
+                        </tr>
+                        }
+                        <tr id ="total-estimate-section" class="total-section">
+                            <td>@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
+                            <td class="summary-data">@breakdown.incomeTaxYTD.toCurrency</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+            }
+        }
     </section>
  }
