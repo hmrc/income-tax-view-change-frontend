@@ -16,6 +16,7 @@
 
 @import views.html.templates.main_template
 @import utils.ImplicitCurrencyFormatter._
+@import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
 @import models.CalculationDataResponseModel
 
@@ -68,12 +69,11 @@
 
         <p id="p1" class="panel-indent">@messages("estimated_tax_liability.estimated-tax.p1")</p>
 
-        <p><span class="bold-medium" id="in-year-estimate">@calcModel.calcAmount.toCurrency</span></p>
-
-        <p id="payment">
-            @messages(s"estimated_tax_liability.estimated-tax.payment")
-            <span id="pyt-due-date">@renderPaymentDueDate(taxYear)</span>.
+        <p>
+            <span class="bold-medium" id="in-year-estimate">@calcModel.calcAmount.toCurrency</span>
+            <br>@messages("estimated_tax_liability.estimated-date", calcModel.calcTimestamp.toLocalDateTime.toLongDateTime)
         </p>
+        <p></p>
 
         @if(calcModel.breakdownNonEmpty){
             @defining(calcModel.calcDataModel.get) { breakdown =>
@@ -160,5 +160,10 @@
             </details>
             }
         }
+
+        <p id="payment">
+            @messages(s"estimated_tax_liability.estimated-tax.payment")
+            <span id="pyt-due-date">@renderPaymentDueDate(taxYear)</span>.
+        </p>
     </section>
  }
