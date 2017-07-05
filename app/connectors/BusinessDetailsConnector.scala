@@ -32,13 +32,13 @@ import scala.concurrent.Future
 class BusinessDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
   lazy val businessListUrl: String = baseUrl("self-assessment-api")
-  lazy val getBusinessListUrl: String => String = nino => s"$businessListUrl/self-assessment/ni/$nino/self-employments"
+  lazy val getBusinessListUrl: String => String = nino => s"$businessListUrl/ni/$nino/self-employments"
 
   def getBusinessList(nino: String)(implicit headerCarrier: HeaderCarrier): Future[BusinessListResponseModel] = {
 
     val url = getBusinessListUrl(nino)
 
-    http.GET[HttpResponse](url) flatMap {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
         response.status match {
           case OK => Logger.debug(s"[BusinessDetailsConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")

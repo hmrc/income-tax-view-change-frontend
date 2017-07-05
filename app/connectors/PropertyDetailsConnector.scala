@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads with ImplicitDateFormatter {
 
   lazy val apiContextRoute: String = baseUrl("self-assessment-api")
-  lazy val getPropertyDetailsUrl: String => String = nino => s"$apiContextRoute/self-assessment/ni/$nino/uk-properties"
+  lazy val getPropertyDetailsUrl: String => String = nino => s"$apiContextRoute/ni/$nino/uk-properties"
 
   // TODO: For MVP the only accounting period for Property is 2017/18. This needs to be enhanced post-MVP
   val defaultSuccessResponse = PropertyDetailsModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
@@ -42,7 +42,7 @@ class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
 
     val url = getPropertyDetailsUrl(nino)
 
-    http.GET[HttpResponse](url) flatMap {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
         response.status match {
           case OK =>

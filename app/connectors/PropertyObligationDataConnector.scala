@@ -32,13 +32,13 @@ import scala.concurrent.Future
 class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
   lazy val propertyDataUrl: String = baseUrl("self-assessment-api")
-  lazy val getPropertyDataUrl: String => String = nino => s"$propertyDataUrl/self-assessment/ni/$nino/uk-properties/obligations"
+  lazy val getPropertyDataUrl: String => String = nino => s"$propertyDataUrl/ni/$nino/uk-properties/obligations"
 
   def getPropertyObligationData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     val url = getPropertyDataUrl(nino)
 
-    http.GET[HttpResponse](url) flatMap {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
         response.status match {
           case OK =>
