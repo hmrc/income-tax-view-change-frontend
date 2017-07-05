@@ -37,7 +37,7 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
       lastCalc <- getLastEstimatedTaxCalculation(nino, taxYear)
       calcBreakdown <- lastCalc match {
         case calculationData: LastTaxCalculation => getCalculationData(nino, calculationData.calcID)
-        case _: LastTaxCalculationError => Future.successful(CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, ""))
+        case _: LastTaxCalculationError => Future.successful(CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "getCalculationData call failed"))
       }
     } yield (lastCalc, calcBreakdown) match {
       case (calc: LastTaxCalculation, breakdown: CalculationDataModel) =>
