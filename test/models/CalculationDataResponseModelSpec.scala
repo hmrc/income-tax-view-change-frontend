@@ -29,24 +29,24 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
     "for the test response" should {
 
       "have the same values as the calculationDataSuccessModel" in {
-        calculationDataSuccessModel.incomeTaxYTD.getOrElse("fail") shouldBe 90500
-        calculationDataSuccessModel.incomeTaxThisPeriod.getOrElse("fail") shouldBe 2000
-        calculationDataSuccessModel.profitFromSelfEmployment.getOrElse("fail") shouldBe 200000
-        calculationDataSuccessModel.profitFromUkLandAndProperty.getOrElse("fail") shouldBe 10000
-        calculationDataSuccessModel.totalIncomeReceived.getOrElse("fail") shouldBe 230000
-        calculationDataSuccessModel.personalAllowance.getOrElse("fail") shouldBe 11500
-        calculationDataSuccessModel.totalIncomeOnWhichTaxIsDue.getOrElse("fail") shouldBe 198500
-        calculationDataSuccessModel.payPensionsProfitAtBRT.getOrElse("fail") shouldBe 20000
-        calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtBRT.getOrElse("fail") shouldBe 4000
-        calculationDataSuccessModel.payPensionsProfitAtHRT.getOrElse("fail") shouldBe 100000
-        calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtHRT.getOrElse("fail") shouldBe 40000
-        calculationDataSuccessModel.payPensionsProfitAtART.getOrElse("fail") shouldBe 50000
-        calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtART.getOrElse("fail") shouldBe 22500
-        calculationDataSuccessModel.incomeTaxDue.getOrElse("fail") shouldBe 66500
-        calculationDataSuccessModel.nicTotal.getOrElse("fail") shouldBe 24000
-        calculationDataSuccessModel.rateBRT.getOrElse("fail") shouldBe 20
-        calculationDataSuccessModel.rateHRT.getOrElse("fail") shouldBe 40
-        calculationDataSuccessModel.rateART.getOrElse("fail") shouldBe 45
+        calculationDataSuccessModel.incomeTaxYTD shouldBe 90500
+        calculationDataSuccessModel.incomeTaxThisPeriod shouldBe 2000
+        calculationDataSuccessModel.profitFromSelfEmployment shouldBe 200000
+        calculationDataSuccessModel.profitFromUkLandAndProperty shouldBe 10000
+        calculationDataSuccessModel.totalIncomeReceived shouldBe 230000
+        calculationDataSuccessModel.personalAllowance shouldBe 11500
+        calculationDataSuccessModel.totalIncomeOnWhichTaxIsDue shouldBe 198500
+        calculationDataSuccessModel.payPensionsProfitAtBRT shouldBe 20000
+        calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtBRT shouldBe 4000
+        calculationDataSuccessModel.payPensionsProfitAtHRT shouldBe 100000
+        calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtHRT shouldBe 40000
+        calculationDataSuccessModel.payPensionsProfitAtART shouldBe 50000
+        calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtART shouldBe 22500
+        calculationDataSuccessModel.incomeTaxDue shouldBe 66500
+        calculationDataSuccessModel.nicTotal shouldBe 24000
+        calculationDataSuccessModel.rateBRT shouldBe 20
+        calculationDataSuccessModel.rateHRT shouldBe 40
+        calculationDataSuccessModel.rateART shouldBe 45
       }
 
     }
