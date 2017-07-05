@@ -56,7 +56,7 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
     implicit request => implicit user => implicit sources =>
       financialDataService.getFinancialData(user.nino, taxYear).map {
         case Some(calcDisplayModel: CalcDisplayModel) if calcDisplayModel.calcDataModel.nonEmpty =>
-          Ok(views.html.estimatedTaxLiability(calcDisplayModel.calcAmount,calcDisplayModel.calcDataModel.get, taxYear))
+          Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
           //Should be here if the Calc Breakdown data returned as None within the display model.
           //TODO: handle this gracefully, for now serve ISE
         case Some(_: CalcDisplayModel) =>

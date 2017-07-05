@@ -232,24 +232,24 @@ object TestConstants extends ImplicitDateFormatter {
   }
 
   object CalcBreakdown {
-    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = Some(90500),
-      incomeTaxThisPeriod = Some(2000),
-      profitFromSelfEmployment = Some(200000),
-      profitFromUkLandAndProperty = Some(10000),
-      totalIncomeReceived = Some(230000),
-      personalAllowance = Some(11500),
-      totalIncomeOnWhichTaxIsDue = Some(198500),
-      payPensionsProfitAtBRT = Some(20000),
-      incomeTaxOnPayPensionsProfitAtBRT = Some(4000),
-      payPensionsProfitAtHRT = Some(100000),
-      incomeTaxOnPayPensionsProfitAtHRT = Some(40000),
-      payPensionsProfitAtART = Some(50000),
-      incomeTaxOnPayPensionsProfitAtART = Some(22500),
-      incomeTaxDue = Some(66500),
-      nicTotal = Some(24000),
-      rateBRT = Some(20),
-      rateHRT = Some(40),
-      rateART = Some(45)
+    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = 90500.00,
+      incomeTaxThisPeriod = 2000.00,
+      profitFromSelfEmployment = 200000.00,
+      profitFromUkLandAndProperty = 10000.00,
+      totalIncomeReceived = 230000.00,
+      personalAllowance = 11500.00,
+      totalIncomeOnWhichTaxIsDue = 198500.00,
+      payPensionsProfitAtBRT = 20000.00,
+      incomeTaxOnPayPensionsProfitAtBRT = 4000.00,
+      payPensionsProfitAtHRT = 100000.00,
+      incomeTaxOnPayPensionsProfitAtHRT = 40000.00,
+      payPensionsProfitAtART = 50000.00,
+      incomeTaxOnPayPensionsProfitAtART = 22500.00,
+      incomeTaxDue = 66500.00,
+      nicTotal = 24000.00,
+      rateBRT = 20.00,
+      rateHRT = 40.00,
+      rateART = 45.00
     )
 
 
