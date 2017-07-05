@@ -27,17 +27,23 @@ import play.api.test.Helpers._
 import utils.TestSupport
 import assets.TestConstants._
 import assets.TestConstants.Estimates._
+import assets.TestConstants.PropertyIncome._
+import assets.TestConstants.BusinessDetails._
 import auth.MtdItUser
+import models.IncomeSourcesModel
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
   lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
 
-  val testAmount: BigDecimal = 2345.67
-  val testAmountOutput: String = "£2,345.67"
+  val testAmount: BigDecimal = 543.21
+  val testAmountOutput: String = "£543.21"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
+  val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), Some(propertyIncomeModel))
 
-  lazy val page = views.html.estimatedTaxLiability(testAmount, CalcBreakdown.calculationDataSuccessModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val page = views.html.estimatedTaxLiability(
+    CalcBreakdown.calculationDisplaySuccessModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The EstimatedTaxLiability view" should {
@@ -68,6 +74,18 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       s"has a payment paragraph with '${messages.EstimateTax.payment}'" in {
         estimateSection.getElementById("payment").text() shouldBe messages.EstimateTax.payment
+      }
+    }
+
+    "have a Calculation Breakdown section" which {
+      "when no breakdown data is retrieved" should {
+        lazy val noBreakdownPage = views.html.estimatedTaxLiability(
+          CalcBreakdown.calculationDisplaySuccessModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+        lazy val noBreakdownDocument = Jsoup.parse(contentAsString(page))
+
+//        "not display a section" in {
+//          document.getElementById("calc-breakdown-inner-link") shouldBe null
+//        }
       }
     }
 
