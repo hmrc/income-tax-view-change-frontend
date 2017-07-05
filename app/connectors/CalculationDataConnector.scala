@@ -27,16 +27,16 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class CalculationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig {
+class CalculationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
   lazy val calculationDataUrl: String = baseUrl("self-assessment-api")
-  lazy val getCalculationDataUrl: (String, String) => String = (nino, taxCalculationId) => s"$calculationDataUrl/self-assessment/ni/$nino/calculations/$taxCalculationId"
+  lazy val getCalculationDataUrl: (String, String) => String = (nino, taxCalculationId) => s"$calculationDataUrl/ni/$nino/calculations/$taxCalculationId"
 
   def getCalculationData(nino: String, taxCalculationId: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
 
     val url = getCalculationDataUrl(nino, taxCalculationId)
 
-    http.GET[HttpResponse](url) flatMap {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
         response.status match {
           case OK => Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, body: ${response.body}")

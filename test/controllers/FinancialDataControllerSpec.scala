@@ -18,6 +18,7 @@ package controllers
 
 import assets.Messages.{EstimatedTaxLiability => messages}
 import assets.TestConstants.Estimates._
+import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants._
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.PropertyDetails._
@@ -35,8 +36,9 @@ class FinancialDataControllerSpec extends TestSupport
   with MockFinancialDataService with MockAsyncActionPredicate with MockIncomeSourceDetailsPredicate with MockAuthenticationPredicate {
 
   // Last Calculation Service mocks
-  def mockLastCalculationSuccess(): Unit = setupMockLastTaxCalculationResult(testNino, testYear)(lastTaxCalcSuccess)
-  def mockLastCalculationError(): Unit = setupMockLastTaxCalculationResult(testNino, testYear)(lastTaxCalcError)
+  def mockFinancialDataSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(financialDataSuccessModel))
+  def mockFinancialDataNoBreakdown(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(financialDataNoBreakdownModel))
+  def mockFinancialDataError(): Unit = setupMockGetFinancialData(testNino, testYear)(None)
 
   class setupTestController(authentication: AuthenticationPredicate, incomeSources: IncomeSourceDetailsPredicate)
     extends FinancialDataController()(
@@ -46,68 +48,68 @@ class FinancialDataControllerSpec extends TestSupport
       mockFinancialDataService
     )
 
-  "The FinancialDataController.getEstimatedTaxLiability(year) action" when {
+  "The FinancialDataController.getFinancialData(year) action" when {
 
     "Called with an Authenticated HMRC-MTD-IT User" which {
 
       "that successfully retrieves Business only income from the Income Sources predicate" +
-        "and an Estimated Tax Liability amount from the EstimatedTaxLiability Service" should {
+        "and financial data from the FinancialData Service" should {
 
-        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, BusinessIncome)
+        object TestFinancialDataController extends setupTestController(MockAuthenticated, BusinessIncome)
 
-        lazy val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockLastCalculationSuccess()
+          mockFinancialDataSuccess()
           status(result) shouldBe Status.OK
         }
 
         "return HTML" in {
-          mockLastCalculationSuccess()
+          mockFinancialDataSuccess()
           contentType(result) shouldBe Some("text/html")
           charset(result) shouldBe Some("utf-8")
         }
 
         "render the EstimatedTaxLiability page" in {
-          mockLastCalculationSuccess()
+          mockFinancialDataSuccess()
           document.title() shouldBe messages.title
         }
       }
 
       "receives Property only income from the Income Sources predicate" +
-        "and an Estimated Tax Liability amount from the EstimatedTaxLiability Service" should {
+        "and financial data from the FinancialData Service" should {
 
-        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, PropertyIncome)
+        object TestFinancialDataController extends setupTestController(MockAuthenticated, PropertyIncome)
 
-        lazy val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockLastCalculationSuccess()
+          mockFinancialDataSuccess()
           status(result) shouldBe Status.OK
         }
 
         "return HTML" in {
-          mockLastCalculationSuccess()
+          mockFinancialDataSuccess()
           contentType(result) shouldBe Some("text/html")
           charset(result) shouldBe Some("utf-8")
         }
 
         "render the EstimatedTaxLiability page" in {
-          mockLastCalculationSuccess()
+          mockFinancialDataSuccess()
           document.title() shouldBe messages.title
         }
       }
 
-      "receives Business Income source from the Income Sources predicate and an error from the Last Calculation Service" should {
+      "receives Business Income source from the Income Sources predicate and an error from the FinancialData Service" should {
 
-        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, BusinessIncome)
+        object TestFinancialDataController extends setupTestController(MockAuthenticated, BusinessIncome)
 
-        lazy val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
-          mockLastCalculationError()
+          mockFinancialDataError()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -117,14 +119,14 @@ class FinancialDataControllerSpec extends TestSupport
         }
       }
 
-      "receives No Income sources from the Income Sources predicate and  an error from the Last Calculation Service" should {
+      "receives No Income sources from the Income Sources predicate and an error from the FinancialData Service" should {
 
-        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, NoIncome)
+        object TestFinancialDataController extends setupTestController(MockAuthenticated, NoIncome)
 
-        lazy val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
-          mockLastCalculationError()
+          mockFinancialDataError()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -138,10 +140,10 @@ class FinancialDataControllerSpec extends TestSupport
 
     "Called with an Unauthenticated User" should {
 
-      object TestEstimatedLiabilityController extends setupTestController(MockUnauthorised, PropertyIncome)
+      object TestFinancialDataController extends setupTestController(MockUnauthorised, PropertyIncome)
 
       "return redirect SEE_OTHER (303)" in {
-        val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestNoSession)
+        val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestNoSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -154,9 +156,9 @@ class FinancialDataControllerSpec extends TestSupport
 
       "successfully retrieves Business only income from the Income Sources predicate" should {
 
-        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, BusinessIncome)
+        object TestFinancialDataController extends setupTestController(MockAuthenticated, BusinessIncome)
 
-        lazy val result = TestEstimatedLiabilityController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
+        lazy val result = TestFinancialDataController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
         "return Status SEE_OTHER (303) (redirect)" in {
           status(result) shouldBe Status.SEE_OTHER
@@ -173,9 +175,9 @@ class FinancialDataControllerSpec extends TestSupport
 
       "successfully retrieves Property only income from the Income Sources predicate" should {
 
-        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, PropertyIncome)
+        object TestFinancialDataController extends setupTestController(MockAuthenticated, PropertyIncome)
 
-        lazy val result = TestEstimatedLiabilityController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
+        lazy val result = TestFinancialDataController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
         "return Status SEE_OTHER (303) (redirect)" in {
           status(result) shouldBe Status.SEE_OTHER
@@ -194,9 +196,9 @@ class FinancialDataControllerSpec extends TestSupport
 
         "the Business Accounting Period is aligned to the Tax Year and the Property Income" should {
 
-          object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, BothIncomeAlignedTaxYear)
+          object TestFinancialDataController extends setupTestController(MockAuthenticated, BothIncomeAlignedTaxYear)
 
-          lazy val result = TestEstimatedLiabilityController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
+          lazy val result = TestFinancialDataController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
           "return Status SEE_OTHER (303) (redirect)" in {
             status(result) shouldBe Status.SEE_OTHER
@@ -214,9 +216,9 @@ class FinancialDataControllerSpec extends TestSupport
 
         "the Property Income Accounting Period is prior to the Business Income Accounting Period" should {
 
-          object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, BothIncome)
+          object TestFinancialDataController extends setupTestController(MockAuthenticated, BothIncome)
 
-          lazy val result = TestEstimatedLiabilityController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
+          lazy val result = TestFinancialDataController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
           "return Status SEE_OTHER (303) (redirect)" in {
             status(result) shouldBe Status.SEE_OTHER
@@ -235,9 +237,9 @@ class FinancialDataControllerSpec extends TestSupport
 
       "retrieves no Income Sources via the Income Sources predicate" should {
 
-        object TestEstimatedLiabilityController extends setupTestController(MockAuthenticated, NoIncome)
+        object TestFinancialDataController extends setupTestController(MockAuthenticated, NoIncome)
 
-        lazy val result = TestEstimatedLiabilityController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
+        lazy val result = TestFinancialDataController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
         "return Status ISE (500)" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -247,10 +249,10 @@ class FinancialDataControllerSpec extends TestSupport
 
     "Called with an Unauthenticated User" should {
 
-      object TestEstimatedLiabilityController extends setupTestController(MockUnauthorised, PropertyIncome)
+      object TestFinancialDataController extends setupTestController(MockUnauthorised, PropertyIncome)
 
       "return redirect SEE_OTHER (303)" in {
-        val result = TestEstimatedLiabilityController.getFinancialData(testYear)(fakeRequestNoSession)
+        val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestNoSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }

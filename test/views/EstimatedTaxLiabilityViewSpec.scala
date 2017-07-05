@@ -37,7 +37,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
   val testAmountOutput: String = "£2,345.67"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
 
-  lazy val page = views.html.estimatedTaxLiability(testAmount, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val page = views.html.estimatedTaxLiability(testAmount, CalcBreakdown.calculationDataSuccessModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The EstimatedTaxLiability view" should {

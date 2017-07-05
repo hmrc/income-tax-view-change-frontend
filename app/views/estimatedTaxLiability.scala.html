@@ -35,7 +35,7 @@
             <h3 id="obligations-heading">@messages("sidebar.view_obligations.h3")</h3>
             <ul>
                 <li class="font-xsmall">
-                    <a id="obligations-link" href="@{controllers.routes.ObligationsController.getObligations().url}">@messages("sidebar.view_obligations.link")</a>
+                    <a data-journey-click="itvc:clickedLink:View Obligations" id="obligations-link" href="@{controllers.routes.ObligationsController.getObligations().url}">@messages("sidebar.view_obligations.link")</a>
                 </li>
             </ul>
         </div>
@@ -43,7 +43,7 @@
             <h3 id="sa-link-heading">@messages("sidebar.self_assessment.h3")</h3>
             <ul>
                 <li class="font-xsmall">
-                    <a id="sa-link" href=@{s"${appConfig.businessTaxAccount}/self-assessment"}>
+                    <a data-journey-click="itvc:clickedLink:View SA Annual Returns" id="sa-link" href=@{s"${appConfig.businessTaxAccount}/self-assessment"}>
                         @messages("sidebar.self_assessment.link")
                     </a>
                 </li>

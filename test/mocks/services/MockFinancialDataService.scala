@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.LastTaxCalculationResponseModel
+import models.CalcDisplayModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -39,11 +39,11 @@ trait MockFinancialDataService extends UnitSpec with MockitoSugar with BeforeAnd
     reset(mockFinancialDataService)
   }
 
-  def setupMockLastTaxCalculationResult(nino: String, year: Int)(response: LastTaxCalculationResponseModel): Unit =
+  def setupMockGetFinancialData(nino: String, taxYear: Int)(response: Option[CalcDisplayModel]): Unit =
     when(mockFinancialDataService
-      .getLastEstimatedTaxCalculation(
+      .getFinancialData(
         ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(year)
+        ArgumentMatchers.eq(taxYear)
       )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 }
