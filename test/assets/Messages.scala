@@ -61,7 +61,7 @@ object Messages {
     val reportsHeading = "Deadlines"
     val reportsLink = "View report deadlines"
     val estimatesHeading = "Estimates"
-    val estimatesLink = "View your estimated tax amount"
+    val estimatesLink = "View your tax estimate"
     val selfAssessmentHeading = "Previous tax years"
     val selfAssessmentLink = "View annual returns"
   }

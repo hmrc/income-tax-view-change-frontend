@@ -45,7 +45,7 @@ timeout.signIn                                                  = To view your q
 ## Sidebar ##
 sidebar.quarterly_reporting_reference.h3                        = Income Tax reference:
 sidebar.view_estimated_liability.h3                             = Estimates
-sidebar.view_estimated_liability.link                           = View your estimated tax amount
+sidebar.view_estimated_liability.link                           = View your tax estimate
 sidebar.view_obligations.h3                                     = Deadlines
 sidebar.view_obligations.link                                   = View report deadlines
 sidebar.self_assessment.h3                                      = Previous tax years

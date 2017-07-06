@@ -32,12 +32,12 @@
             <tbody>
                 @model.get.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
                     <tr class="obligation">
-                        <td>
+                        <td class="no-border-bottom">
                             <p>
                                 <span id="@{id}-ob-@{index + 1}-start">@obligation.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@obligation.end.toLongDate</span>
                             </p>
                         </td>
-                        <td id="@{id}-ob-@{index+1}-status">
+                        <td id="@{id}-ob-@{index+1}-status" class="no-border-bottom">
                             @ObligationStatusHelper.statusHtml(obligation.getObligationStatus)
                         </td>
                     </tr>
