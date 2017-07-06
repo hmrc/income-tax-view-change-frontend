@@ -36,7 +36,7 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
         setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
 
-        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe Some(financialDataSuccessModel)
+        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe Some(calculationDisplaySuccessModel(calculationDataSuccessModel))
       }
     }
 
@@ -56,7 +56,7 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataErrorModel)
 
-        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe Some(financialDataNoBreakdownModel)
+        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe Some(calculationDisplayNoBreakdownModel)
       }
     }
   }

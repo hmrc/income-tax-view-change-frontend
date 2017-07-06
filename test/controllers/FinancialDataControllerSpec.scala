@@ -36,8 +36,8 @@ class FinancialDataControllerSpec extends TestSupport
   with MockFinancialDataService with MockAsyncActionPredicate with MockIncomeSourceDetailsPredicate with MockAuthenticationPredicate {
 
   // Last Calculation Service mocks
-  def mockFinancialDataSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(financialDataSuccessModel))
-  def mockFinancialDataNoBreakdown(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(financialDataNoBreakdownModel))
+  def mockFinancialDataSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(calculationDisplaySuccessModel(calculationDataSuccessModel)))
+  def mockFinancialDataNoBreakdown(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(calculationDisplaySuccessModel(calculationDataSuccessModel)))
   def mockFinancialDataError(): Unit = setupMockGetFinancialData(testNino, testYear)(None)
 
   class setupTestController(authentication: AuthenticationPredicate, incomeSources: IncomeSourceDetailsPredicate)
