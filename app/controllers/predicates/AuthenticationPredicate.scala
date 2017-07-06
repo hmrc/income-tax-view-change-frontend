@@ -24,7 +24,7 @@ import controllers.BaseController
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.{Configuration, Environment, Logger}
-import uk.gov.hmrc.auth.core.Retrievals.authorisedEnrolments
+import uk.gov.hmrc.auth.core.Retrievals._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.frontend.Redirects
 
@@ -58,9 +58,12 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
       case _: BearerTokenExpired =>
         Logger.debug("[AuthenticationPredicate][async] Bearer Token Timed Out.")
         Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
-      case _ =>
+      case _: AuthorisationException =>
         Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
         Future.successful(Redirect(controllers.routes.SignInController.signIn()))
+      case _ =>
+        Logger.debug("[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.")
+        Future.successful(showInternalServerError)
     }
   }
 

@@ -20,9 +20,9 @@ object Messages {
 
   // Estimated Tax Liability Page Messages
   object EstimatedTaxLiability {
-    val title = "2017/18 - Business Tax Account"
     val pageHeading = "Your current tax estimate"
     val taxYear = "2017 to 2018 tax year"
+    val title = taxYear + " " + pageHeading
     object EstimateTax {
       val h2 = "2017/18 - Business Tax Account"
       val p1 = "We've calculated this estimate using the figures and dates you've reported in your accounting software. " +
@@ -36,7 +36,7 @@ object Messages {
 
   //Obligations Page Messages
   object Obligations {
-    val title = "Your Income Tax reports"
+    val title = "Your report deadlines"
     val info  = "You must submit a report once every quarter using your accounting software."
     val businessHeading = "Business income"
     val propertyHeading = "Property income"
