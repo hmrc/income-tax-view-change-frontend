@@ -40,6 +40,8 @@ object Messages {
     val info  = "You must submit a report once every quarter using your accounting software."
     val businessHeading = "Business income"
     val propertyHeading = "Property income"
+    val periodHeading = "Report period"
+    val statusHeading = "Report due date"
   }
 
   // Timeout Messages

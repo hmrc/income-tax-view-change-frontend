@@ -26,7 +26,7 @@ estimated_tax_liability.estimated-date                          = Estimate up to
 obligations.title                                               = Your Income Tax reports
 obligations.heading                                             = Your Income Tax reports
 obligations.info                                                = You must submit a report once every quarter using your accounting software.
-obligations.accountingPeriod                                    = Accounting period
+obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
 
 obligations.bi.subheading                                       = Business income
