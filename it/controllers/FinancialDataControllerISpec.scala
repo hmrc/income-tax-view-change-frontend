@@ -34,7 +34,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         AuthStub.stubAuthorised()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse = LastTaxCalculation("01234567", "2017-07-06T12:34:56.789Z", 1800.00)
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", 1800.00)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
@@ -44,7 +44,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           calc.payPensionsProfitAtHRT, calc.incomeTaxOnPayPensionsProfitAtHRT, calc.payPensionsProfitAtART, calc.incomeTaxOnPayPensionsProfitAtART, calc.incomeTaxDue,
           calc.nicTotal,calc.rateBRT,calc.rateHRT,calc.rateART)
 
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, "01234567", calculationResponse)
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, calculationResponse)
 
         And("I wiremock stub a successful Business Details response")
         SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))

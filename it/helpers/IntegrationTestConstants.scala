@@ -33,6 +33,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testNinoEnrolmentKey = "HMRC-NI"
   val testNinoEnrolmentIdentifier = "NINO"
   val testNino = "AA123456A"
+  val testCalcId = "01234567"
 
   val testYear = "2018"
   val testCalcType = "it"
