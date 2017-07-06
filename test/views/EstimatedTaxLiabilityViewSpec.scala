@@ -31,6 +31,7 @@ import assets.TestConstants.PropertyIncome._
 import assets.TestConstants.BusinessDetails._
 import auth.MtdItUser
 import models.IncomeSourcesModel
+import play.twirl.api.Html
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
@@ -70,6 +71,14 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       s"has the correct Estimated Tax Amount of '$testAmount'" in {
         estimateSection.getElementById("in-year-estimate").text shouldBe testAmountOutput
+      }
+
+      s"has a calculation date paragraph with '${messages.EstimateTax.calcDate("6 July 2017")}'" in {
+        estimateSection.getElementById("in-year-estimate-date").html() shouldBe messages.EstimateTax.calcDate("6 July 2017")
+      }
+
+      s"has a calculation date of the 6 July 2017" in {
+        estimateSection.getElementById("calc-date").text shouldBe "6 July 2017"
       }
 
       s"has a payment paragraph with '${messages.EstimateTax.payment}'" in {

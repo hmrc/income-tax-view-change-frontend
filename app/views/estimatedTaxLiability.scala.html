@@ -71,9 +71,9 @@
 
         <p>
             <span class="bold-medium" id="in-year-estimate">@calcModel.calcAmount.toCurrency</span>
-            <br>@messages("estimated_tax_liability.estimated-date", calcModel.calcTimestamp.toLocalDateTime.toLongDateTime)
+            <br>
+            <span id="in-year-estimate-date">@Html(messages("estimated_tax_liability.estimated-date", calcModel.calcTimestamp.toLocalDateTime.toLongDateTime))</span>
         </p>
-        <p></p>
 
         @if(calcModel.breakdownNonEmpty){
             @defining(calcModel.calcDataModel.get) { breakdown =>

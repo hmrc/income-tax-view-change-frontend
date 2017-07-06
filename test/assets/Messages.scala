@@ -16,6 +16,8 @@
 
 package assets
 
+import play.twirl.api.Html
+
 object Messages {
 
   // Estimated Tax Liability Page Messages
@@ -27,6 +29,7 @@ object Messages {
       val h2 = "2017/18 - Business Tax Account"
       val p1 = "We've calculated this estimate using the figures and dates you've reported in your accounting software. " +
         "The amount includes both your Income Tax and National Insurance."
+      val calcDate: String => String = date => s"""Estimate up to your <span id="calc-date">$date</span> submission"""
       val payment = "You must pay any tax you owe for the whole tax year by 31 January 2019."
       val toDate = "Estimate to date"
     }

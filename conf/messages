@@ -19,7 +19,7 @@ estimated_tax_liability.calc-breakdown.income-tax               = Income Tax
 estimated_tax_liability.calc-breakdown.tax-rate                 = {0} at {1}%
 estimated_tax_liability.calc-breakdown.national-insurance       = National Insurance
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
-estimated_tax_liability.estimated-date                          = Estimate up to your {0} submission
+estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
 
 ## Obligations Page ##
 obligations.title                                               = Your Income Tax reports
