@@ -18,7 +18,7 @@ package helpers
 
 import java.time.LocalDate
 
-import models.{ObligationModel, ObligationsModel}
+import models.{CalculationDataModel, ObligationModel, ObligationsModel}
 import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter
 
@@ -58,6 +58,71 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       """.stripMargin)
   }
 
+  object GetCalculationData {
+    def successResponse(incomeTaxYTD: BigDecimal,
+                        incomeTaxThisPeriod: BigDecimal,
+                        profitFromSelfEmployment: BigDecimal,
+                        profitFromUkLandAndProperty: BigDecimal,
+                        totalIncomeReceived: BigDecimal,
+                        personalAllowance: BigDecimal,
+                        totalIncomeOnWhichTaxIsDue: BigDecimal,
+                        payPensionsProfitAtBRT: BigDecimal,
+                        incomeTaxOnPayPensionsProfitAtBRT: BigDecimal,
+                        payPensionsProfitAtHRT: BigDecimal,
+                        incomeTaxOnPayPensionsProfitAtHRT: BigDecimal,
+                        payPensionsProfitAtART: BigDecimal,
+                        incomeTaxOnPayPensionsProfitAtART: BigDecimal,
+                        incomeTaxDue: BigDecimal,
+                        nicTotal: BigDecimal,
+                        rateBRT: BigDecimal,
+                        rateHRT: BigDecimal,
+                        rateART: BigDecimal): JsValue ={
+      Json.parse(s"""
+        |{
+        | "incomeTaxYTD": "$incomeTaxYTD",
+        | "incomeTaxThisPeriod": "$incomeTaxThisPeriod",
+        | "profitFromSelfEmployment": "$profitFromSelfEmployment",
+        | "profitFromUkLandAndProperty": "$profitFromUkLandAndProperty",
+        | "totalIncomeReceived": "$totalIncomeReceived",
+        | "personalAllowance": "$personalAllowance",
+        | "totalIncomeOnWhichTaxIsDue": "$totalIncomeOnWhichTaxIsDue",
+        | "payPensionsProfitAtBRT": "$payPensionsProfitAtBRT",
+        | "incomeTaxOnPayPensionsProfitAtBRT": "$incomeTaxOnPayPensionsProfitAtBRT",
+        | "payPensionsProfitAtHRT": "$payPensionsProfitAtHRT",
+        | "incomeTaxOnPayPensionsProfitAtHRT": "$incomeTaxOnPayPensionsProfitAtHRT",
+        | "payPensionsProfitAtART": "$payPensionsProfitAtART",
+        | "incomeTaxOnPayPensionsProfitAtART": "$incomeTaxOnPayPensionsProfitAtART",
+        | "incomeTaxDue": "$incomeTaxDue",
+        | "nicTotal": "$nicTotal",
+        | "rateBRT": "$rateBRT",
+        | "rateHRT": "$rateHRT",
+        | "rateART": "$rateART"
+        |}
+        """.stripMargin)
+    }
+
+    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = Some(90500),
+      incomeTaxThisPeriod = Some(2000),
+      profitFromSelfEmployment = Some(200000),
+      profitFromUkLandAndProperty = Some(10000),
+      totalIncomeReceived = Some(230000),
+      personalAllowance = Some(11500),
+      totalIncomeOnWhichTaxIsDue = Some(198500),
+      payPensionsProfitAtBRT = Some(20000),
+      incomeTaxOnPayPensionsProfitAtBRT = Some(4000),
+      payPensionsProfitAtHRT = Some(100000),
+      incomeTaxOnPayPensionsProfitAtHRT = Some(40000),
+      payPensionsProfitAtART = Some(50000),
+      incomeTaxOnPayPensionsProfitAtART = Some(22500),
+      incomeTaxDue = Some(66500),
+      nicTotal = Some(24000),
+      rateBRT = Some(20),
+      rateHRT = Some(40),
+      rateART = Some(45)
+    )
+
+  }
+
   object GetBusinessDetails {
     def successResponse(selfEmploymentId: String): JsValue =
       Json.parse(
@@ -86,6 +151,13 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
                     |   "reason":"$reason"
                     |}
       """.stripMargin)
+  }
+
+  object GetPropertyDetails {
+    def successResponse(): JsValue =
+      Json.parse(
+        s"""{}"""
+      )
   }
 
   object GetObligationsData {

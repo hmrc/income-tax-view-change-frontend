@@ -18,10 +18,11 @@ package controllers
 import helpers.ComponentSpecBase
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub}
-import models.LastTaxCalculation
+import models.{LastTaxCalculation, CalculationDataModel}
 import play.api.http.Status._
+import play.api.Logger
 
-class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
+class FinancialDataControllerISpec extends ComponentSpecBase {
 
   "Calling the FinancialDataController.getEstimatedTaxLiability(year)" when {
 
@@ -33,17 +34,32 @@ class EstimatedTaxLiabilityControllerISpec extends ComponentSpecBase {
         AuthStub.stubAuthorised()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val calculationResponse = LastTaxCalculation("01234567", "2017-07-06T12:34:56.789Z", 1800.00)
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, calculationResponse)
+        val lastTaxCalcResponse = LastTaxCalculation("01234567", "2017-07-06T12:34:56.789Z", 1800.00)
+        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+
+        And("I wiremock stub a successful Get CalculationData response")
+        val calc = GetCalculationData.calculationDataSuccessModel
+        val calculationResponse = CalculationDataModel(calc.incomeTaxYTD, calc.incomeTaxThisPeriod, calc.profitFromSelfEmployment, calc.profitFromUkLandAndProperty,
+          calc.totalIncomeReceived, calc.personalAllowance, calc.totalIncomeOnWhichTaxIsDue, calc.payPensionsProfitAtBRT, calc.incomeTaxOnPayPensionsProfitAtBRT,
+          calc.payPensionsProfitAtHRT, calc.incomeTaxOnPayPensionsProfitAtHRT, calc.payPensionsProfitAtART, calc.incomeTaxOnPayPensionsProfitAtART, calc.incomeTaxDue,
+          calc.nicTotal,calc.rateBRT,calc.rateHRT,calc.rateART)
+
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, "01234567", calculationResponse)
 
         And("I wiremock stub a successful Business Details response")
         SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+        And("I wiremock stub a successful Property Details response")
+        SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
         When(s"I call GET /check-your-income-tax-and-expenses/estimated-tax-liability/$testYear")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         And("I verify the Business Details response has been wiremocked")
         SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+        And("I verify the Property Details response has been wiremocked")
+        SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
