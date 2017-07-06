@@ -29,6 +29,7 @@ import assets.TestConstants._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
 import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.CalcBreakdown._
 import auth.MtdItUser
 import models.IncomeSourcesModel
 
@@ -36,15 +37,14 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
   lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
 
-  val testAmount: BigDecimal = 543.21
-  val testAmountOutput: String = "£543.21"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
   val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), Some(propertyIncomeModel))
   val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), None)
   val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(None, Some(propertyIncomeModel))
 
   lazy val page = views.html.estimatedTaxLiability(
-    CalcBreakdown.calculationDisplaySuccessModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+    CalcBreakdown.calculationDisplaySuccessModel(busPropJustBRTCalcDataModel),
+    testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
 
   lazy val document = Jsoup.parse(contentAsString(page))
   "The EstimatedTaxLiability view" should {
@@ -69,8 +69,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         estimateSection.getElementById("p1").text() shouldBe messages.EstimateTax.p1
       }
 
-      s"has the correct Estimated Tax Amount of '$testAmount'" in {
-        estimateSection.getElementById("in-year-estimate").text shouldBe testAmountOutput
+      s"has the correct Estimated Tax Amount of '${busPropJustBRTCalcDataModel.incomeTaxYTD}'" in {
+        estimateSection.getElementById("in-year-estimate").text shouldBe "£" + busPropJustBRTCalcDataModel.incomeTaxYTD
       }
 
       s"has a payment paragraph with '${messages.EstimateTax.payment}'" in {
@@ -90,17 +90,16 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       }
       "when the user only has businesses registered" should {
         lazy val page = views.html.estimatedTaxLiability(
-          CalcBreakdown.calculationDisplaySuccessModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testBusinessIncomeSource)
+          CalcBreakdown.calculationDisplaySuccessModel(justBusinessCalcDataModel),
+          testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testBusinessIncomeSource)
         lazy val document = Jsoup.parse(contentAsString(page))
-        "display the business profit section" in {
-          document.getElementById("business-profit-section")
-          "" in {
 
-          }
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
 
         "not display the property profit section" in {
-
+          document.getElementById("property-profit-section") shouldBe null
         }
       }
       "when the user only has properties registered" should {
