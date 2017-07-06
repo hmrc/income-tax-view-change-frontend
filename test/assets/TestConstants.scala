@@ -232,6 +232,9 @@ object TestConstants extends ImplicitDateFormatter {
   }
 
   object CalcBreakdown {
+
+
+
     val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = 90500.00,
       incomeTaxThisPeriod = 2000.00,
       profitFromSelfEmployment = 200000.00,
@@ -508,5 +511,18 @@ object TestConstants extends ImplicitDateFormatter {
       calcAmount = Estimates.lastTaxCalcSuccess.calcAmount,
       calcDataModel = None
     )
+    val calculationDisplaySuccessModel =
+      CalcDisplayModel(
+        Estimates.lastTaxCalcSuccess.calcTimestamp,
+        Estimates.lastTaxCalcSuccess.calcAmount,
+        Some(calculationDataSuccessModel)
+      )
+
+    val calculationDisplayNoBreakdownModel =
+      CalcDisplayModel(
+        Estimates.lastTaxCalcSuccess.calcTimestamp,
+        Estimates.lastTaxCalcSuccess.calcAmount,
+        None
+      )
   }
 }
