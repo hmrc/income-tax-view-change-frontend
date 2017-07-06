@@ -309,7 +309,7 @@ object TestConstants extends ImplicitDateFormatter {
         incomeTaxDue = 2072.05
       )
 
-    val busPropJustBRTCalcDataModel =
+    val busPropBRTCalcDataModel =
       CalculationDataModel(
         profitFromSelfEmployment = 1500.00,
         profitFromUkLandAndProperty = 1500.00,
