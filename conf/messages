@@ -9,6 +9,7 @@ estimated_tax_liability.title                                   = 2017/18 - Busi
 estimated_tax_liability.heading                                 = Your current tax estimate
 estimated_tax_liability.tax-year                                = {0} to {1} tax year
 estimated_tax_liability.estimated-tax.p1                        = We''ve calculated this estimate using the figures and dates you''ve reported in your accounting software. The amount includes both your Income Tax and National Insurance.
+estimated_tax_liability.estimated-tax.changes                   = Your estimate could change if you have any income or expenses that you''ve not reported through your software.
 estimated_tax_liability.estimated-tax.payment                   = You must pay any tax you owe for the whole tax year by
 estimated_tax_liability.calc-breakdown.link                     = View your estimate breakdown
 estimated_tax_liability.calc-breakdown.business-profit          = Business profit

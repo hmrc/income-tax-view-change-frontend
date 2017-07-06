@@ -77,6 +77,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         estimateSection.getElementById("in-year-estimate-date").html() shouldBe messages.EstimateTax.calcDate("6 July 2017")
       }
 
+      s"has a paragraph to warn them that their estimate might change" in {
+        estimateSection.getElementById("changes").text shouldBe messages.EstimateTax.changes
+      }
+
       s"has a calculation date of the 6 July 2017" in {
         estimateSection.getElementById("calc-date").text shouldBe "6 July 2017"
       }
