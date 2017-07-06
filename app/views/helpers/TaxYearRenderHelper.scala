@@ -16,12 +16,13 @@
 
 package views.helpers
 
+import play.api.i18n.{Messages, MessagesApi}
 import utils.ImplicitDateFormatter._
 
 object TaxYearRenderHelper {
 
-  def renderTaxYear(taxYear: Int): String = {
-    s"${taxYear - 1}/${taxYear.toString.substring(2,4)}"
+  def renderTaxYear(taxYear: Int)(implicit messages: Messages): String = {
+    messages("estimated_tax_liability.tax-year", s"${taxYear - 1}", s"$taxYear")
   }
 
   def renderPaymentDueDate(taxYear: Int): String = {
