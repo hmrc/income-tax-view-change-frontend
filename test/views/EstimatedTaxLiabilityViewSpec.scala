@@ -94,7 +94,9 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         lazy val document = Jsoup.parse(contentAsString(page))
         "display the business profit section" in {
           document.getElementById("business-profit-section")
+          "" in {
 
+          }
         }
 
         "not display the property profit section" in {
