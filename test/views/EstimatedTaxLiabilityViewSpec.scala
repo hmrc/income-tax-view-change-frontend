@@ -40,12 +40,13 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
   val testAmountOutput: String = "£543.21"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
   val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), Some(propertyIncomeModel))
+  val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), None)
+  val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(None, Some(propertyIncomeModel))
 
   lazy val page = views.html.estimatedTaxLiability(
     CalcBreakdown.calculationDisplaySuccessModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
 
   lazy val document = Jsoup.parse(contentAsString(page))
-
   "The EstimatedTaxLiability view" should {
 
     s"have the title '${messages.title}'" in {
@@ -80,12 +81,33 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
     "have a Calculation Breakdown section" which {
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-          CalcBreakdown.calculationDisplaySuccessModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
-        lazy val noBreakdownDocument = Jsoup.parse(contentAsString(page))
+          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+        lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
 
-//        "not display a section" in {
-//          document.getElementById("calc-breakdown-inner-link") shouldBe null
-//        }
+        "not display a breakdown section" in {
+          noBreakdownDocument.getElementById("calc-breakdown-inner-link") shouldBe null
+        }
+      }
+      "when the user only has businesses registered" should {
+        lazy val page = views.html.estimatedTaxLiability(
+          CalcBreakdown.calculationDisplaySuccessModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testBusinessIncomeSource)
+        lazy val document = Jsoup.parse(contentAsString(page))
+        "display the business profit section" in {
+          document.getElementById("business-profit-section")
+
+        }
+
+        "not display the property profit section" in {
+
+        }
+      }
+      "when the user only has properties registered" should {
+        "display the property profit section" in {
+
+        }
+        "not display the business profit section" in {
+
+        }
       }
     }
 

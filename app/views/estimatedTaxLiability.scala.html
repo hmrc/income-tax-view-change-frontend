@@ -68,11 +68,15 @@
 
         <p id="p1" class="panel-indent">@messages("estimated_tax_liability.estimated-tax.p1")</p>
 
-        <p><span class="bold-medium" id="in-year-estimate">@calcModel.calcAmount.toCurrency</span></p>
+        <p><span class="bold-medium" id="in-year-estimate">
+            @if(calcModel.breakdownNonEmpty) { @calcModel.calcDataModel.get.incomeTaxYTD.toCurrency} else {@calcModel.calcAmount.toCurrency}
+        </span></p>
 
         <p id="payment">
             @messages(s"estimated_tax_liability.estimated-tax.payment")
-            <span id="pyt-due-date">@renderPaymentDueDate(taxYear)</span>.
+            <span id="pyt-due-date">
+                @renderPaymentDueDate(taxYear)
+            </span>
         </p>
 
         @if(calcModel.breakdownNonEmpty){
