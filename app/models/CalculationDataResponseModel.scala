@@ -22,19 +22,42 @@ sealed trait CalculationDataResponseModel
 
 case class CalcDisplayModel(calcTimestamp: String,
                             calcAmount: BigDecimal,
-                            calcDataModel: Option[CalculationDataModel])
+                            calcDataModel: Option[CalculationDataModel]){
+  val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
+
+  val hasBRTSection: Boolean = {
+    if (calcDataModel.nonEmpty)
+      calcDataModel.get.payPensionsProfitAtBRT > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtBRT > 0
+    else false
+  }
+  val hasHRTSection: Boolean = {
+    if (calcDataModel.nonEmpty)
+      calcDataModel.get.payPensionsProfitAtHRT > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtHRT > 0
+    else false
+  }
+  val hasARTSection: Boolean = {
+    if (calcDataModel.nonEmpty)
+      calcDataModel.get.payPensionsProfitAtART > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtART > 0
+    else false
+  }
+  val hasNISection: Boolean = {
+    if(calcDataModel.nonEmpty)
+      calcDataModel.get.nicTotal > 0
+    else false
+  }
+}
 
 case class CalculationDataModel(
-                                 incomeTaxYTD: Option[BigDecimal],
-                                 incomeTaxThisPeriod: Option[BigDecimal],
+                                 incomeTaxYTD: BigDecimal,
+                                 incomeTaxThisPeriod: BigDecimal,
 //                                 payFromAllEmployments: Option[BigDecimal] = None,
 //                                 benefitsAndExpensesReceived: Option[BigDecimal] = None,
 //                                 allowableExpenses: Option[BigDecimal] = None,
 //                                 payFromAllEmploymentsAfterExpenses: Option[BigDecimal] = None,
 //                                 shareSchemes: Option[BigDecimal] = None,
-                                 profitFromSelfEmployment: Option[BigDecimal],
+                                 profitFromSelfEmployment: BigDecimal,
 //                                 profitFromPartnerships: Option[BigDecimal] = None,
-                                 profitFromUkLandAndProperty: Option[BigDecimal],
+                                 profitFromUkLandAndProperty: BigDecimal,
 //                                 dividendsFromForeignCompanies: Option[BigDecimal] = None,
 //                                 foreignIncome: Option[BigDecimal] = None,
 //                                 trustsAndEstates: Option[BigDecimal] = None,
@@ -43,29 +66,29 @@ case class CalculationDataModel(
 //                                 ukPensionsAndStateBenefits: Option[BigDecimal] = None,
 //                                 gainsOnLifeInsurance: Option[BigDecimal] = None,
 //                                 otherIncome: Option[BigDecimal] = None,
-                                 totalIncomeReceived: Option[BigDecimal],
+                                 totalIncomeReceived: BigDecimal,
 //                                 paymentsIntoARetirementAnnuity: Option[BigDecimal] = None,
 //                                 foreignTaxOnEstates: Option[BigDecimal] = None,
 //                                 incomeTaxRelief: Option[BigDecimal] = None,
 //                                 incomeTaxReliefReducedToMaximumAllowable: Option[BigDecimal] = None,
 //                                 annuities: Option[BigDecimal] = None,
 //                                 giftOfInvestmentsAndPropertyToCharity: Option[BigDecimal] = None,
-                                 personalAllowance: Option[BigDecimal],
+                                 personalAllowance: BigDecimal,
 //                                 marriageAllowanceTransfer: Option[BigDecimal] = None,
 //                                 blindPersonAllowance: Option[BigDecimal] = None,
 //                                 blindPersonSurplusAllowanceFromSpouse: Option[BigDecimal] = None,
 //                                 incomeExcluded: Option[BigDecimal] = None,
 //                                 totalIncomeAllowancesUsed: Option[BigDecimal] = None,
-                                 totalIncomeOnWhichTaxIsDue: Option[BigDecimal],
+                                 totalIncomeOnWhichTaxIsDue: BigDecimal,
 //                                 payPensionsExtender: Option[BigDecimal] = None,
 //                                 giftExtender: Option[BigDecimal] = None,
 //                                 extendedBR: Option[BigDecimal] = None,
-                                 payPensionsProfitAtBRT: Option[BigDecimal],
-                                 incomeTaxOnPayPensionsProfitAtBRT: Option[BigDecimal],
-                                 payPensionsProfitAtHRT: Option[BigDecimal],
-                                 incomeTaxOnPayPensionsProfitAtHRT: Option[BigDecimal],
-                                 payPensionsProfitAtART: Option[BigDecimal],
-                                 incomeTaxOnPayPensionsProfitAtART: Option[BigDecimal],
+                                 payPensionsProfitAtBRT: BigDecimal,
+                                 incomeTaxOnPayPensionsProfitAtBRT: BigDecimal,
+                                 payPensionsProfitAtHRT: BigDecimal,
+                                 incomeTaxOnPayPensionsProfitAtHRT: BigDecimal,
+                                 payPensionsProfitAtART: BigDecimal,
+                                 incomeTaxOnPayPensionsProfitAtART: BigDecimal,
 //                                 netPropertyFinanceCosts: Option[BigDecimal] = None,
 //                                 interestReceivedAtStartingRate: Option[BigDecimal] = None,
 //                                 incomeTaxOnInterestReceivedAtStartingRate: Option[BigDecimal] = None,
@@ -87,7 +110,7 @@ case class CalculationDataModel(
 //                                 incomeTaxOnDividendsAtART: Option[BigDecimal] = None,
 //                                 totalIncomeOnWhichTaxHasBeenCharged: Option[BigDecimal] = None,
 //                                 taxOnOtherIncome: Option[BigDecimal] = None,
-                                 incomeTaxDue: Option[BigDecimal],
+                                 incomeTaxDue: BigDecimal,
 //                                 incomeTaxCharged: Option[BigDecimal] = None,
 //                                 deficiencyRelief: Option[BigDecimal] = None,
 //                                 topSlicingRelief: Option[BigDecimal] = None,
@@ -123,7 +146,7 @@ case class CalculationDataModel(
 //                                 totalClass4Charge: Option[BigDecimal] = None,
 //                                 nationalInsuranceClass1Amount: Option[BigDecimal] = None,
 //                                 nationalInsuranceClass2Amount: Option[BigDecimal] = None,
-                                 nicTotal: Option[BigDecimal],
+                                 nicTotal: BigDecimal,
 //                                 underpaidTaxForPreviousYears: Option[BigDecimal] = None,
 //                                 studentLoanRepayments: Option[BigDecimal] = None,
 //                                 pensionChargesGross: Option[BigDecimal] = None,
@@ -175,9 +198,9 @@ case class CalculationDataModel(
 //                                 allowance: Option[BigDecimal] = None,
 //                                 limitBRT: Option[BigDecimal] = None,
 //                                 limitHRT: Option[BigDecimal] = None,
-                                 rateBRT: Option[BigDecimal],
-                                 rateHRT: Option[BigDecimal],
-                                 rateART: Option[BigDecimal]
+                                 rateBRT: BigDecimal,
+                                 rateHRT: BigDecimal,
+                                 rateART: BigDecimal
 //                                 limitAIA: Option[BigDecimal] = None,
 //                                 allowanceBRT: Option[BigDecimal] = None,
 //                                 interestAllowanceHRT: Option[BigDecimal] = None,
