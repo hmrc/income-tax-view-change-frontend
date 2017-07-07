@@ -56,7 +56,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            pageTitle("Your Income Tax reports"),
+            pageTitle("Your report deadlines"),
 
             //Check one obligation section is returned
             nElementsWithClass("obligation")(1),
@@ -96,7 +96,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            pageTitle("Your Income Tax reports"),
+            pageTitle("Your report deadlines"),
 
             //Check three Obligation sections are returned
             nElementsWithClass("obligation")(3),
@@ -139,7 +139,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            pageTitle("Your Income Tax reports"),
+            pageTitle("Your report deadlines"),
 
             //Check one obligation section is returned
             nElementsWithClass("obligation")(1),
@@ -173,7 +173,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            pageTitle("Your Income Tax reports"),
+            pageTitle("Your report deadlines"),
 
             //Check two obligation sections are returned
             nElementsWithClass("obligation")(2),
