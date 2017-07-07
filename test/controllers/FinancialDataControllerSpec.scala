@@ -37,7 +37,7 @@ class FinancialDataControllerSpec extends TestSupport
 
   // Last Calculation Service mocks
   def mockFinancialDataSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(calculationDisplaySuccessModel(calculationDataSuccessModel)))
-  def mockFinancialDataNoBreakdown(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(calculationDisplaySuccessModel(calculationDataSuccessModel)))
+  def mockFinancialDataNoBreakdown(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(calculationDisplayNoBreakdownModel))
   def mockFinancialDataError(): Unit = setupMockGetFinancialData(testNino, testYear)(None)
 
   class setupTestController(authentication: AuthenticationPredicate, incomeSources: IncomeSourceDetailsPredicate)
@@ -109,7 +109,7 @@ class FinancialDataControllerSpec extends TestSupport
         lazy val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
-          mockFinancialDataError()
+          mockFinancialDataNoBreakdown()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
