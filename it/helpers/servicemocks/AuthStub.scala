@@ -42,7 +42,7 @@ object AuthStub {
   }
 
   def stubUnauthorised():Unit = {
-    WiremockHelper.stubPost(postAuthoriseUrl, Status.OK, "{}")
+    WiremockHelper.stubPost(postAuthoriseUrl, Status.UNAUTHORIZED, "{}")
   }
 
   def stubInsufficientEnrolments():Unit = {
