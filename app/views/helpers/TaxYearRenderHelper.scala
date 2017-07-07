@@ -25,6 +25,10 @@ object TaxYearRenderHelper {
     messages("estimated_tax_liability.tax-year", s"${taxYear - 1}", s"$taxYear")
   }
 
+  def renderTitle(taxYear: Int)(implicit messages: Messages): String = {
+    messages("estimated_tax_liability.title", s"${taxYear - 1}", s"$taxYear")
+  }
+
   def renderPaymentDueDate(taxYear: Int): String = {
     s"${taxYear + 1}-01-31".toLocalDate.toLongDate
   }
