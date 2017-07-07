@@ -71,10 +71,13 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
 
           //Check the Page Title
-          pageTitle("2017/18 - Business Tax Account"),
+          pageTitle("2017 to 2018 tax year Your current tax estimate"),
 
           //Check the estimated tax amount is correct
-          elementTextByID("in-year-estimate")("£90,500")
+          elementTextByID("in-year-estimate")("£90,500"),
+
+          //Check the Estimated Calculation Date is correct
+          elementTextByID("in-year-estimate-date")("Estimate up to your 6 July 2017 submission")
         )
       }
     }
