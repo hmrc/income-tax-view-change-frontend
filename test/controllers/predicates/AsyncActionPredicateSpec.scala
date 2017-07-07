@@ -106,5 +106,25 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
+
+    "When an exception which is not an authorisation exception" should {
+
+      def setupFailedFutureResult(): Action[AnyContent] =
+        new AsyncActionPredicate()(
+          fakeApplication.injector.instanceOf[MessagesApi],
+          fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
+          MockAuthenticated,
+          BusinessIncome
+        ).async {
+          implicit request => implicit user => implicit sources =>
+            Future.failed(new Exception("Unexpected Error"))
+        }
+
+      lazy val result = setupFailedFutureResult()(fakeRequestWithActiveSession)
+
+      "render an ISE (500)" in {
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
   }
 }
