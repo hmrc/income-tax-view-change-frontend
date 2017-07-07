@@ -19,7 +19,7 @@ package assets
 import auth.MtdItUser
 import models._
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter
 
 object TestConstants extends ImplicitDateFormatter {
@@ -233,8 +233,6 @@ object TestConstants extends ImplicitDateFormatter {
 
   object CalcBreakdown {
 
-
-
     val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = 90500.00,
       incomeTaxThisPeriod = 2000.00,
       profitFromSelfEmployment = 200000.00,
@@ -255,8 +253,203 @@ object TestConstants extends ImplicitDateFormatter {
       rateART = 45.00
     )
 
+    val noTaxOrNICalcDataModel=
+      CalculationDataModel(
+        profitFromSelfEmployment = 500.00,
+        profitFromUkLandAndProperty = 500.00,
+        personalAllowance = 2868.00,
+        totalIncomeOnWhichTaxIsDue = 0,
 
-    val calculationDataSuccessString =
+        payPensionsProfitAtBRT = 0.00,
+        rateBRT = 20.00,
+        incomeTaxOnPayPensionsProfitAtBRT = 0.00,
+
+        payPensionsProfitAtHRT = 0.00,
+        rateHRT = 40.00,
+        incomeTaxOnPayPensionsProfitAtHRT = 0,
+
+        payPensionsProfitAtART = 0,
+        rateART = 45.00,
+        incomeTaxOnPayPensionsProfitAtART = 0,
+
+        nicTotal = 0,
+        incomeTaxYTD = 0,
+
+        //Don't need these
+        incomeTaxThisPeriod = 2000.00,
+        totalIncomeReceived = 9000.00,
+        incomeTaxDue = 2072.05
+      )
+
+    val noTaxJustNICalcDataModel =
+      CalculationDataModel(
+        profitFromSelfEmployment = 1506.25,
+        profitFromUkLandAndProperty = 0,
+        personalAllowance = 2868.00,
+        totalIncomeOnWhichTaxIsDue = 0,
+
+        payPensionsProfitAtBRT = 0.00,
+        rateBRT = 20.00,
+        incomeTaxOnPayPensionsProfitAtBRT = 0.00,
+
+        payPensionsProfitAtHRT = 0.00,
+        rateHRT = 40.00,
+        incomeTaxOnPayPensionsProfitAtHRT = 0,
+
+        payPensionsProfitAtART = 0,
+        rateART = 45.00,
+        incomeTaxOnPayPensionsProfitAtART = 0,
+
+        nicTotal = 37.05,
+        incomeTaxYTD = 37.05,
+
+        //Don't need these
+        incomeTaxThisPeriod = 2000.00,
+        totalIncomeReceived = 9000.00,
+        incomeTaxDue = 2072.05
+      )
+
+    val busPropBRTCalcDataModel =
+      CalculationDataModel(
+        profitFromSelfEmployment = 1500.00,
+        profitFromUkLandAndProperty = 1500.00,
+        personalAllowance = 2868.00,
+        totalIncomeOnWhichTaxIsDue = 132.00,
+
+        payPensionsProfitAtBRT = 132.00,
+        rateBRT = 20.00,
+        incomeTaxOnPayPensionsProfitAtBRT = 26.00,
+
+        payPensionsProfitAtHRT = 0,
+        rateHRT = 40.00,
+        incomeTaxOnPayPensionsProfitAtHRT = 0,
+
+        payPensionsProfitAtART = 0,
+        rateART = 45.00,
+        incomeTaxOnPayPensionsProfitAtART = 0,
+
+        nicTotal = 123.86,
+        incomeTaxYTD = 149.86,
+
+        //Don't need these
+        incomeTaxThisPeriod = 2000.00,
+        totalIncomeReceived = 9000.00,
+        incomeTaxDue = 2072.05
+      )
+
+    val busBropHRTCalcDataModel =
+      CalculationDataModel(
+        profitFromSelfEmployment = 30000.00,
+        profitFromUkLandAndProperty = 7875.00,
+        personalAllowance = 2868.00,
+        totalIncomeOnWhichTaxIsDue = 35007.00,
+
+        payPensionsProfitAtBRT = 8352.00,
+        rateBRT = 20.00,
+        incomeTaxOnPayPensionsProfitAtBRT = 1670.00,
+
+        payPensionsProfitAtHRT = 26654.00,
+        rateHRT = 40.00,
+        incomeTaxOnPayPensionsProfitAtHRT = 10661.00,
+
+        payPensionsProfitAtART = 0,
+        rateART = 45.00,
+        incomeTaxOnPayPensionsProfitAtART = 0,
+
+        nicTotal = 1396.71,
+        incomeTaxYTD = 13727.71,
+
+        //Don't need these
+        incomeTaxThisPeriod = 2000.00,
+        totalIncomeReceived = 9000.00,
+        incomeTaxDue = 2072.05
+      )
+
+    val busPropARTCalcDataModel =
+      CalculationDataModel(
+        profitFromSelfEmployment = 875.00,
+        profitFromUkLandAndProperty = 40000.00,
+        personalAllowance = 2868.00,
+        totalIncomeOnWhichTaxIsDue = 38007.00,
+
+        payPensionsProfitAtBRT = 8352.00,
+        rateBRT = 20.00,
+        incomeTaxOnPayPensionsProfitAtBRT = 1670.00,
+
+        payPensionsProfitAtHRT = 29044.00,
+        rateHRT = 40.00,
+        incomeTaxOnPayPensionsProfitAtHRT = 11617.00,
+
+        payPensionsProfitAtART = 609.00,
+        rateART = 45.00,
+        incomeTaxOnPayPensionsProfitAtART = 274.00,
+
+        nicTotal = 1456.71,
+        incomeTaxYTD = 15017.71,
+
+        //Don't need these
+        incomeTaxThisPeriod = 2000.00,
+        totalIncomeReceived = 9000.00,
+        incomeTaxDue = 2072.05
+      )
+
+    val justBusinessCalcDataModel =
+      CalculationDataModel(
+        profitFromSelfEmployment = 3000.00,
+        profitFromUkLandAndProperty = 0,
+        personalAllowance = 2868.00,
+        totalIncomeOnWhichTaxIsDue = 132.00,
+
+        payPensionsProfitAtBRT = 132.00,
+        rateBRT = 20.00,
+        incomeTaxOnPayPensionsProfitAtBRT = 26.00,
+
+        payPensionsProfitAtHRT = 0,
+        rateHRT = 40.00,
+        incomeTaxOnPayPensionsProfitAtHRT = 0,
+
+        payPensionsProfitAtART = 0,
+        rateART = 45.00,
+        incomeTaxOnPayPensionsProfitAtART = 0,
+
+        nicTotal = 123.86,
+        incomeTaxYTD = 149.86,
+
+        //Don't need these
+        incomeTaxThisPeriod = 2000.00,
+        totalIncomeReceived = 9000.00,
+        incomeTaxDue = 2072.05
+      )
+
+    val justPropertyCalcDataModel: CalculationDataModel =
+      CalculationDataModel(
+        profitFromSelfEmployment = 0,
+        profitFromUkLandAndProperty = 3000.00,
+        personalAllowance = 2868.00,
+        totalIncomeOnWhichTaxIsDue = 132.00,
+
+        payPensionsProfitAtBRT = 132.00,
+        rateBRT = 20.00,
+        incomeTaxOnPayPensionsProfitAtBRT = 26.00,
+
+        payPensionsProfitAtHRT = 0,
+        rateHRT = 40.00,
+        incomeTaxOnPayPensionsProfitAtHRT = 0,
+
+        payPensionsProfitAtART = 0,
+        rateART = 45.00,
+        incomeTaxOnPayPensionsProfitAtART = 0,
+
+        nicTotal = 123.86,
+        incomeTaxYTD = 149.86,
+
+        //Don't need these
+        incomeTaxThisPeriod = 2000.00,
+        totalIncomeReceived = 9000.00,
+        incomeTaxDue = 2072.05
+      )
+
+    val calculationDataSuccessString: String =
       """
         |{
         | "incomeTaxYTD": 90500,
@@ -500,22 +693,23 @@ object TestConstants extends ImplicitDateFormatter {
        """.stripMargin
     val calculationDataErrorJson = Json.parse(calculationDataErrorString)
 
-    val financialDataSuccessModel = CalcDisplayModel(
-      calcTimestamp = Estimates.lastTaxCalcSuccess.calcTimestamp,
-      calcAmount = Estimates.lastTaxCalcSuccess.calcAmount,
-      calcDataModel = Some(calculationDataSuccessModel)
-    )
+//    val financialDataSuccessModel: CalculationDataModel => CalcDisplayModel = calcModel => CalcDisplayModel(
+//      calcTimestamp = Estimates.lastTaxCalcSuccess.calcTimestamp,
+//      calcAmount = Estimates.lastTaxCalcSuccess.calcAmount,
+//      calcDataModel = Some(calcModel)
+//    )
+//
+//    val financialDataNoBreakdownModel = CalcDisplayModel(
+//      calcTimestamp = Estimates.lastTaxCalcSuccess.calcTimestamp,
+//      calcAmount = Estimates.lastTaxCalcSuccess.calcAmount,
+//      calcDataModel = None
+//    )
 
-    val financialDataNoBreakdownModel = CalcDisplayModel(
-      calcTimestamp = Estimates.lastTaxCalcSuccess.calcTimestamp,
-      calcAmount = Estimates.lastTaxCalcSuccess.calcAmount,
-      calcDataModel = None
-    )
-    val calculationDisplaySuccessModel =
+    val calculationDisplaySuccessModel: CalculationDataModel => CalcDisplayModel = calcModel =>
       CalcDisplayModel(
         Estimates.lastTaxCalcSuccess.calcTimestamp,
         Estimates.lastTaxCalcSuccess.calcAmount,
-        Some(calculationDataSuccessModel)
+        Some(calcModel)
       )
 
     val calculationDisplayNoBreakdownModel =
