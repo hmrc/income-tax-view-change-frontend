@@ -18,7 +18,7 @@ package helpers
 
 import java.time.LocalDate
 
-import models.{CalculationDataModel, ObligationModel, ObligationsModel}
+import models.{CalculationDataErrorModel, CalculationDataModel, ObligationModel, ObligationsModel}
 import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter
 
@@ -102,24 +102,38 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         """.stripMargin)
     }
 
-    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = Some(90500),
-      incomeTaxThisPeriod = Some(2000),
-      profitFromSelfEmployment = Some(200000),
-      profitFromUkLandAndProperty = Some(10000),
-      totalIncomeReceived = Some(230000),
-      personalAllowance = Some(11500),
-      totalIncomeOnWhichTaxIsDue = Some(198500),
-      payPensionsProfitAtBRT = Some(20000),
-      incomeTaxOnPayPensionsProfitAtBRT = Some(4000),
-      payPensionsProfitAtHRT = Some(100000),
-      incomeTaxOnPayPensionsProfitAtHRT = Some(40000),
-      payPensionsProfitAtART = Some(50000),
-      incomeTaxOnPayPensionsProfitAtART = Some(22500),
-      incomeTaxDue = Some(66500),
-      nicTotal = Some(24000),
-      rateBRT = Some(20),
-      rateHRT = Some(40),
-      rateART = Some(45)
+    def errorResponse(code: Int, message: String): JsValue ={
+      Json.parse(
+        s"""
+           |{
+           | "code": "$code",
+           | "message": "$message"
+           |}
+         """.stripMargin)
+    }
+
+    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = 90500,
+      incomeTaxThisPeriod = 2000,
+      profitFromSelfEmployment = 200000,
+      profitFromUkLandAndProperty = 10000,
+      totalIncomeReceived = 230000,
+      personalAllowance = 11500,
+      totalIncomeOnWhichTaxIsDue = 198500,
+      payPensionsProfitAtBRT = 20000,
+      incomeTaxOnPayPensionsProfitAtBRT = 4000,
+      payPensionsProfitAtHRT = 100000,
+      incomeTaxOnPayPensionsProfitAtHRT = 40000,
+      payPensionsProfitAtART = 50000,
+      incomeTaxOnPayPensionsProfitAtART = 22500,
+      incomeTaxDue = 66500,
+      nicTotal = 24000,
+      rateBRT = 20,
+      rateHRT = 40,
+      rateART = 45
+    )
+
+    val calculationDataErrorModel = CalculationDataErrorModel(
+      code = 500, message = "Calculation Error Model Response"
     )
 
   }

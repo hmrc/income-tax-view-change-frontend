@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import helpers.{IntegrationTestConstants, WiremockHelper}
-import models.{CalculationDataModel, LastTaxCalculation}
+import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
 import play.api.http.Status
 import play.api.i18n.I18nSupport
 
@@ -47,26 +47,31 @@ object IncomeTaxViewChangeStub {
     val financialDataResponse =
       IntegrationTestConstants
         .GetCalculationData.successResponse(
-        calc.incomeTaxYTD.get,
-        calc.incomeTaxThisPeriod.get,
-        calc.profitFromSelfEmployment.get,
-        calc.profitFromUkLandAndProperty.get,
-        calc.totalIncomeReceived.get,
-        calc.personalAllowance.get,
-        calc.totalIncomeOnWhichTaxIsDue.get,
-        calc.payPensionsProfitAtBRT.get,
-        calc.incomeTaxOnPayPensionsProfitAtBRT.get,
-        calc.payPensionsProfitAtHRT.get,
-        calc.incomeTaxOnPayPensionsProfitAtHRT.get,
-        calc.payPensionsProfitAtART.get,
-        calc.incomeTaxOnPayPensionsProfitAtART.get,
-        calc.incomeTaxDue.get,
-        calc.nicTotal.get,
-        calc.rateBRT.get,
-        calc.rateHRT.get,
-        calc.rateART.get)
+        calc.incomeTaxYTD,
+        calc.incomeTaxThisPeriod,
+        calc.profitFromSelfEmployment,
+        calc.profitFromUkLandAndProperty,
+        calc.totalIncomeReceived,
+        calc.personalAllowance,
+        calc.totalIncomeOnWhichTaxIsDue,
+        calc.payPensionsProfitAtBRT,
+        calc.incomeTaxOnPayPensionsProfitAtBRT,
+        calc.payPensionsProfitAtHRT,
+        calc.incomeTaxOnPayPensionsProfitAtHRT,
+        calc.payPensionsProfitAtART,
+        calc.incomeTaxOnPayPensionsProfitAtART,
+        calc.incomeTaxDue,
+        calc.nicTotal,
+        calc.rateBRT,
+        calc.rateHRT,
+        calc.rateART)
         .toString()
     WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, financialDataResponse)
+  }
+
+  def stubGetCalcError(nino: String, year: String, error: CalculationDataErrorModel) = {
+    val errorResponse = IntegrationTestConstants.GetCalculationData.errorResponse(500, "Calculation Error Model Response").toString()
+    WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, errorResponse)
   }
 
   def verifyGetCalcData(nino: String, taxCalculationId: String): Unit =
