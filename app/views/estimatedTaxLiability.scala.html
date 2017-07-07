@@ -118,8 +118,9 @@
                         <tr id="brt-section" class="no-border-bottom">
                             <td>
                                 <p>
-                                    <span id="brt-it-calc">@breakdown.payPensionsProfitAtBRT.toCurrencyString</span> at
-                                    <span id="brt-rate">@breakdown.rateBRT</span>%
+                                    <span id="brt-it-calc">@breakdown.payPensionsProfitAtBRT.toCurrencyString</span>
+                                    @messages("estimated_tax_liability.calc-breakdown.at")
+                                    <span id="brt-rate">@breakdown.rateBRT</span>&#37;
                                 </p>
                             </td>
                             <td id="brt-amount" class="summary-data">@breakdown.incomeTaxOnPayPensionsProfitAtBRT.toCurrency</td>
@@ -130,8 +131,9 @@
                             <tr id="hrt-section" class="no-border-bottom">
                                 <td>
                                     <p>
-                                        <span id="hrt-it-calc">@breakdown.payPensionsProfitAtHRT.toCurrencyString</span> at
-                                        <span id="hrt-rate">@breakdown.rateHRT</span>%
+                                        <span id="hrt-it-calc">@breakdown.payPensionsProfitAtHRT.toCurrencyString</span>
+                                        @messages("estimated_tax_liability.calc-breakdown.at")
+                                        <span id="hrt-rate">@breakdown.rateHRT</span>&#37;
                                     </p>
                                 </td>
                                 <td id="hrt-amount" class="summary-data">@breakdown.incomeTaxOnPayPensionsProfitAtHRT.toCurrency</td>
@@ -142,8 +144,9 @@
                                 <tr id="art-section" class="no-border-bottom">
                                     <td>
                                         <p>
-                                            <span id="art-it-calc">@breakdown.payPensionsProfitAtART.toCurrencyString</span> at
-                                            <span id="art-rate">@breakdown.rateART</span>%
+                                            <span id="art-it-calc">@breakdown.payPensionsProfitAtART.toCurrencyString</span>
+                                            @messages("estimated_tax_liability.calc-breakdown.at")
+                                            <span id="art-rate">@breakdown.rateART</span>&#37;
                                         </p>
                                     </td>
                                     <td id="art-amount" class="summary-data">@breakdown.incomeTaxOnPayPensionsProfitAtART.toCurrency</td>
