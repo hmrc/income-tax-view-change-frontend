@@ -48,7 +48,7 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
       case (_: LastTaxCalculationError, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
-      case (_: NoLastTaxCalculation.type, _) =>
+      case (NoLastTaxCalculation, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. No data was found.")
         CalcDisplayNoDataFound
     }
@@ -64,9 +64,9 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
       case success: LastTaxCalculation =>
         Logger.debug(s"[FinancialDataService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n$success")
         success
-      case notFound: NoLastTaxCalculation.type =>
+      case NoLastTaxCalculation =>
         Logger.debug(s"[FinancialDataService][getLastEstimatedTaxCalculation] - No Data Found response returned from connector")
-        notFound
+        NoLastTaxCalculation
       case error: LastTaxCalculationError =>
         Logger.warn(s"[FinancialDataService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
         error
