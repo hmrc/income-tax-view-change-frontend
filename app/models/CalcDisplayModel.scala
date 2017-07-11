@@ -49,6 +49,5 @@ case object CalcDisplayError extends CalcDisplayResponseModel
 case object CalcDisplayNoDataFound extends CalcDisplayResponseModel
 
 object CalcDisplayModel {
-  implicit val formatBreakdown: OFormat[CalculationDataModel] = CalculationDataModel.format
   implicit val format: OFormat[CalcDisplayModel] = Json.format[CalcDisplayModel]
 }
