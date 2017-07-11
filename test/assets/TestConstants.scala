@@ -152,6 +152,7 @@ object TestConstants extends ImplicitDateFormatter {
     )
 
     val lastTaxCalcError = LastTaxCalculationError(testErrorStatus, testErrorMessage)
+    val lastTaxCalcNotFound = NoLastTaxCalculation
   }
 
   object Obligations {

@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import connectors.{CalculationDataConnector, LastTaxCalculationConnector}
 import models._
+import models.NoLastTaxCalculation
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -37,7 +38,8 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
       lastCalc <- getLastEstimatedTaxCalculation(nino, taxYear)
       calcBreakdown <- lastCalc match {
         case calculationData: LastTaxCalculation => getCalculationData(nino, calculationData.calcID)
-        case _: LastTaxCalculationError => Future.successful(CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "getCalculationData call failed"))
+        case error: LastTaxCalculationError => Future.successful(error)
+        case notFound: NoLastTaxCalculation.type => Future.successful(notFound)
       }
     } yield (lastCalc, calcBreakdown) match {
       case (calc: LastTaxCalculation, breakdown: CalculationDataModel) =>
@@ -46,7 +48,7 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
       case (calc: LastTaxCalculation, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
         Some(CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None))
-      case (_: LastTaxCalculationError, _) =>
+      case (_, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Returning nothing.")
         None
     }
@@ -62,6 +64,9 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
       case success: LastTaxCalculation =>
         Logger.debug(s"[FinancialDataService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n$success")
         success
+      case notFound: NoLastTaxCalculation.type =>
+        Logger.debug(s"[FinancialDataService][getLastEstimatedTaxCalculation] - No Data Found response returned from connector")
+        notFound
       case error: LastTaxCalculationError =>
         Logger.warn(s"[FinancialDataService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
         error

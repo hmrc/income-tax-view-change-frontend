@@ -42,10 +42,16 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
 
     "an Error Response is returned from the EstimatedTaxLiabilityConnector" should {
 
-      "return a correctly formatted CalculationDataError model" in {
+      "return none" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
-        setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
+        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe None
+      }
+    }
 
+    "a Not Found Response is returned from the EstimatedTaxLiabilityConnector" should {
+
+      "return none" in {
+        setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
         await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe None
       }
     }
