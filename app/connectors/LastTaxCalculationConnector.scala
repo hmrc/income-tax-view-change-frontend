@@ -53,6 +53,9 @@ class LastTaxCalculationConnector @Inject()(val http: HttpGet) extends ServicesC
               },
               valid => valid
             ))
+          case NOT_FOUND =>
+            Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - No Data Found response)")
+            Future.successful(NoLastTaxCalculation)
           case _ =>
             Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - RESPONSE status: ${response.status}, body: ${response.body}")
             Future.successful(LastTaxCalculationError(response.status, response.body))
