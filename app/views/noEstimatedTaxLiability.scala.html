@@ -1,0 +1,73 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.main_template
+@import utils.ImplicitCurrencyFormatter._
+@import utils.ImplicitDateFormatter._
+@import views.helpers.TaxYearRenderHelper._
+@import views.html.helpers.accordionHelper
+@import models.CalculationDataResponseModel
+
+@(taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
+
+@sidebar = {
+    <section id="sidebar" class="section section--blue-top">
+
+        <div class="form-group">
+            <h3 id="it-reference-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
+            <ul>
+                <li id="it-reference" class="font-xsmall">@user.mtditid</li>
+            </ul>
+        </div>
+
+        <div class="form-group">
+            <h3 id="obligations-heading">@messages("sidebar.view_obligations.h3")</h3>
+            <ul>
+                <li class="font-xsmall">
+                    <a data-journey-click="itvc:clickedLink:View Obligations" id="obligations-link" href="@{controllers.routes.ObligationsController.getObligations().url}">@messages("sidebar.view_obligations.link")</a>
+                </li>
+            </ul>
+        </div>
+        <div class="form-group">
+            <h3 id="sa-link-heading">@messages("sidebar.self_assessment.h3")</h3>
+            <ul>
+                <li class="font-xsmall">
+                    <a data-journey-click="itvc:clickedLink:View SA Annual Returns" id="sa-link" href=@{s"${appConfig.businessTaxAccount}/self-assessment"}>
+                        @messages("sidebar.self_assessment.link")
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+}
+
+@main_template(
+    title = renderTitle(taxYear),
+    bodyClasses = None,
+    scriptElem = None,
+    appConfig = appConfig,
+    sidebarLinks = Some(sidebar)) {
+
+    <section id="estimated-tax">
+
+        <h1>
+            <span id="tax-year" class="pre-heading">@renderTaxYear(taxYear)</span>
+            <span id="page-heading">@messages("estimated_tax_liability.heading")</span>
+        </h1>
+
+        <p id="p1">@messages("estimated_tax_liability.no-data")</p>
+    </section>
+ }

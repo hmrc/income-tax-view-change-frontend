@@ -19,10 +19,8 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import connectors.{CalculationDataConnector, LastTaxCalculationConnector}
-import models._
-import models.NoLastTaxCalculation
+import models.{NoLastTaxCalculation, _}
 import play.api.Logger
-import play.api.http.Status
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,24 +31,26 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
                                       val calculationDataConnector: CalculationDataConnector) {
 
 
-  def getFinancialData(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[Option[CalcDisplayModel]] = {
+  def getFinancialData(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
     for {
       lastCalc <- getLastEstimatedTaxCalculation(nino, taxYear)
       calcBreakdown <- lastCalc match {
         case calculationData: LastTaxCalculation => getCalculationData(nino, calculationData.calcID)
-        case error: LastTaxCalculationError => Future.successful(error)
-        case notFound: NoLastTaxCalculation.type => Future.successful(notFound)
+        case other => Future.successful(other)
       }
     } yield (lastCalc, calcBreakdown) match {
       case (calc: LastTaxCalculation, breakdown: CalculationDataModel) =>
         Logger.debug("[FinancialDataService] Retrieved all Financial Data")
-        Some(CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown)))
+        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown))
       case (calc: LastTaxCalculation, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
-        Some(CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None))
-      case (_, _) =>
-        Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Returning nothing.")
-        None
+        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None)
+      case (_: LastTaxCalculationError, _) =>
+        Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Downstream error.")
+        CalcDisplayError
+      case (_: NoLastTaxCalculation.type, _) =>
+        Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. No data was found.")
+        CalcDisplayNoDataFound
     }
   }
 

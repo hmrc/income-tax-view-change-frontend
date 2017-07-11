@@ -55,15 +55,13 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
   val getFinancialData: Int => Action[AnyContent] = taxYear => actionPredicate.async {
     implicit request => implicit user => implicit sources =>
       financialDataService.getFinancialData(user.nino, taxYear).map {
-        case Some(calcDisplayModel: CalcDisplayModel) if calcDisplayModel.calcDataModel.nonEmpty =>
+        case calcDisplayModel: CalcDisplayModel =>
           Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
-          //Should be here if the Calc Breakdown data returned as None within the display model.
-          //TODO: handle this gracefully, for now serve ISE
-        case Some(_: CalcDisplayModel) =>
-          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No calculation breakdown information was returned")
-          showInternalServerError
-        case None =>
-          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved.")
+        case _: CalcDisplayNoDataFound.type =>
+          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
+          NotFound(views.html.noEstimatedTaxLiability(taxYear))
+        case _: CalcDisplayError.type =>
+          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
           showInternalServerError
       }
   }
