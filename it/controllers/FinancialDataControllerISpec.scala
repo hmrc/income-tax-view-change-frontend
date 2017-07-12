@@ -26,7 +26,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
   "Calling the FinancialDataController.getEstimatedTaxLiability(year)" when {
 
-    "authorised with an active enrolment" should {
+    "authorised with an active enrolment, valid last calc estimate and valid breakdown response" should {
 
       "return the correct page with a valid total" in {
 
@@ -39,11 +39,26 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         And("I wiremock stub a successful Get CalculationData response")
         val calc = GetCalculationData.calculationDataSuccessModel
-        val calculationResponse = CalculationDataModel(calc.incomeTaxYTD, calc.incomeTaxThisPeriod, calc.profitFromSelfEmployment, calc.profitFromUkLandAndProperty,
-          calc.totalIncomeReceived, calc.personalAllowance, calc.totalIncomeOnWhichTaxIsDue, calc.payPensionsProfitAtBRT, calc.incomeTaxOnPayPensionsProfitAtBRT,
-          calc.payPensionsProfitAtHRT, calc.incomeTaxOnPayPensionsProfitAtHRT, calc.payPensionsProfitAtART, calc.incomeTaxOnPayPensionsProfitAtART, calc.incomeTaxDue,
-          calc.nicTotal,calc.rateBRT,calc.rateHRT,calc.rateART)
-
+        val calculationResponse = CalculationDataModel(
+          calc.incomeTaxYTD,
+          calc.incomeTaxThisPeriod,
+          calc.profitFromSelfEmployment,
+          calc.profitFromUkLandAndProperty,
+          calc.totalIncomeReceived,
+          calc.personalAllowance,
+          calc.totalIncomeOnWhichTaxIsDue,
+          calc.payPensionsProfitAtBRT,
+          calc.incomeTaxOnPayPensionsProfitAtBRT,
+          calc.payPensionsProfitAtHRT,
+          calc.incomeTaxOnPayPensionsProfitAtHRT,
+          calc.payPensionsProfitAtART,
+          calc.incomeTaxOnPayPensionsProfitAtART,
+          calc.incomeTaxDue,
+          calc.nicTotal,
+          calc.rateBRT,
+          calc.rateHRT,
+          calc.rateART
+        )
         IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, calculationResponse)
 
         And("I wiremock stub a successful Business Details response")
@@ -63,7 +78,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-        
+
         Then("a successful response is returned with the correct estimate")
         res should have(
 
@@ -82,12 +97,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
       }
     }
 
+    "authorised with an active enrolment, valid last tax estimate response, but error in calc breakdown" should {
 
-
-
-    "authorised with an active enrolment, but no calcData" should {
-
-      "return an internal server error" in {
+      "Return the estimated tax liability without the calculation breakdown" in {
 
         Given("an authorised user response via wiremock stub")
         AuthStub.stubAuthorised()
@@ -120,15 +132,101 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         Then("verification that the Estimated Tax Liability response has been wiremocked ")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
-        Then("an internal server error is returned")
+        Then("a successful response is returned with the correct estimate")
         res should have(
 
-          //Check for a 500 response
-          httpStatus(INTERNAL_SERVER_ERROR)
+          //Check for a Status OK response (200)
+          httpStatus(OK),
+
+          //Check the Page Title
+          pageTitle("2017 to 2018 tax year Your current tax estimate"),
+
+          //Check the estimated tax amount is correct
+          elementTextByID("in-year-estimate")("£90,500"),
+
+          //Check the Estimated Calculation Date is correct
+          elementTextByID("in-year-estimate-date")("Estimate up to your 6 July 2017 submission")
         )
       }
     }
 
+    "authorised with an active enrolment no data found response from Last Calculation" should {
+
+      "Return no data found response and render view explaining that this will be available once they've submitted income" in {
+
+        Given("an authorised user response via wiremock stub")
+        AuthStub.stubAuthorised()
+
+        And("a No Data Found response from Get Last Estimated Tax Liability via wiremock stub")
+        IncomeTaxViewChangeStub.stubGetLastCalcNoData(testNino, testYear)
+
+        And("a successful Business Details response via wiremock stub")
+        SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+        And("a successful Property Details response via wiremock stub")
+        SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+        When(s"I make a call to GET /check-your-income-tax-and-expenses/estimated-tax-liability/$testYear ")
+        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+
+        And("verification that the Business Details response has been wiremocked ")
+        SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+        And("verification that the Property Details response has been wiremocked ")
+        SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+        Then("verification that the Estimated Tax Liability response has been wiremocked ")
+        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+
+        Then("a Not Found response is returned and correct view rendered")
+        res should have(
+
+          //Check for a Status OK response (200)
+          httpStatus(NOT_FOUND),
+
+          //Check the Page Title
+          pageTitle("2017 to 2018 tax year Your current tax estimate")
+        )
+      }
+    }
+
+    "authorised with an active enrolment but error response from Get Last Calculation" should {
+
+      "Render an Internal Server Error (ISE)" in {
+
+        Given("an authorised user response via wiremock stub")
+        AuthStub.stubAuthorised()
+
+        And("an Error Response response from Get Last Estimated Tax Liability via wiremock stub")
+        IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
+
+        And("a successful Business Details response via wiremock stub")
+        SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+        And("a successful Property Details response via wiremock stub")
+        SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+        When(s"I make a call to GET /check-your-income-tax-and-expenses/estimated-tax-liability/$testYear ")
+        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+
+        And("verification that the Business Details response has been wiremocked ")
+        SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+        And("verification that the Property Details response has been wiremocked ")
+        SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+        Then("verification that the Estimated Tax Liability response has been wiremocked ")
+        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+
+        Then("an Internal Server Error response is returned and correct view rendered")
+        res should have(
+
+          //Check for a Status OK response (200)
+          httpStatus(INTERNAL_SERVER_ERROR)
+
+        )
+      }
+    }
 
 
 

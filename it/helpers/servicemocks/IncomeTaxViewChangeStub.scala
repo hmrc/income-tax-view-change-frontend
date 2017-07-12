@@ -39,6 +39,14 @@ object IncomeTaxViewChangeStub {
     WiremockHelper.stubGet(lastCalcUrl(nino, year), Status.OK, financialDataResponse)
   }
 
+  def stubGetLastCalcNoData(nino: String, year: String): Unit = {
+    WiremockHelper.stubGet(lastCalcUrl(nino, year), Status.NOT_FOUND, "")
+  }
+
+  def stubGetLastCalcError(nino: String, year: String): Unit = {
+    WiremockHelper.stubGet(lastCalcUrl(nino, year), Status.INTERNAL_SERVER_ERROR, "Error Message")
+  }
+
   def verifyGetLastTaxCalc(nino: String, year: String): Unit =
     WiremockHelper.verifyGet(lastCalcUrl(nino, year))
 
@@ -69,7 +77,7 @@ object IncomeTaxViewChangeStub {
     WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, financialDataResponse)
   }
 
-  def stubGetCalcError(nino: String, year: String, error: CalculationDataErrorModel) = {
+  def stubGetCalcError(nino: String, year: String, error: CalculationDataErrorModel): Unit = {
     val errorResponse = IntegrationTestConstants.GetCalculationData.errorResponse(500, "Calculation Error Model Response").toString()
     WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, errorResponse)
   }

@@ -20,33 +20,6 @@ import play.api.libs.json.{OFormat, Json}
 
 sealed trait CalculationDataResponseModel
 
-case class CalcDisplayModel(calcTimestamp: String,
-                            calcAmount: BigDecimal,
-                            calcDataModel: Option[CalculationDataModel]){
-  val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
-
-  val hasBRTSection: Boolean = {
-    if (calcDataModel.nonEmpty)
-      calcDataModel.get.payPensionsProfitAtBRT > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtBRT > 0
-    else false
-  }
-  val hasHRTSection: Boolean = {
-    if (calcDataModel.nonEmpty)
-      calcDataModel.get.payPensionsProfitAtHRT > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtHRT > 0
-    else false
-  }
-  val hasARTSection: Boolean = {
-    if (calcDataModel.nonEmpty)
-      calcDataModel.get.payPensionsProfitAtART > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtART > 0
-    else false
-  }
-  val hasNISection: Boolean = {
-    if(calcDataModel.nonEmpty)
-      calcDataModel.get.nicTotal > 0
-    else false
-  }
-}
-
 case class CalculationDataModel(
                                  incomeTaxYTD: BigDecimal,
                                  incomeTaxThisPeriod: BigDecimal,
@@ -255,9 +228,7 @@ case class CalculationDataErrorModel(code: Int, message: String) extends Calcula
 object CalculationDataModel {
   implicit val format: OFormat[CalculationDataModel] = Json.format[CalculationDataModel]
 }
-object CalcDisplayModel {
-  implicit val format: OFormat[CalcDisplayModel] = Json.format[CalcDisplayModel]
-}
+
 
 object CalculationDataErrorModel {
   implicit val format: OFormat[CalculationDataErrorModel] = Json.format[CalculationDataErrorModel]

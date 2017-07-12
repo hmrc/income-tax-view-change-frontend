@@ -26,6 +26,7 @@ import config.FrontendAppConfig
 import mocks.services.MockFinancialDataService
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate}
 import mocks.controllers.predicates.{MockAsyncActionPredicate, MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import models.{CalcDisplayError, CalcDisplayNoDataFound}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{contentType, _}
@@ -36,9 +37,10 @@ class FinancialDataControllerSpec extends TestSupport
   with MockFinancialDataService with MockAsyncActionPredicate with MockIncomeSourceDetailsPredicate with MockAuthenticationPredicate {
 
   // Last Calculation Service mocks
-  def mockFinancialDataSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(calculationDisplaySuccessModel(calculationDataSuccessModel)))
-  def mockFinancialDataNoBreakdown(): Unit = setupMockGetFinancialData(testNino, testYear)(Some(calculationDisplayNoBreakdownModel))
-  def mockFinancialDataError(): Unit = setupMockGetFinancialData(testNino, testYear)(None)
+  def mockFinancialDataSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
+  def mockFinancialDataNoBreakdown(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplayNoBreakdownModel)
+  def mockFinancialDataError(): Unit = setupMockGetFinancialData(testNino, testYear)(CalcDisplayError)
+  def mockFinancialDataNotFound(): Unit = setupMockGetFinancialData(testNino, testYear)(CalcDisplayNoDataFound)
 
   class setupTestController(authentication: AuthenticationPredicate, incomeSources: IncomeSourceDetailsPredicate)
     extends FinancialDataController()(
@@ -107,21 +109,28 @@ class FinancialDataControllerSpec extends TestSupport
         object TestFinancialDataController extends setupTestController(MockAuthenticated, BusinessIncome)
 
         lazy val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
 
-        "return Internal Server Error (500)" in {
+        "return Status OK (200)" in {
           mockFinancialDataNoBreakdown()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(result) shouldBe Status.OK
         }
 
         "return HTML" in {
+          mockFinancialDataNoBreakdown()
           contentType(result) shouldBe Some("text/html")
           charset(result) shouldBe Some("utf-8")
         }
+
+        "render the EstimatedTaxLiability page" in {
+          mockFinancialDataNoBreakdown()
+          document.title() shouldBe messages.title
+        }
       }
 
-      "receives No Income sources from the Income Sources predicate and an error from the FinancialData Service" should {
+      "receives Business Income from the Income Sources predicate and an error from the FinancialData Service" should {
 
-        object TestFinancialDataController extends setupTestController(MockAuthenticated, NoIncome)
+        object TestFinancialDataController extends setupTestController(MockAuthenticated, BusinessIncome)
 
         lazy val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestWithActiveSession)
 
@@ -133,6 +142,30 @@ class FinancialDataControllerSpec extends TestSupport
         "return HTML" in {
           contentType(result) shouldBe Some("text/html")
           charset(result) shouldBe Some("utf-8")
+        }
+      }
+
+      "receives Business Income from the Income Sources predicate and No Data Found from the FinancialData Service" should {
+
+        object TestFinancialDataController extends setupTestController(MockAuthenticated, BusinessIncome)
+
+        lazy val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+
+        "return a 404" in {
+          mockFinancialDataNotFound()
+          status(result) shouldBe Status.NOT_FOUND
+        }
+
+        "return HTML" in {
+          mockFinancialDataNotFound()
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the EstimatedTaxLiabilityNoData page" in {
+          mockFinancialDataNotFound()
+          document.title() shouldBe messages.title
         }
       }
 

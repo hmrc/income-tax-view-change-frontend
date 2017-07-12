@@ -16,16 +16,13 @@
 
 package mocks.services
 
-import models.CalcDisplayModel
+import models.CalcDisplayResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import services.FinancialDataService
 import uk.gov.hmrc.play.test.UnitSpec
-import assets.TestConstants.Estimates._
-import assets.TestConstants.Estimates
-import assets.TestConstants._
 
 import scala.concurrent.Future
 
@@ -39,7 +36,7 @@ trait MockFinancialDataService extends UnitSpec with MockitoSugar with BeforeAnd
     reset(mockFinancialDataService)
   }
 
-  def setupMockGetFinancialData(nino: String, taxYear: Int)(response: Option[CalcDisplayModel]): Unit =
+  def setupMockGetFinancialData(nino: String, taxYear: Int)(response: CalcDisplayResponseModel): Unit =
     when(mockFinancialDataService
       .getFinancialData(
         ArgumentMatchers.eq(nino),
