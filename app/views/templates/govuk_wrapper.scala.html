@@ -73,7 +73,9 @@
     @uiLayouts.serviceInfo(
       betaBanner = phaseBanner(Messages("base.phase")),
       includeGridWrapper = false,
-      serviceInfoContent = Some(serviceInfoContent))
+      serviceInfoContent = Some(serviceInfoContent),
+      includeHMRCBranding = false
+    )
 }
 
 @mainContentHeader = {
