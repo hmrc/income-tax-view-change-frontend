@@ -57,6 +57,14 @@ class ObligationsViewSpec extends TestSupport{
 
     "have a table containing the obligations" should {
 
+      "contain the heading for Report period" in {
+        document.getElementById("bi-period-heading").text() shouldBe "Report period"
+      }
+
+      "contain the heading for Status" in {
+        document.getElementById("bi-status-heading").text() shouldBe "Report due date"
+      }
+
       "contain the first row and have the start date as '1 January 2017' and status 'Received'" in {
         document.getElementById("bi-ob-1-start").text() shouldBe "1 January 2017"
         document.getElementById("bi-ob-1-status").text() shouldBe "Received"

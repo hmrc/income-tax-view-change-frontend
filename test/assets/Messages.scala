@@ -20,13 +20,15 @@ object Messages {
 
   // Estimated Tax Liability Page Messages
   object EstimatedTaxLiability {
-    val title = "2017/18 - Business Tax Account"
     val pageHeading = "Your current tax estimate"
     val taxYear = "2017 to 2018 tax year"
+    val title = taxYear + " " + pageHeading
     object EstimateTax {
       val h2 = "2017/18 - Business Tax Account"
       val p1 = "We've calculated this estimate using the figures and dates you've reported in your accounting software. " +
         "The amount includes both your Income Tax and National Insurance."
+      val calcDate: String => String = date => s"""Estimate up to your <span id="calc-date">$date</span> submission"""
+      val changes = "Your estimate could change if you have any income or expenses that you've not reported through your software."
       val payment = "You must pay any tax you owe for the whole tax year by 31 January 2019."
       val toDate = "Estimate to date"
     }
@@ -34,10 +36,12 @@ object Messages {
 
   //Obligations Page Messages
   object Obligations {
-    val title = "Your Income Tax reports"
+    val title = "Your report deadlines"
     val info  = "You must submit a report once every quarter using your accounting software."
     val businessHeading = "Business income"
     val propertyHeading = "Property income"
+    val periodHeading = "Report period"
+    val statusHeading = "Report due date"
   }
 
   // Timeout Messages
@@ -57,7 +61,7 @@ object Messages {
     val reportsHeading = "Deadlines"
     val reportsLink = "View report deadlines"
     val estimatesHeading = "Estimates"
-    val estimatesLink = "View your estimated tax amount"
+    val estimatesLink = "View your tax estimate"
     val selfAssessmentHeading = "Previous tax years"
     val selfAssessmentLink = "View annual returns"
   }

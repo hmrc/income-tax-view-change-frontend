@@ -47,7 +47,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   private lazy val baseUrl = "check-your-income-tax-and-expenses"
-  private lazy val contactHost = configuration.getString(s"contact-frontend.host").getOrElse("")
+  private lazy val contactHost = loadConfig(s"contact-frontend.host")
 
   //Feedback Config
   private lazy val contactFrontendService = baseUrl("contact-frontend")
@@ -79,5 +79,5 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val ninoIdentifierKey: String = loadConfig("enrolments.nino.identifier")
 
   //Business Tax Account
-  override lazy val businessTaxAccount: String = s"${baseUrl("business-tax-account")}/business-account"
+  override lazy val businessTaxAccount: String = loadConfig("business-tax-account.url")
 }

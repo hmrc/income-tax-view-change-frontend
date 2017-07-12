@@ -5,10 +5,11 @@ base.phase                                                      = BETA
 base.sign-out                                                   = Sign out
 
 ## Estimated Tax Liability Page ##
-estimated_tax_liability.title                                   = 2017/18 - Business Tax Account
+estimated_tax_liability.title                                   = {0} to {1} tax year Your current tax estimate
 estimated_tax_liability.heading                                 = Your current tax estimate
 estimated_tax_liability.tax-year                                = {0} to {1} tax year
 estimated_tax_liability.estimated-tax.p1                        = We''ve calculated this estimate using the figures and dates you''ve reported in your accounting software. The amount includes both your Income Tax and National Insurance.
+estimated_tax_liability.estimated-tax.changes                   = Your estimate could change if you have any income or expenses that you''ve not reported through your software.
 estimated_tax_liability.estimated-tax.payment                   = You must pay any tax you owe for the whole tax year by
 estimated_tax_liability.calc-breakdown.link                     = View your estimate breakdown
 estimated_tax_liability.calc-breakdown.business-profit          = Business profit
@@ -16,17 +17,17 @@ estimated_tax_liability.calc-breakdown.property-profit          = Property profi
 estimated_tax_liability.calc-breakdown.personal-allowance       = Personal Allowance (for the period you''ve reported)
 estimated_tax_liability.calc-breakdown.taxable-income           = Your taxable income
 estimated_tax_liability.calc-breakdown.income-tax               = Income Tax
-estimated_tax_liability.calc-breakdown.tax-rate                 = {0} at {1}%
+estimated_tax_liability.calc-breakdown.at                       = at
 estimated_tax_liability.calc-breakdown.national-insurance       = National Insurance
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
+estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
 
 ## Obligations Page ##
-obligations.title                                               = Your Income Tax reports
-obligations.heading                                             = Your Income Tax reports
+obligations.title                                               = Your report deadlines
+obligations.heading                                             = Your report deadlines
 obligations.info                                                = You must submit a report once every quarter using your accounting software.
-obligations.accountingPeriod                                    = Accounting period
+obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
-
 obligations.bi.subheading                                       = Business income
 obligations.pi.subheading                                       = Property income
 
@@ -44,7 +45,7 @@ timeout.signIn                                                  = To view your q
 ## Sidebar ##
 sidebar.quarterly_reporting_reference.h3                        = Income Tax reference:
 sidebar.view_estimated_liability.h3                             = Estimates
-sidebar.view_estimated_liability.link                           = View your estimated tax amount
+sidebar.view_estimated_liability.link                           = View your tax estimate
 sidebar.view_obligations.h3                                     = Deadlines
 sidebar.view_obligations.link                                   = View report deadlines
 sidebar.self_assessment.h3                                      = Previous tax years

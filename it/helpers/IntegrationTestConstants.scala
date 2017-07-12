@@ -18,7 +18,7 @@ package helpers
 
 import java.time.LocalDate
 
-import models.{ObligationModel, ObligationsModel}
+import models.{CalculationDataErrorModel, CalculationDataModel, ObligationModel, ObligationsModel}
 import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter
 
@@ -33,6 +33,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testNinoEnrolmentKey = "HMRC-NI"
   val testNinoEnrolmentIdentifier = "NINO"
   val testNino = "AA123456A"
+  val testCalcId = "01234567"
 
   val testYear = "2018"
   val testCalcType = "it"
@@ -56,6 +57,85 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
          |   "reason":"$reason"
          |}
       """.stripMargin)
+  }
+
+  object GetCalculationData {
+    def successResponse(incomeTaxYTD: BigDecimal,
+                        incomeTaxThisPeriod: BigDecimal,
+                        profitFromSelfEmployment: BigDecimal,
+                        profitFromUkLandAndProperty: BigDecimal,
+                        totalIncomeReceived: BigDecimal,
+                        personalAllowance: BigDecimal,
+                        totalIncomeOnWhichTaxIsDue: BigDecimal,
+                        payPensionsProfitAtBRT: BigDecimal,
+                        incomeTaxOnPayPensionsProfitAtBRT: BigDecimal,
+                        payPensionsProfitAtHRT: BigDecimal,
+                        incomeTaxOnPayPensionsProfitAtHRT: BigDecimal,
+                        payPensionsProfitAtART: BigDecimal,
+                        incomeTaxOnPayPensionsProfitAtART: BigDecimal,
+                        incomeTaxDue: BigDecimal,
+                        nicTotal: BigDecimal,
+                        rateBRT: BigDecimal,
+                        rateHRT: BigDecimal,
+                        rateART: BigDecimal): JsValue ={
+      Json.parse(s"""
+        |{
+        | "incomeTaxYTD": "$incomeTaxYTD",
+        | "incomeTaxThisPeriod": "$incomeTaxThisPeriod",
+        | "profitFromSelfEmployment": "$profitFromSelfEmployment",
+        | "profitFromUkLandAndProperty": "$profitFromUkLandAndProperty",
+        | "totalIncomeReceived": "$totalIncomeReceived",
+        | "personalAllowance": "$personalAllowance",
+        | "totalIncomeOnWhichTaxIsDue": "$totalIncomeOnWhichTaxIsDue",
+        | "payPensionsProfitAtBRT": "$payPensionsProfitAtBRT",
+        | "incomeTaxOnPayPensionsProfitAtBRT": "$incomeTaxOnPayPensionsProfitAtBRT",
+        | "payPensionsProfitAtHRT": "$payPensionsProfitAtHRT",
+        | "incomeTaxOnPayPensionsProfitAtHRT": "$incomeTaxOnPayPensionsProfitAtHRT",
+        | "payPensionsProfitAtART": "$payPensionsProfitAtART",
+        | "incomeTaxOnPayPensionsProfitAtART": "$incomeTaxOnPayPensionsProfitAtART",
+        | "incomeTaxDue": "$incomeTaxDue",
+        | "nicTotal": "$nicTotal",
+        | "rateBRT": "$rateBRT",
+        | "rateHRT": "$rateHRT",
+        | "rateART": "$rateART"
+        |}
+        """.stripMargin)
+    }
+
+    def errorResponse(code: Int, message: String): JsValue ={
+      Json.parse(
+        s"""
+           |{
+           | "code": "$code",
+           | "message": "$message"
+           |}
+         """.stripMargin)
+    }
+
+    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = 90500,
+      incomeTaxThisPeriod = 2000,
+      profitFromSelfEmployment = 200000,
+      profitFromUkLandAndProperty = 10000,
+      totalIncomeReceived = 230000,
+      personalAllowance = 11500,
+      totalIncomeOnWhichTaxIsDue = 198500,
+      payPensionsProfitAtBRT = 20000,
+      incomeTaxOnPayPensionsProfitAtBRT = 4000,
+      payPensionsProfitAtHRT = 100000,
+      incomeTaxOnPayPensionsProfitAtHRT = 40000,
+      payPensionsProfitAtART = 50000,
+      incomeTaxOnPayPensionsProfitAtART = 22500,
+      incomeTaxDue = 66500,
+      nicTotal = 24000,
+      rateBRT = 20,
+      rateHRT = 40,
+      rateART = 45
+    )
+
+    val calculationDataErrorModel = CalculationDataErrorModel(
+      code = 500, message = "Calculation Error Model Response"
+    )
+
   }
 
   object GetBusinessDetails {
@@ -86,6 +166,13 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
                     |   "reason":"$reason"
                     |}
       """.stripMargin)
+  }
+
+  object GetPropertyDetails {
+    def successResponse(): JsValue =
+      Json.parse(
+        s"""{}"""
+      )
   }
 
   object GetObligationsData {

@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package views.helpers
+@import org.apache.commons.lang3.StringEscapeUtils.escapeEcmaScript
 
-import play.api.i18n.{Messages, MessagesApi}
-import utils.ImplicitDateFormatter._
+@(id: String, label: String, content : Html)(implicit messages: Messages)
 
-object TaxYearRenderHelper {
-
-  def renderTaxYear(taxYear: Int)(implicit messages: Messages): String = {
-    messages("estimated_tax_liability.tax-year", s"${taxYear - 1}", s"$taxYear")
-  }
-
-  def renderTitle(taxYear: Int)(implicit messages: Messages): String = {
-    messages("estimated_tax_liability.title", s"${taxYear - 1}", s"$taxYear")
-  }
-
-  def renderPaymentDueDate(taxYear: Int): String = {
-    s"${taxYear + 1}-01-31".toLocalDate.toLongDate
-  }
-}
+<details onclick="markAccordionOpen('@escapeEcmaScript(label)')">
+    <summary>
+        <span id="@id" class="summary">@label</span>
+    </summary>
+    <div>
+        @content
+    </div>
+</details>

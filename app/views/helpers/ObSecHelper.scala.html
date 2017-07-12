@@ -25,13 +25,13 @@
         <table>
             <thead>
                 <tr>
-                    <th>@Messages("obligations.accountingPeriod")</th>
-                    <th>@Messages("obligations.reportDueDate")</th>
+                    <th id="@{id}-period-heading">@Messages("obligations.accountingPeriod")</th>
+                    <th id="@{id}-status-heading">@Messages("obligations.reportDueDate")</th>
                 </tr>
             </thead>
             <tbody>
                 @model.get.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
-                    <tr class="obligation">
+                    <tr class="obligation no-border-bottom">
                         <td>
                             <p>
                                 <span id="@{id}-ob-@{index + 1}-start">@obligation.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@obligation.end.toLongDate</span>

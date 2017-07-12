@@ -16,24 +16,23 @@
 
 package views
 
-import assets.Messages.{EstimatedTaxLiability => messages}
-import assets.Messages.{Sidebar => sidebarMessages}
+import assets.Messages.{EstimatedTaxLiability => messages, Sidebar => sidebarMessages}
+import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.CalcBreakdown._
+import assets.TestConstants.Estimates._
+import assets.TestConstants.PropertyIncome._
+import assets.TestConstants._
+import auth.MtdItUser
 import config.FrontendAppConfig
+import models.{CalculationDataModel, IncomeSourcesModel}
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{ImplicitCurrencyFormatter, TestSupport}
-import assets.TestConstants._
-import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyIncome._
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.CalcBreakdown._
-import auth.MtdItUser
-import models.{CalculationDataModel, IncomeSourcesModel}
-import org.jsoup.nodes.Document
 import play.twirl.api.HtmlFormat
+import utils.{ImplicitCurrencyFormatter, TestSupport}
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
@@ -82,6 +81,18 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         estimateSection.getElementById("in-year-estimate").text shouldBe "£" + busPropBRTCalcDataModel.incomeTaxYTD
       }
 
+      s"has a calculation date paragraph with '${messages.EstimateTax.calcDate("6 July 2017")}'" in {
+        estimateSection.getElementById("in-year-estimate-date").html() shouldBe messages.EstimateTax.calcDate("6 July 2017")
+      }
+
+      s"has a paragraph to warn them that their estimate might change" in {
+        estimateSection.getElementById("changes").text shouldBe messages.EstimateTax.changes
+      }
+
+      s"has a calculation date of the 6 July 2017" in {
+        estimateSection.getElementById("calc-date").text shouldBe "6 July 2017"
+      }
+
       s"has a payment paragraph with '${messages.EstimateTax.payment}'" in {
         estimateSection.getElementById("payment").text() shouldBe messages.EstimateTax.payment
       }
@@ -92,8 +103,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       "for users with both a property and a business" which {
         "have just the basic rate of tax" should {
           val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
-          import setup._
           import ImplicitCurrencyFormatter._
+          import setup._
 
           s"have a business profit section amount of ${model.profitFromSelfEmployment}" in {
             document.getElementById("business-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
@@ -132,8 +143,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         "have the higher rate of tax" should {
           val setup = pageSetup(busBropHRTCalcDataModel, testIncomeSources)
-          import setup._
           import ImplicitCurrencyFormatter._
+          import setup._
 
           s"have an income tax section" which {
             "has a BRT section" in {
@@ -158,8 +169,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         
         "have the additional rate of tax" should {
           val setup = pageSetup(busPropARTCalcDataModel, testIncomeSources)
-          import setup._
           import ImplicitCurrencyFormatter._
+          import setup._
           s"have an income tax section" which {
             "has a BRT section" in {
               document.getElementById("brt-section") should not be null
@@ -182,8 +193,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         "has no taxable income and no NI contributions" should {
           val setup = pageSetup(noTaxOrNICalcDataModel, testIncomeSources)
-          import setup._
           import ImplicitCurrencyFormatter._
+          import setup._
           s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
             document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
           }
@@ -197,8 +208,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         "has no taxable income and some NI contribution" should {
           val setup = pageSetup(noTaxJustNICalcDataModel, testIncomeSources)
-          import setup._
           import ImplicitCurrencyFormatter._
+          import setup._
           s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
             document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
           }

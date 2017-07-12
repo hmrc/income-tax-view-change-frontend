@@ -1,13 +1,10 @@
 /*Estimated Tax Liabilities*/
 
-#tax-year {
-    color: #6f777b;
-}
 .itvc-table td {
      font-size: inherit;
  }
 
-.no-border-bottom td{
+.no-border-bottom td {
     border-bottom: 0px;
 }
 

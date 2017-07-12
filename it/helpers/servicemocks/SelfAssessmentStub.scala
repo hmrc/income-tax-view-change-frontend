@@ -24,11 +24,16 @@ import play.api.libs.json.{JsValue, Json}
 object SelfAssessmentStub {
 
   val businessDetailsUrl: String => String = nino => s"/ni/$nino/self-employments"
+  val propertyDetailsUrl: String => String = nino => s"/ni/$nino/uk-properties"
   val obligationsDataUrl: (String, String) => String = (nino, selfEmploymentId) => s"/ni/$nino/self-employments/$selfEmploymentId/obligations"
   val propertyObligationsUrl: String => String = nino => s"/ni/$nino/uk-properties/obligations"
 
   def stubGetBusinessDetails(nino: String, businessDetails: JsValue) : Unit = {
     WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetails.toString())
+  }
+
+  def stubGetPropertyDetails(nino: String, propertyDetails: JsValue) : Unit = {
+    WiremockHelper.stubGet(propertyDetailsUrl(nino), Status.OK, propertyDetails.toString())
   }
 
   def stubGetObligations(nino: String, selfEmploymentId: String, business: ObligationsModel, property: ObligationsModel): Unit = {
@@ -52,6 +57,10 @@ object SelfAssessmentStub {
 
   def verifyGetBusinessDetails(nino: String): Unit = {
     WiremockHelper.verifyGetWithHeader(businessDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
+  }
+
+  def verifyGetPropertyDetails(nino: String): Unit = {
+    WiremockHelper.verifyGetWithHeader(propertyDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
   }
 }
 

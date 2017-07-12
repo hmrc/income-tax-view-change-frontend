@@ -40,6 +40,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           And("I wiremock stub a success business details response")
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
           And("I wiremock stub a single business obligation response")
           SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
 
@@ -53,7 +56,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            pageTitle("Your Income Tax reports"),
+            pageTitle("Your report deadlines"),
 
             //Check one obligation section is returned
             nElementsWithClass("obligation")(1),
@@ -77,6 +80,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           And("I wiremock stub a success business details response")
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
           And("I wiremock stub multiple business obligations response")
           SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, multipleObligationsDataSuccessModel)
 
@@ -90,7 +96,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            pageTitle("Your Income Tax reports"),
+            pageTitle("Your report deadlines"),
 
             //Check three Obligation sections are returned
             nElementsWithClass("obligation")(3),
@@ -133,7 +139,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            pageTitle("Your Income Tax reports"),
+            pageTitle("Your report deadlines"),
 
             //Check one obligation section is returned
             nElementsWithClass("obligation")(1),
@@ -167,7 +173,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            pageTitle("Your Income Tax reports"),
+            pageTitle("Your report deadlines"),
 
             //Check two obligation sections are returned
             nElementsWithClass("obligation")(2),
