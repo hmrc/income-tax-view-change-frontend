@@ -693,7 +693,7 @@ object TestConstants extends ImplicitDateFormatter {
          |}
        """.stripMargin
     val calculationDataErrorJson = Json.parse(calculationDataErrorString)
-    
+
     val calculationDisplaySuccessModel: CalculationDataModel => CalcDisplayModel = calcModel =>
       CalcDisplayModel(
         Estimates.lastTaxCalcSuccess.calcTimestamp,
