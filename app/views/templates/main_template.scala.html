@@ -15,6 +15,7 @@
  *@
 
 @import config.AppConfig
+@import auth.MtdItUser
 @import templates.govuk_wrapper
 
 @(title: String,
@@ -24,21 +25,31 @@
   mainClass: Option[String] = None,
   scriptElem: Option[Html] = None,
   appConfig: AppConfig,
-  showLogout: Boolean = true)(mainContent: Html)(implicit request : Request[_], messages: Messages)
+  showLogout: Boolean = true,
+  user: Option[MtdItUser] = None,
+  showBtaHeader: Boolean = true
+)(mainContent: Html)(implicit request : Request[_], messages: Messages)
 
 @import uk.gov.hmrc.play.views.html.layouts
 
 
 @serviceInfoContent = {
-    <a id="service-info-home-link" class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides" data-journey-click="itvc:clickedLink:BTA Home" href="@appConfig.businessTaxAccount">@Messages("bta.home")</a>
-    <ul id="service-info-list" class="service-info__item service-info__right list--collapse">
-        <li class="list__item soft--left">
-            <a href="@appConfig.btaManageAccountUrl" data-journey-click="itvc:clickedLink:BTA Manage Account">@Messages("bta.manage-account")</a>
-        </li>
-        <li class="list__item soft--left">
-            <a href="@appConfig.btaMessagesUrl" data-journey-click="itvc:clickedLink:BTA Messages">@Messages("bta.messages")</a>
-        </li>
-    </ul>
+    @if(showBtaHeader){
+        <a id="service-info-home-link" class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides" data-journey-click="itvc:clickedLink:BTA Home" href="@appConfig.businessTaxAccount">@Messages("bta.home")</a>
+        <ul id="service-info-list" class="service-info__item service-info__right list--collapse">
+            @if(user.nonEmpty) {
+                <li class="list__item">
+                    <span id="service-info-user-name" class="bold-xsmall">@user.get.userDetails.name</span>
+                </li>
+            }
+            <li class="list__item soft--left">
+                <a href="@appConfig.btaManageAccountUrl" data-journey-click="itvc:clickedLink:BTA Manage Account">@Messages("bta.manage-account")</a>
+            </li>
+            <li class="list__item soft--left">
+                <a href="@appConfig.btaMessagesUrl" data-journey-click="itvc:clickedLink:BTA Messages">@Messages("bta.messages")</a>
+            </li>
+        </ul>
+    }
 }
 
 @defaultScriptElem = {

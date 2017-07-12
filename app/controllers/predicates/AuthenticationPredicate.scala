@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import connectors.UserDetailsConnector
 import controllers.BaseController
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Request, Result}
@@ -35,7 +36,8 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
                                         val appConfig: FrontendAppConfig,
                                         override val config: Configuration,
                                         override val env: Environment,
-                                        implicit val messagesApi: MessagesApi
+                                        implicit val messagesApi: MessagesApi,
+                                        val userDetailsConnector: UserDetailsConnector
                                        ) extends BaseController with Redirects {
 
   lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
@@ -44,12 +46,16 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
   lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
 
   def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
-    authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {
-      enrolments => {
-        f(MtdItUser(
-          mtditid = enrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value).get,
-          nino = enrolments.getEnrolment(ninoEnrolmentKey).flatMap(_.getIdentifier(ninoIdentifierKey)).map(_.value).get
-        ))
+    authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments and userDetailsUri) {
+      case enrolments ~ userDetailsUrl => {
+        userDetailsConnector.getUserName(userDetailsUrl.get).flatMap {
+          userDetails =>
+            f(MtdItUser(
+              mtditid = enrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value).get,
+              nino = enrolments.getEnrolment(ninoEnrolmentKey).flatMap(_.getIdentifier(ninoIdentifierKey)).map(_.value).get,
+              userDetails
+            ))
+        }
       }
     }.recoverWith {
       case _: InsufficientEnrolments =>

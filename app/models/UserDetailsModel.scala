@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.play.partials.FormPartialRetriever
-@import uk.gov.hmrc.play.partials.CachedStaticHtmlPartialRetriever
-@import views.html.templates.main_template
-@import config.AppConfig
+package models
 
-@(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialRetriever: FormPartialRetriever,
-partialRetriever: CachedStaticHtmlPartialRetriever, messages: Messages, appConfig: AppConfig)
+import play.api.libs.json.Json
 
-@main_template(title = messages("feedback.title"), appConfig = appConfig, showBtaHeader = false) {
-@formBody.getOrElse(formPartialRetriever.getPartialContent(partialUrl))
+case class UserDetailsModel(name: String, email: Option[String], affinityGroup: String, credentialRole: String)
+
+object UserDetailsModel {
+  implicit val format = Json.format[UserDetailsModel]
 }

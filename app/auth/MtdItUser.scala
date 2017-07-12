@@ -16,4 +16,6 @@
 
 package auth
 
-case class MtdItUser(mtditid: String, nino: String)
+import models.UserDetailsModel
+
+case class MtdItUser(mtditid: String, nino: String, userDetails: UserDetailsModel)

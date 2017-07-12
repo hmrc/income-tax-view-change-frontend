@@ -52,7 +52,7 @@
     </section>
 }
 
-@main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig, sidebarLinks = Some(sidebar)) {
+@main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig, sidebarLinks = Some(sidebar), user = Some(user)) {
 
 <section id="obligations">
     <h1 id="page-heading">@messages("obligations.heading")</h1>
