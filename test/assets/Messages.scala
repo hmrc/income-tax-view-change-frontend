@@ -34,6 +34,14 @@ object Messages {
     }
   }
 
+  // No Estimated Tax Liability Page Messages
+  object NoEstimatedTaxLiability {
+    val pageHeading = "Your current tax estimate"
+    val taxYear = "2017 to 2018 tax year"
+    val title = taxYear + " " + pageHeading
+    val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
+  }
+
   //Obligations Page Messages
   object Obligations {
     val title = "Your report deadlines"

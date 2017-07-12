@@ -21,6 +21,7 @@ estimated_tax_liability.calc-breakdown.at                       = at
 estimated_tax_liability.calc-breakdown.national-insurance       = National Insurance
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
 estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
+estimated_tax_liability.no-data                                 = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
 
 ## Obligations Page ##
 obligations.title                                               = Your report deadlines

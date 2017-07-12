@@ -21,7 +21,8 @@ import assets.TestConstants.Estimates._
 import assets.TestConstants.Estimates
 import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants._
-import mocks.connectors.{MockLastTaxCalculationConnector, MockCalculationDataConnector}
+import mocks.connectors.{MockCalculationDataConnector, MockLastTaxCalculationConnector}
+import models.{CalcDisplayError, CalcDisplayNoDataFound}
 import utils.TestSupport
 
 class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationConnector with MockCalculationDataConnector {
@@ -36,17 +37,23 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
         setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
 
-        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe Some(calculationDisplaySuccessModel(calculationDataSuccessModel))
+        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
       }
     }
 
     "an Error Response is returned from the EstimatedTaxLiabilityConnector" should {
 
-      "return a correctly formatted CalculationDataError model" in {
+      "return none" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
-        setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
+        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe CalcDisplayError
+      }
+    }
 
-        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe None
+    "a Not Found Response is returned from the EstimatedTaxLiabilityConnector" should {
+
+      "return none" in {
+        setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcNotFound)
+        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe CalcDisplayNoDataFound
       }
     }
 
@@ -56,7 +63,7 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataErrorModel)
 
-        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe Some(calculationDisplayNoBreakdownModel)
+        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel
       }
     }
   }

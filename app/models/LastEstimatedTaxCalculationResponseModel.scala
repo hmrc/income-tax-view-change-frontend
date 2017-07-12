@@ -25,6 +25,7 @@ case class LastTaxCalculation(calcID: String,
                               calcAmount: BigDecimal) extends LastTaxCalculationResponseModel
 
 case class LastTaxCalculationError(status: Int, message: String) extends LastTaxCalculationResponseModel
+case object NoLastTaxCalculation extends LastTaxCalculationResponseModel
 
 
 object LastTaxCalculation {

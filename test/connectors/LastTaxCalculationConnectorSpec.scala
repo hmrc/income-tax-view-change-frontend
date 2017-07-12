@@ -20,7 +20,7 @@ package connectors
 import assets.TestConstants.Estimates._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.{LastTaxCalculationError, LastTaxCalculationResponseModel, ObligationsErrorModel}
+import models.{LastTaxCalculationError, LastTaxCalculationResponseModel, NoLastTaxCalculation}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
@@ -32,6 +32,7 @@ class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
 
   val successResponse = HttpResponse(Status.OK, Some(Json.toJson(lastTaxCalcSuccess)))
   val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
+  val noDataFound = HttpResponse(Status.NOT_FOUND)
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
   object TestLastTaxCalculationConnector extends LastTaxCalculationConnector(mockHttpGet)
@@ -54,6 +55,11 @@ class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
     "return EstimatedTaxLiabilityError model in case of failure" in {
       setupMockHttpGet(testUrl)(badResponse)
       await(result) shouldBe LastTaxCalculationError(Status.BAD_REQUEST, "Error Message")
+    }
+
+    "return NoLastTaxCalculation case object in case of No Data Found (NOT_FOUND) scenario" in {
+      setupMockHttpGet(testUrl)(noDataFound)
+      await(result) shouldBe NoLastTaxCalculation
     }
 
     "return LastTaxCalculationError model in case of future failed scenario" in {
