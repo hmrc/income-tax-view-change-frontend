@@ -16,6 +16,9 @@
 
 package views
 
+import assets.Messages.{Obligations => messages, Sidebar => sidebarMessages}
+import assets.TestConstants.{testMtditid, testNino}
+import auth.MtdItUser
 import config.FrontendAppConfig
 import models.{ObligationModel, ObligationsModel}
 import org.jsoup.Jsoup
@@ -23,12 +26,8 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.TestSupport
-import assets.Messages.{Obligations => messages}
-import assets.Messages.{Sidebar => sidebarMessages}
-import assets.TestConstants.{testMtditid, testNino}
-import auth.MtdItUser
 import utils.ImplicitDateFormatter._
+import utils.TestSupport
 
 class ObligationsViewSpec extends TestSupport{
 
@@ -36,16 +35,15 @@ class ObligationsViewSpec extends TestSupport{
 
   val model = ObligationModel(start = "2017-1-1".toLocalDate, end = "2017-3-31".toLocalDate, due = "2017-4-5".toLocalDate, true)
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
-
-
   val dummymodel = ObligationsModel(List(model))
 
-  lazy val bothPage = views.html.obligations(Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
-  lazy val bizPage  = views.html.obligations(Some(dummymodel), None)(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
-  lazy val propPage = views.html.obligations(None, Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
-  lazy val document = Jsoup.parse(contentAsString(bothPage))
+  lazy val bothPage = views.html.obligations(Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val bizPage  = views.html.obligations(Some(dummymodel), None)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val propPage = views.html.obligations(None, Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
 
   "The Obligations view" should {
+
+    lazy val document = Jsoup.parse(contentAsString(bothPage))
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
