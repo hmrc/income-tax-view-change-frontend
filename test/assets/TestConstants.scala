@@ -238,6 +238,8 @@ object TestConstants extends ImplicitDateFormatter {
     val businessIncomeSourceSuccess = IncomeSourcesModel(Some(BusinessDetails.businessIncomeModel), None)
     val propertyIncomeSourceSuccess = IncomeSourcesModel(None, Some(PropertyIncome.propertyIncomeModel))
     val noIncomeSourceSuccess = IncomeSourcesModel(None, None)
+    val bothIncomeSourcesSuccessBusinessAligned =
+      IncomeSourcesModel(Some(BusinessDetails.businessIncomeModelAlignedTaxYear), Some(PropertyIncome.propertyIncomeModel))
 
   }
 

@@ -22,7 +22,7 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Ok
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers._
 import utils.TestSupport
 import uk.gov.hmrc.auth.core._
@@ -33,12 +33,12 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
 
   "The authentication async method" when {
 
-    def setupResult(incomeSourceDetailsPredicate: IncomeSourceDetailsPredicate): Action[AnyContent] =
+    def setupResult(): Action[AnyContent] =
       new AsyncActionPredicate()(
         fakeApplication.injector.instanceOf[MessagesApi],
         fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
         MockAuthenticationPredicate,
-        incomeSourceDetailsPredicate
+        MockIncomeSourceDetailsPredicate
       ).async {
         implicit request => implicit user => implicit sources =>
           Future.successful(Ok(user.mtditid + " " + user.nino))
@@ -46,22 +46,22 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
 
     "called with an authenticated user" when {
 
+      def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
+
       "a HMRC-MTD-IT enrolment exists with a NINO" should {
 
-        lazy val result = setupResult(BusinessIncome)(fakeRequestWithActiveSession)
-
         "return Ok (200)" in {
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
           status(result) shouldBe Status.OK
         }
 
         "should have a body with the expected user details" in {
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
           bodyOf(await(result)) shouldBe testMtditid + " " + testNino
         }
       }
 
       "a HMRC-MTD-IT enrolment does NOT exist" should {
-
-        lazy val result = setupResult(BusinessIncome)(fakeRequestWithActiveSession)
 
         "return Internal Server Error (500)" in {
           setupMockAuthorisationException(new InsufficientEnrolments)
@@ -72,7 +72,7 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
 
     "called with a Bearer Token Expired response from Auth" should {
 
-      lazy val result = setupResult(BusinessIncome)(fakeRequestWithActiveSession)
+      lazy val result = setupResult()(fakeRequestWithActiveSession)
 
       "should be a rerdirect (303)" in {
         setupMockAuthorisationException(new BearerTokenExpired)
@@ -87,7 +87,7 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
 
     "called with an Authenticated User with a Timed Out session (Session Expired)" should {
 
-      lazy val result = setupResult(BusinessIncome)(fakeRequestWithTimeoutSession)
+      lazy val result = setupResult()(fakeRequestWithTimeoutSession)
 
       "should be a rerdirect (303)" in {
         status(result) shouldBe Status.SEE_OTHER
@@ -100,7 +100,7 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
 
     "called with a user with no session" should {
 
-      lazy val result = setupResult(BusinessIncome)(fakeRequestNoSession)
+      lazy val result = setupResult()(fakeRequestNoSession)
 
       "should be a rerdirect (303)" in {
         setupMockAuthorisationException()
@@ -108,7 +108,6 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
       }
 
       "should redirect to GG Sign In" in {
-        setupMockAuthorisationException()
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
     }
@@ -120,7 +119,7 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
           fakeApplication.injector.instanceOf[MessagesApi],
           fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
           MockAuthenticationPredicate,
-          BusinessIncome
+          MockIncomeSourceDetailsPredicate
         ).async {
           implicit request => implicit user => implicit sources =>
             Future.failed(new Exception("Unexpected Error"))

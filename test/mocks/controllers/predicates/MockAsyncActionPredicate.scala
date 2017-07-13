@@ -20,14 +20,13 @@ import controllers.predicates.{AsyncActionPredicate, AuthenticationPredicate, In
 import play.api.i18n.MessagesApi
 import utils.TestSupport
 
-trait MockAsyncActionPredicate extends MockAuthenticationPredicate {
+trait MockAsyncActionPredicate extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
-  class asyncActionBuilder(mockIncomeSources: IncomeSourceDetailsPredicate)
-    extends AsyncActionPredicate()(
+  object MockAsyncActionPredicate extends AsyncActionPredicate()(
       fakeApplication.injector.instanceOf[MessagesApi],
       fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
-      mockIncomeSources
-    )
+      MockIncomeSourceDetailsPredicate
+  )
 
 }

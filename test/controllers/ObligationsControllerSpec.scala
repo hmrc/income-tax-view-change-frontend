@@ -17,95 +17,22 @@
 package controllers
 
 import assets.Messages.{ISE => errorMessages, Obligations => messages}
-import assets.TestConstants._
-import assets.TestConstants.BusinessDetails._
 import config.FrontendAppConfig
-import controllers.predicates.AuthenticationPredicate
-import mocks.controllers.predicates.{MockAsyncActionPredicate, MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockObligationsService
-import models._
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
-import utils.{ImplicitDateFormatter, TestSupport}
+import utils.TestSupport
 
-class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicate with MockObligationsService
-  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter {
+class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicate with MockObligationsService {
 
   object TestObligationsController extends ObligationsController()(
     fakeApplication.injector.instanceOf[FrontendAppConfig],
     fakeApplication.injector.instanceOf[MessagesApi],
-    new asyncActionBuilder(BusinessIncome),
+    MockAsyncActionPredicate,
     mockObligationsService
-  )
-
-  def mockBusinessSuccess(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
-    ObligationsModel(
-      List(
-        ObligationModel(
-          start = "2017-04-06",
-          end = "2017-07-05",
-          due = "2017-08-05",
-          met = true
-        ),
-        ObligationModel(
-          start = "2017-07-06",
-          end = "2017-10-05",
-          due = "2017-11-05",
-          met = true
-        ),
-        ObligationModel(
-          start = "2017-10-06",
-          end = "2018-01-05",
-          due = "2018-02-05",
-          met = false
-        ),
-        ObligationModel(
-          start = "2018-01-06",
-          end = "2018-04-05",
-          due = "2018-05-06",
-          met = false
-        )
-      )
-    )
-  )
-  def mockBusinessError(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
-    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
-  )
-
-  def mockPropertySuccess(): Unit = setupMockPropertyObligationsResult(testNino)(
-    ObligationsModel(
-      List(
-        ObligationModel(
-          start = "2017-04-06",
-          end = "2017-07-05",
-          due = "2017-08-05",
-          met = true
-        ),
-        ObligationModel(
-          start = "2017-07-06",
-          end = "2017-10-05",
-          due = "2017-11-05",
-          met = true
-        ),
-        ObligationModel(
-          start = "2017-10-06",
-          end = "2018-01-05",
-          due = "2018-02-05",
-          met = false
-        ),
-        ObligationModel(
-          start = "2018-01-06",
-          end = "2018-04-05",
-          due = "2018-05-06",
-          met = false
-        )
-      )
-    )
-  )
-  def mockPropertyError(): Unit = setupMockPropertyObligationsResult(testNino)(
-    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 
   "The ObligationsController.getObligations function" when {
@@ -118,6 +45,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
+          mockSingleBusinessIncomeSource()
           mockBusinessSuccess()
           mockPropertyError()
           status(result) shouldBe Status.OK
@@ -139,6 +67,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
+          mockSingleBusinessIncomeSource()
           mockBusinessError()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
@@ -160,6 +89,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
+          mockSingleBusinessIncomeSource()
           mockBusinessSuccess()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
@@ -181,6 +111,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status INTERNAL_SERVER_ERROR (500)" in {
+          mockSingleBusinessIncomeSource()
           mockBusinessError()
           mockPropertyError()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
