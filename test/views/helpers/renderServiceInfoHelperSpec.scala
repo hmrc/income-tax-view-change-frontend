@@ -49,9 +49,7 @@ class renderServiceInfoHelperSpec extends TestSupport {
       lazy val document = Jsoup.parse(html(Some(testMtdItUserNoUserDetails)).body)
 
       "Not render the service-info-user-name" in {
-        assertThrows[NullPointerException] {
-          document.getElementById("service-info-user-name").text()
-        }
+        document.getElementById("service-info-user-name") shouldBe null
       }
     }
   }

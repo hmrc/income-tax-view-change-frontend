@@ -16,6 +16,9 @@
 
 package views
 
+import assets.Messages.{Obligations => messages, Sidebar => sidebarMessages}
+import assets.TestConstants.{testMtditid, testNino}
+import auth.MtdItUser
 import config.FrontendAppConfig
 import models.{ObligationModel, ObligationsModel}
 import org.jsoup.Jsoup
@@ -29,6 +32,7 @@ import assets.Messages.{Sidebar => sidebarMessages}
 import assets.TestConstants.{testMtditid, testNino, testUserDetails, testUserName}
 import auth.MtdItUser
 import utils.ImplicitDateFormatter._
+import utils.TestSupport
 
 class ObligationsViewSpec extends TestSupport{
 
@@ -36,16 +40,15 @@ class ObligationsViewSpec extends TestSupport{
 
   val model = ObligationModel(start = "2017-1-1".toLocalDate, end = "2017-3-31".toLocalDate, due = "2017-4-5".toLocalDate, true)
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
-
-
   val dummymodel = ObligationsModel(List(model))
 
-  lazy val bothPage = views.html.obligations(Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
-  lazy val bizPage  = views.html.obligations(Some(dummymodel), None)(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
-  lazy val propPage = views.html.obligations(None, Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, user = testMtdItUser)
-  lazy val document = Jsoup.parse(contentAsString(bothPage))
+  lazy val bothPage = views.html.obligations(Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val bizPage  = views.html.obligations(Some(dummymodel), None)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val propPage = views.html.obligations(None, Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
 
   "The Obligations view" should {
+
+    lazy val document = Jsoup.parse(contentAsString(bothPage))
 
     s"have the user name '$testUserName' in the service info bar" in {
       document.getElementById("service-info-user-name").text() shouldBe testUserName

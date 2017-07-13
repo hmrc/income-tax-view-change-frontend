@@ -20,38 +20,13 @@
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
 @import models.CalculationDataResponseModel
+@import views.html.helpers.sidebarHelper
+@import views.helpers.EstimatesPage
 
 @(taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
 
 @sidebar = {
-    <section id="sidebar" class="section section--blue-top">
-
-        <div class="form-group">
-            <h3 id="it-reference-heading">@messages("sidebar.quarterly_reporting_reference.h3")</h3>
-            <ul>
-                <li id="it-reference" class="font-xsmall">@user.mtditid</li>
-            </ul>
-        </div>
-
-        <div class="form-group">
-            <h3 id="obligations-heading">@messages("sidebar.view_obligations.h3")</h3>
-            <ul>
-                <li class="font-xsmall">
-                    <a data-journey-click="itvc:clickedLink:View Obligations" id="obligations-link" href="@{controllers.routes.ObligationsController.getObligations().url}">@messages("sidebar.view_obligations.link")</a>
-                </li>
-            </ul>
-        </div>
-        <div class="form-group">
-            <h3 id="sa-link-heading">@messages("sidebar.self_assessment.h3")</h3>
-            <ul>
-                <li class="font-xsmall">
-                    <a data-journey-click="itvc:clickedLink:View SA Annual Returns" id="sa-link" href=@{s"${appConfig.businessTaxAccount}/self-assessment"}>
-                        @messages("sidebar.self_assessment.link")
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </section>
+    @sidebarHelper(EstimatesPage)
 }
 
 @main_template(
