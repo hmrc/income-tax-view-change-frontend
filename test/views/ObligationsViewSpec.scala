@@ -26,7 +26,7 @@ import play.api.test.Helpers._
 import utils.TestSupport
 import assets.Messages.{Obligations => messages}
 import assets.Messages.{Sidebar => sidebarMessages}
-import assets.TestConstants.{testMtditid, testNino, testUserDetails}
+import assets.TestConstants.{testMtditid, testNino, testUserDetails, testUserName}
 import auth.MtdItUser
 import utils.ImplicitDateFormatter._
 
@@ -46,6 +46,10 @@ class ObligationsViewSpec extends TestSupport{
   lazy val document = Jsoup.parse(contentAsString(bothPage))
 
   "The Obligations view" should {
+
+    s"have the user name '$testUserName' in the service info bar" in {
+      document.getElementById("service-info-user-name").text() shouldBe testUserName
+    }
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title

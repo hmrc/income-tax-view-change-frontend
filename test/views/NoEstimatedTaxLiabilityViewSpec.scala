@@ -46,6 +46,10 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
       views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
+    s"have the user name '$testUserName' in the service info bar" in {
+      document.getElementById("service-info-user-name").text() shouldBe testUserName
+    }
+
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
     }

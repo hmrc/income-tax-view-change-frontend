@@ -47,13 +47,14 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
   lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
 
   def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
-    authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {
-      enrolments => {
-        //        userDetailsConnector.getUserDetails(userDetailsUrl.get).flatMap {
-        //          case userDetails: UserDetailsModel =>
-        //            f(buildMtdUser(enrolments, Some(userDetails)))
-        //          case UserDetailsError =>
-        f(buildMtdUser(enrolments))
+    authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments and userDetailsUri) {
+      case enrolments ~ userDetailsUrl => {
+        userDetailsConnector.getUserDetails(userDetailsUrl.get).flatMap {
+          case userDetails: UserDetailsModel =>
+            f(buildMtdUser(enrolments, Some(userDetails)))
+          case UserDetailsError =>
+            f(buildMtdUser(enrolments))
+        }
       }
     }.recoverWith {
       case _: InsufficientEnrolments =>

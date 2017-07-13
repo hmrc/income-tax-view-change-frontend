@@ -37,7 +37,7 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach with MockitoSug
     setupMockAuthRetrievalSuccess(testAuthSuccessResponse)
   }
 
-  def setupMockAuthRetrievalSuccess[T](retrievalValue: T): Unit = {
+  def setupMockAuthRetrievalSuccess[X,Y](retrievalValue: X~Y): Unit = {
     when(mockAuthService.authorised(Enrolment("HMRC-MTD-IT") and Enrolment("HMRC-NI")))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {

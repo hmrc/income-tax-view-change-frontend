@@ -57,6 +57,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
     val setup = pageSetup(busPropBRTCalcDataModel,testIncomeSources)
     import setup._
 
+    s"have the user name '$testUserName' in the service info bar" in {
+      document.getElementById("service-info-user-name").text() shouldBe testUserName
+    }
+
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
     }
