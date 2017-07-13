@@ -58,6 +58,7 @@ object Messages {
     val heading = "Your session has timed out"
     val signIn = "To view your quarterly reporting details, you'll have to sign in using your Government Gateway ID."
   }
+
   object Helpers {
     val overdue = "Overdue"
     val received = "Received"
@@ -76,5 +77,11 @@ object Messages {
 
   object ISE {
     val title = "Sorry, we are experiencing technical difficulties - 500"
+  }
+
+  object BtaServiceInfoHeader {
+    val btaHome = "Business tax home"
+    val btaMessages = "Messages"
+    val btaManageAccount = "Manage account"
   }
 }
