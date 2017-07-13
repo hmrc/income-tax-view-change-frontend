@@ -20,17 +20,23 @@ import auth.MtdItUser
 import models._
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
 import utils.ImplicitDateFormatter
 
 object TestConstants extends ImplicitDateFormatter {
 
   val testMtditid = "XAIT0000123456"
   val testNino = "AB123456C"
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
+  val testUserDetails = UserDetailsModel("Albert Einstein", None, "n/a", "n/a")
+  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val testSelfEmploymentId = "XA00001234"
   val testTaxCalculationId = "CALCID"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
+  val testAuthSuccessResponse = Enrolments(Set(
+    Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated", ConfidenceLevel.L0),
+    Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated", ConfidenceLevel.L0)
+  ))
 
   object BusinessDetails {
 

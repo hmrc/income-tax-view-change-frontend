@@ -18,10 +18,11 @@ package controllers.predicates
 
 import javax.inject.{Inject, Singleton}
 
-import auth.MtdItUser
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.FrontendAppConfig
 import connectors.UserDetailsConnector
 import controllers.BaseController
+import models.{UserDetailsError, UserDetailsModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.{Configuration, Environment, Logger}
@@ -32,7 +33,7 @@ import uk.gov.hmrc.auth.frontend.Redirects
 import scala.concurrent.Future
 
 @Singleton
-class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val appConfig: FrontendAppConfig,
                                         override val config: Configuration,
                                         override val env: Environment,
@@ -46,16 +47,13 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
   lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
 
   def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
-    authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments and userDetailsUri) {
-      case enrolments ~ userDetailsUrl => {
-        userDetailsConnector.getUserName(userDetailsUrl.get).flatMap {
-          userDetails =>
-            f(MtdItUser(
-              mtditid = enrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value).get,
-              nino = enrolments.getEnrolment(ninoEnrolmentKey).flatMap(_.getIdentifier(ninoIdentifierKey)).map(_.value).get,
-              userDetails
-            ))
-        }
+    authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments) {
+      enrolments => {
+        //        userDetailsConnector.getUserDetails(userDetailsUrl.get).flatMap {
+        //          case userDetails: UserDetailsModel =>
+        //            f(buildMtdUser(enrolments, Some(userDetails)))
+        //          case UserDetailsError =>
+        f(buildMtdUser(enrolments))
       }
     }.recoverWith {
       case _: InsufficientEnrolments =>
@@ -73,4 +71,11 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: AuthorisedFunct
     }
   }
 
+  private def buildMtdUser(enrolments: Enrolments, userDetails: Option[UserDetailsModel] = None) = {
+    MtdItUser(
+      mtditid = enrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value).get,
+      nino = enrolments.getEnrolment(ninoEnrolmentKey).flatMap(_.getIdentifier(ninoIdentifierKey)).map(_.value).get,
+      userDetails
+    )
+  }
 }

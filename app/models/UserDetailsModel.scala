@@ -18,7 +18,10 @@ package models
 
 import play.api.libs.json.Json
 
-case class UserDetailsModel(name: String, email: Option[String], affinityGroup: String, credentialRole: String)
+
+sealed trait UserDetailsResponseModel
+case class UserDetailsModel(name: String, email: Option[String], affinityGroup: String, credentialRole: String) extends UserDetailsResponseModel
+case object UserDetailsError extends UserDetailsResponseModel
 
 object UserDetailsModel {
   implicit val format = Json.format[UserDetailsModel]

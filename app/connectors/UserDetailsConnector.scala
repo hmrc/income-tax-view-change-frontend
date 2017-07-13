@@ -20,7 +20,6 @@ import javax.inject.{Inject, Singleton}
 
 import models._
 import play.api.Logger
-import play.api.http.Status
 import play.api.http.Status.OK
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
@@ -31,7 +30,27 @@ import scala.concurrent.Future
 @Singleton
 class UserDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
-  def getUserName(userDetailsUrl: String)(implicit headerCarrier: HeaderCarrier): Future[UserDetailsModel] = {
-    http.GET[UserDetailsModel](userDetailsUrl)
+  def getUserDetails(userDetailsUrl: String)(implicit headerCarrier: HeaderCarrier): Future[UserDetailsResponseModel] = {
+    http.GET[HttpResponse](userDetailsUrl) flatMap {
+      response =>
+        response.status match {
+          case OK =>
+            Logger.debug(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Future.successful(response.json.validate[UserDetailsModel].fold(
+              invalid => {
+                Logger.warn(s"[UserDetailsConnector][getUserDetails] - Json Validation Error. Parsing User Details Response.")
+                UserDetailsError
+              },
+              valid => valid
+            ))
+          case _ =>
+            Logger.warn(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Future.successful(UserDetailsError)
+        }
+    } recoverWith {
+      case _ =>
+        Logger.warn(s"[UserDetailsConnector][getUserDetails] - Unexpected future failed error when calling $userDetailsUrl.")
+        Future.successful(UserDetailsError)
+    }
   }
 }

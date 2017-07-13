@@ -18,4 +18,4 @@ package auth
 
 import models.UserDetailsModel
 
-case class MtdItUser(mtditid: String, nino: String, userDetails: UserDetailsModel)
+case class MtdItUser(mtditid: String, nino: String, userDetails: Option[UserDetailsModel])

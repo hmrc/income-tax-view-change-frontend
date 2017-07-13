@@ -22,6 +22,6 @@
 @(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialRetriever: FormPartialRetriever,
 partialRetriever: CachedStaticHtmlPartialRetriever, messages: Messages, appConfig: AppConfig)
 
-@main_template(title = messages("feedback.title"), appConfig = appConfig, showBtaHeader = false) {
-@formBody.getOrElse(formPartialRetriever.getPartialContent(partialUrl))
+@main_template(title = messages("feedback.title"), showBtaHeader = false) {
+  @formBody.getOrElse(formPartialRetriever.getPartialContent(partialUrl))
 }

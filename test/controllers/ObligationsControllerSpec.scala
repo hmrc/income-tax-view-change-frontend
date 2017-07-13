@@ -31,15 +31,14 @@ import play.api.test.Helpers._
 import utils.{ImplicitDateFormatter, TestSupport}
 
 class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicate with MockObligationsService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter {
+  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter {
 
-  class setupTestController(authentication: AuthenticationPredicate)
-    extends ObligationsController()(
-      fakeApplication.injector.instanceOf[FrontendAppConfig],
-      fakeApplication.injector.instanceOf[MessagesApi],
-      new asyncActionBuilder(authentication, BusinessIncome),
-      mockObligationsService
-    )
+  object TestObligationsController extends ObligationsController()(
+    fakeApplication.injector.instanceOf[FrontendAppConfig],
+    fakeApplication.injector.instanceOf[MessagesApi],
+    new asyncActionBuilder(BusinessIncome),
+    mockObligationsService
+  )
 
   def mockBusinessSuccess(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
     ObligationsModel(
@@ -112,8 +111,6 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
   "The ObligationsController.getObligations function" when {
 
     "called with an Authenticated HMRC-MTD-IT user with NINO" which {
-
-      object TestObligationsController extends setupTestController(MockAuthenticated)
 
       "successfully retrieves a set of Business Obligations from the Obligations service" should {
 
@@ -203,10 +200,9 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
 
     "Called with an Unauthenticated User" should {
 
-      object TestObligationsController extends setupTestController(MockUnauthorised)
-
       "return redirect SEE_OTHER (303)" in {
-        val result = TestObligationsController.getObligations()(fakeRequestNoSession)
+        setupMockAuthorisationException()
+        val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
