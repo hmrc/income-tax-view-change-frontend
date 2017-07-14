@@ -61,6 +61,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             //Check Page Title of HTML Response Body
             pageTitle("Your report deadlines"),
 
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
+
             //Check one obligation section is returned
             nElementsWithClass("obligation")(1),
 
@@ -103,6 +106,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
             //Check Page Title of HTML Response Body
             pageTitle("Your report deadlines"),
+
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
 
             //Check three Obligation sections are returned
             nElementsWithClass("obligation")(3),
@@ -150,6 +156,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             //Check Page Title of HTML Response Body
             pageTitle("Your report deadlines"),
 
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
+
             //Check one obligation section is returned
             nElementsWithClass("obligation")(1),
 
@@ -186,6 +195,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
             //Check Page Title of HTML Response Body
             pageTitle("Your report deadlines"),
+
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
 
             //Check two obligation sections are returned
             nElementsWithClass("obligation")(2),

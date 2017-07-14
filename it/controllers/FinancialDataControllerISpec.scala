@@ -90,6 +90,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           //Check the Page Title
           pageTitle("2017 to 2018 tax year Your current tax estimate"),
 
+          //User Name
+          elementTextByID(id = "service-info-user-name")(testUserName),
+
           //Check the estimated tax amount is correct
           elementTextByID("in-year-estimate")("£90,500"),
 
@@ -145,6 +148,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
           //Check the Page Title
           pageTitle("2017 to 2018 tax year Your current tax estimate"),
+
+          //User Name
+          elementTextByID(id = "service-info-user-name")(testUserName),
 
           //Check the estimated tax amount is correct
           elementTextByID("in-year-estimate")("£90,500"),

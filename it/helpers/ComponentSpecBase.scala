@@ -39,7 +39,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.self-assessment-api.port" -> mockPort
   )
 
-  val testUserDetailsUrl = mockUrl + "/user-details/id/5397272a3d00003d002f3ca9"
+  val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
+  val testUserDetailsWiremockUrl = mockUrl + userDetailsUrl
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))

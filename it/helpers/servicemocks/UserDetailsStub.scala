@@ -18,17 +18,19 @@ package helpers.servicemocks
 
 import helpers.{ComponentSpecBase, WiremockHelper}
 import play.api.http.Status
+import helpers.IntegrationTestConstants.testUserName
 
 object UserDetailsStub extends ComponentSpecBase {
 
-  val getUserDetailsUrl = testUserDetailsUrl
+  val getUserDetailsUrl = userDetailsUrl
 
   def stubGetUserDetails(): Unit = {
     WiremockHelper.stubGet(getUserDetailsUrl, Status.OK,
         s"""{
-           |    "name":"Albert Einstein",
+           |    "name":"$testUserName",
            |    "email":"test@test.com",
            |    "affinityGroup" : "affinityGroup",
+           |    "credentialRole": "n/a",
            |    "description" : "description",
            |    "lastName":"test",
            |    "dateOfBirth":"1980-06-30",

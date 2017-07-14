@@ -38,7 +38,7 @@ object AuthStub extends ComponentSpecBase {
           | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
           | }
           | ],
-          | "userDetailsUri":"$testUserDetailsUrl"
+          | "userDetailsUri":"$testUserDetailsWiremockUrl"
           |}""".stripMargin).toString())
   }
 
@@ -51,7 +51,7 @@ object AuthStub extends ComponentSpecBase {
       Json.parse(
         s"""{
            |"authorisedEnrolments":[{}],
-           |"userDetailsUri":"$testUserDetailsUrl"
+           |"userDetailsUri":"$testUserDetailsWiremockUrl"
            |}
          """.stripMargin).toString()
     )
@@ -65,7 +65,7 @@ object AuthStub extends ComponentSpecBase {
            | "key":"ANOTHER-KEY",
            | "identifiers": [{"key":"ANOTHER-ID", "value":"XA123456789"}]
            | }],
-           | "userDetailsUri":"$testUserDetailsUrl"
+           | "userDetailsUri":"$testUserDetailsWiremockUrl"
            |}""".stripMargin).toString())
   }
 }
