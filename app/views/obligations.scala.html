@@ -21,10 +21,10 @@
 @import views.html.helpers.sidebarHelper
 @import views.helpers.ObligationsPage
 
-@(bizObs: Option[ObligationsModel], propObs: Option[ObligationsModel])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
+@(bizObs: Option[ObligationsModel], propObs: Option[ObligationsModel])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
 
 @sidebar = {
-    @sidebarHelper(ObligationsPage)
+    @sidebarHelper(ObligationsPage, sources)
 }
 
 @main_template(title = messages("obligations.title"), bodyClasses = None, appConfig = appConfig, sidebarLinks = Some(sidebar)) {
