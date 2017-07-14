@@ -30,6 +30,7 @@ import scala.concurrent.Future
 class UserDetailsConnectorSpec extends TestSupport with MockHttp {
 
   val successResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson(testUserDetails)))
+  val badJsonResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson("{}")))
   val badResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR, responseString = Some("Error Message"))
 
   object TestUserDetailsConnector extends UserDetailsConnector(mockHttpGet)
@@ -41,6 +42,11 @@ class UserDetailsConnectorSpec extends TestSupport with MockHttp {
     "return a User Details Model in case of success" in {
       setupMockHttpGet(testUserDetailsUrl)(successResponse)
       await(result) shouldBe testUserDetails
+    }
+
+    "return User Details Error model in case of JSON parse error" in {
+      setupMockHttpGet(testUserDetailsUrl)(badJsonResponse)
+      await(result) shouldBe UserDetailsError
     }
 
     "return User Details Error model in case of failure" in {

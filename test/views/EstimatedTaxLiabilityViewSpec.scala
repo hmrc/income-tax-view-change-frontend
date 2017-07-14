@@ -265,48 +265,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       }
     }
 
-    "have sidebar section " which {
-
-      lazy val sidebarSection = document.getElementById("sidebar")
-
-      "has a heading for the MTDITID" in {
-        sidebarSection.getElementById("it-reference-heading").text() shouldBe sidebarMessages.mtditidHeading
-      }
-
-      "has the correct value for the MTDITID/reporting ref" in {
-        sidebarSection.getElementById("it-reference").text() shouldBe testMtdItUser.mtditid
-      }
-
-      "has a heading for viewing your reports" in {
-        sidebarSection.getElementById("obligations-heading").text() shouldBe sidebarMessages.reportsHeading
-      }
-
-      "has a link to view your reports" which {
-
-        s"has the correct href to '${controllers.routes.ObligationsController.getObligations().url}'" in {
-          sidebarSection.getElementById("obligations-link").attr("href") shouldBe controllers.routes.ObligationsController.getObligations().url
-        }
-
-        s"has the correct link wording of '${sidebarMessages.reportsLink}'" in {
-          sidebarSection.getElementById("obligations-link").text() shouldBe sidebarMessages.reportsLink
-        }
-
-      }
-
-      "has a link to view self assessment details" which {
-        "has a heading for viewing self assessment details" in {
-          sidebarSection.getElementById("sa-link-heading").text shouldBe sidebarMessages.selfAssessmentHeading
-        }
-
-        s"has the correct href to 'business-tax-account/self-assessment'" in {
-          sidebarSection.getElementById("sa-link").attr("href") should endWith("/business-account/self-assessment")
-        }
-
-        "has the correct link wording" in {
-          sidebarSection.getElementById("sa-link").text shouldBe sidebarMessages.selfAssessmentLink
-        }
-      }
+    "have sidebar section " in {
+      document.getElementById("sidebar") shouldNot be(null)
     }
   }
-
 }

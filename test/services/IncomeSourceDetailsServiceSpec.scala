@@ -32,7 +32,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
         setupMockBusinesslistResult(testNino)(businessesSuccessModel)
         setupMockPropertyDetailsResult(testNino)(propertySuccessModel)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe bothIncomeSourceSuccess
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe bothIncomeSourceSuccessMisalignedTaxYear
       }
     }
     "a result with just business details is returned" should {
