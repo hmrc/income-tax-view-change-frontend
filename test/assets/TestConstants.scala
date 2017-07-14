@@ -29,7 +29,7 @@ object TestConstants extends ImplicitDateFormatter {
   val testNino = "AB123456C"
   val testUserName = "Albert Einstein"
   val testUserDetails = UserDetailsModel(testUserName, None, "n/a", "n/a")
-  val testUserDetailsUrl = "/user/oid/banana"
+  val testUserDetailsUrl = "/user/oid/potato"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val testMtdItUserNoUserDetails: MtdItUser = MtdItUser(testMtditid, testNino, None)
   val testSelfEmploymentId = "XA00001234"
