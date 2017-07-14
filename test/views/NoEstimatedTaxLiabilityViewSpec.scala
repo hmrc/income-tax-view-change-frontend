@@ -37,7 +37,7 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
 
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
+  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), Some(propertyIncomeModel))
 
   "The EstimatedTaxLiability view" should {
@@ -45,6 +45,10 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
     lazy val page: HtmlFormat.Appendable =
       views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
+
+    s"have the user name '$testUserName' in the service info bar" in {
+      document.getElementById("service-info-user-name").text() shouldBe testUserName
+    }
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title

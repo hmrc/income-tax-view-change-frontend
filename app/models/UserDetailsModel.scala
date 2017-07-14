@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package views.helpers
+package models
 
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import utils.TestSupport
+import play.api.libs.json.Json
 
-class TaxYearRenderHelperSpec extends TestSupport {
 
-  "The TaxYearRenderHelper.renderTaxYear method" should {
-    "Render the 2018 Tax Year as 2017/18" in {
-      TaxYearRenderHelper.renderTaxYear(2018) shouldBe "2017 to 2018 tax year"
-    }
+sealed trait UserDetailsResponseModel
+case class UserDetailsModel(name: String, email: Option[String], affinityGroup: String, credentialRole: String) extends UserDetailsResponseModel
+case object UserDetailsError extends UserDetailsResponseModel
 
-    "Render the 2018 Payment Date as 31 January 2019" in {
-      TaxYearRenderHelper.renderPaymentDueDate(2018) shouldBe "31 January 2019"
-    }
-  }
+object UserDetailsModel {
+  implicit val format = Json.format[UserDetailsModel]
 }

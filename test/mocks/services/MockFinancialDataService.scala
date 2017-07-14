@@ -16,7 +16,10 @@
 
 package mocks.services
 
-import models.CalcDisplayResponseModel
+import assets.TestConstants.CalcBreakdown.{calculationDataSuccessModel, calculationDisplayNoBreakdownModel, calculationDisplaySuccessModel}
+import assets.TestConstants.Estimates.testYear
+import assets.TestConstants.testNino
+import models.{CalcDisplayError, CalcDisplayNoDataFound, CalcDisplayResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -43,4 +46,9 @@ trait MockFinancialDataService extends UnitSpec with MockitoSugar with BeforeAnd
         ArgumentMatchers.eq(taxYear)
       )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
+
+  def mockFinancialDataSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
+  def mockFinancialDataNoBreakdown(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplayNoBreakdownModel)
+  def mockFinancialDataError(): Unit = setupMockGetFinancialData(testNino, testYear)(CalcDisplayError)
+  def mockFinancialDataNotFound(): Unit = setupMockGetFinancialData(testNino, testYear)(CalcDisplayNoDataFound)
 }

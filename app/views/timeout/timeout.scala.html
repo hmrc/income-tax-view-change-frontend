@@ -19,9 +19,9 @@
 
 @()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main_template(title = messages("timeout.title"), bodyClasses = None, appConfig = appConfig, showLogout = false) {
+@main_template(title = messages("timeout.title"), bodyClasses = None, showLogout = false, showBtaHeader = false) {
 
- <h1>@Messages("timeout.heading")</h1>
- <p id="sign-in">@Html(Messages("timeout.signIn", controllers.routes.SignInController.signIn().url))</p>
+  <h1>@Messages("timeout.heading")</h1>
+  <p id="sign-in">@Html(Messages("timeout.signIn", controllers.routes.SignInController.signIn().url))</p>
 
 }

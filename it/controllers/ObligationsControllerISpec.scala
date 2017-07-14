@@ -20,7 +20,7 @@ import java.time.LocalDate
 import helpers.ComponentSpecBase
 import helpers.IntegrationTestConstants.GetObligationsData._
 import helpers.IntegrationTestConstants._
-import helpers.servicemocks.{AuthStub, SelfAssessmentStub}
+import helpers.servicemocks.{AuthStub, SelfAssessmentStub, UserDetailsStub}
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
@@ -36,6 +36,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
           Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
 
           And("I wiremock stub a success business details response")
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -58,6 +61,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             //Check Page Title of HTML Response Body
             pageTitle("Your report deadlines"),
 
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
+
             //Check one obligation section is returned
             nElementsWithClass("obligation")(1),
 
@@ -76,6 +82,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
           Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
 
           And("I wiremock stub a success business details response")
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -97,6 +106,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
             //Check Page Title of HTML Response Body
             pageTitle("Your report deadlines"),
+
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
 
             //Check three Obligation sections are returned
             nElementsWithClass("obligation")(3),
@@ -126,6 +138,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
 
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
           And("I wiremock stub a single business obligation response")
           SelfAssessmentStub.stubGetOnlyPropObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
 
@@ -140,6 +155,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
             //Check Page Title of HTML Response Body
             pageTitle("Your report deadlines"),
+
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
 
             //Check one obligation section is returned
             nElementsWithClass("obligation")(1),
@@ -160,6 +178,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
 
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
           And("I wiremock stub a single business and property obligation response")
           SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel, singleObligationsDataSuccessModel)
 
@@ -174,6 +195,9 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
             //Check Page Title of HTML Response Body
             pageTitle("Your report deadlines"),
+
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
 
             //Check two obligation sections are returned
             nElementsWithClass("obligation")(2),

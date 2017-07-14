@@ -22,20 +22,17 @@ import controllers.predicates.AuthenticationPredicate
 import play.api.i18n.MessagesApi
 import play.api.{Configuration, Environment}
 import utils.TestSupport
+import mocks.connectors.MockUserDetailsConnector
 
-trait MockAuthenticationPredicate extends TestSupport {
+trait MockAuthenticationPredicate extends TestSupport with MockUserDetailsConnector with MockFrontendAuthorisedFunctions {
 
-  class authBuilder(mock: MockAuthorisedFunctions) extends AuthenticationPredicate(
-    mock,
+  object MockAuthenticationPredicate extends AuthenticationPredicate(
+    mockAuthService,
     fakeApplication.injector.instanceOf[FrontendAppConfig],
     fakeApplication.injector.instanceOf[Configuration],
     fakeApplication.injector.instanceOf[Environment],
-    fakeApplication.injector.instanceOf[MessagesApi]
+    fakeApplication.injector.instanceOf[MessagesApi],
+    mockUserDetailsConnector
   )
-
-  object MockAuthenticated extends authBuilder(MockAuthorisedUserWithEnrolment)
-  object MockAuthenticatedNoEnrolment extends authBuilder(MockAuthorisedUserNoEnrolment)
-  object MockTimeout extends authBuilder(MockTimeoutUser)
-  object MockUnauthorised extends authBuilder(MockUnauthorisedUser)
 
 }

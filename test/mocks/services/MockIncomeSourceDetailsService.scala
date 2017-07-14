@@ -16,57 +16,35 @@
 
 package mocks.services
 
-import assets.TestConstants.BusinessDetails.{businessIncomeModel, businessIncomeModelAlignedTaxYear}
-import assets.TestConstants.PropertyIncome.propertyIncomeModel
-import connectors.{BusinessDetailsConnector, PropertyDetailsConnector}
+import assets.TestConstants.{IncomeSourceDetails, testNino}
 import models.IncomeSourcesModel
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.IncomeSourceDetailsService
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
 
-trait MockIncomeSourceDetailsService extends MockitoSugar {
+trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSugar {
+  self: Suite =>
 
-  object BusinessIncomeOnly extends IncomeSourceDetailsService(mock[BusinessDetailsConnector], mock[PropertyDetailsConnector]) {
-    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] =
-      Future.successful(IncomeSourcesModel(
-        propertyDetails = None,
-        businessDetails = Some(businessIncomeModel)
-      ))
+  val mockIncomeSourceDetailsService: IncomeSourceDetailsService = mock[IncomeSourceDetailsService]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockIncomeSourceDetailsService)
   }
 
-  object PropertyIncomeOnly extends IncomeSourceDetailsService(mock[BusinessDetailsConnector], mock[PropertyDetailsConnector]) {
-    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] =
-      Future.successful(IncomeSourcesModel(
-        propertyDetails = Some(propertyIncomeModel),
-        businessDetails = None
-      ))
+  def setupMockGetIncomeSourceDetails(nino: String)(sources: IncomeSourcesModel): Unit = {
+    when(mockIncomeSourceDetailsService.getIncomeSourceDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any())).thenReturn(Future.successful(sources))
   }
 
-  object BothBusinessAndPropertyIncome extends IncomeSourceDetailsService(mock[BusinessDetailsConnector], mock[PropertyDetailsConnector]) {
-    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] =
-      Future.successful(IncomeSourcesModel(
-        propertyDetails = Some(propertyIncomeModel),
-        businessDetails = Some(businessIncomeModel)
-      ))
-  }
-
-  object BothBusinessAndPropertyIncomeAlignedTaxYear extends IncomeSourceDetailsService(mock[BusinessDetailsConnector], mock[PropertyDetailsConnector]) {
-    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] =
-      Future.successful(IncomeSourcesModel(
-        propertyDetails = Some(propertyIncomeModel),
-        businessDetails = Some(businessIncomeModelAlignedTaxYear)
-      ))
-  }
-
-  object NoIncomeSources extends IncomeSourceDetailsService(mock[BusinessDetailsConnector], mock[PropertyDetailsConnector]) {
-    override def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] =
-      Future.successful(IncomeSourcesModel(
-        propertyDetails = None,
-        businessDetails = None
-      ))
-  }
+  def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
+  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.propertyIncomeSourceSuccess)
+  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourceSuccess)
+  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.noIncomeSourceSuccess)
+  def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourcesSuccessBusinessAligned)
 
 }
