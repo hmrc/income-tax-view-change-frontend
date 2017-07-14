@@ -19,21 +19,13 @@ package mocks.controllers.predicates
 import controllers.predicates.IncomeSourceDetailsPredicate
 import mocks.services._
 import play.api.i18n.MessagesApi
-import services.IncomeSourceDetailsService
 import utils.TestSupport
 
 trait MockIncomeSourceDetailsPredicate extends TestSupport with MockIncomeSourceDetailsService {
 
-  class incomeSourceDetailsBuilder(mock: IncomeSourceDetailsService) extends IncomeSourceDetailsPredicate()(
+  object MockIncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate()(
     fakeApplication.injector.instanceOf[MessagesApi],
-    mock
+    mockIncomeSourceDetailsService
   )
-
-  object BusinessIncome extends incomeSourceDetailsBuilder(BusinessIncomeOnly)
-  object PropertyIncome extends incomeSourceDetailsBuilder(PropertyIncomeOnly)
-  object BothIncome extends incomeSourceDetailsBuilder(BothBusinessAndPropertyIncome)
-  object BothIncomeAlignedTaxYear extends incomeSourceDetailsBuilder(BothBusinessAndPropertyIncomeAlignedTaxYear)
-  object NoIncome extends incomeSourceDetailsBuilder(NoIncomeSources)
-
 
 }

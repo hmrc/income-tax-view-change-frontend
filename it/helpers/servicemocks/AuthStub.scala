@@ -16,12 +16,12 @@
 
 package helpers.servicemocks
 
-import helpers.WiremockHelper
+import helpers.IntegrationTestConstants._
+import helpers.{ComponentSpecBase, WiremockHelper}
 import play.api.http.Status
 import play.api.libs.json.Json
-import helpers.IntegrationTestConstants._
 
-object AuthStub {
+object AuthStub extends ComponentSpecBase {
 
   val postAuthoriseUrl = "/auth/authorise"
 
@@ -37,7 +37,8 @@ object AuthStub {
           | "key":"$testNinoEnrolmentKey",
           | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
           | }
-          | ]
+          | ],
+          | "userDetailsUri":"$testUserDetailsWiremockUrl"
           |}""".stripMargin).toString())
   }
 
@@ -49,7 +50,8 @@ object AuthStub {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.INTERNAL_SERVER_ERROR,
       Json.parse(
         s"""{
-           |"authorisedEnrolments":[{}]
+           |"authorisedEnrolments":[{}],
+           |"userDetailsUri":"$testUserDetailsWiremockUrl"
            |}
          """.stripMargin).toString()
     )
@@ -62,7 +64,8 @@ object AuthStub {
            | "authorisedEnrolments": [{
            | "key":"ANOTHER-KEY",
            | "identifiers": [{"key":"ANOTHER-ID", "value":"XA123456789"}]
-           | }]
+           | }],
+           | "userDetailsUri":"$testUserDetailsWiremockUrl"
            |}""".stripMargin).toString())
   }
 }

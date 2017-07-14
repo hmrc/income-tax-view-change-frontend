@@ -17,10 +17,9 @@ package controllers
 
 import helpers.ComponentSpecBase
 import helpers.IntegrationTestConstants._
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub}
-import models.{CalculationDataErrorModel, LastTaxCalculation, CalculationDataModel}
+import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub, UserDetailsStub}
+import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
 import play.api.http.Status._
-import play.api.Logger
 
 class FinancialDataControllerISpec extends ComponentSpecBase {
 
@@ -32,6 +31,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         Given("I wiremock stub an authorised user response")
         AuthStub.stubAuthorised()
+
+        And("I wiremock stub a response from the User Details service")
+        UserDetailsStub.stubGetUserDetails()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
@@ -88,6 +90,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           //Check the Page Title
           pageTitle("2017 to 2018 tax year Your current tax estimate"),
 
+          //User Name
+          elementTextByID(id = "service-info-user-name")(testUserName),
+
           //Check the estimated tax amount is correct
           elementTextByID("in-year-estimate")("£90,500"),
 
@@ -103,6 +108,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         Given("an authorised user response via wiremock stub")
         AuthStub.stubAuthorised()
+
+        And("I wiremock stub a response from the User Details service")
+        UserDetailsStub.stubGetUserDetails()
 
         And("a successful Get Last Estimated Tax Liability response via wiremock stub")
         val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
@@ -141,6 +149,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           //Check the Page Title
           pageTitle("2017 to 2018 tax year Your current tax estimate"),
 
+          //User Name
+          elementTextByID(id = "service-info-user-name")(testUserName),
+
           //Check the estimated tax amount is correct
           elementTextByID("in-year-estimate")("£90,500"),
 
@@ -156,6 +167,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         Given("an authorised user response via wiremock stub")
         AuthStub.stubAuthorised()
+
+        And("I wiremock stub a response from the User Details service")
+        UserDetailsStub.stubGetUserDetails()
 
         And("a No Data Found response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcNoData(testNino, testYear)
@@ -196,6 +210,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         Given("an authorised user response via wiremock stub")
         AuthStub.stubAuthorised()
+
+        And("I wiremock stub a response from the User Details service")
+        UserDetailsStub.stubGetUserDetails()
 
         And("an Error Response response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)

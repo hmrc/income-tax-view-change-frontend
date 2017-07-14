@@ -4,6 +4,11 @@ base.service_name                                               = Business tax a
 base.phase                                                      = BETA
 base.sign-out                                                   = Sign out
 
+#BTA Links
+bta.home                                                        = Business tax home
+bta.messages                                                    = Messages
+bta.manage-account                                              = Manage account
+
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = {0} to {1} tax year Your current tax estimate
 estimated_tax_liability.heading                                 = Your current tax estimate

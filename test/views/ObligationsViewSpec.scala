@@ -26,6 +26,11 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.TestSupport
+import assets.Messages.{Obligations => messages}
+import assets.Messages.{Sidebar => sidebarMessages}
+import assets.TestConstants.{testMtditid, testNino, testUserDetails, testUserName}
+import auth.MtdItUser
 import utils.ImplicitDateFormatter._
 import utils.TestSupport
 
@@ -34,7 +39,7 @@ class ObligationsViewSpec extends TestSupport{
   lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
 
   val model = ObligationModel(start = "2017-1-1".toLocalDate, end = "2017-3-31".toLocalDate, due = "2017-4-5".toLocalDate, true)
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
+  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val dummymodel = ObligationsModel(List(model))
 
   lazy val bothPage = views.html.obligations(Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -44,6 +49,10 @@ class ObligationsViewSpec extends TestSupport{
   "The Obligations view" should {
 
     lazy val document = Jsoup.parse(contentAsString(bothPage))
+
+    s"have the user name '$testUserName' in the service info bar" in {
+      document.getElementById("service-info-user-name").text() shouldBe testUserName
+    }
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title

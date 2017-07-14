@@ -22,7 +22,7 @@
 
 @(stubSchemaForm: Form[SchemaModel], postAction: Call, showSuccess: Boolean, errorMessage: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
 
-@stub_template(title = "ITVC Stub Schemas", bodyClasses = None, appConfig = appConfig) {
+@stub_template(title = "ITVC Stub Schemas", bodyClasses = None) {
 
     @summaryErrorHelper(stubSchemaForm)
 
