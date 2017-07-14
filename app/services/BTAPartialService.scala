@@ -28,21 +28,26 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService) {
   def getObligations(nino: String, businessIncomeSource: Option[BusinessIncomeModel])(implicit hc: HeaderCarrier) = {
     for{
       ob <- obligationsService.getBusinessObligations(nino, businessIncomeSource) match {
-        case b: ObligationsModel => b //.obligations.filter(_.met == false).reduceLeft((x,y) => if(x.due isBefore y.due) x else y).due
-        case _ => List()
+        case b: ObligationsModel => getMostRecentDate(b)
+        case _ => _
       }
       prop <- obligationsService.getPropertyObligations(nino) match {
-        case p: ObligationsModel => p //.obligations.filter(_.met == false)
-        case _ => List()
+        case p: ObligationsModel => getMostRecentDate(p)
+        case _ => _
       }
-    } yield List.concat(ob,prop)
-  }
-
-  def check(responseModel: ObligationsResponseModel): LocalDate = {
-    responseModel match {
-      case model: ObligationsModel => model.obligations.filter(_.met == false).reduceLeft((x,y) => if(x.due isBefore y.due) x else y).due
-      case _ =>
+    } yield (ob,prop) match {
+      case (b: LocalDate, p: LocalDate) => if(b.isBefore(p)) b else p
+      case (b: LocalDate, _) => b
+      case (_, p: LocalDate) => p
+      case (_,_) =>
     }
   }
+
+  def getMostRecentDate(model: ObligationsModel): LocalDate = {
+    model.obligations.filter(_.met == false)
+      .reduceLeft((x,y) => if(x.due isBefore y.due) x else y).due
+  }
+
+
 
 }
