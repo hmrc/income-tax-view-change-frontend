@@ -19,18 +19,27 @@ package assets
 import auth.MtdItUser
 import models._
 import play.api.http.Status
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
+import uk.gov.hmrc.auth.core._
 import utils.ImplicitDateFormatter
 
 object TestConstants extends ImplicitDateFormatter {
 
   val testMtditid = "XAIT0000123456"
   val testNino = "AB123456C"
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
+  val testUserName = "Albert Einstein"
+  val testUserDetails = UserDetailsModel(testUserName, None, "n/a", "n/a")
+  val testUserDetailsUrl = "/user/oid/potato"
+  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
+  val testMtdItUserNoUserDetails: MtdItUser = MtdItUser(testMtditid, testNino, None)
   val testSelfEmploymentId = "XA00001234"
   val testTaxCalculationId = "CALCID"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
+  val testAuthSuccessResponse = new ~(Enrolments(Set(
+    Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated", ConfidenceLevel.L0),
+    Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated", ConfidenceLevel.L0)
+  )),Option(testUserDetailsUrl))
 
   object BusinessDetails {
 
@@ -229,6 +238,8 @@ object TestConstants extends ImplicitDateFormatter {
     val businessIncomeSourceSuccess = IncomeSourcesModel(Some(BusinessDetails.businessIncomeModel), None)
     val propertyIncomeSourceSuccess = IncomeSourcesModel(None, Some(PropertyIncome.propertyIncomeModel))
     val noIncomeSourceSuccess = IncomeSourcesModel(None, None)
+    val bothIncomeSourcesSuccessBusinessAligned =
+      IncomeSourcesModel(Some(BusinessDetails.businessIncomeModelAlignedTaxYear), Some(PropertyIncome.propertyIncomeModel))
 
   }
 

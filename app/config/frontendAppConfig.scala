@@ -39,6 +39,8 @@ trait AppConfig {
   val ninoEnrolmentKey: String
   val ninoIdentifierKey: String
   val businessTaxAccount: String
+  val btaManageAccountUrl: String
+  val btaMessagesUrl: String
 }
 
 @Singleton
@@ -80,4 +82,6 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
 
   //Business Tax Account
   override lazy val businessTaxAccount: String = loadConfig("business-tax-account.url")
+  override lazy val btaManageAccountUrl: String = s"$businessTaxAccount/manage-account"
+  override lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"
 }

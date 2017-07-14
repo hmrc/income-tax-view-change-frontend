@@ -38,7 +38,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
 
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino)
+  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), Some(propertyIncomeModel))
   val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), None)
   val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(None, Some(propertyIncomeModel))
@@ -56,6 +56,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
     val setup = pageSetup(busPropBRTCalcDataModel,testIncomeSources)
     import setup._
+
+    s"have the user name '$testUserName' in the service info bar" in {
+      document.getElementById("service-info-user-name").text() shouldBe testUserName
+    }
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
