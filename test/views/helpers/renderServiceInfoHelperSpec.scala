@@ -74,7 +74,7 @@ class renderServiceInfoHelperSpec extends TestSupport {
 
       }
 
-      "have a link to Manage Aaccount" which {
+      "have a link to Messages" which {
 
         lazy val messagesLink = document.getElementById("service-info-messages-link")
 
