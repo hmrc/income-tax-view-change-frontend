@@ -55,7 +55,7 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
   }
 
 
-  private[FinancialDataService] def getLastEstimatedTaxCalculation(nino: String,
+  def getLastEstimatedTaxCalculation(nino: String,
                                      year: Int
                                     )(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 

@@ -18,21 +18,21 @@ package services
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-
+import play.api.Logger
 import models._
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 @Singleton
-class BTAPartialService @Inject()(val obligationsService: ObligationsService) {
+class BTAPartialService @Inject()(val obligationsService: ObligationsService, val financialDataService: FinancialDataService) {
 
   def getObligations(nino: String, businessIncomeSource: Option[BusinessIncomeModel])(implicit hc: HeaderCarrier) = {
     for{
       ob <- obligationsService.getBusinessObligations(nino, businessIncomeSource) match {
-        case b: ObligationsModel => getMostRecentDate(b)
+        case b: ObligationsModel => getMostRecentDueDate(b)
         case _ => _
       }
       prop <- obligationsService.getPropertyObligations(nino) match {
-        case p: ObligationsModel => getMostRecentDate(p)
+        case p: ObligationsModel => getMostRecentDueDate(p)
         case _ => _
       }
     } yield (ob,prop) match {
@@ -40,14 +40,25 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService) {
       case (b: LocalDate, _) => b
       case (_, p: LocalDate) => p
       case (_,_) =>
+        Logger.warn("[BTAPartialService][getObligations] - No Obligations obtained")
+        //TODO something better than this:
+        LocalDate.parse("2100-01-01")
     }
   }
 
-  def getMostRecentDate(model: ObligationsModel): LocalDate = {
+  def getEstimate(nino: String, year: Int) = {
+    financialDataService.getLastEstimatedTaxCalculation(nino, year) match {
+      case calc: LastTaxCalculation => calc.calcAmount
+      case _ =>
+        Logger.warn("[BTAPartialService][getObligations] - No LastCalc data retrieved")
+        //TODO something better than this:
+        -1
+    }
+  }
+
+  private[BTAPartialService] def getMostRecentDueDate(model: ObligationsModel): LocalDate = {
     model.obligations.filter(_.met == false)
       .reduceLeft((x,y) => if(x.due isBefore y.due) x else y).due
   }
-
-
 
 }
