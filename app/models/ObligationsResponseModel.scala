@@ -29,7 +29,7 @@ case class ObligationModel(start: LocalDate,
                            end: LocalDate,
                            due: LocalDate,
                            met: Boolean
-                          ) {
+                          ) extends ObligationsResponseModel {
   def currentTime(): LocalDate = LocalDate.now()
 
   def getObligationStatus: ObligationStatus = (met, due) match {

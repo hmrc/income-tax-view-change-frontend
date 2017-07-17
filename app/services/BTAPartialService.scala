@@ -16,49 +16,52 @@
 
 package services
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import models._
 import uk.gov.hmrc.play.http.HeaderCarrier
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 
 @Singleton
 class BTAPartialService @Inject()(val obligationsService: ObligationsService, val financialDataService: FinancialDataService) {
 
-  def getObligations(nino: String, businessIncomeSource: Option[BusinessIncomeModel])(implicit hc: HeaderCarrier) = {
+  def getObligations(nino: String, businessIncomeSource: Option[BusinessIncomeModel])(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
     for{
-      ob <- obligationsService.getBusinessObligations(nino, businessIncomeSource) match {
+      biz <- obligationsService.getBusinessObligations(nino, businessIncomeSource) map {
         case b: ObligationsModel => getMostRecentDueDate(b)
-        case _ => _
+        case _ => ObligationsErrorModel(500, "model... bad")
       }
-      prop <- obligationsService.getPropertyObligations(nino) match {
+      prop <- obligationsService.getPropertyObligations(nino) map {
         case p: ObligationsModel => getMostRecentDueDate(p)
-        case _ => _
+        case _ => ObligationsErrorModel(500, "model... bad")
       }
-    } yield (ob,prop) match {
-      case (b: LocalDate, p: LocalDate) => if(b.isBefore(p)) b else p
-      case (b: LocalDate, _) => b
-      case (_, p: LocalDate) => p
+    } yield (biz,prop) match {
+      case (b: ObligationModel, p: ObligationModel) => if(b.due.isBefore(p.due)) b else p
+      case (b: ObligationModel, _) => b
+      case (_, p: ObligationModel) => p
       case (_,_) =>
         Logger.warn("[BTAPartialService][getObligations] - No Obligations obtained")
         //TODO something better than this:
-        LocalDate.parse("2100-01-01")
+        ObligationsErrorModel(500, "Oh noes!!")
     }
   }
 
-  def getEstimate(nino: String, year: Int) = {
-    financialDataService.getLastEstimatedTaxCalculation(nino, year) match {
-      case calc: LastTaxCalculation => calc.calcAmount
+  def getEstimate(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[Option[BigDecimal]] = {
+    financialDataService.getLastEstimatedTaxCalculation(nino, year) map {
+      case calc: LastTaxCalculation => Some(calc.calcAmount)
+      case NoLastTaxCalculation => None
       case _ =>
         Logger.warn("[BTAPartialService][getObligations] - No LastCalc data retrieved")
         //TODO something better than this:
-        -1
+        Some(BigDecimal(-1))
     }
   }
 
-  private[BTAPartialService] def getMostRecentDueDate(model: ObligationsModel): LocalDate = {
+  private[BTAPartialService] def getMostRecentDueDate(model: ObligationsModel): ObligationModel = {
     model.obligations.filter(_.met == false)
-      .reduceLeft((x,y) => if(x.due isBefore y.due) x else y).due
+      .reduceLeft((x,y) => if(x.due isBefore y.due) x else y)
   }
 
 }

@@ -178,8 +178,8 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Given("I wiremock stub an authorised user response")
           AuthStub.stubAuthorised()
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          And("I wiremock stub a Error Response from the User Details service")
+          UserDetailsStub.stubGetUserDetailsError()
 
           And("I wiremock stub a single business and property obligation response")
           SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel, singleObligationsDataSuccessModel)
@@ -195,9 +195,6 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
             //Check Page Title of HTML Response Body
             pageTitle("Your report deadlines"),
-
-            //User Name
-            elementTextByID(id = "service-info-user-name")(testUserName),
 
             //Check two obligation sections are returned
             nElementsWithClass("obligation")(2),

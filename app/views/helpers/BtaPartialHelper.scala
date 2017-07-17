@@ -16,8 +16,46 @@
 
 package views.helpers
 
-
+import models.{ObligationModel, Overdue, Open}
+import play.api.i18n.Messages
+import play.twirl.api.Html
+import utils.ImplicitDateFormatter._
 
 object BtaPartialHelper {
+  
+  def whichStatus(model: ObligationModel)(implicit messages: Messages) = model.getObligationStatus match {
+    case open: Open =>
+      Html(
+        s"""
+           |<p>${messages("bta_partial.next_due", model.due.toLongDate)}</p>
+           |<p>${messages("bta_partial.deadlines_link")}</p>
+         """.stripMargin
+      )
+    case overdue: Overdue.type =>
+      Html(
+        s"""
+           |<p>${messages("bta_partial.next_due", model.due.toLongDate)}</p>
+           |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
+         """.stripMargin
+      )
+    case _ =>
+      //TODO something better than this
+  }
+
+  def showLastEstimate(estimate: Option[BigDecimal])(implicit messages: Messages) = estimate match {
+    case Some(est) =>
+      Html(
+        s"""
+           |<p>${messages("bta_partial.estimated_tax", est)}</p>
+           |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
+         """.stripMargin
+      )
+    case None =>
+      Html(
+        s"""
+           |
+         """.stripMargin
+      )
+  }
 
 }
