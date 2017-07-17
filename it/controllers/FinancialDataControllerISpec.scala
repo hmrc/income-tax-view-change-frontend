@@ -109,8 +109,8 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         Given("an authorised user response via wiremock stub")
         AuthStub.stubAuthorised()
 
-        And("I wiremock stub a response from the User Details service")
-        UserDetailsStub.stubGetUserDetails()
+        And("I wiremock stub a Error Response from the User Details service")
+        UserDetailsStub.stubGetUserDetailsError()
 
         And("a successful Get Last Estimated Tax Liability response via wiremock stub")
         val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
@@ -148,9 +148,6 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
           //Check the Page Title
           pageTitle("2017 to 2018 tax year Your current tax estimate"),
-
-          //User Name
-          elementTextByID(id = "service-info-user-name")(testUserName),
 
           //Check the estimated tax amount is correct
           elementTextByID("in-year-estimate")("£90,500"),

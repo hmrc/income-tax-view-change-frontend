@@ -21,7 +21,27 @@ import play.api.libs.json.{Json, OFormat}
 case class IncomeSourcesModel(
                               businessDetails: Option[BusinessIncomeModel],
                               propertyDetails: Option[PropertyIncomeModel]
-                            )
+                            ) {
+
+  val hasPropertyIncome: Boolean = propertyDetails.nonEmpty
+  val hasBusinessIncome: Boolean = businessDetails.nonEmpty
+  val hasBothIncomeSources: Boolean = hasPropertyIncome && hasBusinessIncome
+
+  val orderedTaxYears: List[Int] =
+    List(
+      propertyDetails.fold(-1)(_.accountingPeriod.determineTaxYear),
+      businessDetails.fold(-1)(_.accountingPeriod.determineTaxYear)
+    )
+      .filterNot(_ == -1)
+      .sortWith(_ < _)
+      .distinct
+
+  val earliestTaxYear: Int = if(orderedTaxYears.nonEmpty) orderedTaxYears.head else -1
+  val lastTaxTear: Int = if(orderedTaxYears.nonEmpty) orderedTaxYears.last else -1
+  val hasMultipleTaxYears: Boolean = earliestTaxYear < lastTaxTear
+
+
+}
 
 object IncomeSourcesModel {
   val format: OFormat[IncomeSourcesModel] = Json.format[IncomeSourcesModel]

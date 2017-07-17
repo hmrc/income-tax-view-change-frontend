@@ -29,23 +29,23 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
     "the user has both business and property income sources" should {
       //Test Business details
       s"have a business ID of $testSelfEmploymentId" in {
-        bothIncomeSourceSuccess.businessDetails.get.selfEmploymentId shouldBe testSelfEmploymentId
+        bothIncomeSourceSuccessMisalignedTaxYear.businessDetails.get.selfEmploymentId shouldBe testSelfEmploymentId
       }
       s"have the business accounting period start date of ${testBusinessAccountingPeriod.start}" in {
-        bothIncomeSourceSuccess.businessDetails.get.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
+        bothIncomeSourceSuccessMisalignedTaxYear.businessDetails.get.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
       }
       s"have the business accounting period end date of ${testBusinessAccountingPeriod.end}" in {
-        bothIncomeSourceSuccess.businessDetails.get.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
+        bothIncomeSourceSuccessMisalignedTaxYear.businessDetails.get.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
       }
       s"should have the trading name of 'Test Business'" in {
-        bothIncomeSourceSuccess.businessDetails.get.tradingName shouldBe testTradeName
+        bothIncomeSourceSuccessMisalignedTaxYear.businessDetails.get.tradingName shouldBe testTradeName
       }
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        bothIncomeSourceSuccess.propertyDetails.get.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
+        bothIncomeSourceSuccessMisalignedTaxYear.propertyDetails.get.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        bothIncomeSourceSuccess.propertyDetails.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
+        bothIncomeSourceSuccessMisalignedTaxYear.propertyDetails.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
       }
     }
 
