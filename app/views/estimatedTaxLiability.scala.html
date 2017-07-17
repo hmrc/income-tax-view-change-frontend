@@ -33,13 +33,13 @@
     @defining(calcModel.calcDataModel.get) { breakdown =>
         <table class="itvc-table">
             <tbody>
-                @if(sources.businessDetails.nonEmpty){
+                @if(sources.businessDetails.nonEmpty && sources.businessDetails.get.accountingPeriod.determineTaxYear == taxYear){
                     <tr id="business-profit-section" class="no-border-bottom">
                         <td>@messages("estimated_tax_liability.calc-breakdown.business-profit")</td>
                         <td id="business-profit"  class="summary-data">@{breakdown.profitFromSelfEmployment.toCurrency}</td>
                     </tr>
                 }
-                @if(sources.propertyDetails.nonEmpty){
+                @if(sources.propertyDetails.nonEmpty && sources.propertyDetails.get.accountingPeriod.determineTaxYear == taxYear){
                     <tr id="property-profit-section" class="no-border-bottom">
                         <td>@messages("estimated_tax_liability.calc-breakdown.property-profit")</td>
                         <td id="property-profit" class="summary-data">@{breakdown.profitFromUkLandAndProperty.toCurrency}</td>
@@ -50,6 +50,7 @@
                     <td>@messages("estimated_tax_liability.calc-breakdown.personal-allowance")</td>
                     <td id="personal-allowance" class="summary-data">@breakdown.personalAllowance.toCurrency</td>
                 </tr>
+
                 <tr id="taxable-income-section" class="total-section">
                     <td>@messages("estimated_tax_liability.calc-breakdown.taxable-income")</td>
                     <td id="taxable-income" class="summary-data">@breakdown.totalIncomeOnWhichTaxIsDue.toCurrency</td>
@@ -57,15 +58,12 @@
 
                 @if(calcModel.hasBRTSection) {
 
-                    <tr class="no-border-bottom">
-                        <td>@messages("estimated_tax_liability.calc-breakdown.income-tax")</td>
-                    </tr>
-
                     <tr id="brt-section" class="no-border-bottom">
                         <td>
                             <p>
-                                <span id="brt-it-calc">@breakdown.payPensionsProfitAtBRT.toCurrencyString</span> at
-                                <span id="brt-rate">@breakdown.rateBRT</span>%
+                                @messages("estimated_tax_liability.calc-breakdown.income-tax")
+                                (<span id="brt-it-calc">@breakdown.payPensionsProfitAtBRT.toCurrencyString</span> at
+                                <span id="brt-rate">@breakdown.rateBRT</span>%)
                             </p>
                         </td>
                         <td id="brt-amount" class="summary-data">@breakdown.incomeTaxOnPayPensionsProfitAtBRT.toCurrency</td>
@@ -76,8 +74,9 @@
                         <tr id="hrt-section" class="no-border-bottom">
                             <td>
                                 <p>
-                                    <span id="hrt-it-calc">@breakdown.payPensionsProfitAtHRT.toCurrencyString</span> at
-                                    <span id="hrt-rate">@breakdown.rateHRT</span>%
+                                    @messages("estimated_tax_liability.calc-breakdown.income-tax")
+                                    (<span id="hrt-it-calc">@breakdown.payPensionsProfitAtHRT.toCurrencyString</span> at
+                                    <span id="hrt-rate">@breakdown.rateHRT</span>%)
                                 </p>
                             </td>
                             <td id="hrt-amount" class="summary-data">@breakdown.incomeTaxOnPayPensionsProfitAtHRT.toCurrency</td>
@@ -87,8 +86,9 @@
                             <tr id="art-section" class="no-border-bottom">
                                 <td>
                                     <p>
-                                        <span id="art-it-calc">@breakdown.payPensionsProfitAtART.toCurrencyString</span> at
-                                        <span id="art-rate">@breakdown.rateART</span>%
+                                        @messages("estimated_tax_liability.calc-breakdown.income-tax")
+                                        (<span id="art-it-calc">@breakdown.payPensionsProfitAtART.toCurrencyString</span> at
+                                        <span id="art-rate">@breakdown.rateART</span>%)
                                     </p>
                                 </td>
                                 <td id="art-amount" class="summary-data">@breakdown.incomeTaxOnPayPensionsProfitAtART.toCurrency</td>
@@ -126,14 +126,13 @@
             <span id="page-heading">@messages("estimated_tax_liability.heading")</span>
         </h1>
 
-        <p id="p1" class="panel-indent">@messages("estimated_tax_liability.estimated-tax.p1")</p>
-
         <p>
             <span class="bold-medium" id="in-year-estimate">
                 @if(calcModel.breakdownNonEmpty) { @calcModel.calcDataModel.get.incomeTaxYTD.toCurrency} else {@calcModel.calcAmount.toCurrency}
             </span>
-            <br>
-            <span id="in-year-estimate-date">@Html(messages("estimated_tax_liability.estimated-date", calcModel.calcTimestamp.toLocalDateTime.toLongDateTime))</span>
+            @* Commented Out Calc Date, as may be required later *@
+            @* <br> *@
+            @* <span id="in-year-estimate-date">@Html(messages("estimated_tax_liability.estimated-date", calcModel.calcTimestamp.toLocalDateTime.toLongDateTime))</span> *@
         </p>
 
         @if(calcModel.breakdownNonEmpty){
@@ -143,6 +142,13 @@
         <p id="changes">
             @messages("estimated_tax_liability.estimated-tax.changes")
         </p>
+
+        <ul class="bullets">
+            <li id="bullet-1">@messages("estimated_tax_liability.estimated-tax.changes.bullet-1", "INSERT DATE")</li>
+            <li id="bullet-2">@messages("estimated_tax_liability.estimated-tax.changes.bullet-2")</li>
+            <li id="bullet-3">@messages("estimated_tax_liability.estimated-tax.changes.bullet-3")</li>
+            <li id="bullet-4">@messages("estimated_tax_liability.estimated-tax.changes.bullet-4")</li>
+        </ul>
 
         <p id="payment">
             @messages(s"estimated_tax_liability.estimated-tax.payment")

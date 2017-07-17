@@ -88,16 +88,17 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
 
           //Check the Page Title
-          pageTitle("2017 to 2018 tax year Your current tax estimate"),
+          pageTitle("2017 to 2018 tax year Your tax estimate"),
 
           //User Name
           elementTextByID(id = "service-info-user-name")(testUserName),
 
           //Check the estimated tax amount is correct
-          elementTextByID("in-year-estimate")("£90,500"),
+          elementTextByID("in-year-estimate")("£90,500")
 
+          //Commented Out as may be required again later
           //Check the Estimated Calculation Date is correct
-          elementTextByID("in-year-estimate-date")("Estimate up to your 6 July 2017 submission")
+          //elementTextByID("in-year-estimate-date")("Estimate up to your 6 July 2017 submission")
         )
       }
     }
@@ -147,16 +148,17 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
 
           //Check the Page Title
-          pageTitle("2017 to 2018 tax year Your current tax estimate"),
+          pageTitle("2017 to 2018 tax year Your tax estimate"),
 
           //User Name
           elementTextByID(id = "service-info-user-name")(testUserName),
 
           //Check the estimated tax amount is correct
-          elementTextByID("in-year-estimate")("£90,500"),
+          elementTextByID("in-year-estimate")("£90,500")
 
+          //Commented Out as may be required again later
           //Check the Estimated Calculation Date is correct
-          elementTextByID("in-year-estimate-date")("Estimate up to your 6 July 2017 submission")
+          //elementTextByID("in-year-estimate-date")("Estimate up to your 6 July 2017 submission")
         )
       }
     }
@@ -199,7 +201,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           httpStatus(NOT_FOUND),
 
           //Check the Page Title
-          pageTitle("2017 to 2018 tax year Your current tax estimate")
+          pageTitle("2017 to 2018 tax year Your tax estimate")
         )
       }
     }
