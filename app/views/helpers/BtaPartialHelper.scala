@@ -28,15 +28,15 @@ object BtaPartialHelper {
       Html(
         s"""
            |<p>${messages("bta_partial.next_due", model.due.toLongDate)}</p>
-           |<p>${messages("bta_partial.deadlines_link")}</p>
-         """.stripMargin
+           |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
+         """.stripMargin.trim
       )
     case overdue: Overdue.type =>
       Html(
         s"""
            |<p>${messages("bta_partial.next_due", model.due.toLongDate)}</p>
            |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
-         """.stripMargin
+         """.stripMargin.trim
       )
     case _ =>
       //TODO something better than this
@@ -48,13 +48,13 @@ object BtaPartialHelper {
         s"""
            |<p>${messages("bta_partial.estimated_tax", est)}</p>
            |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
-         """.stripMargin
+         """.stripMargin.trim
       )
     case None =>
       Html(
         s"""
            |
-         """.stripMargin
+         """.stripMargin.trim
       )
   }
 

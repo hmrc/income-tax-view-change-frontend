@@ -21,11 +21,9 @@
 @(obMod: ObligationModel, amount: Option[BigDecimal])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
 
 <section id="btaPartial">
-    <h1 id="page-heading">@messages("obligations.heading")</h1>
+    <p class="panel-indent alert--info" id="obligation-intro">@messages("bta_partial.p1")</p>
 
-    <p id="obligation-intro">@messages("bta_partial.p1")</p>
-
-    <h2>@messages("bta_partial.subheading")</h2>
+    <h3>@messages("bta_partial.subheading")</h3>
 
     @BtaPartialHelper.whichStatus(obMod)
     @BtaPartialHelper.showLastEstimate(amount)
