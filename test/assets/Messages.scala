@@ -20,23 +20,24 @@ object Messages {
 
   // Estimated Tax Liability Page Messages
   object EstimatedTaxLiability {
-    val pageHeading = "Your current tax estimate"
+    val pageHeading = "Your tax estimate"
     val taxYear = "2017 to 2018 tax year"
     val title = taxYear + " " + pageHeading
     object EstimateTax {
-      val h2 = "2017/18 - Business Tax Account"
-      val p1 = "We've calculated this estimate using the figures and dates you've reported in your accounting software. " +
-        "The amount includes both your Income Tax and National Insurance."
       val calcDate: String => String = date => s"""Estimate up to your <span id="calc-date">$date</span> submission"""
-      val changes = "Your estimate could change if you have any income or expenses that you've not reported through your software."
-      val payment = "You must pay any tax you owe for the whole tax year by 31 January 2019."
+      val changes = "Your estimate is a current figure and could change because:"
+      val changesBullet1 = "it's based on figures from the start of your accounting period up to your last report"
+      val changesBullet2 = "rates and allowances won't be applied in full until the end of the tax year"
+      val changesBullet3 = "you may earn more money"
+      val changesBullet4 = "you may have income that's not reported in your software"
+      val payment: String => String = date => s"You must pay any tax you owe for the whole tax year by $date."
       val toDate = "Estimate to date"
     }
   }
 
   // No Estimated Tax Liability Page Messages
   object NoEstimatedTaxLiability {
-    val pageHeading = "Your current tax estimate"
+    val pageHeading = "Your tax estimate"
     val taxYear = "2017 to 2018 tax year"
     val title = taxYear + " " + pageHeading
     val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
