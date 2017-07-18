@@ -39,6 +39,10 @@ object UserDetailsStub extends ComponentSpecBase {
            |    "authProviderType": "GovernmentGateway"
            |}""".stripMargin)
   }
+
+  def stubGetUserDetailsError(): Unit = {
+    WiremockHelper.stubGet(getUserDetailsUrl, Status.INTERNAL_SERVER_ERROR, "Error")
+  }
 }
 
 

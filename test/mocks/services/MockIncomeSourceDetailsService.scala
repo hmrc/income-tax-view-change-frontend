@@ -43,7 +43,7 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
 
   def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
   def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.propertyIncomeSourceSuccess)
-  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourceSuccess)
+  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
   def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.noIncomeSourceSuccess)
   def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourcesSuccessBusinessAligned)
 

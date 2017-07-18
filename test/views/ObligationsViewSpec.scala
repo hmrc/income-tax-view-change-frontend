@@ -17,7 +17,8 @@
 package views
 
 import assets.Messages.{Obligations => messages, Sidebar => sidebarMessages}
-import assets.TestConstants.{testMtditid, testNino}
+import assets.TestConstants.{testMtditid, testNino, testUserDetails, testUserName}
+import assets.TestConstants.IncomeSourceDetails._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.{ObligationModel, ObligationsModel}
@@ -26,11 +27,6 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.TestSupport
-import assets.Messages.{Obligations => messages}
-import assets.Messages.{Sidebar => sidebarMessages}
-import assets.TestConstants.{testMtditid, testNino, testUserDetails, testUserName}
-import auth.MtdItUser
 import utils.ImplicitDateFormatter._
 import utils.TestSupport
 
@@ -42,9 +38,10 @@ class ObligationsViewSpec extends TestSupport{
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val dummymodel = ObligationsModel(List(model))
 
-  lazy val bothPage = views.html.obligations(Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
-  lazy val bizPage  = views.html.obligations(Some(dummymodel), None)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
-  lazy val propPage = views.html.obligations(None, Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val bothPage = views.html.obligations(
+    Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+  lazy val bizPage  = views.html.obligations(Some(dummymodel), None)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+  lazy val propPage = views.html.obligations(None, Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
 
   "The Obligations view" should {
 
@@ -81,47 +78,9 @@ class ObligationsViewSpec extends TestSupport{
         document.getElementById("bi-ob-2-status") shouldBe null
       }
     }
-    "have sidebar section " which {
 
-      lazy val sidebarSection = document.getElementById("sidebar")
-
-      "has a heading for the MTDITID" in {
-        sidebarSection.getElementById("it-reference-heading").text() shouldBe sidebarMessages.mtditidHeading
-      }
-
-      "has the correct value for the MTDITID/reporting ref" in {
-        sidebarSection.getElementById("it-reference").text() shouldBe testMtdItUser.mtditid
-      }
-
-      "has a heading for viewing your estimates" in {
-        sidebarSection.getElementById("estimates-heading").text() shouldBe sidebarMessages.estimatesHeading
-      }
-
-      "has a link to view your estimates" which {
-
-        s"has the correct href to '${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}'" in {
-          sidebarSection.getElementById("estimates-link").attr("href") shouldBe controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url
-        }
-
-        s"has the correct link wording of '${sidebarMessages.estimatesLink}'" in {
-          sidebarSection.getElementById("estimates-link").text() shouldBe sidebarMessages.estimatesLink
-        }
-
-      }
-
-      "has a link to view self assessment details" which {
-        "has a heading for viewing self assessment details" in {
-          sidebarSection.getElementById("sa-link-heading").text shouldBe sidebarMessages.selfAssessmentHeading
-        }
-
-        s"has the correct href to 'business-tax-account/self-assessment'" in {
-          sidebarSection.getElementById("sa-link").attr("href") should endWith("/business-account/self-assessment")
-        }
-
-        "has the correct link wording" in {
-          sidebarSection.getElementById("sa-link").text shouldBe sidebarMessages.selfAssessmentLink
-        }
-      }
+    "have sidebar section " in {
+      document.getElementById("sidebar") shouldNot be(null)
     }
 
     "when only business obligations are returned" should {
