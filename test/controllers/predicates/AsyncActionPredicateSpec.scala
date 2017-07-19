@@ -63,9 +63,15 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
 
       "a HMRC-MTD-IT enrolment does NOT exist" should {
 
-        "return Internal Server Error (500)" in {
+        "have a redirect (303 - SEE_OTHER) status" in {
           setupMockAuthorisationException(new InsufficientEnrolments)
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(result) shouldBe Status.SEE_OTHER
+
+        }
+
+        "redirect to the Not Enrolled page" in {
+          setupMockAuthorisationException(new InsufficientEnrolments)
+          redirectLocation(result) shouldBe Some(controllers.notEnrolled.routes.NotEnrolledController.show().url)
         }
       }
     }
