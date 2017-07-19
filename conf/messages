@@ -10,11 +10,14 @@ bta.messages                                                    = Messages
 bta.manage-account                                              = Manage account
 
 ## Estimated Tax Liability Page ##
-estimated_tax_liability.title                                   = {0} to {1} tax year Your current tax estimate
-estimated_tax_liability.heading                                 = Your current tax estimate
+estimated_tax_liability.title                                   = {0} to {1} tax year Your tax estimate
+estimated_tax_liability.heading                                 = Your tax estimate
 estimated_tax_liability.tax-year                                = {0} to {1} tax year
-estimated_tax_liability.estimated-tax.p1                        = We''ve calculated this estimate using the figures and dates you''ve reported in your accounting software. The amount includes both your Income Tax and National Insurance.
-estimated_tax_liability.estimated-tax.changes                   = Your estimate could change if you have any income or expenses that you''ve not reported through your software.
+estimated_tax_liability.estimated-tax.changes                   = Your estimate is a current figure and could change because:
+estimated_tax_liability.estimated-tax.changes.bullet-1          = it''s based on figures from the start of your accounting period up to your last report
+estimated_tax_liability.estimated-tax.changes.bullet-2          = rates and allowances won''t be applied in full until the end of the tax year
+estimated_tax_liability.estimated-tax.changes.bullet-3          = you may earn more money
+estimated_tax_liability.estimated-tax.changes.bullet-4          = you may have income that''s not reported in your software
 estimated_tax_liability.estimated-tax.payment                   = You must pay any tax you owe for the whole tax year by
 estimated_tax_liability.calc-breakdown.link                     = View your estimate breakdown
 estimated_tax_liability.calc-breakdown.business-profit          = Business profit
