@@ -41,6 +41,7 @@ trait AppConfig {
   val businessTaxAccount: String
   val btaManageAccountUrl: String
   val btaMessagesUrl: String
+  val signUpUrl: String
 }
 
 @Singleton
@@ -84,4 +85,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val businessTaxAccount: String = loadConfig("business-tax-account.url")
   override lazy val btaManageAccountUrl: String = s"$businessTaxAccount/manage-account"
   override lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"
+
+  //Subscription Service
+  override lazy val signUpUrl: String = loadConfig("mtd-subscription-service.url")
 }

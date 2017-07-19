@@ -87,4 +87,10 @@ object Messages {
     val btaMessages = "Messages"
     val btaManageAccount = "Manage account"
   }
+
+  object NotEnrolled {
+    val title = "You can't view this page"
+    val heading = title
+    val signUp = "You need to sign up for quarterly reporting before you can view this page."
+  }
 }

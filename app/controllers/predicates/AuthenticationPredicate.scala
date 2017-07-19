@@ -59,7 +59,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
     }.recoverWith {
       case _: InsufficientEnrolments =>
         Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
-        Future.successful(showInternalServerError)
+        Future.successful(Redirect(controllers.notEnrolled.routes.NotEnrolledController.show()))
       case _: BearerTokenExpired =>
         Logger.debug("[AuthenticationPredicate][async] Bearer Token Timed Out.")
         Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
