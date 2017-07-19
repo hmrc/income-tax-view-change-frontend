@@ -2,5 +2,6 @@
 ->         /check-your-income-tax-and-expenses      app.Routes
 ->         /                                        health.Routes
 ->     	   /template                                template.Routes
+->         /partial                                 partial.Routes
 
 GET        /admin/metrics                           @com.kenshoo.play.metrics.MetricsController.metrics
