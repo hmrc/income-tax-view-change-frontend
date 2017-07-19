@@ -21,5 +21,3 @@ GET         /sign-out                               controllers.SignOutControlle
 
 #Sign In Routes
 GET         /sign-in                                controllers.SignInController.signIn
-
-GET         /partial/:taxYear                       controllers.BTAPartialController.setupPartialInt(taxYear: Int)

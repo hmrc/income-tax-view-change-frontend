@@ -43,19 +43,17 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService, va
       case (_, p: ObligationModel) => p
       case (_,_) =>
         Logger.warn("[BTAPartialService][getObligations] - No Obligations obtained")
-        //TODO something better than this:
-        ObligationsErrorModel(500, "Oh noes!!")
+        ObligationsErrorModel(500, "Could not retrieve obligations")
     }
   }
 
-  def getEstimate(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[Option[BigDecimal]] = {
+  def getEstimate(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
     financialDataService.getLastEstimatedTaxCalculation(nino, year) map {
-      case calc: LastTaxCalculation => Some(calc.calcAmount)
-      case NoLastTaxCalculation => None
-      case _ =>
+      case calc: LastTaxCalculation => calc
+      case NoLastTaxCalculation => NoLastTaxCalculation
+      case error: LastTaxCalculationError =>
         Logger.warn("[BTAPartialService][getObligations] - No LastCalc data retrieved")
-        //TODO something better than this:
-        Some(BigDecimal(-1))
+        error
     }
   }
 

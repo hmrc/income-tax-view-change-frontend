@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
 import controllers.predicates.AsyncActionPredicate
-import models.ObligationModel
+import models.{LastTaxCalculation, NoLastTaxCalculation, ObligationModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Action}
 import services.BTAPartialService
@@ -33,13 +33,14 @@ class BTAPartialController @Inject()(implicit val config: AppConfig,
                                      val btaPartialService: BTAPartialService
                                       ) extends BaseController {
 
-  val setupPartialInt: Int => Action[AnyContent] = taxYear => actionPredicate.async {
+  val setupPartial: Int => Action[AnyContent] = taxYear => actionPredicate.async {
     implicit request => implicit user => implicit sources =>
       for{
         obligationDue <- btaPartialService.getObligations(user.nino, sources.businessDetails)
         lastEstimate <- btaPartialService.getEstimate(user.nino, taxYear)
       } yield (obligationDue, lastEstimate) match {
-        case (obligation: ObligationModel, estimate: Option[BigDecimal]) => Ok(views.html.btaPartial(obligation, estimate))
+        case (obligation: ObligationModel, estimate: LastTaxCalculation) => Ok(views.html.btaPartial(obligation, Some(estimate.calcAmount)))
+        case (obligation: ObligationModel, NoLastTaxCalculation) => Ok(views.html.btaPartial(obligation, None))
         case _ => showInternalServerError
       }
   }

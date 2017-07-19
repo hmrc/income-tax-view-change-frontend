@@ -29,14 +29,14 @@ class BtaPartialHelperSpec extends TestSupport {
     "return Html corresponding to the ObligationStatus" when {
       val openHtml = Html(
         """
-           |<p>Your next report is due by 31 October 2017</p>
+           |<p id="report-due">Your next report is due by 31 October 2017</p>
            |<a id="obligations-link" href=/check-your-income-tax-and-expenses/obligations>View deadlines</a>
          """.stripMargin.trim
       )
 
       val overdueHtml = Html(
         """
-           |<p>Your next report is due by 30 October 2017</p>
+           |<p id="report-due">Your next report is due by 30 October 2017</p>
            |<a id="obligations-link" href=/check-your-income-tax-and-expenses/obligations>View deadlines</a>
          """.stripMargin.trim
       )
@@ -55,7 +55,7 @@ class BtaPartialHelperSpec extends TestSupport {
 
       val successHtml: Html = Html(
         """
-          |<p>Your estimated tax amount is 1,000</p>
+          |<p id="current-estimate">Your estimated tax amount is &pound;1,000</p>
           |<a id="estimates-link" href=/check-your-income-tax-and-expenses/estimated-tax-liability>View details</a>
         """.stripMargin.trim
       )

@@ -18,9 +18,10 @@ package services
 
 import assets.TestConstants.Obligations._
 import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.Estimates._
 import assets.TestConstants._
 import mocks.services.{MockObligationsService, MockFinancialDataService}
-import models.ObligationModel
+import models.{ObligationsErrorModel, ObligationModel}
 import utils.TestSupport
 
 class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService with MockObligationsService {
@@ -68,6 +69,33 @@ class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService wi
         mockBusinessError()
         mockPropertySuccess()
         await(TestBTAPartialService.getObligations(testNino, Some(businessIncomeModel))) shouldBe returnedObligation
+      }
+    }
+
+    "no obligations are returned" in {
+      mockBusinessError()
+      mockPropertyError()
+      await(TestBTAPartialService.getObligations(testNino, Some(businessIncomeModel))) shouldBe ObligationsErrorModel(500,"Could not retrieve obligations")
+    }
+  }
+
+  "The BTAPartialService getEstimate method" when {
+    "a valid LastTaxCalculation is returned from the FinancialDataService" should {
+      "return LastTaxCalc model" in {
+        setupMockGetLastEstimatedTaxCalculation(testNino, testYear)(lastTaxCalcSuccess)
+        await(TestBTAPartialService.getEstimate(testNino, testYear)) shouldBe lastTaxCalcSuccess
+      }
+    }
+    "NoLastTaxCalculation is returned from the FinancialDataService" should {
+      "return NoLastTaxCalc" in {
+        setupMockGetLastEstimatedTaxCalculation(testNino, testYear)(lastTaxCalcNotFound)
+        await(TestBTAPartialService.getEstimate(testNino, testYear)) shouldBe lastTaxCalcNotFound
+      }
+    }
+    "LastTaxCalculationError is returned from the FinancialDataService" should {
+      "return LastTaxCalcError" in {
+        setupMockGetLastEstimatedTaxCalculation(testNino, testYear)(lastTaxCalcError)
+        await(TestBTAPartialService.getEstimate(testNino, testYear)) shouldBe lastTaxCalcError
       }
     }
   }

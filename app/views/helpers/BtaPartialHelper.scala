@@ -20,6 +20,7 @@ import models.{ObligationModel, Overdue, Open}
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._
+import utils.ImplicitCurrencyFormatter._
 
 object BtaPartialHelper {
   
@@ -27,14 +28,14 @@ object BtaPartialHelper {
     case open: Open =>
       Html(
         s"""
-           |<p>${messages("bta_partial.next_due", model.due.toLongDate)}</p>
+           |<p id="report-due">${messages("bta_partial.next_due", model.due.toLongDate)}</p>
            |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
     case overdue: Overdue.type =>
       Html(
         s"""
-           |<p>${messages("bta_partial.next_due", model.due.toLongDate)}</p>
+           |<p id="report-due">${messages("bta_partial.next_due", model.due.toLongDate)}</p>
            |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
@@ -46,7 +47,7 @@ object BtaPartialHelper {
     case Some(est) =>
       Html(
         s"""
-           |<p>${messages("bta_partial.estimated_tax", est)}</p>
+           |<p id="current-estimate">${messages("bta_partial.estimated_tax", est.toCurrency)}</p>
            |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
          """.stripMargin.trim
       )

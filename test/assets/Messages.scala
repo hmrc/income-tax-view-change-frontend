@@ -86,4 +86,11 @@ object Messages {
     val btaMessages = "Messages"
     val btaManageAccount = "Manage account"
   }
+
+  object BtaPartial {
+    val initial = "You've signed up for quarterly reporting. You may also need to make an annual Self Assessment return and pay anything you owe."
+    val heading = "Quarterly reporting"
+    val reportDue: String => String = date => "Your next report is due by " + date
+    val currentEstimate: String => String = amount => "Your estimated tax amount is " + amount
+  }
 }
