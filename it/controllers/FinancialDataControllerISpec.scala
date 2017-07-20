@@ -69,7 +69,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Property Details response")
         SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
-        When(s"I call GET /check-your-income-tax-and-expenses/estimated-tax-liability/$testYear")
+        When(s"I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         And("I verify the Business Details response has been wiremocked")
@@ -129,7 +129,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         And("a successful Property Details response via wiremock stub")
         SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
-        When(s"I make a call to GET /check-your-income-tax-and-expenses/estimated-tax-liability/$testYear ")
+        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         And("verification that the Business Details response has been wiremocked ")
@@ -179,7 +179,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         And("a successful Property Details response via wiremock stub")
         SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
-        When(s"I make a call to GET /check-your-income-tax-and-expenses/estimated-tax-liability/$testYear ")
+        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         And("verification that the Business Details response has been wiremocked ")
@@ -222,7 +222,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         And("a successful Property Details response via wiremock stub")
         SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
-        When(s"I make a call to GET /check-your-income-tax-and-expenses/estimated-tax-liability/$testYear ")
+        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         And("verification that the Business Details response has been wiremocked ")
@@ -253,7 +253,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub an unauthorised user response")
         AuthStub.stubUnauthorised()
 
-        When("I call GET /check-your-income-tax-and-expenses/estimated-tax-liability")
+        When("I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         res should have(
