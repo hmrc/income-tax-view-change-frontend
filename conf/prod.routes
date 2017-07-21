@@ -1,5 +1,5 @@
 # Add all the application routes to the app.routes file
-->         /check-your-income-tax-and-expenses      app.Routes
+->         /report-quarterly/income-and-expenses/view      app.Routes
 ->         /                                        health.Routes
 ->     	   /template                                template.Routes
 

@@ -20,7 +20,7 @@ import utils.TestSupport
 
 class RoutesSpec extends TestSupport {
 
-  val contextRoute: String = "/check-your-income-tax-and-expenses"
+  val contextRoute: String = "/report-quarterly/income-and-expenses/view"
 
   // Timeout routes
   "The URL for the SessionTimeoutController.timeout action" should {
