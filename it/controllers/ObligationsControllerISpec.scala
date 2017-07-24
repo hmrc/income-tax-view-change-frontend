@@ -49,7 +49,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           And("I wiremock stub a single business obligation response")
           SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
 
-          When("I call GET /check-your-income-tax-and-expenses/obligations")
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
 
           Then("the result should have a HTTP status of OK and a body containing one obligation")
@@ -95,7 +95,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           And("I wiremock stub multiple business obligations response")
           SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, multipleObligationsDataSuccessModel)
 
-          When("I call GET /check-your-income-tax-and-expenses/obligations")
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
 
           Then("the result should have a HTTP status of OK and a body containing one obligation")
@@ -144,7 +144,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           And("I wiremock stub a single business obligation response")
           SelfAssessmentStub.stubGetOnlyPropObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
 
-          When("I call GET /check-your-income-tax-and-expenses/obligations")
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
 
           Then("the result should have a HTTP status of OK and a body containing one obligation")
@@ -184,7 +184,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           And("I wiremock stub a single business and property obligation response")
           SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel, singleObligationsDataSuccessModel)
 
-          When("I call GET /check-your-income-tax-and-expenses/obligations")
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
 
           Then("the result should have a HTTP status of OK and a body containing one obligation for both property and business")
@@ -220,7 +220,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
         Given("I wiremock stub an unatuhorised user response")
         AuthStub.stubUnauthorised()
 
-        When("I call GET /check-your-income-tax-and-expenses/obligations")
+        When("I call GET /report-quarterly/income-and-expenses/view/obligations")
         val res = IncomeTaxViewChangeFrontend.getObligations
 
         res should have(
