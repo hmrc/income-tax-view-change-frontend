@@ -21,7 +21,7 @@
 
 @main_template(title = messages("timeout.title"), bodyClasses = None, showLogout = false, showBtaHeader = false) {
 
-  <h1>@Messages("timeout.heading")</h1>
+  <h1 class="h1-heading">@Messages("timeout.heading")</h1>
   <p id="sign-in">@Html(Messages("timeout.signIn", controllers.routes.SignInController.signIn().url))</p>
 
 }

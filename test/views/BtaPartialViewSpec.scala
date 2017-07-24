@@ -27,6 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.TestSupport
 import assets.TestConstants.Obligations._
+import assets.TestConstants.Estimates._
 import utils.ImplicitCurrencyFormatter._
 
 class BtaPartialViewSpec extends TestSupport {
@@ -37,7 +38,7 @@ class BtaPartialViewSpec extends TestSupport {
   val calcAmount = BigDecimal(1000)
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
 
-  lazy val page = views.html.btaPartial(model, Some(calcAmount))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val page = views.html.btaPartial(model, Some(List(lastTaxCalcSuccess)))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
   lazy val noEstimatePage = views.html.btaPartial(model, None)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
 
   "The BtaPartial view" when {
@@ -51,7 +52,7 @@ class BtaPartialViewSpec extends TestSupport {
       }
 
       s"have the title '${messages.heading}'" in {
-        document.getElementById("quarterly-reporting").text() shouldBe messages.heading
+        document.getElementById("quarterly-reporting-heading").text() shouldBe messages.heading
       }
 
       s"have a report due sentence" in {
@@ -59,7 +60,7 @@ class BtaPartialViewSpec extends TestSupport {
       }
 
       s"have an estimated tax sentence" in {
-        document.getElementById("current-estimate").text() shouldBe messages.currentEstimate(calcAmount.toCurrencyString)
+        document.getElementById("current-estimate").text() shouldBe messages.currentEstimate(lastTaxCalcSuccess.calcAmount.toCurrencyString)
       }
     }
 
@@ -72,7 +73,7 @@ class BtaPartialViewSpec extends TestSupport {
       }
 
       s"have the title '${messages.heading}'" in {
-        document.getElementById("quarterly-reporting").text() shouldBe messages.heading
+        document.getElementById("quarterly-reporting-heading").text() shouldBe messages.heading
       }
 
       s"have a report due sentence" in {

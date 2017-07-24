@@ -1,2 +1,2 @@
 
-GET         /bta/:taxYear                          controllers.BTAPartialController.setupPartial(taxYear: Int)
+GET         /bta                            controllers.BTAPartialController.setupPartial

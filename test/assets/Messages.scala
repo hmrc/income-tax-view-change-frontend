@@ -94,4 +94,10 @@ object Messages {
     val reportDue: String => String = date => "Your next report is due by " + date
     val currentEstimate: String => String = amount => "Your estimated tax amount is " + amount
   }
+
+  object NotEnrolled {
+    val title = "You can't view this page"
+    val heading = title
+    val signUp = "You need to sign up for quarterly reporting before you can view this page."
+  }
 }

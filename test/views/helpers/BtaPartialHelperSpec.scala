@@ -16,7 +16,8 @@
 
 package views.helpers
 
-import models.{Overdue, Open}
+import assets.TestConstants.Estimates._
+import models.{Open, Overdue}
 import play.twirl.api.Html
 import utils.TestSupport
 import assets.TestConstants.Obligations._
@@ -36,7 +37,7 @@ class BtaPartialHelperSpec extends TestSupport {
 
       val overdueHtml = Html(
         """
-           |<p id="report-due">Your next report is due by 30 October 2017</p>
+           |<p id="report-due">You have an overdue report.</p>
            |<a id="obligations-link" href=/check-your-income-tax-and-expenses/obligations>View deadlines</a>
          """.stripMargin.trim
       )
@@ -55,13 +56,13 @@ class BtaPartialHelperSpec extends TestSupport {
 
       val successHtml: Html = Html(
         """
-          |<p id="current-estimate">Your estimated tax amount is &pound;1,000</p>
+          |<p id="current-estimate">Your estimated tax amount is &pound;543.21</p>
           |<a id="estimates-link" href=/check-your-income-tax-and-expenses/estimated-tax-liability>View details</a>
         """.stripMargin.trim
       )
 
       "passed a number the Html is returned" in {
-        BtaPartialHelper.showLastEstimate(Some(1000)) shouldBe successHtml
+        BtaPartialHelper.showLastEstimate(Some(List(lastTaxCalcSuccess))) shouldBe successHtml
       }
     }
   }

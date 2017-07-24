@@ -48,4 +48,11 @@ class RoutesSpec extends TestSupport {
       controllers.routes.FinancialDataController.getFinancialData(2018).url shouldBe s"$contextRoute/estimated-tax-liability/2018"
     }
   }
+
+  //Not-Enrolled route
+  "The URL for the NotEnrolledController.show action" should {
+    s"be equal to $contextRoute/not-enrolled" in {
+      controllers.notEnrolled.routes.NotEnrolledController.show().url shouldBe s"$contextRoute/not-enrolled"
+    }
+  }
 }

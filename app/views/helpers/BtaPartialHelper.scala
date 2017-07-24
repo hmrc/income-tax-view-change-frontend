@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.{ObligationModel, Overdue, Open}
+import models.{LastTaxCalculation, ObligationModel, Open, Overdue}
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._
@@ -24,7 +24,7 @@ import utils.ImplicitCurrencyFormatter._
 
 object BtaPartialHelper {
   
-  def whichStatus(model: ObligationModel)(implicit messages: Messages) = model.getObligationStatus match {
+  def whichStatus(model: ObligationModel)(implicit messages: Messages): Html = model.getObligationStatus match {
     case open: Open =>
       Html(
         s"""
@@ -32,31 +32,46 @@ object BtaPartialHelper {
            |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
-    case overdue: Overdue.type =>
+    case Overdue =>
       Html(
         s"""
-           |<p id="report-due">${messages("bta_partial.next_due", model.due.toLongDate)}</p>
+           |<p id="report-due">${messages("bta_partial.next_overdue")}</p>
            |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
-    case _ =>
-      //TODO something better than this
   }
 
-  def showLastEstimate(estimate: Option[BigDecimal])(implicit messages: Messages) = estimate match {
-    case Some(est) =>
-      Html(
-        s"""
-           |<p id="current-estimate">${messages("bta_partial.estimated_tax", est.toCurrency)}</p>
-           |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
-         """.stripMargin.trim
-      )
-    case None =>
-      Html(
-        s"""
-           |
-         """.stripMargin.trim
-      )
-  }
+//  def showLastEstimate(estimates: Option[BigDecimal])(implicit messages: Messages): Html = estimates match {
+//    case Some(est) =>
+//      Html(
+//        s"""
+//           |<p id="current-estimate">${messages("bta_partial.estimated_tax", est.toCurrency)}</p>
+//           |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
+//         """.stripMargin.trim
+//      )
+//    case None => Html("")
+//  }
 
+  def showLastEstimate(estimates: Option[List[LastTaxCalculation]])(implicit messages: Messages): Html = {
+    if(estimates.isDefined) {
+      estimates.get match {
+        case estimate if estimate.length == 1 =>
+          Html(
+            s"""
+               |<p id="current-estimate">${messages("bta_partial.estimated_tax", estimate.head.calcAmount.toCurrency)}</p>
+               |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
+             """.stripMargin.trim
+          )
+        case estimate if estimate.length == 2 =>
+          Html(
+            s"""
+               |<p id="current-estimate">${messages("bta_partial.estimated_tax", estimate.head.calcAmount.toCurrency)}</p>
+               |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
+               |<p id="current-estimate">${messages("bta_partial.estimated_tax", estimate(1).calcAmount.toCurrency)}</p>
+               |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
+           """.stripMargin.trim
+          )
+      }
+    } else Html("")
+  }
 }

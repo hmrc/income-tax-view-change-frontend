@@ -41,7 +41,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
 
   "The BTAPartialController.setupPartial action" when {
     "having successfully retrieved an obligation and estimate from BTAPartialService" should {
-      lazy val result = TestBTAPartialController.setupPartial(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
@@ -64,7 +64,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
     }
 
     "having successfully retrieved an obligation, but no estimate from BTAPartialService" should {
-      lazy val result = TestBTAPartialController.setupPartial(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
@@ -87,7 +87,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
     }
 
     "having successfully retrieved an obligation, but a LastTaxCalculationError from BTAPartialService" should {
-      lazy val result = TestBTAPartialController.setupPartial(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
 
       "return Status INTERNAL_SERVER_ERROR (500)" in {
         setupMockGetObligations(testNino, Some(businessIncomeModel))(openObligation)
@@ -103,7 +103,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
     }
 
     "having successfully retrieved an estimate, but no obligations from BTAPartialService" should {
-      lazy val result = TestBTAPartialController.setupPartial(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
 
       "return Status INTERNAL_SERVER_ERROR (500)" in {
         setupMockGetObligations(testNino, Some(businessIncomeModel))(obligationsDataErrorModel)
@@ -119,7 +119,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
     }
 
     "receiving nothing from BTAPartialService" should {
-      lazy val result = TestBTAPartialController.setupPartial(testYear)(fakeRequestWithActiveSession)
+      lazy val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
 
       "return Status INTERNAL_SERVER_ERROR (500)" in {
         setupMockGetObligations(testNino, Some(businessIncomeModel))(obligationsDataErrorModel)
