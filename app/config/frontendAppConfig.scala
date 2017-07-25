@@ -91,5 +91,5 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val signUpUrl: String = loadConfig("mtd-subscription-service.url")
 
   //SelfAssessmentApi
-  override lazy val selfAssessmentApi: String = baseUrl("self-assessment-api") + getConfString("self-assessment-api.contextRoute", throw new RuntimeException(s"sCould not find config self-assessment-api.contextRoute"))
+  override lazy val selfAssessmentApi: String = baseUrl("self-assessment-api") + loadConfig("microservice.services.self-assessment-api.contextRoute")
 }
