@@ -42,6 +42,7 @@ trait AppConfig {
   val btaManageAccountUrl: String
   val btaMessagesUrl: String
   val signUpUrl: String
+  val selfAssessmentApi: String
 }
 
 @Singleton
@@ -88,4 +89,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
 
   //Subscription Service
   override lazy val signUpUrl: String = loadConfig("mtd-subscription-service.url")
+
+  //SelfAssessmentApi
+  override lazy val selfAssessmentApi: String = baseUrl("self-assessment-api") + getConfString("self-assessment-api.contextRoute", throw new RuntimeException(s"sCould not find config self-assessment-api.contextRoute"))
 }

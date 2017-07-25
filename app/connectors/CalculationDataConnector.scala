@@ -17,19 +17,23 @@
 package connectors
 
 import javax.inject.{Inject, Singleton}
+
+import config.FrontendAppConfig
 import models._
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HttpResponse, HeaderCarrier, HttpGet}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
+
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class CalculationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
+class CalculationDataConnector @Inject()(val http: HttpGet,
+                                         val frontendAppConfig: FrontendAppConfig) extends ServicesConfig with RawResponseReads {
 
-  lazy val calculationDataUrl: String = baseUrl("self-assessment-api")
+  lazy val calculationDataUrl: String = frontendAppConfig.selfAssessmentApi
   lazy val getCalculationDataUrl: (String, String) => String = (nino, taxCalculationId) => s"$calculationDataUrl/ni/$nino/calculations/$taxCalculationId"
 
   def getCalculationData(nino: String, taxCalculationId: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
