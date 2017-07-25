@@ -18,6 +18,7 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
+import config.FrontendAppConfig
 import models._
 import play.api.Logger
 import play.api.http.Status
@@ -29,9 +30,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
+class PropertyObligationDataConnector @Inject()(val http: HttpGet,
+                                                val frontendAppConfig: FrontendAppConfig) extends ServicesConfig with RawResponseReads {
 
-  lazy val propertyDataUrl: String = baseUrl("self-assessment-api")
+  lazy val propertyDataUrl: String = frontendAppConfig.selfAssessmentApi
   lazy val getPropertyDataUrl: String => String = nino => s"$propertyDataUrl/ni/$nino/uk-properties/obligations"
 
   def getPropertyObligationData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {

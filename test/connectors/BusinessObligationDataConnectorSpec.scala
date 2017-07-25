@@ -18,6 +18,7 @@ package connectors
 
 import assets.TestConstants.Obligations._
 import assets.TestConstants._
+import config.FrontendAppConfig
 import mocks.MockHttp
 import models.{ObligationsErrorModel, ObligationsResponseModel}
 import play.api.libs.json.Json
@@ -34,7 +35,7 @@ class BusinessObligationDataConnectorSpec extends TestSupport with MockHttp {
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestBusinessObligationDataConnector extends BusinessObligationDataConnector(mockHttpGet)
+  object TestBusinessObligationDataConnector extends BusinessObligationDataConnector(mockHttpGet, fakeApplication.injector.instanceOf[FrontendAppConfig])
 
   "BusinessObligationDataConnector.getObligationData" should {
 

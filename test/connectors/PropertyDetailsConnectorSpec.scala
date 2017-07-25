@@ -17,6 +17,7 @@
 package connectors
 
 import assets.TestConstants._
+import config.FrontendAppConfig
 import mocks.MockHttp
 import models._
 import play.api.libs.json.Json
@@ -33,7 +34,7 @@ class PropertyDetailsConnectorSpec extends TestSupport with MockHttp {
   val successResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestPropertyDetailsConnector extends PropertyDetailsConnector(mockHttpGet)
+  object TestPropertyDetailsConnector extends PropertyDetailsConnector(mockHttpGet, fakeApplication.injector.instanceOf[FrontendAppConfig])
 
   "The PropertyDetailsConnector.getPropertyDetails method" should {
 

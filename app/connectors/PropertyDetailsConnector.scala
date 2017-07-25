@@ -18,6 +18,7 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
+import config.FrontendAppConfig
 import models._
 import play.api.Logger
 import play.api.http.Status
@@ -30,9 +31,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads with ImplicitDateFormatter {
+class PropertyDetailsConnector @Inject()(val http: HttpGet,
+                                         val frontendAppConfig: FrontendAppConfig) extends ServicesConfig with RawResponseReads with ImplicitDateFormatter {
 
-  lazy val apiContextRoute: String = baseUrl("self-assessment-api")
+  lazy val apiContextRoute: String = frontendAppConfig.selfAssessmentApi
   lazy val getPropertyDetailsUrl: String => String = nino => s"$apiContextRoute/ni/$nino/uk-properties"
 
   // TODO: For MVP the only accounting period for Property is 2017/18. This needs to be enhanced post-MVP

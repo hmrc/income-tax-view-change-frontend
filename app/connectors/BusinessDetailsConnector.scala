@@ -18,6 +18,7 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
+import config.FrontendAppConfig
 import models._
 import play.api.Logger
 import play.api.http.Status
@@ -29,9 +30,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class BusinessDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
+class BusinessDetailsConnector @Inject()(val http: HttpGet,
+                                         val frontendAppConfig: FrontendAppConfig) extends ServicesConfig with RawResponseReads {
 
-  lazy val businessListUrl: String = baseUrl("self-assessment-api")
+  lazy val businessListUrl: String = frontendAppConfig.selfAssessmentApi
   lazy val getBusinessListUrl: String => String = nino => s"$businessListUrl/ni/$nino/self-employments"
 
   def getBusinessList(nino: String)(implicit headerCarrier: HeaderCarrier): Future[BusinessListResponseModel] = {
