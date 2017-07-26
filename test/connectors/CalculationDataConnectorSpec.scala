@@ -24,7 +24,6 @@ import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
 import assets.TestConstants._
 import assets.TestConstants.CalcBreakdown._
-import config.FrontendAppConfig
 
 import scala.concurrent.Future
 
@@ -34,7 +33,7 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{\"incomeTaxYTD\":\"somethingBad\"}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestCalculationDataConnector extends CalculationDataConnector(mockHttpGet, fakeApplication.injector.instanceOf[FrontendAppConfig])
+  object TestCalculationDataConnector extends CalculationDataConnector(mockHttpGet)
 
   "BusinessObligationDataConnector.getObligationData" should {
 

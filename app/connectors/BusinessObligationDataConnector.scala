@@ -18,7 +18,6 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
-import config.FrontendAppConfig
 import models._
 import play.api.Logger
 import play.api.http.Status
@@ -30,10 +29,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class BusinessObligationDataConnector @Inject()(val http: HttpGet,
-                                                val frontendAppConfig: FrontendAppConfig) extends ServicesConfig with RawResponseReads {
+class BusinessObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
-  lazy val obligationDataUrl: String = frontendAppConfig.selfAssessmentApi
+  lazy val obligationDataUrl: String = baseUrl("self-assessment-api")
   lazy val getObligationDataUrl: (String, String) => String = (nino, selfEmploymentId) =>
     s"$obligationDataUrl/ni/$nino/self-employments/$selfEmploymentId/obligations"
 

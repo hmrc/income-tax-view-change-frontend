@@ -18,7 +18,6 @@ package connectors
 
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
-import config.FrontendAppConfig
 import mocks.MockHttp
 import models.{BusinessDetailsErrorModel, BusinessListResponseModel, PropertyDetailsErrorModel}
 import play.api.libs.json.Json
@@ -35,7 +34,7 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestBusinessDetailsConnector extends BusinessDetailsConnector(mockHttpGet, fakeApplication.injector.instanceOf[FrontendAppConfig])
+  object TestBusinessDetailsConnector extends BusinessDetailsConnector(mockHttpGet)
 
   "BusinessDetailsConnector.getBusinessList" should {
 
