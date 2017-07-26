@@ -23,11 +23,10 @@ import play.api.libs.json.{JsValue, Json}
 
 object SelfAssessmentStub {
 
-  val businessDetailsUrl: String => String = nino => s"/income-tax-view-change-dynamic-stub/ni/$nino/self-employments"
-  val propertyDetailsUrl: String => String = nino => s"/income-tax-view-change-dynamic-stub/ni/$nino/uk-properties"
-  val obligationsDataUrl: (String, String) => String = (nino, selfEmploymentId) =>
-    s"/income-tax-view-change-dynamic-stub/ni/$nino/self-employments/$selfEmploymentId/obligations"
-  val propertyObligationsUrl: String => String = nino => s"/income-tax-view-change-dynamic-stub/ni/$nino/uk-properties/obligations"
+  val businessDetailsUrl: String => String = nino => s"/ni/$nino/self-employments"
+  val propertyDetailsUrl: String => String = nino => s"/ni/$nino/uk-properties"
+  val obligationsDataUrl: (String, String) => String = (nino, selfEmploymentId) => s"/ni/$nino/self-employments/$selfEmploymentId/obligations"
+  val propertyObligationsUrl: String => String = nino => s"/ni/$nino/uk-properties/obligations"
 
   def stubGetBusinessDetails(nino: String, businessDetails: JsValue) : Unit = {
     WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetails.toString())
