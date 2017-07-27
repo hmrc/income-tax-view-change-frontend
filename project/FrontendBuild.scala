@@ -12,14 +12,14 @@ object FrontendBuild extends Build with MicroService {
   override lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 
-  val frontendBootstrapVersion  = "7.25.0"
-  val playPartialsVersion       = "5.3.0"
-  val playAuthVersion           = "1.0.0"
+  val frontendBootstrapVersion  = "7.26.0"
+  val playPartialsVersion       = "5.4.0"
+  val playAuthVersion           = "1.2.0"
   val playConfigVersion         = "4.3.0"
   val logbackVersion            = "3.1.0"
   val govTemplateVersion        = "5.2.0"
   val playHealthVersion         = "2.1.0"
-  val playUiVersion             = "7.2.1"
+  val playUiVersion             = "7.4.0"
 
   val scalaTestPlusVersion      = "2.0.0"
   val hmrcTestVesrion           = "2.3.0"
