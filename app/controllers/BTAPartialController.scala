@@ -39,37 +39,37 @@ class BTAPartialController @Inject()(implicit val config: AppConfig,
   val setupPartial: Action[AnyContent] = actionPredicate.async {
     implicit request => implicit user => implicit sources =>
       for{
-        obligationDue <- btaPartialService.getObligations(user.nino, sources.businessDetails)
-        firstEstimate <- getYears(user.nino, sources.earliestTaxYear)
-        lastEstimate <- getYears(user.nino, sources.lastTaxTear)
-      } yield (obligationDue, firstEstimate, lastEstimate) match {
+        latestObligation <- btaPartialService.getObligations(user.nino, sources.businessDetails)
+        firstEstimate <- {Logger.warn(s"FIRST ESTIMATE is: ${sources.earliestTaxYear}");getYears(user.nino, sources.earliestTaxYear)}
+        lastEstimate <- {Logger.warn(s"LAST ESTIMATE is: ${sources.lastTaxYear}");getYears(user.nino, sources.lastTaxYear)}
+      } yield (latestObligation, firstEstimate, lastEstimate) match {
 
         case (obligation: ObligationModel, first: LastTaxCalculation, last: LastTaxCalculation) =>
-          Logger.warn(s"[BTAPartialController][setupPartial] - yielded: $first and $last")
+          Logger.debug(s"[BTAPartialController][setupPartial] - yielded: $first and $last")
           Ok(views.html.btaPartial(obligation, sendYears(first, last)))
 
         case (obligation: ObligationModel, first: LastTaxCalculation, NoLastTaxCalculation) =>
-          Logger.warn(s"[BTAPartialController][setupPartial] - yielded: $first and NoLastTaxCalculation")
+          Logger.debug(s"[BTAPartialController][setupPartial] - yielded: $first and NoLastTaxCalculation")
           Ok(views.html.btaPartial(obligation, Some(List(first))))
 
         case (obligation: ObligationModel, NoLastTaxCalculation, last: LastTaxCalculation) =>
-          Logger.warn(s"[BTAPartialController][setupPartial] - yielded: NoLastTaxCalculation and $last")
+          Logger.debug(s"[BTAPartialController][setupPartial] - yielded: NoLastTaxCalculation and $last")
           Ok(views.html.btaPartial(obligation, Some(List(last))))
 
         case (obligation: ObligationModel, NoLastTaxCalculation, NoLastTaxCalculation) =>
-          Logger.warn(s"[BTAPartialController][setupPartial] - yielded: NoLastTaxCalculation")
+          Logger.debug(s"[BTAPartialController][setupPartial] - yielded: NoLastTaxCalculation")
           Ok(views.html.btaPartial(obligation, None))
 
-        case a =>
-          Logger.warn(s"[BTAPartialController][setupPartial] - yielded: $a")
+        case error =>
+          Logger.warn(s"[BTAPartialController][setupPartial] - yielded $error")
           showInternalServerError
       }
   }
 
   private[BTAPartialController]
-  def getYears(nino: String, method: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] =
-    if(method != -1)
-      btaPartialService.getEstimate(nino, method)
+  def getYears(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] =
+    if(year != -1)
+      btaPartialService.getEstimate(nino, year)
     else
       //TODO: what if there is no tax year???
       Future(LastTaxCalculationError(500, "Could not retrieve tax years"))

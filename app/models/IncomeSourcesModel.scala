@@ -37,8 +37,8 @@ case class IncomeSourcesModel(
       .distinct
 
   val earliestTaxYear: Int = if(orderedTaxYears.nonEmpty) orderedTaxYears.head else -1
-  val lastTaxTear: Int = if(orderedTaxYears.nonEmpty) orderedTaxYears.last else -1
-  val hasMultipleTaxYears: Boolean = earliestTaxYear < lastTaxTear
+  val lastTaxYear: Int = if(orderedTaxYears.nonEmpty) orderedTaxYears.last else -1
+  val hasMultipleTaxYears: Boolean = earliestTaxYear < lastTaxYear
 
 
 }

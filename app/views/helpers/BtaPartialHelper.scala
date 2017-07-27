@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.{LastTaxCalculation, ObligationModel, Open, Overdue}
+import models.{LastTaxCalculation, ObligationModel, Open, Overdue, Received}
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._
@@ -39,18 +39,14 @@ object BtaPartialHelper {
            |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
+    case Received =>
+      Html(
+        s"""
+           |<p id="report-due">${messages("bta_partial.next_received")}</p>
+           |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
+         """.stripMargin.trim
+      )
   }
-
-//  def showLastEstimate(estimates: Option[BigDecimal])(implicit messages: Messages): Html = estimates match {
-//    case Some(est) =>
-//      Html(
-//        s"""
-//           |<p id="current-estimate">${messages("bta_partial.estimated_tax", est.toCurrency)}</p>
-//           |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
-//         """.stripMargin.trim
-//      )
-//    case None => Html("")
-//  }
 
   def showLastEstimate(estimates: Option[List[LastTaxCalculation]])(implicit messages: Messages): Html = {
     if(estimates.isDefined) {
@@ -65,9 +61,9 @@ object BtaPartialHelper {
         case estimate if estimate.length == 2 =>
           Html(
             s"""
-               |<p id="current-estimate">${messages("bta_partial.estimated_tax", estimate.head.calcAmount.toCurrency)}</p>
+               |<p id="current-estimate-earliest">${messages("bta_partial.estimated_tax", estimate.head.calcAmount.toCurrency)}</p>
                |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
-               |<p id="current-estimate">${messages("bta_partial.estimated_tax", estimate(1).calcAmount.toCurrency)}</p>
+               |<p id="current-estimate-last">${messages("bta_partial.estimated_tax", estimate(1).calcAmount.toCurrency)}</p>
                |<a id="estimates-link" href=${controllers.routes.FinancialDataController.redirectToEarliestEstimatedTaxLiability().url}>${messages("bta_partial.view_details_link")}</a>
            """.stripMargin.trim
           )

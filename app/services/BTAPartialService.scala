@@ -38,7 +38,7 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService, va
         case _ => ObligationsErrorModel(500, "model... bad")
       }
     } yield (biz,prop) match {
-      case (b: ObligationModel, p: ObligationModel) => if(b.due.isBefore(p.due)) b else p
+      case (b: ObligationModel, p: ObligationModel) => compareBizProp(b,p)
       case (b: ObligationModel, _) => b
       case (_, p: ObligationModel) => p
       case (_,_) =>
@@ -48,6 +48,7 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService, va
   }
 
   def getEstimate(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
+    Logger.warn("ACTUAL BTAPartialService start getEstimate")
     financialDataService.getLastEstimatedTaxCalculation(nino, year) map {
       case calc: LastTaxCalculation => calc
       case NoLastTaxCalculation => NoLastTaxCalculation
@@ -58,8 +59,21 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService, va
   }
 
   private[BTAPartialService] def getMostRecentDueDate(model: ObligationsModel): ObligationModel = {
-    model.obligations.filter(_.met == false)
-      .reduceLeft((x,y) => if(x.due isBefore y.due) x else y)
+    if(!model.obligations.exists(_.met == false)){
+      model.obligations.reduceLeft((x,y) => if(x.due isAfter y.due) x else y)
+    } else {
+      model.obligations.filter(_.met == false)
+        .reduceLeft((x,y) => if(x.due isBefore y.due) x else y)
+    }
+  }
+
+  private[BTAPartialService] def compareBizProp(b: ObligationModel, p: ObligationModel) = {
+    (b.met, p.met) match {
+      case (true,true) => if(b.due isAfter p.due) b else p
+      case (true, false) => p
+      case (false, true) => b
+      case _ => if(b.due isBefore p.due) b else p
+    }
   }
 
 }

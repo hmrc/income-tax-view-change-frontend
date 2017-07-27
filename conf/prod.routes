@@ -2,6 +2,5 @@
 ->         /report-quarterly/income-and-expenses/view      app.Routes
 ->         /                                        health.Routes
 ->     	   /template                                template.Routes
-->         /partial                                 partial.Routes
 
 GET        /admin/metrics                           @com.kenshoo.play.metrics.MetricsController.metrics

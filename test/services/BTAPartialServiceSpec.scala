@@ -21,7 +21,7 @@ import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants._
 import mocks.services.{MockObligationsService, MockFinancialDataService}
-import models.{ObligationsErrorModel, ObligationModel}
+import models.{ObligationsModel, ObligationsErrorModel, ObligationModel}
 import utils.TestSupport
 
 class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService with MockObligationsService {
@@ -30,16 +30,78 @@ class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService wi
 
   "The BTAPartialService getObligations method" when {
 
-    "both property and business obligations are returned" should {
+    "both property and business obligations are returned - business due before property" should {
       val returnedObligation = ObligationModel(
         start = "2017-7-1",
         end = "2017-9-30",
         due = "2017-10-30",
         met = false
       )
+      val otherObligation = ObligationModel(
+        start = "2017-7-1",
+        end = "2017-9-30",
+        due = "2017-10-31",
+        met = false
+      )
+      "return an ObligationModel" in {
+        setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(ObligationsModel(List(otherObligation, returnedObligation)))
+        mockPropertySuccess()
+        await(TestBTAPartialService.getObligations(testNino, Some(businessIncomeModel))) shouldBe returnedObligation
+      }
+    }
+
+    "both property and business obligations are returned - property due before business" should {
+      val returnedObligation = ObligationModel(
+        start = "2017-1-1",
+        end = "2017-2-1",
+        due = "2017-3-1",
+        met = false
+      )
       "return an ObligationModel" in {
         setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(obligationsDataSuccessModel)
-        mockPropertySuccess()
+        setupMockPropertyObligationsResult(testNino)(ObligationsModel(List(returnedObligation)))
+        await(TestBTAPartialService.getObligations(testNino, Some(businessIncomeModel))) shouldBe returnedObligation
+      }
+    }
+
+    "both obligations are returned - Received Business obligation returned" should {
+      val returnedObligation = ObligationModel(
+        start = "2017-6-1",
+        end = "2017-7-1",
+        due = "2017-8-1",
+        met = true
+      )
+      val otherObligation = ObligationModel(
+        start = "2017-6-1",
+        end = "2017-7-1",
+        due = "2017-7-30",
+        met = true
+      )
+      val obligations = ObligationsModel(List(receivedObligation, returnedObligation, otherObligation))
+      "return an ObligationModel" in {
+        setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(obligations)
+        setupMockPropertyObligationsResult(testNino)(ObligationsModel(List(receivedObligation)))
+        await(TestBTAPartialService.getObligations(testNino, Some(businessIncomeModel))) shouldBe returnedObligation
+      }
+    }
+
+    "both obligations are returned - Received Property obligation returned" should {
+      val returnedObligation = ObligationModel(
+        start = "2017-6-1",
+        end = "2017-7-1",
+        due = "2017-8-1",
+        met = true
+      )
+      val otherObligation = ObligationModel(
+        start = "2017-6-1",
+        end = "2017-7-1",
+        due = "2017-7-30",
+        met = true
+      )
+      val obligations = ObligationsModel(List(receivedObligation, returnedObligation, otherObligation))
+      "return an ObligationModel" in {
+        setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(ObligationsModel(List(receivedObligation)))
+        setupMockPropertyObligationsResult(testNino)(obligations)
         await(TestBTAPartialService.getObligations(testNino, Some(businessIncomeModel))) shouldBe returnedObligation
       }
     }
@@ -96,6 +158,11 @@ class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService wi
       "return LastTaxCalcError" in {
         setupMockGetLastEstimatedTaxCalculation(testNino, testYear)(lastTaxCalcError)
         await(TestBTAPartialService.getEstimate(testNino, testYear)) shouldBe lastTaxCalcError
+      }
+    }
+    "" should {
+      "" in {
+
       }
     }
   }

@@ -67,7 +67,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
         Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
         Future.successful(Redirect(controllers.routes.SignInController.signIn()))
       case a =>
-        Logger.debug(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE. \n\n\n\n\n${a.getMessage}\n\n\n")
+        Logger.debug("[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.")
         Future.successful(showInternalServerError)
     }
   }
