@@ -17,7 +17,7 @@
 package views.helpers
 
 import assets.TestConstants.Estimates._
-import models.{LastTaxCalculation, Open, Overdue}
+import models.{LastTaxCalculationWithYear, LastTaxCalculation, Open, Overdue}
 import play.twirl.api.Html
 import utils.TestSupport
 import assets.TestConstants.Obligations._
@@ -30,21 +30,21 @@ class BtaPartialHelperSpec extends TestSupport {
     "return Html corresponding to the ObligationStatus" when {
       val openHtml = Html(
         """
-           |<p id="report-due">Your next report is due by 31 October 2017</p>
+           |<p id="report-due-open">Your next report is due by 31 October 2017</p>
            |<a id="obligations-link" href=/report-quarterly/income-and-expenses/view/obligations>View deadlines</a>
          """.stripMargin.trim
       )
 
       val overdueHtml = Html(
         """
-           |<p id="report-due">You have an overdue report</p>
+           |<p id="report-due-overdue">You have an overdue report</p>
            |<a id="obligations-link" href=/report-quarterly/income-and-expenses/view/obligations>View deadlines</a>
          """.stripMargin.trim
       )
 
       val receivedHtml = Html(
         """
-          |<p id="report-due">Your latest report has been received</p>
+          |<p id="report-due-received">Your latest report has been received</p>
           |<a id="obligations-link" href=/report-quarterly/income-and-expenses/view/obligations>View deadlines</a>
         """.stripMargin.trim
       )
@@ -66,29 +66,33 @@ class BtaPartialHelperSpec extends TestSupport {
 
       val successHtml: Html = Html(
         """
-          |<p id="current-estimate">Your estimated tax amount is &pound;543.21</p>
-          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability>View details</a>
+          |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
+          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
         """.stripMargin.trim
       )
 
       "passed a number the Html is returned" in {
-        BtaPartialHelper.showLastEstimate(Some(List(lastTaxCalcSuccess))) shouldBe successHtml
+        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear)) shouldBe List(successHtml)
       }
     }
 
     "return Html corresponding to the estimated tax for both tax years" when {
 
-      val successHtml: Html = Html(
+      val successHtml1: Html = Html(
         """
-          |<p id="current-estimate-earliest">Your estimated tax amount is &pound;543.21</p>
-          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability>View details</a>
-          |<p id="current-estimate-last">Your estimated tax amount is &pound;6,543.21</p>
-          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability>View details</a>
+          |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
+          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
+        """.stripMargin.trim
+      )
+      val successHtml2: Html = Html(
+        """
+          |<p id="current-estimate-2019">Your estimated tax amount is &pound;6,543.21</p>
+          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2019>View details</a>
         """.stripMargin.trim
       )
 
       "return Html corresponding to the estimated tax for misaligned tax years" in {
-        BtaPartialHelper.showLastEstimate(Some(List(lastTaxCalcSuccess, LastTaxCalculation("CALCID","2018-07-06T12:34:56.789Z", 6543.21)))) shouldBe successHtml
+        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(LastTaxCalculation("CALCID","2018-07-06T12:34:56.789Z", 6543.21), 2019))) shouldBe List(successHtml1,successHtml2)
       }
     }
   }

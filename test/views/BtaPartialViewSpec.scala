@@ -38,8 +38,8 @@ class BtaPartialViewSpec extends TestSupport {
   val calcAmount = BigDecimal(1000)
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
 
-  lazy val page = views.html.btaPartial(model, Some(List(lastTaxCalcSuccess)))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
-  lazy val noEstimatePage = views.html.btaPartial(model, None)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val page = views.html.btaPartial(model, List(lastTaxCalcSuccessWithYear))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  lazy val noEstimatePage = views.html.btaPartial(model, List())(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
 
   "The BtaPartial view" when {
 
@@ -56,11 +56,11 @@ class BtaPartialViewSpec extends TestSupport {
       }
 
       s"have a report due sentence" in {
-        document.getElementById("report-due").text() shouldBe messages.reportDue(model.due.toLongDate)
+        document.getElementById("report-due-open").text() shouldBe messages.reportDue(model.due.toLongDate)
       }
 
       s"have an estimated tax sentence" in {
-        document.getElementById("current-estimate").text() shouldBe messages.currentEstimate(lastTaxCalcSuccess.calcAmount.toCurrencyString)
+        document.getElementById("current-estimate-2018").text() shouldBe messages.currentEstimate(lastTaxCalcSuccess.calcAmount.toCurrencyString)
       }
     }
 
@@ -77,7 +77,7 @@ class BtaPartialViewSpec extends TestSupport {
       }
 
       s"have a report due sentence" in {
-        document.getElementById("report-due").text() shouldBe messages.reportDue(model.due.toLongDate)
+        document.getElementById("report-due-open").text() shouldBe messages.reportDue(model.due.toLongDate)
       }
 
       s"not have an estimated tax sentence" in {

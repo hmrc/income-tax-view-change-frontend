@@ -18,7 +18,7 @@
 @import views.helpers.BtaPartialHelper
 @import views.helpers.BtaPartialHelper
 
-@(obMod: ObligationModel, amount: Option[List[LastTaxCalculation]])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
+@(obMod: ObligationModel, estimates: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
 
 <section id="section-qr">
     <p class="panel-indent alert--info">@messages("bta_partial.p1")</p>
@@ -26,6 +26,6 @@
     <h3 id="quarterly-reporting-heading">@messages("bta_partial.subheading")</h3>
 
     @BtaPartialHelper.whichStatus(obMod)
-    @BtaPartialHelper.showLastEstimate(amount)
+    @BtaPartialHelper.showLastEstimate(estimates)
 
 </section>

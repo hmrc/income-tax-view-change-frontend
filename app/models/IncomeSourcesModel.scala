@@ -29,17 +29,15 @@ case class IncomeSourcesModel(
 
   val orderedTaxYears: List[Int] =
     List(
-      propertyDetails.fold(-1)(_.accountingPeriod.determineTaxYear),
-      businessDetails.fold(-1)(_.accountingPeriod.determineTaxYear)
+      propertyDetails.map(_.accountingPeriod.determineTaxYear),
+      businessDetails.map(_.accountingPeriod.determineTaxYear)
     )
-      .filterNot(_ == -1)
+      .flatten
       .sortWith(_ < _)
       .distinct
 
-  val earliestTaxYear: Int = if(orderedTaxYears.nonEmpty) orderedTaxYears.head else -1
-  val lastTaxYear: Int = if(orderedTaxYears.nonEmpty) orderedTaxYears.last else -1
-  val hasMultipleTaxYears: Boolean = earliestTaxYear < lastTaxYear
-
+  val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
+  val lastTaxYear: Option[Int] = orderedTaxYears.lastOption
 
 }
 

@@ -85,7 +85,7 @@
     @* Future Tax Years *@
     @* **************** *@
     @taxYear.map { currentYear =>
-        @if(currentYear < incomeSources.lastTaxYear) {
+        @if(currentYear < incomeSources.lastTaxYear.get) {
             <div class="form-group">
                 <h3 id="future-years-heading">@messages("sidebar.future_tax_years.h3")</h3>
                 <ul>
