@@ -46,7 +46,7 @@ class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
       response =>
         response.status match {
           case OK =>
-            Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(defaultSuccessResponse)
           case _ =>
             Logger.warn(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, body: ${response.body}")

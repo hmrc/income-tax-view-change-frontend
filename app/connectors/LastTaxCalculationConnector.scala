@@ -45,7 +45,7 @@ class LastTaxCalculationConnector @Inject()(val http: HttpGet) extends ServicesC
       response =>
         response.status match {
           case OK =>
-            Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[LastTaxCalculation].fold(
               invalid => {
                 Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Json Validation Error. Parsing Estimated Tax Liability Response.")
