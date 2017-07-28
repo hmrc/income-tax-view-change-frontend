@@ -225,6 +225,15 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       )
     ))
 
+    val otherObligationsDataSuccessModel = ObligationsModel(List(
+      ObligationModel(
+        start = "2017-04-06",
+        end = "2017-07-05",
+        due = LocalDate.now().minusDays(1),
+        met = true
+      )
+    ))
+
     val emptyModel = ObligationsModel(List())
   }
 }
