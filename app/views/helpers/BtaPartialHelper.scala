@@ -64,7 +64,7 @@ object BtaPartialHelper {
         case NoLastTaxCalculation =>
           Html(
             s"""
-               <p>${messages("bta_partial.no_estimate")}</p>
+               <p>${messages("bta_partial.no_estimate", (estimate.taxYear - 1).toString, estimate.taxYear.toString)}</p>
              """.stripMargin.trim
           )
         case calc: LastTaxCalculationError =>

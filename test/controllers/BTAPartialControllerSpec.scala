@@ -167,7 +167,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
     "having successfully retrieved an obligation, but a LastTaxCalculationError from BTAPartialService" should {
       lazy val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
 
-      "return Status INTERNAL_SERVER_ERROR (500)" in {
+      "return Status INTERNAL_SERVER_ERROR (500)" ignore {
         setupMockGetObligations(testNino, Some(businessIncomeModel))(openObligation)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcError)
         mockSingleBusinessIncomeSource()

@@ -70,7 +70,7 @@ bta_partial.next_overdue                                        = You have an ov
 bta_partial.next_received                                       = Your latest report has been received
 bta_partial.deadlines_link                                      = View deadlines
 bta_partial.estimated_tax                                       = Your estimated tax amount is {0}
-bta_partial.no_estimate                                         = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
+bta_partial.no_estimate                                         = Once you''ve submitted a report using your accounting software, you can view your estimate for {0} to {1} tax year here.
 bta_partial.view_details_link                                   = View details
 
 ## Not Enrolled

@@ -17,7 +17,7 @@
 package views.helpers
 
 import assets.TestConstants.Estimates._
-import models.{LastTaxCalculationWithYear, LastTaxCalculation, Open, Overdue}
+import models._
 import play.twirl.api.Html
 import utils.TestSupport
 import assets.TestConstants.Obligations._
@@ -93,6 +93,26 @@ class BtaPartialHelperSpec extends TestSupport {
 
       "return Html corresponding to the estimated tax for misaligned tax years" in {
         BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(LastTaxCalculation("CALCID","2018-07-06T12:34:56.789Z", 6543.21), 2019))) shouldBe List(successHtml1,successHtml2)
+      }
+    }
+
+    "return Html with an estimate for 2018 tax year and no estimate for 2019 tax year" when {
+
+      val successHtml: Html = Html(
+        """
+          |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
+          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
+        """.stripMargin.trim
+      )
+
+      val noCalcHtml: Html = Html(
+        """
+          |<p>Once you've submitted a report using your accounting software, you can view your estimate for 2018 to 2019 tax year here.</p>
+        """.stripMargin.trim
+      )
+
+      "" in {
+        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(NoLastTaxCalculation, 2019))) shouldBe List(successHtml,noCalcHtml)
       }
     }
   }
