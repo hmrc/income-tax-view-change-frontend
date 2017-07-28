@@ -42,7 +42,8 @@ class BusinessObligationDataConnector @Inject()(val http: HttpGet) extends Servi
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
         response.status match {
-          case OK => Logger.debug(s"[BusinessObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, body: ${response.body}")
+          case OK =>
+            Logger.debug(s"[BusinessObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[ObligationsModel].fold(
               invalid => {
                 Logger.warn(s"[BusinessObligationDataConnector][getObligationData] - Json Validation Error. Parsing Obligation Data Response")

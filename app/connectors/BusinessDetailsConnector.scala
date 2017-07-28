@@ -41,7 +41,8 @@ class BusinessDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
         response.status match {
-          case OK => Logger.debug(s"[BusinessDetailsConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")
+          case OK =>
+            Logger.debug(s"[BusinessDetailsConnector][getBusinessList] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[List[BusinessModel]].fold(
               invalid => {
                 Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Json Validation Error. Parsing Business Details Response")

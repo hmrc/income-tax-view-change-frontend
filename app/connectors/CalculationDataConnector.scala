@@ -39,7 +39,8 @@ class CalculationDataConnector @Inject()(val http: HttpGet) extends ServicesConf
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
         response.status match {
-          case OK => Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, body: ${response.body}")
+          case OK =>
+            Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[CalculationDataModel].fold(
               invalid => {
                 Logger.warn(s"[CalculationDataConnector][getCalculationData] - Json Validation Error. Parsing Obligation Data Response")

@@ -35,7 +35,7 @@ class UserDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig w
       response =>
         response.status match {
           case OK =>
-            Logger.debug(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[UserDetailsModel].fold(
               invalid => {
                 Logger.warn(s"[UserDetailsConnector][getUserDetails] - Json Validation Error. Parsing User Details Response.")
