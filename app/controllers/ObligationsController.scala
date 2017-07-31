@@ -51,7 +51,7 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
               Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
               Ok(views.html.obligations(None, Some(propertySuccess)))
             case (_, _) =>
-              Logger.warn("[ObligationsController][getObligations] No obligations retrieved. Throwing ISE")
+              Logger.debug("[ObligationsController][getObligations] No obligations retrieved. Throwing ISE")
               showInternalServerError
           }
   }

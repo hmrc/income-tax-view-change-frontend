@@ -52,7 +52,7 @@ class PropertyDetailsConnectorSpec extends TestSupport with MockHttp {
 
     "return PropertyDetailsErrorModel model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $testUrl.")
+      await(result) shouldBe PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 }

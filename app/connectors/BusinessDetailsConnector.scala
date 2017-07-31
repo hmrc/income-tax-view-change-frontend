@@ -37,6 +37,7 @@ class BusinessDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
   def getBusinessList(nino: String)(implicit headerCarrier: HeaderCarrier): Future[BusinessListResponseModel] = {
 
     val url = getBusinessListUrl(nino)
+    Logger.debug(s"[BusinessDetailsConnector][getBusinessList] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
@@ -46,18 +47,19 @@ class BusinessDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
             Future.successful(response.json.validate[List[BusinessModel]].fold(
               invalid => {
                 Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Json Validation Error. Parsing Business Details Response")
-                BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Business Details Response.")
+                BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Business Details Response")
               },
               valid => BusinessDetailsModel(valid)
             ))
           case _ =>
-            Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[BusinessDetailsConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Status: [${response.status}] Returned from business details call")
             Future.successful(BusinessDetailsErrorModel(response.status, response.body))
         }
     } recoverWith {
       case _ =>
-        Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Unexpected future failed error when calling $url.")
-        Future.successful(BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
+        Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Unexpected future failed error")
+        Future.successful(BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
     }
   }
 

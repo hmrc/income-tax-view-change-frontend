@@ -41,6 +41,7 @@ class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
   def getPropertyDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[PropertyDetailsResponseModel] = {
 
     val url = getPropertyDetailsUrl(nino)
+    Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
@@ -49,13 +50,14 @@ class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
             Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(defaultSuccessResponse)
           case _ =>
-            Logger.warn(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.warn(s"[PropertyDetailsConnector][getPropertyDetails] - Response status: [${response.status}] returned from Property Details call")
             Future.successful(PropertyDetailsErrorModel(response.status, response.body))
         }
     } recoverWith {
       case _ =>
-        Logger.warn(s"[PropertyDetailsConnector][getPropertyDetails] - Unexpected future failed error when calling $url.")
-        Future.successful(PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
+        Logger.warn(s"[PropertyDetailsConnector][getPropertyDetails] - Unexpected future failed error")
+        Future.successful(PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
     }
   }
 
