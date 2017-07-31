@@ -160,11 +160,6 @@ class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService wi
         await(TestBTAPartialService.getEstimate(testNino, testYear)) shouldBe lastTaxCalcError
       }
     }
-    "" should {
-      "" in {
-
-      }
-    }
   }
 
 }
