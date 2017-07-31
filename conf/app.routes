@@ -24,4 +24,6 @@ GET         /sign-in                                controllers.SignInController
 
 #Not Enrolled
 GET         /not-enrolled                           controllers.notEnrolled.NotEnrolledController.show
+
+#BTA Partial
 GET         /partial                                controllers.BTAPartialController.setupPartial

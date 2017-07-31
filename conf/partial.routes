@@ -1,2 +1,0 @@
-
-GET         /bta                            controllers.BTAPartialController.setupPartial
