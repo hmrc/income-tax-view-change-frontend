@@ -68,7 +68,7 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
         Logger.debug(s"[FinancialDataService][getLastEstimatedTaxCalculation] - No Data Found response returned from connector")
         NoLastTaxCalculation
       case error: LastTaxCalculationError =>
-        Logger.warn(s"[FinancialDataService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
+        Logger.debug(s"[FinancialDataService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
         error
     }
   }
@@ -83,7 +83,7 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
         Logger.debug(s"[FinancialDataService][getCalculationData] - Retrieved Calculation data: \n$success")
         success
       case error: CalculationDataErrorModel =>
-        Logger.warn(s"[FinancialDataService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
+        Logger.debug(s"[FinancialDataService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
         error
     }
   }
