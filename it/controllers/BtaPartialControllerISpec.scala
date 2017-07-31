@@ -30,7 +30,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
     "authorised with na active enrolment" which {
 
-      "has a combination of Received business and property obligations" should {
+      "has a combination of Received business and property obligations with met = true" should {
 
         "display the bta partial with the correct information" in {
 
@@ -76,11 +76,104 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             //Check that only the expected estimate message is being shown
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
             isElementVisibleById("current-estimate-2019")(false)
-
           )
-
         }
+      }
 
+      "has a combination of Received business and property obligations with met = false" should {
+
+        "display the bta partial with the correct information" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+          And("I wiremock stub obligation responses in different tax years")
+          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationPlusYearOpenModel, singleObligationOverdueModel)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/partial")
+          val res = IncomeTaxViewChangeFrontend.getBtaPartial
+
+          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            isElementVisibleById("quarterly-reporting-heading")(true),
+
+            //Check that only the expected obligation message is being shown
+            isElementVisibleById("report-due-received")(false),
+            isElementVisibleById("report-due-open")(false),
+            isElementVisibleById("report-due-overdue")(true),
+
+            //Check that only the expected estimate message is being shown
+            elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
+            isElementVisibleById("current-estimate-2019")(false)
+          )
+        }
+      }
+
+      "has a multiple estimates with different tax years" should {
+
+        "display the bta partial with the correct information" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+          val lastTaxCalcResponsePlusYear = LastTaxCalculation(testCalcId, "2018-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxDue)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, "2019", lastTaxCalcResponsePlusYear)
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.otherSuccessResponse(testSelfEmploymentId))
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+          And("I wiremock stub obligation responses in different tax years")
+          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationPlusYearOpenModel, singleObligationOverdueModel)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/partial")
+          val res = IncomeTaxViewChangeFrontend.getBtaPartial
+
+          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            isElementVisibleById("quarterly-reporting-heading")(true),
+
+            //Check that only the expected obligation message is being shown
+            isElementVisibleById("report-due-received")(false),
+            isElementVisibleById("report-due-open")(false),
+            isElementVisibleById("report-due-overdue")(true),
+
+            //Check that only the expected estimate message is being shown
+            elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
+            elementTextByID("current-estimate-2019")("Your estimated tax amount is £66,500")
+          )
+        }
       }
 
     }

@@ -139,7 +139,7 @@ trait   CustomMatchers extends UnitSpec with GivenWhenThen {
 
     def apply(response: WSResponse) = {
       val body = Jsoup.parse(response.body)
-      Then(s"the elementId '$id' should not be on the page")
+      Then(s"it is $expectedValue that elementId '$id' should be on the page")
 
       HavePropertyMatchResult(
         body.toString.contains(id) == expectedValue,
