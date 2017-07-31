@@ -141,6 +141,12 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           And("I wiremock stub a response from the User Details service")
           UserDetailsStub.stubGetUserDetails()
 
+          And("I wiremock stub no business details as an income source")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.emptyBusinessDetailsResponse())
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
           And("I wiremock stub a single business obligation response")
           SelfAssessmentStub.stubGetOnlyPropObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
 
@@ -180,6 +186,12 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
           And("I wiremock stub a Error Response from the User Details service")
           UserDetailsStub.stubGetUserDetailsError()
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business and property obligation response")
           SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel, singleObligationsDataSuccessModel)

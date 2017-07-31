@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import helpers.servicemocks.UserDetailsStub.mockUrl
 import models.{CalculationDataErrorModel, CalculationDataModel, ObligationModel, ObligationsModel}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsArray, JsValue, Json}
 import utils.ImplicitDateFormatter
 
 object IntegrationTestConstants extends ImplicitDateFormatter {
@@ -161,6 +161,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
             }
           ]
           """.stripMargin)
+    def emptyBusinessDetailsResponse(): JsValue = JsArray()
     def failureResponse(code: String, reason: String): JsValue =
       Json.parse(s"""
                     |{

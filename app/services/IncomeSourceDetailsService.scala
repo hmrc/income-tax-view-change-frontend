@@ -33,11 +33,14 @@ class IncomeSourceDetailsService @Inject()( val businessDetailsConnector: Busine
   def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] = {
     for {
       businessDetails <- getBusinessDetails(nino).map {
-        case businessList: BusinessDetailsModel =>
-          val business = businessList.business.head
-          Some(BusinessIncomeModel(business.id, business.accountingPeriod, business.tradingName))
-        case _: BusinessDetailsErrorModel =>
-          None
+        case businessList: BusinessDetailsModel => businessList.business.headOption match {
+          case Some(business) => Some(BusinessIncomeModel(business.id, business.accountingPeriod, business.tradingName))
+          case None => {
+            Logger.debug("[IncomeSourceDetailsService][getIncomeSourceDetails] No Businesses retrieved from business details")
+            None
+          }
+        }
+        case _: BusinessDetailsErrorModel => None
       }
       propertyDetails <- getPropertyDetails(nino).map {
         case property: PropertyDetailsModel => Some(PropertyIncomeModel(property.accountingPeriod))
