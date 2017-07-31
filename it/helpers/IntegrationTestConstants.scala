@@ -161,7 +161,30 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
             }
           ]
           """.stripMargin)
+
+    def otherSuccessResponse(selfEmploymentId: String): JsValue =
+      Json.parse(
+        s"""
+          [
+            {
+              "id": "$selfEmploymentId",
+              "accountingPeriod":{"start":"2018-01-01","end":"2018-12-31"},
+              "accountingType":"CASH",
+              "commencementDate":"2018-01-01",
+              "cessationDate":"2018-12-31",
+              "tradingName":"business",
+              "businessDescription":"a business",
+              "businessAddressLineOne":"64 Zoo Lane",
+              "businessAddressLineTwo":"Happy Place",
+              "businessAddressLineThree":"Magical Land",
+              "businessAddressLineFour":"England",
+              "businessPostcode":"ZL1 064"
+            }
+          ]
+          """.stripMargin)
+
     def emptyBusinessDetailsResponse(): JsValue = JsArray()
+
     def failureResponse(code: String, reason: String): JsValue =
       Json.parse(s"""
                     |{
@@ -225,6 +248,34 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         met = true
       )
     ))
+
+    val otherObligationsDataSuccessModel = ObligationsModel(List(
+      ObligationModel(
+        start = "2017-04-06",
+        end = "2017-07-05",
+        due = LocalDate.now().minusDays(1),
+        met = true
+      )
+    ))
+
+    val singleObligationOverdueModel = ObligationsModel(List(
+      ObligationModel(
+        start = "2017-04-06",
+        end = "2017-07-05",
+        due = LocalDate.now().minusDays(1),
+        met = false
+      )
+    ))
+
+    val singleObligationPlusYearOpenModel = ObligationsModel(List(ObligationModel(
+        start = "2017-04-06",
+        end = "2017-07-05",
+        due = LocalDate.now().plusYears(1),
+        met = false
+      )
+    ))
+
+
 
     val emptyModel = ObligationsModel(List())
   }

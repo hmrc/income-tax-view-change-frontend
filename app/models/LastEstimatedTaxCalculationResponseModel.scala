@@ -18,11 +18,16 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
+import scala.concurrent.Future
+
 sealed trait LastTaxCalculationResponseModel
 
 case class LastTaxCalculation(calcID: String,
                               calcTimestamp: String,
                               calcAmount: BigDecimal) extends LastTaxCalculationResponseModel
+
+case class LastTaxCalculationWithYear(calculation: LastTaxCalculationResponseModel,
+                                      taxYear: Int)
 
 case class LastTaxCalculationError(status: Int, message: String) extends LastTaxCalculationResponseModel
 case object NoLastTaxCalculation extends LastTaxCalculationResponseModel
