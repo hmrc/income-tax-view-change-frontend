@@ -42,7 +42,7 @@ class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends Servi
       response =>
         response.status match {
           case OK =>
-            Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[ObligationsModel].fold(
               invalid => {
                 Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Json Validation Error. Parsing Property Obligation Data Response")
