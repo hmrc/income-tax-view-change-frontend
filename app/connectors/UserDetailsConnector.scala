@@ -31,6 +31,7 @@ import scala.concurrent.Future
 class UserDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
   def getUserDetails(userDetailsUrl: String)(implicit headerCarrier: HeaderCarrier): Future[UserDetailsResponseModel] = {
+    Logger.debug(s"[UserDetailsConnector][getUserDetails] - GET $userDetailsUrl")
     http.GET[HttpResponse](userDetailsUrl) flatMap {
       response =>
         response.status match {
@@ -44,7 +45,8 @@ class UserDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig w
               valid => valid
             ))
           case _ =>
-            Logger.warn(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.warn(s"[UserDetailsConnector][getUserDetails] - Response status: [${response.status}] returned from User Details call")
             Future.successful(UserDetailsError)
         }
     } recoverWith {

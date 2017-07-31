@@ -35,7 +35,7 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
   object TestCalculationDataConnector extends CalculationDataConnector(mockHttpGet)
 
-  "BusinessObligationDataConnector.getObligationData" should {
+  "CalculationDataConnectorSpec.getCalculationData" should {
 
     lazy val url = TestCalculationDataConnector.getCalculationDataUrl(testNino, testTaxCalculationId)
     def result: Future[CalculationDataResponseModel] = TestCalculationDataConnector.getCalculationData(testNino, testTaxCalculationId)
@@ -52,12 +52,12 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
     "return CalculationDataErrorModel model when bad JSON is received" in {
       setupMockHttpGet(url)(successResponseBadJson)
-      await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response.")
+      await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Calc Breakdown Response")
     }
 
     "return CalculationDataErrorModel model in case of future failed scenario" in {
       setupMockFailedHttpGet(url)(badResponse)
-      await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url.")
+      await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 }

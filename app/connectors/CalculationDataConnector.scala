@@ -35,6 +35,7 @@ class CalculationDataConnector @Inject()(val http: HttpGet) extends ServicesConf
   def getCalculationData(nino: String, taxCalculationId: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
 
     val url = getCalculationDataUrl(nino, taxCalculationId)
+    Logger.debug(s"[CalculationDataConnector][getCalculationData] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
@@ -43,19 +44,20 @@ class CalculationDataConnector @Inject()(val http: HttpGet) extends ServicesConf
             Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[CalculationDataModel].fold(
               invalid => {
-                Logger.warn(s"[CalculationDataConnector][getCalculationData] - Json Validation Error. Parsing Obligation Data Response")
-                CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response.")
+                Logger.warn(s"[CalculationDataConnector][getCalculationData] - Json Validation Error. Parsing Calc Breakdown Response")
+                CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Calc Breakdown Response")
               },
               valid => valid
             ))
           case _ =>
-            Logger.warn(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.warn(s"[CalculationDataConnector][getCalculationData] - Response status: [${response.status}] returned from Calc Breakdown call")
             Future.successful(CalculationDataErrorModel(response.status, response.body))
         }
     } recoverWith {
       case _ =>
-        Logger.warn(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error when calling $url.")
-        Future.successful(CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
+        Logger.warn(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error")
+        Future.successful(CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
     }
   }
 

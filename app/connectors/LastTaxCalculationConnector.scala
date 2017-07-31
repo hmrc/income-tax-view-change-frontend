@@ -38,7 +38,6 @@ class LastTaxCalculationConnector @Inject()(val http: HttpGet) extends ServicesC
   def getLastEstimatedTax(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 
     val url = getEstimatedTaxLiabilityUrl(nino, year.toString)
-
     Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - GET $url")
 
     http.GET[HttpResponse](url) flatMap {
@@ -48,22 +47,23 @@ class LastTaxCalculationConnector @Inject()(val http: HttpGet) extends ServicesC
             Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[LastTaxCalculation].fold(
               invalid => {
-                Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Json Validation Error. Parsing Estimated Tax Liability Response.")
-                LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Estimated Tax Liability Response.")
+                Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Json Validation Error. Parsing Latest Calc Response")
+                LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Latest Calc Response")
               },
               valid => valid
             ))
           case NOT_FOUND =>
-            Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - No Data Found response)")
+            Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - No Data Found response")
             Future.successful(NoLastTaxCalculation)
           case _ =>
-            Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Response status: [${response.status}] from Latest Calc call")
             Future.successful(LastTaxCalculationError(response.status, response.body))
         }
     } recoverWith {
       case _ =>
-        Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Unexpected future failed error when calling $url.")
-        Future.successful(LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
+        Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Unexpected future failed error")
+        Future.successful(LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
     }
   }
 }

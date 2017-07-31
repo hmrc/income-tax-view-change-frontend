@@ -37,6 +37,7 @@ class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends Servi
   def getPropertyObligationData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     val url = getPropertyDataUrl(nino)
+    Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
@@ -46,18 +47,19 @@ class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends Servi
             Future.successful(response.json.validate[ObligationsModel].fold(
               invalid => {
                 Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Json Validation Error. Parsing Property Obligation Data Response")
-                ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response.")
+                ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response")
               },
               valid => valid
             ))
           case _ =>
-            Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Response status: [${response.status}] returned from Property Obligations call")
             Future.successful(ObligationsErrorModel(response.status, response.body))
         }
     } recoverWith {
       case _ =>
-        Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Unexpected future failed error when calling $url.")
-        Future.successful(ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error when calling $url."))
+        Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Unexpected future failed error")
+        Future.successful(ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
     }
   }
 }
