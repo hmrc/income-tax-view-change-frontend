@@ -60,7 +60,7 @@ object IncomeTaxViewChangeStub {
         calc.profitFromSelfEmployment,
         calc.profitFromUkLandAndProperty,
         calc.totalIncomeReceived,
-        calc.personalAllowance,
+        calc.proportionAllowance,
         calc.totalIncomeOnWhichTaxIsDue,
         calc.payPensionsProfitAtBRT,
         calc.incomeTaxOnPayPensionsProfitAtBRT,
