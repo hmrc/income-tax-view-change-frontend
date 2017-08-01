@@ -44,8 +44,7 @@ class CalculationDataConnector @Inject()(val http: HttpGet) extends ServicesConf
             Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[CalculationDataModel].fold(
               invalid => {
-                println(s"\n\n\n\n\n\nInvalid Output:\n\n $invalid\n\n\n\n")
-                Logger.warn(s"[CalculationDataConnector][getCalculationData] - Json Validation Error. Parsing Calc Breakdown Response")
+                Logger.warn(s"[CalculationDataConnector][getCalculationData] - Json Validation Error. Parsing Calc Breakdown Response. Invalid=$invalid")
                 CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Calc Breakdown Response")
               },
               valid => valid
