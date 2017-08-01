@@ -66,12 +66,10 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            isElementVisibleById("quarterly-reporting-heading")(true),
+            isElementVisibleById("it-quarterly-reporting-heading")(true),
 
             //Check that only the expected obligation message is being shown
-            elementTextByID("report-due-received")("Your latest report has been received"),
-            isElementVisibleById("report-due-open")(false),
-            isElementVisibleById("report-due-overdue")(false),
+            elementTextByID("report-due")("Your latest report has been received"),
 
             //Check that only the expected estimate message is being shown
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
@@ -113,12 +111,10 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            isElementVisibleById("quarterly-reporting-heading")(true),
+            isElementVisibleById("it-quarterly-reporting-heading")(true),
 
             //Check that only the expected obligation message is being shown
-            isElementVisibleById("report-due-received")(false),
-            isElementVisibleById("report-due-open")(false),
-            isElementVisibleById("report-due-overdue")(true),
+            elementTextByID("report-due")("You have an overdue report"),
 
             //Check that only the expected estimate message is being shown
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
@@ -162,12 +158,10 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             httpStatus(OK),
 
             //Check Page Title of HTML Response Body
-            isElementVisibleById("quarterly-reporting-heading")(true),
+            isElementVisibleById("it-quarterly-reporting-heading")(true),
 
             //Check that only the expected obligation message is being shown
-            isElementVisibleById("report-due-received")(false),
-            isElementVisibleById("report-due-open")(false),
-            isElementVisibleById("report-due-overdue")(true),
+            elementTextByID("report-due")("You have an overdue report"),
 
             //Check that only the expected estimate message is being shown
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
