@@ -31,21 +31,21 @@ object BtaPartialHelper {
     case open: Open =>
       Html(
         s"""
-           |<p id="report-due-open">${messages("bta_partial.next_due", model.due.toLongDate)}</p>
+           |<p id="report-due">${messages("bta_partial.next_due", model.due.toLongDate)}</p>
            |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
     case Overdue =>
       Html(
         s"""
-           |<p id="report-due-overdue">${messages("bta_partial.next_overdue")}</p>
+           |<p id="report-due">${messages("bta_partial.next_overdue")}</p>
            |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
     case Received =>
       Html(
         s"""
-           |<p id="report-due-received">${messages("bta_partial.next_received")}</p>
+           |<p id="report-due">${messages("bta_partial.next_received")}</p>
            |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
@@ -58,7 +58,7 @@ object BtaPartialHelper {
           Html(
             s"""
                |<p id="current-estimate-${estimate.taxYear}">${messages("bta_partial.estimated_tax", calc.calcAmount.toCurrency)}</p>
-               |<a id="estimates-link" href=${controllers.routes.FinancialDataController.getFinancialData(estimate.taxYear).url}>${messages("bta_partial.view_details_link")}</a>
+               |<a id="estimates-link-${estimate.taxYear}" href=${controllers.routes.FinancialDataController.getFinancialData(estimate.taxYear).url}>${messages("bta_partial.view_details_link")}</a>
              """.stripMargin.trim
           )
         case NoLastTaxCalculation =>
