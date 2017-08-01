@@ -52,7 +52,7 @@ class BtaPartialViewSpec extends TestSupport {
       }
 
       s"have the title '${messages.heading}'" in {
-        document.getElementById("quarterly-reporting-heading").text() shouldBe messages.heading
+        document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages.heading
       }
 
       s"have a report due sentence" in {
@@ -73,7 +73,7 @@ class BtaPartialViewSpec extends TestSupport {
       }
 
       s"have the title '${messages.heading}'" in {
-        document.getElementById("quarterly-reporting-heading").text() shouldBe messages.heading
+        document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages.heading
       }
 
       s"have a report due sentence" in {
