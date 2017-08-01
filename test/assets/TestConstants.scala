@@ -252,13 +252,13 @@ object TestConstants extends ImplicitDateFormatter {
       profitFromSelfEmployment = 200000.00,
       profitFromUkLandAndProperty = 10000.00,
       totalIncomeReceived = 230000.00,
-      personalAllowance = 11500.00,
+      proportionAllowance = 11500.00,
       totalIncomeOnWhichTaxIsDue = 198500.00,
-      payPensionsProfitAtBRT = 20000.00,
+      payPensionsProfitAtBRT = Some(20000.00),
       incomeTaxOnPayPensionsProfitAtBRT = 4000.00,
-      payPensionsProfitAtHRT = 100000.00,
+      payPensionsProfitAtHRT = Some(100000.00),
       incomeTaxOnPayPensionsProfitAtHRT = 40000.00,
-      payPensionsProfitAtART = 50000.00,
+      payPensionsProfitAtART = Some(50000.00),
       incomeTaxOnPayPensionsProfitAtART = 22500.00,
       incomeTaxDue = 66500.00,
       nicTotal = 24000.00,
@@ -271,18 +271,18 @@ object TestConstants extends ImplicitDateFormatter {
       CalculationDataModel(
         profitFromSelfEmployment = 500.00,
         profitFromUkLandAndProperty = 500.00,
-        personalAllowance = 2868.00,
+        proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 0,
 
-        payPensionsProfitAtBRT = 0.00,
+        payPensionsProfitAtBRT = Some(0.00),
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 0.00,
 
-        payPensionsProfitAtHRT = 0.00,
+        payPensionsProfitAtHRT = Some(0.00),
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = 0,
+        payPensionsProfitAtART = Some(0),
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -299,18 +299,18 @@ object TestConstants extends ImplicitDateFormatter {
       CalculationDataModel(
         profitFromSelfEmployment = 1506.25,
         profitFromUkLandAndProperty = 0,
-        personalAllowance = 2868.00,
+        proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 0,
 
-        payPensionsProfitAtBRT = 0.00,
+        payPensionsProfitAtBRT = Some(0.00),
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 0.00,
 
-        payPensionsProfitAtHRT = 0.00,
+        payPensionsProfitAtHRT = Some(0.00),
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = 0,
+        payPensionsProfitAtART = Some(0),
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -327,18 +327,18 @@ object TestConstants extends ImplicitDateFormatter {
       CalculationDataModel(
         profitFromSelfEmployment = 1500.00,
         profitFromUkLandAndProperty = 1500.00,
-        personalAllowance = 2868.00,
+        proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 132.00,
 
-        payPensionsProfitAtBRT = 132.00,
+        payPensionsProfitAtBRT = Some(132.00),
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 26.00,
 
-        payPensionsProfitAtHRT = 0,
+        payPensionsProfitAtHRT = Some(0),
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = 0,
+        payPensionsProfitAtART = Some(0),
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -355,18 +355,18 @@ object TestConstants extends ImplicitDateFormatter {
       CalculationDataModel(
         profitFromSelfEmployment = 30000.00,
         profitFromUkLandAndProperty = 7875.00,
-        personalAllowance = 2868.00,
+        proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 35007.00,
 
-        payPensionsProfitAtBRT = 8352.00,
+        payPensionsProfitAtBRT = Some(8352.00),
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 1670.00,
 
-        payPensionsProfitAtHRT = 26654.00,
+        payPensionsProfitAtHRT = Some(26654.00),
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 10661.00,
 
-        payPensionsProfitAtART = 0,
+        payPensionsProfitAtART = Some(0),
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -383,18 +383,18 @@ object TestConstants extends ImplicitDateFormatter {
       CalculationDataModel(
         profitFromSelfEmployment = 875.00,
         profitFromUkLandAndProperty = 40000.00,
-        personalAllowance = 2868.00,
+        proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 38007.00,
 
-        payPensionsProfitAtBRT = 8352.00,
+        payPensionsProfitAtBRT = Some(8352.00),
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 1670.00,
 
-        payPensionsProfitAtHRT = 29044.00,
+        payPensionsProfitAtHRT = Some(29044.00),
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 11617.00,
 
-        payPensionsProfitAtART = 609.00,
+        payPensionsProfitAtART = Some(609.00),
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 274.00,
 
@@ -411,18 +411,18 @@ object TestConstants extends ImplicitDateFormatter {
       CalculationDataModel(
         profitFromSelfEmployment = 3000.00,
         profitFromUkLandAndProperty = 0,
-        personalAllowance = 2868.00,
+        proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 132.00,
 
-        payPensionsProfitAtBRT = 132.00,
+        payPensionsProfitAtBRT = Some(132.00),
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 26.00,
 
-        payPensionsProfitAtHRT = 0,
+        payPensionsProfitAtHRT = Some(0),
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = 0,
+        payPensionsProfitAtART = Some(0),
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -439,18 +439,18 @@ object TestConstants extends ImplicitDateFormatter {
       CalculationDataModel(
         profitFromSelfEmployment = 0,
         profitFromUkLandAndProperty = 3000.00,
-        personalAllowance = 2868.00,
+        proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 132.00,
 
-        payPensionsProfitAtBRT = 132.00,
+        payPensionsProfitAtBRT = Some(132.00),
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 26.00,
 
-        payPensionsProfitAtHRT = 0,
+        payPensionsProfitAtHRT = Some(0),
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = 0,
+        payPensionsProfitAtART = Some(0),
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -471,7 +471,7 @@ object TestConstants extends ImplicitDateFormatter {
         | "profitFromSelfEmployment": 200000,
         | "profitFromUkLandAndProperty": 10000,
         | "totalIncomeReceived": 230000,
-        | "personalAllowance": 11500,
+        | "proportionAllowance": 11500,
         | "totalIncomeOnWhichTaxIsDue": 198500,
         | "payPensionsProfitAtBRT": 20000,
         | "incomeTaxOnPayPensionsProfitAtBRT": 4000,
@@ -659,7 +659,7 @@ object TestConstants extends ImplicitDateFormatter {
         | "class4NICsLimitHR": 888,
         | "class4NICsBRT": 888,
         | "class4NICsHRT": 888,
-        | "proportionAllowance": 888,
+        | "proportionAllowance": 11500,
         | "proportionLimitBRT": 888,
         | "proportionLimitHRT": 888,
         | "proportionalTaxDue": 888,

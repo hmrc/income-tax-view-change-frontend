@@ -26,17 +26,17 @@ case class CalcDisplayModel(calcTimestamp: String,
 
   val hasBRTSection: Boolean = {
     if (calcDataModel.nonEmpty)
-      calcDataModel.get.payPensionsProfitAtBRT > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtBRT > 0
+      calcDataModel.get.payPensionsProfitAtBRT.getOrElse[BigDecimal](0) > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtBRT > 0
     else false
   }
   val hasHRTSection: Boolean = {
     if (calcDataModel.nonEmpty)
-      calcDataModel.get.payPensionsProfitAtHRT > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtHRT > 0
+      calcDataModel.get.payPensionsProfitAtHRT.getOrElse[BigDecimal](0) > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtHRT > 0
     else false
   }
   val hasARTSection: Boolean = {
     if (calcDataModel.nonEmpty)
-      calcDataModel.get.payPensionsProfitAtART > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtART > 0
+      calcDataModel.get.payPensionsProfitAtART.getOrElse[BigDecimal](0) > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtART > 0
     else false
   }
   val hasNISection: Boolean = {
