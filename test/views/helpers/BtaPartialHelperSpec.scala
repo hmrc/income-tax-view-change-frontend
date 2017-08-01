@@ -30,21 +30,21 @@ class BtaPartialHelperSpec extends TestSupport {
     "return Html corresponding to the ObligationStatus" when {
       val openHtml = Html(
         """
-           |<p id="report-due-open">Your next report is due by 31 October 2017</p>
+           |<p id="report-due">Your next report is due by 31 October 2017</p>
            |<a id="obligations-link" href=/report-quarterly/income-and-expenses/view/obligations>View deadlines</a>
          """.stripMargin.trim
       )
 
       val overdueHtml = Html(
         """
-           |<p id="report-due-overdue">You have an overdue report</p>
+           |<p id="report-due">You have an overdue report</p>
            |<a id="obligations-link" href=/report-quarterly/income-and-expenses/view/obligations>View deadlines</a>
          """.stripMargin.trim
       )
 
       val receivedHtml = Html(
         """
-          |<p id="report-due-received">Your latest report has been received</p>
+          |<p id="report-due">Your latest report has been received</p>
           |<a id="obligations-link" href=/report-quarterly/income-and-expenses/view/obligations>View deadlines</a>
         """.stripMargin.trim
       )
@@ -67,7 +67,7 @@ class BtaPartialHelperSpec extends TestSupport {
       val successHtml: Html = Html(
         """
           |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
-          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
+          |<a id="estimates-link-2018" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
         """.stripMargin.trim
       )
 
@@ -81,13 +81,13 @@ class BtaPartialHelperSpec extends TestSupport {
       val successHtml1: Html = Html(
         """
           |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
-          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
+          |<a id="estimates-link-2018" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
         """.stripMargin.trim
       )
       val successHtml2: Html = Html(
         """
           |<p id="current-estimate-2019">Your estimated tax amount is &pound;6,543.21</p>
-          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2019>View details</a>
+          |<a id="estimates-link-2019" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2019>View details</a>
         """.stripMargin.trim
       )
 
@@ -101,7 +101,7 @@ class BtaPartialHelperSpec extends TestSupport {
       val successHtml: Html = Html(
         """
           |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
-          |<a id="estimates-link" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
+          |<a id="estimates-link-2018" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
         """.stripMargin.trim
       )
 

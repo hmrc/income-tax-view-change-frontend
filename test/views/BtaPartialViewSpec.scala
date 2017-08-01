@@ -56,7 +56,7 @@ class BtaPartialViewSpec extends TestSupport {
       }
 
       s"have a report due sentence" in {
-        document.getElementById("report-due-open").text() shouldBe messages.reportDue(model.due.toLongDate)
+        document.getElementById("report-due").text() shouldBe messages.reportDue(model.due.toLongDate)
       }
 
       s"have an estimated tax sentence" in {
@@ -77,7 +77,7 @@ class BtaPartialViewSpec extends TestSupport {
       }
 
       s"have a report due sentence" in {
-        document.getElementById("report-due-open").text() shouldBe messages.reportDue(model.due.toLongDate)
+        document.getElementById("report-due").text() shouldBe messages.reportDue(model.due.toLongDate)
       }
 
       s"not have an estimated tax sentence" in {

@@ -64,7 +64,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
 
       "render the BTA partial" in {
         document.getElementById("quarterly-reporting-heading").text() shouldBe messages.heading
-        document.getElementById("report-due-open").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
+        document.getElementById("report-due").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
         document.getElementById("current-estimate-2018").text() shouldBe messages.currentEstimate(BigDecimal(543.21).toCurrencyString)
         document.getElementById("current-estimate-2019").text() shouldBe messages.currentEstimate(BigDecimal(6543.21).toCurrencyString)
       }
@@ -88,7 +88,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
 
       "render the BTA partial" in {
         document.getElementById("quarterly-reporting-heading").text() shouldBe messages.heading
-        document.getElementById("report-due-open").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
+        document.getElementById("report-due").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
         document.getElementById("current-estimate-2018").text() shouldBe messages.currentEstimate(BigDecimal(543.21).toCurrencyString)
       }
     }
@@ -112,7 +112,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
 
       "render the BTA partial" in {
         document.getElementById("quarterly-reporting-heading").text() shouldBe messages.heading
-        document.getElementById("report-due-open").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
+        document.getElementById("report-due").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
         document.getElementById("current-estimate-2018").text() shouldBe messages.currentEstimate(BigDecimal(543.21).toCurrencyString)
       }
     }
@@ -136,7 +136,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
 
       "render the BTA partial" in {
         document.getElementById("quarterly-reporting-heading").text() shouldBe messages.heading
-        document.getElementById("report-due-open").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
+        document.getElementById("report-due").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
         document.getElementById("current-estimate-2019").text() shouldBe messages.currentEstimate(BigDecimal(543.21).toCurrencyString)
       }
     }
@@ -159,7 +159,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
 
       "render the BTA partial" in {
         document.getElementById("quarterly-reporting-heading").text() shouldBe messages.heading
-        document.getElementById("report-due-open").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
+        document.getElementById("report-due").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
         document.body().toString.contains("id=\"current-estimate\"") shouldBe false
       }
     }
