@@ -26,7 +26,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object BtaPartialHelper {
-  
+
   def whichStatus(model: ObligationModel)(implicit messages: Messages): Html = model.getObligationStatus match {
     case open: Open =>
       Html(
@@ -51,20 +51,24 @@ object BtaPartialHelper {
       )
   }
 
-  def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages): List[Html] =
+  def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages): List[Html] = {
+    val multipleEstimates: Boolean = if(estimates.length > 1) true else false
     estimates.map {
       estimate => estimate.calculation match {
         case calc: LastTaxCalculation =>
+          val taxYear = estimate.taxYear
           Html(
             s"""
-               |<p id="current-estimate-${estimate.taxYear}">${messages("bta_partial.estimated_tax", calc.calcAmount.toCurrency)}</p>
-               |<a id="estimates-link-${estimate.taxYear}" href=${controllers.routes.FinancialDataController.getFinancialData(estimate.taxYear).url}>${messages("bta_partial.view_details_link")}</a>
+               |<p id="current-estimate-$taxYear">
+               |${messages("bta_partial.estimated_tax", if(multipleEstimates){" for " + (taxYear-1).toString + " to " + taxYear.toString} else "", calc.calcAmount.toCurrency)}</p>
+               |<a id="estimates-link-$taxYear" href=${controllers.routes.FinancialDataController.getFinancialData(taxYear).url}>${messages("bta_partial.view_details_link")}</a>
              """.stripMargin.trim
           )
         case NoLastTaxCalculation =>
+          val taxYear = estimate.taxYear
           Html(
             s"""
-               <p>${messages("bta_partial.no_estimate", (estimate.taxYear - 1).toString, estimate.taxYear.toString)}</p>
+               <p id="current-estimate-$taxYear">${messages("bta_partial.no_estimate", (taxYear - 1).toString, taxYear.toString)}</p>
              """.stripMargin.trim
           )
         case calc: LastTaxCalculationError =>
@@ -75,4 +79,5 @@ object BtaPartialHelper {
           )
       }
     }
+  }
 }

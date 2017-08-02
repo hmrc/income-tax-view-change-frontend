@@ -93,6 +93,8 @@ object Messages {
     val heading = "Quarterly reporting"
     val reportDue: String => String = date => "Your next report is due by " + date
     val currentEstimate: String => String = amount => "Your estimated tax amount is " + amount
+    val currentEstimateYear: (Int, String) => String = (taxYear, amount) => "Your estimated tax amount for " + (taxYear-1) + " to " + taxYear + " is " + amount
+    val noEstimate: Int => String = (taxYear) => "Once you've submitted a report using your accounting software, you can view your estimate for " +(taxYear-1)+ " to " +taxYear+ " tax year here."
   }
 
   object NotEnrolled {

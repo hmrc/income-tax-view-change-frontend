@@ -66,7 +66,8 @@ class BtaPartialHelperSpec extends TestSupport {
 
       val successHtml: Html = Html(
         """
-          |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
+          |<p id="current-estimate-2018">
+          |Your estimated tax amount is &pound;543.21</p>
           |<a id="estimates-link-2018" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
         """.stripMargin.trim
       )
@@ -80,13 +81,15 @@ class BtaPartialHelperSpec extends TestSupport {
 
       val successHtml1: Html = Html(
         """
-          |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
+          |<p id="current-estimate-2018">
+          |Your estimated tax amount for 2017 to 2018 is &pound;543.21</p>
           |<a id="estimates-link-2018" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
         """.stripMargin.trim
       )
       val successHtml2: Html = Html(
         """
-          |<p id="current-estimate-2019">Your estimated tax amount is &pound;6,543.21</p>
+          |<p id="current-estimate-2019">
+          |Your estimated tax amount for 2018 to 2019 is &pound;6,543.21</p>
           |<a id="estimates-link-2019" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2019>View details</a>
         """.stripMargin.trim
       )
@@ -100,18 +103,19 @@ class BtaPartialHelperSpec extends TestSupport {
 
       val successHtml: Html = Html(
         """
-          |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
+          |<p id="current-estimate-2018">
+          |Your estimated tax amount for 2017 to 2018 is &pound;543.21</p>
           |<a id="estimates-link-2018" href=/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018>View details</a>
         """.stripMargin.trim
       )
 
       val noCalcHtml: Html = Html(
         """
-          |<p>Once you've submitted a report using your accounting software, you can view your estimate for 2018 to 2019 tax year here.</p>
+          |<p id="current-estimate-2019">Once you've submitted a report using your accounting software, you can view your estimate for 2018 to 2019 tax year here.</p>
         """.stripMargin.trim
       )
 
-      "" in {
+      "return Html corresponding to the estimate for 2018 and no estimate for 2019" in {
         BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(NoLastTaxCalculation, 2019))) shouldBe List(successHtml,noCalcHtml)
       }
     }
