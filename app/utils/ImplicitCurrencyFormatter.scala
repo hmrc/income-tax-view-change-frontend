@@ -23,7 +23,7 @@ import play.twirl.api.Html
 trait ImplicitCurrencyFormatter {
   implicit class CurrencyFormatter(x: BigDecimal) {
     val f = new DecimalFormat("#,##0.00")
-    def toCurrencyHtml: Html = Html("&pound;" + f.format(x).replace(".00",""))
+    def toCurrency: Html = Html("&pound;" + f.format(x).replace(".00",""))
     def toCurrencyString: String = "£" + f.format(x).replace(".00","")
   }
 }

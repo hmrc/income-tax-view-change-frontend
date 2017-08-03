@@ -57,7 +57,7 @@ object BtaPartialHelper {
         case calc: LastTaxCalculation =>
           Html(
             s"""
-               |<p id="current-estimate-${estimate.taxYear}">${messages("bta_partial.estimated_tax", calc.calcAmount.toCurrencyHtml)}</p>
+               |<p id="current-estimate-${estimate.taxYear}">${messages("bta_partial.estimated_tax", calc.calcAmount.toCurrency)}</p>
                |<a id="estimates-link-${estimate.taxYear}" href=${controllers.routes.FinancialDataController.getFinancialData(estimate.taxYear).url}>${messages("bta_partial.view_details_link")}</a>
              """.stripMargin.trim
           )
