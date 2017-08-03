@@ -16,49 +16,53 @@
 
 package views.helpers
 
+import javax.inject.{Singleton, Inject}
+
+import config.{AppConfig, FrontendAppConfig}
 import models._
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._
 import utils.ImplicitCurrencyFormatter._
+import play.api.Configuration
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object BtaPartialHelper {
   
-  def whichStatus(model: ObligationModel)(implicit messages: Messages): Html = model.getObligationStatus match {
+  def whichStatus(model: ObligationModel)(implicit messages: Messages, config: AppConfig): Html = model.getObligationStatus match {
     case open: Open =>
       Html(
         s"""
            |<p id="report-due">${messages("bta_partial.next_due", model.due.toLongDate)}</p>
-           |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
+           |<a id="obligations-link" href=${config.itvcFrontendEnvironment + controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
     case Overdue =>
       Html(
         s"""
            |<p id="report-due">${messages("bta_partial.next_overdue")}</p>
-           |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
+           |<a id="obligations-link" href=${config.itvcFrontendEnvironment + controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
     case Received =>
       Html(
         s"""
            |<p id="report-due">${messages("bta_partial.next_received")}</p>
-           |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
+           |<a id="obligations-link" href=${config.itvcFrontendEnvironment + controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
          """.stripMargin.trim
       )
   }
 
-  def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages): List[Html] =
+  def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages, config: AppConfig): List[Html] =
     estimates.map {
       estimate => estimate.calculation match {
         case calc: LastTaxCalculation =>
           Html(
             s"""
                |<p id="current-estimate-${estimate.taxYear}">${messages("bta_partial.estimated_tax", calc.calcAmount.toCurrency)}</p>
-               |<a id="estimates-link-${estimate.taxYear}" href=${controllers.routes.FinancialDataController.getFinancialData(estimate.taxYear).url}>${messages("bta_partial.view_details_link")}</a>
+               |<a id="estimates-link-${estimate.taxYear}" href=${config.itvcFrontendEnvironment + controllers.routes.FinancialDataController.getFinancialData(estimate.taxYear).url}>${messages("bta_partial.view_details_link")}</a>
              """.stripMargin.trim
           )
         case NoLastTaxCalculation =>
