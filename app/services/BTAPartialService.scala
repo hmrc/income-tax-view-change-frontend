@@ -48,7 +48,6 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService, va
   }
 
   def getEstimate(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
-    Logger.warn("ACTUAL BTAPartialService start getEstimate")
     financialDataService.getLastEstimatedTaxCalculation(nino, year) map {
       case calc: LastTaxCalculation => calc
       case NoLastTaxCalculation => NoLastTaxCalculation

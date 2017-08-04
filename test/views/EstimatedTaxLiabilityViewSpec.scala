@@ -131,7 +131,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           }
 
           s"have a personal allowance amount of ${model.proportionAllowance}" in {
-            document.getElementById("personal-allowance").text shouldBe model.proportionAllowance.toCurrencyString
+            document.getElementById("personal-allowance").text shouldBe "-"+model.proportionAllowance.toCurrencyString
           }
 
           s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {

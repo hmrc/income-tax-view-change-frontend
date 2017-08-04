@@ -65,8 +65,8 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       "render the BTA partial" in {
         document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages.heading
         document.getElementById("report-due").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
-        document.getElementById("current-estimate-2018").text() shouldBe messages.currentEstimate(BigDecimal(543.21).toCurrencyString)
-        document.getElementById("current-estimate-2019").text() shouldBe messages.currentEstimate(BigDecimal(6543.21).toCurrencyString)
+        document.getElementById("current-estimate-2018").text() shouldBe messages.currentEstimateYear(2018, BigDecimal(543.21).toCurrencyString)
+        document.getElementById("current-estimate-2019").text() shouldBe messages.currentEstimateYear(2019, BigDecimal(6543.21).toCurrencyString)
       }
     }
 
@@ -113,7 +113,8 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       "render the BTA partial" in {
         document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages.heading
         document.getElementById("report-due").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
-        document.getElementById("current-estimate-2018").text() shouldBe messages.currentEstimate(BigDecimal(543.21).toCurrencyString)
+        document.getElementById("current-estimate-2018").text() shouldBe messages.currentEstimateYear(2018, BigDecimal(543.21).toCurrencyString)
+        document.getElementById("current-estimate-2019").text() shouldBe messages.noEstimate(2019)
       }
     }
 
@@ -137,7 +138,8 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       "render the BTA partial" in {
         document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages.heading
         document.getElementById("report-due").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
-        document.getElementById("current-estimate-2019").text() shouldBe messages.currentEstimate(BigDecimal(543.21).toCurrencyString)
+        document.getElementById("current-estimate-2018").text() shouldBe messages.noEstimate(2018)
+        document.getElementById("current-estimate-2019").text() shouldBe messages.currentEstimateYear(2019, BigDecimal(543.21).toCurrencyString)
       }
     }
 
