@@ -164,8 +164,8 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             elementTextByID("report-due")("You have an overdue report"),
 
             //Check that only the expected estimate message is being shown
-            elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
-            elementTextByID("current-estimate-2019")("Your estimated tax amount is £66,500")
+            elementTextByID("current-estimate-2018")("Your estimated tax amount for 2017 to 2018 is £90,500"),
+            elementTextByID("current-estimate-2019")("Your estimated tax amount for 2018 to 2019 is £66,500")
           )
         }
       }

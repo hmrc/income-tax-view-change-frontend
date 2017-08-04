@@ -17,6 +17,7 @@
 @import java.time.LocalDate
 @import views.helpers.BtaPartialHelper
 @import views.helpers.BtaPartialHelper
+@import play.twirl.api.Html
 
 @(obMod: ObligationModel, estimates: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
 
@@ -25,7 +26,7 @@
 
     <h3 id="it-quarterly-reporting-heading">@messages("bta_partial.subheading")</h3>
 
-    @BtaPartialHelper.whichStatus(obMod)
-    @BtaPartialHelper.showLastEstimate(estimates)
+    @Html(BtaPartialHelper.whichStatus(obMod))
+    @BtaPartialHelper.showLastEstimate(estimates).map(Html(_))
 
 </section>
