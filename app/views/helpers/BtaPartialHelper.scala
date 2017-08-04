@@ -16,13 +16,11 @@
 
 package views.helpers
 
-import javax.inject.{Singleton, Inject}
 
-import config.{AppConfig, FrontendAppConfig}
+import config.AppConfig
 import models._
 import play.api.i18n.Messages
 import utils.ImplicitCurrencyFormatter._
-import play.api.Configuration
 import utils.ImplicitDateFormatter._
 
 object BtaPartialHelper {
