@@ -18,66 +18,53 @@ package views.helpers
 
 import models._
 import play.api.i18n.Messages
-import play.twirl.api.Html
-import utils.ImplicitDateFormatter._
 import utils.ImplicitCurrencyFormatter._
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import utils.ImplicitDateFormatter._
 
 object BtaPartialHelper {
 
-  def whichStatus(model: ObligationModel)(implicit messages: Messages): Html = model.getObligationStatus match {
-    case open: Open =>
-      Html(
-        s"""
-           |<p id="report-due">${messages("bta_partial.next_due", model.due.toLongDate)}</p>
-           |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
-         """.stripMargin.trim
-      )
-    case Overdue =>
-      Html(
-        s"""
-           |<p id="report-due">${messages("bta_partial.next_overdue")}</p>
-           |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
-         """.stripMargin.trim
-      )
-    case Received =>
-      Html(
-        s"""
-           |<p id="report-due">${messages("bta_partial.next_received")}</p>
-           |<a id="obligations-link" href=${controllers.routes.ObligationsController.getObligations().url}>${messages("bta_partial.deadlines_link")}</a>
-         """.stripMargin.trim
-      )
+  def whichStatus(model: ObligationModel)(implicit messages: Messages): String = {
+    val obligationMessage = model.getObligationStatus match {
+      case _: Open => messages("bta_partial.next_due", model.due.toLongDate)
+      case Overdue => messages("bta_partial.next_overdue")
+      case Received => messages("bta_partial.next_received")
+    }
+
+    applyFormGroup {
+      s"""
+        |<p id="report-due">$obligationMessage</p>
+        |<a id="obligations-link" href="${controllers.routes.ObligationsController.getObligations().url}">
+        |${messages("bta_partial.deadlines_link")}</a>"""
+    }.stripMargin.replaceAll("\n","")
   }
 
-  def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages): List[Html] = {
-    val multipleEstimates: Boolean = if(estimates.length > 1) true else false
-    estimates.map {
-      estimate => estimate.calculation match {
-        case calc: LastTaxCalculation =>
-          val taxYear = estimate.taxYear
-          Html(
-            s"""
-               |<p id="current-estimate-$taxYear">
-               |${messages("bta_partial.estimated_tax", if(multipleEstimates){" for " + (taxYear-1).toString + " to " + taxYear.toString} else "", calc.calcAmount.toCurrency)}</p>
-               |<a id="estimates-link-$taxYear" href=${controllers.routes.FinancialDataController.getFinancialData(taxYear).url}>${messages("bta_partial.view_details_link")}</a>
-             """.stripMargin.trim
-          )
-        case NoLastTaxCalculation =>
-          val taxYear = estimate.taxYear
-          Html(
-            s"""
-               <p id="current-estimate-$taxYear">${messages("bta_partial.no_estimate", (taxYear - 1).toString, taxYear.toString)}</p>
-             """.stripMargin.trim
-          )
-        case calc: LastTaxCalculationError =>
-          Html(
-            s"""
-               Error
-             """.stripMargin.trim
-          )
+  def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages): List[String] = {
+    def estimatesMessage(taxYear: Int, calcAmount: BigDecimal): String = {
+      if (estimates.length > 1) {
+        messages("bta_partial.estimated_tax_with_year", (taxYear - 1).toString, taxYear.toString, calcAmount.toCurrency)
+      } else {
+        messages("bta_partial.estimated_tax_no_year", calcAmount.toCurrency)
       }
     }
+
+    estimates.map {
+      estimate =>
+        applyFormGroup {
+          estimate.calculation match {
+            case calc: LastTaxCalculation =>
+              val taxYear = estimate.taxYear
+              s"""<p id="current-estimate-$taxYear">${estimatesMessage(taxYear, calc.calcAmount)}</p>
+                 |<a id="estimates-link-$taxYear" href="${controllers.routes.FinancialDataController.getFinancialData(taxYear).url}">
+                 |${messages("bta_partial.view_details_link")}</a>"""
+            case NoLastTaxCalculation =>
+              val taxYear = estimate.taxYear
+              s"""<p id="current-estimate-$taxYear">${messages("bta_partial.no_estimate", (taxYear - 1).toString, taxYear.toString)}</p>"""
+            case _: LastTaxCalculationError => ""
+          }
+        }.stripMargin.replaceAll("\n","")
+    }
   }
+
+  private def applyFormGroup(content: String): String = """<div class="form-group">""" + content + "</div>"
 }
+
