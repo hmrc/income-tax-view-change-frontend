@@ -47,6 +47,18 @@ class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
       amount.toCurrencyString shouldBe "£555,134,432"
     }
 
+    s"format numbers with trailing zeros without the zeros" in {
+      val amount: BigDecimal = 12.00
+      amount.toCurrency shouldBe Html("&pound;12")
+      amount.toCurrencyString shouldBe "£12"
+    }
+
+    s"format numbers with whole pence to include the trailing 0" in {
+      val amount: BigDecimal = 12.4
+      amount.toCurrency shouldBe Html("&pound;12.40")
+      amount.toCurrencyString shouldBe "£12.40"
+    }
+
 
 
 
