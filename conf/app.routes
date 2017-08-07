@@ -1,5 +1,11 @@
 # microservice specific routes
+
+
+# Assets
 GET        /assets/*file                            controllers.Assets.at(path="/public", file)
+
+#Home Controller
+GET         /                                       controllers.HomeController.redirect
 
 #Estimated Tax Liability
 GET         /estimated-tax-liability                controllers.FinancialDataController.redirectToEarliestEstimatedTaxLiability
