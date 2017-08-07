@@ -22,6 +22,13 @@ class RoutesSpec extends TestSupport {
 
   val contextRoute: String = "/report-quarterly/income-and-expenses/view"
 
+  //Context Route
+  "The 'home' url for the HomeController.show action" should {
+    s"be equal to $contextRoute" in {
+      controllers.routes.HomeController.redirect().url shouldBe contextRoute
+    }
+  }
+
   // Timeout routes
   "The URL for the SessionTimeoutController.timeout action" should {
     s"be equal to $contextRoute/session-timeout" in {
