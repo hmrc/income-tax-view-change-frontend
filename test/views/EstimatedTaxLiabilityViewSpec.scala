@@ -263,6 +263,18 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         }
       }
 
+      "when the user only has a business registered but has a property profit value" should {
+        val setup = pageSetup(busPropBRTCalcDataModel, testBusinessIncomeSource)
+        import setup._
+
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£1,500"
+        }
+        "display the property profit amount" in {
+          document.getElementById("property-profit").text shouldBe "£1,500"
+        }
+      }
+
       "when the user only has properties registered" should {
 
         val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
@@ -273,6 +285,18 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         }
         "not display the business profit section" in {
           document.getElementById("business-profit") shouldBe null
+        }
+      }
+
+      "when the user only has properties registered but has a business profit value" should {
+        val setup = pageSetup(busPropBRTCalcDataModel, testPropertyIncomeSource)
+        import setup._
+
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£1,500"
+        }
+        "display the property profit amount" in {
+          document.getElementById("property-profit").text shouldBe "£1,500"
         }
       }
     }
