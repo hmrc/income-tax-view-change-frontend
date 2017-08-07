@@ -17,6 +17,7 @@
 package views.helpers
 
 import assets.TestConstants.Estimates._
+import config.FrontendAppConfig
 import assets.TestConstants.Obligations._
 import models._
 import play.api.Play.current
@@ -25,77 +26,88 @@ import utils.TestSupport
 
 class BtaPartialHelperSpec extends TestSupport {
 
+  lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
+
   "The BtaPartialHelper's whichStatus method" should {
     "return Html corresponding to the ObligationStatus" when {
+
+      lazy val baseUrl = mockAppConfig.itvcFrontendEnvironment
       val open =
-        """<div class="form-group">
+        s"""<div class="form-group">
            |<p id="report-due">Your next report is due by 31 October 2017</p>
-           |<a id="obligations-link" href="/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
+
+           |<a id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
            |</div>""".stripMargin.replaceAll("\n","")
 
       val overdue =
-        """<div class="form-group">
+        s"""<div class="form-group">
            |<p id="report-due">You have an overdue report</p>
-           |<a id="obligations-link" href="/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
+
+           |<a id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
            |</div>""".stripMargin.replaceAll("\n","")
 
       val received =
-        """<div class="form-group">
+        s"""<div class="form-group">
           |<p id="report-due">Your latest report has been received</p>
-          |<a id="obligations-link" href="/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
+          |<a id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       "passed 'Open' the Open Html is returned" in {
-        BtaPartialHelper.whichStatus(openObligation) shouldBe open
+        BtaPartialHelper.whichStatus(openObligation)(applicationMessages, mockAppConfig) shouldBe open
       }
       "passed 'Overdue' the Overdue Html is returned" in {
-        BtaPartialHelper.whichStatus(overdueObligation) shouldBe overdue
+        BtaPartialHelper.whichStatus(overdueObligation)(applicationMessages, mockAppConfig) shouldBe overdue
       }
       "passed 'Received' the Received Html is returned" in {
-        BtaPartialHelper.whichStatus(receivedObligation) shouldBe received
+        BtaPartialHelper.whichStatus(receivedObligation)(applicationMessages, mockAppConfig) shouldBe received
       }
     }
   }
 
   "The BtaPartialHelper's showLastEstimate method" should {
     "return Html corresponding to the estimated tax for a single tax year" when {
+      lazy val baseUrl = mockAppConfig.itvcFrontendEnvironment
 
       val success: String =
-        """<div class="form-group">
+        s"""<div class="form-group">
           |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
-          |<a id="estimates-link-2018" href="/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
+
+          |<a id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       "passed a number the Html is returned" in {
-        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear)) shouldBe List(success)
+        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear))(applicationMessages, mockAppConfig) shouldBe List(success)
       }
     }
 
     "return Html corresponding to the estimated tax for both tax years" when {
+      lazy val baseUrl = mockAppConfig.itvcFrontendEnvironment
 
       val success1: String =
-        """<div class="form-group">
+        s"""<div class="form-group">
           |<p id="current-estimate-2018">Your estimated tax amount for 2017 to 2018 is &pound;543.21</p>
-          |<a id="estimates-link-2018" href="/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
+          |<a id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       val success2: String =
-        """<div class="form-group">
+        s"""<div class="form-group">
           |<p id="current-estimate-2019">Your estimated tax amount for 2018 to 2019 is &pound;6,543.21</p>
-          |<a id="estimates-link-2019" href="/report-quarterly/income-and-expenses/view/estimated-tax-liability/2019">View details</a>
+          |<a id="estimates-link-2019" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2019">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       "return Html corresponding to the estimated tax for misaligned tax years" in {
-        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(LastTaxCalculation("CALCID","2018-07-06T12:34:56.789Z", 6543.21), 2019))) shouldBe List(success1,success2)
+        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(LastTaxCalculation("CALCID","2018-07-06T12:34:56.789Z", 6543.21), 2019)))(applicationMessages, mockAppConfig) shouldBe List(success1,success2)
       }
     }
 
     "return Html with an estimate for 2018 tax year and no estimate for 2019 tax year" when {
 
+      lazy val baseUrl = mockAppConfig.itvcFrontendEnvironment
+
       val success: String =
-        """<div class="form-group">
+        s"""<div class="form-group">
           |<p id="current-estimate-2018">Your estimated tax amount for 2017 to 2018 is &pound;543.21</p>
-          |<a id="estimates-link-2018" href="/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
+          |<a id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       val noCalc: String =
@@ -104,7 +116,7 @@ class BtaPartialHelperSpec extends TestSupport {
           |</div>""".stripMargin.replaceAll("\n","")
 
       "return Html corresponding to the estimate for 2018 and no estimate for 2019" in {
-        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(NoLastTaxCalculation, 2019))) shouldBe List(success,noCalc)
+        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(NoLastTaxCalculation, 2019)))(applicationMessages, mockAppConfig) shouldBe List(success,noCalc)
       }
     }
   }

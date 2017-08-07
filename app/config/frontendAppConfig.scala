@@ -42,6 +42,7 @@ trait AppConfig {
   val btaManageAccountUrl: String
   val btaMessagesUrl: String
   val signUpUrl: String
+  val itvcFrontendEnvironment: String
 }
 
 @Singleton
@@ -51,6 +52,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
 
   private lazy val baseUrl = "report-quarterly/income-and-expenses/view"
   private lazy val contactHost = loadConfig(s"contact-frontend.host")
+
+  override lazy val itvcFrontendEnvironment = loadConfig("base.url")
 
   //Feedback Config
   private lazy val contactFrontendService = baseUrl("contact-frontend")

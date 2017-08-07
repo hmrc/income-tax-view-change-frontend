@@ -16,6 +16,8 @@
 
 package views.helpers
 
+
+import config.AppConfig
 import models._
 import play.api.i18n.Messages
 import utils.ImplicitCurrencyFormatter._
@@ -23,7 +25,7 @@ import utils.ImplicitDateFormatter._
 
 object BtaPartialHelper {
 
-  def whichStatus(model: ObligationModel)(implicit messages: Messages): String = {
+  def whichStatus(model: ObligationModel)(implicit messages: Messages, config: AppConfig): String = {
     val obligationMessage = model.getObligationStatus match {
       case _: Open => messages("bta_partial.next_due", model.due.toLongDate)
       case Overdue => messages("bta_partial.next_overdue")
@@ -33,12 +35,12 @@ object BtaPartialHelper {
     applyFormGroup {
       s"""
         |<p id="report-due">$obligationMessage</p>
-        |<a id="obligations-link" href="${controllers.routes.ObligationsController.getObligations().url}">
+        |<a id="obligations-link" href="${config.itvcFrontendEnvironment + controllers.routes.ObligationsController.getObligations().url}">
         |${messages("bta_partial.deadlines_link")}</a>"""
     }.stripMargin.replaceAll("\n","")
   }
 
-  def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages): List[String] = {
+  def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages, config: AppConfig): List[String] = {
     def estimatesMessage(taxYear: Int, calcAmount: BigDecimal): String = {
       if (estimates.length > 1) {
         messages("bta_partial.estimated_tax_with_year", (taxYear - 1).toString, taxYear.toString, calcAmount.toCurrency)
@@ -54,7 +56,7 @@ object BtaPartialHelper {
             case calc: LastTaxCalculation =>
               val taxYear = estimate.taxYear
               s"""<p id="current-estimate-$taxYear">${estimatesMessage(taxYear, calc.calcAmount)}</p>
-                 |<a id="estimates-link-$taxYear" href="${controllers.routes.FinancialDataController.getFinancialData(taxYear).url}">
+                 |<a id="estimates-link-$taxYear" href="${config.itvcFrontendEnvironment + controllers.routes.FinancialDataController.getFinancialData(taxYear).url}">
                  |${messages("bta_partial.view_details_link")}</a>"""
             case NoLastTaxCalculation =>
               val taxYear = estimate.taxYear
