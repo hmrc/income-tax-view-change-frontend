@@ -47,6 +47,12 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
         bothIncomeSourceSuccessMisalignedTaxYear.propertyDetails.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
       }
+      s"return ${testPropertyAccountingPeriod.start} as the result for 'earliestAccountingPeriod'" in {
+        bothIncomeSourceSuccessMisalignedTaxYear.earliestAccountingPeriodStart shouldBe Some(testPropertyAccountingPeriod.start)
+      }
+      s"return ${testPropertyAccountingPeriod.start} as the result for 'earliestAccountingPeriod' when both Accounting Periods have the same start" in {
+        bothIncomeSourcesSuccessBusinessAligned.earliestAccountingPeriodStart shouldBe Some(testPropertyAccountingPeriod.start)
+      }
     }
 
     "the user has just a business income source" should {
@@ -66,6 +72,9 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
       s"should not have property details" in {
         businessIncomeSourceSuccess.propertyDetails shouldBe None
       }
+      s"return ${testBusinessAccountingPeriod.start} as the result for 'earliestAccountingPeriod'" in {
+        businessIncomeSourceSuccess.earliestAccountingPeriodStart shouldBe Some(testBusinessAccountingPeriod.start)
+      }
     }
     "the user has just a property income source" should {
       //Test Property details
@@ -78,6 +87,9 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
       //Test Business Details
       "should not have business details" in {
         propertyIncomeSourceSuccess.businessDetails shouldBe None
+      }
+      s"return ${testPropertyAccountingPeriod.start} as the result for 'earliestAccountingPeriod'" in {
+        propertyIncomeSourceSuccess.earliestAccountingPeriodStart shouldBe Some(testPropertyAccountingPeriod.start)
       }
     }
     "the user has no income source" should {
