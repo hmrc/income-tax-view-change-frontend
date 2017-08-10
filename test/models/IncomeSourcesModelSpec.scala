@@ -48,10 +48,10 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
         bothIncomeSourceSuccessMisalignedTaxYear.propertyDetails.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
       }
       s"return ${testPropertyAccountingPeriod.start} as the result for 'earliestAccountingPeriod'" in {
-        bothIncomeSourceSuccessMisalignedTaxYear.earliestAccountingPeriodStart shouldBe Some(testPropertyAccountingPeriod.start)
+        bothIncomeSourceSuccessMisalignedTaxYear.earliestAccountingPeriodStart(2018) shouldBe Some(testPropertyAccountingPeriod.start)
       }
       s"return ${testPropertyAccountingPeriod.start} as the result for 'earliestAccountingPeriod' when both Accounting Periods have the same start" in {
-        bothIncomeSourcesSuccessBusinessAligned.earliestAccountingPeriodStart shouldBe Some(testPropertyAccountingPeriod.start)
+        bothIncomeSourcesSuccessBusinessAligned.earliestAccountingPeriodStart(2018) shouldBe Some(testPropertyAccountingPeriod.start)
       }
     }
 
@@ -73,7 +73,7 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
         businessIncomeSourceSuccess.propertyDetails shouldBe None
       }
       s"return ${testBusinessAccountingPeriod.start} as the result for 'earliestAccountingPeriod'" in {
-        businessIncomeSourceSuccess.earliestAccountingPeriodStart shouldBe Some(testBusinessAccountingPeriod.start)
+        businessIncomeSourceSuccess.earliestAccountingPeriodStart(2018) shouldBe Some(testBusinessAccountingPeriod.start)
       }
     }
     "the user has just a property income source" should {
@@ -89,7 +89,7 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
         propertyIncomeSourceSuccess.businessDetails shouldBe None
       }
       s"return ${testPropertyAccountingPeriod.start} as the result for 'earliestAccountingPeriod'" in {
-        propertyIncomeSourceSuccess.earliestAccountingPeriodStart shouldBe Some(testPropertyAccountingPeriod.start)
+        propertyIncomeSourceSuccess.earliestAccountingPeriodStart(2018) shouldBe Some(testPropertyAccountingPeriod.start)
       }
     }
     "the user has no income source" should {

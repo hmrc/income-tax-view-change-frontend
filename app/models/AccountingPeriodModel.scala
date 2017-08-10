@@ -23,7 +23,8 @@ import play.api.libs.json.Json
 
 case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
   val determineTaxYear = end match {
-    case x if x.getDayOfMonth > 5 && x.getMonthValue >= 4 => x.getYear + 1
+    case x if x.getDayOfMonth > 5 && x.getMonthValue == 4 => x.getYear + 1
+    case x if x.getMonthValue > 4 => x.getYear + 1
     case x => x.getYear
   }
 }
