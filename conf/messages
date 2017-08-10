@@ -79,5 +79,7 @@ not_enrolled.heading                                            = You can''t vie
 not_enrolled.title                                              = You can''t view this page
 not_enrolled.sign-up                                            = You need to <a id="sign-up-link" href="{0}">sign up for quarterly reporting</a> before you can view this page.
 
-# Exit Survey
+## Exit Survey ##
+exit_survey.title                                               = Give feedback
+exit_survey.heading                                             = Give feedback
 exit_survey.error.maxLengthImprovements                         = You can''t enter more than 1200 characters for your feedback

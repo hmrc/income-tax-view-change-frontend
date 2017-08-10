@@ -41,7 +41,13 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/ga-survey.js")"></script>
 }
 
-@main_template(title = Messages("exit-survey.title"),bodyClasses = None,scriptElem = Some(scripts), sidebarLinks = None,user = None) {
+@main_template(title = Messages("exit_survey.title"),
+                bodyClasses = None,
+                scriptElem = Some(scripts),
+                sidebarLinks = None,
+                user = None,
+                showBtaHeader = false
+                ) {
 
-    <h1 class="heading-xlarge">@Messages("exit_survey.heading")</h1>
+    <h1 id="page-heading">@Messages("exit_survey.heading")</h1>
 }
