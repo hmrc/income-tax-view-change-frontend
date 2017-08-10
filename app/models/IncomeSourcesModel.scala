@@ -17,6 +17,7 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
+import java.time.LocalDate
 
 case class IncomeSourcesModel(
                               businessDetails: Option[BusinessIncomeModel],
@@ -39,6 +40,16 @@ case class IncomeSourcesModel(
   val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
   val lastTaxYear: Option[Int] = orderedTaxYears.lastOption
 
+  val earliestAccountingPeriodStart: Option[LocalDate] = (hasBusinessIncome, hasPropertyIncome) match {
+    case (b,p) if b && p =>
+      if(businessDetails.get.accountingPeriod.start isBefore propertyDetails.get.accountingPeriod.start)
+        Some(businessDetails.get.accountingPeriod.start)
+      else
+        Some(propertyDetails.get.accountingPeriod.start)
+    case (b,_) if b => Some(businessDetails.get.accountingPeriod.start)
+    case (_,p) if p => Some(propertyDetails.get.accountingPeriod.start)
+    case _ => None
+    }
 }
 
 object IncomeSourcesModel {
