@@ -18,7 +18,6 @@ package forms
 
 import assets.{Messages => messageLookup}
 import models.ExitSurveyModel
-import play.api.data.Form
 import play.api.i18n.MessagesApi
 import utils.TestSupport
 
