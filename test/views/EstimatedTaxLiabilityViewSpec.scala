@@ -94,7 +94,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       }
 
       s"has a bullet point with content '${messages.EstimateTax.changesBullet1}'" in {
-        estimateSection.getElementById("bullet-1").text shouldBe messages.EstimateTax.changesBullet1
+        estimateSection.getElementById("bullet-1").text shouldBe messages.EstimateTax.changesBullet1("6 April 2017")
       }
 
       s"has a bullet point with content '${messages.EstimateTax.changesBullet2}'" in {

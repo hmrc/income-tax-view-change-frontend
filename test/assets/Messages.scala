@@ -26,7 +26,7 @@ object Messages {
     object EstimateTax {
       val calcDate: String => String = date => s"""Estimate up to your <span id="calc-date">$date</span> submission"""
       val changes = "Your estimate is a current figure and could change because:"
-      val changesBullet1 = "it's based on figures from the start of your accounting period up to your last report"
+      val changesBullet1: String => String = date => s"it's based on figures from $date up to your last report"
       val changesBullet2 = "rates and allowances won't be applied in full until the end of the tax year"
       val changesBullet3 = "you may earn more money"
       val changesBullet4 = "you may have income that's not reported in your software"
