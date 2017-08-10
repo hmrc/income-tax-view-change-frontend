@@ -62,4 +62,10 @@ class RoutesSpec extends TestSupport {
       controllers.notEnrolled.routes.NotEnrolledController.show().url shouldBe s"$contextRoute/not-enrolled"
     }
   }
+
+  "The URL for the ExitSurvey.show action" should {
+    s"be equal to $contextRoute/exit-survey" in {
+      controllers.routes.ExitSurveyController.show.url shouldBe s"$contextRoute/exit-survey"
+    }
+  }
 }
