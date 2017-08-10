@@ -33,3 +33,7 @@ GET         /not-enrolled                           controllers.notEnrolled.NotE
 
 #BTA Partial
 GET         /partial                                controllers.BTAPartialController.setupPartial
+
+#Exit Survey
+GET         /exit-survey                            controllers.ExitSurveyController.show
+POST        /exit-survey                            controllers.ExitSurveyController.submit
