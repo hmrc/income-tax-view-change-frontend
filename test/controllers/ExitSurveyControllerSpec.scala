@@ -13,15 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package controllers
 
+import config.FrontendAppConfig
+import play.api.http.Status
+import play.api.i18n.MessagesApi
+import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
+import assets.Messages.{ExitSurvey => messages}
 
 class ExitSurveyControllerSpec extends TestSupport {
 
-  "Navigating to the exit survey page" should {
-    "return Status OK (200)" in {
+  object TestExitSurveyController extends ExitSurveyController()(
+    fakeApplication.injector.instanceOf[FrontendAppConfig],
+    fakeApplication.injector.instanceOf[MessagesApi]
+  )
 
+  "Navigating to the exit survey page" should {
+    lazy val result = TestExitSurveyController.show(fakeRequestWithActiveSession)
+    lazy val document = result.toHtmlDocument
+
+    "return Status OK (200)" in {
+      status(result) shouldBe Status.OK
+    }
+
+    "return HTML" in {
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    "render the EstimatedTaxLiability page" in {
+      document.title() shouldBe messages.title
     }
   }
 

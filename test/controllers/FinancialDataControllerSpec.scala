@@ -18,20 +18,15 @@ package controllers
 
 import assets.Messages.{EstimatedTaxLiability => messages}
 import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyDetails._
-import assets.TestConstants._
 import config.FrontendAppConfig
-import controllers.predicates.IncomeSourceDetailsPredicate
-import mocks.controllers.predicates.{MockAsyncActionPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockFinancialDataService
-import models.{CalcDisplayError, CalcDisplayNoDataFound}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
-
 
 class FinancialDataControllerSpec extends TestSupport with MockFinancialDataService with MockAsyncActionPredicate {
 
