@@ -20,26 +20,66 @@ import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
 import forms.ExitSurveyForm
+import models.ExitSurveyModel
+import play.api.Application
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Action
+import play.api.mvc.{Action, AnyContent, Request}
+import play.twirl.api.Html
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.http.HeaderCarrier
+
+import scala.concurrent.Future
 
 @Singleton
-class ExitSurveyController @Inject()(implicit val config: AppConfig,
-                                     val messagesApi: MessagesApi,
-                                     val form: ExitSurveyForm
+class ExitSurveyController @Inject()(implicit val applicationConfig: AppConfig,
+                                     val messagesApi: MessagesApi
                                     ) extends FrontendController with I18nSupport {
 
-  val show = Action { implicit request =>
-    Ok(views.html.exit_survey(
-        form,
-        routes.ExitSurveyController.submit()
-      )
+  def view(exitSurveyForm: Form[ExitSurveyModel])(implicit request: Request[_]): Html =
+    views.html.exit_survey(
+      surveyForm = exitSurveyForm,
+      routes.ExitSurveyController.submit()
+    )
+
+  val show: Action[AnyContent] = Action { implicit request =>
+    Ok(view(ExitSurveyForm.exitSurveyForm))
+  }
+
+  val submit: Action[AnyContent] = Action.async { implicit request =>
+    ExitSurveyForm.exitSurveyForm.bindFromRequest().fold(
+      formWithErrors => Future.successful(BadRequest(view(exitSurveyForm = formWithErrors))),
+      survey => {
+        //TODO: Store Survey in Splunk and redirect to 'Thank You'
+        //submitSurvey(survey)
+        Future.successful(Redirect(routes.HomeController.redirect()))
+      }
     )
   }
 
-  val submit = Action { implicit request =>
-    //TODO redirect to Thankyou page
-    Redirect(routes.HomeController.redirect())
+  //TODO: Uncomment and Implement Splunk Audit
+//  def submitSurvey(survey: ExitSurveyModel)(implicit hc: HeaderCarrier): Unit = {
+//    val surveyAsMap = surveyFormDataToMap(survey)
+//    if (surveyAsMap.nonEmpty)
+//      logging.audit(transactionName = "ITSA Survey", detail = surveyAsMap, auditType = Logging.eventTypeSurveyFeedback)
+//  }
+
+  private[controllers] final def surveyFormDataToMap(survey: ExitSurveyModel): Map[String, String] = {
+    survey.getClass.getDeclaredFields.map {
+      field =>
+        field.setAccessible(true)
+        field.getName -> (field.get(survey) match {
+          case Some(x) => x.toString
+          case xs: Seq[Any] => xs.mkString(",")
+          case x => x.toString
+        })
+    }.toMap.filter { case (x, y) =>
+      // don't keep any fields in the map if they were not answered
+      y match {
+        case "None" => false
+        case _ => true
+      }
+    }
   }
+
 }

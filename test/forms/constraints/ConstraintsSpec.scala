@@ -17,37 +17,38 @@
 package forms.constraints
 
 import assets.{Messages => messageLookup}
+import forms.validation.Constraints
 import play.api.data.validation.{Invalid, Valid}
 import utils.TestSupport
 
-class ValidationSpec extends Validation with TestSupport {
+class ConstraintsSpec extends Constraints with TestSupport {
 
   val maxLength = 2
   val errMsg = "Too Long"
 
-  "The Validation.optMaxLength method" when {
+  "The Constraints.optMaxLength method" when {
 
     "supplied with a some string which exceeds the max length" should {
       "return invalid with the correct message" in {
-        optMaxLength(maxLength, errMsg)(Some("abc")) shouldBe Invalid(errMsg)
+        optMaxLength(maxLength, Invalid(errMsg))(Some("abc")) shouldBe Invalid(errMsg)
       }
     }
 
     "supplied with a some string which equals the max length" should {
       "return valid" in {
-        optMaxLength(maxLength, errMsg)(Some("ab")) shouldBe Valid
+        optMaxLength(maxLength, Invalid(errMsg))(Some("ab")) shouldBe Valid
       }
     }
 
     "supplied with a some string which is less than the max length" should {
       "return valid" in {
-        optMaxLength(maxLength, errMsg)(Some("a")) shouldBe Valid
+        optMaxLength(maxLength, Invalid(errMsg))(Some("a")) shouldBe Valid
       }
     }
 
     "supplied with no value" should {
       "return valid" in {
-        optMaxLength(maxLength, errMsg)(None) shouldBe Valid
+        optMaxLength(maxLength, Invalid(errMsg))(None) shouldBe Valid
       }
     }
   }

@@ -16,16 +16,12 @@
 
 package forms
 
-import javax.inject.{Inject, Singleton}
-
-import forms.constraints.Validation
+import forms.validation.{Constraints, ErrorMessageFactory}
 import models.ExitSurveyModel
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi}
 
-@Singleton
-class ExitSurveyForm @Inject() ()(implicit val messagesApi: MessagesApi) extends Validation with I18nSupport {
+object ExitSurveyForm extends Constraints {
 
   val satisfaction = "satisfaction"
   val improvements = "improvements"
@@ -34,7 +30,7 @@ class ExitSurveyForm @Inject() ()(implicit val messagesApi: MessagesApi) extends
   val exitSurveyForm: Form[ExitSurveyModel] = Form(
     mapping(
       satisfaction -> optional(text),
-      improvements -> optional(text).verifying(optMaxLength(improvementsMaxLength, messagesApi("exit_survey.error.maxLengthImprovements")))
+      improvements -> optional(text).verifying(optMaxLength(improvementsMaxLength, ErrorMessageFactory.error("exit_survey.error.maxLengthImprovements")))
     )(ExitSurveyModel.apply)(ExitSurveyModel.unapply)
   )
 
