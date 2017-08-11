@@ -105,6 +105,18 @@ object Messages {
   object ExitSurvey {
     val title = "Give feedback"
     val heading = "Give feedback"
-    val maxImprovementsError = "You can't enter more than 1200 characters for your feedback"
+    val q1 = "Overall, how did you feel about the service you received today?"
+    object Options {
+      val option1 = "Very satisfied"
+      val option2 = "Satisfied"
+      val option3 = "Neither satisfied or dissatisfied"
+      val option4 = "Dissatisfied"
+      val option5 = "Very dissatisfied"
+    }
+    val q2 = "How could we improve this service?"
+    val p1 = "Please don't include any personal or financial information, for example your National Insurance or credit card numbers."
+    object Errors {
+      val maxImprovementsError = "You can't enter more than 1200 characters for your feedback"
+    }
   }
 }

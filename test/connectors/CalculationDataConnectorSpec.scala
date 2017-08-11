@@ -52,7 +52,7 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
     "return CalculationDataErrorModel model when bad JSON is received" in {
       setupMockHttpGet(url)(successResponseBadJson)
-      await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Calc Breakdown Response")
+      await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Constraints Error. Parsing Calc Breakdown Response")
     }
 
     "return CalculationDataErrorModel model in case of future failed scenario" in {

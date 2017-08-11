@@ -47,8 +47,8 @@ class LastTaxCalculationConnector @Inject()(val http: HttpGet) extends ServicesC
             Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[LastTaxCalculation].fold(
               invalid => {
-                Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Json Validation Error. Parsing Latest Calc Response")
-                LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Latest Calc Response")
+                Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Json Constraints Error. Parsing Latest Calc Response")
+                LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Constraints Error. Parsing Latest Calc Response")
               },
               valid => valid
             ))

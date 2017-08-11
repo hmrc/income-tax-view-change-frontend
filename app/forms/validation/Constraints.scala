@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package forms.constraints
+package forms.validation
 
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
-trait Validation {
+trait Constraints {
 
-  def optMaxLength(max: Int, errMsg: String): Constraint[Option[String]] = Constraint {
-    case Some(x) if x.length > max => Invalid(errMsg)
+  def optMaxLength(max: Int, err: Invalid): Constraint[Option[String]] = Constraint {
+    case Some(x) if x.length > max => err
     case _ => Valid
   }
 }

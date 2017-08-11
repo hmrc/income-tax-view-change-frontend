@@ -17,8 +17,12 @@
 package forms
 
 import assets.{Messages => messageLookup}
+import forms.validation.ErrorMessageFactory.FieldErrorLoc
+import forms.validation.models.FieldError
 import models.ExitSurveyModel
-import play.api.i18n.MessagesApi
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits.applicationMessages
+import play.api.i18n.{Messages, MessagesApi}
 import utils.TestSupport
 
 class ExitSurveyFormSpec extends TestSupport {
@@ -34,7 +38,7 @@ class ExitSurveyFormSpec extends TestSupport {
       "the length of 'improvements' is equal to the maxLength" should {
 
         lazy val formInput: Map[String, String] = Map("improvements" -> "a" * improvementsMaxLength)
-        lazy val result = TestExitSurveyForm.exitSurveyForm.bind(formInput)
+        lazy val result = ExitSurveyForm.exitSurveyForm.bind(formInput)
 
         "have no errors" in {
           result.hasErrors shouldBe false
@@ -44,7 +48,7 @@ class ExitSurveyFormSpec extends TestSupport {
       "the length of 'improvements' is less than the maxLength" should {
 
         lazy val formInput: Map[String, String] = Map("improvements" -> "a" * (improvementsMaxLength - 1))
-        lazy val result = TestExitSurveyForm.exitSurveyForm.bind(formInput)
+        lazy val result = ExitSurveyForm.exitSurveyForm.bind(formInput)
 
         "have no errors" in {
           result.hasErrors shouldBe false
@@ -70,6 +74,7 @@ class ExitSurveyFormSpec extends TestSupport {
         "should take a ExitSurveyModel and unapply to form" in {
           val model = ExitSurveyModel(Some("Very satisfied"), Some("Awesome Site"))
           TestExitSurveyForm.exitSurveyForm.fill(model).fold(
+
             _ => false shouldBe true,
             success => success shouldBe model
           )
@@ -82,7 +87,7 @@ class ExitSurveyFormSpec extends TestSupport {
       "the max length of 'improvements' is exceeded" should {
 
         lazy val formInput: Map[String, String] = Map("improvements" -> "a" * (improvementsMaxLength + 1))
-        lazy val result = TestExitSurveyForm.exitSurveyForm.bind(formInput)
+        lazy val result = ExitSurveyForm.exitSurveyForm.bind(formInput)
 
         "have an error" in {
           result.hasErrors shouldBe true
@@ -90,6 +95,7 @@ class ExitSurveyFormSpec extends TestSupport {
 
         s"has the error message '${messageLookup.ExitSurvey.maxImprovementsError}'" in {
           result.errors.head.message shouldBe messageLookup.ExitSurvey.maxImprovementsError
+
         }
       }
     }

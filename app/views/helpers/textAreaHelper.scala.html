@@ -1,0 +1,49 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@(field: Field,
+        parentForm: Option[Form[_]] = None,
+        maxLength: Option[Int] = None,
+        cols: Option[Int] = Some(45),
+        rows: Option[Int] = Some(100)
+)(implicit messages: Messages)
+@import forms.validation.ErrorMessageHelper._
+
+@textArea() = {
+    <textarea @maxLength.fold("")(x => s"maxlength=$x data-char-field ") name="@field.name" id="@field.name" cols="@cols" rows="@rows"></textarea>
+}
+
+@hasError = @{
+    val fieldError = getFieldError(field, parentForm)
+    fieldError match {
+        case Some(_) => true
+        case _ => false
+    }
+}
+
+<div class="form-group form-field@if(hasError) { form-field--error}">
+    @fieldErrorHelper(field, parentForm)
+    @maxLength match {
+        case Some(mLen) => {
+            <div class="char-counter" data-char-counter>
+                @textArea()
+            </div>
+        }
+        case _ => {
+            @textArea()
+        }
+    }
+</div>
