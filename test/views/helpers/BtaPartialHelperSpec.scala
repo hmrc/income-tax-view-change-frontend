@@ -36,20 +36,20 @@ class BtaPartialHelperSpec extends TestSupport {
         s"""<div class="form-group">
            |<p id="report-due">Your next report is due by 31 October 2017</p>
 
-           |<a id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
+           |<a data-journey-click="mtdPartial:clickedLink:View Obligations" id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
            |</div>""".stripMargin.replaceAll("\n","")
 
       val overdue =
         s"""<div class="form-group">
            |<p id="report-due">You have an overdue report</p>
 
-           |<a id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
+           |<a data-journey-click="mtdPartial:clickedLink:View Obligations" id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
            |</div>""".stripMargin.replaceAll("\n","")
 
       val received =
         s"""<div class="form-group">
           |<p id="report-due">Your latest report has been received</p>
-          |<a id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
+          |<a data-journey-click="mtdPartial:clickedLink:View Obligations" id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       "passed 'Open' the Open Html is returned" in {
@@ -72,7 +72,7 @@ class BtaPartialHelperSpec extends TestSupport {
         s"""<div class="form-group">
           |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
 
-          |<a id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
+          |<a data-journey-click="mtdPartial:clickedLink:View Estimated Tax Liability 2018" id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       "passed a number the Html is returned" in {
@@ -86,13 +86,13 @@ class BtaPartialHelperSpec extends TestSupport {
       val success1: String =
         s"""<div class="form-group">
           |<p id="current-estimate-2018">Your estimated tax amount for 2017 to 2018 is &pound;543.21</p>
-          |<a id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
+          |<a data-journey-click="mtdPartial:clickedLink:View Estimated Tax Liability 2018" id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       val success2: String =
         s"""<div class="form-group">
           |<p id="current-estimate-2019">Your estimated tax amount for 2018 to 2019 is &pound;6,543.21</p>
-          |<a id="estimates-link-2019" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2019">View details</a>
+          |<a data-journey-click="mtdPartial:clickedLink:View Estimated Tax Liability 2019" id="estimates-link-2019" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2019">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       "return Html corresponding to the estimated tax for misaligned tax years" in {
@@ -107,7 +107,7 @@ class BtaPartialHelperSpec extends TestSupport {
       val success: String =
         s"""<div class="form-group">
           |<p id="current-estimate-2018">Your estimated tax amount for 2017 to 2018 is &pound;543.21</p>
-          |<a id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
+          |<a data-journey-click="mtdPartial:clickedLink:View Estimated Tax Liability 2018" id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       val noCalc: String =
