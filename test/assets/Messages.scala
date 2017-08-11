@@ -102,4 +102,9 @@ object Messages {
     val heading = title
     val signUp = "You need to sign up for quarterly reporting before you can view this page."
   }
+
+
+  object ExitSurvey {
+    val maxImprovementsError = "You can't enter more than 1200 characters for your feedback"
+  }
 }
