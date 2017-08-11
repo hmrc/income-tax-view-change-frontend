@@ -31,7 +31,7 @@ class ExitSurveyForm @Inject() ()(implicit val messagesApi: MessagesApi) extends
   val improvements = "improvements"
   val improvementsMaxLength = 1200
 
-  val exitSurveyForm = Form(
+  val exitSurveyForm: Form[ExitSurveyModel] = Form(
     mapping(
       satisfaction -> optional(text),
       improvements -> optional(text).verifying(optMaxLength(improvementsMaxLength, messagesApi("exit_survey.error.maxLengthImprovements")))

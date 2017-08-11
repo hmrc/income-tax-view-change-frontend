@@ -21,7 +21,12 @@
 @import config.AppConfig
 @import views.helpers.RadioOption
 
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(surveyForm: ExitSurveyForm, formAction: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+
+@question(text: String) = @{
+    <h3 class="heading-medium">@text</h3>
+}
 
 @loadRadioOptions(key: String) = @{
   (1 to Messages(s"$key.size").toInt).map(i =>
@@ -50,4 +55,27 @@
                 ) {
 
     <h1 id="page-heading" class="heading-xlarge">@Messages("exit_survey.heading")</h1>
+
+    @form(action = formAction){
+        @question(Messages("exit_survey.q1"))
+        @radioHelper(
+                field = surveyForm.satisfaction,
+                legend = Messages("exit-survey.q1"),
+                options = loadRadioOptions("exit-survey.q1.option"),
+                parentForm = surveyForm.exitSurveyForm,
+                useTextForValue = true
+            )
+        </div>
+
+        <div class="form-group">
+            @question(Messages("exit-survey.q2"))
+            <p>@Messages("exit-survey.line_1")</p>
+            @textAreaHelper(
+                field = surveyForm.improvements,
+                maxLength = surveyForm.improvementsMaxLength
+            )
+        </div>
+
+        <button formnovalidate class="button" type="submit" id="continue-button">Messages("base.submit")</button>
+    }
 }

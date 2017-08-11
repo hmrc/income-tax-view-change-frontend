@@ -83,3 +83,16 @@ not_enrolled.sign-up                                            = You need to <a
 exit_survey.title                                               = Give feedback
 exit_survey.heading                                             = Give feedback
 exit_survey.error.maxLengthImprovements                         = You can''t enter more than 1200 characters for your feedback
+
+exit-survey.q1                                                  = Overall, how did you feel about the service you received today?
+exit-survey.q1.option.size                                      = 5
+exit-survey.q1.option.1                                         = Very satisfied
+exit-survey.q1.option.2                                         = Satisfied
+exit-survey.q1.option.3                                         = Neither satisfied or dissatisfied
+exit-survey.q1.option.4                                         = Dissatisfied
+exit-survey.q1.option.5                                         = Very dissatisfied
+
+exit-survey.q2                                                  = How could we improve this service?
+
+exit-survey.line_1                                              = Please don''t include any personal or financial information, for example your National Insurance or credit card numbers.
+exit-survey.submit                                              = Send feedback
