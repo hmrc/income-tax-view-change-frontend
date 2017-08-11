@@ -19,17 +19,23 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
+import forms.ExitSurveyForm
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Action
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 @Singleton
 class ExitSurveyController @Inject()(implicit val config: AppConfig,
-                                     val messagesApi: MessagesApi
+                                     val messagesApi: MessagesApi,
+                                     val form: ExitSurveyForm
                                     ) extends FrontendController with I18nSupport {
 
   val show = Action { implicit request =>
-    Ok(views.html.exit_survey())
+    Ok(views.html.exit_survey(
+        form,
+        routes.ExitSurveyController.submit()
+      )
+    )
   }
 
   val submit = Action { implicit request =>
