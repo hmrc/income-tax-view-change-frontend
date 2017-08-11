@@ -31,7 +31,7 @@ class XssFilterSpec extends TestSupport {
     }
 
     "strip out </script> tags" in {
-      XssFilter.filter("banana hello 123") shouldBe "banana hello 123"
+      XssFilter.filter("banana hello 123</script>") shouldBe "banana hello 123"
     }
 
     "strip out vbscript" in {
