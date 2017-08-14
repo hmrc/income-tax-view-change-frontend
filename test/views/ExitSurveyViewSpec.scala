@@ -19,11 +19,8 @@ package views
 import assets.Messages.{ExitSurvey => messages}
 import config.FrontendAppConfig
 import forms.ExitSurveyForm
-import models.ExitSurveyModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.Play.current
-import play.api.data.Form
 import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}

@@ -20,7 +20,6 @@ import assets.Messages.{Thankyou => messages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.Play.current
 import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.Helpers.{contentAsString, _}
 import utils.TestSupport
