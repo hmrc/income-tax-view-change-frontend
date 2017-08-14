@@ -23,10 +23,11 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.TestSupport
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class AuditingServiceSpec extends TestSupport with BeforeAndAfterEach {
 
@@ -48,6 +49,13 @@ class AuditingServiceSpec extends TestSupport with BeforeAndAfterEach {
 
         val testModel = ExitSurveyAuditModel(ExitSurveyModel(Some("Very satisfied"), Some("Awesome")))
         val expectedData = testAuditingService.toDataEvent(testAppName, testModel, controllers.feedback.routes.FeedbackController.show().url)
+
+        when(mockAuditConnector.sendEvent(
+          ArgumentMatchers.refEq(expectedData, "eventId", "generatedAt")
+        )(
+          ArgumentMatchers.any[HeaderCarrier],
+          ArgumentMatchers.any[ExecutionContext]
+        )) thenReturn Future.successful(Success)
 
         testAuditingService.audit(testModel, controllers.feedback.routes.FeedbackController.show().url)
 

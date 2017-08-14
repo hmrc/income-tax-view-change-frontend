@@ -23,7 +23,6 @@ import config.FrontendAuditConnector
 import play.api.libs.json.Json
 import play.api.{Configuration, Logger}
 import uk.gov.hmrc.play.audit.AuditExtensions
-import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Failure, Success}
 import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -39,12 +38,14 @@ class AuditingService @Inject()(configuration: Configuration, auditConnector: Fr
     val dataEvent = toDataEvent(appName, auditModel, path)
     Logger.debug(s"Splunk Audit Event:\n\n${Json.toJson(dataEvent)}")
     auditConnector.sendEvent(dataEvent).map {
+      //$COVERAGE-OFF$ Disabling scoverage as returns Unit, only used for Debug messages
       case Success =>
         Logger.debug("Splunk Audit Successful")
       case Failure(err,_) =>
         Logger.debug(s"Splunk Audit Error, message: $err")
       case _ =>
         Logger.debug(s"Unknown Splunk Error")
+      //$COVERAGE-ON$
     }
   }
 
