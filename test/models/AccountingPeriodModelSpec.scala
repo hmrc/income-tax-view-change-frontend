@@ -38,5 +38,15 @@ class AccountingPeriodModelSpec extends UnitSpec with Matchers {
         AccountingPeriodModel("2017-04-08", "2018-04-07").determineTaxYear shouldBe 2019
       }
     }
+    "the end date is 6th of March" should {
+      "return the next Tax Year" in {
+        AccountingPeriodModel("2017-03-05", "2018-03-06").determineTaxYear shouldBe 2018
+      }
+    }
+    "the end date is 1st of June" should {
+      "return the next Tax Year" in {
+        AccountingPeriodModel("2017-03-05", "2018-06-01").determineTaxYear shouldBe 2019
+      }
+    }
   }
 }

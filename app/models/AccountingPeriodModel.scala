@@ -17,15 +17,15 @@
 package models
 
 import java.time.LocalDate
-
+import utils.ImplicitDateFormatter._
 import play.api.libs.json.Json
 
 
 case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
-  val determineTaxYear = end match {
-    case x if x.getDayOfMonth > 5 && x.getMonthValue >= 4 => x.getYear + 1
-    case x => x.getYear
-  }
+  val determineTaxYear = if(end isBefore s"${end.getYear}-4-6".toLocalDate)
+    end.getYear
+  else
+    end.getYear+1
 }
 
 object AccountingPeriodModel {
