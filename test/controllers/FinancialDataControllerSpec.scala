@@ -54,7 +54,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
 
         "return Status OK (200)" in {
           mockFinancialDataSuccess()
-          mockSingleBusinessIncomeSource()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           status(result) shouldBe Status.OK
         }
 
@@ -96,7 +96,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockSingleBusinessIncomeSource()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           mockFinancialDataNoBreakdown()
           status(result) shouldBe Status.OK
         }

@@ -44,6 +44,7 @@ object TestConstants extends ImplicitDateFormatter {
   object BusinessDetails {
 
     val testBusinessAccountingPeriod = AccountingPeriodModel(start = "2017-6-1", end = "2018-5-30")
+    val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = "2017-3-5", end = "2018-3-6")
     val testTradeName = "business"
 
     val business1 = BusinessModel(
@@ -133,6 +134,7 @@ object TestConstants extends ImplicitDateFormatter {
     val businessListErrorJson = Json.parse(businessErrorString)
 
     val businessIncomeModel = BusinessIncomeModel(testSelfEmploymentId, testBusinessAccountingPeriod, testTradeName)
+    val business2018IncomeModel = BusinessIncomeModel(testSelfEmploymentId, test2018BusinessAccountingPeriod, testTradeName)
     val businessIncomeModelAlignedTaxYear =
       BusinessIncomeModel(testSelfEmploymentId, AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5"), testTradeName)
   }
@@ -238,6 +240,7 @@ object TestConstants extends ImplicitDateFormatter {
     //Outputs
     val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesModel(Some(BusinessDetails.businessIncomeModel), Some(PropertyIncome.propertyIncomeModel))
     val businessIncomeSourceSuccess = IncomeSourcesModel(Some(BusinessDetails.businessIncomeModel), None)
+    val business2018IncomeSourceSuccess = IncomeSourcesModel(Some(BusinessDetails.business2018IncomeModel), None)
     val propertyIncomeSourceSuccess = IncomeSourcesModel(None, Some(PropertyIncome.propertyIncomeModel))
     val noIncomeSourceSuccess = IncomeSourcesModel(None, None)
     val bothIncomeSourcesSuccessBusinessAligned =
