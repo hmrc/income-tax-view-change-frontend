@@ -19,7 +19,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ExitSurveyModel(satisfaction: Option[Int], improvements: Option[String])
+case class ExitSurveyModel(satisfaction: Option[String], improvements: Option[String])
 
 object ExitSurveyModel {
   implicit val format: OFormat[ExitSurveyModel] = Json.format[ExitSurveyModel]

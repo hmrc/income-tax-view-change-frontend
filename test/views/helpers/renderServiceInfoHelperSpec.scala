@@ -16,20 +16,19 @@
 
 package views.helpers
 
-import utils.TestSupport
-import views.html.helpers.renderServiceInfoHelper
-import assets.TestConstants.{testMtdItUser, testMtdItUserNoUserDetails, testUserName}
 import assets.Messages.{BtaServiceInfoHeader => messages}
+import assets.TestConstants.{testMtdItUser, testMtdItUserNoUserDetails, testUserName}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
-import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.twirl.api.Html
+import utils.TestSupport
+import views.html.helpers.renderServiceInfoHelper
 
 class renderServiceInfoHelperSpec extends TestSupport {
 
-  lazy val appConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
+  lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
   def html(user: Option[MtdItUser]): Html = renderServiceInfoHelper(user)(
     applicationMessages,

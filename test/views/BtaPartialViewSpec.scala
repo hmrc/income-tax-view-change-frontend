@@ -17,22 +17,21 @@
 package views
 
 import assets.Messages.{BtaPartial => messages}
+import assets.TestConstants.Estimates._
+import assets.TestConstants.Obligations._
 import assets.TestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
-import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.TestSupport
-import assets.TestConstants.Obligations._
-import assets.TestConstants.Estimates._
 import utils.ImplicitCurrencyFormatter._
+import utils.TestSupport
 
 class BtaPartialViewSpec extends TestSupport {
 
-  lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
+  lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val model = openObligation
   val calcAmount = BigDecimal(1000)

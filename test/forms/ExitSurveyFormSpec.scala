@@ -23,7 +23,7 @@ import utils.TestSupport
 
 class ExitSurveyFormSpec extends TestSupport {
 
-  object TestExitSurveyForm extends ExitSurveyForm()(fakeApplication.injector.instanceOf[MessagesApi])
+  object TestExitSurveyForm extends ExitSurveyForm()(app.injector.instanceOf[MessagesApi])
 
   val improvementsMaxLength = 1200
 
@@ -51,9 +51,9 @@ class ExitSurveyFormSpec extends TestSupport {
         }
       }
 
-      "valid numeric is supplied for 'satisfaction'" should {
+      "valid string is supplied for 'satisfaction'" should {
 
-        lazy val formInput: Map[String, String] = Map("satisfaction" -> "1")
+        lazy val formInput: Map[String, String] = Map("satisfaction" -> "Very satisfied")
         lazy val result = TestExitSurveyForm.exitSurveyForm.bind(formInput)
 
         "have no errors" in {
@@ -63,12 +63,12 @@ class ExitSurveyFormSpec extends TestSupport {
         "can fold a valid form into a ExitSurveyModel" in {
           result.fold(
             _ => false shouldBe true,
-            success => success.satisfaction shouldBe Some(1)
+            success => success.satisfaction shouldBe Some("Very satisfied")
           )
         }
 
         "should take a ExitSurveyModel and unapply to form" in {
-          val model = ExitSurveyModel(Some(3), Some("Awesome Site"))
+          val model = ExitSurveyModel(Some("Very satisfied"), Some("Awesome Site"))
           TestExitSurveyForm.exitSurveyForm.fill(model).fold(
             _ => false shouldBe true,
             success => success shouldBe model
@@ -90,17 +90,6 @@ class ExitSurveyFormSpec extends TestSupport {
 
         s"has the error message '${messageLookup.ExitSurvey.maxImprovementsError}'" in {
           result.errors.head.message shouldBe messageLookup.ExitSurvey.maxImprovementsError
-        }
-      }
-
-
-      "a non-numeric value is supplied for 'satisfaction'" should {
-
-        lazy val formInput: Map[String, String] = Map("satisfaction" -> "a")
-        lazy val result = TestExitSurveyForm.exitSurveyForm.bind(formInput)
-
-        "have an error" in {
-          result.hasErrors shouldBe true
         }
       }
     }

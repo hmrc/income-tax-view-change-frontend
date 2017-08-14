@@ -29,8 +29,8 @@ import utils.TestSupport
 class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicate with MockObligationsService {
 
   object TestObligationsController extends ObligationsController()(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[MessagesApi],
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
     mockObligationsService
   )

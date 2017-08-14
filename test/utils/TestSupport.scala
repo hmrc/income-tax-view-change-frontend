@@ -19,40 +19,27 @@ package utils
 import com.typesafe.config.Config
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalamock.scalatest.MockFactory
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Suite}
-import play.api.inject.guice.GuiceApplicationBuilder
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.{Application, Play}
 import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TestSupport extends UnitSpec with MockFactory with BeforeAndAfterAll with MaterializerSupport {
+trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar with BeforeAndAfterAll with MaterializerSupport {
   this: Suite =>
 
-  lazy val fakeApplication: Application =
-    new GuiceApplicationBuilder()
-      .configure("metrics.enabled" -> "false")
-      .build()
+  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
-  implicit val ec: ExecutionContext = fakeApplication.injector.instanceOf[ExecutionContext]
+  implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-  val config: Config = fakeApplication.configuration.underlying
-
-  override def beforeAll() {
-    super.beforeAll()
-    Play.start(fakeApplication)
-  }
-
-  override def afterAll() {
-    super.afterAll()
-    Play.stop(fakeApplication)
-  }
+  implicit val config: Config = app.configuration.underlying
 
   implicit class JsoupParse(x: Future[Result]) {
     def toHtmlDocument: Document = Jsoup.parse(bodyOf(x))
