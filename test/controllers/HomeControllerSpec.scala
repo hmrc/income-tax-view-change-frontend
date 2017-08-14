@@ -25,8 +25,8 @@ import utils.TestSupport
 class HomeControllerSpec extends TestSupport {
 
   object TestHomeController extends HomeController()(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[MessagesApi]
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[MessagesApi]
   )
 
   "navigating to the home page" should {

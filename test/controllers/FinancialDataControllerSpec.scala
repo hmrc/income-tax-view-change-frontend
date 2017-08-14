@@ -36,8 +36,8 @@ import utils.TestSupport
 class FinancialDataControllerSpec extends TestSupport with MockFinancialDataService with MockAsyncActionPredicate {
 
   object TestFinancialDataController extends FinancialDataController()(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[MessagesApi],
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
     mockFinancialDataService
   )

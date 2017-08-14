@@ -34,8 +34,8 @@ import utils.ImplicitCurrencyFormatter._
 class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService with MockAsyncActionPredicate {
 
   object TestBTAPartialController extends BTAPartialController()(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[MessagesApi],
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
     mockBTAPartialService
   )

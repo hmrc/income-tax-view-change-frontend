@@ -22,7 +22,7 @@ import utils.ImplicitDateFormatter
 
 class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
-  lazy val appConfig: FrontendAppConfig = fakeApplication().injector.instanceOf[FrontendAppConfig]
+  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "Navigating to /report-quarterly/income-and-expenses/view" should {
 

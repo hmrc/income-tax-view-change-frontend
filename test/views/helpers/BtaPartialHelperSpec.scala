@@ -17,16 +17,15 @@
 package views.helpers
 
 import assets.TestConstants.Estimates._
-import config.FrontendAppConfig
 import assets.TestConstants.Obligations._
+import config.FrontendAppConfig
 import models._
-import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import utils.TestSupport
 
 class BtaPartialHelperSpec extends TestSupport {
 
-  lazy val mockAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
+  lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "The BtaPartialHelper's whichStatus method" should {
     "return Html corresponding to the ObligationStatus" when {
