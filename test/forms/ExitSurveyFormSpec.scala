@@ -20,14 +20,10 @@ import assets.{Messages => messageLookup}
 import forms.validation.ErrorMessageFactory.FieldErrorLoc
 import forms.validation.models.FieldError
 import models.ExitSurveyModel
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits.applicationMessages
-import play.api.i18n.{Messages, MessagesApi}
 import utils.TestSupport
+import play.api.i18n.Messages.Implicits._
 
 class ExitSurveyFormSpec extends TestSupport {
-
-  object TestExitSurveyForm extends ExitSurveyForm()(app.injector.instanceOf[MessagesApi])
 
   val improvementsMaxLength = 1200
 
@@ -58,7 +54,7 @@ class ExitSurveyFormSpec extends TestSupport {
       "valid string is supplied for 'satisfaction'" should {
 
         lazy val formInput: Map[String, String] = Map("satisfaction" -> "Very satisfied")
-        lazy val result = TestExitSurveyForm.exitSurveyForm.bind(formInput)
+        lazy val result = ExitSurveyForm.exitSurveyForm.bind(formInput)
 
         "have no errors" in {
           result.hasErrors shouldBe false
@@ -73,7 +69,7 @@ class ExitSurveyFormSpec extends TestSupport {
 
         "should take a ExitSurveyModel and unapply to form" in {
           val model = ExitSurveyModel(Some("Very satisfied"), Some("Awesome Site"))
-          TestExitSurveyForm.exitSurveyForm.fill(model).fold(
+          ExitSurveyForm.exitSurveyForm.fill(model).fold(
 
             _ => false shouldBe true,
             success => success shouldBe model
@@ -93,8 +89,8 @@ class ExitSurveyFormSpec extends TestSupport {
           result.hasErrors shouldBe true
         }
 
-        s"has the error message '${messageLookup.ExitSurvey.maxImprovementsError}'" in {
-          result.errors.head.message shouldBe messageLookup.ExitSurvey.maxImprovementsError
+        s"have the error message '${messageLookup.ExitSurvey.Errors.maxImprovementsError}'" in {
+          result.errors.head.args(FieldErrorLoc).asInstanceOf[FieldError].toText shouldBe messageLookup.ExitSurvey.Errors.maxImprovementsError
 
         }
       }
