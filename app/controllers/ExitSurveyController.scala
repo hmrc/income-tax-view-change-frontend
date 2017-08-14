@@ -18,10 +18,11 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import audit.AuditingService
+import audit.models.ExitSurveyAuditing.ExitSurveyAuditModel
 import config.AppConfig
 import forms.ExitSurveyForm
 import models.ExitSurveyModel
-import play.api.Application
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Request}
@@ -33,7 +34,8 @@ import scala.concurrent.Future
 
 @Singleton
 class ExitSurveyController @Inject()(implicit val applicationConfig: AppConfig,
-                                     val messagesApi: MessagesApi
+                                     val messagesApi: MessagesApi,
+                                     val auditingService: AuditingService
                                     ) extends FrontendController with I18nSupport {
 
   def view(exitSurveyForm: Form[ExitSurveyModel])(implicit request: Request[_]): Html =
@@ -50,36 +52,13 @@ class ExitSurveyController @Inject()(implicit val applicationConfig: AppConfig,
     ExitSurveyForm.exitSurveyForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(exitSurveyForm = formWithErrors))),
       survey => {
-        //TODO: Store Survey in Splunk and redirect to 'Thank You'
-        //submitSurvey(survey)
+        submitSurvey(survey)
         Future.successful(Redirect(routes.ThankYouController.show()))
       }
     )
   }
 
-  //TODO: Uncomment and Implement Splunk Audit
-//  def submitSurvey(survey: ExitSurveyModel)(implicit hc: HeaderCarrier): Unit = {
-//    val surveyAsMap = surveyFormDataToMap(survey)
-//    if (surveyAsMap.nonEmpty)
-//      logging.audit(transactionName = "ITSA Survey", detail = surveyAsMap, auditType = Logging.eventTypeSurveyFeedback)
-//  }
-
-  private[controllers] final def surveyFormDataToMap(survey: ExitSurveyModel): Map[String, String] = {
-    survey.getClass.getDeclaredFields.map {
-      field =>
-        field.setAccessible(true)
-        field.getName -> (field.get(survey) match {
-          case Some(x) => x.toString
-          case xs: Seq[Any] => xs.mkString(",")
-          case x => x.toString
-        })
-    }.toMap.filter { case (x, y) =>
-      // don't keep any fields in the map if they were not answered
-      y match {
-        case "None" => false
-        case _ => true
-      }
-    }
-  }
+  def submitSurvey(survey: ExitSurveyModel)(implicit hc: HeaderCarrier): Unit =
+    auditingService.audit(ExitSurveyAuditModel(survey), controllers.routes.ExitSurveyController.show().url)
 
 }
