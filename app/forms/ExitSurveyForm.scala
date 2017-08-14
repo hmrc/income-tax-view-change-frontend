@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.preprocess.XssFilter
 import forms.validation.{Constraints, ErrorMessageFactory}
 import models.ExitSurveyModel
 import play.api.data.Form
@@ -30,7 +31,9 @@ object ExitSurveyForm extends Constraints {
   val exitSurveyForm: Form[ExitSurveyModel] = Form(
     mapping(
       satisfaction -> optional(text),
-      improvements -> optional(text).verifying(optMaxLength(improvementsMaxLength, ErrorMessageFactory.error("exit_survey.error.maxLengthImprovements")))
+      improvements -> optional(text)
+        .verifying(optMaxLength(improvementsMaxLength, ErrorMessageFactory.error("exit_survey.error.maxLengthImprovements")))
+        .transform[Option[String]](x => x.map(XssFilter.filter), x => x)
     )(ExitSurveyModel.apply)(ExitSurveyModel.unapply)
   )
 
