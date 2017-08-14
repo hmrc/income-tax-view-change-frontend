@@ -35,8 +35,8 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
 
     def setupResult(): Action[AnyContent] =
       new AsyncActionPredicate()(
-        fakeApplication.injector.instanceOf[MessagesApi],
-        fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
+        app.injector.instanceOf[MessagesApi],
+        app.injector.instanceOf[SessionTimeoutPredicate],
         MockAuthenticationPredicate,
         MockIncomeSourceDetailsPredicate
       ).async {
@@ -122,8 +122,8 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
 
       def setupFailedFutureResult(): Action[AnyContent] =
         new AsyncActionPredicate()(
-          fakeApplication.injector.instanceOf[MessagesApi],
-          fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
+          app.injector.instanceOf[MessagesApi],
+          app.injector.instanceOf[SessionTimeoutPredicate],
           MockAuthenticationPredicate,
           MockIncomeSourceDetailsPredicate
         ).async {

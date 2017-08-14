@@ -28,8 +28,8 @@ import utils.TestSupport
 class SessionTimeoutControllerSpec extends TestSupport {
 
   object TestSessionTimeoutController extends SessionTimeoutController()(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[MessagesApi]
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[MessagesApi]
   )
 
   "Calling the timeout action of the SessionTimeoutController" should {

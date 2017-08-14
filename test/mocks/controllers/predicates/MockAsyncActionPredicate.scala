@@ -23,8 +23,8 @@ import utils.TestSupport
 trait MockAsyncActionPredicate extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
   object MockAsyncActionPredicate extends AsyncActionPredicate()(
-      fakeApplication.injector.instanceOf[MessagesApi],
-      fakeApplication.injector.instanceOf[SessionTimeoutPredicate],
+      app.injector.instanceOf[MessagesApi],
+      app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       MockIncomeSourceDetailsPredicate
   )

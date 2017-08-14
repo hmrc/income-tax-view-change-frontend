@@ -24,7 +24,7 @@ import utils.TestSupport
 trait MockIncomeSourceDetailsPredicate extends TestSupport with MockIncomeSourceDetailsService {
 
   object MockIncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate()(
-    fakeApplication.injector.instanceOf[MessagesApi],
+    app.injector.instanceOf[MessagesApi],
     mockIncomeSourceDetailsService
   )
 

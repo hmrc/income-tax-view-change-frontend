@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package views.helpers
+package audit.models
 
-import play.api.i18n.Messages.Implicits._
-import utils.TestSupport
-
-class TaxYearRenderHelperSpec extends TestSupport {
-
-  "The TaxYearRenderHelper.renderTaxYear method" should {
-    "Render the 2018 Tax Year as 2017/18" in {
-      TaxYearRenderHelper.renderTaxYear(2018) shouldBe "2017 to 2018 tax year"
-    }
-
-    "Render the 2018 Payment Date as 31 January 2019" in {
-      TaxYearRenderHelper.renderPaymentDueDate(2018) shouldBe "31 January 2019"
-    }
-  }
+trait AuditModel {
+  val transactionName: String
+  val detail: Map[String, String]
+  val auditType: String
 }

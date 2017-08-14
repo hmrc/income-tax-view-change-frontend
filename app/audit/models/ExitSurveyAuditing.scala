@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package views.helpers
+package audit.models
 
-import play.api.i18n.Messages.Implicits._
-import utils.TestSupport
+import models.ExitSurveyModel
 
-class TaxYearRenderHelperSpec extends TestSupport {
+object ExitSurveyAuditing {
 
-  "The TaxYearRenderHelper.renderTaxYear method" should {
-    "Render the 2018 Tax Year as 2017/18" in {
-      TaxYearRenderHelper.renderTaxYear(2018) shouldBe "2017 to 2018 tax year"
-    }
+  val exitSurveyTransactionName = "ITVCExitSurvey"
+  val exitSurveyAuditType = "exitSurveyFeedbackSubmitted"
 
-    "Render the 2018 Payment Date as 31 January 2019" in {
-      TaxYearRenderHelper.renderPaymentDueDate(2018) shouldBe "31 January 2019"
-    }
+  case class ExitSurveyAuditModel(exitSurveyModel: ExitSurveyModel) extends AuditModel {
+    override val transactionName: String = exitSurveyTransactionName
+    override val detail: Map[String, String] = Map(
+      "satisfaction" -> exitSurveyModel.satisfaction.fold("-")(x => x),
+      "improvements" -> exitSurveyModel.improvements.fold("-")(x => x)
+    )
+    override val auditType: String = exitSurveyAuditType
   }
 }

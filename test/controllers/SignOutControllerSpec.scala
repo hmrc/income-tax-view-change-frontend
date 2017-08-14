@@ -25,8 +25,8 @@ import play.api.test.Helpers._
 class SignOutControllerSpec extends TestSupport {
 
   object TestSignOutController extends SignOutController()(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[MessagesApi]
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[MessagesApi]
   )
 
   "navigating to signout page" should {

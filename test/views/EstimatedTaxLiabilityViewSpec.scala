@@ -27,7 +27,6 @@ import config.FrontendAppConfig
 import models.{CalculationDataModel, IncomeSourcesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,7 +35,7 @@ import utils.{ImplicitCurrencyFormatter, TestSupport}
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
-  lazy val mockAppConfig: FrontendAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
+  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))

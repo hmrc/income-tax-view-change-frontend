@@ -26,7 +26,6 @@ import config.FrontendAppConfig
 import models.IncomeSourcesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,7 +34,7 @@ import utils.TestSupport
 
 class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
 
-  lazy val mockAppConfig: FrontendAppConfig = fakeApplication.injector.instanceOf[FrontendAppConfig]
+  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), Some(propertyIncomeModel))
