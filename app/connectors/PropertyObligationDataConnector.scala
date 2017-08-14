@@ -46,8 +46,8 @@ class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends Servi
             Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[ObligationsModel].fold(
               invalid => {
-                Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Json Constraints Error. Parsing Property Obligation Data Response")
-                ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Constraints Error. Parsing Property Obligation Data Response")
+                Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Json Validation Error. Parsing Property Obligation Data Response")
+                ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response")
               },
               valid => valid
             ))

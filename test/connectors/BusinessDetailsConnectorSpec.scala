@@ -53,7 +53,7 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
 
     "return BusinessListError model when bad JSON is received" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Constraints Error. Parsing Business Details Response")
+      await(result) shouldBe BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Business Details Response")
     }
 
     "return BusinessDetailsErrorModel model in case of future failed scenario" in {

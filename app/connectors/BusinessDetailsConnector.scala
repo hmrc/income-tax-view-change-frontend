@@ -46,8 +46,8 @@ class BusinessDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
             Logger.debug(s"[BusinessDetailsConnector][getBusinessList] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[List[BusinessModel]].fold(
               invalid => {
-                Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Json Constraints Error. Parsing Business Details Response")
-                BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Constraints Error. Parsing Business Details Response")
+                Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Json Validation Error. Parsing Business Details Response")
+                BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Business Details Response")
               },
               valid => BusinessDetailsModel(valid)
             ))

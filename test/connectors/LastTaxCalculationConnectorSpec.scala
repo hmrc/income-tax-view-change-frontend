@@ -49,7 +49,7 @@ class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
 
     "return EstimatedTaxLiabilityError model in case of bad/malformed JSON response" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Constraints Error. Parsing Latest Calc Response")
+      await(result) shouldBe LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Latest Calc Response")
     }
 
     "return EstimatedTaxLiabilityError model in case of failure" in {

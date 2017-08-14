@@ -47,8 +47,8 @@ class BusinessObligationDataConnector @Inject()(val http: HttpGet) extends Servi
             Logger.debug(s"[BusinessObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, json: ${response.json}")
             Future.successful(response.json.validate[ObligationsModel].fold(
               invalid => {
-                Logger.warn(s"[BusinessObligationDataConnector][getObligationData] - Json Constraints Error. Parsing Obligation Data Response")
-                ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Constraints Error. Parsing Obligation Data Response")
+                Logger.warn(s"[BusinessObligationDataConnector][getObligationData] - Json Validation Error. Parsing Obligation Data Response")
+                ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response")
               },
               valid => valid
             ))
