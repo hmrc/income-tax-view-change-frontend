@@ -29,6 +29,20 @@ class ExitSurveyFormSpec extends TestSupport {
 
   "The ExitSurveyForm" should {
 
+    "if 'improvements' includes XSS attack" should {
+
+      "filter out attack" in {
+
+        lazy val formInput: Map[String, String] = Map("improvements" -> "<script>Attack</script>")
+        lazy val result = ExitSurveyForm.exitSurveyForm.bind(formInput)
+
+        result.fold(
+          _ => false shouldBe true,
+          success => success.improvements shouldBe Some("")
+        )
+      }
+    }
+
     "have no errors" when {
 
       "the length of 'improvements' is equal to the maxLength" should {
