@@ -37,3 +37,4 @@ GET         /partial                                controllers.BTAPartialContro
 #Exit Survey
 GET         /exit-survey                            controllers.ExitSurveyController.show
 POST        /exit-survey                            controllers.ExitSurveyController.submit
+GET         /exit-survey/thankyou                   controllers.ThankYouController.show

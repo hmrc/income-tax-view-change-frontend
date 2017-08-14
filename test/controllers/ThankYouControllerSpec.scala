@@ -16,29 +16,37 @@
 
 package controllers
 
+import assets.Messages
 import config.FrontendAppConfig
+import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import utils.TestSupport
 import play.api.test.Helpers._
 
-class SignOutControllerSpec extends TestSupport {
+class ThankYouControllerSpec extends TestSupport {
 
-  object TestSignOutController extends SignOutController()(
-    app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesApi]
+  object TestThankYouController extends ThankYouController()(
+    fakeApplication.injector.instanceOf[FrontendAppConfig],
+    fakeApplication.injector.instanceOf[MessagesApi]
   )
 
-  "navigating to signout page" should {
-    lazy val result = TestSignOutController.signOut(fakeRequestWithActiveSession)
+  "ThankYouController.show" should {
+    lazy val result = TestThankYouController.show(fakeRequestWithActiveSession)
+    lazy val document = Jsoup.parse(contentAsString(result))
 
-    "return OK (303)" in {
-      status(result) shouldBe Status.SEE_OTHER
-    }
-    "redirect to the exitSruvey page" in {
-      redirectLocation(await(result)).head should endWith(controllers.routes.ExitSurveyController.show().url)
+    "return OK (200)" in {
+      status(result) shouldBe Status.OK
     }
 
+    "return HTML" in {
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    s"have the title '${Messages.Thankyou.title}'" in {
+      document.title shouldBe Messages.Thankyou.title
+    }
   }
 
 }

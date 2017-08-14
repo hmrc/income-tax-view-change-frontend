@@ -97,3 +97,9 @@ exit_survey.q1.option.5                                         = Very dissatisf
 exit_survey.q2                                                  = How could we improve this service?
 exit_survey.line_1                                              = Please don''t include any personal or financial information, for example your National Insurance or credit card numbers.
 exit_survey.submit                                              = Send feedback
+
+## ThankYou page ##
+thank_you.title                                                 = Thank you
+thank_you.heading                                               = Thank you
+thank_you.line.1                                                = Your feedback will help us improve this service.
+thank_you.signIn                                                = Go back to sign in.
