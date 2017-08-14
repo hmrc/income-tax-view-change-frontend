@@ -119,4 +119,11 @@ object Messages {
       val maxImprovementsError = "You can't enter more than 1200 characters for your feedback"
     }
   }
+
+  object Thankyou {
+    val title = "Thank you"
+    val heading = "Thank you"
+    val line1 = "Your feedback will help us improve this service."
+    val signInLink = "Go back to sign in."
+  }
 }

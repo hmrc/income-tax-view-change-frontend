@@ -37,7 +37,7 @@ class ExitSurveyController @Inject()(implicit val applicationConfig: AppConfig,
                                     ) extends FrontendController with I18nSupport {
 
   def view(exitSurveyForm: Form[ExitSurveyModel])(implicit request: Request[_]): Html =
-    views.html.exit_survey(
+    views.html.exit_survey.exit_survey(
       surveyForm = exitSurveyForm,
       routes.ExitSurveyController.submit()
     )
@@ -52,7 +52,7 @@ class ExitSurveyController @Inject()(implicit val applicationConfig: AppConfig,
       survey => {
         //TODO: Store Survey in Splunk and redirect to 'Thank You'
         //submitSurvey(survey)
-        Future.successful(Redirect(routes.HomeController.redirect()))
+        Future.successful(Redirect(routes.ThankYouController.show()))
       }
     )
   }

@@ -40,7 +40,7 @@ class ExitSurveyViewSpec extends TestSupport {
     "not errored" should {
 
       lazy val page: HtmlFormat.Appendable =
-        views.html.exit_survey(ExitSurveyForm.exitSurveyForm, controllers.routes.HomeController.redirect())(FakeRequest(), applicationMessages, mockAppConfig)
+        views.html.exit_survey.exit_survey(ExitSurveyForm.exitSurveyForm, controllers.routes.HomeController.redirect())(FakeRequest(), applicationMessages, mockAppConfig)
       lazy val document: Document = Jsoup.parse(contentAsString(page))
 
       s"have the title ${messages.title}" in {
@@ -96,7 +96,7 @@ class ExitSurveyViewSpec extends TestSupport {
 
       lazy val form = ExitSurveyForm.exitSurveyForm.bind(Map("improvements" -> "a" * (ExitSurveyForm.improvementsMaxLength + 1)))
       lazy val page: HtmlFormat.Appendable =
-        views.html.exit_survey(form, controllers.routes.HomeController.redirect())(FakeRequest(), applicationMessages, mockAppConfig)
+        views.html.exit_survey.exit_survey(form, controllers.routes.HomeController.redirect())(FakeRequest(), applicationMessages, mockAppConfig)
       lazy val document: Document = Jsoup.parse(contentAsString(page))
 
       "render the summary error" in {
