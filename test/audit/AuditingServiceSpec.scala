@@ -16,13 +16,13 @@
 
 package audit
 
-import audit.models.ExitSurveyAuditing.ExitSurveyAuditModel
 import _root_.models.ExitSurveyModel
+import audit.models.ExitSurveyAuditing.ExitSurveyAuditModel
+import config.FrontendAuditConnector
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.TestSupport
 
@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext
 
 class AuditingServiceSpec extends TestSupport with BeforeAndAfterEach {
 
-  val mockAuditConnector = mock[AuditConnector]
+  val mockAuditConnector = mock[FrontendAuditConnector]
   val mockConfiguration = mock[Configuration]
   val testAppName = "app"
 

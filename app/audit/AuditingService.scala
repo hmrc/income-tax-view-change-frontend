@@ -19,17 +19,17 @@ package audit
 import javax.inject.{Inject, Singleton}
 
 import audit.models.AuditModel
+import config.FrontendAuditConnector
 import play.api.libs.json.Json
 import play.api.{Configuration, Logger}
 import uk.gov.hmrc.play.audit.AuditExtensions
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuditingService @Inject()(configuration: Configuration, auditConnector: AuditConnector) {
+class AuditingService @Inject()(configuration: Configuration, auditConnector: FrontendAuditConnector) {
 
   lazy val appName: String = configuration.getString("appName").fold("APP NAME NOT SET")(x => x)
 

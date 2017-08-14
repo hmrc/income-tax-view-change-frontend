@@ -22,12 +22,14 @@ import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
 import assets.Messages.{ExitSurvey => messages}
+import audit.AuditingService
 
 class ExitSurveyControllerSpec extends TestSupport {
 
   object TestExitSurveyController extends ExitSurveyController()(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[MessagesApi]
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[MessagesApi],
+    app.injector.instanceOf[AuditingService]
   )
 
   "Navigating to the exit survey page" should {
