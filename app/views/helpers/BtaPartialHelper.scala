@@ -35,7 +35,7 @@ object BtaPartialHelper {
     applyFormGroup {
       s"""
         |<p id="report-due">$obligationMessage</p>
-        |<a data-journey-click="mtdPartial:clickedLink:View Obligations" id="obligations-link" href="${config.itvcFrontendEnvironment + controllers.routes.ObligationsController.getObligations().url}">
+        |<a data-journey-click="itvcPartial:clickedLink:View Obligations" id="obligations-link" href="${config.itvcFrontendEnvironment + controllers.routes.ObligationsController.getObligations().url}">
         |${messages("bta_partial.deadlines_link")}</a>"""
     }.stripMargin.replaceAll("\n","")
   }
@@ -56,7 +56,7 @@ object BtaPartialHelper {
             case calc: LastTaxCalculation =>
               val taxYear = estimate.taxYear
               s"""<p id="current-estimate-$taxYear">${estimatesMessage(taxYear, calc.calcAmount)}</p>
-                 |<a data-journey-click="mtdPartial:clickedLink:View Estimated Tax Liability ${taxYear}" id="estimates-link-$taxYear" href="${config.itvcFrontendEnvironment + controllers.routes.FinancialDataController.getFinancialData(taxYear).url}">
+                 |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability ${taxYear}" id="estimates-link-$taxYear" href="${config.itvcFrontendEnvironment + controllers.routes.FinancialDataController.getFinancialData(taxYear).url}">
                  |${messages("bta_partial.view_details_link")}</a>"""
             case NoLastTaxCalculation =>
               val taxYear = estimate.taxYear
