@@ -22,8 +22,8 @@ trait ImplicitListMethods {
       case Nil => List()
       case _ => List(f(x))
     }
-    def emptyMaxBy[B](f: A => B)(implicit cmp: Ordering[B]): List[A] = x.handleEmptyList(_.maxBy(f))
-    def emptyMinBy[B](f: A => B)(implicit cmp: Ordering[B]): List[A] = x.handleEmptyList(_.minBy(f))
+    def maxItemBy[B](f: A => B)(implicit cmp: Ordering[B]): List[A] = x.handleEmptyList(_.maxBy(f))
+    def minItemBy[B](f: A => B)(implicit cmp: Ordering[B]): List[A] = x.handleEmptyList(_.minBy(f))
   }
 }
 
