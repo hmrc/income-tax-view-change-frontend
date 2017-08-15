@@ -26,11 +26,11 @@ object ObligationRenderHelper extends ImplicitListMethods {
       ObligationsModel(getLatestReceived(obs.obligations) ++ getAllOverdue(obs.obligations) ++ getNextDue(obs.obligations))
     }
 
-  private def getAllOverdue(obligations: List[ObligationModel]): List[ObligationModel] =
-    obligations.filter(_.getObligationStatus == Overdue)
-
   private def getLatestReceived(obligations: List[ObligationModel]): List[ObligationModel] =
     obligations.filter(_.getObligationStatus == Received).emptyMaxBy(_.due.toEpochDay)
+
+  private def getAllOverdue(obligations: List[ObligationModel]): List[ObligationModel] =
+    obligations.filter(_.getObligationStatus == Overdue)
 
   private def getNextDue(obligations: List[ObligationModel]): List[ObligationModel] =
     obligations.filter(_.getObligationStatus.isInstanceOf[Open]).emptyMinBy(_.due.toEpochDay)
