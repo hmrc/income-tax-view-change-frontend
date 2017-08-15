@@ -18,14 +18,12 @@ package utils
 
 trait ImplicitListMethods {
   implicit class ImplicitListMethods[A](x: List[A]) {
-    def emptyMaxBy[B](f: A => B)(implicit cmp: Ordering[B]): List[A] = x match {
+    def handleEmptyList(f: List[A] => A): List[A] = x match {
       case Nil => List()
-      case _ => List(x.maxBy(f))
+      case _ => List(f(x))
     }
-    def emptyMinBy[B](f: A => B)(implicit cmp: Ordering[B]): List[A] = x match {
-      case Nil => List()
-      case _ => List(x.minBy(f))
-    }
+    def emptyMaxBy[B](f: A => B)(implicit cmp: Ordering[B]): List[A] = x.handleEmptyList(_.maxBy(f))
+    def emptyMinBy[B](f: A => B)(implicit cmp: Ordering[B]): List[A] = x.handleEmptyList(_.minBy(f))
   }
 }
 
