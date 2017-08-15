@@ -17,31 +17,21 @@
 package views.helpers
 
 import models._
+import utils.ImplicitListMethods
 
-object ObligationRenderHelper {
+object ObligationRenderHelper extends ImplicitListMethods {
 
   def subsetObligations(obligations: Option[ObligationsModel]): Option[ObligationsModel] =
-    if(obligations.isDefined){
-      val obs = obligations.get.obligations
-      Some(ObligationsModel(
-        doIfNotEmpty(getLatestReceived, obs.filter(_.getObligationStatus == Received))
-          ++ obs.filter(_.getObligationStatus == Overdue)
-          ++ doIfNotEmpty(getNextDue, obs.filter(_.getObligationStatus.isInstanceOf[Open]))
-      ))
-    } else None
+    obligations.map { obs =>
+      ObligationsModel(getLatestReceived(obs.obligations) ++ getAllOverdue(obs.obligations) ++ getNextDue(obs.obligations))
+    }
 
-  private def getLatestReceived(obligations: List[ObligationModel], current: ObligationModel): List[ObligationModel] =
-    if(obligations.isEmpty) List(current)
-    else
-      if(obligations.head.due isAfter current.due) getLatestReceived(obligations.tail, obligations.head)
-      else getLatestReceived(obligations.tail, current)
+  private def getAllOverdue(obligations: List[ObligationModel]): List[ObligationModel] =
+    obligations.filter(_.getObligationStatus == Overdue)
 
-  private def getNextDue(obligations: List[ObligationModel], current: ObligationModel): List[ObligationModel] =
-    if(obligations.isEmpty) List(current)
-    else
-      if(obligations.head.due isBefore current.due) getNextDue(obligations.tail, obligations.head)
-      else getNextDue(obligations.tail, current)
+  private def getLatestReceived(obligations: List[ObligationModel]): List[ObligationModel] =
+    obligations.filter(_.getObligationStatus == Received).emptyMaxBy(_.due.toEpochDay)
 
-  private def doIfNotEmpty(method: (List[ObligationModel],ObligationModel) => List[ObligationModel], list: List[ObligationModel]): List[ObligationModel] =
-    if(list.nonEmpty) method(list.tail, list.head) else List()
+  private def getNextDue(obligations: List[ObligationModel]): List[ObligationModel] =
+    obligations.filter(_.getObligationStatus.isInstanceOf[Open]).emptyMinBy(_.due.toEpochDay)
 }
