@@ -17,10 +17,9 @@
 package views.helpers
 
 import models.{Open, Overdue, Received}
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._
+import play.api.i18n.Messages.Implicits._
 import utils.TestSupport
 
 class ObligationsStatusHelperSpec extends TestSupport {

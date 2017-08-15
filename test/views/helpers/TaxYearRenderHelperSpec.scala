@@ -16,7 +16,6 @@
 
 package views.helpers
 
-import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import utils.TestSupport
 

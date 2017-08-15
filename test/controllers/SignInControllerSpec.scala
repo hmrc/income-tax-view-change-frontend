@@ -26,10 +26,10 @@ import play.api.test.Helpers._
 class SignInControllerSpec extends TestSupport {
 
   object TestSignInController extends SignInController(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[Configuration],
-    fakeApplication.injector.instanceOf[Environment],
-    fakeApplication.injector.instanceOf[MessagesApi]
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[Configuration],
+    app.injector.instanceOf[Environment],
+    app.injector.instanceOf[MessagesApi]
   )
 
   "navigating to SignIn page" should {

@@ -27,8 +27,8 @@ import assets.Messages.{NotEnrolled => messages}
 class NotEnrolledControllerSpec extends TestSupport {
 
   object TestNotEnrolledController extends NotEnrolledController()(
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[MessagesApi]
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[MessagesApi]
   )
 
   "the NotEnrolledController.show() action" should {

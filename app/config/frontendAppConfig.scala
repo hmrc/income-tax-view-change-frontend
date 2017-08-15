@@ -43,6 +43,7 @@ trait AppConfig {
   val btaMessagesUrl: String
   val signUpUrl: String
   val itvcFrontendEnvironment: String
+  val exitSurveyUrl: String
 }
 
 @Singleton
@@ -74,7 +75,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
 
   //Sign out
   override lazy val ggUrl: String = loadConfig(s"government-gateway.url")
-  override lazy val ggSignOutUrl = s"$ggUrl/gg/sign-out?continue=$signInUrl"
+  override lazy val ggSignOutUrl = s"$ggUrl/gg/sign-out?continue=$exitSurveyUrl"
 
   //MTD Income Tax Enrolment
   override lazy val mtdItEnrolmentKey: String = loadConfig("enrolments.mtd.key")
@@ -91,4 +92,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
 
   //Subscription Service
   override lazy val signUpUrl: String = loadConfig("mtd-subscription-service.url")
+
+  //Exit Survey
+  override lazy val exitSurveyUrl: String = s"$itvcFrontendEnvironment/$baseUrl/exit-survey"
 }

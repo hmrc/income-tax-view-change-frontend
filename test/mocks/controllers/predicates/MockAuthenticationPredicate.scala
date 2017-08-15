@@ -28,10 +28,10 @@ trait MockAuthenticationPredicate extends TestSupport with MockUserDetailsConnec
 
   object MockAuthenticationPredicate extends AuthenticationPredicate(
     mockAuthService,
-    fakeApplication.injector.instanceOf[FrontendAppConfig],
-    fakeApplication.injector.instanceOf[Configuration],
-    fakeApplication.injector.instanceOf[Environment],
-    fakeApplication.injector.instanceOf[MessagesApi],
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[Configuration],
+    app.injector.instanceOf[Environment],
+    app.injector.instanceOf[MessagesApi],
     mockUserDetailsConnector
   )
 
