@@ -20,6 +20,7 @@
 @import views.html.helpers.ObSecHelper
 @import views.html.helpers.sidebarHelper
 @import views.helpers.ObligationsPage
+@import views.helpers.ObligationRenderHelper.subsetObligations
 
 @(bizObs: Option[ObligationsModel], propObs: Option[ObligationsModel])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
 
@@ -34,8 +35,8 @@
 
     <p id="obligation-intro">@messages("obligations.info")</p>
 
-    @ObSecHelper(bizObs, "bi")
-    @ObSecHelper(propObs, "pi")
+    @ObSecHelper(subsetObligations(bizObs), "bi")
+    @ObSecHelper(subsetObligations(propObs), "pi")
 </section>
 
 }

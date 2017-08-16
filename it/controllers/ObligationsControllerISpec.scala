@@ -119,14 +119,75 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             elementTextByID(id = "bi-ob-1-status")("Received"),
 
             //Check second obligation
-            elementTextByID(id = "bi-ob-2-start")("6 July 2017"),
-            elementTextByID(id = "bi-ob-2-end")("5 October 2017"),
-            elementTextByID(id = "bi-ob-2-status")("Due by " + LocalDate.now().plusDays(1).toLongDate),
+            elementTextByID(id = "bi-ob-2-start")("6 October 2017"),
+            elementTextByID(id = "bi-ob-2-end")("5 January 2018"),
+            elementTextByID(id = "bi-ob-2-status")("Overdue"),
+
 
             //Check third obligation
-            elementTextByID(id = "bi-ob-3-start")("6 October 2017"),
-            elementTextByID(id = "bi-ob-3-end")("5 January 2018"),
-            elementTextByID(id = "bi-ob-3-status")("Overdue")
+            elementTextByID(id = "bi-ob-3-start")("6 July 2017"),
+            elementTextByID(id = "bi-ob-3-end")("5 October 2017"),
+            elementTextByID(id = "bi-ob-3-status")("Due by " + LocalDate.now().plusDays(1).toLongDate)
+          )
+        }
+      }
+
+      "has multiple received and open obligations" should {
+
+        "display only one of each received and open obligations and all overdue obligations" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+          And("I wiremock stub multiple business obligations response")
+          SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, multipleReceivedOpenObligationsModel)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+          val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("the result should have a HTTP status of OK and a body containing 1 received, 2 overdue and 1 open obligation")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your report deadlines"),
+
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
+
+            //Check four Obligation sections are returned
+            nElementsWithClass("obligation")(4),
+
+            //Check first obligation
+            elementTextByID(id = "bi-ob-1-start")("7 June 2017"),
+            elementTextByID(id = "bi-ob-1-end")("14 July 2017"),
+            elementTextByID(id = "bi-ob-1-status")("Received"),
+
+            //Check second obligation
+            elementTextByID(id = "bi-ob-2-start")("6 October 2017"),
+            elementTextByID(id = "bi-ob-2-end")("5 January 2018"),
+            elementTextByID(id = "bi-ob-2-status")("Overdue"),
+
+            //Check third obligation
+            elementTextByID(id = "bi-ob-3-start")("7 November 2017"),
+            elementTextByID(id = "bi-ob-3-end")("6 February 2018"),
+            elementTextByID(id = "bi-ob-3-status")("Overdue"),
+
+            //Check third obligation
+            elementTextByID(id = "bi-ob-4-start")("7 August 2017"),
+            elementTextByID(id = "bi-ob-4-end")("6 November 2017"),
+            elementTextByID(id = "bi-ob-4-status")("Due by " + LocalDate.now().plusDays(1).toLongDate)
           )
         }
       }
