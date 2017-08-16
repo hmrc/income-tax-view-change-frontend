@@ -240,6 +240,40 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       ))
     )
 
+    val multipleReceivedOpenObligationsModel = ObligationsModel(List(
+      ObligationModel(
+        start = "2017-06-07",
+        end = "2017-07-14",
+        due = LocalDate.now().plusDays(1),
+        met = true
+      ), ObligationModel(
+        start = "2017-04-06",
+        end = "2017-07-05",
+        due = LocalDate.now(),
+        met = true
+      ), ObligationModel(
+        start = "2017-07-06",
+        end = "2017-10-05",
+        due = LocalDate.now().plusDays(2),
+        met = false
+      ), ObligationModel(
+        start = "2017-10-06",
+        end = "2018-01-05",
+        due = LocalDate.now().minusDays(1),
+        met = false
+      ), ObligationModel(
+        start = "2017-08-07",
+        end = "2017-11-06",
+        due = LocalDate.now().plusDays(1),
+        met = false
+      ), ObligationModel(
+        start = "2017-11-07",
+        end = "2018-02-06",
+        due = LocalDate.now().minusDays(1),
+        met = false
+      ))
+    )
+
     val singleObligationsDataSuccessModel = ObligationsModel(List(
       ObligationModel(
         start = "2017-04-06",
