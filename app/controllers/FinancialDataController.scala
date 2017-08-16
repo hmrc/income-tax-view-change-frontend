@@ -36,21 +36,15 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
                                                ) extends BaseController {
 
   val redirectToEarliestEstimatedTaxLiability: Action[AnyContent] = actionPredicate.async {
-    implicit request => implicit user => implicit sources =>
-      (sources.businessDetails, sources.propertyDetails) match {
-        case (Some(business), Some(property)) =>
-          if (property.accountingPeriod.determineTaxYear < business.accountingPeriod.determineTaxYear) {
-            redirectToYear(property.accountingPeriod.determineTaxYear)
-          } else {
-            redirectToYear(business.accountingPeriod.determineTaxYear)
-          }
-        case (Some(business), None) => redirectToYear(business.accountingPeriod.determineTaxYear)
-        case (None, Some(property)) => redirectToYear(property.accountingPeriod.determineTaxYear)
-        case (_, _) =>
-          Logger.debug("[FinancialDataController][redirectToEarliestEstimatedTaxLiability] No Income Sources.")
-          Future.successful(showInternalServerError)
-      }
-  }
+      implicit request => implicit user => implicit sources =>
+        (sources.businessDetails, sources.propertyDetails) match {
+          case (None, None) =>
+            Logger.debug("[FinancialDataController][redirectToEarliestEstimatedTaxLiability] No Income Sources.")
+            Future.successful(showInternalServerError)
+          case (_: Option[IncomeModel], _: Option[IncomeModel]) =>
+            redirectToYear(sources.earliestTaxYear.get)
+        }
+    }
 
   val getFinancialData: Int => Action[AnyContent] = taxYear => actionPredicate.async {
     implicit request => implicit user => implicit sources =>
