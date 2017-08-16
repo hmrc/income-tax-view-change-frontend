@@ -46,8 +46,7 @@ case class IncomeSourcesModel(
 
   def earliestAccountingPeriodStart(year: Int): LocalDate =
     (businessDetails ++ propertyDetails)
-      .filter(_.accountingPeriod.determineTaxYear == year)
-      .minBy(_.accountingPeriod.start).accountingPeriod.start
+      .filter(_.accountingPeriod.determineTaxYear == year).minBy(_.accountingPeriod.start).accountingPeriod.start
 
 }
 

@@ -42,7 +42,7 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
             Logger.debug("[FinancialDataController][redirectToEarliestEstimatedTaxLiability] No Income Sources.")
             Future.successful(showInternalServerError)
           case (_: Option[IncomeModel], _: Option[IncomeModel]) =>
-            redirectToYear(sources.earliestTaxYear.get)
+            Future.successful(Redirect(controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get)))
         }
     }
 
@@ -59,7 +59,4 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
           showInternalServerError
       }
   }
-
-  private[FinancialDataController] def redirectToYear(year: Int): Future[Result] =
-    Future.successful(Redirect(controllers.routes.FinancialDataController.getFinancialData(year)))
 }
