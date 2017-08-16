@@ -16,10 +16,9 @@
 
 package views.helpers
 
-import java.time.LocalDate
-
 import models._
 import utils.ImplicitListMethods
+import utils.ImplicitDateFormatter.localDateOrdering
 
 object ObligationRenderHelper extends ImplicitListMethods {
 
@@ -36,7 +35,5 @@ object ObligationRenderHelper extends ImplicitListMethods {
 
   private def getNextDue(obligations: List[ObligationModel]): List[ObligationModel] =
     obligations.filter(_.getObligationStatus.isInstanceOf[Open]).minItemBy(_.due)
-
-  implicit val localDateOrdering: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 
 }

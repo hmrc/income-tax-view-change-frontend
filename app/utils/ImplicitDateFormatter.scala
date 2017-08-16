@@ -40,4 +40,7 @@ trait ImplicitDateFormatter {
   }
 }
 
-object ImplicitDateFormatter extends ImplicitDateFormatter
+object ImplicitDateFormatter extends ImplicitDateFormatter {
+  implicit val localDateOrdering: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
+  implicit val localDateTimeOrdering: Ordering[LocalDateTime] = Ordering.fromLessThan(_ isBefore _)
+}
