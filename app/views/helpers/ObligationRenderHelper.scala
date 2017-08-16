@@ -16,6 +16,8 @@
 
 package views.helpers
 
+import java.time.LocalDate
+
 import models._
 import utils.ImplicitListMethods
 
@@ -27,11 +29,14 @@ object ObligationRenderHelper extends ImplicitListMethods {
     }
 
   private def getLatestReceived(obligations: List[ObligationModel]): List[ObligationModel] =
-    obligations.filter(_.getObligationStatus == Received).maxItemBy(_.due.toEpochDay)
+    obligations.filter(_.getObligationStatus == Received).maxItemBy(_.due)
 
   private def getAllOverdue(obligations: List[ObligationModel]): List[ObligationModel] =
     obligations.filter(_.getObligationStatus == Overdue)
 
   private def getNextDue(obligations: List[ObligationModel]): List[ObligationModel] =
-    obligations.filter(_.getObligationStatus.isInstanceOf[Open]).minItemBy(_.due.toEpochDay)
+    obligations.filter(_.getObligationStatus.isInstanceOf[Open]).minItemBy(_.due)
+
+  implicit val localDateOrdering: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
+
 }
