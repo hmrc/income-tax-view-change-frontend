@@ -144,7 +144,7 @@
         </p>
 
         <ul class="bullets">
-            <li id="bullet-1">@Html(messages("estimated_tax_liability.estimated-tax.changes.bullet-1", sources.earliestAccountingPeriodStart(taxYear).get.toLongDate))</li>
+            <li id="bullet-1">@Html(messages("estimated_tax_liability.estimated-tax.changes.bullet-1", sources.earliestAccountingPeriodStart(taxYear).toLongDate))</li>
             <li id="bullet-2">@messages("estimated_tax_liability.estimated-tax.changes.bullet-2")</li>
             <li id="bullet-3">@messages("estimated_tax_liability.estimated-tax.changes.bullet-3")</li>
             <li id="bullet-4">@messages("estimated_tax_liability.estimated-tax.changes.bullet-4")</li>
