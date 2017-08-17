@@ -51,8 +51,8 @@ class sidebarHelperSpec extends TestSupport {
             lazy val page = html(EstimatesPage, testMtdItUser, Some(2018), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
             lazy val document = Jsoup.parse(page.body)
 
-            s"has a h3 heading '${messages.futureTaxYearsHeading}'" in {
-              document.getElementById("future-years-heading").text() shouldBe messages.futureTaxYearsHeading
+            s"has a h3 heading '${messages.estimatesHeading}'" in {
+              document.getElementById("estimates-heading").text() shouldBe messages.estimatesHeading
             }
 
             "has an Estimates link to 2019 that" should {

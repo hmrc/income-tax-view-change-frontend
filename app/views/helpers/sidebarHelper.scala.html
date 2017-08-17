@@ -32,64 +32,30 @@
 
     @* Navigation *@
     @* ********** *@
-    <div class="form-group">
-        @page match {
-            case ObligationsPage => {
-                <h3 id="estimates-heading">@messages("sidebar.view_estimated_liability.h3")</h3>
-                <ul>
-                    @for(year <- incomeSources.orderedTaxYears) {
-                        <li class="font-xsmall">
-                            <a data-journey-click="itvc:clickedLink:View Estimated Tax Liability @year" id="estimate-link-@year" href="@{controllers.routes.FinancialDataController.getFinancialData(year).url}">@messages("sidebar.view_estimate_for_year.link", (year - 1).toString, year.toString)</a>
-                        </li>
-                    }
-                </ul>
-            }
-            case EstimatesPage => {
+    @page match {
+        case EstimatesPage => {
+            <div class="form-group">
                 <h3 id="obligations-heading">@messages("sidebar.view_obligations.h3")</h3>
                 <ul>
                     <li class="font-xsmall">
                         <a data-journey-click="itvc:clickedLink:View Obligations" id="obligations-link" href="@{controllers.routes.ObligationsController.getObligations().url}">@messages("sidebar.view_obligations.link")</a>
                     </li>
                 </ul>
-            }
+            </div>
         }
-    </div>
+        case ObligationsPage => {}
+    }
 
 
-    @* Previous Tax Years *@
-    @* ****************** *@
-    <div class="form-group">
-        <h3 id="previous-years-heading">@messages("sidebar.self_assessment.h3")</h3>
-        <ul>
-            @page match {
-                case ObligationsPage => {}
-                case EstimatesPage => {
-                    @taxYear.map { currentYear =>
-                        @for(year <- incomeSources.orderedTaxYears.filter(_ < currentYear).reverse) {
-                            <li class="font-xsmall">
-                                <a data-journey-click="itvc:clickedLink:View Estimated Tax Liability @year" id="estimate-link-@year" href="@{controllers.routes.FinancialDataController.getFinancialData(year).url}">@messages("sidebar.view_estimate_for_year.link", (year - 1).toString, year.toString)</a>
-                            </li>
-                        }
-                    }
-                }
-            }
-            <li class="font-xsmall">
-                <a data-journey-click="itvc:clickedLink:View SA Annual Returns" id="sa-link" href=@{s"${appConfig.businessTaxAccount}/self-assessment"}>
-                    @messages("sidebar.self_assessment.link")
-                </a>
-            </li>
-        </ul>
-    </div>
-
-
-    @* Future Tax Years *@
-    @* **************** *@
-    @taxYear.map { currentYear =>
-        @if(currentYear < incomeSources.lastTaxYear.get) {
+    @* Estimates *@
+    @* ********* *@
+    @page match {
+        case EstimatesPage if(incomeSources.orderedTaxYears.length < 2) => {}
+        case _ => {
             <div class="form-group">
-                <h3 id="future-years-heading">@messages("sidebar.future_tax_years.h3")</h3>
+                <h3 id="estimates-heading">@messages("sidebar.view_estimated_liability.h3")</h3>
                 <ul>
-                    @for(year <- incomeSources.orderedTaxYears.filter(_ > currentYear)) {
+                    @for(year <- if(taxYear.isDefined) incomeSources.orderedTaxYears.filter(_ != taxYear.get) else incomeSources.orderedTaxYears) {
                     <li class="font-xsmall">
                         <a data-journey-click="itvc:clickedLink:View Estimated Tax Liability @year" id="estimate-link-@year" href="@{controllers.routes.FinancialDataController.getFinancialData(year).url}">@messages("sidebar.view_estimate_for_year.link", (year - 1).toString, year.toString)</a>
                     </li>
@@ -98,5 +64,19 @@
             </div>
         }
     }
+
+
+    @* Previous Tax Years *@
+    @* ****************** *@
+    <div class="form-group">
+        <h3 id="previous-years-heading">@messages("sidebar.self_assessment.h3")</h3>
+        <ul>
+            <li class="font-xsmall">
+                <a data-journey-click="itvc:clickedLink:View SA Annual Returns" id="sa-link" href=@{s"${appConfig.businessTaxAccount}/self-assessment"}>
+                    @messages("sidebar.self_assessment.link")
+                </a>
+            </li>
+        </ul>
+    </div>
 
 </section>
