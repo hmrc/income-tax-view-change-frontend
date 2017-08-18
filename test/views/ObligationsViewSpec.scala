@@ -39,6 +39,8 @@ class ObligationsViewSpec extends TestSupport {
   )))
   val errorModel = ObligationsErrorModel(500,"ISE")
 
+
+  //TODO: Complete the Unit Testing for the view
   lazy val bothPage = views.html.obligations(successModel, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
   lazy val bizPage  = views.html.obligations(successModel, NoObligations)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
   lazy val propPage = views.html.obligations(NoObligations, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
