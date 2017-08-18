@@ -32,13 +32,7 @@
 
 @loadRadioOptions(key: String) = @{
   (1 to Messages(s"$key.size").toInt).map(i =>
-  RadioOption(s"$i", Messages(s"$key.$i"))
-  )
-}
-
-@loadCheckboxOptions(key: String) = @{
-  (1 to Messages(s"$key.size").toInt).map(i =>
-  Messages(s"$key.$i")
+    RadioOption(s"$i", Messages(s"$key.$i"))
   )
 }
 

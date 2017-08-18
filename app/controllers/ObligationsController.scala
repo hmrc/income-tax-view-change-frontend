@@ -39,7 +39,7 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
         implicit sources =>
           for {
             business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
-            property <- obligationsService.getPropertyObligations(user.nino)
+            property <- obligationsService.getPropertyObligations(user.nino, sources.propertyDetails)
           } yield (business, property) match {
             case (businessSuccess: ObligationsModel, propertySuccess: ObligationsModel) =>
               Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")

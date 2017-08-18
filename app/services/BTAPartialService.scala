@@ -27,13 +27,13 @@ import scala.concurrent.Future
 @Singleton
 class BTAPartialService @Inject()(val obligationsService: ObligationsService, val financialDataService: FinancialDataService) {
 
-  def getObligations(nino: String, businessIncomeSource: Option[BusinessIncomeModel])(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getObligations(nino: String, incomeSources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
     for{
-      biz <- obligationsService.getBusinessObligations(nino, businessIncomeSource) map {
+      biz <- obligationsService.getBusinessObligations(nino, incomeSources.businessDetails) map {
         case b: ObligationsModel => getMostRecentDueDate(b)
         case _ => ObligationsErrorModel(500, "model... bad")
       }
-      prop <- obligationsService.getPropertyObligations(nino) map {
+      prop <- obligationsService.getPropertyObligations(nino, incomeSources.propertyDetails) map {
         case p: ObligationsModel => getMostRecentDueDate(p)
         case _ => ObligationsErrorModel(500, "model... bad")
       }

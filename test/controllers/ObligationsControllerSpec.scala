@@ -47,7 +47,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         "return Status OK (200)" in {
           mockSingleBusinessIncomeSource()
           mockBusinessSuccess()
-          mockPropertyError()
+          mockNoPropertyIncome()
           status(result) shouldBe Status.OK
         }
 
@@ -67,8 +67,8 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockSingleBusinessIncomeSource()
-          mockBusinessError()
+          mockPropertyIncomeSource()
+          mockNoBusinessIncome()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
         }
@@ -89,7 +89,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockSingleBusinessIncomeSource()
+          mockBothIncomeSources()
           mockBusinessSuccess()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
@@ -111,9 +111,9 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status INTERNAL_SERVER_ERROR (500)" in {
-          mockSingleBusinessIncomeSource()
-          mockBusinessError()
-          mockPropertyError()
+          mockNoIncomeSources()
+          mockNoBusinessIncome()
+          mockNoPropertyIncome()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
