@@ -110,11 +110,11 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
-        "return Status INTERNAL_SERVER_ERROR (500)" in {
+        "return Status OK (200)" in {
           mockNoIncomeSources()
           mockNoBusinessIncome()
           mockNoPropertyIncome()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(result) shouldBe Status.OK
         }
 
         "return HTML" in {
@@ -122,8 +122,8 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the ISE page" in {
-          document.title shouldBe errorMessages.title
+        "render the Obligations page" in {
+          document.title shouldBe messages.title
         }
       }
 

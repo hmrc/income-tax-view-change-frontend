@@ -17,12 +17,12 @@
 @import utils.ImplicitDateFormatter._
 @import views.html.templates.main_template
 @import views.helpers.{ObligationStatusHelper}
-@import views.html.helpers.ObSecHelper
 @import views.html.helpers.sidebarHelper
 @import views.helpers.ObligationsPage
-@import views.helpers.ObligationRenderHelper.subsetObligations
+@import views.helpers.ObligationRenderHelper.renderObligations
+@import models.{BusinessIncome, PropertyIncome}
 
-@(bizObs: Option[ObligationsModel], propObs: Option[ObligationsModel])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
+@(bizObs: ObligationsResponseModel, propObs: ObligationsResponseModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
 
 @sidebar = {
     @sidebarHelper(ObligationsPage, sources)
@@ -35,8 +35,9 @@
 
     <p id="obligation-intro">@messages("obligations.info")</p>
 
-    @ObSecHelper(subsetObligations(bizObs), "bi")
-    @ObSecHelper(subsetObligations(propObs), "pi")
+    @renderObligations(bizObs, BusinessIncome)
+    @renderObligations(propObs, PropertyIncome)
+
 </section>
 
 }

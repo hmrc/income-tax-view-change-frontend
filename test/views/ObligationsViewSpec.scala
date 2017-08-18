@@ -18,29 +18,34 @@ package views
 
 import assets.Messages.{Obligations => messages, Sidebar => sidebarMessages}
 import assets.TestConstants.IncomeSourceDetails._
-import assets.TestConstants.{testMtditid, testNino, testUserDetails, testUserName}
-import auth.MtdItUser
+import assets.TestConstants._
 import config.FrontendAppConfig
-import models.{ObligationModel, ObligationsModel}
+import models.{NoObligations, ObligationModel, ObligationsErrorModel, ObligationsModel}
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.ImplicitDateFormatter._
 import utils.TestSupport
 
-class ObligationsViewSpec extends TestSupport{
+class ObligationsViewSpec extends TestSupport {
 
   lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val model = ObligationModel(start = "2017-1-1".toLocalDate, end = "2017-3-31".toLocalDate, due = "2017-4-5".toLocalDate, true)
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
-  val dummymodel = ObligationsModel(List(model))
+  val successModel = ObligationsModel(List(ObligationModel(
+    start = "2017-1-1".toLocalDate,
+    end = "2017-3-31".toLocalDate,
+    due = "2017-4-5".toLocalDate,
+    met = true
+  )))
+  val errorModel = ObligationsErrorModel(500,"ISE")
 
-  lazy val bothPage = views.html.obligations(
-    Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
-  lazy val bizPage  = views.html.obligations(Some(dummymodel), None)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
-  lazy val propPage = views.html.obligations(None, Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+  lazy val bothPage = views.html.obligations(successModel, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+  lazy val bizPage  = views.html.obligations(successModel, NoObligations)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+  lazy val propPage = views.html.obligations(NoObligations, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+  lazy val bothErrorPage = views.html.obligations(errorModel, errorModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+  lazy val bizErrorPage  = views.html.obligations(errorModel, NoObligations)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+  lazy val propErrorPage = views.html.obligations(NoObligations, errorModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+
 
   "The Obligations view" should {
 

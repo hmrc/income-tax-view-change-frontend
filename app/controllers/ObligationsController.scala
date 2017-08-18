@@ -40,20 +40,7 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
           for {
             business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
             property <- obligationsService.getPropertyObligations(user.nino, sources.propertyDetails)
-          } yield (business, property) match {
-            case (businessSuccess: ObligationsModel, propertySuccess: ObligationsModel) =>
-              Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
-              Ok(views.html.obligations(Some(businessSuccess), Some(propertySuccess)))
-            case (businessSuccess: ObligationsModel, _) =>
-              Logger.debug("[ObligationsController][getObligations] Business Obligations retrieved. Serving HTML page")
-              Ok(views.html.obligations(Some(businessSuccess), None))
-            case (_, propertySuccess: ObligationsModel) =>
-              Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
-              Ok(views.html.obligations(None, Some(propertySuccess)))
-            case (_, _) =>
-              Logger.debug("[ObligationsController][getObligations] No obligations retrieved. Throwing ISE")
-              showInternalServerError
-          }
+          } yield Ok(views.html.obligations(business, property))
   }
 }
 
