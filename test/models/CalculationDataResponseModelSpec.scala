@@ -58,14 +58,6 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
 
     "be able to parse a full JSON string into the Model" in {
       Json.parse(calculationDataFullString).as[CalculationDataModel] shouldBe calculationDataSuccessModel
-
-
-//      CalculationDataModel(90500,2000,200000,10000,230000,888,198500,Some(20000),4000,Some(100000),40000,Some(50000),22500,66500,10000,20,40,45)
-//      CalculationDataModel(
-//        incomeTaxYTD = 90500,
-//        incomeTaxThisPeriod
-//      )
-//      CalculationDataModel(90500.0,2000.0,200000.0,10000.0,230000.0,11500.0,198500.0,Some(20000.0),4000.0,Some(100000.0),40000.0,Some(50000.0),22500.0,66500.0,24000.0,20.0,40.0,45.0)
     }
   }
 

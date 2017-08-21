@@ -97,10 +97,16 @@
                     }
                 }
                 @if(calcModel.hasNISection) {
-                <tr id ="ni-section">
-                    <td>@messages("estimated_tax_liability.calc-breakdown.national-insurance")</td>
-                    @***<td id="ni-amount" class="summary-data">@breakdown.nicTotal.toCurrency</td>***@
-                </tr>
+                <section id ="ni-section">
+                    <tr>
+                        <td>@messages("estimated_tax_liability.calc-breakdown.nic2")</td>
+                        <td id="nic2-amount" class="summary-data">@breakdown.nationalInsuranceClass2Amount.toCurrency</td>
+                    </tr>
+                    <tr>
+                        <td>@messages("estimated_tax_liability.calc-breakdown.nic4")</td>
+                        <td id="nic4-amount" class="summary-data">@breakdown.totalClass4Charge.toCurrency</td>
+                    </tr>
+                </section>
                 }
                 <tr id ="total-estimate-section" class="total-section">
                     <td>@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
