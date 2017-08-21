@@ -148,8 +148,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
               document.getElementById("brt-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtBRT.toCurrencyString
             }
           }
-          s"have a National Insurance amount of ${model.nicTotal}" in {
-            document.getElementById("ni-amount").text shouldBe model.nicTotal.toCurrencyString
+          s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
+            document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
+          }
+          s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
+            document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
           }
           s"have a total tax estimate of ${model.incomeTaxYTD}" in {
             document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
@@ -228,13 +231,15 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
             document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
           }
-          s"have a National Insurance amount of ${model.nicTotal}" in {
-            document.getElementById("ni-amount").text shouldBe model.nicTotal.toCurrencyString
+          s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
+            document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
+          }
+          s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
+            document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
           }
           s"have a total tax estimate of ${model.incomeTaxYTD}" in {
             document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
           }
-
         }
       }
 

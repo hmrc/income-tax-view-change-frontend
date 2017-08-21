@@ -69,7 +69,8 @@ object IncomeTaxViewChangeStub {
         calc.payPensionsProfitAtART,
         calc.incomeTaxOnPayPensionsProfitAtART,
         calc.incomeTaxDue,
-        calc.nicTotal,
+        calc.nationalInsuranceClass2Amount,
+        calc.totalClass4Charge,
         calc.rateBRT,
         calc.rateHRT,
         calc.rateART)
