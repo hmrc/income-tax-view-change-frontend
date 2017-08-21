@@ -30,42 +30,26 @@ import scala.concurrent.Future
 class IncomeSourceDetailsService @Inject()( val businessDetailsConnector: BusinessDetailsConnector,
                                             val propertyDetailsConnector: PropertyDetailsConnector) {
 
-  def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] = {
+  def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
     for {
-      businessDetails <- getBusinessDetails(nino).map {
-        case businessList: BusinessDetailsModel => businessList.business.headOption match {
-          case Some(business) => Some(BusinessIncomeModel(business.id, business.accountingPeriod, business.tradingName))
-          case None => {
-            Logger.debug("[IncomeSourceDetailsService][getIncomeSourceDetails] No Businesses retrieved from business details")
-            None
-          }
-        }
-        case _: BusinessDetailsErrorModel => None
-      }
-      propertyDetails <- getPropertyDetails(nino).map {
-        case property: PropertyDetailsModel => Some(PropertyIncomeModel(property.accountingPeriod))
-        case _: PropertyDetailsErrorModel => None
-      }
-    } yield IncomeSourcesModel(businessDetails, propertyDetails)
-  }
-
-  private[IncomeSourceDetailsService] def getBusinessDetails(nino: String)(implicit hc: HeaderCarrier): Future[BusinessListResponseModel] = {
-    Logger.debug(s"[IncomeSourceDetailsService][getBusinessDetails] - Requesting Business Details from connector for user with NINO: $nino")
-    businessDetailsConnector.getBusinessList(nino).flatMap {
-      case success: BusinessDetailsModel => Future.successful(success)
-      case error: BusinessDetailsErrorModel =>
-        Logger.debug(s"[IncomeSourceDetailsService][getBusinessDetails] - Error Response Status: ${error.code}, Message: ${error.message}")
-        Future.successful(error)
+      businessDetails <- businessDetailsConnector.getBusinessList(nino)
+      propertyDetails <- propertyDetailsConnector.getPropertyDetails(nino)
+    } yield (businessDetails, propertyDetails) match {
+      case (_: BusinessDetailsErrorModel, _) => IncomeSourcesError
+      case (_, _:PropertyDetailsModel) => IncomeSourcesError
+      case (x, y) => createIncomeSourcesModel(x, y)
     }
   }
 
-  private[IncomeSourceDetailsService]def getPropertyDetails(nino: String)(implicit hc: HeaderCarrier): Future[PropertyDetailsResponseModel] = {
-    Logger.debug(s"[IncomeSourceDetailsService][getPropertyDetails] - Requesting Property Details from connector for user with NINO: $nino")
-    propertyDetailsConnector.getPropertyDetails(nino).flatMap {
-      case success: PropertyDetailsModel => Future.successful(success)
-      case error: PropertyDetailsErrorModel =>
-        Logger.debug(s"[IncomeSourceDetailsService][getPropertyDetails] - Error Response Status: ${error.code}, Message: ${error.message}")
-        Future.successful(error)
+  private def createIncomeSourcesModel(business: BusinessListResponseModel, property: PropertyDetailsResponseModel) = {
+    val businessModel = business match {
+      case x: BusinessIncomeModel => Some(x)
+      case _ => None
     }
+    val propertyModel = property match {
+      case x: PropertyIncomeModel => Some(x)
+      case _ => None
+    }
+    IncomeSourcesModel(businessModel, propertyModel)
   }
 }
