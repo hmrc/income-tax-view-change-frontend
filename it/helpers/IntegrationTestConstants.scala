@@ -76,7 +76,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
                         payPensionsProfitAtART: Option[BigDecimal],
                         incomeTaxOnPayPensionsProfitAtART: BigDecimal,
                         incomeTaxDue: BigDecimal,
-                        nicTotal: BigDecimal,
+                        nationalInsuranceClass2Amount: BigDecimal,
+                        totalClass4Charge: BigDecimal,
                         rateBRT: BigDecimal,
                         rateHRT: BigDecimal,
                         rateART: BigDecimal): JsValue ={
@@ -96,7 +97,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "payPensionsProfitAtART": "$payPensionsProfitAtART",
         | "incomeTaxOnPayPensionsProfitAtART": "$incomeTaxOnPayPensionsProfitAtART",
         | "incomeTaxDue": "$incomeTaxDue",
-        | "nicTotal": "$nicTotal",
+        | "nationalInsuranceClass2Amount": "$nationalInsuranceClass2Amount",
+        | "totalClass4Charge": "$totalClass4Charge",
         | "rateBRT": "$rateBRT",
         | "rateHRT": "$rateHRT",
         | "rateART": "$rateART"
@@ -114,7 +116,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
          """.stripMargin)
     }
 
-    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = 90500,
+    val calculationDataSuccessModel = CalculationDataModel(
+      incomeTaxYTD = 90500,
       incomeTaxThisPeriod = 2000,
       profitFromSelfEmployment = 200000,
       profitFromUkLandAndProperty = 10000,
@@ -128,7 +131,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       payPensionsProfitAtART = Some(50000),
       incomeTaxOnPayPensionsProfitAtART = 22500,
       incomeTaxDue = 66500,
-      nicTotal = 24000,
+      nationalInsuranceClass2Amount = 14000,
+      totalClass4Charge = 10000,
       rateBRT = 20,
       rateHRT = 40,
       rateART = 45

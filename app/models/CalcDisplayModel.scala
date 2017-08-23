@@ -41,7 +41,17 @@ case class CalcDisplayModel(calcTimestamp: String,
   }
   val hasNISection: Boolean = {
     if(calcDataModel.nonEmpty)
-      calcDataModel.get.nicTotal > 0
+      calcDataModel.get.nationalInsuranceClass2Amount > 0 || calcDataModel.get.totalClass4Charge > 0
+    else false
+  }
+  val hasNic2Amount: Boolean = {
+    if(calcDataModel.nonEmpty)
+      calcDataModel.get.nationalInsuranceClass2Amount > 0
+    else false
+  }
+  val hasNic4Amount: Boolean = {
+    if(calcDataModel.nonEmpty)
+      calcDataModel.get.totalClass4Charge > 0
     else false
   }
 }
