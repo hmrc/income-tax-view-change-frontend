@@ -51,13 +51,25 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response")
-          SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
 
-          And("I wiremock stub a single business obligation response")
-          SelfAssessmentStub.stubGetOnlyPropObs(testNino, testSelfEmploymentId, otherObligationsDataSuccessModel)
+          And("I wiremock stub a single property obligation response")
+          SelfAssessmentStub.stubGetPropertyObligations(testNino, otherObligationsDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
           val res = IncomeTaxViewChangeFrontend.getBtaPartial
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+
+          Then("Verify that property obligations has been called")
+          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
           Then("the result should have a HTTP status of OK and a body containing one obligation")
           res should have(
@@ -99,10 +111,23 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub obligation responses in different tax years")
-          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationPlusYearOpenModel, singleObligationOverdueModel)
+          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, singleObligationPlusYearOpenModel)
+          SelfAssessmentStub.stubGetPropertyObligations(testNino, singleObligationOverdueModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
           val res = IncomeTaxViewChangeFrontend.getBtaPartial
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+
+          Then("Verify that property obligations has been called")
+          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
           Then("the result should have a HTTP status of OK and a body containing one obligation")
           res should have(
@@ -146,10 +171,29 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub obligation responses in different tax years")
-          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationPlusYearOpenModel, singleObligationOverdueModel)
+          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, singleObligationPlusYearOpenModel)
+          SelfAssessmentStub.stubGetPropertyObligations(testNino, singleObligationOverdueModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
           val res = IncomeTaxViewChangeFrontend.getBtaPartial
+
+          Then(s"Verify that the last calc has been called for $testYear")
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+
+          Then("Verify that the last calc has been called for 2019")
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, "2019")
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+
+          Then("Verify that property obligations has been called")
+          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
           Then("the result should have a HTTP status of OK and a body containing one obligation")
           res should have(

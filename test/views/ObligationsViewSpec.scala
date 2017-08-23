@@ -154,11 +154,11 @@ class ObligationsViewSpec extends TestSupport {
         }
 
         s"has a paragraph with the message '${messages.Errors.p1}'" in {
-          document.getElementById("p1").text() shouldBe messages.Errors.p1
+          document.getElementById("bi-p1").text() shouldBe messages.Errors.p1
         }
 
         s"has a second paragraph with the message '${messages.Errors.p2}'" in {
-          document.getElementById("p2").text() shouldBe messages.Errors.p2
+          document.getElementById("bi-p2").text() shouldBe messages.Errors.p2
         }
       }
     }
@@ -179,11 +179,11 @@ class ObligationsViewSpec extends TestSupport {
         }
 
         s"has a paragraph with the message '${messages.Errors.p1}'" in {
-          document.getElementById("p1").text() shouldBe messages.Errors.p1
+          document.getElementById("pi-p1").text() shouldBe messages.Errors.p1
         }
 
         s"has a second paragraph with the message '${messages.Errors.p2}'" in {
-          document.getElementById("p2").text() shouldBe messages.Errors.p2
+          document.getElementById("pi-p2").text() shouldBe messages.Errors.p2
         }
       }
     }

@@ -30,7 +30,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
     "authorised with an active enrolment" which {
 
-      "has a single business and single obligation" should {
+      "has a single business obligation" should {
 
         "display a single obligation with the correct dates and status" in {
 
@@ -47,10 +47,19 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response")
-          SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
 
           Then("the result should have a HTTP status of OK and a body containing one obligation")
           res should have(
@@ -76,7 +85,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
         }
       }
 
-      "has multiple obligations" should {
+      "has multiple business obligations" should {
 
         "display the correct amount of obligations with the correct statuses" in {
 
@@ -90,13 +99,22 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
 
           And("I wiremock stub multiple business obligations response")
-          SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, multipleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, multipleObligationsDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
 
           Then("the result should have a HTTP status of OK and a body containing one obligation")
           res should have(
@@ -132,7 +150,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
         }
       }
 
-      "has multiple received and open obligations" should {
+      "has multiple received and open business obligations" should {
 
         "display only one of each received and open obligations and all overdue obligations" in {
 
@@ -146,13 +164,22 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
 
           And("I wiremock stub multiple business obligations response")
-          SelfAssessmentStub.stubGetOnlyBizObs(testNino, testSelfEmploymentId, multipleReceivedOpenObligationsModel)
+          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, multipleReceivedOpenObligationsModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
 
           Then("the result should have a HTTP status of OK and a body containing 1 received, 2 overdue and 1 open obligation")
           res should have(
@@ -203,16 +230,25 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           UserDetailsStub.stubGetUserDetails()
 
           And("I wiremock stub no business details as an income source")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.emptyBusinessDetailsResponse())
+          SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
 
           And("I wiremock stub a successful Property Details response")
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response")
-          SelfAssessmentStub.stubGetOnlyPropObs(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetPropertyObligations(testNino, singleObligationsDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
           Then("the result should have a HTTP status of OK and a body containing one obligation")
           res should have(
@@ -238,6 +274,140 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
         }
       }
 
+      "has multiple property obligations" should {
+
+        "display the correct amount of obligations with the correct statuses" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub no business details response")
+          SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+          And("I wiremock stub multiple property obligations response")
+          SelfAssessmentStub.stubGetPropertyObligations(testNino, multipleObligationsDataSuccessModel)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+          val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that property obligations has been called")
+          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
+
+          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your report deadlines"),
+
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
+
+            //Check three Obligation sections are returned
+            nElementsWithClass("obligation")(3),
+
+            //Check first obligation
+            elementTextByID(id = "pi-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "pi-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "pi-ob-1-status")("Received"),
+
+            //Check second obligation
+            elementTextByID(id = "pi-ob-2-start")("6 October 2017"),
+            elementTextByID(id = "pi-ob-2-end")("5 January 2018"),
+            elementTextByID(id = "pi-ob-2-status")("Overdue"),
+
+
+            //Check third obligation
+            elementTextByID(id = "pi-ob-3-start")("6 July 2017"),
+            elementTextByID(id = "pi-ob-3-end")("5 October 2017"),
+            elementTextByID(id = "pi-ob-3-status")("Due by " + LocalDate.now().plusDays(1).toLongDate)
+          )
+        }
+      }
+
+      "has multiple received and open property obligations" should {
+
+        "display only one of each received and open obligations and all overdue obligations" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub no business details response")
+          SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+          And("I wiremock stub multiple property open and received obligations response")
+          SelfAssessmentStub.stubGetPropertyObligations(testNino, multipleReceivedOpenObligationsModel)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+          val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
+
+          Then("the result should have a HTTP status of OK and a body containing 1 received, 2 overdue and 1 open obligation")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your report deadlines"),
+
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
+
+            //Check four Obligation sections are returned
+            nElementsWithClass("obligation")(4),
+
+            //Check first obligation
+            elementTextByID(id = "pi-ob-1-start")("7 June 2017"),
+            elementTextByID(id = "pi-ob-1-end")("14 July 2017"),
+            elementTextByID(id = "pi-ob-1-status")("Received"),
+
+            //Check second obligation
+            elementTextByID(id = "pi-ob-2-start")("6 October 2017"),
+            elementTextByID(id = "pi-ob-2-end")("5 January 2018"),
+            elementTextByID(id = "pi-ob-2-status")("Overdue"),
+
+            //Check third obligation
+            elementTextByID(id = "pi-ob-3-start")("7 November 2017"),
+            elementTextByID(id = "pi-ob-3-end")("6 February 2018"),
+            elementTextByID(id = "pi-ob-3-status")("Overdue"),
+
+            //Check third obligation
+            elementTextByID(id = "pi-ob-4-start")("7 August 2017"),
+            elementTextByID(id = "pi-ob-4-end")("6 November 2017"),
+            elementTextByID(id = "pi-ob-4-status")("Due by " + LocalDate.now().plusDays(1).toLongDate)
+          )
+        }
+      }
+
       "has business and property obligations" should {
 
         "display one obligation each for business and property with the correct dates and statuses" in {
@@ -255,10 +425,23 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business and property obligation response")
-          SelfAssessmentStub.stubGetObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel, singleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetPropertyObligations(testNino, singleObligationsDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+
+          Then("Verify that property obligations has been called")
+          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
           Then("the result should have a HTTP status of OK and a body containing one obligation for both property and business")
           res should have(
@@ -284,6 +467,156 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           )
         }
       }
+
+      "has business income but returns an error response from business obligations" should {
+
+        "Display an error message to the user" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          And("I wiremock stub a successful Property Details response, with no Property Income Source")
+          SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
+
+          And("I wiremock stub an error for the business obligations response")
+          SelfAssessmentStub.stubBusinessObligationsError(testNino, testSelfEmploymentId)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+          val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+
+          Then("the result should have a HTTP status of OK and a body containing an error message for business obligations")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your report deadlines"),
+
+            //Check the business obligation data
+            elementTextByID(id = "bi-section")("Business income"),
+            elementTextByID(id = "bi-p1")("We can't display your next report due date at the moment."),
+            elementTextByID(id = "bi-p2")("Try refreshing the page in a few minutes.")
+          )
+        }
+      }
+
+      "has property income but returns an error response from property obligations" should {
+
+        "Display an error message to the user" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub a success business details response, with no Business Income Source")
+          SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+          And("I wiremock stub an error for the property obligations response")
+          SelfAssessmentStub.stubPropertyObligationsError(testNino)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+          val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that property obligations has been called")
+          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
+
+          Then("the result should have a HTTP status of OK and a body containing an error message for business obligations")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your report deadlines"),
+
+            //Check the business obligation data
+            elementTextByID(id = "pi-section")("Property income"),
+            elementTextByID(id = "pi-p1")("We can't display your next report due date at the moment."),
+            elementTextByID(id = "pi-p2")("Try refreshing the page in a few minutes.")
+          )
+        }
+      }
+
+      "has both property income and business income but both return error responses when retrieving obligations" should {
+
+        "Display an error message to the user" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+          And("I wiremock stub an error for the property obligations response")
+          SelfAssessmentStub.stubPropertyObligationsError(testNino)
+
+          And("I wiremock stub an error for the business obligations response")
+          SelfAssessmentStub.stubBusinessObligationsError(testNino, testSelfEmploymentId)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+          val res = IncomeTaxViewChangeFrontend.getObligations
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+
+          Then("Verify that property obligations has been called")
+          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
+
+          Then("the result should have a HTTP status of OK and a body containing an error message for business obligations")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your report deadlines"),
+
+            //Check the business obligation data
+            elementTextByID(id = "p1")("We can't display your next report due date at the moment."),
+            elementTextByID(id = "p2")("Try refreshing the page in a few minutes.")
+          )
+        }
+      }
+
     }
 
     "unauthorised" should {

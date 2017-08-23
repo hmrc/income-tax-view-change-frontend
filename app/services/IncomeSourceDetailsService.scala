@@ -35,19 +35,26 @@ class IncomeSourceDetailsService @Inject()( val businessDetailsConnector: Busine
       businessDetails <- businessDetailsConnector.getBusinessList(nino)
       propertyDetails <- propertyDetailsConnector.getPropertyDetails(nino)
     } yield (businessDetails, propertyDetails) match {
-      case (_: BusinessDetailsErrorModel, _) => IncomeSourcesError
-      case (_, _:PropertyDetailsModel) => IncomeSourcesError
+      case (x: BusinessDetailsErrorModel, _) =>
+        Logger.debug(s"[IncomeSourceDetailsService][getIncomeSourceDetails] Error Model from BusinessDetailsConnector: $x")
+        IncomeSourcesError
+      case (_, x:PropertyDetailsErrorModel) =>
+        Logger.debug(s"[IncomeSourceDetailsService][getIncomeSourceDetails] Error Model from PropertyDetailsConnector: $x")
+        IncomeSourcesError
       case (x, y) => createIncomeSourcesModel(x, y)
     }
   }
 
   private def createIncomeSourcesModel(business: BusinessListResponseModel, property: PropertyDetailsResponseModel) = {
     val businessModel = business match {
-      case x: BusinessIncomeModel => Some(x)
+      case x: BusinessDetailsModel =>
+        // TODO: In future, this will need to cater for multiple SE Trade (business) income sources
+        val seTrade = x.business.head
+        Some(BusinessIncomeModel(seTrade.id, seTrade.accountingPeriod, seTrade.tradingName))
       case _ => None
     }
     val propertyModel = property match {
-      case x: PropertyIncomeModel => Some(x)
+      case x: PropertyDetailsModel => Some(PropertyIncomeModel(x.accountingPeriod))
       case _ => None
     }
     IncomeSourcesModel(businessModel, propertyModel)

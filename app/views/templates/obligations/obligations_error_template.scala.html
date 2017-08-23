@@ -16,10 +16,11 @@
 
 @import models.IncomeTypeModel
 
-@(id: IncomeTypeModel)(implicit messages: Messages) {
-    <section>
+@(id: IncomeTypeModel)(implicit messages: Messages)
+<section>
+    <div class="form-group">
         <h2 id="@{id}-section">@messages("obligations." + id + ".subheading")</h2>
-        <p id="p1">@messages("obligations.error.p1")</p>
-        <p id="p2">@messages("obligations.error.p2")</p>
-    </section>
-}
+        <p id="@{id}-p1">@messages("obligations.error.p1")</p>
+        <p id="@{id}-p2">@messages("obligations.error.p2")</p>
+    </div>
+</section>

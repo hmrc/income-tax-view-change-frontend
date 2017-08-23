@@ -77,8 +77,8 @@ object TestConstants extends ImplicitDateFormatter {
     )
 
     val businessesSuccessResponse = List(business1, business2)
+    val businessSuccessEmptyResponse = "[]"
     val businessesSuccessModel = BusinessDetailsModel(businessesSuccessResponse)
-    val businessSuccessEmptyModel = BusinessDetailsModel(List.empty)
     val businessSuccessString: String =
       s"""
           {
