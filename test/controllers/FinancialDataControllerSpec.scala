@@ -16,12 +16,11 @@
 
 package controllers
 
-import assets.Messages.{EstimatedTaxLiability => messages}
+import assets.Messages.{EstimatedTaxLiabilityError, EstimatedTaxLiability => messages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
-import assets.TestConstants.IncomeSourceDetails
 import assets.TestConstants.PropertyDetails._
-import assets.TestConstants._
+import assets.TestConstants.{IncomeSourceDetails, _}
 import config.FrontendAppConfig
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockFinancialDataService
@@ -111,17 +110,31 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
       "receives Business Income from the Income Sources predicate and an error from the FinancialData Service" should {
 
         lazy val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
 
-        "return Internal Server Error (500)" in {
+        "return Status OK (200)" in {
           mockFinancialDataError()
           mockSingleBusinessIncomeSource()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(result) shouldBe Status.OK
         }
 
         "return HTML" in {
           contentType(result) shouldBe Some("text/html")
           charset(result) shouldBe Some("utf-8")
         }
+
+        "render the EstimatedTaxLiabilityError page" in {
+          document.title() shouldBe EstimatedTaxLiabilityError.title
+        }
+
+        s"Have a paragraph with the messages ${EstimatedTaxLiabilityError.p1}" in {
+          document.getElementById("p1").text() shouldBe EstimatedTaxLiabilityError.p1
+        }
+
+        s"Have a paragraph with the messages ${EstimatedTaxLiabilityError.p2}" in {
+          document.getElementById("p2").text() shouldBe EstimatedTaxLiabilityError.p2
+        }
+
       }
 
       "receives Business Income from the Income Sources predicate and No Data Found from the FinancialData Service" should {

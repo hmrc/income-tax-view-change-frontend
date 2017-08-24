@@ -43,18 +43,16 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
   }
 
   val getFinancialData: Int => Action[AnyContent] = taxYear => actionPredicate.async {
-    implicit request =>
-      implicit user =>
-        implicit sources =>
-          financialDataService.getFinancialData(user.nino, taxYear).map {
-            case calcDisplayModel: CalcDisplayModel =>
-              Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
-            case CalcDisplayNoDataFound =>
-              Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
-              NotFound(views.html.noEstimatedTaxLiability(taxYear))
-            case CalcDisplayError =>
-              Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
-              showInternalServerError
-          }
+    implicit request => implicit user => implicit sources =>
+      financialDataService.getFinancialData(user.nino, taxYear).map {
+        case calcDisplayModel: CalcDisplayModel =>
+          Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+        case CalcDisplayNoDataFound =>
+          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
+          NotFound(views.html.noEstimatedTaxLiability(taxYear))
+        case CalcDisplayError =>
+          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
+          Ok(views.html.estimatedTaxLiabilityError(taxYear))
+      }
   }
 }
