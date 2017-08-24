@@ -56,7 +56,7 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
           NotFound(views.html.noEstimatedTaxLiability(taxYear))
         case CalcDisplayError =>
           Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
-          showInternalServerError
+          Ok(views.html.estimatedTaxLiabilityError(taxYear))
       }
   }
 }

@@ -43,6 +43,15 @@ object Messages {
     val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
   }
 
+  // Estimated Tax Liability Error Page Messages
+  object EstimatedTaxLiabilityError {
+    val pageHeading = "Your in-year tax estimate"
+    val taxYear = "2017 to 2018 tax year"
+    val title = taxYear + " " + pageHeading
+    val p1 = "We can't display your estimated tax amount at the moment."
+    val p2 = "Try refreshing the page in a few minutes."
+  }
+
   //Obligations Page Messages
   object Obligations {
     val title = "Your report deadlines"
