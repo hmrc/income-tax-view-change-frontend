@@ -51,6 +51,10 @@ object Messages {
     val propertyHeading = "Property income"
     val periodHeading = "Report period"
     val statusHeading = "Report due date"
+    object Errors {
+      val p1 = "We can't display your next report due date at the moment."
+      val p2 = "Try refreshing the page in a few minutes."
+    }
   }
 
   // Timeout Messages

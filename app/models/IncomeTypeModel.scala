@@ -14,29 +14,12 @@
  * limitations under the License.
  */
 
-package forms.validation.utils
+package models
 
-import play.api.data.Forms._
-import play.api.data._
-
-object MappingUtil {
-
-  val oText: Mapping[Option[String]] = optional(text)
-
-  implicit class OTextUtil(mapping: Mapping[Option[String]]) {
-    def toText: Mapping[String] =
-      mapping.transform(
-        x => x.fold("")(x => x),
-        x => Some(x)
-      )
-
-    def toBoolean: Mapping[Boolean] = mapping.transform(
-      {
-        case Some("true") => true
-        case _ => false
-      },
-      x => Some(x.toString)
-    )
-  }
-
+sealed trait IncomeTypeModel
+case object BusinessIncome extends IncomeTypeModel {
+  override def toString: String = "bi"
+}
+case object PropertyIncome extends IncomeTypeModel {
+  override def toString: String = "pi"
 }

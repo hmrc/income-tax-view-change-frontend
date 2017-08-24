@@ -41,6 +41,8 @@ obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
 obligations.bi.subheading                                       = Business income
 obligations.pi.subheading                                       = Property income
+obligations.error.p1                                            = We can''t display your next report due date at the moment.
+obligations.error.p2                                            = Try refreshing the page in a few minutes.
 
 ## Statuses ##
 status.received                                                 = Received
