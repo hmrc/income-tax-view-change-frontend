@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
 import controllers.BaseController
-import models.IncomeSourcesModel
+import models.{IncomeSourcesError, IncomeSourcesModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Request, Result}
 import services.IncomeSourceDetailsService
@@ -33,9 +33,9 @@ class IncomeSourceDetailsPredicate @Inject()(implicit val messagesApi: MessagesA
                                             ) extends BaseController {
 
   def retrieveIncomeSources(f: IncomeSourcesModel => Future[Result])(implicit request: Request[AnyContent], user: MtdItUser): Future[Result] = {
-    incomeSourceDetailsService.getIncomeSourceDetails(user.nino).flatMap { sources =>
-      f(sources)
+    incomeSourceDetailsService.getIncomeSourceDetails(user.nino).flatMap {
+      case x: IncomeSourcesModel => f(x)
+      case IncomeSourcesError => Future.successful(showInternalServerError)
     }
   }
-
 }

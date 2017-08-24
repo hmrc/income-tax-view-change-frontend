@@ -40,27 +40,27 @@ class BusinessObligationDataConnector @Inject()(val http: HttpGet) extends Servi
     val url = getObligationDataUrl(nino, selfEmploymentId)
     Logger.debug(s"[BusinessObligationDataConnector][getObligationData] - GET $url")
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) map {
       response =>
         response.status match {
           case OK =>
             Logger.debug(s"[BusinessObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, json: ${response.json}")
-            Future.successful(response.json.validate[ObligationsModel].fold(
+            response.json.validate[ObligationsModel].fold(
               invalid => {
                 Logger.warn(s"[BusinessObligationDataConnector][getObligationData] - Json Validation Error. Parsing Obligation Data Response")
                 ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response")
               },
               valid => valid
-            ))
+            )
           case _ =>
             Logger.debug(s"[BusinessObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, body: ${response.body}")
             Logger.warn(s"[BusinessObligationDataConnector][getObligationData] - Status: [${response.status}] Returned from business obligations call")
-            Future.successful(ObligationsErrorModel(response.status, response.body))
+            ObligationsErrorModel(response.status, response.body)
         }
-    } recoverWith {
+    } recover {
       case _ =>
         Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Unexpected future failed error")
-        Future.successful(ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
+        ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 

@@ -39,7 +39,7 @@ class BTAPartialController @Inject()(implicit val config: AppConfig,
   val setupPartial: Action[AnyContent] = actionPredicate.async {
     implicit request => implicit user => implicit sources =>
       for{
-        latestObligation <- btaPartialService.getObligations(user.nino, sources.businessDetails)
+        latestObligation <- btaPartialService.getObligations(user.nino, sources)
         allEstimates <- getAllEstimates(user.nino, sources.orderedTaxYears)
       } yield (latestObligation, allEstimates) match {
         case (obligation: ObligationModel, estimates) =>
