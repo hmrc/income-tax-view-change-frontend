@@ -166,6 +166,7 @@ object TestConstants extends ImplicitDateFormatter {
     val lastTaxCalcNotFound = NoLastTaxCalculation
 
     val lastTaxCalcSuccessWithYear = LastTaxCalculationWithYear(lastTaxCalcSuccess, 2018)
+    val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, 2018)
   }
 
   object Obligations {

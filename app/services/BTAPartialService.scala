@@ -30,7 +30,7 @@ import scala.concurrent.Future
 @Singleton
 class BTAPartialService @Inject()(val obligationsService: ObligationsService, val financialDataService: FinancialDataService) extends ImplicitListMethods {
 
-  def getObligations(nino: String, incomeSources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getNextObligation(nino: String, incomeSources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
     for{
       biz <- obligationsService.getBusinessObligations(nino, incomeSources.businessDetails)
       prop <- obligationsService.getPropertyObligations(nino, incomeSources.propertyDetails)
@@ -39,7 +39,7 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService, va
       case (b: ObligationsModel, _) => getMostRecentDueDate(ObligationsModel(b.obligations))
       case (_, p: ObligationsModel) => getMostRecentDueDate(ObligationsModel(p.obligations))
       case (_,_) =>
-        Logger.warn("[BTAPartialService][getObligations] - No Obligations obtained")
+        Logger.warn("[BTAPartialService][getNextObligation] - No Obligations obtained")
         ObligationsErrorModel(500, "Could not retrieve obligations")
     }
   }
@@ -49,7 +49,7 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService, va
       case calc: LastTaxCalculation => calc
       case NoLastTaxCalculation => NoLastTaxCalculation
       case error: LastTaxCalculationError =>
-        Logger.warn("[BTAPartialService][getObligations] - No LastCalc data retrieved")
+        Logger.warn("[BTAPartialService][getNextObligation] - No LastCalc data retrieved")
         error
     }
   }

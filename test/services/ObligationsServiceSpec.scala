@@ -31,7 +31,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
 
   object TestObligationsService extends ObligationsService(mockBusinessObligationDataConnector, mockPropertyObligationDataConnector)
 
-  "The ObligationsService.getObligations method" when {
+  "The ObligationsService.getNextObligation method" when {
 
     "a successful single business" which {
 
