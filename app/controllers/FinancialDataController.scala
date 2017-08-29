@@ -55,9 +55,11 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
     implicit request => implicit user => implicit sources =>
       financialDataService.getFinancialData(user.nino, taxYear).map {
         case calcDisplayModel: CalcDisplayModel =>
+          submitData(user, sources, calcDisplayModel.calcAmount.toString)
           Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
         case CalcDisplayNoDataFound =>
           Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
+          submitData(user, sources, "No data found")
           NotFound(views.html.noEstimatedTaxLiability(taxYear))
         case CalcDisplayError =>
           Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
@@ -65,7 +67,7 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
       }
   }
 
-  private def submitData(user: MtdItUser, sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Unit =
-    auditingService.audit(EstimatesAuditModel(user, sources), controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get).url)
+  private def submitData(user: MtdItUser, sources: IncomeSourcesModel, estimate: String)(implicit hc: HeaderCarrier): Unit =
+    auditingService.audit(EstimatesAuditModel(user, sources, estimate), controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get).url)
 
 }

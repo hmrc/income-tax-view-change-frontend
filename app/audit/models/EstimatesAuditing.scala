@@ -22,14 +22,20 @@ import models.IncomeSourcesModel
 object EstimatesAuditing {
 
   val estimatesTransactionName = "ITVCEstimates"
-  val estimatesAuditType = "estimatesStuff"
+  val estimatesAuditType = "estimatesPageView"
 
-  case class EstimatesAuditModel(user: MtdItUser, sources: IncomeSourcesModel) extends AuditModel {
+  case class EstimatesAuditModel(user: MtdItUser, sources: IncomeSourcesModel, estimate: String) extends AuditModel {
     override val transactionName: String = estimatesTransactionName
     override val detail: Map[String, String] = Map(
       "mtdid" -> user.mtditid,
       "nino" -> user.nino,
-      "noPropIncs" ->
+      "hasBusiness" -> sources.hasBusinessIncome.toString,
+      "hasProperty" -> sources.hasPropertyIncome.toString,
+      "bizAccPeriodStart" -> sources.businessDetails.fold("-")(x => s"${x.accountingPeriod.start}"),
+      "bizAccPeriodEnd" -> sources.businessDetails.fold("-")(x => s"${x.accountingPeriod.end}"),
+      "propAccPeriodStart" -> sources.propertyDetails.fold("-")(x => s"${x.accountingPeriod.start}"),
+      "propAccPeriodEnd" -> sources.propertyDetails.fold("-")(x => s"${x.accountingPeriod.end}"),
+      "currentEstimate" -> estimate
     )
     override val auditType: String = estimatesAuditType
   }
