@@ -108,6 +108,12 @@ object Messages {
     val currentEstimate: String => String = amount => "Your estimated tax amount is " + amount
     val currentEstimateYear: (Int, String) => String = (taxYear, amount) => "Your estimated tax amount for " + (taxYear-1) + " to " + taxYear + " is " + amount
     val noEstimate: Int => String = (taxYear) => "Once you've submitted a report using your accounting software, you can view your estimate for " +(taxYear-1)+ " to " +taxYear+ " tax year here."
+    object Error {
+      val estimateErrorP1 = "We can't display your estimated tax amount at the moment."
+      val estimateErrorP2 = "Try refreshing the page in a few minutes."
+      val obligationErrorP1 = "We can't display your next report due date at the moment."
+      val obligationErrorP2 = "Try refreshing the page in a few minutes."
+    }
   }
 
   object NotEnrolled {

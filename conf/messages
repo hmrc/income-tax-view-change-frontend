@@ -79,6 +79,10 @@ bta_partial.estimated_tax_with_year                             = Your estimated
 bta_partial.estimated_tax_no_year                               = Your estimated tax amount is {0}
 bta_partial.no_estimate                                         = Once you''ve submitted a report using your accounting software, you can view your estimate for {0} to {1} tax year here.
 bta_partial.view_details_link                                   = View details
+bta_partial.obligation.error.p1                                 = We can''t display your next report due date at the moment.
+bta_partial.obligation.error.p2                                 = Try refreshing the page in a few minutes.
+bta_partial.estimate.error.p1                                   = We can''t display your estimated tax amount at the moment.
+bta_partial.estimate.error.p2                                   = Try refreshing the page in a few minutes.
 
 ## Not Enrolled
 not_enrolled.heading                                            = You can''t view this page

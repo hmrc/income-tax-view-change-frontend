@@ -37,7 +37,7 @@ trait MockBTAPartialService extends UnitSpec with MockitoSugar with BeforeAndAft
 
   def setupMockGetObligations(nino: String, incomeSources: IncomeSourcesModel)(response: ObligationsResponseModel): Unit =
     when(mockBTAPartialService
-      .getObligations(
+      .getNextObligation(
         ArgumentMatchers.eq(nino),
         ArgumentMatchers.eq(incomeSources)
       )(ArgumentMatchers.any()))

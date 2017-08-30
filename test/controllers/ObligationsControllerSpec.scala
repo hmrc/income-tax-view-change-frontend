@@ -35,7 +35,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
     mockObligationsService
   )
 
-  "The ObligationsController.getObligations function" when {
+  "The ObligationsController.getNextObligation function" when {
 
     "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
