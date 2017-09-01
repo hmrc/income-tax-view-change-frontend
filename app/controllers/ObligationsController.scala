@@ -18,25 +18,31 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import audit.AuditingService
+import audit.models.ObligationsAuditing.ObligationsAuditModel
+import auth.MtdItUser
 import config.AppConfig
 import controllers.predicates.AsyncActionPredicate
-import models.ObligationsModel
+import models.{IncomeSourcesModel, ObligationsModel}
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.ObligationsService
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 @Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,
                                       implicit val messagesApi: MessagesApi,
                                       val actionPredicate: AsyncActionPredicate,
-                                      val obligationsService: ObligationsService
+                                      val obligationsService: ObligationsService,
+                                      val auditingService: AuditingService
                                      ) extends BaseController {
 
   val getObligations: Action[AnyContent] = actionPredicate.async {
     implicit request =>
       implicit user =>
         implicit sources =>
+          submitData(user, sources)
           for {
             business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
             property <- obligationsService.getPropertyObligations(user.nino)
@@ -55,5 +61,8 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
               showInternalServerError
           }
   }
-}
 
+  private def submitData(user: MtdItUser, sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Unit =
+    auditingService.audit(ObligationsAuditModel(user, sources), controllers.routes.ObligationsController.getObligations().url)
+
+}
