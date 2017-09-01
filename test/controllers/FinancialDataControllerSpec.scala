@@ -22,13 +22,14 @@ import assets.TestConstants.Estimates._
 import assets.TestConstants.IncomeSourceDetails
 import assets.TestConstants.PropertyDetails._
 import assets.TestConstants._
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import audit.AuditingService
-import config.FrontendAppConfig
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockFinancialDataService
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{contentType, _}
+import services.ServiceInfoPartialService
 import utils.TestSupport
 
 class FinancialDataControllerSpec extends TestSupport with MockFinancialDataService with MockAsyncActionPredicate {
@@ -38,7 +39,8 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
     app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
     mockFinancialDataService,
-    app.injector.instanceOf[AuditingService]
+    app.injector.instanceOf[ServiceInfoPartialService],
+    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter]
   )
 
   "The FinancialDataController.getFinancialData(year) action" when {

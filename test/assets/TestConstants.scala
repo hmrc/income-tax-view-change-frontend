@@ -19,6 +19,8 @@ package assets
 import auth.MtdItUser
 import models._
 import play.api.http.Status
+import play.api.libs.json.Json
+import play.twirl.api.Html
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.auth.core._
 import utils.ImplicitDateFormatter
@@ -41,6 +43,39 @@ object TestConstants extends ImplicitDateFormatter {
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated", ConfidenceLevel.L0)
   )),Option(testUserDetailsUrl))
 
+  object ServiceInfoPartial {
+    val serviceInfoPartialSuccess =
+      Html("""
+    <a id="service-info-home-link"
+       class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides"
+       data-journey-click="Header:Click:Home"
+       href="/business-account">
+      Business tax home
+      </a>
+  <ul id="service-info-list"
+      class="service-info__item service-info__right list--collapse">
+
+    <li class="list__item">
+      <span id="service-info-user-name" class="bold-xsmall">Test User</span>
+    </li>
+
+    <li class="list__item soft--left">
+      <a id="service-info-manage-account-link"
+         href="/business-account/manage-account"
+        data-journey-click="Header:Click:ManageAccount">
+        Manage account
+      </a>
+    </li>
+    <li class="list__item soft--left">
+      <a id="service-info-messages-link"
+         href="/business-account/messages"
+        data-journey-click="Header:Click:Messages">
+        Messages
+      </a>
+    </li>
+  </ul>
+  """.stripMargin.trim)
+  }
   object BusinessDetails {
 
     val testBusinessAccountingPeriod = AccountingPeriodModel(start = "2017-6-1", end = "2018-5-30")
@@ -174,29 +209,29 @@ object TestConstants extends ImplicitDateFormatter {
       override def currentTime() = "2017-10-31"
     }
 
-    val receivedObligation: ObligationModel = fakeObligationsModel(ObligationModel(
+    val receivedObligation = fakeObligationsModel(ObligationModel(
       start = "2017-04-01",
       end = "2017-6-30",
       due = "2017-7-31",
       met = true
     ))
 
-    val overdueObligation: ObligationModel = fakeObligationsModel(ObligationModel(
+    val overdueObligation = fakeObligationsModel(ObligationModel(
       start = "2017-7-1",
       end = "2017-9-30",
       due = "2017-10-30",
       met = false
     ))
 
-    val openObligation: ObligationModel = fakeObligationsModel(ObligationModel(
+    val openObligation = fakeObligationsModel(ObligationModel(
       start = "2017-7-1",
       end = "2017-9-30",
       due = "2017-10-31",
       met = false
     ))
 
-    val obligationsDataSuccessModel: ObligationsModel = ObligationsModel(List(receivedObligation, overdueObligation, openObligation))
-    val obligationsDataSuccessString: String =
+    val obligationsDataSuccessModel = ObligationsModel(List(receivedObligation, overdueObligation, openObligation))
+    val obligationsDataSuccessString =
       """
         |{
         |  "obligations": [
@@ -221,17 +256,17 @@ object TestConstants extends ImplicitDateFormatter {
         |  ]
         |}
       """.stripMargin
-    val obligationsDataSuccessJson: JsValue = Json.parse(obligationsDataSuccessString)
+    val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
 
     val obligationsDataErrorModel = ObligationsErrorModel(testErrorStatus, testErrorMessage)
-    val obligationsDataErrorString: String =
+    val obligationsDataErrorString =
       s"""
         |{
         |  "code":$testErrorStatus,
         |  "message":"$testErrorMessage"
         |}
       """.stripMargin
-    val obligationsDataErrorJson: JsValue = Json.parse(obligationsDataErrorString)
+    val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
 
   }
 
@@ -264,14 +299,13 @@ object TestConstants extends ImplicitDateFormatter {
       payPensionsProfitAtART = Some(50000.00),
       incomeTaxOnPayPensionsProfitAtART = 22500.00,
       incomeTaxDue = 66500.00,
-      nationalInsuranceClass2Amount = 10000.00,
-      totalClass4Charge =14000.00,
+      nicTotal = 24000.00,
       rateBRT = 20.00,
       rateHRT = 40.00,
       rateART = 45.00
     )
 
-    val noTaxOrNICalcDataModel =
+    val noTaxOrNICalcDataModel=
       CalculationDataModel(
         profitFromSelfEmployment = 500.00,
         profitFromUkLandAndProperty = 500.00,
@@ -290,8 +324,7 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
-        nationalInsuranceClass2Amount = 0,
-        totalClass4Charge =0,
+        nicTotal = 0,
         incomeTaxYTD = 0,
 
         //Don't need these
@@ -319,8 +352,7 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
-        nationalInsuranceClass2Amount=20.05,
-        totalClass4Charge = 17.05,
+        nicTotal = 37.05,
         incomeTaxYTD = 37.05,
 
         //Don't need these
@@ -348,8 +380,7 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
-        nationalInsuranceClass2Amount=110,
-        totalClass4Charge = 13.86,
+        nicTotal = 123.86,
         incomeTaxYTD = 149.86,
 
         //Don't need these
@@ -377,8 +408,7 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
-        nationalInsuranceClass2Amount=500.71,
-        totalClass4Charge = 896.00,
+        nicTotal = 1396.71,
         incomeTaxYTD = 13727.71,
 
         //Don't need these
@@ -406,8 +436,7 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 274.00,
 
-        nationalInsuranceClass2Amount=1000.00,
-        totalClass4Charge = 456.71,
+        nicTotal = 1456.71,
         incomeTaxYTD = 15017.71,
 
         //Don't need these
