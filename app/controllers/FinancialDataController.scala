@@ -18,45 +18,53 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import config.AppConfig
+import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.AsyncActionPredicate
 import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
-import services.FinancialDataService
+import play.api.mvc.{Action, AnyContent}
+import play.twirl.api.Html
+import services.{FinancialDataService, ServiceInfoPartialService}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class FinancialDataController @Inject()(implicit val config: AppConfig,
-                                                implicit val messagesApi: MessagesApi,
-                                                val actionPredicate: AsyncActionPredicate,
-                                                val financialDataService: FinancialDataService
-                                               ) extends BaseController {
+                                        implicit val messagesApi: MessagesApi,
+                                        val actionPredicate: AsyncActionPredicate,
+                                        val financialDataService: FinancialDataService,
+                                        val serviceInfoPartialService: ServiceInfoPartialService,
+                                        val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter
+                                       ) extends BaseController {
+  import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
   val redirectToEarliestEstimatedTaxLiability: Action[AnyContent] = actionPredicate.async {
-      implicit request => implicit user => implicit sources =>
-        (sources.businessDetails, sources.propertyDetails) match {
-          case (None, None) =>
-            Logger.debug("[FinancialDataController][redirectToEarliestEstimatedTaxLiability] No Income Sources.")
-            Future.successful(showInternalServerError)
-          case (_: Option[IncomeModel], _: Option[IncomeModel]) =>
-            Future.successful(Redirect(controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get)))
-        }
-    }
+    implicit request => implicit user => implicit sources =>
+      (sources.businessDetails, sources.propertyDetails) match {
+        case (None, None) =>
+          Logger.debug("[FinancialDataController][redirectToEarliestEstimatedTaxLiability] No Income Sources.")
+          Future.successful(showInternalServerError)
+        case (_: Option[IncomeModel], _: Option[IncomeModel]) =>
+          Future.successful(Redirect(controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get)))
+      }
+  }
 
   val getFinancialData: Int => Action[AnyContent] = taxYear => actionPredicate.async {
     implicit request => implicit user => implicit sources =>
-      financialDataService.getFinancialData(user.nino, taxYear).map {
-        case calcDisplayModel: CalcDisplayModel =>
-          Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
-        case CalcDisplayNoDataFound =>
-          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
-          NotFound(views.html.noEstimatedTaxLiability(taxYear))
-        case CalcDisplayError =>
-          Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
-          showInternalServerError
+
+      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+        financialDataService.getFinancialData(user.nino, taxYear).map {
+          case calcDisplayModel: CalcDisplayModel =>
+            Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+          case CalcDisplayNoDataFound =>
+            Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
+            NotFound(views.html.noEstimatedTaxLiability(taxYear))
+          case CalcDisplayError =>
+            Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
+            showInternalServerError
+        }
       }
   }
 }

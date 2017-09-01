@@ -18,42 +18,46 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import config.AppConfig
+import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.AsyncActionPredicate
 import models.ObligationsModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import services.ObligationsService
+import services.{ObligationsService, ServiceInfoPartialService}
 
 @Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,
                                       implicit val messagesApi: MessagesApi,
                                       val actionPredicate: AsyncActionPredicate,
-                                      val obligationsService: ObligationsService
+                                      val obligationsService: ObligationsService,
+                                      val serviceInfoPartialService: ServiceInfoPartialService,
+                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter
                                      ) extends BaseController {
+  import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
   val getObligations: Action[AnyContent] = actionPredicate.async {
-    implicit request =>
-      implicit user =>
-        implicit sources =>
-          for {
-            business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
-            property <- obligationsService.getPropertyObligations(user.nino)
-          } yield (business, property) match {
-            case (businessSuccess: ObligationsModel, propertySuccess: ObligationsModel) =>
-              Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
-              Ok(views.html.obligations(Some(businessSuccess), Some(propertySuccess)))
-            case (businessSuccess: ObligationsModel, _) =>
-              Logger.debug("[ObligationsController][getObligations] Business Obligations retrieved. Serving HTML page")
-              Ok(views.html.obligations(Some(businessSuccess), None))
-            case (_, propertySuccess: ObligationsModel) =>
-              Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
-              Ok(views.html.obligations(None, Some(propertySuccess)))
-            case (_, _) =>
-              Logger.debug("[ObligationsController][getObligations] No obligations retrieved. Throwing ISE")
-              showInternalServerError
-          }
+    implicit request => implicit user => implicit sources =>
+
+      serviceInfoPartialService.serviceInfoPartial.flatMap { implicit serviceInfo =>
+        for {
+          business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
+          property <- obligationsService.getPropertyObligations(user.nino)
+        } yield (business, property) match {
+          case (businessSuccess: ObligationsModel, propertySuccess: ObligationsModel) =>
+            Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
+            Ok(views.html.obligations(Some(businessSuccess), Some(propertySuccess)))
+          case (businessSuccess: ObligationsModel, _) =>
+            Logger.debug("[ObligationsController][getObligations] Business Obligations retrieved. Serving HTML page")
+            Ok(views.html.obligations(Some(businessSuccess), None))
+          case (_, propertySuccess: ObligationsModel) =>
+            Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
+            Ok(views.html.obligations(None, Some(propertySuccess)))
+          case (_, _) =>
+            Logger.debug("[ObligationsController][getObligations] No obligations retrieved. Throwing ISE")
+            showInternalServerError
+        }
+      }
   }
 }
 

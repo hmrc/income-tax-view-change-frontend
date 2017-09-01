@@ -45,7 +45,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
   private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
       CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
-      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources, serviceInfo)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     implicit val model: CalculationDataModel = calcDataModel
@@ -55,10 +55,6 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
     val setup = pageSetup(busPropBRTCalcDataModel,testIncomeSources)
     import setup._
-
-    s"have the user name '$testUserName' in the service info bar" in {
-      document.getElementById("service-info-user-name").text() shouldBe testUserName
-    }
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
@@ -240,7 +236,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources, serviceInfo)
         lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
 
         "not display a breakdown section" in {
