@@ -17,7 +17,7 @@ package controllers
 
 import helpers.ComponentSpecBase
 import helpers.IntegrationTestConstants._
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub, UserDetailsStub}
+import helpers.servicemocks._
 import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
 import play.api.http.Status._
 
@@ -34,6 +34,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         And("I wiremock stub a response from the User Details service")
         UserDetailsStub.stubGetUserDetails()
+
+        And("I wiremock stub a ServiceInfo Partial response")
+        BtaPartialStub.stubGetServiceInfoPartial()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
@@ -114,6 +117,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a Error Response from the User Details service")
         UserDetailsStub.stubGetUserDetailsError()
 
+        And("I wiremock stub a ServiceInfo Partial response")
+        BtaPartialStub.stubGetServiceInfoPartial()
+
         And("a successful Get Last Estimated Tax Liability response via wiremock stub")
         val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
@@ -171,6 +177,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a response from the User Details service")
         UserDetailsStub.stubGetUserDetails()
 
+        And("I wiremock stub a ServiceInfo Partial response")
+        BtaPartialStub.stubGetServiceInfoPartial()
+
         And("a No Data Found response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcNoData(testNino, testYear)
 
@@ -213,6 +222,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         And("I wiremock stub a response from the User Details service")
         UserDetailsStub.stubGetUserDetails()
+
+        And("I wiremock stub a ServiceInfo Partial response")
+        BtaPartialStub.stubGetServiceInfoPartial()
 
         And("an Error Response response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
