@@ -43,9 +43,9 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
                                         implicit val messagesApi: MessagesApi,
                                         val actionPredicate: AsyncActionPredicate,
                                         val financialDataService: FinancialDataService,
-                                        val auditingService: AuditingService,
                                         val serviceInfoPartialService: ServiceInfoPartialService,
-                                        val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter
+                                        val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                        val auditingService: AuditingService
                                        ) extends BaseController {
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 

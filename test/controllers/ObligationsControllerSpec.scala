@@ -17,9 +17,8 @@
 package controllers
 
 import assets.Messages.{ISE => errorMessages, Obligations => messages}
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import audit.AuditingService
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockObligationsService
 import org.jsoup.Jsoup
@@ -36,9 +35,9 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
     app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
     mockObligationsService,
-    app.injector.instanceOf[AuditingService],
     app.injector.instanceOf[ServiceInfoPartialService],
-    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter]
+    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
+    app.injector.instanceOf[AuditingService]
   )
 
   "The ObligationsController.getObligations function" when {
