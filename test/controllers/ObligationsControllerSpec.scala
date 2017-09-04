@@ -17,6 +17,7 @@
 package controllers
 
 import assets.Messages.{ISE => errorMessages, Obligations => messages}
+import audit.AuditingService
 import config.FrontendAppConfig
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockObligationsService
@@ -32,7 +33,8 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
-    mockObligationsService
+    mockObligationsService,
+    app.injector.instanceOf[AuditingService]
   )
 
   "The ObligationsController.getNextObligation function" when {

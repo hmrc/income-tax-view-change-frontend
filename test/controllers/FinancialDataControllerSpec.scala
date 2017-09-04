@@ -21,6 +21,7 @@ import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyDetails._
 import assets.TestConstants.{IncomeSourceDetails, _}
+import audit.AuditingService
 import config.FrontendAppConfig
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockFinancialDataService
@@ -35,7 +36,8 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
-    mockFinancialDataService
+    mockFinancialDataService,
+    app.injector.instanceOf[AuditingService]
   )
 
   "The FinancialDataController.getFinancialData(year) action" when {

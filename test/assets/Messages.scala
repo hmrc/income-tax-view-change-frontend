@@ -86,7 +86,6 @@ object Messages {
     val estimatesHeading = "Estimates"
     val estimatesLink = "View your tax estimate"
     val previousTaxYearsHeading = "Previous tax years"
-    val futureTaxYearsHeading = "Future tax years"
     val selfAssessmentLink = "View annual returns"
     val estimatesLinkYear: Int => String = year => s"View ${year - 1} to $year details"
   }

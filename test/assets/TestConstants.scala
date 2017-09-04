@@ -19,7 +19,7 @@ package assets
 import auth.MtdItUser
 import models._
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.auth.core._
 import utils.ImplicitDateFormatter
 
@@ -175,29 +175,29 @@ object TestConstants extends ImplicitDateFormatter {
       override def currentTime() = "2017-10-31"
     }
 
-    val receivedObligation = fakeObligationsModel(ObligationModel(
+    val receivedObligation: ObligationModel = fakeObligationsModel(ObligationModel(
       start = "2017-04-01",
       end = "2017-6-30",
       due = "2017-7-31",
       met = true
     ))
 
-    val overdueObligation = fakeObligationsModel(ObligationModel(
+    val overdueObligation: ObligationModel = fakeObligationsModel(ObligationModel(
       start = "2017-7-1",
       end = "2017-9-30",
       due = "2017-10-30",
       met = false
     ))
 
-    val openObligation = fakeObligationsModel(ObligationModel(
+    val openObligation: ObligationModel = fakeObligationsModel(ObligationModel(
       start = "2017-7-1",
       end = "2017-9-30",
       due = "2017-10-31",
       met = false
     ))
 
-    val obligationsDataSuccessModel = ObligationsModel(List(receivedObligation, overdueObligation, openObligation))
-    val obligationsDataSuccessString =
+    val obligationsDataSuccessModel: ObligationsModel = ObligationsModel(List(receivedObligation, overdueObligation, openObligation))
+    val obligationsDataSuccessString: String =
       """
         |{
         |  "obligations": [
@@ -222,17 +222,17 @@ object TestConstants extends ImplicitDateFormatter {
         |  ]
         |}
       """.stripMargin
-    val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
+    val obligationsDataSuccessJson: JsValue = Json.parse(obligationsDataSuccessString)
 
     val obligationsDataErrorModel = ObligationsErrorModel(testErrorStatus, testErrorMessage)
-    val obligationsDataErrorString =
+    val obligationsDataErrorString: String =
       s"""
         |{
         |  "code":$testErrorStatus,
         |  "message":"$testErrorMessage"
         |}
       """.stripMargin
-    val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
+    val obligationsDataErrorJson: JsValue = Json.parse(obligationsDataErrorString)
 
   }
 
@@ -265,13 +265,14 @@ object TestConstants extends ImplicitDateFormatter {
       payPensionsProfitAtART = Some(50000.00),
       incomeTaxOnPayPensionsProfitAtART = 22500.00,
       incomeTaxDue = 66500.00,
-      nicTotal = 24000.00,
+      nationalInsuranceClass2Amount = 10000.00,
+      totalClass4Charge =14000.00,
       rateBRT = 20.00,
       rateHRT = 40.00,
       rateART = 45.00
     )
 
-    val noTaxOrNICalcDataModel=
+    val noTaxOrNICalcDataModel =
       CalculationDataModel(
         profitFromSelfEmployment = 500.00,
         profitFromUkLandAndProperty = 500.00,
@@ -290,7 +291,8 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
-        nicTotal = 0,
+        nationalInsuranceClass2Amount = 0,
+        totalClass4Charge =0,
         incomeTaxYTD = 0,
 
         //Don't need these
@@ -318,7 +320,8 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
-        nicTotal = 37.05,
+        nationalInsuranceClass2Amount=20.05,
+        totalClass4Charge = 17.05,
         incomeTaxYTD = 37.05,
 
         //Don't need these
@@ -346,7 +349,8 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
-        nicTotal = 123.86,
+        nationalInsuranceClass2Amount=110,
+        totalClass4Charge = 13.86,
         incomeTaxYTD = 149.86,
 
         //Don't need these
@@ -374,7 +378,8 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
-        nicTotal = 1396.71,
+        nationalInsuranceClass2Amount=500.71,
+        totalClass4Charge = 896.00,
         incomeTaxYTD = 13727.71,
 
         //Don't need these
@@ -402,7 +407,8 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 274.00,
 
-        nicTotal = 1456.71,
+        nationalInsuranceClass2Amount=1000.00,
+        totalClass4Charge = 456.71,
         incomeTaxYTD = 15017.71,
 
         //Don't need these
@@ -430,7 +436,8 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
-        nicTotal = 123.86,
+        nationalInsuranceClass2Amount=100.00,
+        totalClass4Charge = 23.86,
         incomeTaxYTD = 149.86,
 
         //Don't need these
@@ -458,7 +465,8 @@ object TestConstants extends ImplicitDateFormatter {
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
-        nicTotal = 123.86,
+        nationalInsuranceClass2Amount=100.00,
+        totalClass4Charge = 23.86,
         incomeTaxYTD = 149.86,
 
         //Don't need these
@@ -484,7 +492,8 @@ object TestConstants extends ImplicitDateFormatter {
         | "payPensionsProfitAtART": 50000,
         | "incomeTaxOnPayPensionsProfitAtART": 22500,
         | "incomeTaxDue": 66500,
-        | "nicTotal": 24000,
+        | "nationalInsuranceClass2Amount": 10000,
+        | "totalClass4Charge": 14000,
         | "rateBRT": 20,
         | "rateHRT": 40,
         | "rateART": 45
@@ -590,9 +599,9 @@ object TestConstants extends ImplicitDateFormatter {
         | "nationalInsuranceContributionCharge": 888,
         | "nationalInsuranceContributionSupAmount": 888,
         | "nationalInsuranceContributionSupCharge": 888,
-        | "totalClass4Charge": 888,
+        | "totalClass4Charge": 14000,
         | "nationalInsuranceClass1Amount": 888,
-        | "nationalInsuranceClass2Amount": 888,
+        | "nationalInsuranceClass2Amount": 10000,
         | "nicTotal": 24000,
         | "underpaidTaxForPreviousYears": 888,
         | "studentLoanRepayments": 888,
@@ -699,17 +708,17 @@ object TestConstants extends ImplicitDateFormatter {
         |}
       """.stripMargin
 
-    val calculationDataSuccessJson = Json.parse(calculationDataSuccessString)
+    val calculationDataSuccessJson: JsValue = Json.parse(calculationDataSuccessString)
 
-    val calculationDataErrorModel = CalculationDataErrorModel(testErrorStatus, testErrorMessage)
-    val calculationDataErrorString =
+    val calculationDataErrorModel: CalculationDataErrorModel = CalculationDataErrorModel(testErrorStatus, testErrorMessage)
+    val calculationDataErrorString: String =
       s"""
          |{
          |  "code":$testErrorStatus,
          |  "message":"$testErrorMessage"
          |}
        """.stripMargin
-    val calculationDataErrorJson = Json.parse(calculationDataErrorString)
+    val calculationDataErrorJson: JsValue = Json.parse(calculationDataErrorString)
 
     val calculationDisplaySuccessModel: CalculationDataModel => CalcDisplayModel = calcModel =>
       CalcDisplayModel(

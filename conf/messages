@@ -28,7 +28,8 @@ estimated_tax_liability.calc-breakdown.personal-allowance       = Personal Allow
 estimated_tax_liability.calc-breakdown.taxable-income           = Your taxable income
 estimated_tax_liability.calc-breakdown.income-tax               = Income Tax
 estimated_tax_liability.calc-breakdown.at                       = at
-estimated_tax_liability.calc-breakdown.national-insurance       = National Insurance
+estimated_tax_liability.calc-breakdown.nic2                     = National Insurance Class 2
+estimated_tax_liability.calc-breakdown.nic4                     = National Insurance Class 4
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
 estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
 estimated_tax_liability.no-data                                 = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
