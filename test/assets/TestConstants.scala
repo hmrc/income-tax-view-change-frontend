@@ -19,6 +19,8 @@ package assets
 import auth.MtdItUser
 import models._
 import play.api.http.Status
+import play.api.libs.json.Json
+import play.twirl.api.Html
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.auth.core._
 import utils.ImplicitDateFormatter
@@ -40,6 +42,40 @@ object TestConstants extends ImplicitDateFormatter {
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated", ConfidenceLevel.L0),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated", ConfidenceLevel.L0)
   )),Option(testUserDetailsUrl))
+
+  object ServiceInfoPartial {
+    val serviceInfoPartialSuccess =
+      Html("""
+    <a id="service-info-home-link"
+       class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides"
+       data-journey-click="Header:Click:Home"
+       href="/business-account">
+      Business tax home
+      </a>
+  <ul id="service-info-list"
+      class="service-info__item service-info__right list--collapse">
+
+    <li class="list__item">
+      <span id="service-info-user-name" class="bold-xsmall">Test User</span>
+    </li>
+
+    <li class="list__item soft--left">
+      <a id="service-info-manage-account-link"
+         href="/business-account/manage-account"
+        data-journey-click="Header:Click:ManageAccount">
+        Manage account
+      </a>
+    </li>
+    <li class="list__item soft--left">
+      <a id="service-info-messages-link"
+         href="/business-account/messages"
+        data-journey-click="Header:Click:Messages">
+        Messages
+      </a>
+    </li>
+  </ul>
+  """.stripMargin.trim)
+  }
 
   object BusinessDetails {
 
@@ -174,29 +210,29 @@ object TestConstants extends ImplicitDateFormatter {
       override def currentTime() = "2017-10-31"
     }
 
-    val receivedObligation: ObligationModel = fakeObligationsModel(ObligationModel(
+    val receivedObligation = fakeObligationsModel(ObligationModel(
       start = "2017-04-01",
       end = "2017-6-30",
       due = "2017-7-31",
       met = true
     ))
 
-    val overdueObligation: ObligationModel = fakeObligationsModel(ObligationModel(
+    val overdueObligation = fakeObligationsModel(ObligationModel(
       start = "2017-7-1",
       end = "2017-9-30",
       due = "2017-10-30",
       met = false
     ))
 
-    val openObligation: ObligationModel = fakeObligationsModel(ObligationModel(
+    val openObligation = fakeObligationsModel(ObligationModel(
       start = "2017-7-1",
       end = "2017-9-30",
       due = "2017-10-31",
       met = false
     ))
 
-    val obligationsDataSuccessModel: ObligationsModel = ObligationsModel(List(receivedObligation, overdueObligation, openObligation))
-    val obligationsDataSuccessString: String =
+    val obligationsDataSuccessModel = ObligationsModel(List(receivedObligation, overdueObligation, openObligation))
+    val obligationsDataSuccessString =
       """
         |{
         |  "obligations": [
@@ -221,17 +257,17 @@ object TestConstants extends ImplicitDateFormatter {
         |  ]
         |}
       """.stripMargin
-    val obligationsDataSuccessJson: JsValue = Json.parse(obligationsDataSuccessString)
+    val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
 
     val obligationsDataErrorModel = ObligationsErrorModel(testErrorStatus, testErrorMessage)
-    val obligationsDataErrorString: String =
+    val obligationsDataErrorString =
       s"""
         |{
         |  "code":$testErrorStatus,
         |  "message":"$testErrorMessage"
         |}
       """.stripMargin
-    val obligationsDataErrorJson: JsValue = Json.parse(obligationsDataErrorString)
+    val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
 
   }
 
