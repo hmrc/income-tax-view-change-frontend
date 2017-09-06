@@ -18,7 +18,6 @@ package helpers
 
 import java.time.LocalDate
 
-import helpers.servicemocks.UserDetailsStub.mockUrl
 import models.{CalculationDataErrorModel, CalculationDataModel, ObligationModel, ObligationsModel}
 import play.api.libs.json.{JsArray, JsValue, Json}
 import utils.ImplicitDateFormatter
@@ -246,37 +245,46 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
 
     val multipleReceivedOpenObligationsModel = ObligationsModel(List(
       ObligationModel(
-        start = "2017-06-07",
-        end = "2017-07-14",
-        due = LocalDate.now().plusDays(1),
+        start = "2016-04-01",
+        end = "2016-06-30",
+        due = LocalDate.now().minusDays(401),
         met = true
       ), ObligationModel(
-        start = "2017-04-06",
-        end = "2017-07-05",
-        due = LocalDate.now(),
+        start = "2016-07-01",
+        end = "2016-09-30",
+        due = LocalDate.now().minusDays(309),
         met = true
       ), ObligationModel(
-        start = "2017-07-06",
-        end = "2017-10-05",
-        due = LocalDate.now().plusDays(2),
+        start = "2016-10-01",
+        end = "2016-12-31",
+        due = LocalDate.now().minusDays(217),
+        met = true
+      ), ObligationModel(
+        start = "2017-01-01",
+        end = "2017-03-31",
+        due = LocalDate.now().minusDays(128),
         met = false
       ), ObligationModel(
-        start = "2017-10-06",
-        end = "2018-01-05",
-        due = LocalDate.now().minusDays(1),
+        start = "2017-04-01",
+        end = "2017-06-30",
+        due = LocalDate.now().minusDays(36),
         met = false
       ), ObligationModel(
-        start = "2017-08-07",
-        end = "2017-11-06",
-        due = LocalDate.now().plusDays(1),
+        start = "2017-07-01",
+        end = "2017-09-30",
+        due = LocalDate.now().plusDays(54),
         met = false
-      ), ObligationModel(
-        start = "2017-11-07",
-        end = "2018-02-06",
-        due = LocalDate.now().minusDays(1),
-        met = false
-      ))
-    )
+      ),ObligationModel(
+        start = "2017-10-01",
+        end = "2018-01-31",
+        due = LocalDate.now().plusDays(146),
+        met = false),
+      ObligationModel(
+        start = "2017-11-01",
+        end = "2018-02-01",
+        due = LocalDate.now().plusDays(174),
+        met = false)
+    ))
 
     val singleObligationsDataSuccessModel = ObligationsModel(List(
       ObligationModel(

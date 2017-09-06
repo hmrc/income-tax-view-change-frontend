@@ -100,11 +100,11 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single property and business obligation response")
-          SelfAssessmentStub.stubGetObligations(testNino,testSelfEmploymentId,singleObligationsDataSuccessModel,singleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetObligations(testNino,testSelfEmploymentId,multipleReceivedOpenObligationsModel,multipleReceivedOpenObligationsModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getObligations
-         // println(s"XXXXXXX ${res.body} XXXXXXXX")
+
           Then("the result should have a HTTP status of OK and a body containing one obligation each for business and property")
           res should have(
 
@@ -118,27 +118,54 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             elementTextByID(id = "service-info-user-name")(testUserName),
 
             //Check one obligation section is returned
-            nElementsWithClass("obligation")(2),
+            nElementsWithClass("obligation")(8),
 
             //Check the 1st obligation data
-            elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
-            elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "bi-ob-1-start")("1 October 2016"),
+            elementTextByID(id = "bi-ob-1-end")("31 December 2016"),
             elementTextByID(id = "bi-ob-1-status")("Received"),
+
+            elementTextByID(id = "bi-ob-2-start")("1 January 2017"),
+            elementTextByID(id = "bi-ob-2-end")("31 March 2017"),
+            elementTextByID(id = "bi-ob-2-status")("Overdue"),
+
+            elementTextByID(id = "bi-ob-3-start")("1 April 2017"),
+            elementTextByID(id = "bi-ob-3-end")("30 June 2017"),
+            elementTextByID(id = "bi-ob-3-status")("Overdue"),
+
+            elementTextByID(id = "bi-ob-4-start")("1 July 2017"),
+            elementTextByID(id = "bi-ob-4-end")("30 September 2017"),
+            elementTextByID(id = "bi-ob-4-status")("Due by 30 October 2017"),
+
             elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
             elementTextByID(id = "sa-link")("View annual returns"),
             elementTextByID(id = "service-info-manage-account-link")("Manage account"),
             elementTextByID(id = "service-info-messages-link")("Messages"),
-            elementTextByID(id = "pi-ob-1-start")("6 April 2017"),
-            elementTextByID(id = "pi-ob-1-end")("5 July 2017"),
-            elementTextByID("pi-ob-1-status")("Received"),
-            isElementVisibleById("pi-ob")(true)
+
+            elementTextByID(id = "pi-ob-1-start")("1 October 2016"),
+            elementTextByID(id = "pi-ob-1-end")("31 December 2016"),
+            elementTextByID(id = "pi-ob-1-status")("Received"),
+
+            elementTextByID(id = "pi-ob-2-start")("1 January 2017"),
+            elementTextByID(id = "pi-ob-2-end")("31 March 2017"),
+            elementTextByID(id = "pi-ob-2-status")("Overdue"),
+
+            elementTextByID(id = "pi-ob-3-start")("1 April 2017"),
+            elementTextByID(id = "pi-ob-3-end")("30 June 2017"),
+            elementTextByID(id = "pi-ob-3-status")("Overdue"),
+
+            elementTextByID(id = "pi-ob-4-start")("1 July 2017"),
+            elementTextByID(id = "pi-ob-4-end")("30 September 2017"),
+            elementTextByID(id = "pi-ob-4-status")("Due by 30 October 2017")
+
+            //            elementTextByID(id = "pi-ob-2-start")("6 April 2017"),
+//            elementTextByID(id = "pi-ob-2-end")("5 July 2017"),
+//            elementTextByID(id = "pi-ob-2-status")("Received")
+
 
           )
         }
       }
-
-
-
 
 
       "has multiple obligations" should {
@@ -235,24 +262,24 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             nElementsWithClass("obligation")(4),
 
             //Check first obligation
-            elementTextByID(id = "bi-ob-1-start")("7 June 2017"),
-            elementTextByID(id = "bi-ob-1-end")("14 July 2017"),
+            elementTextByID(id = "bi-ob-1-start")("1 October 2016"),
+            elementTextByID(id = "bi-ob-1-end")("31 December 2016"),
             elementTextByID(id = "bi-ob-1-status")("Received"),
 
             //Check second obligation
-            elementTextByID(id = "bi-ob-2-start")("6 October 2017"),
-            elementTextByID(id = "bi-ob-2-end")("5 January 2018"),
+            elementTextByID(id = "bi-ob-2-start")("1 January 2017"),
+            elementTextByID(id = "bi-ob-2-end")("31 March 2017"),
             elementTextByID(id = "bi-ob-2-status")("Overdue"),
 
             //Check third obligation
-            elementTextByID(id = "bi-ob-3-start")("7 November 2017"),
-            elementTextByID(id = "bi-ob-3-end")("6 February 2018"),
+            elementTextByID(id = "bi-ob-3-start")("1 April 2017"),
+            elementTextByID(id = "bi-ob-3-end")("30 June 2017"),
             elementTextByID(id = "bi-ob-3-status")("Overdue"),
 
             //Check third obligation
-            elementTextByID(id = "bi-ob-4-start")("7 August 2017"),
-            elementTextByID(id = "bi-ob-4-end")("6 November 2017"),
-            elementTextByID(id = "bi-ob-4-status")("Due by " + LocalDate.now().plusDays(1).toLongDate)
+            elementTextByID(id = "bi-ob-4-start")("1 July 2017"),
+            elementTextByID(id = "bi-ob-4-end")("30 September 2017"),
+            elementTextByID(id = "bi-ob-4-status")("Due by 30 October 2017")
           )
         }
       }
