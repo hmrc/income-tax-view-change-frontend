@@ -71,10 +71,75 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
             elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
             elementTextByID(id = "bi-ob-1-status")("Received"),
+            elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
+            elementTextByID(id = "sa-link")("View annual returns"),
+            elementTextByID(id = "service-info-manage-account-link")("Manage account"),
+            elementTextByID(id = "service-info-messages-link")("Messages"),
             isElementVisibleById("pi-ob")(false)
           )
         }
       }
+
+
+
+
+      "has business and property with single obligations for both" should {
+
+        "display a single obligation with the correct dates and status" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a single property and business obligation response")
+          SelfAssessmentStub.stubGetObligations(testNino,testSelfEmploymentId,singleObligationsDataSuccessModel,singleObligationsDataSuccessModel)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+          val res = IncomeTaxViewChangeFrontend.getObligations
+         // println(s"XXXXXXX ${res.body} XXXXXXXX")
+          Then("the result should have a HTTP status of OK and a body containing one obligation each for business and property")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Page Title of HTML Response Body
+            pageTitle("Your report deadlines"),
+
+            //User Name
+            elementTextByID(id = "service-info-user-name")(testUserName),
+
+            //Check one obligation section is returned
+            nElementsWithClass("obligation")(2),
+
+            //Check the 1st obligation data
+            elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "bi-ob-1-status")("Received"),
+            elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
+            elementTextByID(id = "sa-link")("View annual returns"),
+            elementTextByID(id = "service-info-manage-account-link")("Manage account"),
+            elementTextByID(id = "service-info-messages-link")("Messages"),
+            elementTextByID(id = "pi-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "pi-ob-1-end")("5 July 2017"),
+            elementTextByID("pi-ob-1-status")("Received"),
+            isElementVisibleById("pi-ob")(true)
+
+          )
+        }
+      }
+
+
+
+
 
       "has multiple obligations" should {
 
