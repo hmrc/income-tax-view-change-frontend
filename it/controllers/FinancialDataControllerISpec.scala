@@ -101,8 +101,8 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           elementTextByID("it-reference")("XAITSA123456"),
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
-          elementTextByID("acc-period-start")("1 January 2017"),
-          isElementVisibleById("calc-breakdown-inner-link")(true)
+          elementTextByID("acc-period-start")("1 January 2017")
+         // isElementVisibleById("calc-breakdown-inner-link")(true)
           //Commented Out as may be required again later
           //Check the Estimated Calculation Date is correct
           //elementTextByID("in-year-estimate-date")("Estimate up to your 6 July 2017 submission")
