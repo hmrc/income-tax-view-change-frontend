@@ -18,6 +18,7 @@ package controllers.predicates
 
 import assets.TestConstants._
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import models.IncomeSourcesError
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.i18n.MessagesApi
@@ -48,16 +49,27 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
 
       def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
 
-      "a HMRC-MTD-IT enrolment exists with a NINO" should {
+      "a HMRC-MTD-IT enrolment exists with a NINO" when {
 
-        "return Ok (200)" in {
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
-          status(result) shouldBe Status.OK
+        "valid income source details are retrieved" should {
+
+          "return Ok (200)" in {
+            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
+            status(result) shouldBe Status.OK
+          }
+
+          "should have a body with the expected user details" in {
+            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
+            bodyOf(await(result)) shouldBe testMtditid + " " + testNino
+          }
         }
 
-        "should have a body with the expected user details" in {
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
-          bodyOf(await(result)) shouldBe testMtditid + " " + testNino
+        "no valid income source details are retrieved" should {
+
+          "return ISE (500)" in {
+            setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesError)
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
         }
       }
 

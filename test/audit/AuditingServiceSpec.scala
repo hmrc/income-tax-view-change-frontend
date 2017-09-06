@@ -18,11 +18,10 @@ package audit
 
 import _root_.models.ExitSurveyModel
 import audit.models.ExitSurveyAuditing.ExitSurveyAuditModel
-import config.FrontendAuditConnector
+import config.{FrontendAppConfig, FrontendAuditConnector}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import play.api.Configuration
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.TestSupport
@@ -32,23 +31,22 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuditingServiceSpec extends TestSupport with BeforeAndAfterEach {
 
   val mockAuditConnector = mock[FrontendAuditConnector]
-  val mockConfiguration = mock[Configuration]
-  val testAppName = "app"
+  val mockConfiguration = mock[FrontendAppConfig]
 
   val testAuditingService = new AuditingService(mockConfiguration, mockAuditConnector)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockAuditConnector, mockConfiguration)
-    when(mockConfiguration.getString("appName")) thenReturn Some(testAppName)
   }
 
   "audit" when {
-    "given a ExitSurveyAuditModel" should {
+
+    "given a ExitSurveyAuditModel with Satisfaction and Improvements data" should {
       "extract the data and pass it into the AuditConnector" in {
 
         val testModel = ExitSurveyAuditModel(ExitSurveyModel(Some("Very satisfied"), Some("Awesome")))
-        val expectedData = testAuditingService.toDataEvent(testAppName, testModel, controllers.feedback.routes.FeedbackController.show().url)
+        val expectedData = testAuditingService.toDataEvent(mockConfiguration.appName, testModel, controllers.feedback.routes.FeedbackController.show().url)
 
         when(mockAuditConnector.sendEvent(
           ArgumentMatchers.refEq(expectedData, "eventId", "generatedAt")
@@ -68,5 +66,81 @@ class AuditingServiceSpec extends TestSupport with BeforeAndAfterEach {
           )
       }
     }
+
+    "given a ExitSurveyAuditModel with Satisfaction data only" should {
+      "extract the data and pass it into the AuditConnector" in {
+
+        val testModel = ExitSurveyAuditModel(ExitSurveyModel(Some("Very satisfied"), None))
+        val expectedData = testAuditingService.toDataEvent(mockConfiguration.appName, testModel, controllers.feedback.routes.FeedbackController.show().url)
+
+        when(mockAuditConnector.sendEvent(
+          ArgumentMatchers.refEq(expectedData, "eventId", "generatedAt")
+        )(
+          ArgumentMatchers.any[HeaderCarrier],
+          ArgumentMatchers.any[ExecutionContext]
+        )) thenReturn Future.successful(Success)
+
+        testAuditingService.audit(testModel, controllers.feedback.routes.FeedbackController.show().url)
+
+        verify(mockAuditConnector)
+          .sendEvent(
+            ArgumentMatchers.refEq(expectedData, "eventId", "generatedAt")
+          )(
+            ArgumentMatchers.any[HeaderCarrier],
+            ArgumentMatchers.any[ExecutionContext]
+          )
+      }
+    }
+
+    "given a ExitSurveyAuditModel with Improvements data only" should {
+      "extract the data and pass it into the AuditConnector" in {
+
+        val testModel = ExitSurveyAuditModel(ExitSurveyModel(None, Some("Awesome")))
+        val expectedData = testAuditingService.toDataEvent(mockConfiguration.appName, testModel, controllers.feedback.routes.FeedbackController.show().url)
+
+        when(mockAuditConnector.sendEvent(
+          ArgumentMatchers.refEq(expectedData, "eventId", "generatedAt")
+        )(
+          ArgumentMatchers.any[HeaderCarrier],
+          ArgumentMatchers.any[ExecutionContext]
+        )) thenReturn Future.successful(Success)
+
+        testAuditingService.audit(testModel, controllers.feedback.routes.FeedbackController.show().url)
+
+        verify(mockAuditConnector)
+          .sendEvent(
+            ArgumentMatchers.refEq(expectedData, "eventId", "generatedAt")
+          )(
+            ArgumentMatchers.any[HeaderCarrier],
+            ArgumentMatchers.any[ExecutionContext]
+          )
+      }
+    }
+
+    "given a ExitSurveyAuditModel with no data" should {
+      "extract the data and pass it into the AuditConnector" in {
+
+        val testModel = ExitSurveyAuditModel(ExitSurveyModel(None, None))
+        val expectedData = testAuditingService.toDataEvent(mockConfiguration.appName, testModel, controllers.feedback.routes.FeedbackController.show().url)
+
+        when(mockAuditConnector.sendEvent(
+          ArgumentMatchers.refEq(expectedData, "eventId", "generatedAt")
+        )(
+          ArgumentMatchers.any[HeaderCarrier],
+          ArgumentMatchers.any[ExecutionContext]
+        )) thenReturn Future.successful(Success)
+
+        testAuditingService.audit(testModel, controllers.feedback.routes.FeedbackController.show().url)
+
+        verify(mockAuditConnector)
+          .sendEvent(
+            ArgumentMatchers.refEq(expectedData, "eventId", "generatedAt")
+          )(
+            ArgumentMatchers.any[HeaderCarrier],
+            ArgumentMatchers.any[ExecutionContext]
+          )
+      }
+    }
+
   }
 }

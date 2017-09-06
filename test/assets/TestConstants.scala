@@ -113,8 +113,8 @@ object TestConstants extends ImplicitDateFormatter {
     )
 
     val businessesSuccessResponse = List(business1, business2)
+    val businessSuccessEmptyResponse = "[]"
     val businessesSuccessModel = BusinessDetailsModel(businessesSuccessResponse)
-    val businessSuccessEmptyModel = BusinessDetailsModel(List.empty)
     val businessSuccessString: String =
       s"""
           {
@@ -202,6 +202,7 @@ object TestConstants extends ImplicitDateFormatter {
     val lastTaxCalcNotFound = NoLastTaxCalculation
 
     val lastTaxCalcSuccessWithYear = LastTaxCalculationWithYear(lastTaxCalcSuccess, 2018)
+    val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, 2018)
   }
 
   object Obligations {
@@ -343,15 +344,15 @@ object TestConstants extends ImplicitDateFormatter {
         proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 0,
 
-        payPensionsProfitAtBRT = Some(0.00),
+        payPensionsProfitAtBRT = None,
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 0.00,
 
-        payPensionsProfitAtHRT = Some(0.00),
+        payPensionsProfitAtHRT = None,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = Some(0),
+        payPensionsProfitAtART = None,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -376,11 +377,11 @@ object TestConstants extends ImplicitDateFormatter {
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 26.00,
 
-        payPensionsProfitAtHRT = Some(0),
+        payPensionsProfitAtHRT = None,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = Some(0),
+        payPensionsProfitAtART = None,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -409,7 +410,7 @@ object TestConstants extends ImplicitDateFormatter {
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 10661.00,
 
-        payPensionsProfitAtART = Some(0),
+        payPensionsProfitAtART = None,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -463,11 +464,11 @@ object TestConstants extends ImplicitDateFormatter {
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 26.00,
 
-        payPensionsProfitAtHRT = Some(0),
+        payPensionsProfitAtHRT = None,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = Some(0),
+        payPensionsProfitAtART = None,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -492,11 +493,11 @@ object TestConstants extends ImplicitDateFormatter {
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 26.00,
 
-        payPensionsProfitAtHRT = Some(0),
+        payPensionsProfitAtHRT = None,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = Some(0),
+        payPensionsProfitAtART = None,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 

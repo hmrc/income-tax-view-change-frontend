@@ -32,6 +32,7 @@ class PropertyDetailsConnectorSpec extends TestSupport with MockHttp {
   val propertySuccessModel = PropertyDetailsModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
   val successResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+  val notFound = HttpResponse(Status.NOT_FOUND)
 
   object TestPropertyDetailsConnector extends PropertyDetailsConnector(mockHttpGet)
 
@@ -43,6 +44,11 @@ class PropertyDetailsConnectorSpec extends TestSupport with MockHttp {
     "return a PropertyIncomeModel with JSON in case of success" in {
       setupMockHttpGet(testUrl)(successResponse)
       await(result) shouldBe propertySuccessModel
+    }
+
+    "return a NoPropertyIncomeDetails response when a NOT_FOUND is returned" in {
+      setupMockHttpGet(testUrl)(notFound)
+      await(result) shouldBe NoPropertyIncomeDetails
     }
 
     "return PropertyDetailsErrorModel model in case of failure" in {

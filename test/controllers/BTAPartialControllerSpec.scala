@@ -21,6 +21,7 @@ import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.Obligations._
 import assets.TestConstants._
+import assets.TestConstants.IncomeSourceDetails._
 import config.FrontendAppConfig
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockBTAPartialService
@@ -46,7 +47,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, Some(businessIncomeModel))(openObligation)
+        setupMockGetObligations(testNino, bothIncomeSourceSuccessMisalignedTaxYear)(openObligation)
         setupMockGetEstimate(testNino, 2018)(lastTaxCalcSuccess)
         setupMockGetEstimate(testNino, 2019)(LastTaxCalculation(
           calcID = testTaxCalculationId,
@@ -75,7 +76,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, Some(businessIncomeModelAlignedTaxYear))(openObligation)
+        setupMockGetObligations(testNino, bothIncomeSourcesSuccessBusinessAligned)(openObligation)
         setupMockGetEstimate(testNino, 2018)(lastTaxCalcSuccess)
         mockBothIncomeSourcesBusinessAligned()
         status(result) shouldBe Status.OK
@@ -98,7 +99,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, Some(businessIncomeModel))(openObligation)
+        setupMockGetObligations(testNino, bothIncomeSourceSuccessMisalignedTaxYear)(openObligation)
         setupMockGetEstimate(testNino, 2018)(lastTaxCalcSuccess)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcNotFound)
         mockBothIncomeSources()
@@ -123,7 +124,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, Some(businessIncomeModel))(openObligation)
+        setupMockGetObligations(testNino, bothIncomeSourceSuccessMisalignedTaxYear)(openObligation)
         setupMockGetEstimate(testNino, 2018)(lastTaxCalcNotFound)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcSuccess)
         mockBothIncomeSources()
@@ -148,7 +149,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, Some(businessIncomeModel))(openObligation)
+        setupMockGetObligations(testNino, businessIncomeSourceSuccess)(openObligation)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcNotFound)
         mockSingleBusinessIncomeSource()
         status(result) shouldBe Status.OK
@@ -168,49 +169,89 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
 
     "having successfully retrieved an obligation, but a LastTaxCalculationError from BTAPartialService" should {
       lazy val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
+      lazy val document = result.toHtmlDocument
 
-      "return Status INTERNAL_SERVER_ERROR (500)" ignore {
-        setupMockGetObligations(testNino, Some(businessIncomeModel))(openObligation)
+      "return Status OK (200)" in {
+        setupMockGetObligations(testNino, businessIncomeSourceSuccess)(openObligation)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcError)
         mockSingleBusinessIncomeSource()
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.OK
       }
 
       "return HTML" in {
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
+      }
+
+      "render the quarterly reporting heading" in {
+        document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages.heading
+      }
+
+      "render the next obligation date" in {
+        document.getElementById("report-due").text() shouldBe messages.reportDue(longDate("2017-10-31").toLongDate)
+      }
+
+      "render the estimate section as error" in {
+        document.getElementById("estimate-error-p1").text() shouldBe messages.Error.estimateErrorP1
+        document.getElementById("estimate-error-p2").text() shouldBe messages.Error.estimateErrorP2
       }
     }
 
     "having successfully retrieved an estimate, but no obligations from BTAPartialService" should {
       lazy val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
+      lazy val document = result.toHtmlDocument
 
-      "return Status INTERNAL_SERVER_ERROR (500)" in {
-        setupMockGetObligations(testNino, Some(businessIncomeModel))(obligationsDataErrorModel)
+      "return Status OK (200)" in {
+        setupMockGetObligations(testNino, businessIncomeSourceSuccess)(obligationsDataErrorModel)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcSuccess)
         mockSingleBusinessIncomeSource()
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.OK
       }
 
       "return HTML" in {
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
+      }
+
+
+      "render the quarterly reporting heading" in {
+        document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages.heading
+      }
+
+      "render the next estimated tax amount" in {
+        document.getElementById("current-estimate-2019").text() shouldBe messages.currentEstimate(BigDecimal(543.21).toCurrencyString)
+      }
+
+      "render the obligations section as error" in {
+        document.getElementById("obligation-error-p1").text() shouldBe messages.Error.obligationErrorP1
+        document.getElementById("obligation-error-p2").text() shouldBe messages.Error.obligationErrorP2
       }
     }
 
     "receiving nothing from BTAPartialService" should {
       lazy val result = TestBTAPartialController.setupPartial(fakeRequestWithActiveSession)
+      lazy val document = result.toHtmlDocument
 
       "return Status INTERNAL_SERVER_ERROR (500)" in {
-        setupMockGetObligations(testNino, Some(businessIncomeModel))(obligationsDataErrorModel)
+        setupMockGetObligations(testNino, businessIncomeSourceSuccess)(obligationsDataErrorModel)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcError)
         mockSingleBusinessIncomeSource()
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.OK
       }
 
       "return HTML" in {
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
+      }
+
+      "render the obligations section as error" in {
+        document.getElementById("obligation-error-p1").text() shouldBe messages.Error.obligationErrorP1
+        document.getElementById("obligation-error-p2").text() shouldBe messages.Error.obligationErrorP2
+      }
+
+      "render the estimate section as error" in {
+        document.getElementById("estimate-error-p1").text() shouldBe messages.Error.estimateErrorP1
+        document.getElementById("estimate-error-p2").text() shouldBe messages.Error.estimateErrorP2
       }
     }
   }

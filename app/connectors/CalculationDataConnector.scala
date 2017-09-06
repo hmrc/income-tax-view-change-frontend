@@ -37,27 +37,27 @@ class CalculationDataConnector @Inject()(val http: HttpGet) extends ServicesConf
     val url = getCalculationDataUrl(nino, taxCalculationId)
     Logger.debug(s"[CalculationDataConnector][getCalculationData] - GET $url")
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) map {
       response =>
         response.status match {
           case OK =>
             Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, json: ${response.json}")
-            Future.successful(response.json.validate[CalculationDataModel].fold(
+            response.json.validate[CalculationDataModel].fold(
               invalid => {
                 Logger.warn(s"[CalculationDataConnector][getCalculationData] - Json Validation Error. Parsing Calc Breakdown Response. Invalid=$invalid")
                 CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Calc Breakdown Response")
               },
               valid => valid
-            ))
+            )
           case _ =>
             Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, body: ${response.body}")
             Logger.warn(s"[CalculationDataConnector][getCalculationData] - Response status: [${response.status}] returned from Calc Breakdown call")
-            Future.successful(CalculationDataErrorModel(response.status, response.body))
+            CalculationDataErrorModel(response.status, response.body)
         }
-    } recoverWith {
+    } recover {
       case _ =>
         Logger.warn(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error")
-        Future.successful(CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
+        CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 
