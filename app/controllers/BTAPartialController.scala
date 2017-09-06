@@ -22,9 +22,8 @@ import config.AppConfig
 import controllers.predicates.AsyncActionPredicate
 import models._
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import services.BTAPartialService
-import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future

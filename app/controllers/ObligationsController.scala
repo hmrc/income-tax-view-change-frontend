@@ -18,6 +18,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter}
 import audit.AuditingService
 import audit.models.ObligationsAuditing.ObligationsAuditModel
 import auth.MtdItUser
@@ -29,24 +30,30 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.ObligationsService
 import uk.gov.hmrc.play.http.HeaderCarrier
+import services.{ObligationsService, ServiceInfoPartialService}
 
 @Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,
                                       implicit val messagesApi: MessagesApi,
                                       val actionPredicate: AsyncActionPredicate,
                                       val obligationsService: ObligationsService,
+                                      val serviceInfoPartialService: ServiceInfoPartialService,
+                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                       val auditingService: AuditingService
                                      ) extends BaseController {
+  import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
   val getObligations: Action[AnyContent] = actionPredicate.async {
     implicit request =>
       implicit user =>
         implicit sources =>
           submitData(user, sources)
-          for {
-            business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
-            property <- obligationsService.getPropertyObligations(user.nino, sources.propertyDetails)
-          } yield Ok(views.html.obligations(business, property))
+          serviceInfoPartialService.serviceInfoPartial.flatMap { implicit serviceInfo =>
+            for {
+              business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
+              property <- obligationsService.getPropertyObligations(user.nino, sources.propertyDetails)
+            } yield Ok(views.html.obligations(business, property))
+          }
   }
 
   private def submitData(user: MtdItUser, sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Unit =

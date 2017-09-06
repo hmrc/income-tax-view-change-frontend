@@ -40,18 +40,10 @@ class ObligationsViewSpec extends TestSupport {
   val errorModel = ObligationsErrorModel(500,"ISE")
 
 
-  //TODO: Complete the Unit Testing for the view
-  lazy val bothPage = views.html.obligations(successModel, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
-  lazy val propErrorPage = views.html.obligations(NoObligations, errorModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+    "The Obligations view" should {
 
-
-  "The Obligations view" should {
-
-    lazy val document = Jsoup.parse(contentAsString(bothPage))
-
-    s"have the user name '$testUserName' in the service info bar" in {
-      document.getElementById("service-info-user-name").text() shouldBe testUserName
-    }
+    lazy val page = views.html.obligations(successModel, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
+    lazy val document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
@@ -87,7 +79,7 @@ class ObligationsViewSpec extends TestSupport {
 
     "when only business obligations are returned" should {
 
-      lazy val page = views.html.obligations(successModel, NoObligations)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+      lazy val page = views.html.obligations(successModel, NoObligations)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "contain a section for Business Obligations" in {
@@ -101,7 +93,7 @@ class ObligationsViewSpec extends TestSupport {
 
     "when only property obligations are returned" should {
 
-      lazy val page = views.html.obligations(NoObligations, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+      lazy val page = views.html.obligations(NoObligations, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "contain a section for Property Obligations" in {
@@ -115,7 +107,7 @@ class ObligationsViewSpec extends TestSupport {
 
     "when both Business and Property obligations are errored" should {
 
-      lazy val page = views.html.obligations(errorModel, errorModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+      lazy val page = views.html.obligations(errorModel, errorModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "contains a no section Property Obligations" in {
@@ -140,7 +132,7 @@ class ObligationsViewSpec extends TestSupport {
 
     "when Business obligations are errored and there are no Property obligations" should {
 
-      lazy val page = views.html.obligations(errorModel, NoObligations)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+      lazy val page = views.html.obligations(errorModel, NoObligations)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "contain no section for Property Obligations" in {
@@ -165,7 +157,7 @@ class ObligationsViewSpec extends TestSupport {
 
     "when Property obligations are errored and there are no Business obligations" should {
 
-      lazy val page = views.html.obligations(NoObligations, errorModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+      lazy val page = views.html.obligations(NoObligations, errorModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "contain no section for Business Obligations" in {

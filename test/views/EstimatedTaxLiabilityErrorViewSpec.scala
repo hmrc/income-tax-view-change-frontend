@@ -42,12 +42,8 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
   "The EstimatedTaxLiabilityError view" should {
 
     lazy val page: HtmlFormat.Appendable =
-      views.html.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+      views.html.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources, serviceInfo)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
-
-    s"have the user name '$testUserName' in the service info bar" in {
-      document.getElementById("service-info-user-name").text() shouldBe testUserName
-    }
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title

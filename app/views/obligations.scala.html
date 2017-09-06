@@ -22,7 +22,7 @@
 @import views.helpers.ObligationRenderHelper.renderObligations
 @import models.{BusinessIncome, PropertyIncome}
 
-@(bizObs: ObligationsResponseModel, propObs: ObligationsResponseModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
+@(bizObs: ObligationsResponseModel, propObs: ObligationsResponseModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel, serviceInfo: Html)
 
 @sidebar = {
     @sidebarHelper(ObligationsPage, sources)

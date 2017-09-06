@@ -17,6 +17,7 @@
 @import config.AppConfig
 @import auth.MtdItUser
 @import templates.govuk_wrapper
+@import helpers.renderServiceInfoPartial
 @import helpers.renderServiceInfoHelper
 
 @(title: String,
@@ -28,14 +29,14 @@
   showLogout: Boolean = true,
   user: Option[MtdItUser] = None,
   showBtaHeader: Boolean = true
-)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig)
+)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig, serviceInfo: Html = Html(""))
 
 @import uk.gov.hmrc.play.views.html.layouts
 
 
 @serviceInfoContent = {
     @if(showBtaHeader){
-        @renderServiceInfoHelper(user)
+        @renderServiceInfoPartial(user)
     }
 }
 

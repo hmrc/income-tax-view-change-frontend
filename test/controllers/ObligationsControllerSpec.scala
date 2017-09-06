@@ -18,13 +18,14 @@ package controllers
 
 import assets.Messages.{ISE => errorMessages, Obligations => messages}
 import audit.AuditingService
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockObligationsService
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
+import services.ServiceInfoPartialService
 import utils.TestSupport
 
 class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicate with MockObligationsService {
@@ -34,6 +35,8 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
     app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
     mockObligationsService,
+    app.injector.instanceOf[ServiceInfoPartialService],
+    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]
   )
 
