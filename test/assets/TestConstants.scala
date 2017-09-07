@@ -19,9 +19,8 @@ package assets
 import auth.MtdItUser
 import models._
 import play.api.http.Status
-import play.api.libs.json.Json
-import play.twirl.api.Html
 import play.api.libs.json.{JsValue, Json}
+import play.twirl.api.Html
 import uk.gov.hmrc.auth.core._
 import utils.ImplicitDateFormatter
 
@@ -51,29 +50,28 @@ object TestConstants extends ImplicitDateFormatter {
        data-journey-click="Header:Click:Home"
        href="/business-account">
       Business tax home
-      </a>
-  <ul id="service-info-list"
+    </a>
+    <ul id="service-info-list"
       class="service-info__item service-info__right list--collapse">
+      <li class="list__item">
+        <span id="service-info-user-name" class="bold-xsmall">Test User</span>
+      </li>
 
-    <li class="list__item">
-      <span id="service-info-user-name" class="bold-xsmall">Test User</span>
-    </li>
-
-    <li class="list__item soft--left">
-      <a id="service-info-manage-account-link"
-         href="/business-account/manage-account"
-        data-journey-click="Header:Click:ManageAccount">
-        Manage account
-      </a>
-    </li>
-    <li class="list__item soft--left">
-      <a id="service-info-messages-link"
-         href="/business-account/messages"
-        data-journey-click="Header:Click:Messages">
-        Messages
-      </a>
-    </li>
-  </ul>
+      <li class="list__item soft--left">
+        <a id="service-info-manage-account-link"
+           href="/business-account/manage-account"
+          data-journey-click="Header:Click:ManageAccount">
+          Manage account
+        </a>
+      </li>
+      <li class="list__item soft--left">
+        <a id="service-info-messages-link"
+           href="/business-account/messages"
+          data-journey-click="Header:Click:Messages">
+          Messages
+        </a>
+      </li>
+    </ul>
   """.stripMargin.trim)
   }
 

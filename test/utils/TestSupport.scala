@@ -16,8 +16,10 @@
 
 package utils
 
+import auth.MtdItUser
 import com.typesafe.config.Config
 import config.ItvcHeaderCarrierForPartialsConverter
+import models.UserDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.mockito.MockitoSugar
@@ -46,6 +48,20 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
   implicit val hcwc: HeaderCarrierForPartials = HeaderCarrierForPartials(headerCarrier, "")
 
   implicit val config: Config = app.configuration.underlying
+
+  implicit val user: MtdItUser = MtdItUser(
+    mtditid = "12341234",
+    nino = "AA123456A",
+    userDetails =
+      Some(
+        UserDetailsModel(
+          name = "Test User",
+          email = None,
+          affinityGroup = "",
+          credentialRole = ""
+        )
+      )
+  )
 
   implicit val serviceInfo: Html = Html("")
 

@@ -16,9 +16,13 @@
 
 package mocks.services
 
+import auth.MtdItUser
+import config.FrontendAppConfig
+import models.UserDetailsModel
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
+import play.api.i18n.Messages
 import play.twirl.api.Html
 import services.ServiceInfoPartialService
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -29,6 +33,22 @@ import uk.gov.hmrc.play.test.UnitSpec
 trait MockServiceInfoPartialService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   implicit val hcwc = HeaderCarrierForPartials(HeaderCarrier(), "")
+  implicit val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  implicit val user: MtdItUser = MtdItUser(
+    mtditid = "12341234",
+    nino = "AA123456A",
+    userDetails =
+      Some(
+        UserDetailsModel(
+          name = "Test User",
+          email = None,
+          affinityGroup = "",
+          credentialRole = ""
+        )
+      )
+  )
+  implicit val messages: Messages = mock[Messages]
+
   val mockServiceInfoPartialService: ServiceInfoPartialService = mock[ServiceInfoPartialService]
 
   override def beforeEach(): Unit = {
