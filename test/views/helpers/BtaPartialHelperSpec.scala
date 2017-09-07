@@ -18,7 +18,6 @@ package views.helpers
 
 import assets.TestConstants.Estimates._
 import assets.TestConstants.Obligations._
-import assets.Messages.{BtaPartial => messages}
 import config.FrontendAppConfig
 import models._
 import play.api.i18n.Messages.Implicits._
@@ -28,7 +27,7 @@ class BtaPartialHelperSpec extends TestSupport {
 
   lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  "The BtaPartialHelper's showNextObligation method" should {
+  "The BtaPartialHelper's whichStatus method" should {
     "return Html corresponding to the ObligationStatus" when {
 
       lazy val baseUrl = mockAppConfig.itvcFrontendEnvironment
@@ -52,23 +51,14 @@ class BtaPartialHelperSpec extends TestSupport {
           |<a data-journey-click="itvcPartial:clickedLink:View Obligations" id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
-      val error =
-        s"""<div class="form-group">
-           |<p id="obligation-error-p1">${messages.Error.obligationErrorP1}</p>
-           |<p id="obligation-error-p2">${messages.Error.obligationErrorP2}</p>
-           |</div>""".stripMargin.replaceAll("\n","")
-
       "passed 'Open' the Open Html is returned" in {
-        BtaPartialHelper.showNextObligation(openObligation)(applicationMessages, mockAppConfig) shouldBe open
+        BtaPartialHelper.whichStatus(openObligation)(applicationMessages, mockAppConfig) shouldBe open
       }
       "passed 'Overdue' the Overdue Html is returned" in {
-        BtaPartialHelper.showNextObligation(overdueObligation)(applicationMessages, mockAppConfig) shouldBe overdue
+        BtaPartialHelper.whichStatus(overdueObligation)(applicationMessages, mockAppConfig) shouldBe overdue
       }
       "passed 'Received' the Received Html is returned" in {
-        BtaPartialHelper.showNextObligation(receivedObligation)(applicationMessages, mockAppConfig) shouldBe received
-      }
-      "an error message when the obligations can't be retrieved" in {
-        BtaPartialHelper.showNextObligation(obligationsDataErrorModel)(applicationMessages, mockAppConfig) shouldBe error
+        BtaPartialHelper.whichStatus(receivedObligation)(applicationMessages, mockAppConfig) shouldBe received
       }
     }
   }
@@ -127,16 +117,6 @@ class BtaPartialHelperSpec extends TestSupport {
       "return Html corresponding to the estimate for 2018 and no estimate for 2019" in {
         BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(NoLastTaxCalculation, 2019)))(applicationMessages, mockAppConfig) shouldBe List(success,noCalc)
       }
-    }
-
-    "render an error when no estimates are retrieved" in {
-      val error =
-        s"""<div class="form-group">
-           |<p id="estimate-error-p1">${messages.Error.estimateErrorP1}</p>
-           |<p id="estimate-error-p2">${messages.Error.estimateErrorP2}</p>
-           |</div>""".stripMargin.replaceAll("\n","")
-
-      BtaPartialHelper.showLastEstimate(List(lastTaxCalcErrorWithYear))(applicationMessages, mockAppConfig) shouldBe List(error)
     }
   }
 

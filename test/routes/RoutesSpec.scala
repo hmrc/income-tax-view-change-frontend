@@ -37,7 +37,7 @@ class RoutesSpec extends TestSupport {
   }
 
   //Obligation route
-  "The URL for the ObligationsController.getNextObligation action" should {
+  "The URL for the ObligationsController.getObligations action" should {
     s"be equal tp $contextRoute/obligations" in {
       controllers.routes.ObligationsController.getObligations().url shouldBe s"$contextRoute/obligations"
     }

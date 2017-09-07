@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import models._
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status.{OK,NOT_FOUND}
+import play.api.http.Status.OK
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import utils.ImplicitDateFormatter
@@ -43,24 +43,21 @@ class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
     val url = getPropertyDetailsUrl(nino)
     Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - GET $url")
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) map {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
         response.status match {
           case OK =>
             Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
-            defaultSuccessResponse
-          case NOT_FOUND =>
-            Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
-            NoPropertyIncomeDetails
+            Future.successful(defaultSuccessResponse)
           case _ =>
             Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
             Logger.warn(s"[PropertyDetailsConnector][getPropertyDetails] - Response status: [${response.status}] returned from Property Details call")
-            PropertyDetailsErrorModel(response.status, response.body)
+            Future.successful(PropertyDetailsErrorModel(response.status, response.body))
         }
-    } recover {
+    } recoverWith {
       case _ =>
         Logger.warn(s"[PropertyDetailsConnector][getPropertyDetails] - Unexpected future failed error")
-        PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+        Future.successful(PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
     }
   }
 

@@ -44,17 +44,28 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
   val getObligations: Action[AnyContent] = actionPredicate.async {
-    implicit request =>
-      implicit user =>
-        implicit sources =>
-          submitData(user, sources)
-          serviceInfoPartialService.serviceInfoPartial.flatMap { implicit serviceInfo =>
-            for {
-              business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
-              property <- obligationsService.getPropertyObligations(user.nino, sources.propertyDetails)
-            } yield Ok(views.html.obligations(business, property))
-          }
+    implicit request => implicit user => implicit sources =>
+      submitData(user, sources)
+      serviceInfoPartialService.serviceInfoPartial.flatMap { implicit serviceInfo =>
+        for {
+          business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
+          property <- obligationsService.getPropertyObligations(user.nino)
+        } yield (business, property) match {
+          case (businessSuccess: ObligationsModel, propertySuccess: ObligationsModel) =>
+            Logger.debug("[ObligationsController][getObligations] Business & Property Obligations retrieved. Serving HTML page")
+            Ok(views.html.obligations(Some(businessSuccess), Some(propertySuccess)))
+          case (businessSuccess: ObligationsModel, _) =>
+            Logger.debug("[ObligationsController][getObligations] Business Obligations retrieved. Serving HTML page")
+            Ok(views.html.obligations(Some(businessSuccess), None))
+          case (_, propertySuccess: ObligationsModel) =>
+            Logger.debug("[ObligationsController][getObligations] Property Obligations retrieved. Serving HTML page")
+            Ok(views.html.obligations(None, Some(propertySuccess)))
+          case (_, _) =>
+            Logger.debug("[ObligationsController][getObligations] No obligations retrieved. Throwing ISE")
+            showInternalServerError
+      }
   }
+}
 
   private def submitData(user: MtdItUser, sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(ObligationsAuditModel(user, sources), controllers.routes.ObligationsController.getObligations().url)

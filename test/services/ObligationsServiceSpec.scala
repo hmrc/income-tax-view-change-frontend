@@ -21,7 +21,6 @@ import assets.TestConstants
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Obligations._
 import assets.TestConstants._
-import assets.TestConstants.PropertyIncome._
 import mocks.connectors.{MockBusinessObligationDataConnector, MockPropertyObligationDataConnector}
 import models._
 import play.api.http.Status
@@ -31,7 +30,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
 
   object TestObligationsService extends ObligationsService(mockBusinessObligationDataConnector, mockPropertyObligationDataConnector)
 
-  "The ObligationsService.getNextObligation method" when {
+  "The ObligationsService.getObligations method" when {
 
     "a successful single business" which {
 
@@ -55,15 +54,9 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
 
     "no business income source passed in" should {
 
-      "return NoObligations case object" in {
-        await(TestObligationsService.getBusinessObligations(testNino, None)) shouldBe NoObligations
-      }
-    }
-
-    "no property income source passed in" should {
-
-      "return NoObligations case object" in {
-        await(TestObligationsService.getPropertyObligations(testNino, None)) shouldBe NoObligations
+      "return an obligations error model" in {
+        await(TestObligationsService.getBusinessObligations(testNino, None)) shouldBe
+          ObligationsErrorModel(Status.NOT_FOUND, "No business income source")
       }
     }
   }
@@ -99,7 +92,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
               )
             )
           )
-        await(TestObligationsService.getPropertyObligations(testNino, Some(propertyIncomeModel))) shouldBe successfulObligationsResponse
+        await(TestObligationsService.getPropertyObligations(testNino)) shouldBe successfulObligationsResponse
       }
     }
   }

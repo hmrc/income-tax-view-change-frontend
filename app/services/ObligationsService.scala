@@ -33,19 +33,13 @@ class ObligationsService @Inject()(val businessObligationDataConnector: Business
 
   def getBusinessObligations(nino: String, businessIncomeSource: Option[BusinessIncomeModel])(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
     businessIncomeSource match {
-      case Some(incomeSource) =>
-        Logger.debug(s"[ObligationsService][getBusinessObligations] - Requesting Business Obligation details from connector for user with NINO: $nino")
-        businessObligationDataConnector.getBusinessObligationData(nino, incomeSource.selfEmploymentId)
-      case _ => Future.successful(NoObligations)
+      case Some(incomeSource) => businessObligationDataConnector.getBusinessObligationData(nino, incomeSource.selfEmploymentId)
+      case _ => Future.successful(ObligationsErrorModel(Status.NOT_FOUND, "No business income source"))
     }
   }
 
-  def getPropertyObligations(nino: String, propertyIncomeSource: Option[PropertyIncomeModel])(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
-    propertyIncomeSource match {
-      case Some(_) =>
-        Logger.debug (s"[ObligationsService][getPropertyObligations] - Requesting Property Obligation details from connectors for user with NINO: $nino")
-        propertyObligationDataConnector.getPropertyObligationData (nino)
-      case _ => Future.successful(NoObligations)
-    }
+  def getPropertyObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+    Logger.debug(s"[ObligationsService][getPropertyObligations] - Requesting Property Obligation details from connectors for user with NINO: $nino")
+    propertyObligationDataConnector.getPropertyObligationData(nino)
   }
 }

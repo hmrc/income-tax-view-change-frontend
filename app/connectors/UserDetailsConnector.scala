@@ -32,27 +32,27 @@ class UserDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig w
 
   def getUserDetails(userDetailsUrl: String)(implicit headerCarrier: HeaderCarrier): Future[UserDetailsResponseModel] = {
     Logger.debug(s"[UserDetailsConnector][getUserDetails] - GET $userDetailsUrl")
-    http.GET[HttpResponse](userDetailsUrl) map {
+    http.GET[HttpResponse](userDetailsUrl) flatMap {
       response =>
         response.status match {
           case OK =>
             Logger.debug(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[UserDetailsModel].fold(
+            Future.successful(response.json.validate[UserDetailsModel].fold(
               invalid => {
                 Logger.warn(s"[UserDetailsConnector][getUserDetails] - Json Validation Error. Parsing User Details Response.")
                 UserDetailsError
               },
               valid => valid
-            )
+            ))
           case _ =>
             Logger.debug(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
             Logger.warn(s"[UserDetailsConnector][getUserDetails] - Response status: [${response.status}] returned from User Details call")
-            UserDetailsError
+            Future.successful(UserDetailsError)
         }
-    } recover {
+    } recoverWith {
       case _ =>
         Logger.warn(s"[UserDetailsConnector][getUserDetails] - Unexpected future failed error when calling $userDetailsUrl.")
-        UserDetailsError
+        Future.successful(UserDetailsError)
     }
   }
 }

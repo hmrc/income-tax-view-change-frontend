@@ -40,7 +40,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
     app.injector.instanceOf[AuditingService]
   )
 
-  "The ObligationsController.getNextObligation function" when {
+  "The ObligationsController.getObligations function" when {
 
     "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
@@ -52,7 +52,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         "return Status OK (200)" in {
           mockSingleBusinessIncomeSource()
           mockBusinessSuccess()
-          mockNoPropertyIncome()
+          mockPropertyError()
           status(result) shouldBe Status.OK
         }
 
@@ -72,8 +72,8 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockPropertyIncomeSource()
-          mockNoBusinessIncome()
+          mockSingleBusinessIncomeSource()
+          mockBusinessError()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
         }
@@ -94,7 +94,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockBothIncomeSources()
+          mockSingleBusinessIncomeSource()
           mockBusinessSuccess()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
@@ -115,11 +115,11 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
-        "return Status OK (200)" in {
-          mockNoIncomeSources()
-          mockNoBusinessIncome()
-          mockNoPropertyIncome()
-          status(result) shouldBe Status.OK
+        "return Status INTERNAL_SERVER_ERROR (500)" in {
+          mockSingleBusinessIncomeSource()
+          mockBusinessError()
+          mockPropertyError()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
         "return HTML" in {
@@ -127,8 +127,8 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the Obligations page" in {
-          document.title shouldBe messages.title
+        "render the ISE page" in {
+          document.title shouldBe errorMessages.title
         }
       }
 

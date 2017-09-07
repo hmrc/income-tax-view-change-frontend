@@ -52,9 +52,13 @@ class ExitSurveyController @Inject()(implicit val applicationConfig: AppConfig,
     ExitSurveyForm.exitSurveyForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(view(exitSurveyForm = formWithErrors))),
       survey => {
-        auditingService.audit(ExitSurveyAuditModel(survey), controllers.routes.ExitSurveyController.show().url)
+        submitSurvey(survey)
         Future.successful(Redirect(routes.ThankYouController.show()))
       }
     )
   }
+
+  def submitSurvey(survey: ExitSurveyModel)(implicit hc: HeaderCarrier): Unit =
+    auditingService.audit(ExitSurveyAuditModel(survey), controllers.routes.ExitSurveyController.show().url)
+
 }

@@ -25,24 +25,19 @@ import utils.ImplicitDateFormatter._
 
 object BtaPartialHelper {
 
-  def showNextObligation(model: ObligationsResponseModel)(implicit messages: Messages, config: AppConfig): String = applyFormGroup {
-    model match {
-      case obligation: ObligationModel => {
-        val obligationMessage = obligation.getObligationStatus match {
-          case _: Open => messages("bta_partial.next_due", obligation.due.toLongDate)
-          case Overdue => messages("bta_partial.next_overdue")
-          case Received => messages("bta_partial.next_received")
-        }
-
-        s"""
-          |<p id="report-due">$obligationMessage</p>
-          |<a data-journey-click="itvcPartial:clickedLink:View Obligations" id="obligations-link" href="${config.itvcFrontendEnvironment + controllers.routes.ObligationsController.getObligations().url}">
-          |${messages("bta_partial.deadlines_link")}</a>"""
-      }
-      case _ =>
-        s"""<p id="obligation-error-p1">${messages("bta_partial.obligation.error.p1")}</p>""" +
-        s"""<p id="obligation-error-p2">${messages("bta_partial.obligation.error.p2")}</p>"""
+  def whichStatus(model: ObligationModel)(implicit messages: Messages, config: AppConfig): String = {
+    val obligationMessage = model.getObligationStatus match {
+      case _: Open => messages("bta_partial.next_due", model.due.toLongDate)
+      case Overdue => messages("bta_partial.next_overdue")
+      case Received => messages("bta_partial.next_received")
     }
+
+    applyFormGroup {
+      s"""
+        |<p id="report-due">$obligationMessage</p>
+        |<a data-journey-click="itvcPartial:clickedLink:View Obligations" id="obligations-link" href="${config.itvcFrontendEnvironment + controllers.routes.ObligationsController.getObligations().url}">
+        |${messages("bta_partial.deadlines_link")}</a>"""
+    }.stripMargin.replaceAll("\n","")
   }
 
   def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages, config: AppConfig): List[String] = {
@@ -61,19 +56,17 @@ object BtaPartialHelper {
             case calc: LastTaxCalculation =>
               val taxYear = estimate.taxYear
               s"""<p id="current-estimate-$taxYear">${estimatesMessage(taxYear, calc.calcAmount)}</p>
-                 |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability $taxYear" id="estimates-link-$taxYear" href="${config.itvcFrontendEnvironment + controllers.routes.FinancialDataController.getFinancialData(taxYear).url}">
+                 |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability ${taxYear}" id="estimates-link-$taxYear" href="${config.itvcFrontendEnvironment + controllers.routes.FinancialDataController.getFinancialData(taxYear).url}">
                  |${messages("bta_partial.view_details_link")}</a>"""
             case NoLastTaxCalculation =>
               val taxYear = estimate.taxYear
               s"""<p id="current-estimate-$taxYear">${messages("bta_partial.no_estimate", (taxYear - 1).toString, taxYear.toString)}</p>"""
-            case _: LastTaxCalculationError =>
-              s"""<p id="estimate-error-p1">${messages("bta_partial.estimate.error.p1")}</p>""" +
-              s"""<p id="estimate-error-p2">${messages("bta_partial.estimate.error.p2")}</p>"""
+            case _: LastTaxCalculationError => ""
           }
-        }
+        }.stripMargin.replaceAll("\n","")
     }
   }
 
-  private def applyFormGroup(content: String): String = ("""<div class="form-group">""" + content + "</div>").stripMargin.replaceAll("\n","")
+  private def applyFormGroup(content: String): String = """<div class="form-group">""" + content + "</div>"
 }
 

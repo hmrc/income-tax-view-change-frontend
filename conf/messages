@@ -33,8 +33,6 @@ estimated_tax_liability.calc-breakdown.nic4                     = National Insur
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
 estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
 estimated_tax_liability.no-data                                 = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
-estimated_tax_liability.error.p1                                = We can''t display your estimated tax amount at the moment.
-estimated_tax_liability.error.p2                                = Try refreshing the page in a few minutes.
 
 ## Obligations Page ##
 obligations.title                                               = Your report deadlines
@@ -44,8 +42,6 @@ obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
 obligations.bi.subheading                                       = Business income
 obligations.pi.subheading                                       = Property income
-obligations.error.p1                                            = We can''t display your next report due date at the moment.
-obligations.error.p2                                            = Try refreshing the page in a few minutes.
 
 ## Statuses ##
 status.received                                                 = Received
@@ -80,10 +76,6 @@ bta_partial.estimated_tax_with_year                             = Your estimated
 bta_partial.estimated_tax_no_year                               = Your estimated tax amount is {0}
 bta_partial.no_estimate                                         = Once you''ve submitted a report using your accounting software, you can view your estimate for {0} to {1} tax year here.
 bta_partial.view_details_link                                   = View details
-bta_partial.obligation.error.p1                                 = We can''t display your next report due date at the moment.
-bta_partial.obligation.error.p2                                 = Try refreshing the page in a few minutes.
-bta_partial.estimate.error.p1                                   = We can''t display your estimated tax amount at the moment.
-bta_partial.estimate.error.p2                                   = Try refreshing the page in a few minutes.
 
 ## Not Enrolled
 not_enrolled.heading                                            = You can''t view this page
