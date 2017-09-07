@@ -134,11 +134,13 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             elementTextByID(id = "bi-ob-4-start")("1 July 2017"),
             elementTextByID(id = "bi-ob-4-end")("30 September 2017"),
             elementTextByID(id = "bi-ob-4-status")("Due by "+LocalDate.now().plusDays(30).toLongDate),
+            isElementVisibleById("bi-ob-5-status")(false),
 
             elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
             elementTextByID(id = "sa-link")("View annual returns"),
             elementTextByID(id = "service-info-manage-account-link")("Manage account"),
             elementTextByID(id = "service-info-messages-link")("Messages"),
+            elementTextByID(id= "page-heading")("Your report deadlines"),
 
             elementTextByID(id = "pi-ob-1-start")("1 October 2016"),
             elementTextByID(id = "pi-ob-1-end")("31 December 2016"),
@@ -154,8 +156,8 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
             elementTextByID(id = "pi-ob-4-start")("1 July 2017"),
             elementTextByID(id = "pi-ob-4-end")("30 September 2017"),
-            elementTextByID(id = "pi-ob-4-status")("Due by "+LocalDate.now().plusDays(30).toLongDate)
-
+            elementTextByID(id = "pi-ob-4-status")("Due by "+LocalDate.now().plusDays(30).toLongDate),
+            isElementVisibleById("pi-ob-5-status")(false)
           )
         }
       }
