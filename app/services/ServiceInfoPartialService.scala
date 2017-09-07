@@ -41,9 +41,10 @@ class ServiceInfoPartialService @Inject()(implicit val appConfig: AppConfig,
         Logger.warn("[ServiceInfoPartialService][serviceInfoPartial] - could not retrieve BTA Service Info Partial")
         renderServiceInfoHelper(Some(user))
       }
-      else
+      else {
         Logger.debug("[ServiceInfoPartialService][serviceInfoPartial] - retrieved BTA Service Info Partial")
         htmlResult
+      }
     }
   }
 }
