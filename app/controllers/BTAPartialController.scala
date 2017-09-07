@@ -22,9 +22,8 @@ import config.AppConfig
 import controllers.predicates.AsyncActionPredicate
 import models._
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import services.BTAPartialService
-import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -38,17 +37,10 @@ class BTAPartialController @Inject()(implicit val config: AppConfig,
 
   val setupPartial: Action[AnyContent] = actionPredicate.async {
     implicit request => implicit user => implicit sources =>
-      for {
-        latestObligation <- btaPartialService.getObligations(user.nino, sources.businessDetails)
+      for{
+        latestObligation <- btaPartialService.getNextObligation(user.nino, sources)
         allEstimates <- getAllEstimates(user.nino, sources.orderedTaxYears)
-      } yield (latestObligation, allEstimates) match {
-        case (obligation: ObligationModel, estimates) =>
-          Logger.debug(s"[BTAPartialController][setupPartial] - yielded: $obligation and $estimates")
-          Ok(views.html.btaPartial(obligation, estimates))
-        case error =>
-          Logger.warn(s"[BTAPartialController][setupPartial] - yielded $error")
-          showInternalServerError
-      }
+      } yield Ok(views.html.btaPartial(latestObligation, allEstimates))
   }
 
   private def getAllEstimates(nino: String, orderedYears: List[Int])(implicit headerCarrier: HeaderCarrier): Future[List[LastTaxCalculationWithYear]] =

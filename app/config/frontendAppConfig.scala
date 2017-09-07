@@ -22,6 +22,7 @@ import play.api.Configuration
 import uk.gov.hmrc.play.config.ServicesConfig
 
 trait AppConfig {
+  val appName: String
   val analyticsToken: String
   val analyticsHost: String
   val contactFormServiceIdentifier: String
@@ -51,12 +52,13 @@ class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfi
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
+  //App
   private lazy val baseUrl = "report-quarterly/income-and-expenses/view"
-  private lazy val contactHost = loadConfig(s"contact-frontend.host")
-
   override lazy val itvcFrontendEnvironment = loadConfig("base.url")
+  override lazy val appName = loadConfig("appName")
 
   //Feedback Config
+  private lazy val contactHost = loadConfig(s"contact-frontend.host")
   private lazy val contactFrontendService = baseUrl("contact-frontend")
   override lazy val contactFormServiceIdentifier = "ITVC"
   override lazy val contactFrontendPartialBaseUrl = s"$contactFrontendService"
