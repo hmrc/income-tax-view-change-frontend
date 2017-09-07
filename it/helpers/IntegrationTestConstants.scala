@@ -272,7 +272,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       ), ObligationModel(
         start = "2017-07-01",
         end = "2017-09-30",
-        due = LocalDate.now().plusDays(54),
+        due = LocalDate.now().plusDays(30),
         met = false
       ),ObligationModel(
         start = "2017-10-01",
