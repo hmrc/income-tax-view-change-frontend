@@ -20,7 +20,8 @@ import javax.inject.{Inject, Singleton}
 import auth.MtdItUser
 import config.AppConfig
 import connectors.ServiceInfoPartialConnector
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.Logger
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import views.html.helpers.renderServiceInfoHelper
@@ -36,9 +37,12 @@ class ServiceInfoPartialService @Inject()(implicit val appConfig: AppConfig,
 
   def serviceInfoPartial()(implicit hc: HeaderCarrierForPartials, user: MtdItUser): Future[Html] = {
     serviceInfoPartialConnector.getServiceInfoPartial().map { htmlResult =>
-      if (htmlResult.body.isEmpty)
+      if (htmlResult.body.isEmpty) {
+        Logger.warn("[ServiceInfoPartialService][serviceInfoPartial] - could not retrieve BTA Service Info Partial")
         renderServiceInfoHelper(Some(user))
+      }
       else
+        Logger.debug("[ServiceInfoPartialService][serviceInfoPartial] - retrieved BTA Service Info Partial")
         htmlResult
     }
   }
