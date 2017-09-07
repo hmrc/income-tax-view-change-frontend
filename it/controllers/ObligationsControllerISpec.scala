@@ -81,9 +81,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
       }
 
 
-
-
-      "has business and property with single obligations for both" should {
+      "has business and property with multiple obligations for both" should {
 
         "display a single obligation with the correct dates and status" in {
 
@@ -157,11 +155,6 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             elementTextByID(id = "pi-ob-4-start")("1 July 2017"),
             elementTextByID(id = "pi-ob-4-end")("30 September 2017"),
             elementTextByID(id = "pi-ob-4-status")("Due by 30 October 2017")
-
-            //            elementTextByID(id = "pi-ob-2-start")("6 April 2017"),
-//            elementTextByID(id = "pi-ob-2-end")("5 July 2017"),
-//            elementTextByID(id = "pi-ob-2-status")("Received")
-
 
           )
         }
