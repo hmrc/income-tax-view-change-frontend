@@ -23,7 +23,7 @@
 @import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
 
-@(taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel, serviceInfo: Html)
+@(taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
 
 @sidebar = {
     @sidebarHelper(EstimatesPage, sources, Some(taxYear))

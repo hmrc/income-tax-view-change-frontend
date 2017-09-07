@@ -19,14 +19,13 @@ package controllers.predicates
 import javax.inject.{Inject, Singleton}
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import connectors.{ServiceInfoPartialConnector, UserDetailsConnector}
+import config.FrontendAppConfig
+import connectors.UserDetailsConnector
 import controllers.BaseController
 import models.{UserDetailsError, UserDetailsModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.{Configuration, Environment, Logger}
-import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.Retrievals._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.frontend.Redirects
@@ -73,7 +72,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
     }
   }
 
-  private def buildMtdUser(enrolments: Enrolments, userDetails: Option[UserDetailsModel] = None): MtdItUser = {
+  private def buildMtdUser(enrolments: Enrolments, userDetails: Option[UserDetailsModel] = None) = {
     MtdItUser(
       mtditid = enrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value).get,
       nino = enrolments.getEnrolment(ninoEnrolmentKey).flatMap(_.getIdentifier(ninoIdentifierKey)).map(_.value).get,

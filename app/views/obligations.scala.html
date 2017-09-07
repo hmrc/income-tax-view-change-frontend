@@ -22,7 +22,7 @@
 @import views.helpers.ObligationsPage
 @import views.helpers.ObligationRenderHelper.subsetObligations
 
-@(bizObs: Option[ObligationsModel], propObs: Option[ObligationsModel])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel, serviceInfo: Html)
+@(bizObs: Option[ObligationsModel], propObs: Option[ObligationsModel])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
 
 @sidebar = {
     @sidebarHelper(ObligationsPage, sources)

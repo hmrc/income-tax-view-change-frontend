@@ -23,7 +23,6 @@ import controllers.BaseController
 import models.IncomeSourcesModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Request, Result}
-import play.twirl.api.Html
 
 import scala.concurrent.Future
 
@@ -38,11 +37,10 @@ class AsyncActionPredicate @Inject()(implicit val messagesApi: MessagesApi,
     Action.async { implicit request =>
       sessionTimeoutPredicate.checkSessionTimeout {
         authenticationPredicate.authorisedUser { implicit user =>
-            incomeSourceDetailsPredicate.retrieveIncomeSources { implicit sources =>
-              action(request)(user)(sources)
-            }
+          incomeSourceDetailsPredicate.retrieveIncomeSources { implicit sources =>
+            action(request)(user)(sources)
           }
         }
       }
-
+    }
 }

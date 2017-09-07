@@ -20,7 +20,7 @@ import java.time.LocalDate
 import helpers.ComponentSpecBase
 import helpers.IntegrationTestConstants.GetObligationsData._
 import helpers.IntegrationTestConstants._
-import helpers.servicemocks.{AuthStub, BtaPartialStub, SelfAssessmentStub, UserDetailsStub}
+import helpers.servicemocks.{AuthStub, SelfAssessmentStub, UserDetailsStub}
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
@@ -39,9 +39,6 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
           And("I wiremock stub a response from the User Details service")
           UserDetailsStub.stubGetUserDetails()
-
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
 
           And("I wiremock stub a success business details response")
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -88,9 +85,6 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
           And("I wiremock stub a response from the User Details service")
           UserDetailsStub.stubGetUserDetails()
-
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
 
           And("I wiremock stub a success business details response")
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -147,9 +141,6 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
           And("I wiremock stub a response from the User Details service")
           UserDetailsStub.stubGetUserDetails()
-
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
 
           And("I wiremock stub a success business details response")
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -211,9 +202,6 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           And("I wiremock stub a response from the User Details service")
           UserDetailsStub.stubGetUserDetails()
 
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
-
           And("I wiremock stub no business details as an income source")
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.emptyBusinessDetailsResponse())
 
@@ -259,9 +247,6 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
           And("I wiremock stub a Error Response from the User Details service")
           UserDetailsStub.stubGetUserDetailsError()
-
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
 
           And("I wiremock stub a success business details response")
           SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))

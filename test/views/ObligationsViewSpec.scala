@@ -38,15 +38,17 @@ class ObligationsViewSpec extends TestSupport{
   val dummymodel = ObligationsModel(List(model))
 
   lazy val bothPage = views.html.obligations(
-    Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
-  lazy val bizPage  =
-    views.html.obligations(Some(dummymodel), None)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
-  lazy val propPage =
-    views.html.obligations(None, Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
+    Some(dummymodel), Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+  lazy val bizPage  = views.html.obligations(Some(dummymodel), None)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
+  lazy val propPage = views.html.obligations(None, Some(dummymodel))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear)
 
   "The Obligations view" should {
 
     lazy val document = Jsoup.parse(contentAsString(bothPage))
+
+    s"have the user name '$testUserName' in the service info bar" in {
+      document.getElementById("service-info-user-name").text() shouldBe testUserName
+    }
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
