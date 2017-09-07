@@ -154,7 +154,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
 
             elementTextByID(id = "pi-ob-4-start")("1 July 2017"),
             elementTextByID(id = "pi-ob-4-end")("30 September 2017"),
-            elementTextByID(id = "pi-ob-4-status")("Due by 31 October 2017")
+            elementTextByID(id = "pi-ob-4-status")("Due by "+LocalDate.now().plusDays(54).toLongDate)
 
           )
         }
