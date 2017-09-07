@@ -22,7 +22,6 @@ import utils.TestSupport
 import assets.TestConstants._
 import assets.TestConstants.PropertyDetails._
 import assets.TestConstants.IncomeSourceDetails._
-import models.{IncomeSourcesError, NoBusinessIncomeDetails, NoPropertyIncomeDetails}
 class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetailsConnector with MockPropertyDetailsConnector{
 
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, mockPropertysDetailsConnector)
@@ -39,14 +38,14 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
     "a result with just business details is returned" should {
       "return an IncomeSourceDetailsModel with just a business option" in {
         setupMockBusinesslistResult(testNino)(businessesSuccessModel)
-        setupMockPropertyDetailsResult(testNino)(NoPropertyIncomeDetails)
+        setupMockPropertyDetailsResult(testNino)(propertyErrorModel)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe businessIncomeSourceSuccess
       }
     }
     "a result with just property details is returned" should {
       "return an IncomeSourceDetailsModel with just a property option" in {
-        setupMockBusinesslistResult(testNino)(NoBusinessIncomeDetails)
+        setupMockBusinesslistResult(testNino)(businessErrorModel)
         setupMockPropertyDetailsResult(testNino)(propertySuccessModel)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe propertyIncomeSourceSuccess
@@ -54,34 +53,10 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
     }
     "a result with no income source details is returned" should {
       "return an IncomeSourceDetailsModel with no options" in {
-        setupMockBusinesslistResult(testNino)(NoBusinessIncomeDetails)
-        setupMockPropertyDetailsResult(testNino)(NoPropertyIncomeDetails)
+        setupMockBusinesslistResult(testNino)(businessErrorModel)
+        setupMockPropertyDetailsResult(testNino)(propertyErrorModel)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe noIncomeSourceSuccess
-      }
-    }
-    "a result where the Business Income Source Details are error" should {
-      "return an IncomeSourceError" in {
-        setupMockBusinesslistResult(testNino)(businessErrorModel)
-        setupMockPropertyDetailsResult(testNino)(NoPropertyIncomeDetails)
-
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe IncomeSourcesError
-      }
-    }
-    "a result where the Property Income Source Details are error" should {
-      "return an IncomeSourceError" in {
-        setupMockBusinesslistResult(testNino)(NoBusinessIncomeDetails)
-        setupMockPropertyDetailsResult(testNino)(propertyErrorModel)
-
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe IncomeSourcesError
-      }
-    }
-    "a result where Business and Property Income Source Details are error" should {
-      "return an IncomeSourceError" in {
-        setupMockBusinesslistResult(testNino)(businessErrorModel)
-        setupMockPropertyDetailsResult(testNino)(propertyErrorModel)
-
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe IncomeSourcesError
       }
     }
   }

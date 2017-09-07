@@ -17,7 +17,6 @@
 package mocks.services
 
 import assets.TestConstants.BusinessDetails.businessIncomeModel
-import assets.TestConstants.PropertyIncome.propertyIncomeModel
 import assets.TestConstants.testNino
 import models._
 import org.mockito.ArgumentMatchers
@@ -46,8 +45,8 @@ trait MockObligationsService extends UnitSpec with MockitoSugar with BeforeAndAf
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockPropertyObligationsResult(nino: String, propertyIncome: Option[PropertyIncomeModel])(response: ObligationsResponseModel): Unit = {
-    when(mockObligationsService.getPropertyObligations(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(propertyIncome))(ArgumentMatchers.any()))
+  def setupMockPropertyObligationsResult(nino: String)(response: ObligationsResponseModel): Unit = {
+    when(mockObligationsService.getPropertyObligations(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
@@ -85,9 +84,7 @@ trait MockObligationsService extends UnitSpec with MockitoSugar with BeforeAndAf
     ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 
-  def mockNoBusinessIncome(): Unit = setupMockBusinessObligationsResult(testNino, None)(NoObligations)
-
-  def mockPropertySuccess(): Unit = setupMockPropertyObligationsResult(testNino, Some(propertyIncomeModel))(
+  def mockPropertySuccess(): Unit = setupMockPropertyObligationsResult(testNino)(
     ObligationsModel(
       List(
         ObligationModel(
@@ -117,9 +114,7 @@ trait MockObligationsService extends UnitSpec with MockitoSugar with BeforeAndAf
       )
     )
   )
-  def mockPropertyError(): Unit = setupMockPropertyObligationsResult(testNino, Some(propertyIncomeModel))(
+  def mockPropertyError(): Unit = setupMockPropertyObligationsResult(testNino)(
     ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
-
-  def mockNoPropertyIncome(): Unit = setupMockPropertyObligationsResult(testNino, None)(NoObligations)
 }

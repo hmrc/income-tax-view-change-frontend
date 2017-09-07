@@ -39,27 +39,27 @@ class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends Servi
     val url = getPropertyDataUrl(nino)
     Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - GET $url")
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) map {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) flatMap {
       response =>
         response.status match {
           case OK =>
             Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[ObligationsModel].fold(
+            Future.successful(response.json.validate[ObligationsModel].fold(
               invalid => {
                 Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Json Validation Error. Parsing Property Obligation Data Response")
                 ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response")
               },
               valid => valid
-            )
+            ))
           case _ =>
             Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, body: ${response.body}")
             Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Response status: [${response.status}] returned from Property Obligations call")
-            ObligationsErrorModel(response.status, response.body)
+            Future.successful(ObligationsErrorModel(response.status, response.body))
         }
-    } recover {
+    } recoverWith {
       case _ =>
         Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Unexpected future failed error")
-        ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+        Future.successful(ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error"))
     }
   }
 }

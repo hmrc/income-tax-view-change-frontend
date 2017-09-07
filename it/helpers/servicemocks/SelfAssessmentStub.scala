@@ -25,47 +25,42 @@ object SelfAssessmentStub {
 
   val businessDetailsUrl: String => String = nino => s"/ni/$nino/self-employments"
   val propertyDetailsUrl: String => String = nino => s"/ni/$nino/uk-properties"
-  val businessObligationsUrl: (String, String) => String = (nino, selfEmploymentId) => s"/ni/$nino/self-employments/$selfEmploymentId/obligations"
+  val obligationsDataUrl: (String, String) => String = (nino, selfEmploymentId) => s"/ni/$nino/self-employments/$selfEmploymentId/obligations"
   val propertyObligationsUrl: String => String = nino => s"/ni/$nino/uk-properties/obligations"
 
-  //Income Source Details
-  def stubGetBusinessDetails(nino: String, businessDetails: JsValue) : Unit =
+  def stubGetBusinessDetails(nino: String, businessDetails: JsValue) : Unit = {
     WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetails.toString())
+  }
 
-  def stubGetNoBusinessDetails(nino: String) : Unit =
-    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, "[]")
-
-  def stubGetPropertyDetails(nino: String, propertyDetails: JsValue) : Unit =
+  def stubGetPropertyDetails(nino: String, propertyDetails: JsValue) : Unit = {
     WiremockHelper.stubGet(propertyDetailsUrl(nino), Status.OK, propertyDetails.toString())
+  }
 
-  def stubGetNoPropertyDetails(nino: String) : Unit =
-    WiremockHelper.stubGet(propertyDetailsUrl(nino), Status.NOT_FOUND, "{}")
-
-  //Obligations
-  def stubGetBusinessObligations(nino: String, selfEmploymentId: String, business: ObligationsModel): Unit =
-    WiremockHelper.stubGet(businessObligationsUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
-
-  def stubGetPropertyObligations(nino: String, property: ObligationsModel): Unit =
+  def stubGetObligations(nino: String, selfEmploymentId: String, business: ObligationsModel, property: ObligationsModel): Unit = {
+    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
     WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, Json.toJson(property).toString())
+  }
 
-  def stubPropertyObligationsError(nino: String): Unit =
-    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
+  def stubGetOnlyBizObs(nino: String, selfEmploymentId: String, business: ObligationsModel): Unit = {
+    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
+    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, Json.parse( """[]""").toString())
+  }
 
-  def stubBusinessObligationsError(nino: String, selfEmploymentId: String): Unit =
-    WiremockHelper.stubGet(businessObligationsUrl(nino, selfEmploymentId), Status.INTERNAL_SERVER_ERROR, "ISE")
+  def stubGetOnlyPropObs(nino: String, selfEmploymentId: String, property: ObligationsModel): Unit = {
+    WiremockHelper.stubGet(obligationsDataUrl(nino, selfEmploymentId), Status.OK, Json.parse( """[]""").toString())
+    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, Json.toJson(property).toString())
+  }
 
+  def verifyGetObligations(nino: String, selfEmploymentId: String): Unit = {
+    WiremockHelper.verifyGetWithHeader(obligationsDataUrl(nino, selfEmploymentId), "Accept", "application/vnd.hmrc.1.0+json")
+  }
 
-  // Verifications
-  def verifyGetBusinessObligations(nino: String, selfEmploymentId: String): Unit =
-    WiremockHelper.verifyGetWithHeader(businessObligationsUrl(nino, selfEmploymentId), "Accept", "application/vnd.hmrc.1.0+json")
-
-  def verifyGetPropertyObligations(nino: String): Unit =
-    WiremockHelper.verifyGetWithHeader(propertyObligationsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
-
-  def verifyGetBusinessDetails(nino: String): Unit =
+  def verifyGetBusinessDetails(nino: String): Unit = {
     WiremockHelper.verifyGetWithHeader(businessDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
+  }
 
-  def verifyGetPropertyDetails(nino: String): Unit =
+  def verifyGetPropertyDetails(nino: String): Unit = {
     WiremockHelper.verifyGetWithHeader(propertyDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
+  }
 }
 

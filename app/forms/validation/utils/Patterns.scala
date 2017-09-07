@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package forms.validation.utils
 
-import play.api.libs.json.Json
+object Patterns {
 
+  // ISO 8859-1 standard
+  // ASCII range {32 to 126} + {160 to 255} all values inclusive
+  val iso8859_1Regex = """^([\x20-\x7E\xA0-\xFF])*$"""
 
-sealed trait PropertyDetailsResponseModel
-case class PropertyDetailsModel(accountingPeriod: AccountingPeriodModel) extends PropertyDetailsResponseModel
-case class PropertyDetailsErrorModel(code: Int, message: String) extends PropertyDetailsResponseModel
+  val emailRegex = """(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"""
 
-object PropertyDetailsModel {
-  implicit val format = Json.format[PropertyDetailsModel]
-}
+  def validText(text: String): Boolean = text matches iso8859_1Regex
 
-object PropertyDetailsErrorModel {
-  implicit val format = Json.format[PropertyDetailsErrorModel]
+  def validEmail(text: String): Boolean = text matches emailRegex
+
 }

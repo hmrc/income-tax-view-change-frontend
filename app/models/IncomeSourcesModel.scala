@@ -21,12 +21,10 @@ import java.time.LocalDate
 import play.api.libs.json.{Json, OFormat}
 import utils.ImplicitDateFormatter._
 
-sealed trait IncomeSourcesResponseModel
-case object IncomeSourcesError extends IncomeSourcesResponseModel
 case class IncomeSourcesModel(
                               businessDetails: Option[BusinessIncomeModel],
                               propertyDetails: Option[PropertyIncomeModel]
-                            ) extends IncomeSourcesResponseModel {
+                            ) {
 
   val hasPropertyIncome: Boolean = propertyDetails.nonEmpty
   val hasBusinessIncome: Boolean = businessDetails.nonEmpty

@@ -215,7 +215,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
     "authorised with an active enrolment but error response from Get Last Calculation" should {
 
-      "Render the Estimated Tax Liability Error Page" in {
+      "Render an Internal Server Error (ISE)" in {
 
         Given("an authorised user response via wiremock stub")
         AuthStub.stubAuthorised()
@@ -251,14 +251,8 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         res should have(
 
           //Check for a Status OK response (200)
-          httpStatus(OK),
+          httpStatus(INTERNAL_SERVER_ERROR)
 
-          //Check the Page Title
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
-
-          //Check for the correct error message
-          elementTextByID("p1")("We can't display your estimated tax amount at the moment."),
-          elementTextByID("p2")("Try refreshing the page in a few minutes.")
         )
       }
     }

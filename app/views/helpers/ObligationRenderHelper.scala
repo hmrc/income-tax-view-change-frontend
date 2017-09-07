@@ -17,23 +17,15 @@
 package views.helpers
 
 import models._
-import play.api.i18n.Messages
-import play.twirl.api.{Html, HtmlFormat}
-import utils.ImplicitDateFormatter.localDateOrdering
 import utils.ImplicitListMethods
-import views.html.templates.obligations.{obligations_error_template, obligations_template}
+import utils.ImplicitDateFormatter.localDateOrdering
 
 object ObligationRenderHelper extends ImplicitListMethods {
 
-  def renderObligations(obs: ObligationsResponseModel, incomeType: IncomeTypeModel)(implicit messages: Messages): HtmlFormat.Appendable =
-    obs match {
-      case obligations: ObligationsModel => obligations_template(subsetObligations(obligations), incomeType)
-      case _: ObligationsErrorModel => obligations_error_template(incomeType)
-      case _ => Html("")
+  def subsetObligations(obligations: Option[ObligationsModel]): Option[ObligationsModel] =
+    obligations.map { obs =>
+      ObligationsModel(getLatestReceived(obs.obligations) ++ getAllOverdue(obs.obligations) ++ getNextDue(obs.obligations))
     }
-
-  def subsetObligations(obs: ObligationsModel): ObligationsModel =
-    ObligationsModel(getLatestReceived(obs.obligations) ++ getAllOverdue(obs.obligations) ++ getNextDue(obs.obligations))
 
   private def getLatestReceived(obligations: List[ObligationModel]): List[ObligationModel] =
     obligations.filter(_.getObligationStatus == Received).maxItemBy(_.due)
