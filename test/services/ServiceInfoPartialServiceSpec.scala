@@ -16,14 +16,22 @@
 
 package services
 
-import mocks.connectors.MockServiceInfoPartialConnector
-import utils.TestSupport
-import play.twirl.api.Html
 import assets.TestConstants.ServiceInfoPartial._
+import config.FrontendAppConfig
+import mocks.connectors.MockServiceInfoPartialConnector
+import org.jsoup.Jsoup
+import play.api.i18n.MessagesApi
+import play.twirl.api.Html
+import utils.TestSupport
 
 class ServiceInfoPartialServiceSpec extends TestSupport with MockServiceInfoPartialConnector{
 
-  object TestServiceInfoPartialService extends ServiceInfoPartialService(mockServiceInfoPartialConnector)
+  object TestServiceInfoPartialService
+    extends ServiceInfoPartialService()(
+      app.injector.instanceOf[FrontendAppConfig],
+      app.injector.instanceOf[MessagesApi],
+      mockServiceInfoPartialConnector
+    )
 
   "The ServiceInfoPartialService.serviceInfoPartial" when {
     "valid HTML is retrieved from the connector" should {
@@ -33,9 +41,35 @@ class ServiceInfoPartialServiceSpec extends TestSupport with MockServiceInfoPart
       }
     }
     "no HTML is retrieved from the connector" should {
-      "return empty HTML" in {
-        setupMockGetServiceInfoPartial()(Html(""))
-        await(TestServiceInfoPartialService.serviceInfoPartial()) shouldBe Html("")
+
+      setupMockGetServiceInfoPartial()(Html(""))
+
+      val result = await(TestServiceInfoPartialService.serviceInfoPartial()).toString()
+      val document = Jsoup.parse(result.toString)
+
+      "return the fallback HTML" which {
+
+        "has the 'Business taxnhome' link" in {
+          val link = document.getElementById("service-info-home-link")
+          link.text shouldBe "Business tax home"
+          link.attr("href") should endWith ("/business-account")
+        }
+
+        "displays the user's name" in {
+          document.getElementById("service-info-user-name").text shouldBe "Test User"
+        }
+
+        "has the 'Manage Account' link" in {
+          val link = document.getElementById("service-info-manage-account-link")
+          link.text shouldBe "Manage account"
+          link.attr("href") should endWith ("business-account/manage-account")
+        }
+
+        "has the 'Messages' link" in {
+          val link = document.getElementById("service-info-messages-link")
+          link.text shouldBe "Messages"
+          link.attr("href") should endWith ("business-account/messages")
+        }
       }
     }
   }
