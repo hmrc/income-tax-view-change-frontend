@@ -79,7 +79,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
                         totalClass4Charge: BigDecimal,
                         rateBRT: BigDecimal,
                         rateHRT: BigDecimal,
-                        rateART: BigDecimal): JsValue ={
+                        rateART: BigDecimal): JsValue = {
       Json.parse(s"""
         |{
         | "incomeTaxYTD": "$incomeTaxYTD",
@@ -89,11 +89,11 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "totalIncomeReceived": "$totalIncomeReceived",
         | "proportionAllowance": "$proportionAllowance",
         | "totalIncomeOnWhichTaxIsDue": "$totalIncomeOnWhichTaxIsDue",
-        | "payPensionsProfitAtBRT": "$payPensionsProfitAtBRT",
+        | "payPensionsProfitAtBRT": "${payPensionsProfitAtBRT.getOrElse[BigDecimal](0)}",
         | "incomeTaxOnPayPensionsProfitAtBRT": "$incomeTaxOnPayPensionsProfitAtBRT",
-        | "payPensionsProfitAtHRT": "$payPensionsProfitAtHRT",
+        | "payPensionsProfitAtHRT": "${payPensionsProfitAtHRT.getOrElse[BigDecimal](0)}",
         | "incomeTaxOnPayPensionsProfitAtHRT": "$incomeTaxOnPayPensionsProfitAtHRT",
-        | "payPensionsProfitAtART": "$payPensionsProfitAtART",
+        | "payPensionsProfitAtART": "${payPensionsProfitAtART.getOrElse[BigDecimal](0)}",
         | "incomeTaxOnPayPensionsProfitAtART": "$incomeTaxOnPayPensionsProfitAtART",
         | "incomeTaxDue": "$incomeTaxDue",
         | "nationalInsuranceClass2Amount": "$nationalInsuranceClass2Amount",
@@ -123,11 +123,11 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       totalIncomeReceived = 230000,
       proportionAllowance = 11500,
       totalIncomeOnWhichTaxIsDue = 198500,
-      payPensionsProfitAtBRT = Some(20000),
+      payPensionsProfitAtBRT = Some(20000.00),
       incomeTaxOnPayPensionsProfitAtBRT = 4000,
-      payPensionsProfitAtHRT = Some(100000),
+      payPensionsProfitAtHRT = Some(100000.00),
       incomeTaxOnPayPensionsProfitAtHRT = 40000,
-      payPensionsProfitAtART = Some(50000),
+      payPensionsProfitAtART = Some(50000.00),
       incomeTaxOnPayPensionsProfitAtART = 22500,
       incomeTaxDue = 66500,
       nationalInsuranceClass2Amount = 14000,
