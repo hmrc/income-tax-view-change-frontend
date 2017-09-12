@@ -19,7 +19,6 @@ package helpers.servicemocks
 import helpers.{IntegrationTestConstants, WiremockHelper}
 import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
 import play.api.http.Status
-import play.api.i18n.I18nSupport
 
 object IncomeTaxViewChangeStub {
 
