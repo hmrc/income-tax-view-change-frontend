@@ -19,7 +19,6 @@ package helpers.servicemocks
 import helpers.{IntegrationTestConstants, WiremockHelper}
 import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
 import play.api.http.Status
-import play.libs.Json
 
 object IncomeTaxViewChangeStub {
 
@@ -52,7 +51,7 @@ object IncomeTaxViewChangeStub {
 
 
   def stubGetCalcData(nino: String, year: String, calc: CalculationDataModel): Unit = {
-    val financialDataResponse: String =
+    val financialDataResponse =
       IntegrationTestConstants
         .GetCalculationData.successResponse(
         calc.incomeTaxYTD,
@@ -74,7 +73,7 @@ object IncomeTaxViewChangeStub {
         calc.rateBRT,
         calc.rateHRT,
         calc.rateART)
-      .toString()
+        .toString()
     WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, financialDataResponse)
   }
 

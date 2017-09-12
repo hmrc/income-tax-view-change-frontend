@@ -272,6 +272,8 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
       }
     }
 
+
+
     "unauthorised" should {
 
       "redirect to sign in" in {
