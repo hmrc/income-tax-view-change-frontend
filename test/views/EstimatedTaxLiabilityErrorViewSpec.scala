@@ -16,7 +16,7 @@
 
 package views
 
-import assets.Messages.{NoEstimatedTaxLiability => messages, Sidebar => sidebarMessages}
+import assets.Messages.{EstimatedTaxLiabilityError => messages, Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
@@ -32,17 +32,17 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import utils.TestSupport
 
-class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
+class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), Some(propertyIncomeModel))
 
-  "The EstimatedTaxLiability view" should {
+  "The EstimatedTaxLiabilityError view" should {
 
     lazy val page: HtmlFormat.Appendable =
-      views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources, serviceInfo)
+      views.html.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources, serviceInfo)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {
@@ -63,6 +63,10 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
 
       s"has a paragraph with '${messages.p1}'" in {
         estimateSection.getElementById("p1").text() shouldBe messages.p1
+      }
+
+      s"has a paragraph with '${messages.p2}'" in {
+        estimateSection.getElementById("p2").text() shouldBe messages.p2
       }
     }
 

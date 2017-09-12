@@ -22,6 +22,7 @@ import play.api.libs.json.Json
 sealed trait PropertyDetailsResponseModel
 case class PropertyDetailsModel(accountingPeriod: AccountingPeriodModel) extends PropertyDetailsResponseModel
 case class PropertyDetailsErrorModel(code: Int, message: String) extends PropertyDetailsResponseModel
+case object NoPropertyIncomeDetails extends PropertyDetailsResponseModel
 
 object PropertyDetailsModel {
   implicit val format = Json.format[PropertyDetailsModel]

@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms.validation.utils
+@import config.AppConfig
+@import auth.MtdItUser
+@import connectors.ServiceInfoPartialConnector
 
-object Patterns {
+@(user: Option[MtdItUser])(implicit messages: Messages, appConfig: AppConfig, serviceInfo: Html)
 
-  // ISO 8859-1 standard
-  // ASCII range {32 to 126} + {160 to 255} all values inclusive
-  val iso8859_1Regex = """^([\x20-\x7E\xA0-\xFF])*$"""
+@serviceInfo
 
-  val emailRegex = """(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"""
-
-  def validText(text: String): Boolean = text matches iso8859_1Regex
-
-  def validEmail(text: String): Boolean = text matches emailRegex
-
-}

@@ -17,7 +17,7 @@ package controllers
 
 import helpers.ComponentSpecBase
 import helpers.IntegrationTestConstants._
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub, UserDetailsStub}
+import helpers.servicemocks._
 import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
 import play.api.http.Status._
 
@@ -34,6 +34,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         And("I wiremock stub a response from the User Details service")
         UserDetailsStub.stubGetUserDetails()
+
+        And("I wiremock stub a ServiceInfo Partial response")
+        BtaPartialStub.stubGetServiceInfoPartial()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
@@ -123,6 +126,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a Error Response from the User Details service")
         UserDetailsStub.stubGetUserDetailsError()
 
+        And("I wiremock stub a ServiceInfo Partial response")
+        BtaPartialStub.stubGetServiceInfoPartial()
+
         And("a successful Get Last Estimated Tax Liability response via wiremock stub")
         val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
@@ -180,6 +186,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a response from the User Details service")
         UserDetailsStub.stubGetUserDetails()
 
+        And("I wiremock stub a ServiceInfo Partial response")
+        BtaPartialStub.stubGetServiceInfoPartial()
+
         And("a No Data Found response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcNoData(testNino, testYear)
 
@@ -215,13 +224,16 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
     "authorised with an active enrolment but error response from Get Last Calculation" should {
 
-      "Render an Internal Server Error (ISE)" in {
+      "Render the Estimated Tax Liability Error Page" in {
 
         Given("an authorised user response via wiremock stub")
         AuthStub.stubAuthorised()
 
         And("I wiremock stub a response from the User Details service")
         UserDetailsStub.stubGetUserDetails()
+
+        And("I wiremock stub a ServiceInfo Partial response")
+        BtaPartialStub.stubGetServiceInfoPartial()
 
         And("an Error Response response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
@@ -248,8 +260,14 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         res should have(
 
           //Check for a Status OK response (200)
-          httpStatus(INTERNAL_SERVER_ERROR)
+          httpStatus(OK),
 
+          //Check the Page Title
+          pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
+
+          //Check for the correct error message
+          elementTextByID("p1")("We can't display your estimated tax amount at the moment."),
+          elementTextByID("p2")("Try refreshing the page in a few minutes.")
         )
       }
     }

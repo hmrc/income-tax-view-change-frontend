@@ -18,13 +18,14 @@ package controllers
 
 import assets.Messages.{ISE => errorMessages, Obligations => messages}
 import audit.AuditingService
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockObligationsService
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
+import services.ServiceInfoPartialService
 import utils.TestSupport
 
 class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicate with MockObligationsService {
@@ -34,10 +35,12 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
     app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
     mockObligationsService,
+    app.injector.instanceOf[ServiceInfoPartialService],
+    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]
   )
 
-  "The ObligationsController.getObligations function" when {
+  "The ObligationsController.getNextObligation function" when {
 
     "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
@@ -49,7 +52,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         "return Status OK (200)" in {
           mockSingleBusinessIncomeSource()
           mockBusinessSuccess()
-          mockPropertyError()
+          mockNoPropertyIncome()
           status(result) shouldBe Status.OK
         }
 
@@ -69,8 +72,8 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockSingleBusinessIncomeSource()
-          mockBusinessError()
+          mockPropertyIncomeSource()
+          mockNoBusinessIncome()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
         }
@@ -91,7 +94,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockSingleBusinessIncomeSource()
+          mockBothIncomeSources()
           mockBusinessSuccess()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
@@ -112,11 +115,11 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
         lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
-        "return Status INTERNAL_SERVER_ERROR (500)" in {
-          mockSingleBusinessIncomeSource()
-          mockBusinessError()
-          mockPropertyError()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        "return Status OK (200)" in {
+          mockNoIncomeSources()
+          mockNoBusinessIncome()
+          mockNoPropertyIncome()
+          status(result) shouldBe Status.OK
         }
 
         "return HTML" in {
@@ -124,8 +127,8 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the ISE page" in {
-          document.title shouldBe errorMessages.title
+        "render the Obligations page" in {
+          document.title shouldBe messages.title
         }
       }
 

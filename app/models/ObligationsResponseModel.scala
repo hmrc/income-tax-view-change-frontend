@@ -41,6 +41,8 @@ case class ObligationModel(start: LocalDate,
 
 case class ObligationsErrorModel(code: Int, message: String) extends ObligationsResponseModel
 
+case object NoObligations extends ObligationsResponseModel
+
 object ObligationModel {
   implicit val format: OFormat[ObligationModel] = Json.format[ObligationModel]
 }

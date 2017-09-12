@@ -43,6 +43,15 @@ object Messages {
     val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
   }
 
+  // Estimated Tax Liability Error Page Messages
+  object EstimatedTaxLiabilityError {
+    val pageHeading = "Your in-year tax estimate"
+    val taxYear = "2017 to 2018 tax year"
+    val title = taxYear + " " + pageHeading
+    val p1 = "We can't display your estimated tax amount at the moment."
+    val p2 = "Try refreshing the page in a few minutes."
+  }
+
   //Obligations Page Messages
   object Obligations {
     val title = "Your report deadlines"
@@ -51,6 +60,10 @@ object Messages {
     val propertyHeading = "Property income"
     val periodHeading = "Report period"
     val statusHeading = "Report due date"
+    object Errors {
+      val p1 = "We can't display your next report due date at the moment."
+      val p2 = "Try refreshing the page in a few minutes."
+    }
   }
 
   // Timeout Messages
@@ -94,6 +107,12 @@ object Messages {
     val currentEstimate: String => String = amount => "Your estimated tax amount is " + amount
     val currentEstimateYear: (Int, String) => String = (taxYear, amount) => "Your estimated tax amount for " + (taxYear-1) + " to " + taxYear + " is " + amount
     val noEstimate: Int => String = (taxYear) => "Once you've submitted a report using your accounting software, you can view your estimate for " +(taxYear-1)+ " to " +taxYear+ " tax year here."
+    object Error {
+      val estimateErrorP1 = "We can't display your estimated tax amount at the moment."
+      val estimateErrorP2 = "Try refreshing the page in a few minutes."
+      val obligationErrorP1 = "We can't display your next report due date at the moment."
+      val obligationErrorP2 = "Try refreshing the page in a few minutes."
+    }
   }
 
   object NotEnrolled {

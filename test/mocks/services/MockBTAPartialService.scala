@@ -16,12 +16,11 @@
 
 package mocks.services
 
-import models.{BusinessIncomeModel, LastTaxCalculationResponseModel, ObligationsResponseModel}
+import models.{IncomeSourcesModel, LastTaxCalculationResponseModel, ObligationsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import play.api.Logger
 import services.BTAPartialService
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -36,11 +35,11 @@ trait MockBTAPartialService extends UnitSpec with MockitoSugar with BeforeAndAft
     reset(mockBTAPartialService)
   }
 
-  def setupMockGetObligations(nino: String, businessIncome: Option[BusinessIncomeModel])(response: ObligationsResponseModel): Unit =
+  def setupMockGetObligations(nino: String, incomeSources: IncomeSourcesModel)(response: ObligationsResponseModel): Unit =
     when(mockBTAPartialService
-      .getObligations(
+      .getNextObligation(
         ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(businessIncome)
+        ArgumentMatchers.eq(incomeSources)
       )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 

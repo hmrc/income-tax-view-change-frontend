@@ -17,26 +17,38 @@
 @import utils.ImplicitDateFormatter._
 @import views.html.templates.main_template
 @import views.helpers.{ObligationStatusHelper}
-@import views.html.helpers.ObSecHelper
 @import views.html.helpers.sidebarHelper
 @import views.helpers.ObligationsPage
-@import views.helpers.ObligationRenderHelper.subsetObligations
+@import views.helpers.ObligationRenderHelper.renderObligations
+@import models.{BusinessIncome, PropertyIncome}
 
-@(bizObs: Option[ObligationsModel], propObs: Option[ObligationsModel])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel)
+@(bizObs: ObligationsResponseModel, propObs: ObligationsResponseModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel, serviceInfo: Html)
 
 @sidebar = {
     @sidebarHelper(ObligationsPage, sources)
 }
 
+@allObligationsErrored = {
+    <p id="p1">@messages("obligations.error.p1")</p>
+    <p id="p2">@messages("obligations.error.p2")</p>
+}
+
 @main_template(title = messages("obligations.title"), bodyClasses = None, sidebarLinks = Some(sidebar), user = Some(user)) {
 
 <section id="obligations">
+
     <h1 id="page-heading">@messages("obligations.heading")</h1>
 
-    <p id="obligation-intro">@messages("obligations.info")</p>
-
-    @ObSecHelper(subsetObligations(bizObs), "bi")
-    @ObSecHelper(subsetObligations(propObs), "pi")
+    @(bizObs, propObs) match {
+        case (_: ObligationsErrorModel, _: ObligationsErrorModel) => {
+            @allObligationsErrored
+        }
+        case (_,_) => {
+            <p id="obligation-intro">@messages("obligations.info")</p>
+            @renderObligations(bizObs, BusinessIncome)
+            @renderObligations(propObs, PropertyIncome)
+        }
+    }
 </section>
 
 }
