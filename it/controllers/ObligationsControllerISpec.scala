@@ -166,47 +166,95 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
               nElementsWithClass("obligation")(8)
             )
 
-              //Check the 1st obligation data
-//              elementTextByID(id = "bi-ob-1-start")("1 October 2016"),
-//              elementTextByID(id = "bi-ob-1-end")("31 December 2016"),
-//              elementTextByID(id = "bi-ob-1-status")("Received"),
-//
-//              elementTextByID(id = "bi-ob-2-start")("1 January 2017"),
-//              elementTextByID(id = "bi-ob-2-end")("31 March 2017"),
-//              elementTextByID(id = "bi-ob-2-status")("Overdue"),
-//
-//              elementTextByID(id = "bi-ob-3-start")("1 April 2017"),
-//              elementTextByID(id = "bi-ob-3-end")("30 June 2017"),
-//              elementTextByID(id = "bi-ob-3-status")("Overdue"),
-//
-//              elementTextByID(id = "bi-ob-4-start")("1 July 2017"),
-//              elementTextByID(id = "bi-ob-4-end")("30 September 2017"),
-//              elementTextByID(id = "bi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate),
-//              isElementVisibleById("bi-ob-5-status")(false),
-//
-//              elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-//              elementTextByID(id = "sa-link")("View annual returns"),
-//              elementTextByID(id = "service-info-manage-account-link")("Manage account"),
-//              elementTextByID(id = "service-info-messages-link")("Messages"),
-//              elementTextByID(id = "page-heading")("Your report deadlines"),
-//
-//              elementTextByID(id = "pi-ob-1-start")("1 October 2016"),
-//              elementTextByID(id = "pi-ob-1-end")("31 December 2016"),
-//              elementTextByID(id = "pi-ob-1-status")("Received"),
-//
-//              elementTextByID(id = "pi-ob-2-start")("1 January 2017"),
-//              elementTextByID(id = "pi-ob-2-end")("31 March 2017"),
-//              elementTextByID(id = "pi-ob-2-status")("Overdue"),
-//
-//              elementTextByID(id = "pi-ob-3-start")("1 April 2017"),
-//              elementTextByID(id = "pi-ob-3-end")("30 June 2017"),
-//              elementTextByID(id = "pi-ob-3-status")("Overdue"),
-//
-//              elementTextByID(id = "pi-ob-4-start")("1 July 2017"),
-//              elementTextByID(id = "pi-ob-4-end")("30 September 2017"),
-//              elementTextByID(id = "pi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate),
-//              isElementVisibleById("pi-ob-5-status")(false)
-//            )
+            Then("the first obligation data contains")
+            res should have(
+              elementTextByID(id = "bi-ob-1-start")("1 October 2016"),
+              elementTextByID(id = "bi-ob-1-end")("31 December 2016"),
+              elementTextByID(id = "bi-ob-1-status")("Received")
+            )
+
+            Then("the second obligation data contains")
+            res should have(
+              elementTextByID(id = "bi-ob-2-start")("1 January 2017"),
+              elementTextByID(id = "bi-ob-2-end")("31 March 2017"),
+              elementTextByID(id = "bi-ob-2-status")("Overdue")
+            )
+
+            Then("the third obligation data contains")
+            res should have(
+              elementTextByID(id = "bi-ob-3-start")("1 April 2017"),
+              elementTextByID(id = "bi-ob-3-end")("30 June 2017"),
+              elementTextByID(id = "bi-ob-3-status")("Overdue")
+            )
+
+            Then("the fourth obligation data contains")
+            res should have(
+              elementTextByID(id = "bi-ob-4-start")("1 July 2017"),
+              elementTextByID(id = "bi-ob-4-end")("30 September 2017"),
+              elementTextByID(id = "bi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
+
+            )
+
+            Then("the fifth obligation data contains")
+            res should have(
+              elementTextByID(id = "pi-ob-1-start")("1 October 2016"),
+              elementTextByID(id = "pi-ob-1-end")("31 December 2016"),
+              elementTextByID(id = "pi-ob-1-status")("Received")
+            )
+
+            Then("the sixth obligation data contains")
+            res should have(
+              elementTextByID(id = "pi-ob-2-start")("1 January 2017"),
+              elementTextByID(id = "pi-ob-2-end")("31 March 2017"),
+              elementTextByID(id = "pi-ob-2-status")("Overdue")
+            )
+
+            Then("the seventh obligation data contains")
+            res should have(
+              elementTextByID(id = "pi-ob-3-start")("1 April 2017"),
+              elementTextByID(id = "pi-ob-3-end")("30 June 2017"),
+              elementTextByID(id = "pi-ob-3-status")("Overdue")
+            )
+
+            Then("the eight obligation data contains")
+            res should have(
+              elementTextByID(id = "pi-ob-4-start")("1 July 2017"),
+              elementTextByID(id = "pi-ob-4-end")("30 September 2017"),
+              elementTextByID(id = "pi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
+            )
+
+            Then("the View 2017 to 2018 details link is displayed")
+            res should have(
+              elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details")
+            )
+
+            Then("the View annual returns link displayed")
+            res should have(
+              elementTextByID(id = "sa-link")("View annual returns")
+            )
+
+            Then("the Manage account link displayed")
+            res should have(
+              elementTextByID(id = "service-info-manage-account-link")("Manage account")
+            )
+
+
+            Then("the Message link is displayed")
+            res should have(
+              elementTextByID(id = "service-info-messages-link")("Messages")
+            )
+
+            Then("the Your report deadlines link is displayed")
+            res should have(
+              elementTextByID(id = "page-heading")("Your report deadlines")
+            )
+
+            Then("the fifth property and business obligation data are not displayed")
+            res should have(
+              isElementVisibleById("pi-ob-5-status")(false),
+              isElementVisibleById("bi-ob-5-status")(false)
+            )
+
           }
         }
       }
