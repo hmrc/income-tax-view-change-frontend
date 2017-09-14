@@ -71,19 +71,23 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
-          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          Then("the result should have a HTTP status of OK")
           res should have(
+            httpStatus(OK)
+          )
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
+          Then("the BTA page contains the text - Quarterly reporting")
+          res should have(
+            isElementVisibleById("it-quarterly-reporting-heading")(true)
+          )
 
-            //Check Page Title of HTML Response Body
-            isElementVisibleById("it-quarterly-reporting-heading")(true),
+          Then("the BTA page contains the text - Your latest report has been received")
+          res should have(
+            elementTextByID("report-due")("Your latest report has been received")
+          )
 
-            //Check that only the expected obligation message is being shown
-            elementTextByID("report-due")("Your latest report has been received"),
-
-            //Check that only the expected estimate message is being shown
+          Then("the BTA page contains the text - Your estimated tax amount is £90,500")
+          res should have(
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
             isElementVisibleById("current-estimate-2019")(false)
           )
@@ -129,19 +133,23 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
-          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          Then("the result should have a HTTP status of OK")
           res should have(
+            httpStatus(OK)
+          )
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
+          Then("the BTA page contains the text - Quarterly reporting")
+          res should have(
+            isElementVisibleById("it-quarterly-reporting-heading")(true)
+          )
 
-            //Check Page Title of HTML Response Body
-            isElementVisibleById("it-quarterly-reporting-heading")(true),
+          Then("the BTA page contains the text - You have an overdue report")
+          res should have(
+            elementTextByID("report-due")("You have an overdue report")
+          )
 
-            //Check that only the expected obligation message is being shown
-            elementTextByID("report-due")("You have an overdue report"),
-
-            //Check that only the expected estimate message is being shown
+          Then("the BTA page contains the text - Your estimated tax amount is £90,500")
+          res should have(
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
             isElementVisibleById("current-estimate-2019")(false)
           )
