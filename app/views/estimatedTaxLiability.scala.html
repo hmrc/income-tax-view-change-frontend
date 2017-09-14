@@ -62,9 +62,11 @@
             @accordionHelper("calc-breakdown-inner-link", messages("estimated_tax_liability.calc-breakdown.link"), calcBreakdown)
         }
 
-        <p id="changes">
-            @messages("estimated_tax_liability.estimated-tax.changes")
-        </p>
+        <h2>
+            <p id="changes">
+                @messages("estimated_tax_liability.estimated-tax.changes")
+            </p>
+        </h2>
 
         <ul class="bullets">
             <li id="bullet-1">@Html(messages("estimated_tax_liability.estimated-tax.changes.bullet-1", sources.earliestAccountingPeriodStart(taxYear).toLongDate))</li>
