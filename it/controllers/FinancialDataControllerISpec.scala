@@ -84,6 +84,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+        //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
 
         Then("a successful response is returned with the correct estimate")
         res should have(
@@ -98,7 +99,15 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           elementTextByID(id = "service-info-user-name")(testUserName),
 
           //Check the estimated tax amount is correct
-          elementTextByID("in-year-estimate")("£90,500")
+          elementTextByID("in-year-estimate")("£90,500"),
+          elementTextByID("tax-year")("2017 to 2018 tax year"),
+          elementTextByID("it-reference")("XAITSA123456"),
+          elementTextByID("obligations-link")("View report deadlines"),
+          elementTextByID("sa-link")("View annual returns"),
+          elementTextByID("acc-period-start")("1 January 2017"),
+          isElementVisibleById("calc-breakdown-inner-link")(true),
+
+          elementTextByID("total-estimate")("£90,500")
 
           //Commented Out as may be required again later
           //Check the Estimated Calculation Date is correct
