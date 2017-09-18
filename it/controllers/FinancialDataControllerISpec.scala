@@ -86,32 +86,69 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
         //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
 
-        Then("a successful response is returned with the correct estimate")
+        Then("the result should have a HTTP status of OK")
         res should have(
+          httpStatus(OK)
+        )
 
-          //Check for a Status OK response (200)
-          httpStatus(OK),
 
+        Then("the page title is - 2017 to 2018 tax year Your in-year tax estimate")
+        res should have(
           //Check the Page Title
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
+          pageTitle("2017 to 2018 tax year Your in-year tax estimate")
+        )
 
-          //User Name
-          elementTextByID(id = "service-info-user-name")(testUserName),
+        Then("the page displays the logged on user")
+        res should have(
+          elementTextByID(id = "service-info-user-name")(testUserName)
+          )
 
-          //Check the estimated tax amount is correct
-          elementTextByID("in-year-estimate")("£90,500"),
-          elementTextByID("tax-year")("2017 to 2018 tax year"),
-          elementTextByID("it-reference")("XAITSA123456"),
-          elementTextByID("obligations-link")("View report deadlines"),
-          elementTextByID("sa-link")("View annual returns"),
-          elementTextByID("acc-period-start")("1 January 2017"),
+        Then("the displayed in year tax estimate is")
+        res should have(
+          elementTextByID("in-year-estimate")("£90,500")
+        )
+
+        Then("the displayed tax year")
+        res should have(
+          elementTextByID("tax-year")("2017 to 2018 tax year")
+        )
+
+        Then("the Income Tax Reference")
+        res should have(
+          elementTextByID("it-reference")("XAITSA123456")
+        )
+
+        Then("the displayed deadlines link")
+        res should have(
+          elementTextByID("obligations-link")("View report deadlines")
+        )
+
+        Then("the displayed Previous tax years link")
+        res should have(
+          elementTextByID("sa-link")("View annual returns")
+        )
+
+        Then("the text for accounting period start")
+        res should have(
+          elementTextByID("acc-period-start")("1 January 2017")
+        )
+        Then("the page heading text")
+        res should have(
+          elementTextByID("page-heading")("Your in-year tax estimate")
+        )
+
+        Then("the view estimate breakdown section")
+        res should have(
+          elementTextByID("business-profit")("£200,000"),
+          elementTextByID("property-profit")("£10,000"),
+          elementTextByID("personal-allowance")("-£11,500"),
+          elementTextByID("taxable-income")("£198,500"),
+          elementTextByID("nic2-amount")("£10,000"),
+          elementTextByID("nic4-amount")("£14,000"),
+          elementTextByID("total-estimate")("£90,500"),
           isElementVisibleById("calc-breakdown-inner-link")(true),
-
           elementTextByID("total-estimate")("£90,500")
 
-          //Commented Out as may be required again later
-          //Check the Estimated Calculation Date is correct
-          //elementTextByID("in-year-estimate-date")("Estimate up to your 6 July 2017 submission")
         )
       }
     }
