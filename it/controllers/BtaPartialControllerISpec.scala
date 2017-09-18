@@ -86,6 +86,12 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             elementTextByID("report-due")("Your latest report has been received")
           )
 
+          Then("the BTA page contains the following links")
+          res should have(
+            elementTextByID("obligations-link")("View deadlines"),
+            elementTextByID("estimates-link-2018")("View details")
+          )
+
           Then("the BTA page contains the text - Your estimated tax amount is £90,500")
           res should have(
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
