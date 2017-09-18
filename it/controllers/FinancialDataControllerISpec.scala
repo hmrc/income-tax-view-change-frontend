@@ -137,7 +137,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           elementTextByID("page-heading")("Your in-year tax estimate")
         )
 
-        Then("the view estimate section")
+        Then("the view estimate breakdown section")
         res should have(
           elementTextByID("business-profit")("£200,000"),
           elementTextByID("property-profit")("£10,000"),
