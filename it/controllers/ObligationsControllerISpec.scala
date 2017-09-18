@@ -64,29 +64,57 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          Then("the result should have a HTTP status of OK")
           res should have(
+            httpStatus(OK)
+          )
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
+            Then("the page title should be")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
 
-            //Check Page Title of HTML Response Body
-            pageTitle("Your report deadlines"),
-
+          Then("the page should display the correct user")
             //User Name
-            elementTextByID(id = "service-info-user-name")(testUserName),
+          res should have(
+            elementTextByID(id = "service-info-user-name")(testUserName)
+          )
 
-            //Check one obligation section is returned
-            nElementsWithClass("obligation")(1),
+          Then("the page displays one obligation")
+          res should have(
+            nElementsWithClass("obligation")(1)
+          )
 
+          Then("the single business obligation data is")
+          res should have(
             //Check the 1st obligation data
             elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
             elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
-            elementTextByID(id = "bi-ob-1-status")("Received"),
-            elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-            elementTextByID(id = "sa-link")("View annual returns"),
-            elementTextByID(id = "service-info-manage-account-link")("Manage account"),
-            elementTextByID(id = "service-info-messages-link")("Messages"),
+            elementTextByID(id = "bi-ob-1-status")("Received")
+          )
+
+          Then("the page displays the View 2017 to 2018 details link")
+          res should have(
+            elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details")
+          )
+
+          Then("the page displays the View annual returns link")
+          res should have(
+            elementTextByID(id = "sa-link")("View annual returns")
+          )
+
+          Then("the page displays the Manage account link")
+          res should have(
+            elementTextByID(id = "service-info-manage-account-link")("Manage account")
+          )
+
+          Then("the page displays the Message link")
+          res should have(
+            elementTextByID(id = "service-info-messages-link")("Messages")
+          )
+
+          Then("the page should not contain any property obligation")
+          res should have(
             isElementVisibleById("pi-ob")(false)
           )
         }
@@ -118,62 +146,115 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getObligations
 
-            Then("the result should have a HTTP status of OK and a body containing one obligation each for business and property")
+            Then("the result should have a HTTP status of OK")
             res should have(
+              httpStatus(OK)
+            )
 
-              //Check Status OK (200) Result
-              httpStatus(OK),
+            Then("the correct page title is displayed")
+            res should have(
+              pageTitle("Your report deadlines")
+            )
 
-              //Check Page Title of HTML Response Body
-              pageTitle("Your report deadlines"),
+            Then("the correct user is displayed")
+            res should have(
+              elementTextByID(id = "service-info-user-name")(testUserName)
+            )
 
-              //User Name
-              elementTextByID(id = "service-info-user-name")(testUserName),
+            Then("the page displays four business obligations and four property obligations")
+            res should have(
+              nElementsWithClass("obligation")(8)
+            )
 
-              //Check one obligation section is returned
-              nElementsWithClass("obligation")(8),
-
-              //Check the 1st obligation data
+            Then("the first obligation data contains")
+            res should have(
               elementTextByID(id = "bi-ob-1-start")("1 October 2016"),
               elementTextByID(id = "bi-ob-1-end")("31 December 2016"),
-              elementTextByID(id = "bi-ob-1-status")("Received"),
+              elementTextByID(id = "bi-ob-1-status")("Received")
+            )
 
+            Then("the second obligation data contains")
+            res should have(
               elementTextByID(id = "bi-ob-2-start")("1 January 2017"),
               elementTextByID(id = "bi-ob-2-end")("31 March 2017"),
-              elementTextByID(id = "bi-ob-2-status")("Overdue"),
+              elementTextByID(id = "bi-ob-2-status")("Overdue")
+            )
 
+            Then("the third obligation data contains")
+            res should have(
               elementTextByID(id = "bi-ob-3-start")("1 April 2017"),
               elementTextByID(id = "bi-ob-3-end")("30 June 2017"),
-              elementTextByID(id = "bi-ob-3-status")("Overdue"),
+              elementTextByID(id = "bi-ob-3-status")("Overdue")
+            )
 
+            Then("the fourth obligation data contains")
+            res should have(
               elementTextByID(id = "bi-ob-4-start")("1 July 2017"),
               elementTextByID(id = "bi-ob-4-end")("30 September 2017"),
-              elementTextByID(id = "bi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate),
-              isElementVisibleById("bi-ob-5-status")(false),
+              elementTextByID(id = "bi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
 
-              elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-              elementTextByID(id = "sa-link")("View annual returns"),
-              elementTextByID(id = "service-info-manage-account-link")("Manage account"),
-              elementTextByID(id = "service-info-messages-link")("Messages"),
-              elementTextByID(id = "page-heading")("Your report deadlines"),
+            )
 
+            Then("the fifth obligation data contains")
+            res should have(
               elementTextByID(id = "pi-ob-1-start")("1 October 2016"),
               elementTextByID(id = "pi-ob-1-end")("31 December 2016"),
-              elementTextByID(id = "pi-ob-1-status")("Received"),
+              elementTextByID(id = "pi-ob-1-status")("Received")
+            )
 
+            Then("the sixth obligation data contains")
+            res should have(
               elementTextByID(id = "pi-ob-2-start")("1 January 2017"),
               elementTextByID(id = "pi-ob-2-end")("31 March 2017"),
-              elementTextByID(id = "pi-ob-2-status")("Overdue"),
+              elementTextByID(id = "pi-ob-2-status")("Overdue")
+            )
 
+            Then("the seventh obligation data contains")
+            res should have(
               elementTextByID(id = "pi-ob-3-start")("1 April 2017"),
               elementTextByID(id = "pi-ob-3-end")("30 June 2017"),
-              elementTextByID(id = "pi-ob-3-status")("Overdue"),
+              elementTextByID(id = "pi-ob-3-status")("Overdue")
+            )
 
+            Then("the eight obligation data contains")
+            res should have(
               elementTextByID(id = "pi-ob-4-start")("1 July 2017"),
               elementTextByID(id = "pi-ob-4-end")("30 September 2017"),
-              elementTextByID(id = "pi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate),
-              isElementVisibleById("pi-ob-5-status")(false)
+              elementTextByID(id = "pi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
             )
+
+            Then("the View 2017 to 2018 details link is displayed")
+            res should have(
+              elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details")
+            )
+
+            Then("the View annual returns link displayed")
+            res should have(
+              elementTextByID(id = "sa-link")("View annual returns")
+            )
+
+            Then("the Manage account link displayed")
+            res should have(
+              elementTextByID(id = "service-info-manage-account-link")("Manage account")
+            )
+
+
+            Then("the Message link is displayed")
+            res should have(
+              elementTextByID(id = "service-info-messages-link")("Messages")
+            )
+
+            Then("the Your report deadlines link is displayed")
+            res should have(
+              elementTextByID(id = "page-heading")("Your report deadlines")
+            )
+
+            Then("the fifth property and business obligation data are not displayed")
+            res should have(
+              isElementVisibleById("pi-ob-5-status")(false),
+              isElementVisibleById("bi-ob-5-status")(false)
+            )
+
           }
         }
       }
@@ -212,36 +293,71 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          Then("the result should have a HTTP status of OK")
           res should have(
+            httpStatus(OK)
+          )
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
+          Then("the page title should be displayed")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
 
-            //Check Page Title of HTML Response Body
-            pageTitle("Your report deadlines"),
+          Then("the page should display the logged in user")
+          res should have(
+            elementTextByID(id = "service-info-user-name")(testUserName)
+          )
 
-            //User Name
-            elementTextByID(id = "service-info-user-name")(testUserName),
+          Then("the page should contain seven obligations")
+          res should have(
+            nElementsWithClass("obligation")(7)
+          )
 
-            //Check three Obligation sections are returned
-            nElementsWithClass("obligation")(7),
-
-            //Check first obligation
+          Then("the first business obligation displayed is")
+          res should have(
             elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
             elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
-            elementTextByID(id = "bi-ob-1-status")("Received"),
-
-            //Check second obligation
+            elementTextByID(id = "bi-ob-1-status")("Received")
+          )
+          Then("the second business obligation displayed is")
+          res should have(
             elementTextByID(id = "bi-ob-2-start")("6 October 2017"),
             elementTextByID(id = "bi-ob-2-end")("5 January 2018"),
-            elementTextByID(id = "bi-ob-2-status")("Overdue"),
+            elementTextByID(id = "bi-ob-2-status")("Overdue")
+          )
 
-
-            //Check third obligation
+          Then("the third business obligation displayed is")
+          res should have(
             elementTextByID(id = "bi-ob-3-start")("6 July 2017"),
             elementTextByID(id = "bi-ob-3-end")("5 October 2017"),
             elementTextByID(id = "bi-ob-3-status")("Due by " + LocalDate.now().plusDays(1).toLongDate)
+          )
+
+          Then("the first property obligation displayed is")
+          res should have(
+            elementTextByID(id = "pi-ob-1-start")("1 October 2016"),
+            elementTextByID(id = "pi-ob-1-end")("31 December 2016"),
+            elementTextByID(id = "pi-ob-1-status")("Received")
+          )
+          Then("the second property obligation displayed is")
+          res should have(
+            elementTextByID(id = "pi-ob-2-start")("1 January 2017"),
+            elementTextByID(id = "pi-ob-2-end")("31 March 2017"),
+            elementTextByID(id = "pi-ob-2-status")("Overdue")
+          )
+
+          Then("the third property obligation displayed is")
+          res should have(
+            elementTextByID(id = "pi-ob-3-start")("1 April 2017"),
+            elementTextByID(id = "pi-ob-3-end")("30 June 2017"),
+            elementTextByID(id = "pi-ob-3-status")("Overdue")
+          )
+
+          Then("the fourth property obligation displayed is")
+          res should have(
+            elementTextByID(id = "pi-ob-4-start")("1 July 2017"),
+            elementTextByID(id = "pi-ob-4-end")("30 September 2017"),
+            elementTextByID(id = "pi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
           )
         }
       }
@@ -280,40 +396,82 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK and a body containing 1 received, 2 overdue and 1 open obligation")
+          Then("the result should have a HTTP status of OK")
           res should have(
+            httpStatus(OK)
+          )
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
 
-            //Check Page Title of HTML Response Body
-            pageTitle("Your report deadlines"),
+          Then("the page title is displayed")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
 
-            //User Name
-            elementTextByID(id = "service-info-user-name")(testUserName),
+          Then("the logged in user is displayed")
+          res should have(
+            elementTextByID(id = "service-info-user-name")(testUserName)
+          )
 
-            //Check four Obligation sections are returned
-            nElementsWithClass("obligation")(8),
+          Then("eight obligations are displayed")
+          res should have(
+            nElementsWithClass("obligation")(8)
+          )
 
-            //Check first obligation
+          Then("first business obligation displayed is")
+          res should have(
             elementTextByID(id = "bi-ob-1-start")("1 October 2016"),
             elementTextByID(id = "bi-ob-1-end")("31 December 2016"),
-            elementTextByID(id = "bi-ob-1-status")("Received"),
+            elementTextByID(id = "bi-ob-1-status")("Received")
+          )
 
-            //Check second obligation
+          Then("second business obligation displayed is")
+          res should have(
             elementTextByID(id = "bi-ob-2-start")("1 January 2017"),
             elementTextByID(id = "bi-ob-2-end")("31 March 2017"),
-            elementTextByID(id = "bi-ob-2-status")("Overdue"),
+            elementTextByID(id = "bi-ob-2-status")("Overdue")
+          )
 
-            //Check third obligation
+          Then("third business obligation displayed is")
+          res should have(
             elementTextByID(id = "bi-ob-3-start")("1 April 2017"),
             elementTextByID(id = "bi-ob-3-end")("30 June 2017"),
-            elementTextByID(id = "bi-ob-3-status")("Overdue"),
+            elementTextByID(id = "bi-ob-3-status")("Overdue")
+          )
 
-            //Check third obligation
+          Then("fourth business obligation displayed is")
+          res should have(
             elementTextByID(id = "bi-ob-4-start")("1 July 2017"),
             elementTextByID(id = "bi-ob-4-end")("30 September 2017"),
             elementTextByID(id = "bi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
+          )
+
+          Then("first property obligation displayed is")
+          res should have(
+            elementTextByID(id = "pi-ob-1-start")("1 October 2016"),
+            elementTextByID(id = "pi-ob-1-end")("31 December 2016"),
+            elementTextByID(id = "pi-ob-1-status")("Received")
+          )
+
+          Then("second property obligation displayed is")
+          res should have(
+            elementTextByID(id = "pi-ob-2-start")("1 January 2017"),
+            elementTextByID(id = "pi-ob-2-end")("31 March 2017"),
+            elementTextByID(id = "pi-ob-2-status")("Overdue")
+          )
+
+          Then("third property obligation displayed is")
+          res should have(
+            elementTextByID(id = "pi-ob-3-start")("1 April 2017"),
+            elementTextByID(id = "pi-ob-3-end")("30 June 2017"),
+            elementTextByID(id = "pi-ob-3-status")("Overdue")
+          )
+
+          Then("fourth property obligation displayed is")
+          res should have(
+            elementTextByID(id = "pi-ob-4-start")("1 July 2017"),
+            elementTextByID(id = "pi-ob-4-end")("30 September 2017"),
+            elementTextByID(id = "pi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate),
+            isElementVisibleById("pi-ob-5-status")(false)
           )
         }
       }
@@ -352,22 +510,28 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
-          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          Then("the result should have a HTTP status of OK")
           res should have(
-
-            //Check Status OK (200) Result
-            httpStatus(OK),
-
+            httpStatus(OK)
+          )
             //Check Page Title of HTML Response Body
-            pageTitle("Your report deadlines"),
+          Then("the page title is displayed")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
 
-            //User Name
-            elementTextByID(id = "service-info-user-name")(testUserName),
+           Then("the logged in user is displayed")
+          res should have(
+            elementTextByID(id = "service-info-user-name")(testUserName)
+          )
 
-            //Check one obligation section is returned
-            nElementsWithClass("obligation")(1),
+          Then("One property obligation is displayed")
+          res should have(
+            nElementsWithClass("obligation")(1)
+          )
 
-            //Check the 1st obligation data
+          Then("the single property obligation displayed is")
+          res should have(
             elementTextByID(id = "pi-ob-1-start")("6 April 2017"),
             elementTextByID(id = "pi-ob-1-end")("5 July 2017"),
             elementTextByID(id = "pi-ob-1-status")("Received"),
@@ -407,33 +571,42 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
-          Then("the result should have a HTTP status of OK and a body containing one obligation")
+          Then("the result should have a HTTP status of OK")
           res should have(
+            httpStatus(OK)
+          )
+            Then("the page title is displayed")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
+          Then("the logged in user is displayed")
+          res should have(
+            elementTextByID(id = "service-info-user-name")(testUserName)
+          )
 
-            //Check Page Title of HTML Response Body
-            pageTitle("Your report deadlines"),
 
-            //User Name
-            elementTextByID(id = "service-info-user-name")(testUserName),
+          Then("three obligations are displayed")
+          res should have(
+            nElementsWithClass("obligation")(3)
+          )
 
-            //Check three Obligation sections are returned
-            nElementsWithClass("obligation")(3),
-
-            //Check first obligation
+          Then("the first property obligation is")
+          res should have(
             elementTextByID(id = "pi-ob-1-start")("6 April 2017"),
             elementTextByID(id = "pi-ob-1-end")("5 July 2017"),
-            elementTextByID(id = "pi-ob-1-status")("Received"),
+            elementTextByID(id = "pi-ob-1-status")("Received")
+          )
 
-            //Check second obligation
+          Then("the second property obligation is")
+          res should have(
             elementTextByID(id = "pi-ob-2-start")("6 October 2017"),
             elementTextByID(id = "pi-ob-2-end")("5 January 2018"),
-            elementTextByID(id = "pi-ob-2-status")("Overdue"),
+            elementTextByID(id = "pi-ob-2-status")("Overdue")
+          )
 
-
-            //Check third obligation
+          Then("the third property obligation is")
+          res should have(
             elementTextByID(id = "pi-ob-3-start")("6 July 2017"),
             elementTextByID(id = "pi-ob-3-end")("5 October 2017"),
             elementTextByID(id = "pi-ob-3-status")("Due by " + LocalDate.now().plusDays(1).toLongDate)
@@ -472,37 +645,49 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
-          Then("the result should have a HTTP status of OK and a body containing 1 received, 2 overdue and 1 open obligation")
+          Then("the result should have a HTTP status of OK")
+          res should have(
+            httpStatus(OK)
+          )
+
+          Then("the page title should be")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
+
+          Then("the page displays the correct user")
+          res should have(
+            elementTextByID(id = "service-info-user-name")(testUserName)
+          )
+
+          Then("the page displays four obligations")
           res should have(
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
+            nElementsWithClass("obligation")(4)
+          )
 
-            //Check Page Title of HTML Response Body
-            pageTitle("Your report deadlines"),
-
-            //User Name
-            elementTextByID(id = "service-info-user-name")(testUserName),
-
-            //Check four Obligation sections are returned
-            nElementsWithClass("obligation")(4),
-
-            //Check first obligation
+          Then("the first obligation displayed should be")
+          res should have(
             elementTextByID(id = "pi-ob-1-start")("1 October 2016"),
             elementTextByID(id = "pi-ob-1-end")("31 December 2016"),
-            elementTextByID(id = "pi-ob-1-status")("Received"),
+            elementTextByID(id = "pi-ob-1-status")("Received")
+          )
 
-            //Check second obligation
+          Then("the second obligation displayed should be")
+          res should have(
             elementTextByID(id = "pi-ob-2-start")("1 January 2017"),
             elementTextByID(id = "pi-ob-2-end")("31 March 2017"),
-            elementTextByID(id = "pi-ob-2-status")("Overdue"),
+            elementTextByID(id = "pi-ob-2-status")("Overdue")
+          )
 
-            //Check third obligation
+          Then("the third obligation displayed should be")
+          res should have(
             elementTextByID(id = "pi-ob-3-start")("1 April 2017"),
             elementTextByID(id = "pi-ob-3-end")("30 June 2017"),
-            elementTextByID(id = "pi-ob-3-status")("Overdue"),
-
-            //Check third obligation
+            elementTextByID(id = "pi-ob-3-status")("Overdue")
+          )
+          Then("the fourth obligation dispolayed should be")
+          res should have(
             elementTextByID(id = "pi-ob-4-start")("1 July 2017"),
             elementTextByID(id = "pi-ob-4-end")("30 September 2017"),
             elementTextByID(id = "pi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
@@ -548,24 +733,31 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
-          Then("the result should have a HTTP status of OK and a body containing one obligation for both property and business")
+          Then("the result should have a HTTP status of OK")
           res should have(
 
             //Check Status OK (200) Result
-            httpStatus(OK),
+            httpStatus(OK)
+          )
+          Then("the page title")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
 
-            //Check Page Title of HTML Response Body
-            pageTitle("Your report deadlines"),
+          Then("the page title")
+          res should have(
+            nElementsWithClass("obligation")(2)
+          )
 
-            //Check two obligation sections are returned
-            nElementsWithClass("obligation")(2),
-
-            //Check the business obligation data
+          Then("the single business obligation")
+          res should have(
             elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
             elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
-            elementTextByID(id = "bi-ob-1-status")("Received"),
+            elementTextByID(id = "bi-ob-1-status")("Received")
+          )
 
-            //Check the business obligation data
+          Then("the single property obligation")
+          res should have(
             elementTextByID(id = "pi-ob-1-start")("6 April 2017"),
             elementTextByID(id = "pi-ob-1-end")("5 July 2017"),
             elementTextByID(id = "pi-ob-1-status")("Received")
@@ -604,20 +796,31 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK and a body containing an error message for business obligations")
+          Then("the result should have a HTTP status of Ok")
           res should have(
+            httpStatus(OK)
+          )
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
+          Then("the page title is displayed")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
 
-            //Check Page Title of HTML Response Body
-            pageTitle("Your report deadlines"),
+          Then("the business section is displayed under Business income")
+          res should have(
+            elementTextByID(id = "bi-section")("Business income")
+          )
 
-            //Check the business obligation data
-            elementTextByID(id = "bi-section")("Business income"),
-            elementTextByID(id = "bi-p1")("We can't display your next report due date at the moment."),
+          Then("the page displays the following error message")
+          res should have(
+            elementTextByID(id = "bi-p1")("We can't display your next report due date at the moment.")
+          )
+
+          Then("the page displays the following instruction")
+          res should have(
             elementTextByID(id = "bi-p2")("Try refreshing the page in a few minutes.")
           )
+
         }
       }
 
@@ -652,18 +855,27 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
-          Then("the result should have a HTTP status of OK and a body containing an error message for business obligations")
+          Then("the result should have a HTTP status of OK")
           res should have(
+            httpStatus(OK)
+          )
+          Then("the page title is displayed")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
+          Then("the property section is displayed under Property income")
+          res should have(
+            elementTextByID(id = "pi-section")("Property income")
+          )
 
-            //Check Page Title of HTML Response Body
-            pageTitle("Your report deadlines"),
+          Then("an error message for property obligations is displayed")
+          res should have(
+            elementTextByID(id = "pi-p1")("We can't display your next report due date at the moment.")
+          )
 
-            //Check the business obligation data
-            elementTextByID(id = "pi-section")("Property income"),
-            elementTextByID(id = "pi-p1")("We can't display your next report due date at the moment."),
+          Then("the page displays the following instruction")
+          res should have(
             elementTextByID(id = "pi-p2")("Try refreshing the page in a few minutes.")
           )
         }
@@ -706,16 +918,18 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyObligations(testNino)
 
-          Then("the result should have a HTTP status of OK and a body containing an error message for business obligations")
+          Then("the result should have a HTTP status of OK")
           res should have(
+            httpStatus(OK)
+          )
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
+          Then("the page title is displayed")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
 
-            //Check Page Title of HTML Response Body
-            pageTitle("Your report deadlines"),
-
-            //Check the business obligation data
+          Then("an error message for property obligations is displayed")
+          res should have(
             elementTextByID(id = "p1")("We can't display your next report due date at the moment."),
             elementTextByID(id = "p2")("Try refreshing the page in a few minutes.")
           )

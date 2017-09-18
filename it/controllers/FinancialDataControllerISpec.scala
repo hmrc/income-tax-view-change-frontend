@@ -321,6 +321,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         When("I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
+        Then("the http response for an unauthorised user is returned")
         res should have(
 
           //Check for a Redirect response SEE_OTHER (303)
