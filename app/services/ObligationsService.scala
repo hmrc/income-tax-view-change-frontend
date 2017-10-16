@@ -31,7 +31,9 @@ class ObligationsService @Inject()(val businessObligationDataConnector: Business
                                    val propertyObligationDataConnector: PropertyObligationDataConnector
                                   ) {
 
-  def getBusinessObligations(nino: String, businessIncomeSource: Option[BusinessIncomeModel])(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getBusinessObligations(nino: String,
+                             businessIncomeSource: Option[BusinessIncomeModel]
+                            )(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
     businessIncomeSource match {
       case Some(incomeSource) =>
         Logger.debug(s"[ObligationsService][getBusinessObligations] - Requesting Business Obligation details from connector for user with NINO: $nino")
