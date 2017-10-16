@@ -49,15 +49,15 @@ object IncomeSourcesModel {
 case class BusinessIncomeModel(
                                 selfEmploymentId: String,
                                 tradingName: String,
-                                cessationDate: LocalDate,
+                                cessationDate: Option[LocalDate],
                                 accountingPeriod: AccountingPeriodModel,
-                                obligations: ObligationsModel) extends IncomeModel
+                                obligations: Option[ObligationsResponseModel]) extends IncomeModel
 
 object BusinessIncomeModel {
   implicit val format: OFormat[BusinessIncomeModel] = Json.format[BusinessIncomeModel]
 }
 
-case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, obligations: ObligationsModel) extends IncomeModel
+case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, obligations: Option[ObligationsResponseModel]) extends IncomeModel
 
 object PropertyIncomeModel {
   implicit val format: OFormat[PropertyIncomeModel] = Json.format[PropertyIncomeModel]
@@ -65,7 +65,7 @@ object PropertyIncomeModel {
 
 abstract class IncomeModel {
   def accountingPeriod: AccountingPeriodModel
-  def obligations: ObligationsModel
+  def obligations: Option[ObligationsResponseModel]
 }
 
 

@@ -16,9 +16,10 @@
 
 package services
 
+import java.io
 import javax.inject.{Inject, Singleton}
 
-import connectors.{BusinessDetailsConnector, PropertyDetailsConnector}
+import connectors.{BusinessDetailsConnector, BusinessObligationDataConnector, PropertyDetailsConnector, PropertyObligationDataConnector}
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -28,7 +29,9 @@ import scala.concurrent.Future
 
 @Singleton
 class IncomeSourceDetailsService @Inject()( val businessDetailsConnector: BusinessDetailsConnector,
-                                            val propertyDetailsConnector: PropertyDetailsConnector) {
+                                            val propertyDetailsConnector: PropertyDetailsConnector,
+                                            val businessObligationDataConnector: BusinessObligationDataConnector,
+                                            val propertyObligationDataConnector: PropertyObligationDataConnector) {
 
   def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
     for {
@@ -41,22 +44,57 @@ class IncomeSourceDetailsService @Inject()( val businessDetailsConnector: Busine
       case (_, x:PropertyDetailsErrorModel) =>
         Logger.debug(s"[IncomeSourceDetailsService][getIncomeSourceDetails] Error Model from PropertyDetailsConnector: $x")
         IncomeSourcesError
-      case (x, y) => createIncomeSourcesModel(x, y)
+      case (x, y) => createIncomeSourcesModel(nino, x, y)
     }
   }
 
-  private def createIncomeSourcesModel(business: BusinessListResponseModel, property: PropertyDetailsResponseModel) = {
-    val businessModel = business match {
+  private def createIncomeSourcesModel(nino: String, business: BusinessListResponseModel, property: PropertyDetailsResponseModel) = {
+    val businessIncomeModelListF: Future[List[BusinessIncomeModel]] = business match {
       case x: BusinessDetailsModel =>
-        // TODO: In future, this will need to cater for multiple SE Trade (business) income sources
-        val seTrade = x.business.head
-        Some(BusinessIncomeModel(seTrade.id, seTrade.accountingPeriod, seTrade.tradingName))
-      case _ => None
+       Future.sequence(x.business.map { seTrade =>
+          for {
+            obs <- businessObligationDataConnector.getBusinessObligationData(nino, seTrade.id)
+          } yield {
+            BusinessIncomeModel(seTrade.id, seTrade.tradingName, seTrade.cessationDate, seTrade.accountingPeriod, obligations = Some(obs))
+          }
+        })
     }
-    val propertyModel = property match {
-      case x: PropertyDetailsModel => Some(PropertyIncomeModel(x.accountingPeriod))
-      case _ => None
+
+    val propertyIncomeModelF: Future[Option[PropertyIncomeModel]] = property match {
+      case x: PropertyDetailsModel =>
+        for {
+          obs <- propertyObligationDataConnector.getPropertyObligationData(nino)
+        } yield {
+          Some(PropertyIncomeModel(x.accountingPeriod, obligations = Some(obs)))
+        }
     }
-    IncomeSourcesModel(businessModel, propertyModel)
+
+    for {
+      businessList <- businessIncomeModelListF
+      property <- propertyIncomeModelF
+    } yield {
+      IncomeSourcesModel(businessList ++ property)
+    }
   }
+
+  def getBusinessObligations(nino: String,
+                             businessIncomeSource: Option[BusinessIncomeModel]
+                            )(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+    businessIncomeSource match {
+      case Some(incomeSource) =>
+        Logger.debug(s"[ObligationsService][getBusinessObligations] - Requesting Business Obligation details from connector for user with NINO: $nino")
+        businessObligationDataConnector.getBusinessObligationData(nino, incomeSource.selfEmploymentId)
+      case _ => Future.successful(NoObligations)
+    }
+  }
+
+  def getPropertyObligations(nino: String, propertyIncomeSource: Option[PropertyIncomeModel])(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+    propertyIncomeSource match {
+      case Some(_) =>
+        Logger.debug (s"[ObligationsService][getPropertyObligations] - Requesting Property Obligation details from connectors for user with NINO: $nino")
+        propertyObligationDataConnector.getPropertyObligationData (nino)
+      case _ => Future.successful(NoObligations)
+    }
+  }
+
 }
