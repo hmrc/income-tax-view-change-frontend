@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.PropertyObligationDataConnector
+import connectors.PropertyReportDeadlineDataConnector
 import models.ObligationsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 trait MockPropertyObligationDataConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockPropertyObligationDataConnector: PropertyObligationDataConnector = mock[PropertyObligationDataConnector]
+  val mockPropertyObligationDataConnector: PropertyReportDeadlineDataConnector = mock[PropertyReportDeadlineDataConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

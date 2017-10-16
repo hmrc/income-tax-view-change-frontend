@@ -28,13 +28,13 @@ import utils.TestSupport
 import scala.concurrent.Future
 
 
-class BusinessObligationDataConnectorSpec extends TestSupport with MockHttp {
+class BusinessReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
   val successResponse = HttpResponse(Status.OK, Some(Json.toJson(obligationsDataSuccessModel)))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestBusinessObligationDataConnector extends BusinessObligationDataConnector(mockHttpGet)
+  object TestBusinessObligationDataConnector extends BusinessReportDeadlinesConnector(mockHttpGet)
 
   "BusinessObligationDataConnector.getObligationData" should {
 

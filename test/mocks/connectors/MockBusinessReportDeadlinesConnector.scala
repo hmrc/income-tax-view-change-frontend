@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.BusinessObligationDataConnector
+import connectors.BusinessReportDeadlinesConnector
 import models.ObligationsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -27,9 +27,9 @@ import uk.gov.hmrc.play.test.UnitSpec
 import scala.concurrent.Future
 
 
-trait MockBusinessObligationDataConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockBusinessReportDeadlinesConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockBusinessObligationDataConnector: BusinessObligationDataConnector = mock[BusinessObligationDataConnector]
+  val mockBusinessObligationDataConnector: BusinessReportDeadlinesConnector = mock[BusinessReportDeadlinesConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

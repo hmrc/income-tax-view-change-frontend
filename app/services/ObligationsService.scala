@@ -18,7 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{BusinessObligationDataConnector, PropertyObligationDataConnector}
+import connectors.{BusinessReportDeadlinesConnector, PropertyReportDeadlineDataConnector}
 import models._
 import play.api.Logger
 import play.api.http.Status
@@ -27,8 +27,8 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import scala.concurrent.Future
 
 @Singleton
-class ObligationsService @Inject()(val businessObligationDataConnector: BusinessObligationDataConnector,
-                                   val propertyObligationDataConnector: PropertyObligationDataConnector
+class ObligationsService @Inject()(val businessObligationDataConnector: BusinessReportDeadlinesConnector,
+                                   val propertyObligationDataConnector: PropertyReportDeadlineDataConnector
                                   ) {
 
   def getBusinessObligations(nino: String,

@@ -29,13 +29,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class BusinessObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
+class BusinessReportDeadlinesConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
   lazy val obligationDataUrl: String = baseUrl("self-assessment-api")
   lazy val getObligationDataUrl: (String, String) => String = (nino, selfEmploymentId) =>
     s"$obligationDataUrl/ni/$nino/self-employments/$selfEmploymentId/obligations"
 
-  def getBusinessObligationData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getBusinessReportDeadlineData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     val url = getObligationDataUrl(nino, selfEmploymentId)
     Logger.debug(s"[BusinessObligationDataConnector][getObligationData] - GET $url")

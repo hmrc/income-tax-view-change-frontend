@@ -29,12 +29,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
+class PropertyReportDeadlineDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
   lazy val propertyDataUrl: String = baseUrl("self-assessment-api")
   lazy val getPropertyDataUrl: String => String = nino => s"$propertyDataUrl/ni/$nino/uk-properties/obligations"
 
-  def getPropertyObligationData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getPropertyReportDeadlineData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
 
     val url = getPropertyDataUrl(nino)
     Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - GET $url")

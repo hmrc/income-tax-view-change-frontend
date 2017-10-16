@@ -22,12 +22,12 @@ import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Obligations._
 import assets.TestConstants._
 import assets.TestConstants.PropertyIncome._
-import mocks.connectors.{MockBusinessObligationDataConnector, MockPropertyObligationDataConnector}
+import mocks.connectors.{MockBusinessReportDeadlinesConnector, MockPropertyObligationDataConnector}
 import models._
 import play.api.http.Status
 import utils.TestSupport
 
-class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector with MockPropertyObligationDataConnector {
+class ObligationsServiceSpec extends TestSupport with MockBusinessReportDeadlinesConnector with MockPropertyObligationDataConnector {
 
   object TestObligationsService extends ObligationsService(mockBusinessObligationDataConnector, mockPropertyObligationDataConnector)
 
