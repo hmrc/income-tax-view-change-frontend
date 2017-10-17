@@ -28,9 +28,21 @@ case class IncomeSourcesModel(incomeSources: List[IncomeModel]) extends IncomeSo
   val hasPropertyIncome: Boolean = incomeSources.exists {
     case _: PropertyIncomeModel => true
   }
+
+  val propertySource: Option[PropertyIncomeModel] =
+    if (hasPropertyIncome)
+      incomeSources.collect{case p: PropertyIncomeModel => p}.headOption
+    else None
+
   val hasBusinessIncome: Boolean = incomeSources.exists {
     case _: BusinessIncomeModel => true
   }
+
+  val businessSources: Option[List[BusinessIncomeModel]] =
+    if(hasBusinessIncome)
+      Some(incomeSources.collect{case b: BusinessIncomeModel => b})
+    else None
+
   val hasBothIncomeSources: Boolean = hasPropertyIncome && hasBusinessIncome
 
   val orderedTaxYears: List[Int] = incomeSources.map(_.accountingPeriod.determineTaxYear).sortWith(_ < _).distinct

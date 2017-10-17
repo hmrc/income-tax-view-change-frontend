@@ -30,8 +30,7 @@ import scala.concurrent.Future
 @Singleton
 class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
                                            val propertyDetailsConnector: PropertyDetailsConnector,
-                                           val businessReportDeadlinesConnector: BusinessReportDeadlinesConnector,
-                                           val propertyReportDeadlineDataConnector: PropertyReportDeadlineDataConnector) {
+                                           val reportDeadlinesService: ReportDeadlinesService) {
 
   def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
     for {
@@ -52,53 +51,34 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
                                        business: BusinessListResponseModel,
                                        property: PropertyDetailsResponseModel
                                       )(implicit hc: HeaderCarrier) = {
-    val businessIncomeModelListF: Future[List[BusinessIncomeModel]] = business match {
+    val businessIncomeModelListF: Future[Option[List[BusinessIncomeModel]]] = business match {
       case x: BusinessDetailsModel =>
        Future.sequence(
           for {
             seTrade <- x.business
-            obs <- businessReportDeadlinesConnector.getBusinessReportDeadlineData(nino, seTrade.id)
+            obs <- reportDeadlinesService.getBusinessReportDeadlines(nino, seTrade.id)
           } yield {
             BusinessIncomeModel(seTrade.id, seTrade.tradingName, seTrade.cessationDate, seTrade.accountingPeriod, obligations = Some(obs))
           }
        )
+      case _ => Future.successful(None)
     }
 
     val propertyIncomeModelF: Future[Option[PropertyIncomeModel]] = property match {
       case x: PropertyDetailsModel =>
         for {
-          obs <- propertyReportDeadlineDataConnector.getPropertyReportDeadlineData(nino)
+          obs <- reportDeadlinesService.getPropertyReportDeadlines(nino)
         } yield {
           Some(PropertyIncomeModel(x.accountingPeriod, obligations = Some(obs)))
         }
+      case _ => Future.successful(None)
     }
 
     for {
       businessList <- businessIncomeModelListF
       property <- propertyIncomeModelF
     } yield {
-      IncomeSourcesModel(businessList ++ property)
+      IncomeSourcesModel(List(businessList ++ property).flatten.flatten)
     }
   }
-
-//  def getBusinessObligations(nino: String,
-//                             seTradeId: String
-//                            )(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
-//    businessIncomeSource match {
-//      case Some(incomeSource) =>
-//        Logger.debug(s"[ObligationsService][getBusinessObligations] - Requesting Business Obligation details from connector for user with NINO: $nino")
-//        businessObligationDataConnector.getBusinessObligationData(nino, incomeSource.selfEmploymentId)
-//      case _ => Future.successful(NoObligations)
-//    }
-//  }
-//
-//  def getPropertyObligations(nino: String)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
-//    propertyIncomeSource match {
-//      case Some(_) =>
-//        Logger.debug (s"[ObligationsService][getPropertyObligations] - Requesting Property Obligation details from connectors for user with NINO: $nino")
-//        propertyObligationDataConnector.getPropertyObligationData (nino)
-//      case _ => Future.successful(NoObligations)
-//    }
-//  }
-
 }

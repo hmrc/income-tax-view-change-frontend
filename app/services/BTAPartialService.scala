@@ -32,8 +32,8 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService, va
 
   def getNextObligation(nino: String, incomeSources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
     for{
-      biz <- obligationsService.getBusinessObligations(nino, incomeSources.businessDetails)
-      prop <- obligationsService.getPropertyObligations(nino, incomeSources.propertyDetails)
+      biz <- incomeSources.businessSources
+      prop <- incomeSources.propertySource
     } yield (biz,prop) match {
       case (b: ObligationsModel, p: ObligationsModel) => getMostRecentDueDate(ObligationsModel(b.obligations ++ p.obligations))
       case (b: ObligationsModel, _) => getMostRecentDueDate(ObligationsModel(b.obligations))
