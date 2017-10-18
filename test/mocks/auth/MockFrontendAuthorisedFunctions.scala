@@ -21,10 +21,10 @@ import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.play.http.HeaderCarrier
 import assets.TestConstants.testAuthSuccessResponse
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>

@@ -21,6 +21,7 @@ import com.google.inject.AbstractModule
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost, WSPut}
+import uk.gov.hmrc.http.{ HttpDelete, HttpGet, HttpPatch, HttpPost, HttpPut }
 
 class DIModule extends AbstractModule{
   def configure(): Unit = {

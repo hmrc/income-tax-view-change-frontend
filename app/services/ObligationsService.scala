@@ -22,9 +22,9 @@ import connectors.{BusinessObligationDataConnector, PropertyObligationDataConnec
 import models._
 import play.api.Logger
 import play.api.http.Status
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class ObligationsService @Inject()(val businessObligationDataConnector: BusinessObligationDataConnector,

@@ -22,11 +22,11 @@ import models._
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import play.api.http.Status.OK
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpGet, HttpResponse }
 
 @Singleton
 class BusinessObligationDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {

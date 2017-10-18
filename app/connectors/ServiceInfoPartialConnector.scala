@@ -22,12 +22,12 @@ import config.ItvcHeaderCarrierForPartialsConverter
 import play.api.Logger
 import play.twirl.api.Html
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.HttpGet
 import uk.gov.hmrc.play.partials.HtmlPartial._
 import uk.gov.hmrc.play.partials.{HeaderCarrierForPartials, HtmlPartial}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HttpGet
 
 @Singleton
 class ServiceInfoPartialConnector @Inject()(http: HttpGet,

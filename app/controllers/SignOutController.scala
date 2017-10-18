@@ -23,7 +23,6 @@ import play.api.mvc._
 
 import scala.concurrent.Future
 import com.google.inject.{Inject, Singleton}
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 @Singleton
 class SignOutController @Inject()(implicit val config: AppConfig,

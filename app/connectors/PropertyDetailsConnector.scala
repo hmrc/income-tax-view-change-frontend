@@ -23,11 +23,11 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{OK,NOT_FOUND}
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import utils.ImplicitDateFormatter
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpGet, HttpResponse }
 
 @Singleton
 class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads with ImplicitDateFormatter {

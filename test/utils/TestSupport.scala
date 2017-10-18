@@ -29,11 +29,11 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import uk.gov.hmrc.play.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.{ HeaderCarrier, SessionKeys }
 
 trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar with BeforeAndAfterAll with MaterializerSupport {
   this: Suite =>

@@ -24,9 +24,9 @@ import models._
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.BTAPartialService
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class BTAPartialController @Inject()(implicit val config: AppConfig,

@@ -29,8 +29,8 @@ import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.ObligationsService
-import uk.gov.hmrc.play.http.HeaderCarrier
 import services.{ObligationsService, ServiceInfoPartialService}
+import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,

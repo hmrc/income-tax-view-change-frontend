@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.partials._
 import views.html.feedback.feedback_thankyou
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpGet, HttpReads, HttpResponse }
 
 @Singleton
 class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,

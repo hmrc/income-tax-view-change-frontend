@@ -25,9 +25,9 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import services.ServiceInfoPartialService
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.http.HeaderCarrier
 
 
 trait MockServiceInfoPartialService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {

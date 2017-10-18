@@ -21,9 +21,9 @@ import javax.inject.{Inject, Singleton}
 import connectors.RawResponseReads
 import testOnly.TestOnlyAppConfig
 import testOnly.models.{DataModel, SchemaModel}
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpPost, HttpResponse}
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpPost, HttpResponse }
 
 @Singleton
 class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
