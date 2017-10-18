@@ -17,14 +17,19 @@
 @import config.AppConfig
 @import templates.govuk_wrapper
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(pageTitle: String, heading: String, message: String, scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @contentHeader = {
   <h1>@heading</h1>
 }
 
-@mainContent = {
-  <p>@message</p>
+@defaultScriptElem = {
+  <script type="text/javascript" src=@routes.Assets.at("javascripts/ga-reporting.js")></script>
+  @scriptElem.fold(HtmlFormat.empty)(x => x)
 }
 
-@govuk_wrapper(title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)
+@mainContent = {
+  <p data-metrics="handledError:serviceError:shownErrorPage">@message</p>
+}
+
+@govuk_wrapper(title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent, scriptElem = Some(defaultScriptElem))
