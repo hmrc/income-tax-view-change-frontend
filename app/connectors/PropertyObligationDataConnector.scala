@@ -24,7 +24,7 @@ import play.api.http.Status
 import play.api.http.Status.OK
 import uk.gov.hmrc.play.config.ServicesConfig
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import scala.concurrent.Future
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpGet, HttpResponse }
 
@@ -39,7 +39,7 @@ class PropertyObligationDataConnector @Inject()(val http: HttpGet) extends Servi
     val url = getPropertyDataUrl(nino)
     Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - GET $url")
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) map {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
       response =>
         response.status match {
           case OK =>
