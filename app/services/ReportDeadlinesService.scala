@@ -28,8 +28,8 @@ import scala.concurrent.Future
 
 @Singleton
 class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: BusinessReportDeadlinesConnector,
-                                   val propertyReportDeadlineDataConnector: PropertyReportDeadlineDataConnector
-                                  ) {
+                                       val propertyReportDeadlineDataConnector: PropertyReportDeadlineDataConnector
+                                      ) {
 
   def getBusinessReportDeadlines(nino: String, selfEmploymentId: String)
                                 (implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
@@ -40,8 +40,8 @@ class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: Bus
 
   def getPropertyReportDeadlines(nino: String)
                                 (implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
-        Logger.debug (
-          s"[ReportDeadlinesService][getPropertyReportDeadlineData] - Requesting Property Obligation details from connectors for user with NINO: $nino")
-        propertyReportDeadlineDataConnector.getPropertyReportDeadlineData (nino)
+    Logger.debug (
+      s"[ReportDeadlinesService][getPropertyReportDeadlineData] - Requesting Property Obligation details from connectors for user with NINO: $nino")
+    propertyReportDeadlineDataConnector.getPropertyReportDeadlineData (nino)
   }
 }

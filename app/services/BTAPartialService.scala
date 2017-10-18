@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import models._
 import play.api.Logger
+import play.api.http.Status
 import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.ImplicitListMethods
 
@@ -28,19 +29,18 @@ import scala.concurrent.Future
 
 
 @Singleton
-class BTAPartialService @Inject()(val obligationsService: ObligationsService, val financialDataService: FinancialDataService) extends ImplicitListMethods {
+class BTAPartialService @Inject()(val financialDataService: FinancialDataService) extends ImplicitListMethods {
 
-  def getNextObligation(nino: String, incomeSources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
-    for{
-      biz <- incomeSources.businessSources
-      prop <- incomeSources.propertySource
-    } yield (biz,prop) match {
-      case (b: ObligationsModel, p: ObligationsModel) => getMostRecentDueDate(ObligationsModel(b.obligations ++ p.obligations))
-      case (b: ObligationsModel, _) => getMostRecentDueDate(ObligationsModel(b.obligations))
-      case (_, p: ObligationsModel) => getMostRecentDueDate(ObligationsModel(p.obligations))
-      case (_,_) =>
-        Logger.warn("[BTAPartialService][getNextObligation] - No Obligations obtained")
-        ObligationsErrorModel(500, "Could not retrieve obligations")
+  def getNextObligation(sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): ObligationsResponseModel = {
+    if (!sources.hasBusinessIncome && !sources.hasPropertyIncome) {
+      Logger.warn("[BTAPartialService][getNextObligation] - No Obligations obtained")
+      ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Could not retrieve obligations")
+    } else {
+      getMostRecentDueDate(
+        sources.incomeSources.flatMap(_.obligations)
+          .collect{case o: ObligationsModel => o.obligations}
+          .flatten
+      )
     }
   }
 
@@ -54,11 +54,11 @@ class BTAPartialService @Inject()(val obligationsService: ObligationsService, va
     }
   }
 
-  private[BTAPartialService] def getMostRecentDueDate(model: ObligationsModel): ObligationModel = {
-    if(!model.obligations.exists(!_.met)){
-      model.obligations.reduceLeft((x,y) => if(x.due isAfter y.due) x else y)
+  private[BTAPartialService] def getMostRecentDueDate(obligationList: List[ObligationModel]): ObligationModel = {
+    if(!obligationList.exists(!_.met)){
+      obligationList.reduceLeft((x,y) => if(x.due isAfter y.due) x else y)
     } else {
-      model.obligations.filter(!_.met).reduceLeft((x,y) => if(x.due isBefore y.due) x else y)
+      obligationList.filter(!_.met).reduceLeft((x,y) => if(x.due isBefore y.due) x else y)
     }
   }
 
