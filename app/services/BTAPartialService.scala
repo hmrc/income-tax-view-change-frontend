@@ -20,11 +20,11 @@ import javax.inject.{Inject, Singleton}
 
 import models._
 import play.api.Logger
-import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.ImplicitListMethods
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 
 @Singleton

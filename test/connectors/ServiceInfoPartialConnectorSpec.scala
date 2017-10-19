@@ -20,11 +20,11 @@ import assets.TestConstants.ServiceInfoPartial._
 import mocks.MockHttp
 import play.mvc.Http.Status
 import play.twirl.api.Html
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.play.partials.HtmlPartial.{Failure, Success}
 import utils.TestSupport
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HttpResponse
 
 
 class ServiceInfoPartialConnectorSpec extends TestSupport with MockHttp {

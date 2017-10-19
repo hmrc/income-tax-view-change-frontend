@@ -23,6 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core._
 import utils.ImplicitDateFormatter
+import uk.gov.hmrc.auth.core.retrieve._
 
 object TestConstants extends ImplicitDateFormatter {
 
@@ -38,8 +39,8 @@ object TestConstants extends ImplicitDateFormatter {
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
   val testAuthSuccessResponse = new ~(Enrolments(Set(
-    Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated", ConfidenceLevel.L0),
-    Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated", ConfidenceLevel.L0)
+    Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
+    Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
   )),Option(testUserDetailsUrl))
 
   object ServiceInfoPartial {

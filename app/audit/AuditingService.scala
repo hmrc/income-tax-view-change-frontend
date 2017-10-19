@@ -25,12 +25,15 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Failure, Success}
 import uk.gov.hmrc.play.audit.model.DataEvent
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 
 import scala.concurrent.ExecutionContext
+import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: FrontendAuditConnector) {
+
+  implicit val dataEventWrites = Json.writes[DataEvent]
 
   def audit(auditModel: AuditModel, path: String = "N/A")(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path)

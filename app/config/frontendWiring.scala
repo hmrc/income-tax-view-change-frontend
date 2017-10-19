@@ -19,11 +19,11 @@ package config
 import javax.inject.{Inject, Singleton}
 
 import uk.gov.hmrc.auth.core.PlayAuthConnector
-import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
 import uk.gov.hmrc.play.config.{AppName, ServicesConfig}
 import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
+import uk.gov.hmrc.play.frontend.config.LoadAuditingConfig
 
 @Singleton
 class FrontendAuditConnector @Inject()() extends Auditing with AppName {

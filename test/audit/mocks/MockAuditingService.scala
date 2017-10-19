@@ -21,10 +21,10 @@ import audit.models.AuditModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import uk.gov.hmrc.play.http.HeaderCarrier
 import utils.TestSupport
 
 import scala.concurrent.ExecutionContext
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
 
