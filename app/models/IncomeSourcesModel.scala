@@ -23,32 +23,21 @@ import utils.ImplicitDateFormatter._
 
 sealed trait IncomeSourcesResponseModel
 case object IncomeSourcesError extends IncomeSourcesResponseModel
-case class IncomeSourcesModel(incomeSources: List[IncomeModel]) extends IncomeSourcesResponseModel {
+case class IncomeSourcesModel(
+                               businessIncomeSources: List[BusinessIncomeModel],
+                               propertyIncomeSource: Option[PropertyIncomeModel]) extends IncomeSourcesResponseModel {
 
-  val hasPropertyIncome: Boolean = incomeSources.exists {
-    case _: PropertyIncomeModel => true
-  }
+  val incomeSources: List[IncomeModel] = businessIncomeSources ++ propertyIncomeSource
 
-  val propertySource: Option[PropertyIncomeModel] =
-    if (hasPropertyIncome)
-      incomeSources.collect{case p: PropertyIncomeModel => p}.headOption
-    else None
-
-  val hasBusinessIncome: Boolean = incomeSources.exists {
-    case _: BusinessIncomeModel => true
-  }
-
-  val businessSources: Option[List[BusinessIncomeModel]] =
-    if(hasBusinessIncome)
-      Some(incomeSources.collect{case b: BusinessIncomeModel => b})
-    else None
-
+  val hasPropertyIncome: Boolean = propertyIncomeSource.nonEmpty
+  val hasBusinessIncome: Boolean = businessIncomeSources.nonEmpty
   val hasBothIncomeSources: Boolean = hasPropertyIncome && hasBusinessIncome
 
   val orderedTaxYears: List[Int] = incomeSources.map(_.accountingPeriod.determineTaxYear).sortWith(_ < _).distinct
-
   val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
   val lastTaxYear: Option[Int] = orderedTaxYears.lastOption
+
+  val allObligationsErrored: Boolean = !incomeSources.map(_.obligations).exists{case d: ObligationsModel => true}
 
   def earliestAccountingPeriodStart(year: Int): LocalDate = incomeSources.map(_.accountingPeriod.start).min
 }
@@ -63,21 +52,24 @@ case class BusinessIncomeModel(
                                 tradingName: String,
                                 cessationDate: Option[LocalDate],
                                 accountingPeriod: AccountingPeriodModel,
-                                obligations: Option[ObligationsResponseModel]) extends IncomeModel
+                                obligations: ObligationsResponseModel) extends IncomeModel
 
 object BusinessIncomeModel {
   implicit val format: OFormat[BusinessIncomeModel] = Json.format[BusinessIncomeModel]
+  implicit val obsFormat = Json.format[ObligationsResponseModel]
 }
 
-case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, obligations: Option[ObligationsResponseModel]) extends IncomeModel
+case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, obligations: ObligationsResponseModel) extends IncomeModel
 
 object PropertyIncomeModel {
   implicit val format: OFormat[PropertyIncomeModel] = Json.format[PropertyIncomeModel]
+  implicit val obsFormat = Json.format[ObligationsResponseModel]
 }
 
 abstract class IncomeModel {
   def accountingPeriod: AccountingPeriodModel
-  def obligations: Option[ObligationsResponseModel]
+  def obligations: ObligationsResponseModel
 }
+
 
 

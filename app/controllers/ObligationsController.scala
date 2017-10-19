@@ -18,25 +18,23 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter}
 import audit.AuditingService
 import audit.models.ObligationsAuditing.ObligationsAuditModel
 import auth.MtdItUser
-import config.AppConfig
+import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.AsyncActionPredicate
-import models.{IncomeSourcesModel, ObligationsModel}
-import play.api.Logger
+import models.IncomeSourcesModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import services.ObligationsService
+import services.ServiceInfoPartialService
 import uk.gov.hmrc.play.http.HeaderCarrier
-import services.{ObligationsService, ServiceInfoPartialService}
+
+import scala.concurrent.Future
 
 @Singleton
 class ObligationsController @Inject()(implicit val config: AppConfig,
                                       implicit val messagesApi: MessagesApi,
                                       val actionPredicate: AsyncActionPredicate,
-                                      val obligationsService: ObligationsService,
                                       val serviceInfoPartialService: ServiceInfoPartialService,
                                       val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                       val auditingService: AuditingService
@@ -49,10 +47,7 @@ class ObligationsController @Inject()(implicit val config: AppConfig,
         implicit sources =>
           submitData(user, sources)
           serviceInfoPartialService.serviceInfoPartial.flatMap { implicit serviceInfo =>
-            for {
-              business <- obligationsService.getBusinessObligations(user.nino, sources.businessDetails)
-              property <- obligationsService.getPropertyObligations(user.nino, sources.propertyDetails)
-            } yield Ok(views.html.obligations(business, property))
+            Future.successful(Ok(views.html.obligations(sources)))
           }
   }
 

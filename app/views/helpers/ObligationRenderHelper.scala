@@ -25,11 +25,10 @@ import views.html.templates.obligations.{obligations_error_template, obligations
 
 object ObligationRenderHelper extends ImplicitListMethods {
 
-  def renderObligations(obs: ObligationsResponseModel, incomeType: IncomeTypeModel)(implicit messages: Messages): HtmlFormat.Appendable =
+  def renderObligations(obs: ObligationsResponseModel, id: String)(implicit messages: Messages): HtmlFormat.Appendable =
     obs match {
-      case obligations: ObligationsModel => obligations_template(subsetObligations(obligations), incomeType)
-      case _: ObligationsErrorModel => obligations_error_template(incomeType)
-      case _ => Html("")
+      case obligations: ObligationsModel => obligations_template(subsetObligations(obligations), id)
+      case _: ObligationsErrorModel => obligations_error_template(id)
     }
 
   def subsetObligations(obs: ObligationsModel): ObligationsModel =

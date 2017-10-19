@@ -32,14 +32,13 @@ import scala.concurrent.Future
 class BTAPartialService @Inject()(val financialDataService: FinancialDataService) extends ImplicitListMethods {
 
   def getNextObligation(sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): ObligationsResponseModel = {
-    if (!sources.hasBusinessIncome && !sources.hasPropertyIncome) {
+    if (sources.allObligationsErrored) {
       Logger.warn("[BTAPartialService][getNextObligation] - No Obligations obtained")
       ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Could not retrieve obligations")
     } else {
       getMostRecentDueDate(
-        sources.incomeSources.flatMap(_.obligations)
-          .collect{case o: ObligationsModel => o.obligations}
-          .flatten
+        sources.incomeSources.map(_.obligations)
+          .collect{case o: ObligationsModel => o.obligations}.flatten
       )
     }
   }

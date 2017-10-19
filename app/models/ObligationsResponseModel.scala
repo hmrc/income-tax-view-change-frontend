@@ -18,8 +18,7 @@ package models
 
 import java.time.LocalDate
 
-import play.api.Logger
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{JsValue, Json, OFormat}
 
 sealed trait ObligationsResponseModel
 
@@ -41,8 +40,6 @@ case class ObligationModel(start: LocalDate,
 
 case class ObligationsErrorModel(code: Int, message: String) extends ObligationsResponseModel
 
-case object NoObligations extends ObligationsResponseModel
-
 object ObligationModel {
   implicit val format: OFormat[ObligationModel] = Json.format[ObligationModel]
 }
@@ -55,3 +52,20 @@ object ObligationsErrorModel {
   implicit val format: OFormat[ObligationsErrorModel] = Json.format[ObligationsErrorModel]
 }
 
+object ObligationsResponseModel {
+  def unapply(obsRespModel: ObligationsResponseModel): Option[(String, JsValue)] = {
+    val (p: Product, sub) = obsRespModel match {
+      case model: ObligationsModel => (model, Json.toJson(model)(ObligationsModel.format))
+      case model: ObligationModel => (model, Json.toJson(model)(ObligationModel.format))
+      case error: ObligationsErrorModel => (error, Json.toJson(error)(ObligationsErrorModel.format))
+    }
+    Some(p.productPrefix -> sub)
+  }
+  def apply(`class`: String, data: JsValue): ObligationsResponseModel ={
+    (`class` match {
+      case "ObligationsModel" => Json.fromJson[ObligationsModel](data)(ObligationsModel.format)
+      case "ObligationModel" => Json.fromJson[ObligationModel](data)(ObligationModel.format)
+      case "ObligationsErrorModel" => Json.fromJson[ObligationsErrorModel](data)(ObligationsErrorModel.format)
+    }).get
+  }
+}

@@ -16,10 +16,9 @@
 
 package services
 
-import java.io
 import javax.inject.{Inject, Singleton}
 
-import connectors.{BusinessDetailsConnector, BusinessReportDeadlinesConnector, PropertyDetailsConnector, PropertyReportDeadlineDataConnector}
+import connectors.{BusinessDetailsConnector, PropertyDetailsConnector}
 import models._
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -39,37 +38,33 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     } yield (businessDetails, propertyDetails) match {
       case (x: BusinessDetailsErrorModel, _) =>
         Logger.debug(s"[IncomeSourceDetailsService][getIncomeSourceDetails] Error Model from BusinessDetailsConnector: $x")
-        IncomeSourcesError
+        Future.successful(IncomeSourcesError)
       case (_, x:PropertyDetailsErrorModel) =>
         Logger.debug(s"[IncomeSourceDetailsService][getIncomeSourceDetails] Error Model from PropertyDetailsConnector: $x")
-        IncomeSourcesError
-      case (x, y) => createIncomeSourcesModel(nino, x, y)
+        Future.successful(IncomeSourcesError)
+      case (x: BusinessDetailsModel, y) =>
+        createIncomeSourcesModel(nino, x, y)
     }
-  }
+  }.flatMap(x => x)
 
-  private def createIncomeSourcesModel(nino: String,
-                                       business: BusinessListResponseModel,
-                                       property: PropertyDetailsResponseModel
-                                      )(implicit hc: HeaderCarrier) = {
-    val businessIncomeModelListF: Future[Option[List[BusinessIncomeModel]]] = business match {
-      case x: BusinessDetailsModel =>
-       Future.sequence(
-          for {
-            seTrade <- x.business
-            obs <- reportDeadlinesService.getBusinessReportDeadlines(nino, seTrade.id)
-          } yield {
-            BusinessIncomeModel(seTrade.id, seTrade.tradingName, seTrade.cessationDate, seTrade.accountingPeriod, obligations = Some(obs))
-          }
-       )
-      case _ => Future.successful(None)
-    }
+  def createIncomeSourcesModel(nino: String,
+                               businessDetails: BusinessDetailsModel,
+                               property: PropertyDetailsResponseModel
+                              )(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] = {
+
+    val businessIncomeModelListF: Future[List[BusinessIncomeModel]] =
+      Future.sequence(businessDetails.businesses.map { seTrade =>
+        reportDeadlinesService.getBusinessReportDeadlines(nino, seTrade.id).map { obs =>
+          BusinessIncomeModel(seTrade.id, seTrade.tradingName, seTrade.cessationDate, seTrade.accountingPeriod, obs)
+        }
+      })
 
     val propertyIncomeModelF: Future[Option[PropertyIncomeModel]] = property match {
       case x: PropertyDetailsModel =>
         for {
           obs <- reportDeadlinesService.getPropertyReportDeadlines(nino)
         } yield {
-          Some(PropertyIncomeModel(x.accountingPeriod, obligations = Some(obs)))
+          Some(PropertyIncomeModel(x.accountingPeriod, obs))
         }
       case _ => Future.successful(None)
     }
@@ -78,7 +73,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
       businessList <- businessIncomeModelListF
       property <- propertyIncomeModelF
     } yield {
-      IncomeSourcesModel(List(businessList ++ property).flatten.flatten)
+      IncomeSourcesModel(businessList, property)
     }
   }
 }

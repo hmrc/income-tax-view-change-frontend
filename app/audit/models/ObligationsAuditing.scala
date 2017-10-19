@@ -30,11 +30,11 @@ object ObligationsAuditing {
       "mtdid" -> user.mtditid,
       "nino" -> user.nino,
       "hasBusiness" -> sources.hasBusinessIncome.toString,
-      "hasProperty" -> sources.hasPropertyIncome.toString,
-      "bizAccPeriodStart" -> sources.businessDetails.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "bizAccPeriodEnd" -> sources.businessDetails.fold("-")(x => s"${x.accountingPeriod.end}"),
-      "propAccPeriodStart" -> sources.propertyDetails.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "propAccPeriodEnd" -> sources.propertyDetails.fold("-")(x => s"${x.accountingPeriod.end}")
+      "hasProperty" -> sources.hasPropertyIncome.toString
+//      "bizAccPeriodStart" -> sources.businessDetails.fold("-")(x => s"${x.accountingPeriod.start}"),
+//      "bizAccPeriodEnd" -> sources.businessDetails.fold("-")(x => s"${x.accountingPeriod.end}"),
+//      "propAccPeriodStart" -> sources.propertyDetails.fold("-")(x => s"${x.accountingPeriod.start}"),
+//      "propAccPeriodEnd" -> sources.propertyDetails.fold("-")(x => s"${x.accountingPeriod.end}")
     )
     override val auditType: String = obligationAuditType
   }

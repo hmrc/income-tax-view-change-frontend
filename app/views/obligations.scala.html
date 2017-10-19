@@ -22,10 +22,10 @@
 @import views.helpers.ObligationRenderHelper.renderObligations
 @import models.{BusinessIncome, PropertyIncome}
 
-@(bizObs: ObligationsResponseModel, propObs: ObligationsResponseModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel, serviceInfo: Html)
+@(incomeSources: models.IncomeSourcesModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, serviceInfo: Html)
 
 @sidebar = {
-    @sidebarHelper(ObligationsPage, sources)
+    @sidebarHelper(ObligationsPage, incomeSources)
 }
 
 @allObligationsErrored = {
@@ -35,20 +35,32 @@
 
 @main_template(title = messages("obligations.title"), bodyClasses = None, sidebarLinks = Some(sidebar), user = Some(user)) {
 
-<section id="obligations">
+    <section id="obligations">
 
-    <h1 id="page-heading">@messages("obligations.heading")</h1>
+        <h1 id="page-heading">@messages("obligations.heading")</h1>
 
-    @(bizObs, propObs) match {
-        case (_: ObligationsErrorModel, _: ObligationsErrorModel) => {
+        @if(incomeSources.allObligationsErrored) {
             @allObligationsErrored
-        }
-        case (_,_) => {
+        } else {
             <p id="obligation-intro">@messages("obligations.info")</p>
-            @renderObligations(bizObs, BusinessIncome)
-            @renderObligations(propObs, PropertyIncome)
-        }
-    }
-</section>
 
+            <!-- business obligations -->
+            <section>
+                @incomeSources.businessIncomeSources.zipWithIndex.foreach { case (business, i) =>
+                    @defining("bi" + i) { id =>
+                        <h2 id="@{id}-section">@business.tradingName</h2>
+                        @renderObligations(business.obligations, id)
+                    }
+                }
+            </section>
+
+            <!-- Property obligations -->
+            @incomeSources.propertyIncomeSource.map { p =>
+                <section>
+                    <h2 id="pi-section">@Messages("obligations.pi.subheading")</h2>
+                    @renderObligations(p.obligations, "pi")
+                </section>
+            }
+        }
+    </section>
 }

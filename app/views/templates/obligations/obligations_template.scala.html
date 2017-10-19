@@ -14,13 +14,13 @@
  * limitations under the License.
  *@
 
-@import models.{ObligationModel, ObligationsModel, IncomeTypeModel}
+@import models.{ObligationModel, ObligationsModel}
 @import utils.ImplicitDateFormatter._
 @import views.helpers.ObligationStatusHelper
 
-@(model: ObligationsModel, id: IncomeTypeModel)(implicit messages: Messages)
-<section>
-    <h2 id="@{id}-section">@Messages("obligations." + id + ".subheading")</h2>
+@(model: ObligationsModel, id: String)(implicit messages: Messages)
+<!--<section>-->
+    <!--<h2 id="@{id}-section">@Messages("obligations." + id + ".subheading")</h2>-->
     <table>
         <thead>
             <tr>
@@ -43,4 +43,4 @@
             }
         </tbody>
     </table>
-</section>
+<!--</section>-->
