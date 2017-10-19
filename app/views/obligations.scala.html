@@ -46,10 +46,10 @@
 
             <!-- business obligations -->
             <section>
-                @incomeSources.businessIncomeSources.zipWithIndex.foreach { case (business, i) =>
-                    @defining("bi" + i) { id =>
+                @incomeSources.businessIncomeSources.zipWithIndex.map{ case (business, i) =>
+                    @defining("bi" + i.toString) { id =>
                         <h2 id="@{id}-section">@business.tradingName</h2>
-                        @renderObligations(business.obligations, id)
+                        @renderObligations(business.obligations, "thing")
                     }
                 }
             </section>
