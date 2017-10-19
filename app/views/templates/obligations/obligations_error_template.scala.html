@@ -19,6 +19,10 @@
 @(id: IncomeTypeModel)(implicit messages: Messages)
 <section>
     <div class="form-group">
+    @{id match{
+        case _: BusinessIncome.type => <span data-metrics="handledError:obligationsError:noBusinessObs"></span>
+        case _: PropertyIncome.type => <span data-metrics="handledError:obligationsError:noPropertyObs"></span>
+    }}
         <h2 id="@{id}-section">@messages("obligations." + id + ".subheading")</h2>
         <p id="@{id}-p1">@messages("obligations.error.p1")</p>
         <p id="@{id}-p2">@messages("obligations.error.p2")</p>
