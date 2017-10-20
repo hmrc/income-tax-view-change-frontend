@@ -33,7 +33,8 @@ object TestConstants extends ImplicitDateFormatter {
   val testUserDetailsUrl = "/user/oid/potato"
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val testMtdItUserNoUserDetails: MtdItUser = MtdItUser(testMtditid, testNino, None)
-  val testSelfEmploymentId = "XA00001234"
+  val testSelfEmploymentId  = "XA00001234"
+  val testSelfEmploymentId2 = "XA00001235"
   val testTaxCalculationId = "CALCID"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
@@ -77,9 +78,12 @@ object TestConstants extends ImplicitDateFormatter {
 
   object BusinessDetails {
 
+    import ReportDeadlines._
+
     val testBusinessAccountingPeriod = AccountingPeriodModel(start = "2017-6-1", end = "2018-5-30")
     val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = "2017-3-5", end = "2018-3-6")
     val testTradeName = "business"
+    val testTradeName2 = "business"
 
     val business1 = BusinessModel(
       id = testSelfEmploymentId,
@@ -96,8 +100,8 @@ object TestConstants extends ImplicitDateFormatter {
       businessPostcode = Some("ZL1 064")
     )
     val business2 = BusinessModel(
-      id = "5678",
-      accountingPeriod = AccountingPeriodModel(start = "2017-1-1", end = "2017-12-31"),
+      id = testSelfEmploymentId2,
+      accountingPeriod = testBusinessAccountingPeriod,
       accountingType = "CASH",
       commencementDate = Some("2017-1-1"),
       cessationDate = Some("2017-12-31"),
@@ -136,15 +140,15 @@ object TestConstants extends ImplicitDateFormatter {
                    "businessPostcode":"ZL1 064"
                 },
                 {
-                   "id":"5678",
-                   "accountingPeriod":{
-                      "start":"2017-01-01",
-                      "end":"2017-12-31"
-                   },
+                   "id":$testSelfEmploymentId2,
+                      "accountingPeriod":{
+                        "start":"${testBusinessAccountingPeriod.start}",
+                        "end":"${testBusinessAccountingPeriod.end}"
+                      },
                    "accountingType":"CASH",
                    "commencementDate":"2017-01-01",
                    "cessationDate":"2017-12-31",
-                   "tradingName":"otherBusiness",
+                   "tradingName":"$testTradeName2",
                    "businessDescription":"some business",
                    "businessAddressLineOne":"65 Zoo Lane",
                    "businessAddressLineTwo":"Happy Place",
@@ -155,28 +159,60 @@ object TestConstants extends ImplicitDateFormatter {
              ]
           }
       """.stripMargin
-    val businessSuccessJson = Json.parse(businessSuccessString)
+    val businessSuccessJson: JsValue = Json.parse(businessSuccessString)
 
 
     val businessErrorModel = BusinessDetailsErrorModel(testErrorStatus, testErrorMessage)
-    val businessErrorString =
+    val businessErrorString: String =
       s"""
         |{
         |  "code":$testErrorStatus,
         |  "message":"$testErrorMessage"
         |}
       """.stripMargin
-    val businessListErrorJson = Json.parse(businessErrorString)
+    val businessListErrorJson: JsValue = Json.parse(businessErrorString)
 
-    val businessIncomeModel = BusinessIncomeModel(testSelfEmploymentId, testBusinessAccountingPeriod, testTradeName)
-    val business2018IncomeModel = BusinessIncomeModel(testSelfEmploymentId, test2018BusinessAccountingPeriod, testTradeName)
+    val businessIncomeModel =
+      BusinessIncomeModel(
+        testSelfEmploymentId,
+        testTradeName,
+        None,
+        testBusinessAccountingPeriod,
+        obligationsDataSuccessModel
+      )
+
+    val businessIncomeModel2 =
+      BusinessIncomeModel(
+        testSelfEmploymentId2,
+        testTradeName2,
+        None,
+        testBusinessAccountingPeriod,
+        obligationsDataSuccessModel
+      )
+
+    val business2018IncomeModel =
+      BusinessIncomeModel(
+        testSelfEmploymentId,
+        testTradeName,
+        None,
+        test2018BusinessAccountingPeriod,
+        obligationsDataSuccessModel
+      )
+
     val businessIncomeModelAlignedTaxYear =
-      BusinessIncomeModel(testSelfEmploymentId, AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5"), testTradeName)
+      BusinessIncomeModel(
+        testSelfEmploymentId,
+        testTradeName,
+        None,
+        AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5"),
+        obligationsDataSuccessModel
+      )
   }
 
   object PropertyIncome {
     val propertyIncomeModel = PropertyIncomeModel(
-      accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05")
+      accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"),
+      ReportDeadlines.obligationsDataSuccessModel
     )
   }
 
@@ -231,8 +267,8 @@ object TestConstants extends ImplicitDateFormatter {
       met = false
     ))
 
-    val obligationsDataSuccessModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
-    val obligationsDataSuccessString =
+    val obligationsDataSuccessModel: ReportDeadlinesResponseModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
+    val obligationsDataSuccessString: String =
       """
         |{
         |  "obligations": [
@@ -274,14 +310,13 @@ object TestConstants extends ImplicitDateFormatter {
   object IncomeSourceDetails {
 
     //Outputs
-    val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesModel(Some(BusinessDetails.businessIncomeModel), Some(PropertyIncome.propertyIncomeModel))
-    val businessIncomeSourceSuccess = IncomeSourcesModel(Some(BusinessDetails.businessIncomeModel), None)
-    val business2018IncomeSourceSuccess = IncomeSourcesModel(Some(BusinessDetails.business2018IncomeModel), None)
-    val propertyIncomeSourceSuccess = IncomeSourcesModel(None, Some(PropertyIncome.propertyIncomeModel))
-    val noIncomeSourceSuccess = IncomeSourcesModel(None, None)
+    val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesModel(List(BusinessDetails.businessIncomeModel), Some(PropertyIncome.propertyIncomeModel))
+    val businessIncomeSourceSuccess = IncomeSourcesModel(List(BusinessDetails.businessIncomeModel), None)
+    val business2018IncomeSourceSuccess = IncomeSourcesModel(List(BusinessDetails.business2018IncomeModel), None)
+    val propertyIncomeSourceSuccess = IncomeSourcesModel(List.empty, Some(PropertyIncome.propertyIncomeModel))
+    val noIncomeSourceSuccess = IncomeSourcesModel(List.empty, None)
     val bothIncomeSourcesSuccessBusinessAligned =
-      IncomeSourcesModel(Some(BusinessDetails.businessIncomeModelAlignedTaxYear), Some(PropertyIncome.propertyIncomeModel))
-
+      IncomeSourcesModel(List(BusinessDetails.businessIncomeModelAlignedTaxYear), Some(PropertyIncome.propertyIncomeModel))
   }
 
   object CalcBreakdown {
