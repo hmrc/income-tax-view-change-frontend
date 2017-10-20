@@ -17,15 +17,18 @@
 package services
 
 import assets.TestConstants.BusinessDetails._
-import mocks.connectors.{MockBusinessDetailsConnector, MockPropertyDetailsConnector}
-import utils.TestSupport
-import assets.TestConstants._
-import assets.TestConstants.PropertyDetails._
 import assets.TestConstants.IncomeSourceDetails._
-import models.{IncomeSourcesError, NoBusinessIncomeDetails, NoPropertyIncomeDetails}
-class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetailsConnector with MockPropertyDetailsConnector{
+import assets.TestConstants.PropertyDetails._
+import assets.TestConstants._
+import mocks.connectors.{MockBusinessDetailsConnector, MockPropertyDetailsConnector}
+import mocks.services.MockReportDeadlinesService
+import models.{IncomeSourcesError, NoPropertyIncomeDetails}
+import utils.TestSupport
 
-  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, mockPropertysDetailsConnector)
+
+class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetailsConnector with MockPropertyDetailsConnector with MockReportDeadlinesService {
+
+  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, mockPropertysDetailsConnector, mockReportDeadlinesService)
 
   "The IncomeSourceDetailsService .getIncomeSourceDetails method" when {
     "a result with both business and property details is returned" should {
@@ -46,7 +49,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
     }
     "a result with just property details is returned" should {
       "return an IncomeSourceDetailsModel with just a property option" in {
-        setupMockBusinesslistResult(testNino)(NoBusinessIncomeDetails)
+        setupMockBusinesslistResult(testNino)(noBusinessDetails)
         setupMockPropertyDetailsResult(testNino)(propertySuccessModel)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe propertyIncomeSourceSuccess
@@ -54,7 +57,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
     }
     "a result with no income source details is returned" should {
       "return an IncomeSourceDetailsModel with no options" in {
-        setupMockBusinesslistResult(testNino)(NoBusinessIncomeDetails)
+        setupMockBusinesslistResult(testNino)(noBusinessDetails)
         setupMockPropertyDetailsResult(testNino)(NoPropertyIncomeDetails)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe noIncomeSourceSuccess
@@ -70,7 +73,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
     }
     "a result where the Property Income Source Details are error" should {
       "return an IncomeSourceError" in {
-        setupMockBusinesslistResult(testNino)(NoBusinessIncomeDetails)
+        setupMockBusinesslistResult(testNino)(noBusinessDetails)
         setupMockPropertyDetailsResult(testNino)(propertyErrorModel)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe IncomeSourcesError

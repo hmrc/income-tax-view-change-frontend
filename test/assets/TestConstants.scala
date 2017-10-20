@@ -111,6 +111,7 @@ object TestConstants extends ImplicitDateFormatter {
     )
 
     val businessesSuccessResponse = List(business1, business2)
+    val noBusinessDetails = BusinessDetailsModel(List())
     val businessSuccessEmptyResponse = "[]"
     val businessesSuccessModel = BusinessDetailsModel(businessesSuccessResponse)
     val businessSuccessString: String =
@@ -205,25 +206,25 @@ object TestConstants extends ImplicitDateFormatter {
 
   object ReportDeadlines {
 
-    def fakeReportDeadlinesModel(m: ObligationModel): ObligationModel = new ObligationModel(m.start,m.end,m.due,m.met) {
+    def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start,m.end,m.due,m.met) {
       override def currentTime() = "2017-10-31"
     }
 
-    val receivedObligation = fakeReportDeadlinesModel(ObligationModel(
+    val receivedObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
       start = "2017-04-01",
       end = "2017-6-30",
       due = "2017-7-31",
       met = true
     ))
 
-    val overdueObligation = fakeReportDeadlinesModel(ObligationModel(
+    val overdueObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
       start = "2017-7-1",
       end = "2017-9-30",
       due = "2017-10-30",
       met = false
     ))
 
-    val openObligation = fakeReportDeadlinesModel(ObligationModel(
+    val openObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
       start = "2017-7-1",
       end = "2017-9-30",
       due = "2017-10-31",

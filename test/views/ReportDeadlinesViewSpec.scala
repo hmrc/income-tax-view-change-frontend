@@ -20,7 +20,7 @@ import assets.Messages.{ReportDeadlines => messages, Sidebar => sidebarMessages}
 import assets.TestConstants.IncomeSourceDetails._
 import assets.TestConstants._
 import config.FrontendAppConfig
-import models.{NoReportDeadlines, ObligationModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
+import models.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
@@ -31,7 +31,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
 
   lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val successModel = ReportDeadlinesModel(List(ObligationModel(
+  val successModel = ReportDeadlinesModel(List(ReportDeadlineModel(
     start = "2017-1-1".toLocalDate,
     end = "2017-3-31".toLocalDate,
     due = "2017-4-5".toLocalDate,
@@ -42,7 +42,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
 
     "The ReportDeadlines view" should {
 
-    lazy val page = views.html.obligations(successModel, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
+    lazy val page = views.html.report_deadlines(successModel, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
     lazy val document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {

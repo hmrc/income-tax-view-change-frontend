@@ -29,22 +29,22 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
     "for the 1st Business" should {
 
       s"have the id set as $testSelfEmploymentId" in {
-        businessesSuccessModel.business.head.id shouldBe testSelfEmploymentId
+        businessesSuccessModel.businesses.head.id shouldBe testSelfEmploymentId
       }
 
       "when calling the method to detrmine the Tax Year to which the accounting periods" in {
-        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2019
+        businessesSuccessModel.businesses.head.accountingPeriod.determineTaxYear shouldBe 2019
       }
     }
 
     "for the 2nd Business" should {
 
       "have the id set as 5678" in {
-        businessesSuccessModel.business.last.id shouldBe "5678"
+        businessesSuccessModel.businesses.last.id shouldBe "5678"
       }
 
       "when calling the method to detrmine the Tax Year to which the accounting periods" in {
-        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2019
+        businessesSuccessModel.businesses.head.accountingPeriod.determineTaxYear shouldBe 2019
       }
     }
 

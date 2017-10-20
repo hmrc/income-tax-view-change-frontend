@@ -22,12 +22,12 @@ import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import assets.TestConstants.PropertyIncome._
-import mocks.connectors.{MockBusinessReportDeadlinesConnector, MockPropertyObligationDataConnector}
+import mocks.connectors.{MockBusinessReportDeadlinesConnector, MockPropertyReportDeadlinesConnector}
 import models._
 import play.api.http.Status
 import utils.TestSupport
 
-class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDeadlinesConnector with MockPropertyObligationDataConnector {
+class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDeadlinesConnector with MockPropertyReportDeadlinesConnector {
 
   object TestReportDeadlinesService extends ReportDeadlinesService(mockBusinessObligationDataConnector, mockPropertyObligationDataConnector)
 
@@ -39,31 +39,15 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDead
 
         "return a valid list of obligations" in {
           setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
-          await(TestReportDeadlinesService.getBusinessReportDeadlines(testNino, Some(businessIncomeModel))) shouldBe obligationsDataSuccessModel
-        }
-      }
-}
-      "does not have a valid list of obligations returned from the connector" should {
-
-        "return a valid list of obligations" in {
-          setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataErrorModel)
-          await(TestReportDeadlinesService.getBusinessReportDeadlines(testNino, Some(businessIncomeModel))) shouldBe obligationsDataErrorModel
+          await(TestReportDeadlinesService.getBusinessReportDeadlines(testNino, testSelfEmploymentId)) shouldBe obligationsDataSuccessModel
         }
       }
     }
+    "does not have a valid list of obligations returned from the connector" should {
 
-
-    "no business income source passed in" should {
-
-      "return NoReportDeadlines case object" in {
-        await(TestReportDeadlinesService.getBusinessReportDeadlines(testNino, None)) shouldBe NoReportDeadlines
-      }
-    }
-
-    "no property income source passed in" should {
-
-      "return NoReportDeadlines case object" in {
-        await(TestReportDeadlinesService.getPropertyReportDeadlines(testNino, None)) shouldBe NoReportDeadlines
+      "return a valid list of obligations" in {
+        setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataErrorModel)
+        await(TestReportDeadlinesService.getBusinessReportDeadlines(testNino, testSelfEmploymentId)) shouldBe obligationsDataErrorModel
       }
     }
   }
@@ -79,19 +63,19 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDead
         val successfulReportDeadlinesResponse =
           ReportDeadlinesModel(
             List(
-              ObligationModel(
+              ReportDeadlineModel(
                 start = "2017-04-01",
                 end = "2017-6-30",
                 due = "2017-7-31",
                 met = true
               ),
-              ObligationModel(
+              ReportDeadlineModel(
                 start = "2017-7-1",
                 end = "2017-9-30",
                 due = "2017-10-30",
                 met = false
               ),
-              ObligationModel(
+              ReportDeadlineModel(
                 start = "2017-7-1",
                 end = "2017-9-30",
                 due = "2017-10-31",
@@ -99,7 +83,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDead
               )
             )
           )
-        await(TestReportDeadlinesService.getPropertyReportDeadlines(testNino, Some(propertyIncomeModel))) shouldBe successfulReportDeadlinesResponse
+        await(TestReportDeadlinesService.getPropertyReportDeadlines(testNino)) shouldBe successfulReportDeadlinesResponse
       }
     }
   }

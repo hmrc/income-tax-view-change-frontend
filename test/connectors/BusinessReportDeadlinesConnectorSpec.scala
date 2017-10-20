@@ -38,8 +38,8 @@ class BusinessReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
   "BusinessObligationDataConnector.getObligationData" should {
 
-    lazy val testUrl = TestBusinessObligationDataConnector.getObligationDataUrl(testNino, testSelfEmploymentId)
-    def result: Future[ReportDeadlinesResponseModel] = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
+    lazy val testUrl = TestBusinessObligationDataConnector.getReportDeadlineDataUrl(testNino, testSelfEmploymentId)
+    def result: Future[ReportDeadlinesResponseModel] = TestBusinessObligationDataConnector.getBusinessReportDeadlineData(testNino, testSelfEmploymentId)
 
     "return a SuccessResponse with JSON in case of sucess" in {
       setupMockHttpGet(testUrl)(successResponse)

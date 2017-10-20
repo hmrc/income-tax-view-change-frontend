@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import scala.concurrent.Future
 
 
-trait MockPropertyObligationDataConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockPropertyReportDeadlinesConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   val mockPropertyObligationDataConnector: PropertyReportDeadlineDataConnector = mock[PropertyReportDeadlineDataConnector]
 
@@ -37,7 +37,7 @@ trait MockPropertyObligationDataConnector extends UnitSpec with MockitoSugar wit
   }
 
   def setupMockPropertyObligation(nino: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockPropertyObligationDataConnector.getPropertyObligationData(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+    when(mockPropertyObligationDataConnector.getPropertyReportDeadlineData(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 

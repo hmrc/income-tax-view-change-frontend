@@ -23,123 +23,123 @@ import assets.TestConstants.Estimates._
 import assets.TestConstants._
 import assets.TestConstants.IncomeSourceDetails._
 import mocks.services.{MockReportDeadlinesService, MockFinancialDataService}
-import models.{ReportDeadlinesModel, ReportDeadlinesErrorModel, ObligationModel}
+import models.{ReportDeadlinesModel, ReportDeadlinesErrorModel, ReportDeadlineModel}
 import utils.TestSupport
 
 class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService with MockReportDeadlinesService {
 
-  object TestBTAPartialService extends BTAPartialService(mockReportDeadlinesService, mockFinancialDataService)
+  object TestBTAPartialService extends BTAPartialService(mockFinancialDataService)
 
   "The BTAPartialService getNextObligation method" when {
 
     "both property and business obligations are returned - business due before property" should {
-      val returnedObligation = ObligationModel(
+      val returnedObligation = ReportDeadlineModel(
         start = "2017-7-1",
         end = "2017-9-30",
         due = "2017-10-30",
         met = false
       )
-      val otherObligation = ObligationModel(
+      val otherObligation = ReportDeadlineModel(
         start = "2017-7-1",
         end = "2017-9-30",
         due = "2017-10-31",
         met = false
       )
-      "return an ObligationModel" in {
+      "return an ReportDeadlineModel" in {
         setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(ReportDeadlinesModel(List(otherObligation, returnedObligation)))
         mockPropertySuccess()
-        await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
+        await(TestBTAPartialService.getNextObligation(bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
       }
     }
 
     "both property and business obligations are returned - property due before business" should {
-      val returnedObligation = ObligationModel(
+      val returnedObligation = ReportDeadlineModel(
         start = "2017-1-1",
         end = "2017-2-1",
         due = "2017-3-1",
         met = false
       )
-      "return an ObligationModel" in {
+      "return an ReportDeadlineModel" in {
         setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(obligationsDataSuccessModel)
         setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(ReportDeadlinesModel(List(returnedObligation)))
-        await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
+        await(TestBTAPartialService.getNextObligation(bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
       }
     }
 
     "both obligations are returned - Received Business obligation returned" should {
-      val returnedObligation = ObligationModel(
+      val returnedObligation = ReportDeadlineModel(
         start = "2017-6-1",
         end = "2017-7-1",
         due = "2017-8-1",
         met = true
       )
-      val otherObligation = ObligationModel(
+      val otherObligation = ReportDeadlineModel(
         start = "2017-6-1",
         end = "2017-7-1",
         due = "2017-7-30",
         met = true
       )
       val obligations = ReportDeadlinesModel(List(receivedObligation, returnedObligation, otherObligation))
-      "return an ObligationModel" in {
+      "return an ReportDeadlineModel" in {
         setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(obligations)
         setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(ReportDeadlinesModel(List(receivedObligation)))
-        await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
+        await(TestBTAPartialService.getNextObligation(bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
       }
     }
 
     "both obligations are returned - Received Property obligation returned" should {
-      val returnedObligation = ObligationModel(
+      val returnedObligation = ReportDeadlineModel(
         start = "2017-6-1",
         end = "2017-7-1",
         due = "2017-8-1",
         met = true
       )
-      val otherObligation = ObligationModel(
+      val otherObligation = ReportDeadlineModel(
         start = "2017-6-1",
         end = "2017-7-1",
         due = "2017-7-30",
         met = true
       )
       val obligations = ReportDeadlinesModel(List(receivedObligation, returnedObligation, otherObligation))
-      "return an ObligationModel" in {
+      "return an ReportDeadlineModel" in {
         setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(ReportDeadlinesModel(List(receivedObligation)))
         setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(obligations)
-        await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
+        await(TestBTAPartialService.getNextObligation(bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
       }
     }
 
     "only business obligations are returned" should {
-      val returnedObligation = ObligationModel(
+      val returnedObligation = ReportDeadlineModel(
         start = "2017-10-06",
         end = "2018-01-05",
         due = "2018-02-05",
         met = false
       )
-      "return an ObligationModel" in {
+      "return an ReportDeadlineModel" in {
         mockBusinessSuccess()
         mockNoPropertyIncome()
-        await(TestBTAPartialService.getNextObligation(testNino, businessIncomeSourceSuccess)) shouldBe returnedObligation
+        await(TestBTAPartialService.getNextObligation(businessIncomeSourceSuccess)) shouldBe returnedObligation
       }
     }
 
     "only property obligations are returned" should {
-      val returnedObligation = ObligationModel(
+      val returnedObligation = ReportDeadlineModel(
         start = "2017-10-06",
         end = "2018-01-05",
         due = "2018-02-05",
         met = false
       )
-      "return an ObligationModel" in {
+      "return an ReportDeadlineModel" in {
         mockNoBusinessIncome()
         mockPropertySuccess()
-        await(TestBTAPartialService.getNextObligation(testNino, propertyIncomeSourceSuccess)) shouldBe returnedObligation
+        await(TestBTAPartialService.getNextObligation(propertyIncomeSourceSuccess)) shouldBe returnedObligation
       }
     }
 
     "no obligations are returned" in {
       mockNoPropertyIncome()
       mockNoBusinessIncome()
-      await(TestBTAPartialService.getNextObligation(testNino, noIncomeSourceSuccess)) shouldBe ReportDeadlinesErrorModel(500,"Could not retrieve obligations")
+      await(TestBTAPartialService.getNextObligation(noIncomeSourceSuccess)) shouldBe ReportDeadlinesErrorModel(500,"Could not retrieve obligations")
     }
   }
 

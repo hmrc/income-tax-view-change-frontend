@@ -38,8 +38,8 @@ class PropertyObligationDataConnectorSpec extends TestSupport with MockHttp {
 
   "PropertyObligationDataConnector.getPropertyData" should {
 
-    lazy val testUrl = TestPropertyObligationDataConnector.getPropertyDataUrl(testNino)
-    def result: Future[ReportDeadlinesResponseModel] = TestPropertyObligationDataConnector.getPropertyObligationData(testNino)
+    lazy val testUrl = TestPropertyObligationDataConnector.getPropertyReportDeadlineDataUrl(testNino)
+    def result: Future[ReportDeadlinesResponseModel] = TestPropertyObligationDataConnector.getPropertyReportDeadlineData(testNino)
 
     "return a SuccessResponse with JSON in case of sucess" in {
       setupMockHttpGet(testUrl)(successResponse)
