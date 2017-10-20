@@ -36,7 +36,7 @@ estimated_tax_liability.no-data                                 = Once you''ve s
 estimated_tax_liability.error.p1                                = We can''t display your estimated tax amount at the moment.
 estimated_tax_liability.error.p2                                = Try refreshing the page in a few minutes.
 
-## Obligations Page ##
+## ReportDeadlines Page ##
 obligations.title                                               = Your report deadlines
 obligations.heading                                             = Your report deadlines
 obligations.info                                                = You must submit a report once every quarter using your accounting software.

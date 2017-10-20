@@ -25,18 +25,18 @@ import utils.ImplicitDateFormatter._
 
 object BtaPartialHelper {
 
-  def showNextObligation(model: ObligationsResponseModel)(implicit messages: Messages, config: AppConfig): String = applyFormGroup {
+  def showNextObligation(model: ReportDeadlinesResponseModel)(implicit messages: Messages, config: AppConfig): String = applyFormGroup {
     model match {
-      case obligation: ObligationModel => {
-        val obligationMessage = obligation.getObligationStatus match {
-          case _: Open => messages("bta_partial.next_due", obligation.due.toLongDate)
+      case reportDeadline: ReportDeadlineModel => {
+        val reportDeadlineMessage = reportDeadline.getReportDeadlineStatus match {
+          case _: Open => messages("bta_partial.next_due", reportDeadline.due.toLongDate)
           case Overdue => messages("bta_partial.next_overdue")
           case Received => messages("bta_partial.next_received")
         }
 
         s"""
-          |<p id="report-due">$obligationMessage</p>
-          |<a data-journey-click="itvcPartial:clickedLink:View Obligations" id="obligations-link" href="${config.itvcFrontendEnvironment + controllers.routes.ObligationsController.getObligations().url}">
+          |<p id="report-due">$reportDeadlineMessage</p>
+          |<a data-journey-click="itvcPartial:clickedLink:View ReportDeadlines" id="obligations-link" href="${config.itvcFrontendEnvironment + controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">
           |${messages("bta_partial.deadlines_link")}</a>"""
       }
       case _ =>

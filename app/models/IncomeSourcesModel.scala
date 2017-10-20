@@ -37,7 +37,10 @@ case class IncomeSourcesModel(
   val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
   val lastTaxYear: Option[Int] = orderedTaxYears.lastOption
 
-  val allObligationsErrored: Boolean = !incomeSources.map(_.obligations).exists{case d: ObligationsModel => true}
+  val allReportDeadlinesErrored: Boolean = !incomeSources.map(_.reportDeadlines).exists {
+    case _: ReportDeadlinesModel => true
+    case _ => false
+  }
 
   def earliestAccountingPeriodStart(year: Int): LocalDate = incomeSources.map(_.accountingPeriod.start).min
 }
@@ -52,23 +55,23 @@ case class BusinessIncomeModel(
                                 tradingName: String,
                                 cessationDate: Option[LocalDate],
                                 accountingPeriod: AccountingPeriodModel,
-                                obligations: ObligationsResponseModel) extends IncomeModel
+                                reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel
 
 object BusinessIncomeModel {
   implicit val format: OFormat[BusinessIncomeModel] = Json.format[BusinessIncomeModel]
-  implicit val obsFormat = Json.format[ObligationsResponseModel]
+  implicit val obsFormat: OFormat[ReportDeadlinesResponseModel] = Json.format[ReportDeadlinesResponseModel]
 }
 
-case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, obligations: ObligationsResponseModel) extends IncomeModel
+case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel
 
 object PropertyIncomeModel {
   implicit val format: OFormat[PropertyIncomeModel] = Json.format[PropertyIncomeModel]
-  implicit val obsFormat = Json.format[ObligationsResponseModel]
+  implicit val obsFormat: OFormat[ReportDeadlinesResponseModel] = Json.format[ReportDeadlinesResponseModel]
 }
 
 abstract class IncomeModel {
   def accountingPeriod: AccountingPeriodModel
-  def obligations: ObligationsResponseModel
+  def reportDeadlines: ReportDeadlinesResponseModel
 }
 
 

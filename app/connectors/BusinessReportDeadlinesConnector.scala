@@ -31,36 +31,37 @@ import scala.concurrent.Future
 @Singleton
 class BusinessReportDeadlinesConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
-  lazy val obligationDataUrl: String = baseUrl("self-assessment-api")
-  lazy val getObligationDataUrl: (String, String) => String = (nino, selfEmploymentId) =>
-    s"$obligationDataUrl/ni/$nino/self-employments/$selfEmploymentId/obligations"
+  lazy val reportDeadlineDataUrl: String = baseUrl("self-assessment-api")
+  lazy val getReportDeadlineDataUrl: (String, String) => String = (nino, selfEmploymentId) =>
+    s"$reportDeadlineDataUrl/ni/$nino/self-employments/$selfEmploymentId/obligations"
 
-  def getBusinessReportDeadlineData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getBusinessReportDeadlineData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
 
-    val url = getObligationDataUrl(nino, selfEmploymentId)
-    Logger.debug(s"[BusinessObligationDataConnector][getObligationData] - GET $url")
+    val url = getReportDeadlineDataUrl(nino, selfEmploymentId)
+    Logger.debug(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) map {
       response =>
         response.status match {
           case OK =>
-            Logger.debug(s"[BusinessObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[ObligationsModel].fold(
+            Logger.debug(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - RESPONSE status: ${response.status}, json: ${response.json}")
+            response.json.validate[ReportDeadlinesModel].fold(
               invalid => {
-                Logger.warn(s"[BusinessObligationDataConnector][getObligationData] - Json Validation Error. Parsing Obligation Data Response")
-                ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response")
+                Logger.warn(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - Json Validation Error. Parsing Report Deadline Data Response")
+                ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadline Data Response")
               },
               valid => valid
             )
           case _ =>
-            Logger.debug(s"[BusinessObligationDataConnector][getObligationData] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(s"[BusinessObligationDataConnector][getObligationData] - Status: [${response.status}] Returned from business obligations call")
-            ObligationsErrorModel(response.status, response.body)
+            Logger.debug(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.warn(
+              s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - Status: [${response.status}] Returned from business report deadlines call")
+            ReportDeadlinesErrorModel(response.status, response.body)
         }
     } recover {
       case _ =>
-        Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Unexpected future failed error")
-        ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+        Logger.warn(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - Unexpected future failed error")
+        ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 

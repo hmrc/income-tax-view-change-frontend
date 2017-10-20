@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import models.{ObligationModel, ObligationsModel}
+@import models.ReportDeadlinesModel
 @import utils.ImplicitDateFormatter._
-@import views.helpers.ObligationStatusHelper
+@import views.helpers.ReportDeadlineStatusHelper
 
-@(model: ObligationsModel, id: String)(implicit messages: Messages)
+@(model: ReportDeadlinesModel, id: String)(implicit messages: Messages)
     <table>
         <thead>
             <tr>
@@ -27,15 +27,15 @@
             </tr>
         </thead>
         <tbody>
-            @model.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
+            @model.obligations.zipWithIndex.map { case (report: ReportDeadlineModel, index: Int) =>
                 <tr class="obligation no-border-bottom">
                     <td>
                         <p>
-                            <span id="@{id}-ob-@{index + 1}-start">@obligation.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@obligation.end.toLongDate</span>
+                            <span id="@{id}-ob-@{index + 1}-start">@report.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@report.end.toLongDate</span>
                         </p>
                     </td>
                     <td id="@{id}-ob-@{index+1}-status">
-                        @ObligationStatusHelper.statusHtml(obligation.getObligationStatus)
+                        @ReportDeadlineStatusHelper.statusHtml(report.getReportDeadlineStatus)
                     </td>
                 </tr>
             }

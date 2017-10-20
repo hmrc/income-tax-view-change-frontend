@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import helpers.{IntegrationTestConstants, WiremockHelper}
-import models.{BusinessDetailsModel, BusinessModel, ObligationsModel}
+import models.{BusinessDetailsModel, BusinessModel, ReportDeadlinesModel}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 
@@ -25,8 +25,8 @@ object SelfAssessmentStub {
 
   val businessDetailsUrl: String => String = nino => s"/ni/$nino/self-employments"
   val propertyDetailsUrl: String => String = nino => s"/ni/$nino/uk-properties"
-  val businessObligationsUrl: (String, String) => String = (nino, selfEmploymentId) => s"/ni/$nino/self-employments/$selfEmploymentId/obligations"
-  val propertyObligationsUrl: String => String = nino => s"/ni/$nino/uk-properties/obligations"
+  val businessReportDeadlinesUrl: (String, String) => String = (nino, selfEmploymentId) => s"/ni/$nino/self-employments/$selfEmploymentId/obligations"
+  val propertyReportDeadlinesUrl: String => String = nino => s"/ni/$nino/uk-properties/obligations"
 
   //Income Source Details
   def stubGetBusinessDetails(nino: String, businessDetails: JsValue) : Unit =
@@ -41,26 +41,26 @@ object SelfAssessmentStub {
   def stubGetNoPropertyDetails(nino: String) : Unit =
     WiremockHelper.stubGet(propertyDetailsUrl(nino), Status.NOT_FOUND, "{}")
 
-  //Obligations
-  def stubGetBusinessObligations(nino: String, selfEmploymentId: String, business: ObligationsModel): Unit =
-    WiremockHelper.stubGet(businessObligationsUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
+  //ReportDeadlines
+  def stubGetBusinessReportDeadlines(nino: String, selfEmploymentId: String, business: ReportDeadlinesModel): Unit =
+    WiremockHelper.stubGet(businessReportDeadlinesUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
 
-  def stubGetPropertyObligations(nino: String, property: ObligationsModel): Unit =
-    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.OK, Json.toJson(property).toString())
+  def stubGetPropertyReportDeadlines(nino: String, property: ReportDeadlinesModel): Unit =
+    WiremockHelper.stubGet(propertyReportDeadlinesUrl(nino), Status.OK, Json.toJson(property).toString())
 
-  def stubPropertyObligationsError(nino: String): Unit =
-    WiremockHelper.stubGet(propertyObligationsUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
+  def stubPropertyReportDeadlinesError(nino: String): Unit =
+    WiremockHelper.stubGet(propertyReportDeadlinesUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
 
-  def stubBusinessObligationsError(nino: String, selfEmploymentId: String): Unit =
-    WiremockHelper.stubGet(businessObligationsUrl(nino, selfEmploymentId), Status.INTERNAL_SERVER_ERROR, "ISE")
+  def stubBusinessReportDeadlinesError(nino: String, selfEmploymentId: String): Unit =
+    WiremockHelper.stubGet(businessReportDeadlinesUrl(nino, selfEmploymentId), Status.INTERNAL_SERVER_ERROR, "ISE")
 
 
   // Verifications
-  def verifyGetBusinessObligations(nino: String, selfEmploymentId: String): Unit =
-    WiremockHelper.verifyGetWithHeader(businessObligationsUrl(nino, selfEmploymentId), "Accept", "application/vnd.hmrc.1.0+json")
+  def verifyGetBusinessReportDeadlines(nino: String, selfEmploymentId: String): Unit =
+    WiremockHelper.verifyGetWithHeader(businessReportDeadlinesUrl(nino, selfEmploymentId), "Accept", "application/vnd.hmrc.1.0+json")
 
-  def verifyGetPropertyObligations(nino: String): Unit =
-    WiremockHelper.verifyGetWithHeader(propertyObligationsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
+  def verifyGetPropertyReportDeadlines(nino: String): Unit =
+    WiremockHelper.verifyGetWithHeader(propertyReportDeadlinesUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
 
   def verifyGetBusinessDetails(nino: String): Unit =
     WiremockHelper.verifyGetWithHeader(businessDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")

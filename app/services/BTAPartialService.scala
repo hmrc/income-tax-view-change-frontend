@@ -31,14 +31,14 @@ import scala.concurrent.Future
 @Singleton
 class BTAPartialService @Inject()(val financialDataService: FinancialDataService) extends ImplicitListMethods {
 
-  def getNextObligation(sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): ObligationsResponseModel = {
-    if (sources.allObligationsErrored) {
-      Logger.warn("[BTAPartialService][getNextObligation] - No Obligations obtained")
-      ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Could not retrieve obligations")
+  def getNextObligation(sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): ReportDeadlinesResponseModel = {
+    if (sources.allReportDeadlinesErrored) {
+      Logger.warn("[BTAPartialService][getNextObligation] - No ReportDeadlines obtained")
+      ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Could not retrieve obligations")
     } else {
       getMostRecentDueDate(
-        sources.incomeSources.map(_.obligations)
-          .collect{case o: ObligationsModel => o.obligations}.flatten
+        sources.incomeSources.map(_.reportDeadlines)
+          .collect{case o: ReportDeadlinesModel => o.obligations}.flatten
       )
     }
   }
@@ -53,11 +53,11 @@ class BTAPartialService @Inject()(val financialDataService: FinancialDataService
     }
   }
 
-  private[BTAPartialService] def getMostRecentDueDate(obligationList: List[ObligationModel]): ObligationModel = {
-    if(!obligationList.exists(!_.met)){
-      obligationList.reduceLeft((x,y) => if(x.due isAfter y.due) x else y)
+  private[BTAPartialService] def getMostRecentDueDate(reportDeadlinesList: List[ReportDeadlineModel]): ReportDeadlineModel = {
+    if(!reportDeadlinesList.exists(!_.met)){
+      reportDeadlinesList.reduceLeft((x,y) => if(x.due isAfter y.due) x else y)
     } else {
-      obligationList.filter(!_.met).reduceLeft((x,y) => if(x.due isBefore y.due) x else y)
+      reportDeadlinesList.filter(!_.met).reduceLeft((x,y) => if(x.due isBefore y.due) x else y)
     }
   }
 

@@ -32,16 +32,16 @@ class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: Bus
                                       ) {
 
   def getBusinessReportDeadlines(nino: String, selfEmploymentId: String)
-                                (implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+                                (implicit hc: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
     Logger.debug(
       s"[ReportDeadlinesService][getBusinessReportDeadlineData] - Requesting Business Obligation details from connector for user with NINO: $nino")
     businessReportDeadlinesConnector.getBusinessReportDeadlineData(nino, selfEmploymentId)
   }
 
   def getPropertyReportDeadlines(nino: String)
-                                (implicit hc: HeaderCarrier): Future[ObligationsResponseModel] = {
+                                (implicit hc: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
     Logger.debug (
       s"[ReportDeadlinesService][getPropertyReportDeadlineData] - Requesting Property Obligation details from connectors for user with NINO: $nino")
-    propertyReportDeadlineDataConnector.getPropertyReportDeadlineData (nino)
+    propertyReportDeadlineDataConnector.getPropertyReportDeadlineData(nino)
   }
 }

@@ -203,34 +203,34 @@ object TestConstants extends ImplicitDateFormatter {
     val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, 2018)
   }
 
-  object Obligations {
+  object ReportDeadlines {
 
-    def fakeObligationsModel(m: ObligationModel): ObligationModel = new ObligationModel(m.start,m.end,m.due,m.met) {
+    def fakeReportDeadlinesModel(m: ObligationModel): ObligationModel = new ObligationModel(m.start,m.end,m.due,m.met) {
       override def currentTime() = "2017-10-31"
     }
 
-    val receivedObligation = fakeObligationsModel(ObligationModel(
+    val receivedObligation = fakeReportDeadlinesModel(ObligationModel(
       start = "2017-04-01",
       end = "2017-6-30",
       due = "2017-7-31",
       met = true
     ))
 
-    val overdueObligation = fakeObligationsModel(ObligationModel(
+    val overdueObligation = fakeReportDeadlinesModel(ObligationModel(
       start = "2017-7-1",
       end = "2017-9-30",
       due = "2017-10-30",
       met = false
     ))
 
-    val openObligation = fakeObligationsModel(ObligationModel(
+    val openObligation = fakeReportDeadlinesModel(ObligationModel(
       start = "2017-7-1",
       end = "2017-9-30",
       due = "2017-10-31",
       met = false
     ))
 
-    val obligationsDataSuccessModel = ObligationsModel(List(receivedObligation, overdueObligation, openObligation))
+    val obligationsDataSuccessModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
     val obligationsDataSuccessString =
       """
         |{
@@ -258,7 +258,7 @@ object TestConstants extends ImplicitDateFormatter {
       """.stripMargin
     val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
 
-    val obligationsDataErrorModel = ObligationsErrorModel(testErrorStatus, testErrorMessage)
+    val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
     val obligationsDataErrorString =
       s"""
         |{

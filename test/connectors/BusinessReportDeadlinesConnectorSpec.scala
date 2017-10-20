@@ -16,10 +16,10 @@
 
 package connectors
 
-import assets.TestConstants.Obligations._
+import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.{ObligationsErrorModel, ObligationsResponseModel}
+import models.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.play.http.HttpResponse
@@ -39,7 +39,7 @@ class BusinessReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
   "BusinessObligationDataConnector.getObligationData" should {
 
     lazy val testUrl = TestBusinessObligationDataConnector.getObligationDataUrl(testNino, testSelfEmploymentId)
-    def result: Future[ObligationsResponseModel] = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
+    def result: Future[ReportDeadlinesResponseModel] = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
 
     "return a SuccessResponse with JSON in case of sucess" in {
       setupMockHttpGet(testUrl)(successResponse)
@@ -48,17 +48,17 @@ class BusinessReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
     "return ErrorResponse model in case of failure" in {
       setupMockHttpGet(testUrl)(badResponse)
-      await(result) shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return BusinessListError model when bad JSON is received" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response")
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response")
     }
 
-    "return ObligationsErrorModel model in case of future failed scenario" in {
+    "return ReportDeadlinesErrorModel model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 }

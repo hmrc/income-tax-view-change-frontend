@@ -18,15 +18,15 @@ package controllers
 import java.time.LocalDate
 
 import helpers.ComponentSpecBase
-import helpers.IntegrationTestConstants.GetObligationsData._
+import helpers.IntegrationTestConstants.GetReportDeadlinesData._
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks.{AuthStub, BtaPartialStub, SelfAssessmentStub, UserDetailsStub}
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
-class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
+class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
-  "Calling the ObligationsController" when {
+  "Calling the ReportDeadlinesController" when {
 
     "authorised with an active enrolment" which {
 
@@ -50,10 +50,10 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response")
-          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getObligations
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           Then("Verify business details has been called")
           SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -62,7 +62,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
           Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
 
           Then("the result should have a HTTP status of OK")
           res should have(
@@ -139,12 +139,12 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
             SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
             And("I wiremock stub a single property and business obligation response")
-            // SelfAssessmentStub.stubGetObligations(testNino,testSelfEmploymentId,multipleReceivedOpenObligationsModel,multipleReceivedOpenObligationsModel)
-            SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, multipleReceivedOpenObligationsModel)
-            SelfAssessmentStub.stubGetPropertyObligations(testNino, multipleReceivedOpenObligationsModel)
+            // SelfAssessmentStub.stubGetReportDeadlines(testNino,testSelfEmploymentId,multipleReceivedOpenReportDeadlinesModel,multipleReceivedOpenReportDeadlinesModel)
+            SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
+            SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReceivedOpenReportDeadlinesModel)
 
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-            val res = IncomeTaxViewChangeFrontend.getObligations
+            val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
             Then("the result should have a HTTP status of OK")
             res should have(
@@ -279,10 +279,10 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple business obligations response")
-          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, multipleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getObligations
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           Then("Verify business details has been called")
           SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -291,7 +291,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
           Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
 
           Then("the result should have a HTTP status of OK")
           res should have(
@@ -382,10 +382,10 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple business obligations response")
-          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, multipleReceivedOpenObligationsModel)
+          SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getObligations
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           Then("Verify business details has been called")
           SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -394,7 +394,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
           Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
 
           Then("the result should have a HTTP status of OK")
           res should have(
@@ -496,10 +496,10 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response")
-          SelfAssessmentStub.stubGetPropertyObligations(testNino, singleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, singleReportDeadlinesDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getObligations
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           Then("Verify business details has been called")
           SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -508,7 +508,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
           Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
+          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
           Then("the result should have a HTTP status of OK")
           res should have(
@@ -557,10 +557,10 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple property obligations response")
-          SelfAssessmentStub.stubGetPropertyObligations(testNino, multipleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReportDeadlinesDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getObligations
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           Then("Verify business details has been called")
           SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -569,7 +569,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
           Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
+          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
           Then("the result should have a HTTP status of OK")
           res should have(
@@ -631,10 +631,10 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple property open and received obligations response")
-          SelfAssessmentStub.stubGetPropertyObligations(testNino, multipleReceivedOpenObligationsModel)
+          SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReceivedOpenReportDeadlinesModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getObligations
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           Then("Verify business details has been called")
           SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -643,7 +643,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
           Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
+          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
           Then("the result should have a HTTP status of OK")
           res should have(
@@ -715,11 +715,11 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business and property obligation response")
-          SelfAssessmentStub.stubGetBusinessObligations(testNino, testSelfEmploymentId, singleObligationsDataSuccessModel)
-          SelfAssessmentStub.stubGetPropertyObligations(testNino, singleObligationsDataSuccessModel)
+          SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
+          SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, singleReportDeadlinesDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getObligations
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           Then("Verify business details has been called")
           SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -728,10 +728,10 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
           Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
 
           Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
+          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
           Then("the result should have a HTTP status of OK")
           res should have(
@@ -782,10 +782,10 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
 
           And("I wiremock stub an error for the business obligations response")
-          SelfAssessmentStub.stubBusinessObligationsError(testNino, testSelfEmploymentId)
+          SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getObligations
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           Then("Verify business details has been called")
           SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -794,7 +794,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
           Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
 
           Then("the result should have a HTTP status of Ok")
           res should have(
@@ -841,10 +841,10 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub an error for the property obligations response")
-          SelfAssessmentStub.stubPropertyObligationsError(testNino)
+          SelfAssessmentStub.stubPropertyReportDeadlinesError(testNino)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getObligations
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           Then("Verify business details has been called")
           SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -853,7 +853,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
           Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
+          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
           Then("the result should have a HTTP status of OK")
           res should have(
@@ -898,13 +898,13 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
 
           And("I wiremock stub an error for the property obligations response")
-          SelfAssessmentStub.stubPropertyObligationsError(testNino)
+          SelfAssessmentStub.stubPropertyReportDeadlinesError(testNino)
 
           And("I wiremock stub an error for the business obligations response")
-          SelfAssessmentStub.stubBusinessObligationsError(testNino, testSelfEmploymentId)
+          SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getObligations
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           Then("Verify business details has been called")
           SelfAssessmentStub.verifyGetBusinessDetails(testNino)
@@ -913,10 +913,10 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
           SelfAssessmentStub.verifyGetPropertyDetails(testNino)
 
           Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessObligations(testNino, testSelfEmploymentId)
+          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
 
           Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyObligations(testNino)
+          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
           Then("the result should have a HTTP status of OK")
           res should have(
@@ -946,7 +946,7 @@ class ObligationsControllerISpec extends ComponentSpecBase with ImplicitDateForm
         AuthStub.stubUnauthorised()
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-        val res = IncomeTaxViewChangeFrontend.getObligations
+        val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
         res should have(
 

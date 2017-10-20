@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.BusinessReportDeadlinesConnector
-import models.ObligationsResponseModel
+import models.ReportDeadlinesResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -36,7 +36,7 @@ trait MockBusinessReportDeadlinesConnector extends UnitSpec with MockitoSugar wi
     reset(mockBusinessObligationDataConnector)
   }
 
-  def setupMockObligation(nino: String, selfEmploymentId: String)(response: ObligationsResponseModel): Unit = {
+  def setupMockObligation(nino: String, selfEmploymentId: String)(response: ReportDeadlinesResponseModel): Unit = {
     when(mockBusinessObligationDataConnector.getBusinessObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }

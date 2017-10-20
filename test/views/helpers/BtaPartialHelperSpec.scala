@@ -17,7 +17,7 @@
 package views.helpers
 
 import assets.TestConstants.Estimates._
-import assets.TestConstants.Obligations._
+import assets.TestConstants.ReportDeadlines._
 import assets.Messages.{BtaPartial => messages}
 import config.FrontendAppConfig
 import models._
@@ -36,20 +36,20 @@ class BtaPartialHelperSpec extends TestSupport {
         s"""<div class="form-group">
            |<p id="report-due">Your next report is due by 31 October 2017</p>
 
-           |<a data-journey-click="itvcPartial:clickedLink:View Obligations" id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
+           |<a data-journey-click="itvcPartial:clickedLink:View ReportDeadlines" id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
            |</div>""".stripMargin.replaceAll("\n","")
 
       val overdue =
         s"""<div class="form-group">
            |<p id="report-due">You have an overdue report</p>
 
-           |<a data-journey-click="itvcPartial:clickedLink:View Obligations" id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
+           |<a data-journey-click="itvcPartial:clickedLink:View ReportDeadlines" id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
            |</div>""".stripMargin.replaceAll("\n","")
 
       val received =
         s"""<div class="form-group">
           |<p id="report-due">Your latest report has been received</p>
-          |<a data-journey-click="itvcPartial:clickedLink:View Obligations" id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
+          |<a data-journey-click="itvcPartial:clickedLink:View ReportDeadlines" id="obligations-link" href="$baseUrl/report-quarterly/income-and-expenses/view/obligations">View deadlines</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       val error =

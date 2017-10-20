@@ -31,35 +31,36 @@ import scala.concurrent.Future
 @Singleton
 class PropertyReportDeadlineDataConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
 
-  lazy val propertyDataUrl: String = baseUrl("self-assessment-api")
-  lazy val getPropertyDataUrl: String => String = nino => s"$propertyDataUrl/ni/$nino/uk-properties/obligations"
+  lazy val propertyReportDeadlineDataUrl: String = baseUrl("self-assessment-api")
+  lazy val getPropertyReportDeadlineDataUrl: String => String = nino => s"$propertyReportDeadlineDataUrl/ni/$nino/uk-properties/obligations"
 
-  def getPropertyReportDeadlineData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ObligationsResponseModel] = {
+  def getPropertyReportDeadlineData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
 
-    val url = getPropertyDataUrl(nino)
-    Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - GET $url")
+    val url = getPropertyReportDeadlineDataUrl(nino)
+    Logger.debug(s"[PropertyReportDeadlineDataConnector][getPropertyData] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) map {
       response =>
         response.status match {
           case OK =>
-            Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[ObligationsModel].fold(
+            Logger.debug(s"[PropertyReportDeadlineDataConnector][getPropertyData] - RESPONSE status: ${response.status}, json: ${response.json}")
+            response.json.validate[ReportDeadlinesModel].fold(
               invalid => {
-                Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Json Validation Error. Parsing Property Obligation Data Response")
-                ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response")
+                Logger.warn(s"[PropertyReportDeadlineDataConnector][getPropertyData] - Json Validation Error. Parsing Property Obligation Data Response")
+                ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response")
               },
               valid => valid
             )
           case _ =>
-            Logger.debug(s"[PropertyObligationDataConnector][getPropertyData] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Response status: [${response.status}] returned from Property Obligations call")
-            ObligationsErrorModel(response.status, response.body)
+            Logger.debug(s"[PropertyReportDeadlineDataConnector][getPropertyData] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.warn(
+              s"[PropertyReportDeadlineDataConnector][getPropertyData] - Response status: [${response.status}] returned from Property ReportDeadlines call")
+            ReportDeadlinesErrorModel(response.status, response.body)
         }
     } recover {
       case _ =>
-        Logger.warn(s"[PropertyObligationDataConnector][getPropertyData] - Unexpected future failed error")
-        ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+        Logger.warn(s"[PropertyReportDeadlineDataConnector][getPropertyData] - Unexpected future failed error")
+        ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 }

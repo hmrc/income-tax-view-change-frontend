@@ -16,19 +16,19 @@
 
 package services
 
-import assets.TestConstants.Obligations._
+import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.PropertyIncome._
 import assets.TestConstants.Estimates._
 import assets.TestConstants._
 import assets.TestConstants.IncomeSourceDetails._
-import mocks.services.{MockObligationsService, MockFinancialDataService}
-import models.{ObligationsModel, ObligationsErrorModel, ObligationModel}
+import mocks.services.{MockReportDeadlinesService, MockFinancialDataService}
+import models.{ReportDeadlinesModel, ReportDeadlinesErrorModel, ObligationModel}
 import utils.TestSupport
 
-class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService with MockObligationsService {
+class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService with MockReportDeadlinesService {
 
-  object TestBTAPartialService extends BTAPartialService(mockObligationsService, mockFinancialDataService)
+  object TestBTAPartialService extends BTAPartialService(mockReportDeadlinesService, mockFinancialDataService)
 
   "The BTAPartialService getNextObligation method" when {
 
@@ -46,7 +46,7 @@ class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService wi
         met = false
       )
       "return an ObligationModel" in {
-        setupMockBusinessObligationsResult(testNino, Some(businessIncomeModelAlignedTaxYear))(ObligationsModel(List(otherObligation, returnedObligation)))
+        setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(ReportDeadlinesModel(List(otherObligation, returnedObligation)))
         mockPropertySuccess()
         await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
       }
@@ -60,8 +60,8 @@ class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService wi
         met = false
       )
       "return an ObligationModel" in {
-        setupMockBusinessObligationsResult(testNino, Some(businessIncomeModelAlignedTaxYear))(obligationsDataSuccessModel)
-        setupMockPropertyObligationsResult(testNino, Some(propertyIncomeModel))(ObligationsModel(List(returnedObligation)))
+        setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(obligationsDataSuccessModel)
+        setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(ReportDeadlinesModel(List(returnedObligation)))
         await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
       }
     }
@@ -79,10 +79,10 @@ class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService wi
         due = "2017-7-30",
         met = true
       )
-      val obligations = ObligationsModel(List(receivedObligation, returnedObligation, otherObligation))
+      val obligations = ReportDeadlinesModel(List(receivedObligation, returnedObligation, otherObligation))
       "return an ObligationModel" in {
-        setupMockBusinessObligationsResult(testNino, Some(businessIncomeModelAlignedTaxYear))(obligations)
-        setupMockPropertyObligationsResult(testNino, Some(propertyIncomeModel))(ObligationsModel(List(receivedObligation)))
+        setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(obligations)
+        setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(ReportDeadlinesModel(List(receivedObligation)))
         await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
       }
     }
@@ -100,10 +100,10 @@ class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService wi
         due = "2017-7-30",
         met = true
       )
-      val obligations = ObligationsModel(List(receivedObligation, returnedObligation, otherObligation))
+      val obligations = ReportDeadlinesModel(List(receivedObligation, returnedObligation, otherObligation))
       "return an ObligationModel" in {
-        setupMockBusinessObligationsResult(testNino, Some(businessIncomeModelAlignedTaxYear))(ObligationsModel(List(receivedObligation)))
-        setupMockPropertyObligationsResult(testNino, Some(propertyIncomeModel))(obligations)
+        setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(ReportDeadlinesModel(List(receivedObligation)))
+        setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(obligations)
         await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
       }
     }
@@ -139,7 +139,7 @@ class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService wi
     "no obligations are returned" in {
       mockNoPropertyIncome()
       mockNoBusinessIncome()
-      await(TestBTAPartialService.getNextObligation(testNino, noIncomeSourceSuccess)) shouldBe ObligationsErrorModel(500,"Could not retrieve obligations")
+      await(TestBTAPartialService.getNextObligation(testNino, noIncomeSourceSuccess)) shouldBe ReportDeadlinesErrorModel(500,"Could not retrieve obligations")
     }
   }
 

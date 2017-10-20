@@ -19,7 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import audit.AuditingService
-import audit.models.ObligationsAuditing.ObligationsAuditModel
+import audit.models.ReportDeadlinesAuditing.ReportDeadlinesAuditModel
 import auth.MtdItUser
 import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.AsyncActionPredicate
@@ -32,26 +32,26 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import scala.concurrent.Future
 
 @Singleton
-class ObligationsController @Inject()(implicit val config: AppConfig,
-                                      implicit val messagesApi: MessagesApi,
-                                      val actionPredicate: AsyncActionPredicate,
-                                      val serviceInfoPartialService: ServiceInfoPartialService,
-                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                      val auditingService: AuditingService
+class ReportDeadlinesController @Inject()(implicit val config: AppConfig,
+                                          implicit val messagesApi: MessagesApi,
+                                          val actionPredicate: AsyncActionPredicate,
+                                          val serviceInfoPartialService: ServiceInfoPartialService,
+                                          val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                          val auditingService: AuditingService
                                      ) extends BaseController {
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
-  val getObligations: Action[AnyContent] = actionPredicate.async {
+  val getReportDeadlines: Action[AnyContent] = actionPredicate.async {
     implicit request =>
       implicit user =>
         implicit sources =>
           submitData(user, sources)
           serviceInfoPartialService.serviceInfoPartial.flatMap { implicit serviceInfo =>
-            Future.successful(Ok(views.html.obligations(sources)))
+            Future.successful(Ok(views.html.report_deadlines(sources)))
           }
   }
 
   private def submitData(user: MtdItUser, sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Unit =
-    auditingService.audit(ObligationsAuditModel(user, sources), controllers.routes.ObligationsController.getObligations().url)
+    auditingService.audit(ReportDeadlinesAuditModel(user, sources), controllers.routes.ReportDeadlinesController.getReportDeadlines().url)
 
 }

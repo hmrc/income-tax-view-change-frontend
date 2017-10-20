@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.PropertyReportDeadlineDataConnector
-import models.ObligationsResponseModel
+import models.ReportDeadlinesResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -36,7 +36,7 @@ trait MockPropertyObligationDataConnector extends UnitSpec with MockitoSugar wit
     reset(mockPropertyObligationDataConnector)
   }
 
-  def setupMockPropertyObligation(nino: String)(response: ObligationsResponseModel): Unit = {
+  def setupMockPropertyObligation(nino: String)(response: ReportDeadlinesResponseModel): Unit = {
     when(mockPropertyObligationDataConnector.getPropertyObligationData(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }

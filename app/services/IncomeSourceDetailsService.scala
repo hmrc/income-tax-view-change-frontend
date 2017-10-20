@@ -45,7 +45,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
       case (x: BusinessDetailsModel, y) =>
         createIncomeSourcesModel(nino, x, y)
     }
-  }.flatMap(x => x)
+  }.flatMap(z => z)
 
   def createIncomeSourcesModel(nino: String,
                                businessDetails: BusinessDetailsModel,
