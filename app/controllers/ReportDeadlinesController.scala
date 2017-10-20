@@ -46,8 +46,8 @@ class ReportDeadlinesController @Inject()(implicit val config: AppConfig,
       implicit user =>
         implicit sources =>
           submitData(user, sources)
-          serviceInfoPartialService.serviceInfoPartial.flatMap { implicit serviceInfo =>
-            Future.successful(Ok(views.html.report_deadlines(sources)))
+          serviceInfoPartialService.serviceInfoPartial.map { implicit serviceInfo =>
+            Ok(views.html.report_deadlines(sources))
           }
   }
 
