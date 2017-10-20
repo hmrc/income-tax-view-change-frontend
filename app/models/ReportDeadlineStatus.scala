@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import models.IncomeTypeModel
+package models
 
-@(id: IncomeTypeModel)(implicit messages: Messages)
-<section>
-    <div class="form-group">
-        <h2 id="@{id}-section">@messages("obligations." + id + ".subheading")</h2>
-        <p id="@{id}-p1">@messages("obligations.error.p1")</p>
-        <p id="@{id}-p2">@messages("obligations.error.p2")</p>
-    </div>
-</section>
+import java.time.LocalDate
+
+sealed trait ReportDeadlineStatus
+case object Received extends ReportDeadlineStatus
+case object Overdue extends ReportDeadlineStatus
+case class Open(dueDate: LocalDate) extends ReportDeadlineStatus
+

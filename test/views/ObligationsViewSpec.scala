@@ -16,31 +16,31 @@
 
 package views
 
-import assets.Messages.{Obligations => messages, Sidebar => sidebarMessages}
+import assets.Messages.{ReportDeadlines => messages, Sidebar => sidebarMessages}
 import assets.TestConstants.IncomeSourceDetails._
 import assets.TestConstants._
 import config.FrontendAppConfig
-import models.{NoObligations, ObligationModel, ObligationsErrorModel, ObligationsModel}
+import models.{NoReportDeadlines, ObligationModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.TestSupport
 
-class ObligationsViewSpec extends TestSupport {
+class ReportDeadlinesViewSpec extends TestSupport {
 
   lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val successModel = ObligationsModel(List(ObligationModel(
+  val successModel = ReportDeadlinesModel(List(ObligationModel(
     start = "2017-1-1".toLocalDate,
     end = "2017-3-31".toLocalDate,
     due = "2017-4-5".toLocalDate,
     met = true
   )))
-  val errorModel = ObligationsErrorModel(500,"ISE")
+  val errorModel = ReportDeadlinesErrorModel(500,"ISE")
 
 
-    "The Obligations view" should {
+    "The ReportDeadlines view" should {
 
     lazy val page = views.html.obligations(successModel, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
     lazy val document = Jsoup.parse(contentAsString(page))
@@ -79,28 +79,28 @@ class ObligationsViewSpec extends TestSupport {
 
     "when only business obligations are returned" should {
 
-      lazy val page = views.html.obligations(successModel, NoObligations)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
+      lazy val page = views.html.obligations(successModel, NoReportDeadlines)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
       lazy val document = Jsoup.parse(contentAsString(page))
 
-      "contain a section for Business Obligations" in {
+      "contain a section for Business ReportDeadlines" in {
         document.getElementById("bi-section").text() shouldBe messages.businessHeading
       }
 
-      "not contain Property Obligations section" in {
+      "not contain Property ReportDeadlines section" in {
         document.getElementById("pi-section") shouldBe null
       }
     }
 
     "when only property obligations are returned" should {
 
-      lazy val page = views.html.obligations(NoObligations, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
+      lazy val page = views.html.obligations(NoReportDeadlines, successModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
       lazy val document = Jsoup.parse(contentAsString(page))
 
-      "contain a section for Property Obligations" in {
+      "contain a section for Property ReportDeadlines" in {
         document.getElementById("pi-section").text() shouldBe messages.propertyHeading
       }
 
-      "not contain Business Obligations section" in {
+      "not contain Business ReportDeadlines section" in {
         document.getElementById("bi-section") shouldBe null
       }
     }
@@ -110,11 +110,11 @@ class ObligationsViewSpec extends TestSupport {
       lazy val page = views.html.obligations(errorModel, errorModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
       lazy val document = Jsoup.parse(contentAsString(page))
 
-      "contains a no section Property Obligations" in {
+      "contains a no section Property ReportDeadlines" in {
         document.getElementById("pi-section") shouldBe null
       }
 
-      "contains a no section Business Obligations" in {
+      "contains a no section Business ReportDeadlines" in {
         document.getElementById("bi-section") shouldBe null
       }
 
@@ -132,14 +132,14 @@ class ObligationsViewSpec extends TestSupport {
 
     "when Business obligations are errored and there are no Property obligations" should {
 
-      lazy val page = views.html.obligations(errorModel, NoObligations)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
+      lazy val page = views.html.obligations(errorModel, NoReportDeadlines)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
       lazy val document = Jsoup.parse(contentAsString(page))
 
-      "contain no section for Property Obligations" in {
+      "contain no section for Property ReportDeadlines" in {
         document.getElementById("pi-section") shouldBe null
       }
 
-      "contains a section for Business Obligations" which {
+      "contains a section for Business ReportDeadlines" which {
 
         s"has the heading '${messages.businessHeading}'" in {
           document.getElementById("bi-section").text() shouldBe messages.businessHeading
@@ -157,14 +157,14 @@ class ObligationsViewSpec extends TestSupport {
 
     "when Property obligations are errored and there are no Business obligations" should {
 
-      lazy val page = views.html.obligations(NoObligations, errorModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
+      lazy val page = views.html.obligations(NoReportDeadlines, errorModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, bothIncomeSourceSuccessMisalignedTaxYear, serviceInfo)
       lazy val document = Jsoup.parse(contentAsString(page))
 
-      "contain no section for Business Obligations" in {
+      "contain no section for Business ReportDeadlines" in {
         document.getElementById("bi-section") shouldBe null
       }
 
-      "contains a section for Property Obligations" which {
+      "contains a section for Property ReportDeadlines" which {
 
         s"has the heading '${messages.propertyHeading}'" in {
           document.getElementById("pi-section").text() shouldBe messages.propertyHeading

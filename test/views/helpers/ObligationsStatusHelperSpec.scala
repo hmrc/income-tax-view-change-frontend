@@ -22,7 +22,7 @@ import utils.ImplicitDateFormatter._
 import play.api.i18n.Messages.Implicits._
 import utils.TestSupport
 
-class ObligationsStatusHelperSpec extends TestSupport {
+class ReportDeadlinesStatusHelperSpec extends TestSupport {
 
   "The ObligationStatusHelper.statusHtml" should {
     "return Html corresponding to the ObligationStatus" when {

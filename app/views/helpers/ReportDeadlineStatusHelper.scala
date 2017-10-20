@@ -16,14 +16,14 @@
 
 package views.helpers
 
-import models.{ObligationStatus, Open, Overdue, Received}
+import models._
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._
 
-object ObligationStatusHelper {
+object ReportDeadlineStatusHelper {
 
-  def statusHtml(status: ObligationStatus)(implicit messages: Messages): Html = status match {
+  def statusHtml(status: ReportDeadlineStatus)(implicit messages: Messages): Html = status match {
     case open: Open =>
       Html(
         s"""

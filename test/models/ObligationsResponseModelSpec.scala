@@ -16,15 +16,15 @@
 
 package models
 
-import assets.TestConstants.Obligations._
+import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
 
-class ObligationsResponseModelSpec extends UnitSpec with Matchers{
+class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
 
-  "The ObligationsModel" should {
+  "The ReportDeadlinesModel" should {
 
     "for the 1st Obligation" should {
 
@@ -102,15 +102,15 @@ class ObligationsResponseModelSpec extends UnitSpec with Matchers{
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson[ObligationsModel](obligationsDataSuccessModel) shouldBe obligationsDataSuccessJson
+      Json.toJson[ReportDeadlinesModel](obligationsDataSuccessModel) shouldBe obligationsDataSuccessJson
     }
 
     "be able to parse a JSON to string into the Model" in {
-      Json.parse(obligationsDataSuccessString).as[ObligationsModel] shouldBe obligationsDataSuccessModel
+      Json.parse(obligationsDataSuccessString).as[ReportDeadlinesModel] shouldBe obligationsDataSuccessModel
     }
   }
 
-  "The ObligationsErrorModel" should {
+  "The ReportDeadlinesErrorModel" should {
 
     "have the correct status code in the model" in {
       obligationsDataErrorModel.code shouldBe testErrorStatus
@@ -121,11 +121,11 @@ class ObligationsResponseModelSpec extends UnitSpec with Matchers{
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson[ObligationsErrorModel](obligationsDataErrorModel) shouldBe obligationsDataErrorJson
+      Json.toJson[ReportDeadlinesErrorModel](obligationsDataErrorModel) shouldBe obligationsDataErrorJson
     }
 
     "be able to parse a JSON to string into the Model" in {
-      Json.parse(obligationsDataErrorString).as[ObligationsErrorModel] shouldBe obligationsDataErrorModel
+      Json.parse(obligationsDataErrorString).as[ReportDeadlinesErrorModel] shouldBe obligationsDataErrorModel
     }
   }
 }

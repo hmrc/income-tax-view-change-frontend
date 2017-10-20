@@ -33,20 +33,22 @@ class BTAPartialController @Inject()(implicit val config: AppConfig,
                                      implicit val messagesApi: MessagesApi,
                                      val actionPredicate: AsyncActionPredicate,
                                      val btaPartialService: BTAPartialService
-                                      ) extends BaseController {
+                                    ) extends BaseController {
 
   val setupPartial: Action[AnyContent] = actionPredicate.async {
-    implicit request => implicit user => implicit sources =>
-      for{
-        latestObligation <- btaPartialService.getNextObligation(user.nino, sources)
-        allEstimates <- getAllEstimates(user.nino, sources.orderedTaxYears)
-      } yield Ok(views.html.btaPartial(latestObligation, allEstimates))
+    implicit request =>
+      implicit user =>
+        implicit sources =>
+          getAllEstimates(user.nino, sources.orderedTaxYears).map { allEstimates =>
+            Ok(views.html.btaPartial(btaPartialService.getNextObligation(sources), allEstimates))
+          }
   }
 
   private def getAllEstimates(nino: String, orderedYears: List[Int])(implicit headerCarrier: HeaderCarrier): Future[List[LastTaxCalculationWithYear]] =
     Future.sequence(orderedYears.map {
-      year => btaPartialService.getEstimate(nino, year).map {
-        est => LastTaxCalculationWithYear(est, year)
-      }
+      year =>
+        btaPartialService.getEstimate(nino, year).map {
+          est => LastTaxCalculationWithYear(est, year)
+        }
     })
 }

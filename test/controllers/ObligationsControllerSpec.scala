@@ -16,11 +16,11 @@
 
 package controllers
 
-import assets.Messages.{ISE => errorMessages, Obligations => messages}
+import assets.Messages.{ISE => errorMessages, ReportDeadlines => messages}
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import mocks.controllers.predicates.MockAsyncActionPredicate
-import mocks.services.MockObligationsService
+import mocks.services.MockReportDeadlinesService
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
@@ -28,25 +28,25 @@ import play.api.test.Helpers._
 import services.ServiceInfoPartialService
 import utils.TestSupport
 
-class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicate with MockObligationsService {
+class ReportDeadlinesControllerSpec extends TestSupport with MockAsyncActionPredicate with MockReportDeadlinesService {
 
-  object TestObligationsController extends ObligationsController()(
+  object TestReportDeadlinesController extends ReportDeadlinesController()(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
-    mockObligationsService,
+    mockReportDeadlinesService,
     app.injector.instanceOf[ServiceInfoPartialService],
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]
   )
 
-  "The ObligationsController.getNextObligation function" when {
+  "The ReportDeadlinesController.getNextObligation function" when {
 
     "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
-      "successfully retrieves a set of Business Obligations from the Obligations service" should {
+      "successfully retrieves a set of Business ReportDeadlines from the ReportDeadlines service" should {
 
-        lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
+        lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
@@ -61,14 +61,14 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the Obligations page" in {
+        "render the ReportDeadlines page" in {
           document.title shouldBe messages.title
         }
       }
 
-      "successfully retrieves a set of Property Obligations from the Obligations service" should {
+      "successfully retrieves a set of Property ReportDeadlines from the ReportDeadlines service" should {
 
-        lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
+        lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
@@ -83,14 +83,14 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the Obligations page" in {
+        "render the ReportDeadlines page" in {
           document.title shouldBe messages.title
         }
       }
 
-      "successfully retrieves a set of both Business & Property Obligations from the Obligations service" should {
+      "successfully retrieves a set of both Business & Property ReportDeadlines from the ReportDeadlines service" should {
 
-        lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
+        lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
@@ -105,14 +105,14 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the Obligations page" in {
+        "render the ReportDeadlines page" in {
           document.title shouldBe messages.title
         }
       }
 
-      "doesn't retrieve any Obligations from the Obligations service" should {
+      "doesn't retrieve any ReportDeadlines from the ReportDeadlines service" should {
 
-        lazy val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
+        lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
@@ -127,7 +127,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the Obligations page" in {
+        "render the ReportDeadlines page" in {
           document.title shouldBe messages.title
         }
       }
@@ -138,7 +138,7 @@ class ObligationsControllerSpec extends TestSupport with MockAsyncActionPredicat
 
       "return redirect SEE_OTHER (303)" in {
         setupMockAuthorisationException()
-        val result = TestObligationsController.getObligations()(fakeRequestWithActiveSession)
+        val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }

@@ -25,34 +25,34 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
-import services.ObligationsService
+import services.ReportDeadlinesService
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.ImplicitDateFormatter
 
 import scala.concurrent.Future
 
 
-trait MockObligationsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ImplicitDateFormatter {
+trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ImplicitDateFormatter {
 
-  val mockObligationsService: ObligationsService = mock[ObligationsService]
+  val mockReportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockObligationsService)
+    reset(mockReportDeadlinesService)
   }
 
-  def setupMockBusinessObligationsResult(nino: String, businessIncome: Option[BusinessIncomeModel])(response: ObligationsResponseModel): Unit = {
-    when(mockObligationsService.getBusinessObligations(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(businessIncome))(ArgumentMatchers.any()))
+  def setupMockBusinessReportDeadlinesResult(nino: String, businessIncome: Option[BusinessIncomeModel])(response: ReportDeadlinesResponseModel): Unit = {
+    when(mockReportDeadlinesService.getBusinessReportDeadlines(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(businessIncome))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockPropertyObligationsResult(nino: String, propertyIncome: Option[PropertyIncomeModel])(response: ObligationsResponseModel): Unit = {
-    when(mockObligationsService.getPropertyObligations(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(propertyIncome))(ArgumentMatchers.any()))
+  def setupMockPropertyReportDeadlinesResult(nino: String, propertyIncome: Option[PropertyIncomeModel])(response: ReportDeadlinesResponseModel): Unit = {
+    when(mockReportDeadlinesService.getPropertyReportDeadlines(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(propertyIncome))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def mockBusinessSuccess(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
-    ObligationsModel(
+  def mockBusinessSuccess(): Unit = setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModel))(
+    ReportDeadlinesModel(
       List(
         ObligationModel(
           start = "2017-04-06",
@@ -81,14 +81,14 @@ trait MockObligationsService extends UnitSpec with MockitoSugar with BeforeAndAf
       )
     )
   )
-  def mockBusinessError(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
-    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
+  def mockBusinessError(): Unit = setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModel))(
+    ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 
-  def mockNoBusinessIncome(): Unit = setupMockBusinessObligationsResult(testNino, None)(NoObligations)
+  def mockNoBusinessIncome(): Unit = setupMockBusinessReportDeadlinesResult(testNino, None)(NoReportDeadlines)
 
-  def mockPropertySuccess(): Unit = setupMockPropertyObligationsResult(testNino, Some(propertyIncomeModel))(
-    ObligationsModel(
+  def mockPropertySuccess(): Unit = setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(
+    ReportDeadlinesModel(
       List(
         ObligationModel(
           start = "2017-04-06",
@@ -117,9 +117,9 @@ trait MockObligationsService extends UnitSpec with MockitoSugar with BeforeAndAf
       )
     )
   )
-  def mockPropertyError(): Unit = setupMockPropertyObligationsResult(testNino, Some(propertyIncomeModel))(
-    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
+  def mockPropertyError(): Unit = setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(
+    ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 
-  def mockNoPropertyIncome(): Unit = setupMockPropertyObligationsResult(testNino, None)(NoObligations)
+  def mockNoPropertyIncome(): Unit = setupMockPropertyReportDeadlinesResult(testNino, None)(NoReportDeadlines)
 }

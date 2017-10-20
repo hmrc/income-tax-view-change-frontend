@@ -19,19 +19,19 @@ package services
 
 import assets.TestConstants
 import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.Obligations._
+import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import assets.TestConstants.PropertyIncome._
-import mocks.connectors.{MockBusinessObligationDataConnector, MockPropertyObligationDataConnector}
+import mocks.connectors.{MockBusinessReportDeadlinesConnector, MockPropertyObligationDataConnector}
 import models._
 import play.api.http.Status
 import utils.TestSupport
 
-class ObligationsServiceSpec extends TestSupport with MockBusinessObligationDataConnector with MockPropertyObligationDataConnector {
+class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDeadlinesConnector with MockPropertyObligationDataConnector {
 
-  object TestObligationsService extends ObligationsService(mockBusinessObligationDataConnector, mockPropertyObligationDataConnector)
+  object TestReportDeadlinesService extends ReportDeadlinesService(mockBusinessObligationDataConnector, mockPropertyObligationDataConnector)
 
-  "The ObligationsService.getNextObligation method" when {
+  "The ReportDeadlinesService.getNextObligation method" when {
 
     "a successful single business" which {
 
@@ -39,15 +39,15 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
 
         "return a valid list of obligations" in {
           setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
-          await(TestObligationsService.getBusinessObligations(testNino, Some(businessIncomeModel))) shouldBe obligationsDataSuccessModel
+          await(TestReportDeadlinesService.getBusinessReportDeadlines(testNino, Some(businessIncomeModel))) shouldBe obligationsDataSuccessModel
         }
       }
-
+}
       "does not have a valid list of obligations returned from the connector" should {
 
         "return a valid list of obligations" in {
           setupMockObligation(testNino, testSelfEmploymentId)(obligationsDataErrorModel)
-          await(TestObligationsService.getBusinessObligations(testNino, Some(businessIncomeModel))) shouldBe obligationsDataErrorModel
+          await(TestReportDeadlinesService.getBusinessReportDeadlines(testNino, Some(businessIncomeModel))) shouldBe obligationsDataErrorModel
         }
       }
     }
@@ -55,29 +55,29 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
 
     "no business income source passed in" should {
 
-      "return NoObligations case object" in {
-        await(TestObligationsService.getBusinessObligations(testNino, None)) shouldBe NoObligations
+      "return NoReportDeadlines case object" in {
+        await(TestReportDeadlinesService.getBusinessReportDeadlines(testNino, None)) shouldBe NoReportDeadlines
       }
     }
 
     "no property income source passed in" should {
 
-      "return NoObligations case object" in {
-        await(TestObligationsService.getPropertyObligations(testNino, None)) shouldBe NoObligations
+      "return NoReportDeadlines case object" in {
+        await(TestReportDeadlinesService.getPropertyReportDeadlines(testNino, None)) shouldBe NoReportDeadlines
       }
     }
   }
 
-  "The ObligationsService.getPropertyObligations method" when {
+  "The ReportDeadlinesService.getPropertyReportDeadlines method" when {
 
     "a single list of obligations is returned from the connector" should {
 
       "return a valid list of obligations" in {
 
-        setupMockPropertyObligation(testNino)(TestConstants.Obligations.obligationsDataSuccessModel)
+        setupMockPropertyObligation(testNino)(TestConstants.ReportDeadlines.obligationsDataSuccessModel)
 
-        val successfulObligationsResponse =
-          ObligationsModel(
+        val successfulReportDeadlinesResponse =
+          ReportDeadlinesModel(
             List(
               ObligationModel(
                 start = "2017-04-01",
@@ -99,7 +99,7 @@ class ObligationsServiceSpec extends TestSupport with MockBusinessObligationData
               )
             )
           )
-        await(TestObligationsService.getPropertyObligations(testNino, Some(propertyIncomeModel))) shouldBe successfulObligationsResponse
+        await(TestReportDeadlinesService.getPropertyReportDeadlines(testNino, Some(propertyIncomeModel))) shouldBe successfulReportDeadlinesResponse
       }
     }
   }

@@ -18,4 +18,4 @@ package views.helpers
 
 sealed trait Page
 case object EstimatesPage extends Page
-case object ObligationsPage extends Page
+case object ReportDeadlinesPage extends Page

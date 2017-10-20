@@ -19,7 +19,7 @@ package controllers
 import assets.Messages.{BtaPartial => messages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
-import assets.TestConstants.Obligations._
+import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import assets.TestConstants.IncomeSourceDetails._
 import config.FrontendAppConfig
@@ -47,7 +47,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, bothIncomeSourceSuccessMisalignedTaxYear)(openObligation)
+        setupMockGetReportDeadlines(testNino, bothIncomeSourceSuccessMisalignedTaxYear)(openObligation)
         setupMockGetEstimate(testNino, 2018)(lastTaxCalcSuccess)
         setupMockGetEstimate(testNino, 2019)(LastTaxCalculation(
           calcID = testTaxCalculationId,
@@ -76,7 +76,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, bothIncomeSourcesSuccessBusinessAligned)(openObligation)
+        setupMockGetReportDeadlines(testNino, bothIncomeSourcesSuccessBusinessAligned)(openObligation)
         setupMockGetEstimate(testNino, 2018)(lastTaxCalcSuccess)
         mockBothIncomeSourcesBusinessAligned()
         status(result) shouldBe Status.OK
@@ -99,7 +99,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, bothIncomeSourceSuccessMisalignedTaxYear)(openObligation)
+        setupMockGetReportDeadlines(testNino, bothIncomeSourceSuccessMisalignedTaxYear)(openObligation)
         setupMockGetEstimate(testNino, 2018)(lastTaxCalcSuccess)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcNotFound)
         mockBothIncomeSources()
@@ -124,7 +124,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, bothIncomeSourceSuccessMisalignedTaxYear)(openObligation)
+        setupMockGetReportDeadlines(testNino, bothIncomeSourceSuccessMisalignedTaxYear)(openObligation)
         setupMockGetEstimate(testNino, 2018)(lastTaxCalcNotFound)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcSuccess)
         mockBothIncomeSources()
@@ -149,7 +149,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, businessIncomeSourceSuccess)(openObligation)
+        setupMockGetReportDeadlines(testNino, businessIncomeSourceSuccess)(openObligation)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcNotFound)
         mockSingleBusinessIncomeSource()
         status(result) shouldBe Status.OK
@@ -172,7 +172,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, businessIncomeSourceSuccess)(openObligation)
+        setupMockGetReportDeadlines(testNino, businessIncomeSourceSuccess)(openObligation)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcError)
         mockSingleBusinessIncomeSource()
         status(result) shouldBe Status.OK
@@ -202,7 +202,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status OK (200)" in {
-        setupMockGetObligations(testNino, businessIncomeSourceSuccess)(obligationsDataErrorModel)
+        setupMockGetReportDeadlines(testNino, businessIncomeSourceSuccess)(obligationsDataErrorModel)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcSuccess)
         mockSingleBusinessIncomeSource()
         status(result) shouldBe Status.OK
@@ -233,7 +233,7 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
       lazy val document = result.toHtmlDocument
 
       "return Status INTERNAL_SERVER_ERROR (500)" in {
-        setupMockGetObligations(testNino, businessIncomeSourceSuccess)(obligationsDataErrorModel)
+        setupMockGetReportDeadlines(testNino, businessIncomeSourceSuccess)(obligationsDataErrorModel)
         setupMockGetEstimate(testNino, 2019)(lastTaxCalcError)
         mockSingleBusinessIncomeSource()
         status(result) shouldBe Status.OK
