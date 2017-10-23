@@ -35,274 +35,274 @@ import utils.{ImplicitCurrencyFormatter, TestSupport}
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
-//  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-//
-//  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
-//  val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
-//  val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModelAlignedTaxYear), None)
-//  val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(None, Some(propertyIncomeModel))
-//
-//  private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel) = new {
-//    lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
-//      CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
-//      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources, serviceInfo)
-//    lazy val document: Document = Jsoup.parse(contentAsString(page))
-//
-//    implicit val model: CalculationDataModel = calcDataModel
-//  }
-//
-//  "The EstimatedTaxLiability view" should {
-//
-//    val setup = pageSetup(busPropBRTCalcDataModel,testIncomeSources)
-//    import setup._
-//
-//    s"have the title '${messages.title}'" in {
-//      document.title() shouldBe messages.title
-//    }
-//
-//    s"have the tax year '${messages.taxYear}'" in {
-//      document.getElementById("tax-year").text() shouldBe messages.taxYear
-//    }
-//
-//    s"have the page heading '${messages.pageHeading}'" in {
-//      document.getElementById("page-heading").text() shouldBe messages.pageHeading
-//    }
-//
-//    s"have an Estimated Tax Liability section" which {
-//
-//      lazy val estimateSection = document.getElementById("estimated-tax")
-//
-//      s"has the correct Estimated Tax Amount of '${busPropBRTCalcDataModel.incomeTaxYTD}'" in {
-//        estimateSection.getElementById("in-year-estimate").text shouldBe "£" + busPropBRTCalcDataModel.incomeTaxYTD
-//      }
-//
-//      s"has a calculation date paragraph with '${messages.EstimateTax.calcDate("6 July 2017")}'" ignore {
-//        estimateSection.getElementById("in-year-estimate-date").html() shouldBe messages.EstimateTax.calcDate("6 July 2017")
-//      }
-//
-//      s"has a calculation date of the 6 July 2017" ignore {
-//        estimateSection.getElementById("calc-date").text shouldBe "6 July 2017"
-//      }
-//
-//      s"has a paragraph to warn them that their estimate might change" in {
-//        estimateSection.getElementById("changes").text shouldBe messages.EstimateTax.changes
-//      }
-//
-//      s"has a bullet point with content '${messages.EstimateTax.changesBullet1}'" in {
-//        estimateSection.getElementById("bullet-1").text shouldBe messages.EstimateTax.changesBullet1("6 April 2017")
-//      }
-//
-//      s"has a bullet point with content '${messages.EstimateTax.changesBullet2}'" in {
-//        estimateSection.getElementById("bullet-2").text shouldBe messages.EstimateTax.changesBullet2
-//      }
-//
-//      s"has a bullet point with content '${messages.EstimateTax.changesBullet3}'" in {
-//        estimateSection.getElementById("bullet-3").text shouldBe messages.EstimateTax.changesBullet3
-//      }
-//
-//      s"has a bullet point with content '${messages.EstimateTax.changesBullet4}'" in {
-//        estimateSection.getElementById("bullet-4").text shouldBe messages.EstimateTax.changesBullet4
-//      }
-//
-//      s"has a payment paragraph with '${messages.EstimateTax.payment("31 January 2019")}'" in {
-//        estimateSection.getElementById("payment").text() shouldBe messages.EstimateTax.payment("31 January 2019")
-//      }
-//    }
-//
-//    "have a Calculation Breakdown section" that {
-//
-//      "for users with both a property and a business" which {
-//        "have just the basic rate of tax" should {
-//          val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
-//          import ImplicitCurrencyFormatter._
-//          import setup._
-//
-//          s"have a business profit section amount of ${model.profitFromSelfEmployment}" in {
-//            document.getElementById("business-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
-//          }
-//
-//          s"have a property profit amount of ${model.profitFromUkLandAndProperty}" in {
-//            document.getElementById("property-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
-//          }
-//
-//          s"have a personal allowance amount of ${model.proportionAllowance}" in {
-//            document.getElementById("personal-allowance").text shouldBe "-"+model.proportionAllowance.toCurrencyString
-//          }
-//
-//          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
-//            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
-//          }
-//
-//          s"have an income tax section" which {
-//            "has the correct amount of income taxed at BRT" in {
-//              document.getElementById("brt-it-calc").text shouldBe model.payPensionsProfitAtBRT.get.toCurrencyString
-//            }
-//            "has the correct BRT rate" in {
-//              document.getElementById("brt-rate").text shouldBe model.rateBRT.toString
-//            }
-//            "has the correct tax charged at BRT" in {
-//              document.getElementById("brt-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtBRT.toCurrencyString
-//            }
-//          }
-//          s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
-//            document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
-//          }
-//          s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
-//            document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
-//          }
-//          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
-//            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
-//          }
-//        }
-//
-//        "have the higher rate of tax" should {
-//          val setup = pageSetup(busBropHRTCalcDataModel, testIncomeSources)
-//          import ImplicitCurrencyFormatter._
-//          import setup._
-//
-//          s"have an income tax section" which {
-//            "has a BRT section" in {
-//              document.getElementById("brt-section") should not be null
-//            }
-//
-//            "has the correct amount of income taxed at HRT" in {
-//              document.getElementById("hrt-it-calc").text shouldBe model.payPensionsProfitAtHRT.get.toCurrencyString
-//            }
-//            "has the correct HRT rate" in {
-//              document.getElementById("hrt-rate").text shouldBe model.rateHRT.toString
-//            }
-//            "has the correct tax charged at HRT" in {
-//              document.getElementById("hrt-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtHRT.toCurrencyString
-//            }
-//
-//            "does not have an ART section" in {
-//              document.getElementById("art-section") shouldBe null
-//            }
-//          }
-//        }
-//
-//        "have the additional rate of tax" should {
-//          val setup = pageSetup(busPropARTCalcDataModel, testIncomeSources)
-//          import ImplicitCurrencyFormatter._
-//          import setup._
-//          s"have an income tax section" which {
-//            "has a BRT section" in {
-//              document.getElementById("brt-section") should not be null
-//            }
-//            "has a HRT section" in {
-//              document.getElementById("hrt-section") should not be null
-//            }
-//
-//            "has the correct amount of income taxed at ART" in {
-//              document.getElementById("art-it-calc").text shouldBe model.payPensionsProfitAtART.get.toCurrencyString
-//            }
-//            "has the correct ART rate" in {
-//              document.getElementById("art-rate").text shouldBe model.rateART.toString
-//            }
-//            "has the correct tax charged at ART" in {
-//              document.getElementById("art-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtART.toCurrencyString
-//            }
-//          }
-//        }
-//
-//        "has no taxable income and no NI contributions" should {
-//          val setup = pageSetup(noTaxOrNICalcDataModel, testIncomeSources)
-//          import ImplicitCurrencyFormatter._
-//          import setup._
-//          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
-//            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
-//          }
-//          s"not have a National Insurance amount" in {
-//            document.getElementById("ni-amount") shouldBe null
-//          }
-//          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
-//            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
-//          }
-//        }
-//
-//        "has no taxable income and some NI contribution" should {
-//          val setup = pageSetup(noTaxJustNICalcDataModel, testIncomeSources)
-//          import ImplicitCurrencyFormatter._
-//          import setup._
-//          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
-//            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
-//          }
-//          s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
-//            document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
-//          }
-//          s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
-//            document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
-//          }
-//          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
-//            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
-//          }
-//        }
-//      }
-//
-//      "when no breakdown data is retrieved" should {
-//        lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-//          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources, serviceInfo)
-//        lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
-//
-//        "not display a breakdown section" in {
-//          noBreakdownDocument.getElementById("calc-breakdown-inner-link") shouldBe null
-//        }
-//      }
-//
-//      "when the user only has businesses registered" should {
-//
-//        val setup = pageSetup(justBusinessCalcDataModel, testBusinessIncomeSource)
-//        import setup._
-//
-//        "display the business profit amount" in {
-//          document.getElementById("business-profit").text shouldBe "£3,000"
-//        }
-//
-//        "not display the property profit section" in {
-//          document.getElementById("property-profit-section") shouldBe null
-//        }
-//      }
-//
-//      "when the user only has a business registered but has a property profit value" should {
-//        val setup = pageSetup(busPropBRTCalcDataModel, testBusinessIncomeSource)
-//        import setup._
-//
-//        "display the business profit amount" in {
-//          document.getElementById("business-profit").text shouldBe "£1,500"
-//        }
-//        "display the property profit amount" in {
-//          document.getElementById("property-profit").text shouldBe "£1,500"
-//        }
-//      }
-//
-//      "when the user only has properties registered" should {
-//
-//        val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
-//        import setup._
-//
-//        "display the property profit section" in {
-//          document.getElementById("property-profit").text shouldBe "£3,000"
-//        }
-//        "not display the business profit section" in {
-//          document.getElementById("business-profit") shouldBe null
-//        }
-//      }
-//
-//      "when the user only has properties registered but has a business profit value" should {
-//        val setup = pageSetup(busPropBRTCalcDataModel, testPropertyIncomeSource)
-//        import setup._
-//
-//        "display the business profit amount" in {
-//          document.getElementById("business-profit").text shouldBe "£1,500"
-//        }
-//        "display the property profit amount" in {
-//          document.getElementById("property-profit").text shouldBe "£1,500"
-//        }
-//      }
-//    }
-//
-//    "have sidebar section " in {
-//      document.getElementById("sidebar") shouldNot be(null)
-//    }
-//  }
+  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
+  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
+  val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
+  val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), None)
+  val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List.empty, Some(propertyIncomeModel))
+
+  private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel) = new {
+    lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
+      CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
+      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources, serviceInfo)
+    lazy val document: Document = Jsoup.parse(contentAsString(page))
+
+    implicit val model: CalculationDataModel = calcDataModel
+  }
+
+  "The EstimatedTaxLiability view" should {
+
+    val setup = pageSetup(busPropBRTCalcDataModel,testIncomeSources)
+    import setup._
+
+    s"have the title '${messages.title}'" in {
+      document.title() shouldBe messages.title
+    }
+
+    s"have the tax year '${messages.taxYear}'" in {
+      document.getElementById("tax-year").text() shouldBe messages.taxYear
+    }
+
+    s"have the page heading '${messages.pageHeading}'" in {
+      document.getElementById("page-heading").text() shouldBe messages.pageHeading
+    }
+
+    s"have an Estimated Tax Liability section" which {
+
+      lazy val estimateSection = document.getElementById("estimated-tax")
+
+      s"has the correct Estimated Tax Amount of '${busPropBRTCalcDataModel.incomeTaxYTD}'" in {
+        estimateSection.getElementById("in-year-estimate").text shouldBe "£" + busPropBRTCalcDataModel.incomeTaxYTD
+      }
+
+      s"has a calculation date paragraph with '${messages.EstimateTax.calcDate("6 July 2017")}'" ignore {
+        estimateSection.getElementById("in-year-estimate-date").html() shouldBe messages.EstimateTax.calcDate("6 July 2017")
+      }
+
+      s"has a calculation date of the 6 July 2017" ignore {
+        estimateSection.getElementById("calc-date").text shouldBe "6 July 2017"
+      }
+
+      s"has a paragraph to warn them that their estimate might change" in {
+        estimateSection.getElementById("changes").text shouldBe messages.EstimateTax.changes
+      }
+
+      s"has a bullet point with content '${messages.EstimateTax.changesBullet1}'" in {
+        estimateSection.getElementById("bullet-1").text shouldBe messages.EstimateTax.changesBullet1("6 April 2017")
+      }
+
+      s"has a bullet point with content '${messages.EstimateTax.changesBullet2}'" in {
+        estimateSection.getElementById("bullet-2").text shouldBe messages.EstimateTax.changesBullet2
+      }
+
+      s"has a bullet point with content '${messages.EstimateTax.changesBullet3}'" in {
+        estimateSection.getElementById("bullet-3").text shouldBe messages.EstimateTax.changesBullet3
+      }
+
+      s"has a bullet point with content '${messages.EstimateTax.changesBullet4}'" in {
+        estimateSection.getElementById("bullet-4").text shouldBe messages.EstimateTax.changesBullet4
+      }
+
+      s"has a payment paragraph with '${messages.EstimateTax.payment("31 January 2019")}'" in {
+        estimateSection.getElementById("payment").text() shouldBe messages.EstimateTax.payment("31 January 2019")
+      }
+    }
+
+    "have a Calculation Breakdown section" that {
+
+      "for users with both a property and a business" which {
+        "have just the basic rate of tax" should {
+          val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
+          import ImplicitCurrencyFormatter._
+          import setup._
+
+          s"have a business profit section amount of ${model.profitFromSelfEmployment}" in {
+            document.getElementById("business-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
+          }
+
+          s"have a property profit amount of ${model.profitFromUkLandAndProperty}" in {
+            document.getElementById("property-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
+          }
+
+          s"have a personal allowance amount of ${model.proportionAllowance}" in {
+            document.getElementById("personal-allowance").text shouldBe "-"+model.proportionAllowance.toCurrencyString
+          }
+
+          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
+            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
+          }
+
+          s"have an income tax section" which {
+            "has the correct amount of income taxed at BRT" in {
+              document.getElementById("brt-it-calc").text shouldBe model.payPensionsProfitAtBRT.get.toCurrencyString
+            }
+            "has the correct BRT rate" in {
+              document.getElementById("brt-rate").text shouldBe model.rateBRT.toString
+            }
+            "has the correct tax charged at BRT" in {
+              document.getElementById("brt-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtBRT.toCurrencyString
+            }
+          }
+          s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
+            document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
+          }
+          s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
+            document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
+          }
+          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
+            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
+          }
+        }
+
+        "have the higher rate of tax" should {
+          val setup = pageSetup(busBropHRTCalcDataModel, testIncomeSources)
+          import ImplicitCurrencyFormatter._
+          import setup._
+
+          s"have an income tax section" which {
+            "has a BRT section" in {
+              document.getElementById("brt-section") should not be null
+            }
+
+            "has the correct amount of income taxed at HRT" in {
+              document.getElementById("hrt-it-calc").text shouldBe model.payPensionsProfitAtHRT.get.toCurrencyString
+            }
+            "has the correct HRT rate" in {
+              document.getElementById("hrt-rate").text shouldBe model.rateHRT.toString
+            }
+            "has the correct tax charged at HRT" in {
+              document.getElementById("hrt-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtHRT.toCurrencyString
+            }
+
+            "does not have an ART section" in {
+              document.getElementById("art-section") shouldBe null
+            }
+          }
+        }
+
+        "have the additional rate of tax" should {
+          val setup = pageSetup(busPropARTCalcDataModel, testIncomeSources)
+          import ImplicitCurrencyFormatter._
+          import setup._
+          s"have an income tax section" which {
+            "has a BRT section" in {
+              document.getElementById("brt-section") should not be null
+            }
+            "has a HRT section" in {
+              document.getElementById("hrt-section") should not be null
+            }
+
+            "has the correct amount of income taxed at ART" in {
+              document.getElementById("art-it-calc").text shouldBe model.payPensionsProfitAtART.get.toCurrencyString
+            }
+            "has the correct ART rate" in {
+              document.getElementById("art-rate").text shouldBe model.rateART.toString
+            }
+            "has the correct tax charged at ART" in {
+              document.getElementById("art-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtART.toCurrencyString
+            }
+          }
+        }
+
+        "has no taxable income and no NI contributions" should {
+          val setup = pageSetup(noTaxOrNICalcDataModel, testIncomeSources)
+          import ImplicitCurrencyFormatter._
+          import setup._
+          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
+            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
+          }
+          s"not have a National Insurance amount" in {
+            document.getElementById("ni-amount") shouldBe null
+          }
+          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
+            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
+          }
+        }
+
+        "has no taxable income and some NI contribution" should {
+          val setup = pageSetup(noTaxJustNICalcDataModel, testIncomeSources)
+          import ImplicitCurrencyFormatter._
+          import setup._
+          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
+            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
+          }
+          s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
+            document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
+          }
+          s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
+            document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
+          }
+          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
+            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
+          }
+        }
+      }
+
+      "when no breakdown data is retrieved" should {
+        lazy val noBreakdownPage = views.html.estimatedTaxLiability(
+          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources, serviceInfo)
+        lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
+
+        "not display a breakdown section" in {
+          noBreakdownDocument.getElementById("calc-breakdown-inner-link") shouldBe null
+        }
+      }
+
+      "when the user only has businesses registered" should {
+
+        val setup = pageSetup(justBusinessCalcDataModel, testBusinessIncomeSource)
+        import setup._
+
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
+        }
+
+        "not display the property profit section" in {
+          document.getElementById("property-profit-section") shouldBe null
+        }
+      }
+
+      "when the user only has a business registered but has a property profit value" should {
+        val setup = pageSetup(busPropBRTCalcDataModel, testBusinessIncomeSource)
+        import setup._
+
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£1,500"
+        }
+        "display the property profit amount" in {
+          document.getElementById("property-profit").text shouldBe "£1,500"
+        }
+      }
+
+      "when the user only has properties registered" should {
+
+        val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
+        import setup._
+
+        "display the property profit section" in {
+          document.getElementById("property-profit").text shouldBe "£3,000"
+        }
+        "not display the business profit section" in {
+          document.getElementById("business-profit") shouldBe null
+        }
+      }
+
+      "when the user only has properties registered but has a business profit value" should {
+        val setup = pageSetup(busPropBRTCalcDataModel, testPropertyIncomeSource)
+        import setup._
+
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£1,500"
+        }
+        "display the property profit amount" in {
+          document.getElementById("property-profit").text shouldBe "£1,500"
+        }
+      }
+    }
+
+    "have sidebar section " in {
+      document.getElementById("sidebar") shouldNot be(null)
+    }
+  }
 }

@@ -37,41 +37,41 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
-//  val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModel), Some(propertyIncomeModel))
+  val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModel), Some(propertyIncomeModel))
 
   "The EstimatedTaxLiabilityError view" should {
 
-//    lazy val page: HtmlFormat.Appendable =
-//      views.html.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources, serviceInfo)
-//    lazy val document: Document = Jsoup.parse(contentAsString(page))
-//
-//    s"have the title '${messages.title}'" in {
-//      document.title() shouldBe messages.title
-//    }
-//
-//    s"have the tax year '${messages.taxYear}'" in {
-//      document.getElementById("tax-year").text() shouldBe messages.taxYear
-//    }
-//
-//    s"have the page heading '${messages.pageHeading}'" in {
-//      document.getElementById("page-heading").text() shouldBe messages.pageHeading
-//    }
-//
-//    s"have an Estimated Tax Liability section" which {
-//
-//      lazy val estimateSection = document.getElementById("estimated-tax")
-//
-//      s"has a paragraph with '${messages.p1}'" in {
-//        estimateSection.getElementById("p1").text() shouldBe messages.p1
-//      }
-//
-//      s"has a paragraph with '${messages.p2}'" in {
-//        estimateSection.getElementById("p2").text() shouldBe messages.p2
-//      }
-//    }
-//
-//    "have sidebar section " in {
-//      document.getElementById("sidebar") shouldNot be(null)
-//    }
+    lazy val page: HtmlFormat.Appendable =
+      views.html.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources, serviceInfo)
+    lazy val document: Document = Jsoup.parse(contentAsString(page))
+
+    s"have the title '${messages.title}'" in {
+      document.title() shouldBe messages.title
+    }
+
+    s"have the tax year '${messages.taxYear}'" in {
+      document.getElementById("tax-year").text() shouldBe messages.taxYear
+    }
+
+    s"have the page heading '${messages.pageHeading}'" in {
+      document.getElementById("page-heading").text() shouldBe messages.pageHeading
+    }
+
+    s"have an Estimated Tax Liability section" which {
+
+      lazy val estimateSection = document.getElementById("estimated-tax")
+
+      s"has a paragraph with '${messages.p1}'" in {
+        estimateSection.getElementById("p1").text() shouldBe messages.p1
+      }
+
+      s"has a paragraph with '${messages.p2}'" in {
+        estimateSection.getElementById("p2").text() shouldBe messages.p2
+      }
+    }
+
+    "have sidebar section " in {
+      document.getElementById("sidebar") shouldNot be(null)
+    }
   }
 }
