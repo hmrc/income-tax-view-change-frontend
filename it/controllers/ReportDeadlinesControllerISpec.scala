@@ -808,7 +808,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the business section is displayed under Business income")
           res should have(
-            elementTextByID(id = "bi-1-section")("Business income")
+            elementTextByID(id = "bi-1-section")("business")
           )
 
           Then("the page displays the following error message")

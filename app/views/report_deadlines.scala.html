@@ -38,7 +38,7 @@
 
         <h1 id="page-heading">@messages("obligations.heading")</h1>
 
-        @if(incomeSources.allReportDeadlinesErrored) {
+        @if(incomeSources.allReportDeadlinesErroredForAllIncomeSources) {
             @allReportDeadlinesErrored
         } else {
             <p id="obligation-intro">@messages("obligations.info")</p>
