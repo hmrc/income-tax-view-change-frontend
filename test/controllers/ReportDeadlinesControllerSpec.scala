@@ -34,7 +34,6 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAsyncActionPred
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
-    mockReportDeadlinesService,
     app.injector.instanceOf[ServiceInfoPartialService],
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]

@@ -28,7 +28,7 @@ import utils.TestSupport
 import scala.concurrent.Future
 
 
-class PropertyObligationDataConnectorSpec extends TestSupport with MockHttp {
+class PropertyReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
   val successResponse = HttpResponse(Status.OK, Some(Json.toJson(obligationsDataSuccessModel)))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))

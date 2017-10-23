@@ -76,10 +76,97 @@ object TestConstants extends ImplicitDateFormatter {
   """.stripMargin.trim)
   }
 
+  object ReportDeadlines {
+
+    def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start,m.end,m.due,m.met) {
+      override def currentTime() = "2017-10-31"
+    }
+
+    val receivedObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-04-01",
+      end = "2017-6-30",
+      due = "2017-7-31",
+      met = true
+    ))
+
+    val overdueObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-30",
+      met = false
+    ))
+
+    val openObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-31",
+      met = false
+    ))
+
+    val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
+    val obligationsDataSuccessString: String =
+      """
+        |{
+        |  "obligations": [
+        |    {
+        |      "start": "2017-04-01",
+        |      "end": "2017-06-30",
+        |      "due": "2017-07-31",
+        |      "met": true
+        |    },
+        |    {
+        |      "start": "2017-07-01",
+        |      "end": "2017-09-30",
+        |      "due": "2017-10-30",
+        |      "met": false
+        |    },
+        |    {
+        |      "start": "2017-07-01",
+        |      "end": "2017-09-30",
+        |      "due": "2017-10-31",
+        |      "met": false
+        |    }
+        |  ]
+        |}
+      """.stripMargin
+    val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
+
+    val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
+    val obligationsDataErrorString =
+      s"""
+         |{
+         |  "code":$testErrorStatus,
+         |  "message":"$testErrorMessage"
+         |}
+      """.stripMargin
+    val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
+
+  }
+
   object BusinessDetails {
 
-    import ReportDeadlines._
+    val receivedObligation = ReportDeadlineModel(
+      start = "2017-04-01",
+      end = "2017-6-30",
+      due = "2017-7-31",
+      met = true
+    )
 
+    val overdueObligation = ReportDeadlineModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-30",
+      met = false
+    )
+
+    val openObligation = ReportDeadlineModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-31",
+      met = false
+    )
+
+    val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
     val testBusinessAccountingPeriod = AccountingPeriodModel(start = "2017-6-1", end = "2018-5-30")
     val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = "2017-3-5", end = "2018-3-6")
     val testTradeName = "business"
@@ -238,73 +325,6 @@ object TestConstants extends ImplicitDateFormatter {
 
     val lastTaxCalcSuccessWithYear = LastTaxCalculationWithYear(lastTaxCalcSuccess, 2018)
     val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, 2018)
-  }
-
-  object ReportDeadlines {
-
-    def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start,m.end,m.due,m.met) {
-      override def currentTime() = "2017-10-31"
-    }
-
-    val receivedObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-      start = "2017-04-01",
-      end = "2017-6-30",
-      due = "2017-7-31",
-      met = true
-    ))
-
-    val overdueObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-      start = "2017-7-1",
-      end = "2017-9-30",
-      due = "2017-10-30",
-      met = false
-    ))
-
-    val openObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-      start = "2017-7-1",
-      end = "2017-9-30",
-      due = "2017-10-31",
-      met = false
-    ))
-
-    val obligationsDataSuccessModel: ReportDeadlinesResponseModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
-    val obligationsDataSuccessString: String =
-      """
-        |{
-        |  "obligations": [
-        |    {
-        |      "start": "2017-04-01",
-        |      "end": "2017-06-30",
-        |      "due": "2017-07-31",
-        |      "met": true
-        |    },
-        |    {
-        |      "start": "2017-07-01",
-        |      "end": "2017-09-30",
-        |      "due": "2017-10-30",
-        |      "met": false
-        |    },
-        |    {
-        |      "start": "2017-07-01",
-        |      "end": "2017-09-30",
-        |      "due": "2017-10-31",
-        |      "met": false
-        |    }
-        |  ]
-        |}
-      """.stripMargin
-    val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
-
-    val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
-    val obligationsDataErrorString =
-      s"""
-        |{
-        |  "code":$testErrorStatus,
-        |  "message":"$testErrorMessage"
-        |}
-      """.stripMargin
-    val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
-
   }
 
   object IncomeSourceDetails {

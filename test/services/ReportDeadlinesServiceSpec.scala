@@ -18,13 +18,10 @@ package services
 
 
 import assets.TestConstants
-import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
-import assets.TestConstants.PropertyIncome._
 import mocks.connectors.{MockBusinessReportDeadlinesConnector, MockPropertyReportDeadlinesConnector}
 import models._
-import play.api.http.Status
 import utils.TestSupport
 
 class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDeadlinesConnector with MockPropertyReportDeadlinesConnector {

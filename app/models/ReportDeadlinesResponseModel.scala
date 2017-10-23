@@ -68,4 +68,5 @@ object ReportDeadlinesResponseModel {
       case "ReportDeadlinesErrorModel" => Json.fromJson[ReportDeadlinesErrorModel](data)(ReportDeadlinesErrorModel.format)
     }).get
   }
+  implicit val format: OFormat[ReportDeadlinesResponseModel] = Json.format[ReportDeadlinesResponseModel]
 }
