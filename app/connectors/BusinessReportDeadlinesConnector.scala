@@ -47,8 +47,8 @@ class BusinessReportDeadlinesConnector @Inject()(val http: HttpGet) extends Serv
             Logger.debug(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[ReportDeadlinesModel].fold(
               invalid => {
-                Logger.warn(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - Json Validation Error. Parsing Report Deadline Data Response")
-                ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadline Data Response")
+                Logger.warn(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - Json Validation Error. Parsing Report Deadlines Data Response")
+                ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
               },
               valid => valid
             )

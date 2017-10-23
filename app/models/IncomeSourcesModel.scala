@@ -47,7 +47,8 @@ case class IncomeSourcesModel(
     case _ => false
   }
 
-  def earliestAccountingPeriodStart(year: Int): LocalDate = incomeSources.map(_.accountingPeriod.start).min
+  def earliestAccountingPeriodStart(year: Int): LocalDate =
+    incomeSources.filter(_.accountingPeriod.determineTaxYear == year).map(_.accountingPeriod.start).min
 }
 
 case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel

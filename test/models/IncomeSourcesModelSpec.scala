@@ -86,7 +86,7 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
       }
       //Test Business Details
       "should not have business details" in {
-        propertyIncomeSourceSuccess.businessIncomeSources shouldBe None
+        propertyIncomeSourceSuccess.businessIncomeSources shouldBe List.empty
       }
       s"return ${testPropertyAccountingPeriod.start} as the result for 'earliestAccountingPeriodStart'" in {
         propertyIncomeSourceSuccess.earliestAccountingPeriodStart(2018) shouldBe testPropertyAccountingPeriod.start
@@ -95,7 +95,7 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
     "the user has no income source" should {
       "return None for both business and property sources" in {
         noIncomeSourceSuccess.propertyIncomeSource shouldBe None
-        noIncomeSourceSuccess.businessIncomeSources shouldBe None
+        noIncomeSourceSuccess.businessIncomeSources shouldBe List.empty
       }
     }
     "the user has both income sources, but only a business income source for 2019 then 'earliestAccountingPeriodStart'" should {
