@@ -88,9 +88,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the single business obligation data is")
           res should have(
             //Check the 1st obligation data
-            elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
-            elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
-            elementTextByID(id = "bi-ob-1-status")("Received")
+            elementTextByID(id = "bi-1-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "bi-1-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "bi-1-ob-1-status")("Received")
           )
 
           Then("the page displays the View 2017 to 2018 details link")
@@ -168,30 +168,30 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the first obligation data contains")
             res should have(
-              elementTextByID(id = "bi-ob-1-start")("1 October 2016"),
-              elementTextByID(id = "bi-ob-1-end")("31 December 2016"),
-              elementTextByID(id = "bi-ob-1-status")("Received")
+              elementTextByID(id = "bi-1-ob-1-start")("1 October 2016"),
+              elementTextByID(id = "bi-1-ob-1-end")("31 December 2016"),
+              elementTextByID(id = "bi-1-ob-1-status")("Received")
             )
 
             Then("the second obligation data contains")
             res should have(
-              elementTextByID(id = "bi-ob-2-start")("1 January 2017"),
-              elementTextByID(id = "bi-ob-2-end")("31 March 2017"),
-              elementTextByID(id = "bi-ob-2-status")("Overdue")
+              elementTextByID(id = "bi-1-ob-2-start")("1 January 2017"),
+              elementTextByID(id = "bi-1-ob-2-end")("31 March 2017"),
+              elementTextByID(id = "bi-1-ob-2-status")("Overdue")
             )
 
             Then("the third obligation data contains")
             res should have(
-              elementTextByID(id = "bi-ob-3-start")("1 April 2017"),
-              elementTextByID(id = "bi-ob-3-end")("30 June 2017"),
-              elementTextByID(id = "bi-ob-3-status")("Overdue")
+              elementTextByID(id = "bi-1-ob-3-start")("1 April 2017"),
+              elementTextByID(id = "bi-1-ob-3-end")("30 June 2017"),
+              elementTextByID(id = "bi-1-ob-3-status")("Overdue")
             )
 
             Then("the fourth obligation data contains")
             res should have(
-              elementTextByID(id = "bi-ob-4-start")("1 July 2017"),
-              elementTextByID(id = "bi-ob-4-end")("30 September 2017"),
-              elementTextByID(id = "bi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
+              elementTextByID(id = "bi-1-ob-4-start")("1 July 2017"),
+              elementTextByID(id = "bi-1-ob-4-end")("30 September 2017"),
+              elementTextByID(id = "bi-1-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
 
             )
 
@@ -252,7 +252,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the fifth property and business obligation data are not displayed")
             res should have(
               isElementVisibleById("pi-ob-5-status")(false),
-              isElementVisibleById("bi-ob-5-status")(false)
+              isElementVisibleById("bi-1-ob-5-status")(false)
             )
 
           }
@@ -315,22 +315,22 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the first business obligation displayed is")
           res should have(
-            elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
-            elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
-            elementTextByID(id = "bi-ob-1-status")("Received")
+            elementTextByID(id = "bi-1-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "bi-1-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "bi-1-ob-1-status")("Received")
           )
           Then("the second business obligation displayed is")
           res should have(
-            elementTextByID(id = "bi-ob-2-start")("6 October 2017"),
-            elementTextByID(id = "bi-ob-2-end")("5 January 2018"),
-            elementTextByID(id = "bi-ob-2-status")("Overdue")
+            elementTextByID(id = "bi-1-ob-2-start")("6 October 2017"),
+            elementTextByID(id = "bi-1-ob-2-end")("5 January 2018"),
+            elementTextByID(id = "bi-1-ob-2-status")("Overdue")
           )
 
           Then("the third business obligation displayed is")
           res should have(
-            elementTextByID(id = "bi-ob-3-start")("6 July 2017"),
-            elementTextByID(id = "bi-ob-3-end")("5 October 2017"),
-            elementTextByID(id = "bi-ob-3-status")("Due by " + LocalDate.now().plusDays(1).toLongDate)
+            elementTextByID(id = "bi-1-ob-3-start")("6 July 2017"),
+            elementTextByID(id = "bi-1-ob-3-end")("5 October 2017"),
+            elementTextByID(id = "bi-1-ob-3-status")("Due by " + LocalDate.now().plusDays(1).toLongDate)
           )
 
           Then("the first property obligation displayed is")
@@ -419,30 +419,30 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("first business obligation displayed is")
           res should have(
-            elementTextByID(id = "bi-ob-1-start")("1 October 2016"),
-            elementTextByID(id = "bi-ob-1-end")("31 December 2016"),
-            elementTextByID(id = "bi-ob-1-status")("Received")
+            elementTextByID(id = "bi-1-ob-1-start")("1 October 2016"),
+            elementTextByID(id = "bi-1-ob-1-end")("31 December 2016"),
+            elementTextByID(id = "bi-1-ob-1-status")("Received")
           )
 
           Then("second business obligation displayed is")
           res should have(
-            elementTextByID(id = "bi-ob-2-start")("1 January 2017"),
-            elementTextByID(id = "bi-ob-2-end")("31 March 2017"),
-            elementTextByID(id = "bi-ob-2-status")("Overdue")
+            elementTextByID(id = "bi-1-ob-2-start")("1 January 2017"),
+            elementTextByID(id = "bi-1-ob-2-end")("31 March 2017"),
+            elementTextByID(id = "bi-1-ob-2-status")("Overdue")
           )
 
           Then("third business obligation displayed is")
           res should have(
-            elementTextByID(id = "bi-ob-3-start")("1 April 2017"),
-            elementTextByID(id = "bi-ob-3-end")("30 June 2017"),
-            elementTextByID(id = "bi-ob-3-status")("Overdue")
+            elementTextByID(id = "bi-1-ob-3-start")("1 April 2017"),
+            elementTextByID(id = "bi-1-ob-3-end")("30 June 2017"),
+            elementTextByID(id = "bi-1-ob-3-status")("Overdue")
           )
 
           Then("fourth business obligation displayed is")
           res should have(
-            elementTextByID(id = "bi-ob-4-start")("1 July 2017"),
-            elementTextByID(id = "bi-ob-4-end")("30 September 2017"),
-            elementTextByID(id = "bi-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
+            elementTextByID(id = "bi-1-ob-4-start")("1 July 2017"),
+            elementTextByID(id = "bi-1-ob-4-end")("30 September 2017"),
+            elementTextByID(id = "bi-1-ob-4-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
           )
 
           Then("first property obligation displayed is")
@@ -535,7 +535,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             elementTextByID(id = "pi-ob-1-start")("6 April 2017"),
             elementTextByID(id = "pi-ob-1-end")("5 July 2017"),
             elementTextByID(id = "pi-ob-1-status")("Received"),
-            isElementVisibleById("bi-ob")(false)
+            isElementVisibleById("bi-1-ob")(false)
           )
         }
       }
@@ -751,9 +751,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the single business obligation")
           res should have(
-            elementTextByID(id = "bi-ob-1-start")("6 April 2017"),
-            elementTextByID(id = "bi-ob-1-end")("5 July 2017"),
-            elementTextByID(id = "bi-ob-1-status")("Received")
+            elementTextByID(id = "bi-1-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "bi-1-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "bi-1-ob-1-status")("Received")
           )
 
           Then("the single property obligation")
@@ -808,17 +808,17 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the business section is displayed under Business income")
           res should have(
-            elementTextByID(id = "bi-section")("Business income")
+            elementTextByID(id = "bi-1-section")("Business income")
           )
 
           Then("the page displays the following error message")
           res should have(
-            elementTextByID(id = "bi-p1")("We can't display your next report due date at the moment.")
+            elementTextByID(id = "bi-1-p1")("We can't display your next report due date at the moment.")
           )
 
           Then("the page displays the following instruction")
           res should have(
-            elementTextByID(id = "bi-p2")("Try refreshing the page in a few minutes.")
+            elementTextByID(id = "bi-1-p2")("Try refreshing the page in a few minutes.")
           )
 
         }

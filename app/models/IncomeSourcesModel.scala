@@ -42,7 +42,7 @@ case class IncomeSourcesModel(
   val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
   val lastTaxYear: Option[Int] = orderedTaxYears.lastOption
 
-  val allReportDeadlinesErrored: Boolean = !incomeSources.map(_.reportDeadlines).exists {
+  val allReportDeadlinesErrored: Boolean = hasBothIncomeSources && !incomeSources.map(_.reportDeadlines).exists {
     case _: ReportDeadlinesModel => true
     case _ => false
   }

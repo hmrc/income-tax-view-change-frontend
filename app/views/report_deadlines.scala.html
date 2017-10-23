@@ -46,9 +46,9 @@
             <!-- business obligations -->
             <section>
                 @incomeSources.businessIncomeSources.zipWithIndex.map{ case (business, i) =>
-                    @defining("bi" + i.toString) { id =>
+                    @defining("bi-" + (i + 1).toString) { id =>
                         <h2 id="@{id}-section">@business.tradingName</h2>
-                        @renderReportDeadlines(business.reportDeadlines, "thing")
+                        @renderReportDeadlines(business.reportDeadlines, id)
                     }
                 }
             </section>
