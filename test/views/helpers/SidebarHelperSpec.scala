@@ -27,7 +27,7 @@ import play.twirl.api.Html
 import utils.TestSupport
 import views.html.helpers.sidebarHelper
 
-class sidebarHelperSpec extends TestSupport {
+class SidebarHelperSpec extends TestSupport {
 
   lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
 

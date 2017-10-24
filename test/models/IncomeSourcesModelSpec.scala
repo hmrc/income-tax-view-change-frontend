@@ -29,23 +29,23 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
     "the user has both business and property income sources" should {
       //Test Business details
       s"have a business ID of $testSelfEmploymentId" in {
-        bothIncomeSourceSuccessMisalignedTaxYear.businessDetails.get.selfEmploymentId shouldBe testSelfEmploymentId
+        bothIncomeSourceSuccessMisalignedTaxYear.businessIncomeSources.head.selfEmploymentId shouldBe testSelfEmploymentId
       }
       s"have the business accounting period start date of ${testBusinessAccountingPeriod.start}" in {
-        bothIncomeSourceSuccessMisalignedTaxYear.businessDetails.get.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
+        bothIncomeSourceSuccessMisalignedTaxYear.businessIncomeSources.head.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
       }
       s"have the business accounting period end date of ${testBusinessAccountingPeriod.end}" in {
-        bothIncomeSourceSuccessMisalignedTaxYear.businessDetails.get.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
+        bothIncomeSourceSuccessMisalignedTaxYear.businessIncomeSources.head.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
       }
       s"should have the trading name of 'Test Business'" in {
-        bothIncomeSourceSuccessMisalignedTaxYear.businessDetails.get.tradingName shouldBe testTradeName
+        bothIncomeSourceSuccessMisalignedTaxYear.businessIncomeSources.head.tradingName shouldBe testTradeName
       }
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        bothIncomeSourceSuccessMisalignedTaxYear.propertyDetails.get.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
+        bothIncomeSourceSuccessMisalignedTaxYear.propertyIncomeSource.get.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        bothIncomeSourceSuccessMisalignedTaxYear.propertyDetails.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
+        bothIncomeSourceSuccessMisalignedTaxYear.propertyIncomeSource.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
       }
       s"return ${testPropertyAccountingPeriod.start} as the result for 'earliestAccountingPeriodStart'" in {
         bothIncomeSourceSuccessMisalignedTaxYear.earliestAccountingPeriodStart(2018) shouldBe testPropertyAccountingPeriod.start
@@ -57,20 +57,20 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
 
     "the user has just a business income source" should {
       s"have a business ID of $testSelfEmploymentId" in {
-        businessIncomeSourceSuccess.businessDetails.get.selfEmploymentId shouldBe testSelfEmploymentId
+        businessIncomeSourceSuccess.businessIncomeSources.head.selfEmploymentId shouldBe testSelfEmploymentId
       }
       s"have the business accounting period start date of ${testBusinessAccountingPeriod.start}" in {
-        businessIncomeSourceSuccess.businessDetails.get.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
+        businessIncomeSourceSuccess.businessIncomeSources.head.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
       }
       s"have the business accounting period end date of ${testBusinessAccountingPeriod.end}" in {
-        businessIncomeSourceSuccess.businessDetails.get.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
+        businessIncomeSourceSuccess.businessIncomeSources.head.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
       }
       s"should have the trading name of 'Test Business'" in {
-        businessIncomeSourceSuccess.businessDetails.get.tradingName shouldBe testTradeName
+        businessIncomeSourceSuccess.businessIncomeSources.head.tradingName shouldBe testTradeName
       }
       //Test Property details
       s"should not have property details" in {
-        businessIncomeSourceSuccess.propertyDetails shouldBe None
+        businessIncomeSourceSuccess.propertyIncomeSource shouldBe None
       }
       s"return ${testBusinessAccountingPeriod.start} as the result for 'earliestAccountingPeriodStart'" in {
         businessIncomeSourceSuccess.earliestAccountingPeriodStart(2019) shouldBe testBusinessAccountingPeriod.start
@@ -79,14 +79,14 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
     "the user has just a property income source" should {
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        propertyIncomeSourceSuccess.propertyDetails.get.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
+        propertyIncomeSourceSuccess.propertyIncomeSource.get.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        propertyIncomeSourceSuccess.propertyDetails.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
+        propertyIncomeSourceSuccess.propertyIncomeSource.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
       }
       //Test Business Details
       "should not have business details" in {
-        propertyIncomeSourceSuccess.businessDetails shouldBe None
+        propertyIncomeSourceSuccess.businessIncomeSources shouldBe List.empty
       }
       s"return ${testPropertyAccountingPeriod.start} as the result for 'earliestAccountingPeriodStart'" in {
         propertyIncomeSourceSuccess.earliestAccountingPeriodStart(2018) shouldBe testPropertyAccountingPeriod.start
@@ -94,8 +94,8 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
     }
     "the user has no income source" should {
       "return None for both business and property sources" in {
-        noIncomeSourceSuccess.propertyDetails shouldBe None
-        noIncomeSourceSuccess.businessDetails shouldBe None
+        noIncomeSourceSuccess.propertyIncomeSource shouldBe None
+        noIncomeSourceSuccess.businessIncomeSources shouldBe List.empty
       }
     }
     "the user has both income sources, but only a business income source for 2019 then 'earliestAccountingPeriodStart'" should {

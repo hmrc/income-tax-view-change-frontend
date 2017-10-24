@@ -21,6 +21,11 @@ import java.time.LocalDate
 import play.api.libs.json.{Json, OFormat}
 import utils.ImplicitDateFormatter._
 
+abstract class IncomeModel {
+  def accountingPeriod: AccountingPeriodModel
+  def reportDeadlines: ReportDeadlinesResponseModel
+}
+
 sealed trait IncomeSourcesResponseModel
 case object IncomeSourcesError extends IncomeSourcesResponseModel
 case class IncomeSourcesModel(
@@ -42,14 +47,13 @@ case class IncomeSourcesModel(
     case _ => false
   }
 
-  def earliestAccountingPeriodStart(year: Int): LocalDate = incomeSources.map(_.accountingPeriod.start).min
+  val allReportDeadlinesErroredForAllIncomeSources: Boolean = hasBothIncomeSources && allReportDeadlinesErrored
+
+  def earliestAccountingPeriodStart(year: Int): LocalDate =
+    incomeSources.filter(_.accountingPeriod.determineTaxYear == year).map(_.accountingPeriod.start).min
 }
 
-object IncomeSourcesModel {
-  val format: OFormat[IncomeSourcesModel] = Json.format[IncomeSourcesModel]
-
-}
-
+case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel
 case class BusinessIncomeModel(
                                 selfEmploymentId: String,
                                 tradingName: String,
@@ -59,19 +63,14 @@ case class BusinessIncomeModel(
 
 object BusinessIncomeModel {
   implicit val format: OFormat[BusinessIncomeModel] = Json.format[BusinessIncomeModel]
-  implicit val obsFormat: OFormat[ReportDeadlinesResponseModel] = Json.format[ReportDeadlinesResponseModel]
 }
-
-case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel
 
 object PropertyIncomeModel {
   implicit val format: OFormat[PropertyIncomeModel] = Json.format[PropertyIncomeModel]
-  implicit val obsFormat: OFormat[ReportDeadlinesResponseModel] = Json.format[ReportDeadlinesResponseModel]
 }
 
-abstract class IncomeModel {
-  def accountingPeriod: AccountingPeriodModel
-  def reportDeadlines: ReportDeadlinesResponseModel
+object IncomeSourcesModel {
+ implicit val format: OFormat[IncomeSourcesModel] = Json.format[IncomeSourcesModel]
 }
 
 

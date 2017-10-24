@@ -34,12 +34,12 @@ class BusinessReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestBusinessObligationDataConnector extends BusinessReportDeadlinesConnector(mockHttpGet)
+  object TestBusinessReportDeadlinesDataConnector extends BusinessReportDeadlinesConnector(mockHttpGet)
 
-  "BusinessObligationDataConnector.getObligationData" should {
+  "BusinessReportDealinesDataConnector.getObligationData" should {
 
-    lazy val testUrl = TestBusinessObligationDataConnector.getObligationDataUrl(testNino, testSelfEmploymentId)
-    def result: Future[ReportDeadlinesResponseModel] = TestBusinessObligationDataConnector.getBusinessObligationData(testNino, testSelfEmploymentId)
+    lazy val testUrl = TestBusinessReportDeadlinesDataConnector.getReportDeadlineDataUrl(testNino, testSelfEmploymentId)
+    def result: Future[ReportDeadlinesResponseModel] = TestBusinessReportDeadlinesDataConnector.getBusinessReportDeadlineData(testNino, testSelfEmploymentId)
 
     "return a SuccessResponse with JSON in case of sucess" in {
       setupMockHttpGet(testUrl)(successResponse)
@@ -53,7 +53,7 @@ class BusinessReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
     "return BusinessListError model when bad JSON is received" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Obligation Data Response")
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
     }
 
     "return ReportDeadlinesErrorModel model in case of future failed scenario" in {

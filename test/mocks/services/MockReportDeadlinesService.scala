@@ -16,9 +16,7 @@
 
 package mocks.services
 
-import assets.TestConstants.BusinessDetails.businessIncomeModel
-import assets.TestConstants.PropertyIncome.propertyIncomeModel
-import assets.TestConstants.testNino
+import assets.TestConstants.{testNino, testSelfEmploymentId}
 import models._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -41,38 +39,38 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
     reset(mockReportDeadlinesService)
   }
 
-  def setupMockBusinessReportDeadlinesResult(nino: String, businessIncome: Option[BusinessIncomeModel])(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockReportDeadlinesService.getBusinessReportDeadlines(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(businessIncome))(ArgumentMatchers.any()))
+  def setupMockBusinessReportDeadlinesResult(nino: String, selfEmploymentId: String)(response: ReportDeadlinesResponseModel): Unit = {
+    when(mockReportDeadlinesService.getBusinessReportDeadlines(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockPropertyReportDeadlinesResult(nino: String, propertyIncome: Option[PropertyIncomeModel])(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockReportDeadlinesService.getPropertyReportDeadlines(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(propertyIncome))(ArgumentMatchers.any()))
+  def setupMockPropertyReportDeadlinesResult(nino: String)(response: ReportDeadlinesResponseModel): Unit = {
+    when(mockReportDeadlinesService.getPropertyReportDeadlines(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def mockBusinessSuccess(): Unit = setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModel))(
+  def mockBusinessSuccess(): Unit = setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(
     ReportDeadlinesModel(
       List(
-        ObligationModel(
+        ReportDeadlineModel(
           start = "2017-04-06",
           end = "2017-07-05",
           due = "2017-08-05",
           met = true
         ),
-        ObligationModel(
+        ReportDeadlineModel(
           start = "2017-07-06",
           end = "2017-10-05",
           due = "2017-11-05",
           met = true
         ),
-        ObligationModel(
+        ReportDeadlineModel(
           start = "2017-10-06",
           end = "2018-01-05",
           due = "2018-02-05",
           met = false
         ),
-        ObligationModel(
+        ReportDeadlineModel(
           start = "2018-01-06",
           end = "2018-04-05",
           due = "2018-05-06",
@@ -81,34 +79,33 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
       )
     )
   )
-  def mockBusinessError(): Unit = setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModel))(
+
+  def mockBusinessError(): Unit = setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(
     ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 
-  def mockNoBusinessIncome(): Unit = setupMockBusinessReportDeadlinesResult(testNino, None)(NoReportDeadlines)
-
-  def mockPropertySuccess(): Unit = setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(
+  def mockPropertySuccess(): Unit = setupMockPropertyReportDeadlinesResult(testNino)(
     ReportDeadlinesModel(
       List(
-        ObligationModel(
+        ReportDeadlineModel(
           start = "2017-04-06",
           end = "2017-07-05",
           due = "2017-08-05",
           met = true
         ),
-        ObligationModel(
+        ReportDeadlineModel(
           start = "2017-07-06",
           end = "2017-10-05",
           due = "2017-11-05",
           met = true
         ),
-        ObligationModel(
+        ReportDeadlineModel(
           start = "2017-10-06",
           end = "2018-01-05",
           due = "2018-02-05",
           met = false
         ),
-        ObligationModel(
+        ReportDeadlineModel(
           start = "2018-01-06",
           end = "2018-04-05",
           due = "2018-05-06",
@@ -117,9 +114,8 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
       )
     )
   )
-  def mockPropertyError(): Unit = setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(
+
+  def mockPropertyError(): Unit = setupMockPropertyReportDeadlinesResult(testNino)(
     ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
-
-  def mockNoPropertyIncome(): Unit = setupMockPropertyReportDeadlinesResult(testNino, None)(NoReportDeadlines)
 }

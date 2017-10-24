@@ -76,10 +76,97 @@ object TestConstants extends ImplicitDateFormatter {
   """.stripMargin.trim)
   }
 
+  object ReportDeadlines {
+
+    def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start,m.end,m.due,m.met) {
+      override def currentTime() = "2017-10-31"
+    }
+
+    val receivedObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-04-01",
+      end = "2017-6-30",
+      due = "2017-7-31",
+      met = true
+    ))
+
+    val overdueObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-30",
+      met = false
+    ))
+
+    val openObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-31",
+      met = false
+    ))
+
+    val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
+    val obligationsDataSuccessString: String =
+      """
+        |{
+        |  "obligations": [
+        |    {
+        |      "start": "2017-04-01",
+        |      "end": "2017-06-30",
+        |      "due": "2017-07-31",
+        |      "met": true
+        |    },
+        |    {
+        |      "start": "2017-07-01",
+        |      "end": "2017-09-30",
+        |      "due": "2017-10-30",
+        |      "met": false
+        |    },
+        |    {
+        |      "start": "2017-07-01",
+        |      "end": "2017-09-30",
+        |      "due": "2017-10-31",
+        |      "met": false
+        |    }
+        |  ]
+        |}
+      """.stripMargin
+    val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
+
+    val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
+    val obligationsDataErrorString =
+      s"""
+         |{
+         |  "code":$testErrorStatus,
+         |  "message":"$testErrorMessage"
+         |}
+      """.stripMargin
+    val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
+
+  }
+
   object BusinessDetails {
 
-    import ReportDeadlines._
+    val receivedObligation = ReportDeadlineModel(
+      start = "2017-04-01",
+      end = "2017-6-30",
+      due = "2017-7-31",
+      met = true
+    )
 
+    val overdueObligation = ReportDeadlineModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-30",
+      met = false
+    )
+
+    val openObligation = ReportDeadlineModel(
+      start = "2017-7-1",
+      end = "2017-9-30",
+      due = "2017-10-31",
+      met = false
+    )
+
+    val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
     val testBusinessAccountingPeriod = AccountingPeriodModel(start = "2017-6-1", end = "2018-5-30")
     val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = "2017-3-5", end = "2018-3-6")
     val testTradeName = "business"
@@ -90,7 +177,7 @@ object TestConstants extends ImplicitDateFormatter {
       accountingPeriod = testBusinessAccountingPeriod,
       accountingType = "CASH",
       commencementDate = Some("2017-1-1"),
-      cessationDate = Some("2017-12-31"),
+      cessationDate = None,
       tradingName = testTradeName,
       businessDescription = Some("a business"),
       businessAddressLineOne = Some("64 Zoo Lane"),
@@ -104,8 +191,8 @@ object TestConstants extends ImplicitDateFormatter {
       accountingPeriod = testBusinessAccountingPeriod,
       accountingType = "CASH",
       commencementDate = Some("2017-1-1"),
-      cessationDate = Some("2017-12-31"),
-      tradingName = "otherBusiness",
+      cessationDate = None,
+      tradingName = testTradeName2,
       businessDescription = Some("some business"),
       businessAddressLineOne = Some("65 Zoo Lane"),
       businessAddressLineTwo = Some("Happy Place"),
@@ -114,13 +201,16 @@ object TestConstants extends ImplicitDateFormatter {
       businessPostcode = Some("ZL1 064")
     )
 
-    val businessesSuccessResponse = List(business1, business2)
+    val businessesSuccessResponse = List(business1)
+    val multipleBusinessSuccessResponse = List(business1, business2)
+    val noBusinessDetails = BusinessDetailsModel(List())
     val businessSuccessEmptyResponse = "[]"
     val businessesSuccessModel = BusinessDetailsModel(businessesSuccessResponse)
+    val multipleBusinessesSuccessModel = BusinessDetailsModel(multipleBusinessSuccessResponse)
     val businessSuccessString: String =
       s"""
           {
-             "business":[
+             "businesses":[
                 {
                    "id":"$testSelfEmploymentId",
                    "accountingPeriod":{
@@ -129,7 +219,6 @@ object TestConstants extends ImplicitDateFormatter {
                    },
                    "accountingType":"CASH",
                    "commencementDate":"2017-01-01",
-                   "cessationDate":"2017-12-31",
                    "tradingName":"$testTradeName",
                    "businessDescription":"a business",
                    "businessAddressLineOne":"64 Zoo Lane",
@@ -139,14 +228,13 @@ object TestConstants extends ImplicitDateFormatter {
                    "businessPostcode":"ZL1 064"
                 },
                 {
-                   "id":$testSelfEmploymentId2,
+                   "id":"$testSelfEmploymentId2",
                       "accountingPeriod":{
                         "start":"${testBusinessAccountingPeriod.start}",
                         "end":"${testBusinessAccountingPeriod.end}"
                       },
                    "accountingType":"CASH",
                    "commencementDate":"2017-01-01",
-                   "cessationDate":"2017-12-31",
                    "tradingName":"$testTradeName2",
                    "businessDescription":"some business",
                    "businessAddressLineOne":"65 Zoo Lane",
@@ -239,77 +327,10 @@ object TestConstants extends ImplicitDateFormatter {
     val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, 2018)
   }
 
-  object ReportDeadlines {
-
-    def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start,m.end,m.due,m.met) {
-      override def currentTime() = "2017-10-31"
-    }
-
-    val receivedObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-      start = "2017-04-01",
-      end = "2017-6-30",
-      due = "2017-7-31",
-      met = true
-    ))
-
-    val overdueObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-      start = "2017-7-1",
-      end = "2017-9-30",
-      due = "2017-10-30",
-      met = false
-    ))
-
-    val openObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-      start = "2017-7-1",
-      end = "2017-9-30",
-      due = "2017-10-31",
-      met = false
-    ))
-
-    val obligationsDataSuccessModel: ReportDeadlinesResponseModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
-    val obligationsDataSuccessString: String =
-      """
-        |{
-        |  "obligations": [
-        |    {
-        |      "start": "2017-04-01",
-        |      "end": "2017-06-30",
-        |      "due": "2017-07-31",
-        |      "met": true
-        |    },
-        |    {
-        |      "start": "2017-07-01",
-        |      "end": "2017-09-30",
-        |      "due": "2017-10-30",
-        |      "met": false
-        |    },
-        |    {
-        |      "start": "2017-07-01",
-        |      "end": "2017-09-30",
-        |      "due": "2017-10-31",
-        |      "met": false
-        |    }
-        |  ]
-        |}
-      """.stripMargin
-    val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
-
-    val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
-    val obligationsDataErrorString =
-      s"""
-        |{
-        |  "code":$testErrorStatus,
-        |  "message":"$testErrorMessage"
-        |}
-      """.stripMargin
-    val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
-
-  }
-
   object IncomeSourceDetails {
 
     //Outputs
-    val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesModel(List(BusinessDetails.businessIncomeModel), Some(PropertyIncome.propertyIncomeModel))
+    val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesModel(List(BusinessDetails.businessIncomeModel, BusinessDetails.businessIncomeModel2), Some(PropertyIncome.propertyIncomeModel))
     val businessIncomeSourceSuccess = IncomeSourcesModel(List(BusinessDetails.businessIncomeModel), None)
     val business2018IncomeSourceSuccess = IncomeSourcesModel(List(BusinessDetails.business2018IncomeModel), None)
     val propertyIncomeSourceSuccess = IncomeSourcesModel(List.empty, Some(PropertyIncome.propertyIncomeModel))

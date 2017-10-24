@@ -38,9 +38,9 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
-  val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
-  val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(Some(businessIncomeModelAlignedTaxYear), None)
-  val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(None, Some(propertyIncomeModel))
+  val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
+  val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), None)
+  val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List.empty, Some(propertyIncomeModel))
 
   private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
@@ -180,7 +180,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             }
           }
         }
-        
+
         "have the additional rate of tax" should {
           val setup = pageSetup(busPropARTCalcDataModel, testIncomeSources)
           import ImplicitCurrencyFormatter._

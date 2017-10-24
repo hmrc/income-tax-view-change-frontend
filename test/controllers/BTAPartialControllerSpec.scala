@@ -17,20 +17,19 @@
 package controllers
 
 import assets.Messages.{BtaPartial => messages}
-import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
+import assets.TestConstants.IncomeSourceDetails._
 import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
-import assets.TestConstants.IncomeSourceDetails._
 import config.FrontendAppConfig
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockBTAPartialService
 import models.LastTaxCalculation
-import play.api.i18n.MessagesApi
-import utils.TestSupport
 import play.api.http.Status
+import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import utils.ImplicitCurrencyFormatter._
+import utils.TestSupport
 
 class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService with MockAsyncActionPredicate {
 

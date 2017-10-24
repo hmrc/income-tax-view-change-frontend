@@ -56,13 +56,13 @@ class ReportDeadlinesStatusHelperSpec extends TestSupport {
 
 
       "passed 'Open' the Open Html is returned" in {
-        ObligationStatusHelper.statusHtml(Open("2017-12-25")) shouldBe openHtml
+        ReportDeadlineStatusHelper.statusHtml(Open("2017-12-25")) shouldBe openHtml
       }
       "passed 'Overdue' the Overdue Html is returned" in {
-        ObligationStatusHelper.statusHtml(Overdue) shouldBe overdueHtml
+        ReportDeadlineStatusHelper.statusHtml(Overdue) shouldBe overdueHtml
       }
       "passed 'Received' the Received Html is returned" in {
-        ObligationStatusHelper.statusHtml(Received) shouldBe receivedHtml
+        ReportDeadlineStatusHelper.statusHtml(Received) shouldBe receivedHtml
       }
     }
   }

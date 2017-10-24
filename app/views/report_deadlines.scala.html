@@ -38,7 +38,7 @@
 
         <h1 id="page-heading">@messages("obligations.heading")</h1>
 
-        @if(incomeSources.allReportDeadlinesErrored) {
+        @if(incomeSources.allReportDeadlinesErroredForAllIncomeSources) {
             @allReportDeadlinesErrored
         } else {
             <p id="obligation-intro">@messages("obligations.info")</p>
@@ -46,9 +46,9 @@
             <!-- business obligations -->
             <section>
                 @incomeSources.businessIncomeSources.zipWithIndex.map{ case (business, i) =>
-                    @defining("bi" + i.toString) { id =>
+                    @defining("bi-" + (i + 1).toString) { id =>
                         <h2 id="@{id}-section">@business.tradingName</h2>
-                        @renderReportDeadlines(business.reportDeadlines, "thing")
+                        @renderReportDeadlines(business.reportDeadlines, id)
                     }
                 }
             </section>

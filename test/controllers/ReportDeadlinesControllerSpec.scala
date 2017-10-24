@@ -34,7 +34,6 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAsyncActionPred
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
     MockAsyncActionPredicate,
-    mockReportDeadlinesService,
     app.injector.instanceOf[ServiceInfoPartialService],
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]
@@ -52,7 +51,6 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAsyncActionPred
         "return Status OK (200)" in {
           mockSingleBusinessIncomeSource()
           mockBusinessSuccess()
-          mockNoPropertyIncome()
           status(result) shouldBe Status.OK
         }
 
@@ -73,7 +71,6 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAsyncActionPred
 
         "return Status OK (200)" in {
           mockPropertyIncomeSource()
-          mockNoBusinessIncome()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
         }
@@ -117,8 +114,6 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAsyncActionPred
 
         "return Status OK (200)" in {
           mockNoIncomeSources()
-          mockNoBusinessIncome()
-          mockNoPropertyIncome()
           status(result) shouldBe Status.OK
         }
 

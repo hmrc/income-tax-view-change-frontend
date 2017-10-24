@@ -16,130 +16,263 @@
 
 package services
 
-import assets.TestConstants.ReportDeadlines._
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.PropertyIncome._
 import assets.TestConstants.Estimates._
-import assets.TestConstants._
 import assets.TestConstants.IncomeSourceDetails._
-import mocks.services.{MockReportDeadlinesService, MockFinancialDataService}
-import models.{ReportDeadlinesModel, ReportDeadlinesErrorModel, ObligationModel}
+import assets.TestConstants.BusinessDetails._
+import assets.TestConstants._
+import assets.TestConstants.ReportDeadlines._
+import mocks.services.{MockFinancialDataService, MockReportDeadlinesService}
+import models._
 import utils.TestSupport
 
 class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService with MockReportDeadlinesService {
 
-  object TestBTAPartialService extends BTAPartialService(mockReportDeadlinesService, mockFinancialDataService)
+  object TestBTAPartialService extends BTAPartialService(mockFinancialDataService)
 
   "The BTAPartialService getNextObligation method" when {
 
     "both property and business obligations are returned - business due before property" should {
-      val returnedObligation = ObligationModel(
-        start = "2017-7-1",
-        end = "2017-9-30",
-        due = "2017-10-30",
+      val returnedObligation = ReportDeadlineModel(
+        start = "2017-04-01",
+        end = "2017-06-30",
+        due = "2017-07-30",
         met = false
       )
-      val otherObligation = ObligationModel(
-        start = "2017-7-1",
-        end = "2017-9-30",
-        due = "2017-10-31",
-        met = false
+      val bothIncomeSourcesBusinessReportDueNext = IncomeSourcesModel(
+        List(BusinessIncomeModel(
+          selfEmploymentId = testSelfEmploymentId,
+          tradingName = testTradeName,
+          cessationDate = None,
+          accountingPeriod = testBusinessAccountingPeriod,
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(returnedObligation)
+          )
+        )),
+        Some(PropertyIncomeModel(
+          accountingPeriod = AccountingPeriodModel("2017-04-06","2018-04-05"),
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(
+              ReportDeadlineModel(
+                start = "2017-04-01",
+                end = "2017-06-30",
+                due = "2017-07-31",
+                met = false
+              )
+            )
+          )
+        ))
       )
-      "return an ObligationModel" in {
-        setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(ReportDeadlinesModel(List(otherObligation, returnedObligation)))
-        mockPropertySuccess()
-        await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
+
+      "return an ReportDeadlineModel" in {
+        await(TestBTAPartialService.getNextObligation(bothIncomeSourcesBusinessReportDueNext)) shouldBe returnedObligation
       }
     }
 
     "both property and business obligations are returned - property due before business" should {
-      val returnedObligation = ObligationModel(
-        start = "2017-1-1",
-        end = "2017-2-1",
-        due = "2017-3-1",
+
+      val returnedObligation = ReportDeadlineModel(
+        start = "2017-04-01",
+        end = "2017-06-30",
+        due = "2017-07-30",
         met = false
       )
-      "return an ObligationModel" in {
-        setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(obligationsDataSuccessModel)
-        setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(ReportDeadlinesModel(List(returnedObligation)))
-        await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
+      val bothIncomeSourcesPropertyReportDueNext = IncomeSourcesModel(
+        List(BusinessIncomeModel(
+          selfEmploymentId = testSelfEmploymentId,
+          tradingName = testTradeName,
+          cessationDate = None,
+          accountingPeriod = testBusinessAccountingPeriod,
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(
+              ReportDeadlineModel(
+                start = "2017-04-01",
+                end = "2017-06-30",
+                due = "2017-07-31",
+                met = false
+              )
+            )
+          )
+        )),
+        Some(PropertyIncomeModel(
+          accountingPeriod = AccountingPeriodModel("2017-04-06","2018-04-05"),
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(returnedObligation)
+          )
+        ))
+      )
+      "return an ReportDeadlineModel" in {
+        await(TestBTAPartialService.getNextObligation(bothIncomeSourcesPropertyReportDueNext)) shouldBe returnedObligation
       }
     }
 
-    "both obligations are returned - Received Business obligation returned" should {
-      val returnedObligation = ObligationModel(
-        start = "2017-6-1",
-        end = "2017-7-1",
-        due = "2017-8-1",
-        met = true
+    "both property and business obligations are returned - business due before property but is received, therefore property obligation returned" should {
+      val returnedObligation = ReportDeadlineModel(
+        start = "2017-04-01",
+        end = "2017-06-30",
+        due = "2017-07-31",
+        met = false
       )
-      val otherObligation = ObligationModel(
-        start = "2017-6-1",
-        end = "2017-7-1",
-        due = "2017-7-30",
-        met = true
+      val bothIncomeSourcesPropertyReportDueNext = IncomeSourcesModel(
+        List(BusinessIncomeModel(
+          selfEmploymentId = testSelfEmploymentId,
+          tradingName = testTradeName,
+          cessationDate = None,
+          accountingPeriod = testBusinessAccountingPeriod,
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(ReportDeadlineModel(
+              start = "2017-04-01",
+              end = "2017-06-30",
+              due = "2017-07-30",
+              met = true
+            ))
+          )
+        )),
+        Some(PropertyIncomeModel(
+          accountingPeriod = AccountingPeriodModel("2017-04-06","2018-04-05"),
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(returnedObligation)
+          )
+        ))
       )
-      val obligations = ReportDeadlinesModel(List(receivedObligation, returnedObligation, otherObligation))
-      "return an ObligationModel" in {
-        setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(obligations)
-        setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(ReportDeadlinesModel(List(receivedObligation)))
-        await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
+
+      "return an ReportDeadlineModel" in {
+        await(TestBTAPartialService.getNextObligation(bothIncomeSourcesPropertyReportDueNext)) shouldBe returnedObligation
       }
     }
 
-    "both obligations are returned - Received Property obligation returned" should {
-      val returnedObligation = ObligationModel(
-        start = "2017-6-1",
-        end = "2017-7-1",
-        due = "2017-8-1",
+    "both property and business obligations are returned - property due before business but is received, therefore business obligation returned" should {
+      val returnedObligation = ReportDeadlineModel(
+        start = "2017-04-01",
+        end = "2017-06-30",
+        due = "2017-07-31",
+        met = false
+      )
+      val bothIncomeSourcesBusinessReportDueNext = IncomeSourcesModel(
+        List(BusinessIncomeModel(
+          selfEmploymentId = testSelfEmploymentId,
+          tradingName = testTradeName,
+          cessationDate = None,
+          accountingPeriod = testBusinessAccountingPeriod,
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(returnedObligation)
+          )
+        )),
+        Some(PropertyIncomeModel(
+          accountingPeriod = AccountingPeriodModel("2017-04-06","2018-04-05"),
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(ReportDeadlineModel(
+              start = "2017-04-01",
+              end = "2017-06-30",
+              due = "2017-07-30",
+              met = true
+            ))
+          )
+        ))
+      )
+
+      "return an ReportDeadlineModel" in {
+        await(TestBTAPartialService.getNextObligation(bothIncomeSourcesBusinessReportDueNext)) shouldBe returnedObligation
+      }
+    }
+
+    "both property and business obligations are returned - both are received, therefore most recent obligation returned" should {
+      val returnedObligation = ReportDeadlineModel(
+        start = "2017-04-01",
+        end = "2017-06-30",
+        due = "2017-07-31",
         met = true
       )
-      val otherObligation = ObligationModel(
-        start = "2017-6-1",
-        end = "2017-7-1",
-        due = "2017-7-30",
-        met = true
+      val bothIncomeSourcesBusinessReportDueNext = IncomeSourcesModel(
+        List(BusinessIncomeModel(
+          selfEmploymentId = testSelfEmploymentId,
+          tradingName = testTradeName,
+          cessationDate = None,
+          accountingPeriod = testBusinessAccountingPeriod,
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(returnedObligation)
+          )
+        )),
+        Some(PropertyIncomeModel(
+          accountingPeriod = AccountingPeriodModel("2017-04-06","2018-04-05"),
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(ReportDeadlineModel(
+              start = "2017-04-01",
+              end = "2017-06-30",
+              due = "2017-07-30",
+              met = true
+            ))
+          )
+        ))
       )
-      val obligations = ReportDeadlinesModel(List(receivedObligation, returnedObligation, otherObligation))
-      "return an ObligationModel" in {
-        setupMockBusinessReportDeadlinesResult(testNino, Some(businessIncomeModelAlignedTaxYear))(ReportDeadlinesModel(List(receivedObligation)))
-        setupMockPropertyReportDeadlinesResult(testNino, Some(propertyIncomeModel))(obligations)
-        await(TestBTAPartialService.getNextObligation(testNino, bothIncomeSourcesSuccessBusinessAligned)) shouldBe returnedObligation
+
+      "return an ReportDeadlineModel" in {
+        await(TestBTAPartialService.getNextObligation(bothIncomeSourcesBusinessReportDueNext)) shouldBe returnedObligation
       }
     }
 
     "only business obligations are returned" should {
-      val returnedObligation = ObligationModel(
-        start = "2017-10-06",
-        end = "2018-01-05",
-        due = "2018-02-05",
+      val otherObligation = ReportDeadlineModel(
+        start = "2017-07-01",
+        end = "2017-09-30",
+        due = "2017-10-31",
         met = false
       )
-      "return an ObligationModel" in {
-        mockBusinessSuccess()
-        mockNoPropertyIncome()
-        await(TestBTAPartialService.getNextObligation(testNino, businessIncomeSourceSuccess)) shouldBe returnedObligation
+      val returnedObligation = ReportDeadlineModel(
+        start = "2017-04-01",
+        end = "2017-06-30",
+        due = "2017-07-31",
+        met = false
+      )
+      val businessIncomeSourceReportDueNext = IncomeSourcesModel(
+        List(BusinessIncomeModel(
+          selfEmploymentId = testSelfEmploymentId,
+          tradingName = testTradeName,
+          cessationDate = None,
+          accountingPeriod = testBusinessAccountingPeriod,
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(returnedObligation, otherObligation)
+          )
+        )),
+        None
+      )
+      "return an ReportDeadlineModel" in {
+        await(TestBTAPartialService.getNextObligation(businessIncomeSourceReportDueNext)) shouldBe returnedObligation
       }
     }
 
     "only property obligations are returned" should {
-      val returnedObligation = ObligationModel(
-        start = "2017-10-06",
-        end = "2018-01-05",
-        due = "2018-02-05",
+      val otherObligation = ReportDeadlineModel(
+        start = "2017-07-01",
+        end = "2017-09-30",
+        due = "2017-10-31",
         met = false
       )
-      "return an ObligationModel" in {
-        mockNoBusinessIncome()
-        mockPropertySuccess()
-        await(TestBTAPartialService.getNextObligation(testNino, propertyIncomeSourceSuccess)) shouldBe returnedObligation
+      val returnedObligation = ReportDeadlineModel(
+        start = "2017-04-01",
+        end = "2017-06-30",
+        due = "2017-07-31",
+        met = false
+      )
+      val propertyIncomeSourceReportDueNext = IncomeSourcesModel(
+        List(),
+        Some(PropertyIncomeModel(
+          accountingPeriod = testBusinessAccountingPeriod,
+          reportDeadlines = ReportDeadlinesModel(
+            obligations = List(returnedObligation, otherObligation)
+          )
+        ))
+      )
+      "return an ReportDeadlineModel" in {
+        await(TestBTAPartialService.getNextObligation(propertyIncomeSourceReportDueNext)) shouldBe returnedObligation
       }
     }
 
     "no obligations are returned" in {
-      mockNoPropertyIncome()
-      mockNoBusinessIncome()
-      await(TestBTAPartialService.getNextObligation(testNino, noIncomeSourceSuccess)) shouldBe ReportDeadlinesErrorModel(500,"Could not retrieve obligations")
+      IncomeSourcesModel(
+        List(),
+        None
+      )
+      await(TestBTAPartialService.getNextObligation(noIncomeSourceSuccess)) shouldBe ReportDeadlinesErrorModel(500,"Could not retrieve obligations")
     }
   }
 

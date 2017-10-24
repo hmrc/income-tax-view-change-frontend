@@ -37,7 +37,7 @@ trait MockBusinessReportDeadlinesConnector extends UnitSpec with MockitoSugar wi
   }
 
   def setupMockObligation(nino: String, selfEmploymentId: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockBusinessObligationDataConnector.getBusinessObligationData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
+    when(mockBusinessObligationDataConnector.getBusinessReportDeadlineData(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
