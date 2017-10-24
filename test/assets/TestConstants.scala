@@ -141,6 +141,16 @@ object TestConstants extends ImplicitDateFormatter {
       """.stripMargin
     val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
 
+    val reportDeadlineReceived =
+      """{
+        |      "start": "2017-04-01",
+        |      "end": "2017-06-30",
+        |      "due": "2017-07-31",
+        |      "met": true
+        |    }"""
+      .stripMargin
+    val reportDeadlineReceivedJson = Json.parse(reportDeadlineReceived)
+
   }
 
   object BusinessDetails {
