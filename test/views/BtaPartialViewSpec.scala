@@ -18,7 +18,7 @@ package views
 
 import assets.Messages.{BtaPartial => messages}
 import assets.TestConstants.Estimates._
-import assets.TestConstants.ReportDeadlines._
+import assets.TestConstants.Obligations._
 import assets.TestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig

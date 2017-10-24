@@ -27,7 +27,7 @@ import play.twirl.api.Html
 import utils.TestSupport
 import views.html.helpers.sidebarHelper
 
-class SidebarHelperSpec extends TestSupport {
+class sidebarHelperSpec extends TestSupport {
 
   lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -152,7 +152,7 @@ class SidebarHelperSpec extends TestSupport {
         }
       }
 
-      "being viewed for any tax year has a link to view ReportDeadlines" should {
+      "being viewed for any tax year has a link to view Obligations" should {
 
         lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
         lazy val document = Jsoup.parse(page.body)
@@ -161,27 +161,27 @@ class SidebarHelperSpec extends TestSupport {
           document.getElementById("obligations-heading").text() shouldBe messages.reportsHeading
         }
 
-        "has a View ReportDeadlines link that" should {
+        "has a View Obligations link that" should {
 
           s"have the text '${messages.reportsLink}" in {
             document.getElementById("obligations-link").text() shouldBe messages.reportsLink
           }
 
-          s"have a link to '${controllers.routes.ReportDeadlinesController.getReportDeadlines().url}/self-assessment'" in {
-            document.getElementById("obligations-link").attr("href") shouldBe controllers.routes.ReportDeadlinesController.getReportDeadlines().url
+          s"have a link to '${controllers.routes.ObligationsController.getObligations().url}/self-assessment'" in {
+            document.getElementById("obligations-link").attr("href") shouldBe controllers.routes.ObligationsController.getObligations().url
           }
 
         }
       }
     }
 
-    "being rendered for the ReportDeadlines page" when {
+    "being rendered for the Obligations page" when {
 
       "the user has estimates for multiple tax years" should {
 
           "render an Estimates section" which {
 
-            lazy val page = html(ReportDeadlinesPage, testMtdItUser, None, IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
+            lazy val page = html(ObligationsPage, testMtdItUser, None, IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
             lazy val document = Jsoup.parse(page.body)
 
             s"has a h3 heading '${messages.estimatesHeading}'" in {
@@ -238,7 +238,7 @@ class SidebarHelperSpec extends TestSupport {
 
         "render an Estimates section" which {
 
-          lazy val page = html(ReportDeadlinesPage, testMtdItUser, None, IncomeSourceDetails.propertyIncomeSourceSuccess)
+          lazy val page = html(ObligationsPage, testMtdItUser, None, IncomeSourceDetails.propertyIncomeSourceSuccess)
           lazy val document = Jsoup.parse(page.body)
 
           s"has a h3 heading '${messages.estimatesHeading}'" in {
@@ -284,7 +284,7 @@ class SidebarHelperSpec extends TestSupport {
 
       "have a Income Tax Reference section on obligations page" which {
 
-        lazy val page = html(ReportDeadlinesPage, testMtdItUser, None, IncomeSourceDetails.propertyIncomeSourceSuccess)
+        lazy val page = html(ObligationsPage, testMtdItUser, None, IncomeSourceDetails.propertyIncomeSourceSuccess)
         lazy val document = Jsoup.parse(page.body)
 
         s"has the h3 heading '${messages.mtditidHeading}'" in {

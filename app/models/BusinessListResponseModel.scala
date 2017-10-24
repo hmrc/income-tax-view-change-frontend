@@ -22,8 +22,9 @@ import play.api.libs.json.Json
 
 
 sealed trait BusinessListResponseModel
-case class BusinessDetailsModel(businesses: List[BusinessModel]) extends BusinessListResponseModel
+case class BusinessDetailsModel(business: List[BusinessModel]) extends BusinessListResponseModel
 case class BusinessDetailsErrorModel(code: Int, message: String) extends BusinessListResponseModel
+case object NoBusinessIncomeDetails extends BusinessListResponseModel
 
 case class BusinessModel(
                           id: String,

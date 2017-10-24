@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.helpers.{Page, EstimatesPage, ReportDeadlinesPage}
+@import views.helpers.{Page, EstimatesPage, ObligationsPage}
 
 @(page: Page, incomeSources: IncomeSourcesModel, taxYear: Option[Int] = None)(implicit messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
 
@@ -38,12 +38,12 @@
                 <h3 id="obligations-heading">@messages("sidebar.view_obligations.h3")</h3>
                 <ul>
                     <li class="font-xsmall">
-                        <a data-journey-click="itvc:clickedLink:View ReportDeadlines" id="obligations-link" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">@messages("sidebar.view_obligations.link")</a>
+                        <a data-journey-click="itvc:clickedLink:View Obligations" id="obligations-link" href="@{controllers.routes.ObligationsController.getObligations().url}">@messages("sidebar.view_obligations.link")</a>
                     </li>
                 </ul>
             </div>
         }
-        case ReportDeadlinesPage => {}
+        case ObligationsPage => {}
     }
 
 

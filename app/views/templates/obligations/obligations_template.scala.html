@@ -14,11 +14,13 @@
  * limitations under the License.
  *@
 
-@import models.ReportDeadlinesModel
+@import models.{ObligationModel, ObligationsModel, IncomeTypeModel}
 @import utils.ImplicitDateFormatter._
-@import views.helpers.ReportDeadlineStatusHelper
+@import views.helpers.ObligationStatusHelper
 
-@(model: ReportDeadlinesModel, id: String)(implicit messages: Messages)
+@(model: ObligationsModel, id: IncomeTypeModel)(implicit messages: Messages)
+<section>
+    <h2 id="@{id}-section">@Messages("obligations." + id + ".subheading")</h2>
     <table>
         <thead>
             <tr>
@@ -27,17 +29,18 @@
             </tr>
         </thead>
         <tbody>
-            @model.obligations.zipWithIndex.map { case (report: ReportDeadlineModel, index: Int) =>
+            @model.obligations.zipWithIndex.map { case (obligation: ObligationModel, index: Int) =>
                 <tr class="obligation no-border-bottom">
                     <td>
                         <p>
-                            <span id="@{id}-ob-@{index + 1}-start">@report.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@report.end.toLongDate</span>
+                            <span id="@{id}-ob-@{index + 1}-start">@obligation.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@obligation.end.toLongDate</span>
                         </p>
                     </td>
                     <td id="@{id}-ob-@{index+1}-status">
-                        @ReportDeadlineStatusHelper.statusHtml(report.getReportDeadlineStatus)
+                        @ObligationStatusHelper.statusHtml(obligation.getObligationStatus)
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+</section>

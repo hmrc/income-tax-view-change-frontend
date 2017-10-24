@@ -52,10 +52,11 @@ object Messages {
     val p2 = "Try refreshing the page in a few minutes."
   }
 
-  //ReportDeadlines Page Messages
-  object ReportDeadlines {
+  //Obligations Page Messages
+  object Obligations {
     val title = "Your report deadlines"
     val info  = "You must submit a report once every quarter using your accounting software."
+    val businessHeading = "Business income"
     val propertyHeading = "Property income"
     val periodHeading = "Report period"
     val statusHeading = "Report due date"

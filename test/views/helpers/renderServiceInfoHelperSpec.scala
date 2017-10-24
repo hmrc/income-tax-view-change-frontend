@@ -26,7 +26,7 @@ import play.twirl.api.Html
 import utils.TestSupport
 import views.html.helpers.renderServiceInfoHelper
 
-class RenderServiceInfoHelperSpec extends TestSupport {
+class renderServiceInfoHelperSpec extends TestSupport {
 
   lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
 

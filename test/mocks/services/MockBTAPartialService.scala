@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.{IncomeSourcesModel, LastTaxCalculationResponseModel, ReportDeadlinesResponseModel}
+import models.{IncomeSourcesModel, LastTaxCalculationResponseModel, ObligationsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -35,9 +35,12 @@ trait MockBTAPartialService extends UnitSpec with MockitoSugar with BeforeAndAft
     reset(mockBTAPartialService)
   }
 
-  def setupMockGetReportDeadlines(nino: String, incomeSources: IncomeSourcesModel)(response: ReportDeadlinesResponseModel): Unit =
+  def setupMockGetObligations(nino: String, incomeSources: IncomeSourcesModel)(response: ObligationsResponseModel): Unit =
     when(mockBTAPartialService
-      .getNextObligation(ArgumentMatchers.eq(incomeSources))(ArgumentMatchers.any()))
+      .getNextObligation(
+        ArgumentMatchers.eq(nino),
+        ArgumentMatchers.eq(incomeSources)
+      )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
   def setupMockGetEstimate(nino: String, taxYear: Int)(response: LastTaxCalculationResponseModel): Unit =
