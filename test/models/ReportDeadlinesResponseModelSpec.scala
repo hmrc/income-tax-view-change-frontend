@@ -128,4 +128,32 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
       Json.parse(obligationsDataErrorString).as[ReportDeadlinesErrorModel] shouldBe obligationsDataErrorModel
     }
   }
+
+  "The ReportDeadlinesResponseModel .apply function" should {
+
+    "create a ReportDeadlines Model when passed the correct Json" in {
+      ReportDeadlinesResponseModel.apply("ReportDeadlinesModel", obligationsDataSuccessJson) shouldBe obligationsDataSuccessModel
+    }
+
+    "create a ReportDeadlinesErrorModel when passed the correct Json" in {
+      ReportDeadlinesResponseModel.apply("ReportDeadlinesErrorModel", obligationsDataErrorJson) shouldBe obligationsDataErrorModel
+    }
+
+    "create a ReportDeadlinesModel when passed the correct Json" in {
+      ReportDeadlinesResponseModel.apply("ReportDeadlineModel", reportDeadlineReceivedJson) shouldBe receivedObligation
+    }
+  }
+
+  "The ReportDeadlinesResponseModel .unappy function" should {
+
+    "extract the ReportDeadlinesModel and Json" in {
+      ReportDeadlinesResponseModel.unapply(obligationsDataSuccessModel) shouldBe Some(("ReportDeadlinesModel", obligationsDataSuccessJson))
+    }
+    "extract the ReportDeadlinesErrorModel and Json" in {
+      ReportDeadlinesResponseModel.unapply(obligationsDataErrorModel) shouldBe Some(("ReportDeadlinesErrorModel", obligationsDataErrorJson))
+    }
+    "extract the ReportDeadlineModel and Json" in {
+      ReportDeadlinesResponseModel.unapply(receivedObligation) shouldBe Some(("ReportDeadlineModel", reportDeadlineReceivedJson))
+    }
+  }
 }
