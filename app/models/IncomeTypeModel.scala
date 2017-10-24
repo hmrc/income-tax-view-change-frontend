@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package views.helpers
+package models
 
-sealed trait Page
-case object EstimatesPage extends Page
-case object ObligationsPage extends Page
+sealed trait IncomeTypeModel
+case object BusinessIncome extends IncomeTypeModel {
+  override def toString: String = "bi"
+}
+case object PropertyIncome extends IncomeTypeModel {
+  override def toString: String = "pi"
+}

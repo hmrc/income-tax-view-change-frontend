@@ -48,8 +48,8 @@ class FinancialDataController @Inject()(implicit val config: AppConfig,
     implicit request =>
       implicit user =>
         implicit sources =>
-          serviceInfoPartialService.serviceInfoPartial().map { implicit serviceInfo =>
-            Redirect(controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get))
+          serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+            Future.successful(Redirect(controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get)))
           }
   }
 

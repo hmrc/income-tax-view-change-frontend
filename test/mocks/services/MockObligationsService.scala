@@ -16,61 +16,63 @@
 
 package mocks.services
 
-import assets.TestConstants.{testNino, testSelfEmploymentId}
+import assets.TestConstants.BusinessDetails.businessIncomeModel
+import assets.TestConstants.PropertyIncome.propertyIncomeModel
+import assets.TestConstants.testNino
 import models._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
-import services.ReportDeadlinesService
+import services.ObligationsService
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.ImplicitDateFormatter
 
 import scala.concurrent.Future
 
 
-trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ImplicitDateFormatter {
+trait MockObligationsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ImplicitDateFormatter {
 
-  val mockReportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]
+  val mockObligationsService: ObligationsService = mock[ObligationsService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockReportDeadlinesService)
+    reset(mockObligationsService)
   }
 
-  def setupMockBusinessReportDeadlinesResult(nino: String, selfEmploymentId: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockReportDeadlinesService.getBusinessReportDeadlines(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
+  def setupMockBusinessObligationsResult(nino: String, businessIncome: Option[BusinessIncomeModel])(response: ObligationsResponseModel): Unit = {
+    when(mockObligationsService.getBusinessObligations(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(businessIncome))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockPropertyReportDeadlinesResult(nino: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockReportDeadlinesService.getPropertyReportDeadlines(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+  def setupMockPropertyObligationsResult(nino: String, propertyIncome: Option[PropertyIncomeModel])(response: ObligationsResponseModel): Unit = {
+    when(mockObligationsService.getPropertyObligations(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(propertyIncome))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def mockBusinessSuccess(): Unit = setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(
-    ReportDeadlinesModel(
+  def mockBusinessSuccess(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
+    ObligationsModel(
       List(
-        ReportDeadlineModel(
+        ObligationModel(
           start = "2017-04-06",
           end = "2017-07-05",
           due = "2017-08-05",
           met = true
         ),
-        ReportDeadlineModel(
+        ObligationModel(
           start = "2017-07-06",
           end = "2017-10-05",
           due = "2017-11-05",
           met = true
         ),
-        ReportDeadlineModel(
+        ObligationModel(
           start = "2017-10-06",
           end = "2018-01-05",
           due = "2018-02-05",
           met = false
         ),
-        ReportDeadlineModel(
+        ObligationModel(
           start = "2018-01-06",
           end = "2018-04-05",
           due = "2018-05-06",
@@ -79,33 +81,34 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
       )
     )
   )
-
-  def mockBusinessError(): Unit = setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(
-    ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
+  def mockBusinessError(): Unit = setupMockBusinessObligationsResult(testNino, Some(businessIncomeModel))(
+    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 
-  def mockPropertySuccess(): Unit = setupMockPropertyReportDeadlinesResult(testNino)(
-    ReportDeadlinesModel(
+  def mockNoBusinessIncome(): Unit = setupMockBusinessObligationsResult(testNino, None)(NoObligations)
+
+  def mockPropertySuccess(): Unit = setupMockPropertyObligationsResult(testNino, Some(propertyIncomeModel))(
+    ObligationsModel(
       List(
-        ReportDeadlineModel(
+        ObligationModel(
           start = "2017-04-06",
           end = "2017-07-05",
           due = "2017-08-05",
           met = true
         ),
-        ReportDeadlineModel(
+        ObligationModel(
           start = "2017-07-06",
           end = "2017-10-05",
           due = "2017-11-05",
           met = true
         ),
-        ReportDeadlineModel(
+        ObligationModel(
           start = "2017-10-06",
           end = "2018-01-05",
           due = "2018-02-05",
           met = false
         ),
-        ReportDeadlineModel(
+        ObligationModel(
           start = "2018-01-06",
           end = "2018-04-05",
           due = "2018-05-06",
@@ -114,8 +117,9 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
       )
     )
   )
-
-  def mockPropertyError(): Unit = setupMockPropertyReportDeadlinesResult(testNino)(
-    ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
+  def mockPropertyError(): Unit = setupMockPropertyObligationsResult(testNino, Some(propertyIncomeModel))(
+    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
+
+  def mockNoPropertyIncome(): Unit = setupMockPropertyObligationsResult(testNino, None)(NoObligations)
 }

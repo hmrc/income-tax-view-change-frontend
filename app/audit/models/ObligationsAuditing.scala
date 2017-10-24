@@ -19,26 +19,24 @@ package audit.models
 import auth.MtdItUser
 import models.{IncomeSourcesModel}
 
-object ReportDeadlinesAuditing {
+object ObligationsAuditing {
 
-  val reportDeadlineTransactionName = "ITVCObligations"
-  val reportDeadlineAuditType = "obligationsPageView"
+  val obligationTransactionName = "ITVCObligations"
+  val obligationAuditType = "obligationsPageView"
 
-  case class ReportDeadlinesAuditModel(user: MtdItUser, sources: IncomeSourcesModel) extends AuditModel {
-    override val transactionName: String = reportDeadlineTransactionName
-    //TODO: Auditing needs to be revisited for multiple business scenario - speak to Kris McLackland
-    val business = sources.businessIncomeSources.headOption
+  case class ObligationsAuditModel(user: MtdItUser, sources: IncomeSourcesModel) extends AuditModel {
+    override val transactionName: String = obligationTransactionName
     override val detail: Map[String, String] = Map(
       "mtdid" -> user.mtditid,
       "nino" -> user.nino,
       "hasBusiness" -> sources.hasBusinessIncome.toString,
       "hasProperty" -> sources.hasPropertyIncome.toString,
-      "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.end}"),
-      "propAccPeriodStart" -> sources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "propAccPeriodEnd" -> sources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.end}")
+      "bizAccPeriodStart" -> sources.businessDetails.fold("-")(x => s"${x.accountingPeriod.start}"),
+      "bizAccPeriodEnd" -> sources.businessDetails.fold("-")(x => s"${x.accountingPeriod.end}"),
+      "propAccPeriodStart" -> sources.propertyDetails.fold("-")(x => s"${x.accountingPeriod.start}"),
+      "propAccPeriodEnd" -> sources.propertyDetails.fold("-")(x => s"${x.accountingPeriod.end}")
     )
-    override val auditType: String = reportDeadlineAuditType
+    override val auditType: String = obligationAuditType
   }
 
 }

@@ -27,9 +27,8 @@ import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
-                                           val propertyDetailsConnector: PropertyDetailsConnector,
-                                           val reportDeadlinesService: ReportDeadlinesService) {
+class IncomeSourceDetailsService @Inject()( val businessDetailsConnector: BusinessDetailsConnector,
+                                            val propertyDetailsConnector: PropertyDetailsConnector) {
 
   def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
     for {
@@ -38,42 +37,26 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     } yield (businessDetails, propertyDetails) match {
       case (x: BusinessDetailsErrorModel, _) =>
         Logger.debug(s"[IncomeSourceDetailsService][getIncomeSourceDetails] Error Model from BusinessDetailsConnector: $x")
-        Future.successful(IncomeSourcesError)
+        IncomeSourcesError
       case (_, x:PropertyDetailsErrorModel) =>
         Logger.debug(s"[IncomeSourceDetailsService][getIncomeSourceDetails] Error Model from PropertyDetailsConnector: $x")
-        Future.successful(IncomeSourcesError)
-      case (x: BusinessDetailsModel, y) =>
-        createIncomeSourcesModel(nino, x, y)
+        IncomeSourcesError
+      case (x, y) => createIncomeSourcesModel(x, y)
     }
-  }.flatMap(z => z)
+  }
 
-  def createIncomeSourcesModel(nino: String,
-                               businessDetails: BusinessDetailsModel,
-                               property: PropertyDetailsResponseModel
-                              )(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] = {
-
-    val businessIncomeModelListF: Future[List[BusinessIncomeModel]] =
-      Future.sequence(businessDetails.businesses.map { seTrade =>
-        reportDeadlinesService.getBusinessReportDeadlines(nino, seTrade.id).map { obs =>
-          BusinessIncomeModel(seTrade.id, seTrade.tradingName, seTrade.cessationDate, seTrade.accountingPeriod, obs)
-        }
-      })
-
-    val propertyIncomeModelF: Future[Option[PropertyIncomeModel]] = property match {
-      case x: PropertyDetailsModel =>
-        for {
-          obs <- reportDeadlinesService.getPropertyReportDeadlines(nino)
-        } yield {
-          Some(PropertyIncomeModel(x.accountingPeriod, obs))
-        }
-      case _ => Future.successful(None)
+  private def createIncomeSourcesModel(business: BusinessListResponseModel, property: PropertyDetailsResponseModel) = {
+    val businessModel = business match {
+      case x: BusinessDetailsModel =>
+        // TODO: In future, this will need to cater for multiple SE Trade (business) income sources
+        val seTrade = x.business.head
+        Some(BusinessIncomeModel(seTrade.id, seTrade.accountingPeriod, seTrade.tradingName))
+      case _ => None
     }
-
-    for {
-      businessList <- businessIncomeModelListF
-      property <- propertyIncomeModelF
-    } yield {
-      IncomeSourcesModel(businessList, property)
+    val propertyModel = property match {
+      case x: PropertyDetailsModel => Some(PropertyIncomeModel(x.accountingPeriod))
+      case _ => None
     }
+    IncomeSourcesModel(businessModel, propertyModel)
   }
 }

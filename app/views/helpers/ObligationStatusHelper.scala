@@ -16,54 +16,41 @@
 
 package views.helpers
 
-import models.{Open, Overdue, Received}
+import models.{ObligationStatus, Open, Overdue, Received}
+import play.api.i18n.Messages
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._
-import play.api.i18n.Messages.Implicits._
-import utils.TestSupport
 
-class ReportDeadlinesStatusHelperSpec extends TestSupport {
+object ObligationStatusHelper {
 
-  "The ObligationStatusHelper.statusHtml" should {
-    "return Html corresponding to the ObligationStatus" when {
-
-      val openHtml = Html(
+  def statusHtml(status: ObligationStatus)(implicit messages: Messages): Html = status match {
+    case open: Open =>
+      Html(
         s"""
            |<p class="flush--bottom  alert  soft-half--ends soft--right">
            |  <span class='bold-xsmall'>
-           |    Due by 25 December 2017
+           |    ${messages("status.open", open.dueDate.toLongDate)}
            |  </span>
            |</p>
          """.stripMargin)
-
-      val overdueHtml = Html(
-        s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #b10e1e;">
-           |  <span class='bold-xsmall'>
-           |    Overdue
-           |  </span>
-           |</p>
-           """.stripMargin)
-
-      val receivedHtml = Html(
+    case _: Received.type =>
+      Html(
         s"""
            |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #005ea5;">
            |  <span class='bold-xsmall'>
-           |    Received
+           |    ${messages("status.received")}
            |  </span>
            |</p>
            """.stripMargin)
-
-
-      "passed 'Open' the Open Html is returned" in {
-        ReportDeadlineStatusHelper.statusHtml(Open("2017-12-25")) shouldBe openHtml
-      }
-      "passed 'Overdue' the Overdue Html is returned" in {
-        ReportDeadlineStatusHelper.statusHtml(Overdue) shouldBe overdueHtml
-      }
-      "passed 'Received' the Received Html is returned" in {
-        ReportDeadlineStatusHelper.statusHtml(Received) shouldBe receivedHtml
-      }
-    }
+    case _: Overdue.type   =>
+      Html(
+        s"""
+           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #b10e1e;">
+           |  <span class='bold-xsmall'>
+           |    ${messages("status.overdue")}
+           |  </span>
+           |</p>
+           """.stripMargin)
   }
+
 }

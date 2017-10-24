@@ -18,7 +18,7 @@ package helpers
 
 import java.time.LocalDate
 
-import models.{CalculationDataErrorModel, CalculationDataModel, ReportDeadlineModel, ReportDeadlinesModel}
+import models.{CalculationDataErrorModel, CalculationDataModel, ObligationModel, ObligationsModel}
 import play.api.libs.json.{JsArray, JsValue, Json}
 import utils.ImplicitDateFormatter
 
@@ -204,8 +204,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       )
   }
 
-  object GetReportDeadlinesData {
-    def successResponse(obligationsModel: ReportDeadlinesModel): JsValue = {
+  object GetObligationsData {
+    def successResponse(obligationsModel: ObligationsModel): JsValue = {
       Json.toJson(obligationsModel)
     }
 
@@ -224,18 +224,18 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
            |}
          """.stripMargin)
 
-    val multipleReportDeadlinesDataSuccessModel = ReportDeadlinesModel(List(
-      ReportDeadlineModel(
+    val multipleObligationsDataSuccessModel = ObligationsModel(List(
+      ObligationModel(
         start = "2017-04-06",
         end = "2017-07-05",
         due = LocalDate.now(),
         met = true
-      ), ReportDeadlineModel(
+      ), ObligationModel(
         start = "2017-07-06",
         end = "2017-10-05",
         due = LocalDate.now().plusDays(1),
         met = false
-      ), ReportDeadlineModel(
+      ), ObligationModel(
         start = "2017-10-06",
         end = "2018-01-05",
         due = LocalDate.now().minusDays(1),
@@ -243,51 +243,51 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       ))
     )
 
-    val multipleReceivedOpenReportDeadlinesModel = ReportDeadlinesModel(List(
-      ReportDeadlineModel(
+    val multipleReceivedOpenObligationsModel = ObligationsModel(List(
+      ObligationModel(
         start = "2016-04-01",
         end = "2016-06-30",
         due = "2016-07-31",
         met = true
-      ), ReportDeadlineModel(
+      ), ObligationModel(
         start = "2016-07-01",
         end = "2016-09-30",
         due = LocalDate.now().minusDays(309),
         met = true
-      ), ReportDeadlineModel(
+      ), ObligationModel(
         start = "2016-10-01",
         end = "2016-12-31",
         due = LocalDate.now().minusDays(217),
         met = true
-      ), ReportDeadlineModel(
+      ), ObligationModel(
         start = "2017-01-01",
         end = "2017-03-31",
         due = LocalDate.now().minusDays(128),
         met = false
-      ), ReportDeadlineModel(
+      ), ObligationModel(
         start = "2017-04-01",
         end = "2017-06-30",
         due = LocalDate.now().minusDays(36),
         met = false
-      ), ReportDeadlineModel(
+      ), ObligationModel(
         start = "2017-07-01",
         end = "2017-09-30",
         due = LocalDate.now().plusDays(30),
         met = false
-      ),ReportDeadlineModel(
+      ),ObligationModel(
         start = "2017-10-01",
         end = "2018-01-31",
         due = LocalDate.now().plusDays(146),
         met = false),
-      ReportDeadlineModel(
+      ObligationModel(
         start = "2017-11-01",
         end = "2018-02-01",
         due = LocalDate.now().plusDays(174),
         met = false)
     ))
 
-    val singleReportDeadlinesDataSuccessModel = ReportDeadlinesModel(List(
-      ReportDeadlineModel(
+    val singleObligationsDataSuccessModel = ObligationsModel(List(
+      ObligationModel(
         start = "2017-04-06",
         end = "2017-07-05",
         due = LocalDate.now(),
@@ -295,8 +295,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       )
     ))
 
-    val otherReportDeadlinesDataSuccessModel = ReportDeadlinesModel(List(
-      ReportDeadlineModel(
+    val otherObligationsDataSuccessModel = ObligationsModel(List(
+      ObligationModel(
         start = "2017-04-06",
         end = "2017-07-05",
         due = LocalDate.now().minusDays(1),
@@ -304,8 +304,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       )
     ))
 
-    val singleObligationOverdueModel = ReportDeadlinesModel(List(
-      ReportDeadlineModel(
+    val singleObligationOverdueModel = ObligationsModel(List(
+      ObligationModel(
         start = "2017-04-06",
         end = "2017-07-05",
         due = LocalDate.now().minusDays(1),
@@ -313,7 +313,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       )
     ))
 
-    val singleObligationPlusYearOpenModel = ReportDeadlinesModel(List(ReportDeadlineModel(
+    val singleObligationPlusYearOpenModel = ObligationsModel(List(ObligationModel(
         start = "2017-04-06",
         end = "2017-07-05",
         due = LocalDate.now().plusYears(1),
@@ -323,6 +323,6 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
 
 
 
-    val emptyModel = ReportDeadlinesModel(List())
+    val emptyModel = ObligationsModel(List())
   }
 }

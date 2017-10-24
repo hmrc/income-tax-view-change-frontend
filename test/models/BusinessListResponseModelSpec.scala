@@ -29,31 +29,31 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
     "for the 1st Business" should {
 
       s"have the id set as $testSelfEmploymentId" in {
-        multipleBusinessesSuccessModel.businesses.head.id shouldBe testSelfEmploymentId
+        businessesSuccessModel.business.head.id shouldBe testSelfEmploymentId
       }
 
       "when calling the method to detrmine the Tax Year to which the accounting periods" in {
-        multipleBusinessesSuccessModel.businesses.head.accountingPeriod.determineTaxYear shouldBe 2019
+        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2019
       }
     }
 
     "for the 2nd Business" should {
 
-      s"have the id set as $testSelfEmploymentId2" in {
-        multipleBusinessesSuccessModel.businesses.last.id shouldBe testSelfEmploymentId2
+      "have the id set as 5678" in {
+        businessesSuccessModel.business.last.id shouldBe "5678"
       }
 
       "when calling the method to detrmine the Tax Year to which the accounting periods" in {
-        multipleBusinessesSuccessModel.businesses.last.accountingPeriod.determineTaxYear shouldBe 2019
+        businessesSuccessModel.business.head.accountingPeriod.determineTaxYear shouldBe 2019
       }
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson[BusinessDetailsModel](multipleBusinessesSuccessModel) shouldBe businessSuccessJson
+      Json.toJson[BusinessDetailsModel](businessesSuccessModel) shouldBe businessSuccessJson
     }
 
     "be able to parse a JSON input as a string into the Model" in {
-      Json.parse(businessSuccessString).as[BusinessDetailsModel] shouldBe multipleBusinessesSuccessModel
+      Json.parse(businessSuccessString).as[BusinessDetailsModel] shouldBe businessesSuccessModel
     }
   }
 
