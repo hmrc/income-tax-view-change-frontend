@@ -21,11 +21,11 @@ import models.{BusinessListResponseModel, CalculationDataErrorModel, Calculation
 import utils.TestSupport
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import uk.gov.hmrc.play.http.HttpResponse
 import assets.TestConstants._
 import assets.TestConstants.CalcBreakdown._
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HttpResponse
 
 class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 

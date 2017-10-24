@@ -22,9 +22,9 @@ import controllers.BaseController
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Request, Result}
-import uk.gov.hmrc.play.http.SessionKeys
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.SessionKeys
 
 @Singleton
 class SessionTimeoutPredicate @Inject()(implicit val messagesApi: MessagesApi) extends BaseController {

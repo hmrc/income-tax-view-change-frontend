@@ -22,8 +22,8 @@ import models._
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
+import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ class PropertyReportDeadlineDataConnector @Inject()(val http: HttpGet) extends S
     val url = getPropertyReportDeadlineDataUrl(nino)
     Logger.debug(s"[PropertyReportDeadlineDataConnector][getPropertyData] - GET $url")
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) map {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
       response =>
         response.status match {
           case OK =>

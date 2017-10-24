@@ -23,11 +23,11 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{OK,NOT_FOUND}
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
 import utils.ImplicitDateFormatter
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpGet, HttpResponse }
 
 @Singleton
 class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads with ImplicitDateFormatter {
@@ -43,7 +43,7 @@ class PropertyDetailsConnector @Inject()(val http: HttpGet) extends ServicesConf
     val url = getPropertyDetailsUrl(nino)
     Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - GET $url")
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json")) map {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
       response =>
         response.status match {
           case OK =>

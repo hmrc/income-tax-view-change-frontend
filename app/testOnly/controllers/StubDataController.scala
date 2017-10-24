@@ -28,11 +28,10 @@ import play.api.{Configuration, Environment}
 import testOnly.connectors.DynamicStubConnector
 import testOnly.forms.{StubDataForm, StubSchemaForm}
 import testOnly.models.{DataModel, SchemaModel}
-import uk.gov.hmrc.auth.frontend.Redirects
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 import scala.util.Try
+import uk.gov.hmrc.play.frontend.config.AuthRedirects
 
 @Singleton
 class StubDataController @Inject()(implicit val appConfig: FrontendAppConfig,
@@ -40,7 +39,7 @@ class StubDataController @Inject()(implicit val appConfig: FrontendAppConfig,
                                      override val env: Environment,
                                      implicit val messagesApi: MessagesApi,
                                      val dynamicStubConnector: DynamicStubConnector
-                                    ) extends BaseController with Redirects {
+                                    ) extends BaseController with AuthRedirects {
 
   val show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(view(StubDataForm.stubDataForm)))

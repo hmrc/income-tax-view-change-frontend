@@ -27,9 +27,7 @@ import models.IncomeSourcesModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.ServiceInfoPartialService
-import uk.gov.hmrc.play.http.HeaderCarrier
-
-import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class ReportDeadlinesController @Inject()(implicit val config: AppConfig,

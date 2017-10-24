@@ -27,11 +27,12 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.{Configuration, Environment, Logger}
 import play.twirl.api.Html
-import uk.gov.hmrc.auth.core.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.frontend.Redirects
 
 import scala.concurrent.Future
+import uk.gov.hmrc.play.frontend.config.AuthRedirects
 
 @Singleton
 class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -40,7 +41,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
                                         override val env: Environment,
                                         implicit val messagesApi: MessagesApi,
                                         val userDetailsConnector: UserDetailsConnector
-                                       ) extends BaseController with Redirects {
+                                       ) extends BaseController with AuthRedirects {
 
   lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
   lazy val mtdItIdentifierKey: String = appConfig.mtdItIdentifierKey

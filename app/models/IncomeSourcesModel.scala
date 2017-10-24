@@ -49,6 +49,16 @@ case class IncomeSourcesModel(
 
   val allReportDeadlinesErroredForAllIncomeSources: Boolean = hasBothIncomeSources && allReportDeadlinesErrored
 
+  val hasBusinessReportErrors: Boolean = businessIncomeSources.map(_.reportDeadlines).exists {
+    case _: ReportDeadlinesErrorModel => true
+    case _ => false
+  }
+
+  val hasPropertyReportErrors: Boolean = propertyIncomeSource.map(_.reportDeadlines).exists {
+    case _: ReportDeadlinesErrorModel => true
+    case _ => false
+  }
+
   def earliestAccountingPeriodStart(year: Int): LocalDate =
     incomeSources.filter(_.accountingPeriod.determineTaxYear == year).map(_.accountingPeriod.start).min
 }

@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import models._
 import play.api.Logger
 import play.api.http.Status
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.ImplicitListMethods
 
 import scala.concurrent.ExecutionContext.Implicits.global
