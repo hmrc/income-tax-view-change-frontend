@@ -232,6 +232,80 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
         }
       }
 
+      "has multiple businesses where the second business has an overdue obligation" should {
+
+        "display the bta partial with the correct information" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+
+          And("I wiremock stub a multiple success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a single business obligation response for each business")
+          SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
+          SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId, singleObligationOverdueModel)
+
+          And("I wiremock stub a single property obligation response")
+          SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, otherReportDeadlinesDataSuccessModel)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/partial")
+          val res = IncomeTaxViewChangeFrontend.getBtaPartial
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that the business obligations have been called")
+          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId)
+
+          Then("Verify that property obligations has been called")
+          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+
+          Then("the result should have a HTTP status of OK")
+          res should have(
+            httpStatus(OK)
+          )
+
+          Then("the BTA page contains the text - Quarterly reporting")
+          res should have(
+            isElementVisibleById("it-quarterly-reporting-heading")(true)
+          )
+
+          Then("the BTA page contains the text - You have an overdue report")
+          res should have(
+            elementTextByID("report-due")("You have an overdue report")
+          )
+
+          Then("the BTA page contains the following links")
+          res should have(
+            elementTextByID("obligations-link")("View deadlines"),
+            elementTextByID("estimates-link-2018")("View details")
+          )
+
+          Then("the BTA page contains the text - Your estimated tax amount is £90,500")
+          res should have(
+            elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
+            isElementVisibleById("current-estimate-2019")(false)
+          )
+
+        }
+
+      }
+
       "receives an error from Tax Estimate but valid obligations" should {
 
         "display the bta partial with the correct information" in {

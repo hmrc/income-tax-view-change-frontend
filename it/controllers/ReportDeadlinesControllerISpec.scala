@@ -765,6 +765,108 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
       }
 
+      "has 2 businesses with one obligation each" should {
+
+        "display the obligation of each businesses" in {
+
+          Given("I wiremock stub an authorised user response")
+          AuthStub.stubAuthorised()
+
+          And("I wiremock stub a response from the User Details service")
+          UserDetailsStub.stubGetUserDetails()
+
+          And("I wiremock stub a ServiceInfo Partial response")
+          BtaPartialStub.stubGetServiceInfoPartial()
+
+          And("I wiremock stub a success business details response")
+          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+
+          And("I wiremock stub a successful Property Details response")
+          SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
+
+          And("I wiremock stub a single business obligation response")
+          SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
+          SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+          Then("Verify business details has been called")
+          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+
+          Then("Verify property details has been called")
+          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+
+          Then("Verify that business obligations has been called")
+          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId)
+
+          Then("the result should have a HTTP status of OK")
+          res should have(
+            httpStatus(OK)
+          )
+
+          Then("the page title should be")
+          res should have(
+            pageTitle("Your report deadlines")
+          )
+
+          Then("the page should display the correct user")
+          //User Name
+          res should have(
+            elementTextByID(id = "service-info-user-name")(testUserName)
+          )
+
+          Then("the page displays two obligations")
+          res should have(
+            nElementsWithClass("obligation")(2)
+          )
+
+          Then("the first business obligation data is")
+          res should have(
+            //Check the 1st obligation data
+            elementTextByID(id = "bi-1-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "bi-1-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "bi-1-ob-1-status")("Received")
+          )
+
+          Then("the second business obligation data is")
+          res should have(
+            //Check the 1st obligation data
+            elementTextByID(id = "bi-2-ob-1-start")("6 April 2017"),
+            elementTextByID(id = "bi-2-ob-1-end")("5 July 2017"),
+            elementTextByID(id = "bi-2-ob-1-status")("Received")
+          )
+
+          Then("the page displays the View 2017 to 2018 details link")
+          res should have(
+            elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details")
+          )
+
+          Then("the page displays the View annual returns link")
+          res should have(
+            elementTextByID(id = "sa-link")("View annual returns")
+          )
+
+          Then("the page displays the Manage account link")
+          res should have(
+            elementTextByID(id = "service-info-manage-account-link")("Manage account")
+          )
+
+          Then("the page displays the Message link")
+          res should have(
+            elementTextByID(id = "service-info-messages-link")("Messages")
+          )
+
+          Then("the page should not contain any property obligation")
+          res should have(
+            isElementVisibleById("pi-ob")(false)
+          )
+
+        }
+
+      }
+
       "has business income but returns an error response from business obligations" should {
 
         "Display an error message to the user" in {
