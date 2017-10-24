@@ -11,8 +11,8 @@ GET         /                                       controllers.HomeController.r
 GET         /estimated-tax-liability                controllers.FinancialDataController.redirectToEarliestEstimatedTaxLiability
 GET         /estimated-tax-liability/:taxYear       controllers.FinancialDataController.getFinancialData(taxYear: Int)
 
-#Obligations
-GET         /obligations                            controllers.ObligationsController.getObligations
+#ReportDeadlines
+GET         /obligations                            controllers.ReportDeadlinesController.getReportDeadlines
 
 #Feedback Routes
 GET         /feedback                               controllers.feedback.FeedbackController.show

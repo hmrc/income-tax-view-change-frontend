@@ -21,13 +21,13 @@
 @defining(calcModel.calcDataModel.get) { breakdown =>
     <table class="itvc-table">
         <tbody>
-        @if((sources.businessDetails.nonEmpty && sources.businessDetails.get.accountingPeriod.determineTaxYear == taxYear) || breakdown.profitFromSelfEmployment > 0){
+        @if((sources.hasBusinessIncome && sources.businessIncomeSources.exists(_.accountingPeriod.determineTaxYear == taxYear)) || breakdown.profitFromSelfEmployment > 0){
         <tr id="business-profit-section" class="no-border-bottom">
             <td>@messages("estimated_tax_liability.calc-breakdown.business-profit")</td>
             <td id="business-profit"  class="summary-data">@{breakdown.profitFromSelfEmployment.toCurrency}</td>
         </tr>
         }
-        @if((sources.propertyDetails.nonEmpty && sources.propertyDetails.get.accountingPeriod.determineTaxYear == taxYear) || breakdown.profitFromUkLandAndProperty > 0){
+        @if((sources.hasPropertyIncome && sources.propertyIncomeSource.get.accountingPeriod.determineTaxYear == taxYear) || breakdown.profitFromUkLandAndProperty > 0){
         <tr id="property-profit-section" class="no-border-bottom">
             <td>@messages("estimated_tax_liability.calc-breakdown.property-profit")</td>
             <td id="property-profit" class="summary-data">@{breakdown.profitFromUkLandAndProperty.toCurrency}</td>

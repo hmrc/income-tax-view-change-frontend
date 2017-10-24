@@ -19,7 +19,7 @@ package connectors
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.{BusinessDetailsErrorModel, BusinessListResponseModel, NoBusinessIncomeDetails, PropertyDetailsErrorModel}
+import models.{BusinessDetailsErrorModel, BusinessListResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import utils.TestSupport
@@ -49,7 +49,7 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
 
     "return a NoBusinessIncomeDetails case object when no business are returned" in {
       setupMockHttpGet(testUrl)(successNoBusiness)
-      await(result) shouldBe NoBusinessIncomeDetails
+      await(result) shouldBe noBusinessDetails
     }
 
     "return BusinessListError model in case of failure" in {

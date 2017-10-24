@@ -16,41 +16,54 @@
 
 package views.helpers
 
-import models.{ObligationStatus, Open, Overdue, Received}
-import play.api.i18n.Messages
+import models.{Open, Overdue, Received}
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._
+import play.api.i18n.Messages.Implicits._
+import utils.TestSupport
 
-object ObligationStatusHelper {
+class ReportDeadlinesStatusHelperSpec extends TestSupport {
 
-  def statusHtml(status: ObligationStatus)(implicit messages: Messages): Html = status match {
-    case open: Open =>
-      Html(
+  "The ObligationStatusHelper.statusHtml" should {
+    "return Html corresponding to the ObligationStatus" when {
+
+      val openHtml = Html(
         s"""
            |<p class="flush--bottom  alert  soft-half--ends soft--right">
            |  <span class='bold-xsmall'>
-           |    ${messages("status.open", open.dueDate.toLongDate)}
+           |    Due by 25 December 2017
            |  </span>
            |</p>
          """.stripMargin)
-    case _: Received.type =>
-      Html(
-        s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #005ea5;">
-           |  <span class='bold-xsmall'>
-           |    ${messages("status.received")}
-           |  </span>
-           |</p>
-           """.stripMargin)
-    case _: Overdue.type   =>
-      Html(
+
+      val overdueHtml = Html(
         s"""
            |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #b10e1e;">
            |  <span class='bold-xsmall'>
-           |    ${messages("status.overdue")}
+           |    Overdue
            |  </span>
            |</p>
            """.stripMargin)
-  }
 
+      val receivedHtml = Html(
+        s"""
+           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #005ea5;">
+           |  <span class='bold-xsmall'>
+           |    Received
+           |  </span>
+           |</p>
+           """.stripMargin)
+
+
+      "passed 'Open' the Open Html is returned" in {
+        ReportDeadlineStatusHelper.statusHtml(Open("2017-12-25")) shouldBe openHtml
+      }
+      "passed 'Overdue' the Overdue Html is returned" in {
+        ReportDeadlineStatusHelper.statusHtml(Overdue) shouldBe overdueHtml
+      }
+      "passed 'Received' the Received Html is returned" in {
+        ReportDeadlineStatusHelper.statusHtml(Received) shouldBe receivedHtml
+      }
+    }
+  }
 }

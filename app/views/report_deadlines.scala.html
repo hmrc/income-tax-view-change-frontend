@@ -1,0 +1,72 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import utils.ImplicitDateFormatter._
+@import views.html.templates.main_template
+@import views.html.helpers.sidebarHelper
+@import views.helpers.ReportDeadlinesPage
+@import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
+
+@(incomeSources: models.IncomeSourcesModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, serviceInfo: Html)
+
+@sidebar = {
+    @sidebarHelper(ReportDeadlinesPage, incomeSources)
+}
+
+@allReportDeadlinesErrored = {
+    <p id="p1" data-metrics="handledError:obligationsError:noObligations">@messages("obligations.error.p1")</p>
+    <p id="p2">@messages("obligations.error.p2")</p>
+}
+
+@main_template(title = messages("obligations.title"), bodyClasses = None, sidebarLinks = Some(sidebar), user = Some(user)) {
+
+    <section id="obligations">
+
+        <h1 id="page-heading">@messages("obligations.heading")</h1>
+
+        @if(incomeSources.allReportDeadlinesErroredForAllIncomeSources) {
+            @allReportDeadlinesErrored
+        } else {
+            <p id="obligation-intro">@messages("obligations.info")</p>
+
+            <!-- business obligations -->
+            @if(incomeSources.hasBusinessReportErrors) {
+                <section data-metrics="handledError:obligationsError:noBusinessObs">
+            } else {
+                <section>
+            }
+                @incomeSources.businessIncomeSources.zipWithIndex.map{ case (business, i) =>
+                    @defining("bi-" + (i + 1).toString) { id =>
+                        <h2 id="@{id}-section">@business.tradingName</h2>
+                        @renderReportDeadlines(business.reportDeadlines, id)
+                    }
+                }
+            </section>
+
+            <!-- Property obligations -->
+            @incomeSources.propertyIncomeSource.map { p =>
+                    @if(incomeSources.hasPropertyReportErrors) {
+                        <section data-metrics="handledError:obligationsError:noPropertyObs">
+                    } else {
+                        <section>
+                    }
+                    <h2 id="pi-section">@Messages("obligations.pi.subheading")</h2>
+                    @renderReportDeadlines(p.reportDeadlines, "pi")
+                </section>
+            }
+        }
+    </section>
+}

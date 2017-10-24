@@ -16,10 +16,10 @@
 
 package connectors
 
-import assets.TestConstants.Obligations._
+import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.{LastTaxCalculationError, ObligationsErrorModel, ObligationsResponseModel}
+import models.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import utils.TestSupport
@@ -28,18 +28,18 @@ import scala.concurrent.Future
 import uk.gov.hmrc.http.HttpResponse
 
 
-class PropertyObligationDataConnectorSpec extends TestSupport with MockHttp {
+class BusinessReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
   val successResponse = HttpResponse(Status.OK, Some(Json.toJson(obligationsDataSuccessModel)))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestPropertyObligationDataConnector extends PropertyObligationDataConnector(mockHttpGet)
+  object TestBusinessReportDeadlinesDataConnector extends BusinessReportDeadlinesConnector(mockHttpGet)
 
-  "PropertyObligationDataConnector.getPropertyData" should {
+  "BusinessReportDealinesDataConnector.getObligationData" should {
 
-    lazy val testUrl = TestPropertyObligationDataConnector.getPropertyDataUrl(testNino)
-    def result: Future[ObligationsResponseModel] = TestPropertyObligationDataConnector.getPropertyObligationData(testNino)
+    lazy val testUrl = TestBusinessReportDeadlinesDataConnector.getReportDeadlineDataUrl(testNino, testSelfEmploymentId)
+    def result: Future[ReportDeadlinesResponseModel] = TestBusinessReportDeadlinesDataConnector.getBusinessReportDeadlineData(testNino, testSelfEmploymentId)
 
     "return a SuccessResponse with JSON in case of sucess" in {
       setupMockHttpGet(testUrl)(successResponse)
@@ -48,17 +48,17 @@ class PropertyObligationDataConnectorSpec extends TestSupport with MockHttp {
 
     "return ErrorResponse model in case of failure" in {
       setupMockHttpGet(testUrl)(badResponse)
-      await(result) shouldBe ObligationsErrorModel(Status.BAD_REQUEST, "Error Message")
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
-    "return ObligationsErrorModel when bad JSON is received" in {
+    "return BusinessListError model when bad JSON is received" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response")
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
     }
 
-    "return ObligationsErrorModel model in case of future failed scenario" in {
+    "return ReportDeadlinesErrorModel model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 }

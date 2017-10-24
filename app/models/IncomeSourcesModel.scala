@@ -21,56 +21,67 @@ import java.time.LocalDate
 import play.api.libs.json.{Json, OFormat}
 import utils.ImplicitDateFormatter._
 
+abstract class IncomeModel {
+  def accountingPeriod: AccountingPeriodModel
+  def reportDeadlines: ReportDeadlinesResponseModel
+}
+
 sealed trait IncomeSourcesResponseModel
 case object IncomeSourcesError extends IncomeSourcesResponseModel
 case class IncomeSourcesModel(
-                              businessDetails: Option[BusinessIncomeModel],
-                              propertyDetails: Option[PropertyIncomeModel]
-                            ) extends IncomeSourcesResponseModel {
+                               businessIncomeSources: List[BusinessIncomeModel],
+                               propertyIncomeSource: Option[PropertyIncomeModel]) extends IncomeSourcesResponseModel {
 
-  val hasPropertyIncome: Boolean = propertyDetails.nonEmpty
-  val hasBusinessIncome: Boolean = businessDetails.nonEmpty
+  val incomeSources: List[IncomeModel] = businessIncomeSources ++ propertyIncomeSource
+
+  val hasPropertyIncome: Boolean = propertyIncomeSource.nonEmpty
+  val hasBusinessIncome: Boolean = businessIncomeSources.nonEmpty
   val hasBothIncomeSources: Boolean = hasPropertyIncome && hasBusinessIncome
 
-  val orderedTaxYears: List[Int] =
-    List(
-      propertyDetails.map(_.accountingPeriod.determineTaxYear),
-      businessDetails.map(_.accountingPeriod.determineTaxYear)
-    )
-      .flatten
-      .sortWith(_ < _)
-      .distinct
-
+  val orderedTaxYears: List[Int] = incomeSources.map(_.accountingPeriod.determineTaxYear).sortWith(_ < _).distinct
   val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
   val lastTaxYear: Option[Int] = orderedTaxYears.lastOption
 
+  val allReportDeadlinesErrored: Boolean = !incomeSources.map(_.reportDeadlines).exists {
+    case _: ReportDeadlinesModel => true
+    case _ => false
+  }
 
+  val allReportDeadlinesErroredForAllIncomeSources: Boolean = hasBothIncomeSources && allReportDeadlinesErrored
+
+  val hasBusinessReportErrors: Boolean = businessIncomeSources.map(_.reportDeadlines).exists {
+    case _: ReportDeadlinesErrorModel => true
+    case _ => false
+  }
+
+  val hasPropertyReportErrors: Boolean = propertyIncomeSource.map(_.reportDeadlines).exists {
+    case _: ReportDeadlinesErrorModel => true
+    case _ => false
+  }
 
   def earliestAccountingPeriodStart(year: Int): LocalDate =
-    (businessDetails ++ propertyDetails)
-      .filter(_.accountingPeriod.determineTaxYear == year).minBy(_.accountingPeriod.start).accountingPeriod.start
-
+    incomeSources.filter(_.accountingPeriod.determineTaxYear == year).map(_.accountingPeriod.start).min
 }
 
-object IncomeSourcesModel {
-  val format: OFormat[IncomeSourcesModel] = Json.format[IncomeSourcesModel]
-
-}
-
-case class BusinessIncomeModel(selfEmploymentId: String, accountingPeriod: AccountingPeriodModel, tradingName: String) extends IncomeModel
+case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel
+case class BusinessIncomeModel(
+                                selfEmploymentId: String,
+                                tradingName: String,
+                                cessationDate: Option[LocalDate],
+                                accountingPeriod: AccountingPeriodModel,
+                                reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel
 
 object BusinessIncomeModel {
   implicit val format: OFormat[BusinessIncomeModel] = Json.format[BusinessIncomeModel]
 }
 
-case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel) extends IncomeModel
-
 object PropertyIncomeModel {
   implicit val format: OFormat[PropertyIncomeModel] = Json.format[PropertyIncomeModel]
 }
 
-abstract class IncomeModel {
-  def accountingPeriod: AccountingPeriodModel
+object IncomeSourcesModel {
+ implicit val format: OFormat[IncomeSourcesModel] = Json.format[IncomeSourcesModel]
 }
+
 
 
