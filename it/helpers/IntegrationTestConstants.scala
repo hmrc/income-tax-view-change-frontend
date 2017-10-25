@@ -40,6 +40,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testCalcType = "it"
 
   val testSelfEmploymentId = "ABC123456789"
+  val otherTestSelfEmploymentId = "ABC123456780"
 
   object GetLastCalculation {
     def successResponse(calcID: String, calcTimestamp: String, calcAmount: BigDecimal): JsValue =
@@ -182,6 +183,41 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "businessAddressLineThree":"Magical Land",
               "businessAddressLineFour":"England",
               "businessPostcode":"ZL1 064"
+            }
+          ]
+          """.stripMargin)
+
+    def multipleSuccessResponse(id1: String, id2: String): JsValue =
+      Json.parse(
+        s"""
+          [
+            {
+              "id": "$id1",
+              "accountingPeriod":{"start":"2017-01-01","end":"2017-12-31"},
+              "accountingType":"CASH",
+              "commencementDate":"2017-01-01",
+              "cessationDate":"2017-12-31",
+              "tradingName":"firstBusiness",
+              "businessDescription":"a first business",
+              "businessAddressLineOne":"64 Zoo Lane",
+              "businessAddressLineTwo":"Happy Place",
+              "businessAddressLineThree":"Magical Land",
+              "businessAddressLineFour":"England",
+              "businessPostcode":"ZL1 064"
+            },
+            {
+              "id": "$id2",
+              "accountingPeriod":{"start":"2017-01-01","end":"2017-12-31"},
+              "accountingType":"CASH",
+              "commencementDate":"2017-01-01",
+              "cessationDate":"2017-12-31",
+              "tradingName":"secondBusiness",
+              "businessDescription":"a second business",
+              "businessAddressLineOne":"742 Evergreen Terrace",
+              "businessAddressLineTwo":"Springfield",
+              "businessAddressLineThree":"Oregon",
+              "businessAddressLineFour":"USA",
+              "businessPostcode":"51MP 50N5"
             }
           ]
           """.stripMargin)
