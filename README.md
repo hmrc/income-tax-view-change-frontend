@@ -168,7 +168,7 @@ Where **:nino** is a valid NINO in format XX999999X, for example: ```QQ123456C``
 ```
 
 
-###GET /self-assessment/ni/:nino/uk-properties/obligations
+### GET /self-assessment/ni/:nino/uk-properties/obligations
 
 Where **:nino** is a valid NINO in format XX999999X, for example: ```QQ123456C```
 
@@ -212,7 +212,7 @@ Where:
 * **met** is ```true``` if the obligation period has been met and ```false``` otherwise
 
 
-#### Error Responses
+### API Error Responses
 
 ##### INVALID NINO
 * **Status**: 400
