@@ -5,17 +5,16 @@
 
 This is the repository for the Income Tax View and Change frontend.
 
-Backend: https://github.com/hmrc/income-tax-view-change__
+Backend: https://github.com/hmrc/income-tax-view-change
+
 Stub: https://github.tools.tax.service.gov.uk/hmrc/itvc-dynamic-stub
 
 
-##APIs
+## APIs
 
-###**GET** /self-assessment/ni/:nino/self-employments
+### **GET** /self-assessment/ni/:nino/self-employments
 
-Where:
-
-* :nino is a valid NINO in format XX999999X, for example: "QQ123456C"
+Where **:nino** is a valid NINO in format XX999999X, for example: ```QQ123456C```
 
 #### Success Response
 
@@ -47,8 +46,8 @@ Where:
 ```
 Where:
 * **id** is an identifier for the self-employment business, unique to the customer
-* **start**, **end**, **commencementDate** and **cessationDate** are dates in the format YYYY-MM-DD
-* **accountingType** is either CASH or ACCRUAL
+* **start**, **end**, **commencementDate** and **cessationDate** are dates in the format ```YYYY-MM-DD```
+* **accountingType** is either ```CASH``` or ```ACCRUAL```
 * **tradingName** is the Business trading name
 * **businessDescription** is a description that conforms to the SIC 2007 standard trade classifications
 * **businessAddressLineOne**, **Two**, **Three** and **Four** are the lines of the Business address
