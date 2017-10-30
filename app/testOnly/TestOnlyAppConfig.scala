@@ -19,10 +19,10 @@ package testOnly
 import javax.inject.{Inject, Singleton}
 
 import config.FrontendAppConfig
-import play.api.Configuration
+import play.api.{Configuration, Environment}
 
 @Singleton
-class TestOnlyAppConfig @Inject()(config: Configuration) extends FrontendAppConfig(config) {
+class TestOnlyAppConfig @Inject()(env: Environment, config: Configuration) extends FrontendAppConfig(env, config) {
 
   lazy val dynamicStubUrl: String = baseUrl("itvc-dynamic-stub")
 

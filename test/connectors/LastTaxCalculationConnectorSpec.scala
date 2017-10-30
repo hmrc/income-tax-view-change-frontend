@@ -35,7 +35,7 @@ class LastTaxCalculationConnectorSpec extends TestSupport with MockHttp {
   val noDataFound = HttpResponse(Status.NOT_FOUND)
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestLastTaxCalculationConnector extends LastTaxCalculationConnector(mockHttpGet)
+  object TestLastTaxCalculationConnector extends LastTaxCalculationConnector(mockHttpGet, environment, conf)
 
   "EstimatedTaxLiabilityConnector.redirectToEarliestEstimatedTaxLiability" should {
 

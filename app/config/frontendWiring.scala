@@ -18,29 +18,36 @@ package config
 
 import javax.inject.{Inject, Singleton}
 
+import play.api.Mode.Mode
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.PlayAuthConnector
+import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
+import uk.gov.hmrc.play.bootstrap.config.LoadAuditingConfig
+import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.config.{AppName, ServicesConfig}
-import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
-import uk.gov.hmrc.play.frontend.config.LoadAuditingConfig
 
 @Singleton
-class FrontendAuditConnector @Inject()() extends Auditing with AppName {
-  override lazy val auditingConfig = LoadAuditingConfig(s"auditing")
+class FrontendAuditConnector @Inject()(val environment: Environment,
+                                       val conf: Configuration) extends Auditing with AppName {
+
+  override protected def appNameConfiguration: Configuration = conf
+  protected val mode: Mode = environment.mode
+  override lazy val auditingConfig = LoadAuditingConfig(appNameConfiguration, mode, s"auditing")
 }
 
 @Singleton
-class FrontendAuthConnector @Inject()(val WSHttp: WSHttp) extends PlayAuthConnector with ServicesConfig {
+class FrontendAuthConnector @Inject()(val environment: Environment,
+                                      val conf: Configuration,
+                                      val WSHttp: WSHttp) extends PlayAuthConnector with ServicesConfig {
+  override protected def runModeConfiguration: Configuration = conf
+  override protected def mode: Mode = environment.mode
   lazy val serviceUrl: String = baseUrl("auth")
   lazy val http = WSHttp
 }
 
 @Singleton
-class ItvcHeaderCarrierForPartialsConverter extends HeaderCarrierForPartialsConverter {
-  val crypto: String => String = cookie => SessionCookieCryptoFilter.encrypt(cookie)
+class ItvcHeaderCarrierForPartialsConverter @Inject()(val sessionCookieCrypto: SessionCookieCrypto) extends HeaderCarrierForPartialsConverter {
+  val crypto: String => String = cookie => sessionCookieCrypto.crypto.encrypt(PlainText.apply(cookie)).value
 }
-
-object FrontendAuditConnector extends FrontendAuditConnector
-
-object FrontendAuthConnector extends FrontendAuthConnector(WSHttp)

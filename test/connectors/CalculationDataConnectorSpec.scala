@@ -33,7 +33,7 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{\"incomeTaxYTD\":\"somethingBad\"}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestCalculationDataConnector extends CalculationDataConnector(mockHttpGet)
+  object TestCalculationDataConnector extends CalculationDataConnector(mockHttpGet, environment, conf)
 
   "CalculationDataConnectorSpec.getCalculationData" should {
 

@@ -16,7 +16,7 @@ object FrontendBuild extends Build with MicroService {
   val govTemplateVersion        = "5.14.0"
   val playPartialsVersion       = "6.1.0"
   val authClientVersion         = "2.3.0"
-
+  val playUiVersion             = "7.8.0"
 
   val scalaTestPlusVersion      = "2.0.0"
   val hmrcTestVersion           = "3.0.0"
@@ -31,6 +31,7 @@ object FrontendBuild extends Build with MicroService {
     ws,
     "uk.gov.hmrc" %% "bootstrap-play-25" % frontendBootstrapVersion,
     "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
+    "uk.gov.hmrc" %% "play-ui" % playUiVersion,
     "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
     "uk.gov.hmrc" %% "auth-client" % authClientVersion
   )

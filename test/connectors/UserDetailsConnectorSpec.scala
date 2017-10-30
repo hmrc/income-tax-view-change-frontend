@@ -33,7 +33,7 @@ class UserDetailsConnectorSpec extends TestSupport with MockHttp {
   val badJsonResponse = HttpResponse(Status.OK, responseJson = Some(Json.toJson("{}")))
   val badResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR, responseString = Some("Error Message"))
 
-  object TestUserDetailsConnector extends UserDetailsConnector(mockHttpGet)
+  object TestUserDetailsConnector extends UserDetailsConnector(mockHttpGet, environment, conf)
 
   "The UserDetailsConnector.getUserDetails() method" should {
 

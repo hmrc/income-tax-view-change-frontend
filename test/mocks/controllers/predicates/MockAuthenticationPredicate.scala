@@ -17,7 +17,7 @@
 package mocks.controllers.predicates
 
 import mocks.auth._
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.AuthenticationPredicate
 import play.api.i18n.MessagesApi
 import play.api.{Configuration, Environment}
@@ -32,7 +32,8 @@ trait MockAuthenticationPredicate extends TestSupport with MockUserDetailsConnec
     app.injector.instanceOf[Configuration],
     app.injector.instanceOf[Environment],
     app.injector.instanceOf[MessagesApi],
-    mockUserDetailsConnector
+    mockUserDetailsConnector,
+    app.injector.instanceOf[ItvcErrorHandler]
   )
 
 }

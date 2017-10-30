@@ -22,9 +22,9 @@ import config.FrontendAppConfig
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import scala.concurrent.Future
-import uk.gov.hmrc.play.frontend.config.AuthRedirects
 
 @Singleton
 class SignInController @Inject()(val appConfig: FrontendAppConfig,

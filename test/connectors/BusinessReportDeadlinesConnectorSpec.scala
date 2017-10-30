@@ -34,7 +34,7 @@ class BusinessReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestBusinessReportDeadlinesDataConnector extends BusinessReportDeadlinesConnector(mockHttpGet)
+  object TestBusinessReportDeadlinesDataConnector extends BusinessReportDeadlinesConnector(mockHttpGet, environment, conf)
 
   "BusinessReportDealinesDataConnector.getObligationData" should {
 

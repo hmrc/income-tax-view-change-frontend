@@ -19,6 +19,7 @@ package controllers.predicates
 import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
+import config.ItvcErrorHandler
 import controllers.BaseController
 import models.{IncomeSourcesError, IncomeSourcesModel}
 import play.api.i18n.MessagesApi
@@ -29,13 +30,14 @@ import scala.concurrent.Future
 
 @Singleton
 class IncomeSourceDetailsPredicate @Inject()(implicit val messagesApi: MessagesApi,
-                                             val incomeSourceDetailsService: IncomeSourceDetailsService
+                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                             val itvcErrorHandler: ItvcErrorHandler
                                             ) extends BaseController {
 
   def retrieveIncomeSources(f: IncomeSourcesModel => Future[Result])(implicit request: Request[AnyContent], user: MtdItUser): Future[Result] = {
     incomeSourceDetailsService.getIncomeSourceDetails(user.nino).flatMap {
       case x: IncomeSourcesModel => f(x)
-      case IncomeSourcesError => Future.successful(showInternalServerError)
+      case IncomeSourcesError => Future.successful(itvcErrorHandler.showInternalServerError)
     }
   }
 }
