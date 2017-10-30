@@ -22,6 +22,8 @@
 
 @(incomeSources: models.IncomeSourcesModel)(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser, serviceInfo: Html)
 
+
+
 @sidebar = {
     @sidebarHelper(ReportDeadlinesPage, incomeSources)
 }

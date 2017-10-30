@@ -43,6 +43,7 @@
 @defaultScriptElem = {
     <script type="text/javascript" src=@routes.Assets.at("javascripts/ga-reporting.js")></script>
     <script type="text/javascript" src=@routes.Assets.at("javascripts/ga-accordion.js")></script>
+    <script type="text/javascript" src=@routes.Assets.at("javascripts/banner-close.js")></script>
     @scriptElem.fold(HtmlFormat.empty)(x => x)
 }
 
@@ -52,14 +53,28 @@
     }
 }
 
+@afterHeader = {
+    <div id ="ur-panel" class="notice-banner" style="display:none;">
+        <div class="notice-banner__wrapper">
+            <a class="notice-banner__content"
+               href="#"
+               id="recruitment-page-link"
+               data-metrics="RecruitmentBanner:Click:Help improve digital services"
+               target="_blank">@Messages("banner.recruitment.link")</a>
+            <a class="banner-panel__close notice-banner__content" href="#" role="button">@Messages("banner.recruitment.dismiss")</a>
+        </div>
+    </div>
+}
+
 
 @govuk_wrapper(title = title,
-               mainClass = mainClass,
-               bodyClasses = bodyClasses,
-               sidebar = sidebar,
-               contentHeader = contentHeader,
-               mainContent = layouts.article(mainContent),
-               serviceInfoContent = serviceInfoContent,
-               scriptElem = Some(defaultScriptElem),
-               showLogout = showLogout
+                mainClass = mainClass,
+                bodyClasses = bodyClasses,
+                sidebar = sidebar,
+                contentHeader = contentHeader,
+                mainContent = layouts.article(mainContent),
+                serviceInfoContent = serviceInfoContent,
+                scriptElem = Some(defaultScriptElem),
+                afterHeader = Some(afterHeader),
+                showLogout = showLogout
 )

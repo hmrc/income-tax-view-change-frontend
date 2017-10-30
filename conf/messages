@@ -57,6 +57,9 @@ timeout.title                                                   = Your session h
 timeout.heading                                                 = Your session has timed out
 timeout.signIn                                                  = To view your quarterly reporting details, you''ll have to <a id="sign-in-link" href="{0}">sign in</a> using your Government Gateway ID.
 
+## User Research Banner ##
+banner.recruitment.link                                         = Help improve digital services by joining the HMRC user panel (opens in new window)
+banner.recruitment.dismiss                                      = No thanks
 
 ## Sidebar ##
 sidebar.quarterly_reporting_reference.h3                        = Income Tax reference:
