@@ -19,7 +19,7 @@ package controllers.feedback
 import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
 
-import config.{AppConfig, WSHttp}
+import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter, WSHttp}
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -38,7 +38,8 @@ import scala.concurrent.Future
 class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
                                    val wsHttp: WSHttp,
                                    val messagesApi: MessagesApi,
-                                   val sessionCookieCrypto: SessionCookieCrypto
+                                   val sessionCookieCrypto: SessionCookieCrypto,
+                                   val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter
                                   ) extends FrontendController with PartialRetriever with I18nSupport {
   override val httpGet = wsHttp
   val httpPost = wsHttp
@@ -84,7 +85,8 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
   def submit: Action[AnyContent] = UnauthorisedAction.async {
     implicit request =>
       request.body.asFormUrlEncoded.map { formData =>
-        httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec = mdcExecutionContext).map {
+        httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
+          rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec = mdcExecutionContext).map {
           resp =>
             resp.status match {
               case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
@@ -108,16 +110,8 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
   private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")
 
   private def partialsReadyHeaderCarrier(implicit request: Request[_]): HeaderCarrier = {
-    val hc1 = PlaHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest(request)
-    PlaHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc1)
-  }
-
-  object PlaHeaderCarrierForPartialsConverter extends HeaderCarrierForPartialsConverter {
-    override val crypto = encryptCookieString _
-
-    def encryptCookieString(cookie: String): String = {
-      sessionCookieCrypto.crypto.encrypt(PlainText(cookie)).value
-    }
+    val hc = itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest(request)
+    itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
   }
 
   implicit val readPartialsForm: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {

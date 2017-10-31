@@ -49,5 +49,5 @@ class FrontendAuthConnector @Inject()(val environment: Environment,
 
 @Singleton
 class ItvcHeaderCarrierForPartialsConverter @Inject()(val sessionCookieCrypto: SessionCookieCrypto) extends HeaderCarrierForPartialsConverter {
-  val crypto: String => String = cookie => sessionCookieCrypto.crypto.encrypt(PlainText.apply(cookie)).value
+  val crypto: String => String = cookie => sessionCookieCrypto.crypto.encrypt(PlainText(cookie)).value
 }
