@@ -3,7 +3,7 @@ $(document).ready(function() {
 // Handle the ITVC UR panel dismiss link functionality
 // =====================================================
 
-    var cookieData=GOVUK.getCookie("bta_ur_panel");
+    var cookieData=GOVUK.getCookie("mdtpurr");
     var URbanner = $("#ur-panel");
 
     if (cookieData == null) {
@@ -12,7 +12,7 @@ $(document).ready(function() {
 
     $(".banner-panel__close").on("click", function(e) {
         e.preventDefault();
-         GOVUK.setCookie("bta_ur_panel", 1, 99999999999);
+         GOVUK.setCookie("mdtpurr", 1, 2419200);
          URbanner.removeClass("banner-panel--show").addClass('hidden');
     });
   // end of on doc ready
