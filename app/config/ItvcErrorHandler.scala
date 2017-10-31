@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package controllers
+package config
 
-import config.AppConfig
-import play.api.Play
-import play.api.i18n.I18nSupport
-import play.api.mvc.Results._
+import javax.inject.Inject
+
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Request, Result}
-import play.twirl.api.Html
-import uk.gov.hmrc.play.frontend.bootstrap.ShowErrorPage
+import play.api.mvc.Results.InternalServerError
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
 import views.html.templates.error_template
 
-trait ErrorPageRenderer extends ShowErrorPage with I18nSupport {
-
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html ={
-    implicit val appConfig: AppConfig = Play.current.injector.instanceOf[AppConfig]
+class ItvcErrorHandler @Inject()(val messagesApi: MessagesApi,
+                                 implicit val config: AppConfig) extends FrontendErrorHandler {
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): HtmlFormat.Appendable =
     error_template(pageTitle, heading, message)
-  }
 
   def showInternalServerError(implicit request: Request[_]): Result = InternalServerError(internalServerErrorTemplate)
 

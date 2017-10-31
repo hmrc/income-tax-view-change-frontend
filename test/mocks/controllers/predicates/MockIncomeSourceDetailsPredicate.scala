@@ -16,6 +16,7 @@
 
 package mocks.controllers.predicates
 
+import config.ItvcErrorHandler
 import controllers.predicates.IncomeSourceDetailsPredicate
 import mocks.services._
 import play.api.i18n.MessagesApi
@@ -25,7 +26,8 @@ trait MockIncomeSourceDetailsPredicate extends TestSupport with MockIncomeSource
 
   object MockIncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate()(
     app.injector.instanceOf[MessagesApi],
-    mockIncomeSourceDetailsService
+    mockIncomeSourceDetailsService,
+    app.injector.instanceOf[ItvcErrorHandler]
   )
 
 }

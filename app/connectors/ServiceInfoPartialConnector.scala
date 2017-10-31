@@ -19,7 +19,8 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import config.ItvcHeaderCarrierForPartialsConverter
-import play.api.Logger
+import play.api.Mode.Mode
+import play.api.{Configuration, Environment, Logger}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.partials.HtmlPartial._
@@ -31,9 +32,12 @@ import uk.gov.hmrc.http.HttpGet
 
 @Singleton
 class ServiceInfoPartialConnector @Inject()(http: HttpGet,
-                                            headerCarrierConverter: ItvcHeaderCarrierForPartialsConverter
-                                           ) extends ServicesConfig with RawResponseReads {
+                                            headerCarrierConverter: ItvcHeaderCarrierForPartialsConverter,
+                                            val environment: Environment,
+                                            val conf: Configuration) extends ServicesConfig with RawResponseReads {
 
+  override protected def mode: Mode = environment.mode
+  override protected def runModeConfiguration: Configuration = conf
 
   lazy val btaUrl: String = baseUrl("business-account") + "/business-account/partial/service-info"
 

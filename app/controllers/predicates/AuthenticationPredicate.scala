@@ -19,20 +19,19 @@ package controllers.predicates
 import javax.inject.{Inject, Singleton}
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import connectors.{ServiceInfoPartialConnector, UserDetailsConnector}
+import config.{FrontendAppConfig, ItvcErrorHandler}
+import connectors.UserDetailsConnector
 import controllers.BaseController
 import models.{UserDetailsError, UserDetailsModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.{Configuration, Environment, Logger}
-import play.twirl.api.Html
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve._
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import scala.concurrent.Future
-import uk.gov.hmrc.play.frontend.config.AuthRedirects
 
 @Singleton
 class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -40,7 +39,8 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
                                         override val config: Configuration,
                                         override val env: Environment,
                                         implicit val messagesApi: MessagesApi,
-                                        val userDetailsConnector: UserDetailsConnector
+                                        val userDetailsConnector: UserDetailsConnector,
+                                        val itvcErrorHandler: ItvcErrorHandler
                                        ) extends BaseController with AuthRedirects {
 
   lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
@@ -70,7 +70,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
         Future.successful(Redirect(controllers.routes.SignInController.signIn()))
       case _ =>
         Logger.debug("[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.")
-        Future.successful(showInternalServerError)
+        Future.successful(itvcErrorHandler.showInternalServerError)
     }
   }
 

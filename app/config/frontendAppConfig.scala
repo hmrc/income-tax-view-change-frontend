@@ -17,8 +17,10 @@
 package config
 
 import javax.inject.Singleton
+
 import com.google.inject.Inject
-import play.api.Configuration
+import play.api.Mode.Mode
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
 
 trait AppConfig {
@@ -48,9 +50,12 @@ trait AppConfig {
 }
 
 @Singleton
-class FrontendAppConfig @Inject()(configuration: Configuration) extends AppConfig with ServicesConfig {
+class FrontendAppConfig @Inject()(val environment: Environment,
+                                  val conf: Configuration) extends AppConfig with ServicesConfig {
 
-  private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+  override protected def runModeConfiguration: Configuration = conf
+  override protected def mode: Mode = environment.mode
+  private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   //App
   private lazy val baseUrl = "report-quarterly/income-and-expenses/view"

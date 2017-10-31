@@ -19,25 +19,27 @@ package controllers.feedback
 import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
 
-import config.{AppConfig, WSHttp}
+import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter, WSHttp}
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
-import uk.gov.hmrc.play.frontend.controller.{FrontendController, UnauthorisedAction}
-import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
-import uk.gov.hmrc.play.http._
+import uk.gov.hmrc.crypto.PlainText
+import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpReads, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.controller.{FrontendController, UnauthorisedAction}
+import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.partials._
 import views.html.feedback.feedback_thankyou
 
-import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpReads, HttpResponse}
+import scala.concurrent.Future
 
 @Singleton
 class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
                                    val wsHttp: WSHttp,
-                                   val messagesApi: MessagesApi
+                                   val messagesApi: MessagesApi,
+                                   val sessionCookieCrypto: SessionCookieCrypto,
+                                   val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter
                                   ) extends FrontendController with PartialRetriever with I18nSupport {
   override val httpGet = wsHttp
   val httpPost = wsHttp
@@ -52,7 +54,7 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
   implicit val formPartialRetriever: FormPartialRetriever = new FormPartialRetriever {
     override def httpGet: HttpGet = wsHttp
 
-    override def crypto: (String) => String = cookie => SessionCookieCryptoFilter.encrypt(cookie)
+    override def crypto: (String) => String = cookie => sessionCookieCrypto.crypto.encrypt(PlainText(cookie)).value
   }
 
   def contactFormReferer(implicit request: Request[AnyContent]): String = request.headers.get(REFERER).getOrElse("")
@@ -83,7 +85,8 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
   def submit: Action[AnyContent] = UnauthorisedAction.async {
     implicit request =>
       request.body.asFormUrlEncoded.map { formData =>
-        httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec = mdcExecutionContext).map {
+        httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
+          rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec = mdcExecutionContext).map {
           resp =>
             resp.status match {
               case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
@@ -107,16 +110,8 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
   private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")
 
   private def partialsReadyHeaderCarrier(implicit request: Request[_]): HeaderCarrier = {
-    val hc1 = PlaHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest(request)
-    PlaHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc1)
-  }
-
-  object PlaHeaderCarrierForPartialsConverter extends HeaderCarrierForPartialsConverter {
-    override val crypto = encryptCookieString _
-
-    def encryptCookieString(cookie: String): String = {
-      SessionCookieCryptoFilter.encrypt(cookie)
-    }
+    val hc = itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest(request)
+    itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
   }
 
   implicit val readPartialsForm: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {

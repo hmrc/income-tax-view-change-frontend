@@ -16,6 +16,7 @@
 
 package controllers
 
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import play.api.i18n.I18nSupport
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-trait BaseController extends FrontendController with ErrorPageRenderer
+trait BaseController extends FrontendController with I18nSupport

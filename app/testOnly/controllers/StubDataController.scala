@@ -18,7 +18,6 @@ package testOnly.controllers
 
 import javax.inject.{Inject, Singleton}
 
-import com.fasterxml.jackson.core.JsonParseException
 import config.FrontendAppConfig
 import controllers.BaseController
 import play.api.data.Form
@@ -26,12 +25,11 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import play.api.{Configuration, Environment}
 import testOnly.connectors.DynamicStubConnector
-import testOnly.forms.{StubDataForm, StubSchemaForm}
-import testOnly.models.{DataModel, SchemaModel}
+import testOnly.forms.StubDataForm
+import testOnly.models.DataModel
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import scala.concurrent.Future
-import scala.util.Try
-import uk.gov.hmrc.play.frontend.config.AuthRedirects
 
 @Singleton
 class StubDataController @Inject()(implicit val appConfig: FrontendAppConfig,

@@ -25,15 +25,17 @@ import org.jsoup.nodes.Document
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Suite}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.{Configuration, Environment}
+import play.api.Mode.Mode
+import play.api.i18n.MessagesApi
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.twirl.api.Html
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.{ HeaderCarrier, SessionKeys }
 
 trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar with BeforeAndAfterAll with MaterializerSupport {
   this: Suite =>
@@ -47,6 +49,8 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
   implicit val hcwc: HeaderCarrierForPartials = HeaderCarrierForPartials(headerCarrier, "")
 
+  implicit val conf: Configuration = app.configuration
+  implicit val environment: Environment = app.injector.instanceOf[Environment]
   implicit val config: Config = app.configuration.underlying
 
   implicit val user: MtdItUser = MtdItUser(

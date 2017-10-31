@@ -19,7 +19,8 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import models._
-import play.api.Logger
+import play.api.Mode.Mode
+import play.api.{Configuration, Environment, Logger}
 import play.api.http.Status
 import play.api.http.Status._
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -27,10 +28,15 @@ import uk.gov.hmrc.play.http._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpGet, HttpResponse }
+import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
 
 @Singleton
-class LastTaxCalculationConnector @Inject()(val http: HttpGet) extends ServicesConfig with RawResponseReads {
+class LastTaxCalculationConnector @Inject()(val http: HttpGet,
+                                            val environment: Environment,
+                                            val conf: Configuration) extends ServicesConfig with RawResponseReads {
+
+  override protected def mode: Mode = environment.mode
+  override protected def runModeConfiguration: Configuration = conf
 
   lazy val protectedMicroserviceUrl: String = baseUrl("income-tax-view-change")
   lazy val getEstimatedTaxLiabilityUrl: (String, String) => String = (nino, year) =>

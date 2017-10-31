@@ -12,13 +12,14 @@ object FrontendBuild extends Build with MicroService {
   override lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
 
-  val frontendBootstrapVersion  = "8.8.0"
+  val frontendBootstrapVersion  = "0.12.0"
+  val govTemplateVersion        = "5.14.0"
   val playPartialsVersion       = "6.1.0"
   val authClientVersion         = "2.3.0"
-
+  val playUiVersion             = "7.8.0"
 
   val scalaTestPlusVersion      = "2.0.0"
-  val hmrcTestVesrion           = "2.3.0"
+  val hmrcTestVersion           = "3.0.0"
   val scalatestVersion          = "3.0.0"
   val pegdownVersion            = "1.6.0"
   val jsoupVersion              = "1.10.2"
@@ -28,13 +29,15 @@ object FrontendBuild extends Build with MicroService {
 
   val compile = Seq(
     ws,
-    "uk.gov.hmrc" %% "frontend-bootstrap" % frontendBootstrapVersion,
+    "uk.gov.hmrc" %% "bootstrap-play-25" % frontendBootstrapVersion,
+    "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
+    "uk.gov.hmrc" %% "play-ui" % playUiVersion,
     "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
     "uk.gov.hmrc" %% "auth-client" % authClientVersion
   )
 
   def test(scope: String = "test,it") = Seq(
-    "uk.gov.hmrc" %% "hmrctest" % hmrcTestVesrion % scope,
+    "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
     "org.scalatest" %% "scalatest" % scalatestVersion % scope,
     "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
     "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
