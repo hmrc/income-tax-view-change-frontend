@@ -21,7 +21,10 @@ import helpers.ComponentSpecBase
 import helpers.IntegrationTestConstants.GetReportDeadlinesData._
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks.{AuthStub, BtaPartialStub, SelfAssessmentStub, UserDetailsStub}
+import org.scalatest.Assertion
 import play.api.http.Status._
+import play.api.libs.json.JsValue
+import play.api.libs.ws.WSResponse
 import utils.ImplicitDateFormatter
 
 class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
@@ -34,20 +37,15 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display a single obligation with the correct dates and status" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
+          stubPartial()
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -64,15 +62,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
-            httpStatus(OK)
-          )
+          hasStatus(res, OK)
 
-            Then("the page title should be")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasTitle(res, "Your report deadlines")
 
           Then("the page should display the correct user")
             //User Name
@@ -126,17 +118,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           "display a single obligation with the correct dates and status" in {
 
-            Given("I wiremock stub an authorised user response")
-            AuthStub.stubAuthorised()
+            authorised(true)
 
-            And("I wiremock stub a response from the User Details service")
-            UserDetailsStub.stubGetUserDetails()
+            stubUserDetails()
 
-            And("I wiremock stub a success business details response")
-            SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+            getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-            And("I wiremock stub a successful Property Details response")
-            SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+            getPropDeets(GetPropertyDetails.successResponse())
 
             And("I wiremock stub a single property and business obligation response")
             // SelfAssessmentStub.stubGetReportDeadlines(testNino,testSelfEmploymentId,multipleReceivedOpenReportDeadlinesModel,multipleReceivedOpenReportDeadlinesModel)
@@ -146,15 +134,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            Then("the result should have a HTTP status of OK")
-            res should have(
-              httpStatus(OK)
-            )
+            hasStatus(res, OK)
 
-            Then("the correct page title is displayed")
-            res should have(
-              pageTitle("Your report deadlines")
-            )
+            hasTitle(res, "Your report deadlines")
 
             Then("the correct user is displayed")
             res should have(
@@ -263,20 +245,15 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display the correct amount of obligations with the correct statuses" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
+          stubPartial()
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple business obligations response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -293,15 +270,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
-            httpStatus(OK)
-          )
+          hasStatus(res, OK)
 
-          Then("the page title should be displayed")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasTitle(res, "Your report deadlines")
 
           Then("the page should display the logged in user")
           res should have(
@@ -366,20 +337,15 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display only one of each received and open obligations and all overdue obligations" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
+          stubPartial()
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple business obligations response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
@@ -396,16 +362,10 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
-            httpStatus(OK)
-          )
+          hasStatus(res, OK)
 
 
-          Then("the page title is displayed")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasTitle(res, "Your report deadlines")
 
           Then("the logged in user is displayed")
           res should have(
@@ -480,20 +440,16 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display a single obligation with the correct dates and status" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
+          stubPartial()
 
           And("I wiremock stub no business details as an income source")
           SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response")
           SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, singleReportDeadlinesDataSuccessModel)
@@ -510,15 +466,10 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
-            httpStatus(OK)
-          )
+          hasStatus(res, OK)
+
             //Check Page Title of HTML Response Body
-          Then("the page title is displayed")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasTitle(res, "Your report deadlines")
 
            Then("the logged in user is displayed")
           res should have(
@@ -544,17 +495,14 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display the correct amount of obligations with the correct statuses" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
           And("I wiremock stub no business details response")
           SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple property obligations response")
           SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReportDeadlinesDataSuccessModel)
@@ -571,14 +519,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
-            httpStatus(OK)
-          )
-            Then("the page title is displayed")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasStatus(res, OK)
+
+          hasTitle(res, "Your report deadlines")
 
           Then("the logged in user is displayed")
           res should have(
@@ -618,17 +561,14 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display only one of each received and open obligations and all overdue obligations" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
           And("I wiremock stub no business details response")
           SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple property open and received obligations response")
           SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReceivedOpenReportDeadlinesModel)
@@ -645,15 +585,10 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
-            httpStatus(OK)
-          )
+          hasStatus(res, OK)
 
-          Then("the page title should be")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasTitle(res, "Your report deadlines")
+
 
           Then("the page displays the correct user")
           res should have(
@@ -699,20 +634,15 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display one obligation each for business and property with the correct dates and statuses" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a Error Response from the User Details service")
-          UserDetailsStub.stubGetUserDetailsError()
+          stubUserDetailsError()
 
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
+          stubPartial()
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business and property obligation response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -733,16 +663,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
+          hasStatus(res, OK)
 
-            //Check Status OK (200) Result
-            httpStatus(OK)
-          )
-          Then("the page title")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasTitle(res, "Your report deadlines")
 
           Then("the page title")
           res should have(
@@ -769,22 +692,18 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display the obligation of each businesses" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
+          stubPartial()
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
 
           And("I wiremock stub a successful Property Details response")
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
 
-          And("I wiremock stub a single business obligation response")
+          And("I wiremock stub a single business obligation response for each business")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
@@ -801,15 +720,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
-            httpStatus(OK)
-          )
+          hasStatus(res, OK)
 
-          Then("the page title should be")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasTitle(res, "Your report deadlines")
 
           Then("the page should display the correct user")
           //User Name
@@ -871,20 +784,15 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display the obligation of each businesses" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
-          And("I wiremock stub a ServiceInfo Partial response")
-          BtaPartialStub.stubGetServiceInfoPartial()
+          stubPartial()
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple business obligations and a single property obligation response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -904,15 +812,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
-            httpStatus(OK)
-          )
+          hasStatus(res, OK)
 
-          Then("the page title should be")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasTitle(res, "Your report deadlines")
 
           Then("the page should display the correct user")
           //User Name
@@ -986,14 +888,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "Display an error message to the user" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub a successful Property Details response, with no Property Income Source")
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
@@ -1013,15 +912,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
 
-          Then("the result should have a HTTP status of Ok")
-          res should have(
-            httpStatus(OK)
-          )
+          hasStatus(res, OK)
 
-          Then("the page title is displayed")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasTitle(res, "Your report deadlines")
 
           Then("the business section is displayed under Business income")
           res should have(
@@ -1045,17 +938,14 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "Display an error message to the user" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
           And("I wiremock stub a success business details response, with no Business Income Source")
           SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub an error for the property obligations response")
           SelfAssessmentStub.stubPropertyReportDeadlinesError(testNino)
@@ -1072,14 +962,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
-            httpStatus(OK)
-          )
-          Then("the page title is displayed")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasStatus(res, OK)
+
+          hasTitle(res, "Your report deadlines")
 
           Then("the property section is displayed under Property income")
           res should have(
@@ -1102,17 +987,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "Display an error message to the user" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          authorised(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub an error for the property obligations response")
           SelfAssessmentStub.stubPropertyReportDeadlinesError(testNino)
@@ -1135,15 +1016,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
 
-          Then("the result should have a HTTP status of OK")
-          res should have(
-            httpStatus(OK)
-          )
+          hasStatus(res, OK)
 
-          Then("the page title is displayed")
-          res should have(
-            pageTitle("Your report deadlines")
-          )
+          hasTitle(res, "Your report deadlines")
 
           Then("an error message for property obligations is displayed")
           res should have(
@@ -1159,8 +1034,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
       "redirect to sign in" in {
 
-        Given("I wiremock stub an unatuhorised user response")
-        AuthStub.stubUnauthorised()
+        authorised(false)
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")
         val res = IncomeTaxViewChangeFrontend.getReportDeadlines
@@ -1176,4 +1050,55 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
       }
     }
   }
+
+
+  def hasTitle(actual: WSResponse, expected: String): Assertion = {
+    Then("the page title should be " + expected)
+    actual should have(
+      pageTitle(expected)
+    )
+  }
+
+  def hasStatus(actual: WSResponse, expected: Int): Assertion = {
+    Then("the result should have a HTTP status " + expected)
+    actual should have(
+      httpStatus(expected)
+    )
+  }
+
+  def authorised(bool: Boolean): Unit = {
+    if(bool){
+      Given("I wiremock stub an authorised user response")
+      AuthStub.stubAuthorised()
+    } else {
+      Given("I wiremock stub an unatuhorised user response")
+      AuthStub.stubUnauthorised()
+    }
+  }
+
+  def stubUserDetails(): Unit = {
+    And("I wiremock stub a response from the User Details service")
+    UserDetailsStub.stubGetUserDetails()
+  }
+
+  def stubUserDetailsError(): Unit= {
+    And("I wiremock stub a Error Response from the User Details service")
+    UserDetailsStub.stubGetUserDetailsError()
+  }
+
+  def stubPartial(): Unit = {
+    And("I wiremock stub a ServiceInfo Partial response")
+    BtaPartialStub.stubGetServiceInfoPartial()
+  }
+
+  def getBizDeets(response: JsValue): Unit = {
+    And("I wiremock stub a success business details response")
+    SelfAssessmentStub.stubGetBusinessDetails(testNino, response)
+  }
+
+  def getPropDeets(response: JsValue): Unit = {
+    And("I wiremock stub a successful Property Details response")
+    SelfAssessmentStub.stubGetPropertyDetails(testNino, response)
+  }
+
 }
