@@ -16,6 +16,8 @@
     font-weight: 700;
 }
 
-
+.banner-panel__close {
+    float: right;
+}
 
 
