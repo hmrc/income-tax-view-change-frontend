@@ -53,11 +53,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
@@ -261,11 +259,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
@@ -353,11 +349,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
@@ -457,11 +451,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
@@ -510,11 +502,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
@@ -576,11 +566,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
@@ -651,11 +639,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
@@ -710,11 +696,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
@@ -802,11 +786,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
@@ -903,11 +885,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
@@ -953,11 +933,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that property obligations has been called")
           SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
@@ -1004,11 +982,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
           Then("Verify that business obligations has been called")
           SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
@@ -1099,6 +1075,16 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
   def getPropDeets(response: JsValue): Unit = {
     And("I wiremock stub a successful Property Details response")
     SelfAssessmentStub.stubGetPropertyDetails(testNino, response)
+  }
+
+  def verifyBizDeetsCall(): Unit = {
+    Then("Verify business details has been called")
+    SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+  }
+
+  def verifyPropDeetsCall(): Unit = {
+    Then("Verify property details has been called")
+    SelfAssessmentStub.verifyGetPropertyDetails(testNino)
   }
 
 }
