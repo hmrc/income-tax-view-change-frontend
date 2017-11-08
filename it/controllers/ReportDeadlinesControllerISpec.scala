@@ -23,7 +23,7 @@ import helpers.IntegrationTestConstants._
 import helpers.servicemocks.{AuthStub, BtaPartialStub, SelfAssessmentStub, UserDetailsStub}
 import org.scalatest.Assertion
 import play.api.http.Status._
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsNull, JsValue}
 import play.api.libs.ws.WSResponse
 import utils.ImplicitDateFormatter
 
@@ -57,8 +57,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
           hasStatus(res, OK)
 
@@ -263,8 +262,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
           hasStatus(res, OK)
 
@@ -353,8 +351,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
           hasStatus(res, OK)
 
@@ -440,8 +437,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           stubPartial()
 
-          And("I wiremock stub no business details as an income source")
-          SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
+          getBizDeets()
 
           getPropDeets(GetPropertyDetails.successResponse())
 
@@ -455,8 +451,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+          verifyPropObsCall()
 
           hasStatus(res, OK)
 
@@ -491,8 +486,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           stubUserDetails()
 
-          And("I wiremock stub no business details response")
-          SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
+          getBizDeets()
 
           getPropDeets(GetPropertyDetails.successResponse())
 
@@ -506,8 +500,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+          verifyPropObsCall()
 
           hasStatus(res, OK)
 
@@ -555,8 +548,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           stubUserDetails()
 
-          And("I wiremock stub no business details response")
-          SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
+          getBizDeets()
 
           getPropDeets(GetPropertyDetails.successResponse())
 
@@ -570,8 +562,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+          verifyPropObsCall()
 
           hasStatus(res, OK)
 
@@ -643,11 +634,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
-          Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+          verifyPropObsCall()
 
           hasStatus(res, OK)
 
@@ -700,9 +689,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId, otherTestSelfEmploymentId)
 
           hasStatus(res, OK)
 
@@ -790,9 +777,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId, otherTestSelfEmploymentId)
 
           hasStatus(res, OK)
 
@@ -889,8 +874,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
           hasStatus(res, OK)
 
@@ -922,8 +906,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           stubUserDetails()
 
-          And("I wiremock stub a success business details response, with no Business Income Source")
-          SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
+          getBizDeets()
 
           getPropDeets(GetPropertyDetails.successResponse())
 
@@ -937,8 +920,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+          verifyPropObsCall()
 
           hasStatus(res, OK)
 
@@ -986,11 +968,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
-          Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+          verifyPropObsCall()
 
           hasStatus(res, OK)
 
@@ -1067,9 +1047,14 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
     BtaPartialStub.stubGetServiceInfoPartial()
   }
 
-  def getBizDeets(response: JsValue): Unit = {
-    And("I wiremock stub a success business details response")
-    SelfAssessmentStub.stubGetBusinessDetails(testNino, response)
+  def getBizDeets(response: JsValue = JsNull): Unit = {
+    if(response == JsNull) {
+      And("I wiremock stub a success business details response, with no Business Income Source")
+      SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
+    } else {
+      And("I wiremock stub a success business details response")
+      SelfAssessmentStub.stubGetBusinessDetails(testNino, response)
+    }
   }
 
   def getPropDeets(response: JsValue): Unit = {
@@ -1085,6 +1070,18 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
   def verifyPropDeetsCall(): Unit = {
     Then("Verify property details has been called")
     SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+  }
+
+  def verifyBizObsCall(employmentIds: String*): Unit = {
+    Then("Verify that business obligations has been called")
+    for(employmentId <- employmentIds){
+      SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, employmentId)
+    }
+  }
+
+  def verifyPropObsCall(): Unit = {
+    Then("Verify that property obligations has been called")
+    SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
   }
 
 }
