@@ -18,29 +18,22 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
+import config.FrontendAppConfig
 import models._
-import play.api.Mode.Mode
-import play.api.{Configuration, Environment, Logger}
+import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status._
-import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
 
 @Singleton
 class LastTaxCalculationConnector @Inject()(val http: HttpGet,
-                                            val environment: Environment,
-                                            val conf: Configuration) extends ServicesConfig with RawResponseReads {
+                                            val config: FrontendAppConfig) extends RawResponseReads {
 
-  override protected def mode: Mode = environment.mode
-  override protected def runModeConfiguration: Configuration = conf
-
-  lazy val protectedMicroserviceUrl: String = baseUrl("income-tax-view-change")
   lazy val getEstimatedTaxLiabilityUrl: (String, String) => String = (nino, year) =>
-    s"$protectedMicroserviceUrl/income-tax-view-change/estimated-tax-liability/$nino/$year/it"
+    s"${config.itvcProtectedService}/income-tax-view-change/estimated-tax-liability/$nino/$year/it"
 
   def getLastEstimatedTax(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 

@@ -18,37 +18,31 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
-import config.ItvcHeaderCarrierForPartialsConverter
-import play.api.Mode.Mode
-import play.api.{Configuration, Environment, Logger}
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import play.api.Logger
 import play.twirl.api.Html
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.http.HttpGet
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.play.partials.HtmlPartial._
 import uk.gov.hmrc.play.partials.{HeaderCarrierForPartials, HtmlPartial}
 
 import scala.concurrent.Future
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import uk.gov.hmrc.http.HttpGet
 
 @Singleton
 class ServiceInfoPartialConnector @Inject()(http: HttpGet,
                                             headerCarrierConverter: ItvcHeaderCarrierForPartialsConverter,
-                                            val environment: Environment,
-                                            val conf: Configuration) extends ServicesConfig with RawResponseReads {
+                                            val config: FrontendAppConfig) extends RawResponseReads {
 
-  override protected def mode: Mode = environment.mode
-  override protected def runModeConfiguration: Configuration = conf
-
-  lazy val btaUrl: String = baseUrl("business-account") + "/business-account/partial/service-info"
+  lazy val btaUrl: String = config.btaService + "/business-account/partial/service-info"
 
   def getServiceInfoPartial()(implicit hcwc: HeaderCarrierForPartials): Future[Html] = {
     implicit val executionContext = fromLoggingDetails(hcwc.hc)
     http.GET[HtmlPartial](s"$btaUrl")(hc = hcwc.toHeaderCarrier, rds = readsPartial, ec = executionContext) recover connectionExceptionsAsHtmlPartialFailure map { p =>
       p.successfulContentOrEmpty
-    }  recoverWith {
+    } recover {
       case _ =>
         Logger.warn(s"[ServiceInfoPartialConnector][getServiceInfoPartial] - Unexpected future failed error")
-        Future.successful(Html(""))
+        Html("")
     }
   }
 }

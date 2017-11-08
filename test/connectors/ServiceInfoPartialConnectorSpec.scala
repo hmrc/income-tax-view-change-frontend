@@ -34,7 +34,7 @@ class ServiceInfoPartialConnectorSpec extends TestSupport with MockHttp {
   val gatewayTimeoutResponse = Failure(Some(Status.GATEWAY_TIMEOUT))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestServiceInfoPartialConnector extends ServiceInfoPartialConnector(mockHttpGet, mockItvcHeaderCarrierForPartialsConverter, environment, conf)
+  object TestServiceInfoPartialConnector extends ServiceInfoPartialConnector(mockHttpGet, mockItvcHeaderCarrierForPartialsConverter, frontendAppConfig)
 
   "The ServiceInfoPartialConnector.getServiceInfoPartial() method" when {
     lazy val testUrl: String = TestServiceInfoPartialConnector.btaUrl

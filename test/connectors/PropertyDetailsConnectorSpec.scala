@@ -34,7 +34,7 @@ class PropertyDetailsConnectorSpec extends TestSupport with MockHttp {
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
   val notFound = HttpResponse(Status.NOT_FOUND)
 
-  object TestPropertyDetailsConnector extends PropertyDetailsConnector(mockHttpGet, environment, conf)
+  object TestPropertyDetailsConnector extends PropertyDetailsConnector(mockHttpGet, frontendAppConfig)
 
   "The PropertyDetailsConnector.getPropertyDetails method" should {
 
