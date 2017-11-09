@@ -19,7 +19,7 @@ package controllers.feedback
 import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
 
-import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter, WSHttp}
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter, WSHttp}
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,7 +35,7 @@ import views.html.feedback.feedback_thankyou
 import scala.concurrent.Future
 
 @Singleton
-class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
+class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    val wsHttp: WSHttp,
                                    val messagesApi: MessagesApi,
                                    val sessionCookieCrypto: SessionCookieCrypto,
@@ -65,14 +65,14 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
 
 
   private def feedbackFormPartialUrl(implicit request: Request[AnyContent]) =
-    s"${applicationConfig.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/?submitUrl=${urlEncode(localSubmitUrl)}" +
-      s"&service=${urlEncode(applicationConfig.contactFormServiceIdentifier)}&referer=${urlEncode(contactFormReferer)}"
+    s"${config.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/?submitUrl=${urlEncode(localSubmitUrl)}" +
+      s"&service=${urlEncode(config.contactFormServiceIdentifier)}&referer=${urlEncode(contactFormReferer)}"
 
   private def feedbackHmrcSubmitPartialUrl(implicit request: Request[AnyContent]) =
-    s"${applicationConfig.contactFrontendPartialBaseUrl}/contact/beta-feedback/form?resubmitUrl=${urlEncode(localSubmitUrl)}"
+    s"${config.contactFrontendPartialBaseUrl}/contact/beta-feedback/form?resubmitUrl=${urlEncode(localSubmitUrl)}"
 
   private def feedbackThankYouPartialUrl(ticketId: String)(implicit request: Request[AnyContent]) =
-    s"${applicationConfig.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/confirmation?ticketId=${urlEncode(ticketId)}"
+    s"${config.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/confirmation?ticketId=${urlEncode(ticketId)}"
 
   def show: Action[AnyContent] = UnauthorisedAction {
     implicit request =>

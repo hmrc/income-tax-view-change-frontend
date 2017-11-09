@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
+@import config.FrontendAppConfig
 @import auth.MtdItUser
 @import templates.govuk_wrapper
 @import helpers.renderServiceInfoPartial
@@ -29,7 +29,7 @@
   showLogout: Boolean = true,
   user: Option[MtdItUser] = None,
   showBtaHeader: Boolean = true
-)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig, serviceInfo: Html = Html(""))
+)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: FrontendAppConfig, serviceInfo: Html = Html(""))
 
 @import uk.gov.hmrc.play.views.html.layouts
 
