@@ -21,21 +21,7 @@ import org.scalatest.Assertion
 import play.api.libs.json.{JsNull, JsValue}
 import play.api.libs.ws.WSResponse
 
-trait GenericMethods extends CustomMatchers {
-
-  def hasTitle(actual: WSResponse, expected: String): Assertion = {
-    Then("the page title should be " + expected)
-    actual should have(
-      pageTitle(expected)
-    )
-  }
-
-  def hasStatus(actual: WSResponse, expected: Int): Assertion = {
-    Then("the result should have a HTTP status " + expected)
-    actual should have(
-      httpStatus(expected)
-    )
-  }
+trait GenericStubMethods extends CustomMatchers {
 
   def authorised(bool: Boolean): Unit = {
     if(bool){

@@ -15,13 +15,13 @@
  */
 package controllers
 
-import helpers.ComponentSpecBase
+import helpers.{ComponentSpecBase, GenericStubMethods}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
 import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
 import play.api.http.Status._
 
-class FinancialDataControllerISpec extends ComponentSpecBase {
+class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
   "Calling the FinancialDataController.getEstimatedTaxLiability(year)" when {
 
@@ -29,14 +29,11 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
       "return the correct page with a valid total" in {
 
-        Given("I wiremock stub an authorised user response")
-        AuthStub.stubAuthorised()
+        authorised(true)
 
-        And("I wiremock stub a response from the User Details service")
-        UserDetailsStub.stubGetUserDetails()
+        stubUserDetails()
 
-        And("I wiremock stub a ServiceInfo Partial response")
-        BtaPartialStub.stubGetServiceInfoPartial()
+        stubPartial()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
@@ -67,73 +64,31 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         )
         IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, calculationResponse)
 
-        And("I wiremock stub a successful Business Details response")
-        SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-        And("I wiremock stub a successful Property Details response")
-        SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+        getPropDeets(GetPropertyDetails.successResponse())
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-        And("I verify the Business Details response has been wiremocked")
-        SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+        verifyBizDeetsCall()
 
-        And("I verify the Property Details response has been wiremocked")
-        SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+        verifyPropDeetsCall()
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
         //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
 
-        Then("the result should have a HTTP status of OK")
-        res should have(
-          httpStatus(OK)
-        )
-
-
-        Then("the page title is - 2017 to 2018 tax year Your in-year tax estimate")
-        res should have(
-          //Check the Page Title
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate")
-        )
-
-        Then("the page displays the logged on user")
-        res should have(
-          elementTextByID(id = "service-info-user-name")(testUserName)
-          )
-
-        Then("the displayed in year tax estimate is")
-        res should have(
-          elementTextByID("in-year-estimate")("£90,500")
-        )
-
-        Then("the displayed tax year")
-        res should have(
-          elementTextByID("tax-year")("2017 to 2018 tax year")
-        )
-
-        Then("the Income Tax Reference")
-        res should have(
-          elementTextByID("it-reference")("XAITSA123456")
-        )
-
-        Then("the displayed deadlines link")
-        res should have(
-          elementTextByID("obligations-link")("View report deadlines")
-        )
-
-        Then("the displayed Previous tax years link")
-        res should have(
-          elementTextByID("sa-link")("View annual returns")
-        )
-
-        Then("the text for accounting period start")
-        res should have(
-          elementTextByID("acc-period-start")("1 January 2017")
-        )
-        Then("the page heading text")
-        res should have(
+        res should have (
+          httpStatus(OK),
+          pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
+          elementTextByID(id = "service-info-user-name")(testUserName),
+          elementTextByID("in-year-estimate")("£90,500"),
+          elementTextByID("tax-year")("2017 to 2018 tax year"),
+          elementTextByID("it-reference")("XAITSA123456"),
+          elementTextByID("obligations-link")("View report deadlines"),
+          elementTextByID("sa-link")("View annual returns"),
+          elementTextByID("acc-period-start")("1 January 2017"),
           elementTextByID("page-heading")("Your in-year tax estimate")
         )
 
@@ -157,14 +112,11 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
       "Return the estimated tax liability without the calculation breakdown" in {
 
-        Given("an authorised user response via wiremock stub")
-        AuthStub.stubAuthorised()
+        authorised(true)
 
-        And("I wiremock stub a Error Response from the User Details service")
-        UserDetailsStub.stubGetUserDetailsError()
+        stubUserDetailsError()
 
-        And("I wiremock stub a ServiceInfo Partial response")
-        BtaPartialStub.stubGetServiceInfoPartial()
+        stubPartial()
 
         And("a successful Get Last Estimated Tax Liability response via wiremock stub")
         val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
@@ -176,34 +128,24 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetCalcError(testNino, testCalcId, calculationResponse)
 
-        And("a successful Business Details response via wiremock stub")
-        SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-        And("a successful Property Details response via wiremock stub")
-        SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+        getPropDeets(GetPropertyDetails.successResponse())
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-        And("verification that the Business Details response has been wiremocked ")
-        SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+        verifyBizDeetsCall()
 
-        And("verification that the Property Details response has been wiremocked ")
-        SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+        verifyPropDeetsCall()
 
         Then("verification that the Estimated Tax Liability response has been wiremocked ")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
         Then("a successful response is returned with the correct estimate")
         res should have(
-
-          //Check for a Status OK response (200)
           httpStatus(OK),
-
-          //Check the Page Title
           pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
-
-          //Check the estimated tax amount is correct
           elementTextByID("in-year-estimate")("£90,500")
 
           //Commented Out as may be required again later
@@ -217,43 +159,32 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
       "Return no data found response and render view explaining that this will be available once they've submitted income" in {
 
-        Given("an authorised user response via wiremock stub")
-        AuthStub.stubAuthorised()
+        authorised(true)
 
-        And("I wiremock stub a response from the User Details service")
-        UserDetailsStub.stubGetUserDetails()
+        stubUserDetails()
 
-        And("I wiremock stub a ServiceInfo Partial response")
-        BtaPartialStub.stubGetServiceInfoPartial()
+        stubPartial()
 
         And("a No Data Found response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcNoData(testNino, testYear)
 
-        And("a successful Business Details response via wiremock stub")
-        SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-        And("a successful Property Details response via wiremock stub")
-        SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+        getPropDeets(GetPropertyDetails.successResponse())
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-        And("verification that the Business Details response has been wiremocked ")
-        SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+        verifyBizDeetsCall()
 
-        And("verification that the Property Details response has been wiremocked ")
-        SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+        verifyPropDeetsCall()
 
         Then("verification that the Estimated Tax Liability response has been wiremocked ")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
         Then("a Not Found response is returned and correct view rendered")
         res should have(
-
-          //Check for a Status OK response (200)
           httpStatus(NOT_FOUND),
-
-          //Check the Page Title
           pageTitle("2017 to 2018 tax year Your in-year tax estimate")
         )
       }
@@ -263,46 +194,33 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
       "Render the Estimated Tax Liability Error Page" in {
 
-        Given("an authorised user response via wiremock stub")
-        AuthStub.stubAuthorised()
+        authorised(true)
 
-        And("I wiremock stub a response from the User Details service")
-        UserDetailsStub.stubGetUserDetails()
+        stubUserDetails()
 
-        And("I wiremock stub a ServiceInfo Partial response")
-        BtaPartialStub.stubGetServiceInfoPartial()
+        stubPartial()
 
         And("an Error Response response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
 
-        And("a successful Business Details response via wiremock stub")
-        SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-        And("a successful Property Details response via wiremock stub")
-        SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+        getPropDeets(GetPropertyDetails.successResponse())
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-        And("verification that the Business Details response has been wiremocked ")
-        SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+        verifyBizDeetsCall()
 
-        And("verification that the Property Details response has been wiremocked ")
-        SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+        verifyPropDeetsCall()
 
         Then("verification that the Estimated Tax Liability response has been wiremocked ")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
         Then("an Internal Server Error response is returned and correct view rendered")
         res should have(
-
-          //Check for a Status OK response (200)
           httpStatus(OK),
-
-          //Check the Page Title
           pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
-
-          //Check for the correct error message
           elementTextByID("p1")("We can't display your estimated tax amount at the moment."),
           elementTextByID("p2")("Try refreshing the page in a few minutes.")
         )
@@ -315,19 +233,14 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
       "redirect to sign in" in {
 
-        Given("I wiremock stub an unauthorised user response")
-        AuthStub.stubUnauthorised()
+        authorised(false)
 
         When("I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         Then("the http response for an unauthorised user is returned")
         res should have(
-
-          //Check for a Redirect response SEE_OTHER (303)
           httpStatus(SEE_OTHER),
-
-          //Check redirect location of response
           redirectURI(controllers.routes.SignInController.signIn().url)
         )
       }
