@@ -48,6 +48,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
         calculationDataSuccessModel.rateBRT shouldBe 20
         calculationDataSuccessModel.rateHRT shouldBe 40
         calculationDataSuccessModel.rateART shouldBe 45
+        calculationDataSuccessModel.eoyEstimate.get.incomeTaxNicAmount shouldBe 66000
       }
 
     }
