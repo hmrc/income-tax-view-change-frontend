@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
+@import config.FrontendAppConfig
 @import auth.MtdItUser
 
-@(user: Option[MtdItUser])(implicit messages: Messages, appConfig: AppConfig)
+@(user: Option[MtdItUser])(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 <a id="service-info-home-link" class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides" data-journey-click="itvc:clickedLink:BTA Home" href="@appConfig.businessTaxAccount">@Messages("bta.home")</a>
 <ul id="service-info-list" class="service-info__item service-info__right list--collapse">

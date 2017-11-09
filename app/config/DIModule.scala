@@ -25,7 +25,6 @@ import uk.gov.hmrc.http.{ HttpDelete, HttpGet, HttpPatch, HttpPost, HttpPut }
 
 class DIModule extends AbstractModule{
   def configure(): Unit = {
-    bind(classOf[AppConfig]).to(classOf[FrontendAppConfig]).asEagerSingleton()
     bind(classOf[AuthorisedFunctions]).to(classOf[FrontendAuthorisedFunctions]).asEagerSingleton()
     bind(classOf[WSGet]).to(classOf[WSHttp]).asEagerSingleton()
     bind(classOf[HttpGet]).to(classOf[WSHttp]).asEagerSingleton()

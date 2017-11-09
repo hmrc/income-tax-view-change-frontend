@@ -16,7 +16,7 @@
 
 @import views.helpers.{Page, EstimatesPage, ReportDeadlinesPage}
 
-@(page: Page, incomeSources: IncomeSourcesModel, taxYear: Option[Int] = None)(implicit messages: Messages, appConfig: config.AppConfig, user: auth.MtdItUser)
+@(page: Page, incomeSources: IncomeSourcesModel, taxYear: Option[Int] = None)(implicit messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser)
 
 <section id="sidebar" class="section section--blue-top">
 
