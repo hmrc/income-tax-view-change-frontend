@@ -92,10 +92,10 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
         )
 
 
-        Then("the page title is - 2017 to 2018 tax year Your in-year tax estimate")
+        Then("the page title is - Tax year: 2017 to 2018")
         res should have(
           //Check the Page Title
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate")
+          pageTitle("Tax year: 2017 to 2018")
         )
 
         Then("the page displays the logged on user")
@@ -105,12 +105,12 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
 
         Then("the displayed in year tax estimate is")
         res should have(
-          elementTextByID("in-year-estimate")("£90,500")
+          elementTextByID("inYearEstimateHeading")("Current estimate: £90,500")
         )
 
         Then("the displayed tax year")
         res should have(
-          elementTextByID("tax-year")("2017 to 2018 tax year")
+          elementTextByID("tax-year")("Tax year: 2017 to 2018")
         )
 
         Then("the Income Tax Reference")
@@ -128,13 +128,9 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           elementTextByID("sa-link")("View annual returns")
         )
 
-        Then("the text for accounting period start")
-        res should have(
-          elementTextByID("acc-period-start")("1 January 2017")
-        )
         Then("the page heading text")
         res should have(
-          elementTextByID("page-heading")("Your in-year tax estimate")
+          elementTextByID("page-heading")("Your Income Tax estimate")
         )
 
         Then("the view estimate breakdown section")
@@ -146,7 +142,6 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           elementTextByID("nic2-amount")("£10,000"),
           elementTextByID("nic4-amount")("£14,000"),
           elementTextByID("total-estimate")("£90,500"),
-          isElementVisibleById("calc-breakdown-inner-link")(true),
           elementTextByID("total-estimate")("£90,500")
 
         )
@@ -201,10 +196,10 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
 
           //Check the Page Title
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
+          pageTitle("Tax year: 2017 to 2018"),
 
           //Check the estimated tax amount is correct
-          elementTextByID("in-year-estimate")("£90,500")
+          elementTextByID("inYearEstimateHeading")("Current estimate: £90,500")
 
           //Commented Out as may be required again later
           //Check the Estimated Calculation Date is correct
@@ -254,7 +249,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           httpStatus(NOT_FOUND),
 
           //Check the Page Title
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate")
+          pageTitle("Tax year: 2017 to 2018")
         )
       }
     }
@@ -300,7 +295,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
 
           //Check the Page Title
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
+          pageTitle("Tax year: 2017 to 2018"),
 
           //Check for the correct error message
           elementTextByID("p1")("We can't display your estimated tax amount at the moment."),

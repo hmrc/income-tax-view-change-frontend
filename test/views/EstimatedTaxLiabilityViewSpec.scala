@@ -16,7 +16,8 @@
 
 package views
 
-import assets.Messages.{EstimatedTaxLiability => messages, Sidebar => sidebarMessages}
+import assets.Messages
+import assets.Messages.{Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants.Estimates._
@@ -31,7 +32,9 @@ import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import utils.ImplicitCurrencyFormatter._
 import utils.{ImplicitCurrencyFormatter, TestSupport}
+
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
@@ -53,15 +56,16 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
   "The EstimatedTaxLiability view" should {
 
-    val setup = pageSetup(busPropBRTCalcDataModel,testIncomeSources)
+    val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
     import setup._
+    val messages = new Messages.EstimatedTaxLiability(taxYear = 2018)
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
     }
 
-    s"have the tax year '${messages.taxYear}'" in {
-      document.getElementById("tax-year").text() shouldBe messages.taxYear
+    s"have the tax year '${messages.taxYearSubHeadiing}'" in {
+      document.getElementById("tax-year").text() shouldBe messages.taxYearSubHeadiing
     }
 
     s"have the page heading '${messages.pageHeading}'" in {
@@ -72,40 +76,65 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       lazy val estimateSection = document.getElementById("estimated-tax")
 
-      s"has the correct Estimated Tax Amount of '${busPropBRTCalcDataModel.incomeTaxYTD}'" in {
-        estimateSection.getElementById("in-year-estimate").text shouldBe "£" + busPropBRTCalcDataModel.incomeTaxYTD
+      "has a section for EoY Estimate" which {
+
+        lazy val eoySection = estimateSection.getElementById("eoyEstimate")
+
+        s"has the correct Annual Tax Amount Estimate Heading of '${messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.incomeTaxNicAmount.toCurrencyString)}" in {
+          eoySection.getElementById("eoyEstimateHeading").text shouldBe messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.incomeTaxNicAmount.toCurrencyString)
+        }
+
+        s"has the correct estimate p1 paragraph '${messages.EoyEstimate.p1}'" in {
+          eoySection.getElementById("eoyP1").text shouldBe messages.EoyEstimate.p1
+        }
+
+        s"has the correct estimate p2 paragraph '${messages.EoyEstimate.p2}'" in {
+          eoySection.getElementById("eoyP2").text shouldBe messages.EoyEstimate.p2
+        }
       }
 
-      s"has a calculation date paragraph with '${messages.EstimateTax.calcDate("6 July 2017")}'" ignore {
-        estimateSection.getElementById("in-year-estimate-date").html() shouldBe messages.EstimateTax.calcDate("6 July 2017")
-      }
+      "has a section for In Year (Current) Estimate" which {
 
-      s"has a calculation date of the 6 July 2017" ignore {
-        estimateSection.getElementById("calc-date").text shouldBe "6 July 2017"
-      }
+        lazy val inYearSection = estimateSection.getElementById("inYearEstimate")
 
-      s"has a paragraph to warn them that their estimate might change" in {
-        estimateSection.getElementById("changes").text shouldBe messages.EstimateTax.changes
-      }
+        s"has the correct Annual Tax Amount Estimate Heading of '${messages.InYearEstimate.heading(busPropBRTCalcDataModel.incomeTaxYTD.toCurrencyString)}" in {
+          inYearSection.getElementById("inYearEstimateHeading").text shouldBe messages.InYearEstimate.heading(busPropBRTCalcDataModel.incomeTaxYTD.toCurrencyString)
+        }
 
-      s"has a bullet point with content '${messages.EstimateTax.changesBullet1}'" in {
-        estimateSection.getElementById("bullet-1").text shouldBe messages.EstimateTax.changesBullet1("6 April 2017")
-      }
+        s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(Estimates.lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)}'" in {
+          inYearSection.getElementById("inYearP1").text shouldBe messages.InYearEstimate.p1(Estimates.lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)
+        }
 
-      s"has a bullet point with content '${messages.EstimateTax.changesBullet2}'" in {
-        estimateSection.getElementById("bullet-2").text shouldBe messages.EstimateTax.changesBullet2
-      }
+        s"has the correct estimate p2 paragraph '${messages.InYearEstimate.p2}'" in {
+          inYearSection.getElementById("inYearP2").text shouldBe messages.InYearEstimate.p2
+        }
 
-      s"has a bullet point with content '${messages.EstimateTax.changesBullet3}'" in {
-        estimateSection.getElementById("bullet-3").text shouldBe messages.EstimateTax.changesBullet3
-      }
+        "has a disclaimer to warn them around the accuracy of the figure" in {
+          inYearSection.getElementById("accuracy").text shouldBe messages.InYearEstimate.accuracy
+        }
 
-      s"has a bullet point with content '${messages.EstimateTax.changesBullet4}'" in {
-        estimateSection.getElementById("bullet-4").text shouldBe messages.EstimateTax.changesBullet4
-      }
+        "has progressive disclosure for why there estimate might change" which {
 
-      s"has a payment paragraph with '${messages.EstimateTax.payment("31 January 2019")}'" in {
-        estimateSection.getElementById("payment").text() shouldBe messages.EstimateTax.payment("31 January 2019")
+          s"has the heading '${messages.InYearEstimate.WhyThisMayChange.heading}'" in {
+            inYearSection.getElementById("whyEstimateMayChange").text shouldBe messages.InYearEstimate.WhyThisMayChange.heading
+          }
+
+          s"has the p1 heading '${messages.InYearEstimate.WhyThisMayChange.p1}'" in {
+            inYearSection.getElementById("whyMayChangeP1").text shouldBe messages.InYearEstimate.WhyThisMayChange.p1
+          }
+
+          s"has the 1st bullet '${messages.InYearEstimate.WhyThisMayChange.bullet1}'" in {
+            inYearSection.select("#whyMayChange ul li:nth-child(1)").text shouldBe messages.InYearEstimate.WhyThisMayChange.bullet1
+          }
+
+          s"has the 2nd bullet '${messages.InYearEstimate.WhyThisMayChange.bullet2}'" in {
+            inYearSection.select("#whyMayChange ul li:nth-child(2)").text shouldBe messages.InYearEstimate.WhyThisMayChange.bullet2
+          }
+
+          s"has the 2nd bullet '${messages.InYearEstimate.WhyThisMayChange.bullet3}'" in {
+            inYearSection.select("#whyMayChange ul li:nth-child(3)").text shouldBe messages.InYearEstimate.WhyThisMayChange.bullet3
+          }
+        }
       }
     }
 
@@ -114,22 +143,25 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       "for users with both a property and a business" which {
         "have just the basic rate of tax" should {
           val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
-          import ImplicitCurrencyFormatter._
           import setup._
 
           s"have a business profit section amount of ${model.profitFromSelfEmployment}" in {
+            document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
             document.getElementById("business-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
           }
 
           s"have a property profit amount of ${model.profitFromUkLandAndProperty}" in {
+            document.getElementById("property-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.propertyProfit
             document.getElementById("property-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
           }
 
           s"have a personal allowance amount of ${model.proportionAllowance}" in {
+            document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
             document.getElementById("personal-allowance").text shouldBe "-"+model.proportionAllowance.toCurrencyString
           }
 
           s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
+            document.getElementById("taxable-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableIncome
             document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
           }
 
@@ -145,12 +177,15 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             }
           }
           s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
+            document.getElementById("nic2-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic2
             document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
           }
           s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
+            document.getElementById("nic4-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic4
             document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
           }
           s"have a total tax estimate of ${model.incomeTaxYTD}" in {
+            document.getElementById("total-estimate-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.total
             document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
           }
         }

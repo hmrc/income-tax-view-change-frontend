@@ -22,7 +22,9 @@ sealed trait CalcDisplayResponseModel
 case class CalcDisplayModel(calcTimestamp: String,
                             calcAmount: BigDecimal,
                             calcDataModel: Option[CalculationDataModel]) extends CalcDisplayResponseModel {
+
   val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
+  val hasEoyEstimate: Boolean = calcDataModel.fold(false)(_.eoyEstimate.nonEmpty)
 
   val hasBRTSection: Boolean = {
     if (calcDataModel.nonEmpty)

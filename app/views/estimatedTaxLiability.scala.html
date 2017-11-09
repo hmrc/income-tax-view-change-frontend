@@ -34,6 +34,17 @@
     @calcBreakdownHelper(calcModel, taxYear)
 }
 
+@whyThisMayChange = {
+    <div id="whyMayChange" class="panel-indent">
+        <p id="whyMayChangeP1">@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.p1")</p>
+        <ul class="list list-bullet">
+            <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1")</li>
+            <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2")</li>
+            <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3")</li>
+        </ul>
+    </div>
+}
+
 @main_template(
     title = renderTitle(taxYear),
     bodyClasses = None,
@@ -46,35 +57,35 @@
 
         <h1>
             <span id="tax-year" class="pre-heading">@renderTaxYear(taxYear)</span>
-            <span id="page-heading">@messages("estimated_tax_liability.heading")</span>
+            <span id="page-heading" class="heading-xlarge">@messages("estimated_tax_liability.heading")</span>
         </h1>
 
-        <p>
-            <span class="bold-medium" id="in-year-estimate">
-                @if(calcModel.breakdownNonEmpty) { @calcModel.calcDataModel.get.incomeTaxYTD.toCurrency} else {@calcModel.calcAmount.toCurrency}
-            </span>
-        </p>
-
-        @if(calcModel.breakdownNonEmpty){
-            @accordionHelper("calc-breakdown-inner-link", messages("estimated_tax_liability.calc-breakdown.link"), calcBreakdown)
+        @if(calcModel.hasEoyEstimate) {
+            <section id="eoyEstimate" class="form-group">
+                <h2 id="eoyEstimateHeading" class="heading-large">@Html(messages("estimated_tax_liability.eoyEstimate.heading", s"${calcModel.calcDataModel.get.eoyEstimate.get.incomeTaxNicAmount.toCurrency}"))</h2>
+                <p id="eoyP1">@messages("estimated_tax_liability.eoyEstimate.p1", s"${taxYear - 1}", s"$taxYear")</p>
+                <p id="eoyP2">@messages("estimated_tax_liability.eoyEstimate.p2")</p>
+            </section>
         }
 
-        <h2>
+        <section id="inYearEstimate">
+            <h2 id="inYearEstimateHeading" class="heading-large">
+                @Html(messages("estimated_tax_liability.inYearEstimate.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.incomeTaxYTD.toCurrency)}"))
+            </h2>
+            <p id="inYearP1">@messages("estimated_tax_liability.inYearEstimate.p1", s"${taxYear - 1}", s"${calcModel.calcTimestamp.toLocalDateTime.toLongDateTime}")</p>
+            <p id="inYearP2">@messages("estimated_tax_liability.inYearEstimate.p2")</p>
+
+            @if(calcModel.breakdownNonEmpty){
+                <h3 id="howCalculatedHeading" class="heading-medium">@messages("estimated_tax_liability.calc-breakdown.heading")</h3>
+                @calcBreakdown
+            }
+
+            <p id="accuracy">@messages("estimated_tax_liability.inYearEstimate.accuracy")</p>
             <p id="changes">
-                @messages("estimated_tax_liability.estimated-tax.changes")
+                @accordionHelper("whyEstimateMayChange", messages("estimated_tax_liability.inYearEstimate.whyThisMayChange"), whyThisMayChange)
             </p>
-        </h2>
 
-        <ul class="bullets">
-            <li id="bullet-1">@Html(messages("estimated_tax_liability.estimated-tax.changes.bullet-1", sources.earliestAccountingPeriodStart(taxYear).toLongDate))</li>
-            <li id="bullet-2">@messages("estimated_tax_liability.estimated-tax.changes.bullet-2")</li>
-            <li id="bullet-3">@messages("estimated_tax_liability.estimated-tax.changes.bullet-3")</li>
-            <li id="bullet-4">@messages("estimated_tax_liability.estimated-tax.changes.bullet-4")</li>
-        </ul>
+        </section>
 
-        <p id="payment">
-            @messages(s"estimated_tax_liability.estimated-tax.payment")
-            <span id="pyt-due-date">@renderPaymentDueDate(taxYear)</span>.
-        </p>
     </section>
  }
