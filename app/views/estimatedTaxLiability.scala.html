@@ -53,9 +53,6 @@
             <span class="bold-medium" id="in-year-estimate">
                 @if(calcModel.breakdownNonEmpty) { @calcModel.calcDataModel.get.incomeTaxYTD.toCurrency} else {@calcModel.calcAmount.toCurrency}
             </span>
-            @* Commented Out Calc Date, as may be required later *@
-            @* <br> *@
-            @* <span id="in-year-estimate-date">@Html(messages("estimated_tax_liability.estimated-date", calcModel.calcTimestamp.toLocalDateTime.toLongDateTime))</span> *@
         </p>
 
         @if(calcModel.breakdownNonEmpty){
