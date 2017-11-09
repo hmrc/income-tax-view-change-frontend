@@ -370,7 +370,8 @@ object TestConstants extends ImplicitDateFormatter {
       totalClass4Charge =14000.00,
       rateBRT = 20.00,
       rateHRT = 40.00,
-      rateART = 45.00
+      rateART = 45.00,
+      eoyEstimate = Some(EoyEstimate(66000.00))
     )
 
     val noTaxOrNICalcDataModel =
@@ -597,7 +598,10 @@ object TestConstants extends ImplicitDateFormatter {
         | "totalClass4Charge": 14000,
         | "rateBRT": 20,
         | "rateHRT": 40,
-        | "rateART": 45
+        | "rateART": 45,
+        | "eoyEstimate": {
+        |   "incomeTaxNicAmount": 66000
+        | }
         |}
       """.stripMargin
 
@@ -805,7 +809,36 @@ object TestConstants extends ImplicitDateFormatter {
         | "proportionClass2NICsLimit": 888,
         | "proportionClass4NICsLimitBR": 888,
         | "proportionClass4NICsLimitHR": 888,
-        | "proportionReducedAllowanceLimit": 888
+        | "proportionReducedAllowanceLimit": 888,
+        | "eoyEstimate": {
+        |        "selfEmployment": [
+        |            {
+        |                "id": "selfEmploymentId1",
+        |                "taxableIncome": 89999999.99,
+        |                "supplied": true,
+        |                "finalised": true
+        |            },
+        |            {
+        |                "id": "selfEmploymentId2",
+        |                "taxableIncome": 89999999.99,
+        |                "supplied": true,
+        |                "finalised": true
+        |            }
+        |        ],
+        |        "ukProperty": [
+        |            {
+        |                "taxableIncome": 89999999.99,
+        |                "supplied": true,
+        |                "finalised": true
+        |            }
+        |        ],
+        |        "totalTaxableIncome": 89999999.99,
+        |        "incomeTaxAmount": 89999999.99,
+        |        "nic2": 89999999.99,
+        |        "nic4": 89999999.99,
+        |        "totalNicAmount": 9999999.99,
+        |        "incomeTaxNicAmount": 66000.00
+        |    }
         |}
       """.stripMargin
 
