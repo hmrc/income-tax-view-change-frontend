@@ -35,7 +35,7 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
   val successNoBusiness = HttpResponse(Status.OK, responseJson = Some(Json.parse(businessSuccessEmptyResponse)))
 
-  object TestBusinessDetailsConnector extends BusinessDetailsConnector(mockHttpGet, environment, conf)
+  object TestBusinessDetailsConnector extends BusinessDetailsConnector(mockHttpGet, frontendAppConfig)
 
   "BusinessDetailsConnector.getBusinessList" should {
 

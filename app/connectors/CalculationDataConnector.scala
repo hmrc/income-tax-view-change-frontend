@@ -18,6 +18,7 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
+import config.FrontendAppConfig
 import models._
 import play.api.Mode.Mode
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -31,14 +32,9 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
 
 @Singleton
 class CalculationDataConnector @Inject()(val http: HttpGet,
-                                         val environment: Environment,
-                                         val conf: Configuration) extends ServicesConfig with RawResponseReads {
+                                         val config: FrontendAppConfig) extends RawResponseReads {
 
-  override protected def mode: Mode = environment.mode
-  override protected def runModeConfiguration: Configuration = conf
-
-  lazy val calculationDataUrl: String = baseUrl("self-assessment-api")
-  lazy val getCalculationDataUrl: (String, String) => String = (nino, taxCalculationId) => s"$calculationDataUrl/ni/$nino/calculations/$taxCalculationId"
+  lazy val getCalculationDataUrl: (String, String) => String = (nino, taxCalculationId) => s"${config.saApiService}/ni/$nino/calculations/$taxCalculationId"
 
   def getCalculationData(nino: String, taxCalculationId: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
 

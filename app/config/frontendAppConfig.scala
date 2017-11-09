@@ -47,6 +47,9 @@ trait AppConfig {
   val signUpUrl: String
   val itvcFrontendEnvironment: String
   val exitSurveyUrl: String
+  val saApiService: String
+  val itvcProtectedService: String
+  val btaService: String
 }
 
 @Singleton
@@ -72,6 +75,12 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   override lazy val betaFeedbackUrl = s"$baseUrl/feedback"
   override lazy val betaFeedbackUnauthenticatedUrl: String = betaFeedbackUrl
 
+  //SA-API Config
+  override lazy val saApiService: String = baseUrl("self-assessment-api")
+
+  //ITVC Protected Service
+  override lazy val itvcProtectedService: String = baseUrl("income-tax-view-change")
+
   //GA
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
@@ -93,6 +102,7 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   override lazy val ninoIdentifierKey: String = loadConfig("enrolments.nino.identifier")
 
   //Business Tax Account
+  override lazy val btaService: String = baseUrl("business-account")
   override lazy val businessTaxAccount: String = loadConfig("business-tax-account.url")
   override lazy val btaManageAccountUrl: String = s"$businessTaxAccount/manage-account"
   override lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"

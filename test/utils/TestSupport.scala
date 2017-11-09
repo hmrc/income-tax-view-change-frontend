@@ -18,7 +18,7 @@ package utils
 
 import auth.MtdItUser
 import com.typesafe.config.Config
-import config.ItvcHeaderCarrierForPartialsConverter
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import models.UserDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -51,6 +51,7 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
 
   implicit val conf: Configuration = app.configuration
   implicit val environment: Environment = app.injector.instanceOf[Environment]
+  implicit val frontendAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   implicit val config: Config = app.configuration.underlying
 
   implicit val user: MtdItUser = MtdItUser(
