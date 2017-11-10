@@ -21,20 +21,19 @@ import javax.inject.{Inject, Singleton}
 import audit.AuditingService
 import audit.models.EstimatesAuditing.EstimatesAuditModel
 import auth.MtdItUser
-import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.AsyncActionPredicate
 import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.{FinancialDataService, ServiceInfoPartialService}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 @Singleton
-class FinancialDataController @Inject()(implicit val config: AppConfig,
+class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
                                         implicit val messagesApi: MessagesApi,
                                         val actionPredicate: AsyncActionPredicate,
                                         val financialDataService: FinancialDataService,

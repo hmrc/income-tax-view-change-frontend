@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
+@import config.FrontendAppConfig
 @import auth.MtdItUser
 @import connectors.ServiceInfoPartialConnector
 
-@(user: Option[MtdItUser])(implicit messages: Messages, appConfig: AppConfig, serviceInfo: Html)
+@(user: Option[MtdItUser])(implicit messages: Messages, appConfig: FrontendAppConfig, serviceInfo: Html)
 
 @serviceInfo
 

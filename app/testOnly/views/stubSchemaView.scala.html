@@ -20,7 +20,7 @@
 @import testOnly.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers.form
 
-@(stubSchemaForm: Form[SchemaModel], postAction: Call, showSuccess: Boolean, errorMessage: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.AppConfig)
+@(stubSchemaForm: Form[SchemaModel], postAction: Call, showSuccess: Boolean, errorMessage: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @stub_template(title = "ITVC Stub Schemas", bodyClasses = None) {
 

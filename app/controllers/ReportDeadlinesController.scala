@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import audit.AuditingService
 import audit.models.ReportDeadlinesAuditing.ReportDeadlinesAuditModel
 import auth.MtdItUser
-import config.{AppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.AsyncActionPredicate
 import models.IncomeSourcesModel
 import play.api.i18n.MessagesApi
@@ -30,7 +30,7 @@ import services.ServiceInfoPartialService
 import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
-class ReportDeadlinesController @Inject()(implicit val config: AppConfig,
+class ReportDeadlinesController @Inject()(implicit val config: FrontendAppConfig,
                                           implicit val messagesApi: MessagesApi,
                                           val actionPredicate: AsyncActionPredicate,
                                           val serviceInfoPartialService: ServiceInfoPartialService,

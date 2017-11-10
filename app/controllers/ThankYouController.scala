@@ -18,13 +18,13 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import config.AppConfig
+import config.FrontendAppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 @Singleton
-class ThankYouController @Inject()(implicit val config: AppConfig,
+class ThankYouController @Inject()(implicit val config: FrontendAppConfig,
                                    val messagesApi: MessagesApi
                                   ) extends FrontendController with I18nSupport {
 

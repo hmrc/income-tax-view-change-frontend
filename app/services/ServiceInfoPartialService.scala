@@ -18,7 +18,7 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
-import config.AppConfig
+import config.FrontendAppConfig
 import connectors.ServiceInfoPartialConnector
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ServiceInfoPartialService @Inject()(implicit val appConfig: AppConfig,
+class ServiceInfoPartialService @Inject()(implicit val config: FrontendAppConfig,
                                           implicit val messagesApi: MessagesApi,
                                           val serviceInfoPartialConnector: ServiceInfoPartialConnector
                                          ) extends I18nSupport {

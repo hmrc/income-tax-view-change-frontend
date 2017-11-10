@@ -17,7 +17,7 @@
 package views.helpers
 
 
-import config.AppConfig
+import config.FrontendAppConfig
 import models._
 import play.api.i18n.Messages
 import utils.ImplicitCurrencyFormatter._
@@ -25,7 +25,7 @@ import utils.ImplicitDateFormatter._
 
 object BtaPartialHelper {
 
-  def showNextObligation(model: ReportDeadlinesResponseModel)(implicit messages: Messages, config: AppConfig): String = applyFormGroup {
+  def showNextObligation(model: ReportDeadlinesResponseModel)(implicit messages: Messages, config: FrontendAppConfig): String = applyFormGroup {
     model match {
       case reportDeadline: ReportDeadlineModel => {
         val reportDeadlineMessage = reportDeadline.getReportDeadlineStatus match {
@@ -45,7 +45,7 @@ object BtaPartialHelper {
     }
   }
 
-  def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages, config: AppConfig): List[String] = {
+  def showLastEstimate(estimates: List[LastTaxCalculationWithYear])(implicit messages: Messages, config: FrontendAppConfig): List[String] = {
     def estimatesMessage(taxYear: Int, calcAmount: BigDecimal): String = {
       if (estimates.length > 1) {
         messages("bta_partial.estimated_tax_with_year", (taxYear - 1).toString, taxYear.toString, calcAmount.toCurrency)
