@@ -16,9 +16,10 @@
 
 package helpers.servicemocks
 
-import helpers.{IntegrationTestConstants, WiremockHelper}
+import helpers.WiremockHelper
 import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
 import play.api.http.Status
+import play.api.libs.json.Json
 
 object IncomeTaxViewChangeStub {
 
@@ -28,14 +29,7 @@ object IncomeTaxViewChangeStub {
   val calcUrl: (String,String) => String = (nino, taxCalculationId) => s"/ni/$nino/calculations/$taxCalculationId"
 
   def stubGetLastTaxCalc(nino: String, year: String, lastCalc: LastTaxCalculation): Unit = {
-    val financialDataResponse =
-      IntegrationTestConstants
-        .GetLastCalculation.successResponse(
-        lastCalc.calcID,
-        lastCalc.calcTimestamp,
-        lastCalc.calcAmount)
-        .toString()
-    WiremockHelper.stubGet(lastCalcUrl(nino, year), Status.OK, financialDataResponse)
+    WiremockHelper.stubGet(lastCalcUrl(nino, year), Status.OK, Json.toJson(lastCalc).toString())
   }
 
   def stubGetLastCalcNoData(nino: String, year: String): Unit = {
@@ -51,35 +45,11 @@ object IncomeTaxViewChangeStub {
 
 
   def stubGetCalcData(nino: String, year: String, calc: CalculationDataModel): Unit = {
-    val financialDataResponse =
-      IntegrationTestConstants
-        .GetCalculationData.successResponse(
-        calc.incomeTaxYTD,
-        calc.incomeTaxThisPeriod,
-        calc.profitFromSelfEmployment,
-        calc.profitFromUkLandAndProperty,
-        calc.totalIncomeReceived,
-        calc.proportionAllowance,
-        calc.totalIncomeOnWhichTaxIsDue,
-        calc.payPensionsProfitAtBRT,
-        calc.incomeTaxOnPayPensionsProfitAtBRT,
-        calc.payPensionsProfitAtHRT,
-        calc.incomeTaxOnPayPensionsProfitAtHRT,
-        calc.payPensionsProfitAtART,
-        calc.incomeTaxOnPayPensionsProfitAtART,
-        calc.incomeTaxDue,
-        calc.nationalInsuranceClass2Amount,
-        calc.totalClass4Charge,
-        calc.rateBRT,
-        calc.rateHRT,
-        calc.rateART)
-        .toString()
-    WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, financialDataResponse)
+    WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, Json.toJson(calc).toString())
   }
 
   def stubGetCalcError(nino: String, year: String, error: CalculationDataErrorModel): Unit = {
-    val errorResponse = IntegrationTestConstants.GetCalculationData.errorResponse(500, "Calculation Error Model Response").toString()
-    WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, errorResponse)
+    WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, Json.toJson(error).toString())
   }
 
   def verifyGetCalcData(nino: String, taxCalculationId: String): Unit =

@@ -18,7 +18,7 @@ package helpers
 
 import java.time.LocalDate
 
-import models.{CalculationDataErrorModel, CalculationDataModel, ReportDeadlineModel, ReportDeadlinesModel}
+import models._
 import play.api.libs.json.{JsArray, JsValue, Json}
 import utils.ImplicitDateFormatter
 
@@ -42,79 +42,30 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testSelfEmploymentId = "ABC123456789"
   val otherTestSelfEmploymentId = "ABC123456780"
 
-  object GetLastCalculation {
-    def successResponse(calcID: String, calcTimestamp: String, calcAmount: BigDecimal): JsValue =
-      Json.parse(s"""
-         |{
-         |   "calcID": "$calcID",
-         |   "calcTimestamp": "$calcTimestamp",
-         |   "calcAmount": $calcAmount
-         |}
-         |""".stripMargin)
-
-    def failureResponse(code: String, reason: String): JsValue =
-      Json.parse(s"""
-         |{
-         |   "code": "$code",
-         |   "reason":"$reason"
-         |}
-      """.stripMargin)
-  }
-
   object GetCalculationData {
-    def successResponse(incomeTaxYTD: BigDecimal,
-                        incomeTaxThisPeriod: BigDecimal,
-                        profitFromSelfEmployment: BigDecimal,
-                        profitFromUkLandAndProperty: BigDecimal,
-                        totalIncomeReceived: BigDecimal,
-                        proportionAllowance: BigDecimal,
-                        totalIncomeOnWhichTaxIsDue: BigDecimal,
-                        payPensionsProfitAtBRT: Option[BigDecimal],
-                        incomeTaxOnPayPensionsProfitAtBRT: BigDecimal,
-                        payPensionsProfitAtHRT: Option[BigDecimal],
-                        incomeTaxOnPayPensionsProfitAtHRT: BigDecimal,
-                        payPensionsProfitAtART: Option[BigDecimal],
-                        incomeTaxOnPayPensionsProfitAtART: BigDecimal,
-                        incomeTaxDue: BigDecimal,
-                        nationalInsuranceClass2Amount: BigDecimal,
-                        totalClass4Charge: BigDecimal,
-                        rateBRT: BigDecimal,
-                        rateHRT: BigDecimal,
-                        rateART: BigDecimal): JsValue = {
-      Json.parse(s"""
-        |{
-        | "incomeTaxYTD": "$incomeTaxYTD",
-        | "incomeTaxThisPeriod": "$incomeTaxThisPeriod",
-        | "profitFromSelfEmployment": "$profitFromSelfEmployment",
-        | "profitFromUkLandAndProperty": "$profitFromUkLandAndProperty",
-        | "totalIncomeReceived": "$totalIncomeReceived",
-        | "proportionAllowance": "$proportionAllowance",
-        | "totalIncomeOnWhichTaxIsDue": "$totalIncomeOnWhichTaxIsDue",
-        | "payPensionsProfitAtBRT": "${payPensionsProfitAtBRT.getOrElse[BigDecimal](0)}",
-        | "incomeTaxOnPayPensionsProfitAtBRT": "$incomeTaxOnPayPensionsProfitAtBRT",
-        | "payPensionsProfitAtHRT": "${payPensionsProfitAtHRT.getOrElse[BigDecimal](0)}",
-        | "incomeTaxOnPayPensionsProfitAtHRT": "$incomeTaxOnPayPensionsProfitAtHRT",
-        | "payPensionsProfitAtART": "${payPensionsProfitAtART.getOrElse[BigDecimal](0)}",
-        | "incomeTaxOnPayPensionsProfitAtART": "$incomeTaxOnPayPensionsProfitAtART",
-        | "incomeTaxDue": "$incomeTaxDue",
-        | "nationalInsuranceClass2Amount": "$nationalInsuranceClass2Amount",
-        | "totalClass4Charge": "$totalClass4Charge",
-        | "rateBRT": "$rateBRT",
-        | "rateHRT": "$rateHRT",
-        | "rateART": "$rateART"
-        |}
-        """.stripMargin)
-    }
 
-    def errorResponse(code: Int, message: String): JsValue ={
-      Json.parse(
-        s"""
-           |{
-           | "code": "$code",
-           | "message": "$message"
-           |}
-         """.stripMargin)
-    }
+    val calculationDataSuccessWithEoYModel = CalculationDataModel(
+      incomeTaxYTD = 90500,
+      incomeTaxThisPeriod = 2000,
+      profitFromSelfEmployment = 200000,
+      profitFromUkLandAndProperty = 10000,
+      totalIncomeReceived = 230000,
+      proportionAllowance = 11500,
+      totalIncomeOnWhichTaxIsDue = 198500,
+      payPensionsProfitAtBRT = Some(20000.00),
+      incomeTaxOnPayPensionsProfitAtBRT = 4000,
+      payPensionsProfitAtHRT = Some(100000.00),
+      incomeTaxOnPayPensionsProfitAtHRT = 40000,
+      payPensionsProfitAtART = Some(50000.00),
+      incomeTaxOnPayPensionsProfitAtART = 22500,
+      incomeTaxDue = 66500,
+      nationalInsuranceClass2Amount = 14000,
+      totalClass4Charge = 10000,
+      rateBRT = 20,
+      rateHRT = 40,
+      rateART = 45,
+      eoyEstimate = Some(EoyEstimate(25000))
+    )
 
     val calculationDataSuccessModel = CalculationDataModel(
       incomeTaxYTD = 90500,
@@ -135,12 +86,11 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       totalClass4Charge = 10000,
       rateBRT = 20,
       rateHRT = 40,
-      rateART = 45
+      rateART = 45,
+      eoyEstimate = None
     )
 
-    val calculationDataErrorModel = CalculationDataErrorModel(
-      code = 500, message = "Calculation Error Model Response"
-    )
+    val calculationDataErrorModel = CalculationDataErrorModel(code = 500, message = "Calculation Error Model Response")
 
   }
 

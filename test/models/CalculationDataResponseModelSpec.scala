@@ -28,7 +28,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
 
     "for the test response" should {
 
-      "have the same values as the calculationDataSuccessModel" in {
+      "have the same values as the calculationDataSuccessWithEoYModel" in {
         calculationDataSuccessModel.incomeTaxYTD shouldBe 90500
         calculationDataSuccessModel.incomeTaxThisPeriod shouldBe 2000
         calculationDataSuccessModel.profitFromSelfEmployment shouldBe 200000

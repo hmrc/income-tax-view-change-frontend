@@ -41,7 +41,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           UserDetailsStub.stubGetUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           And("I wiremock stub a success business details response")
@@ -111,7 +111,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           UserDetailsStub.stubGetUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           And("I wiremock stub a success business details response")
@@ -173,8 +173,8 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           UserDetailsStub.stubGetUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
-          val lastTaxCalcResponsePlusYear = LastTaxCalculation(testCalcId, "2018-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxDue)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+          val lastTaxCalcResponsePlusYear = LastTaxCalculation(testCalcId, "2018-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxDue)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, "2019", lastTaxCalcResponsePlusYear)
 
@@ -243,7 +243,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           UserDetailsStub.stubGetUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           And("I wiremock stub a multiple success business details response")
@@ -376,7 +376,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           UserDetailsStub.stubGetUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           And("I wiremock stub a success business details response for 2018")
