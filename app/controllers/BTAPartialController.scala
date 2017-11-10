@@ -18,18 +18,18 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import config.AppConfig
+import config.FrontendAppConfig
 import controllers.predicates.AsyncActionPredicate
 import models._
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.BTAPartialService
-
-import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.Future
+
 @Singleton
-class BTAPartialController @Inject()(implicit val config: AppConfig,
+class BTAPartialController @Inject()(implicit val config: FrontendAppConfig,
                                      implicit val messagesApi: MessagesApi,
                                      val actionPredicate: AsyncActionPredicate,
                                      val btaPartialService: BTAPartialService

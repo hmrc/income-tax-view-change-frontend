@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import audit.AuditingService
 import audit.models.ExitSurveyAuditing.ExitSurveyAuditModel
-import config.AppConfig
+import config.FrontendAppConfig
 import forms.ExitSurveyForm
 import models.ExitSurveyModel
 import play.api.data.Form
@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class ExitSurveyController @Inject()(implicit val applicationConfig: AppConfig,
+class ExitSurveyController @Inject()(implicit val config: FrontendAppConfig,
                                      val messagesApi: MessagesApi,
                                      val auditingService: AuditingService
                                     ) extends FrontendController with I18nSupport {

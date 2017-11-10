@@ -18,7 +18,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import config.AppConfig
+import config.FrontendAppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class HomeController @Inject()(implicit val config: AppConfig, val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+class HomeController @Inject()(implicit val config: FrontendAppConfig, val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
   val redirect: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Redirect(config.businessTaxAccount))

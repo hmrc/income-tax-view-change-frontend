@@ -16,10 +16,10 @@
 
 @import uk.gov.hmrc.play.partials.CachedStaticHtmlPartialRetriever
 @import views.html.templates.main_template
-@import config.AppConfig
+@import config.FrontendAppConfig
 
 @(partialUrl: String, redirectUrl: String)(implicit request: Request[_], cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever
-, messages: Messages, appConfig: AppConfig)
+, messages: Messages, appConfig: FrontendAppConfig)
 
 @main_template(title = messages("feedback.title")) {
   @cachedStaticHtmlPartialRetriever.getPartialContent(partialUrl)

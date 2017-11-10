@@ -18,27 +18,21 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
+import config.FrontendAppConfig
 import models._
-import play.api.Mode.Mode
-import play.api.{Configuration, Environment, Logger}
+import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
-import uk.gov.hmrc.play.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class PropertyReportDeadlineDataConnector @Inject()(val http: HttpGet,
-                                                    val environment: Environment,
-                                                    val conf: Configuration) extends ServicesConfig with RawResponseReads {
+                                                    val config: FrontendAppConfig) extends RawResponseReads {
 
-  override protected def mode: Mode = environment.mode
-  override protected def runModeConfiguration: Configuration = conf
-
-  lazy val propertyReportDeadlineDataUrl: String = baseUrl("self-assessment-api")
-  lazy val getPropertyReportDeadlineDataUrl: String => String = nino => s"$propertyReportDeadlineDataUrl/ni/$nino/uk-properties/obligations"
+  lazy val getPropertyReportDeadlineDataUrl: String => String = nino => s"${config.saApiService}/ni/$nino/uk-properties/obligations"
 
   def getPropertyReportDeadlineData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
 
