@@ -41,22 +41,22 @@ class ReportDeadlinesViewSpec extends TestSupport {
   val errorModel = ReportDeadlinesErrorModel(500,"ISE")
 
 
-    "The ReportDeadlines view" should {
-      lazy val businessIncomeSource = IncomeSourcesModel(
-        List(
-          BusinessIncomeModel(
-            selfEmploymentId = testSelfEmploymentId,
-            tradingName = testTradeName,
-            cessationDate = None,
-            accountingPeriod = testBusinessAccountingPeriod,
-            reportDeadlines = successModel
-          )
-        ),
-        None
-      )
+  "The ReportDeadlines view" should {
+    lazy val businessIncomeSource = IncomeSourcesModel(
+      List(
+        BusinessIncomeModel(
+          selfEmploymentId = testSelfEmploymentId,
+          tradingName = testTradeName,
+          cessationDate = None,
+          accountingPeriod = testBusinessAccountingPeriod,
+          reportDeadlines = successModel
+        )
+      ),
+      None
+    )
 
-      lazy val page = views.html.report_deadlines(businessIncomeSource)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
-      lazy val document = Jsoup.parse(contentAsString(page))
+    lazy val page = views.html.report_deadlines(businessIncomeSource)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
+    lazy val document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
@@ -123,6 +123,28 @@ class ReportDeadlinesViewSpec extends TestSupport {
 
       "not contain Business ReportDeadlines section" in {
         document.getElementById("bi-1-section") shouldBe null
+      }
+    }
+
+    "when a business has ceased trading" should {
+      lazy val ceasedBusinessIncomeModel = IncomeSourcesModel(
+        List(
+          BusinessIncomeModel(
+          selfEmploymentId = testSelfEmploymentId,
+          tradingName = testTradeName,
+          cessationDate = Some("2017-09-15".toLocalDate),
+          accountingPeriod = testBusinessAccountingPeriod,
+          reportDeadlines = successModel
+          )
+        ),
+        None
+      )
+
+      lazy val page = views.html.report_deadlines(ceasedBusinessIncomeModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
+      lazy val document = Jsoup.parse(contentAsString(page))
+
+      "contains text under the business name stating the business has ceased trading" in {
+        document.getElementById("bi-1-ceased").text() shouldBe messages.ceased("15 September 2017")
       }
     }
 

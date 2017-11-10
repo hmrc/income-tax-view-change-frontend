@@ -71,7 +71,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the page title should be")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the page should display the correct user")
@@ -153,7 +153,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the correct page title is displayed")
             res should have(
-              pageTitle("Your report deadlines")
+              pageTitle("Your Income Tax report deadlines")
             )
 
             Then("the correct user is displayed")
@@ -244,11 +244,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               elementTextByID(id = "service-info-messages-link")("Messages")
             )
 
-            Then("the Your report deadlines link is displayed")
-            res should have(
-              elementTextByID(id = "page-heading")("Your report deadlines")
-            )
-
             Then("the fifth property and business obligation data are not displayed")
             res should have(
               isElementVisibleById("pi-ob-5-status")(false),
@@ -300,7 +295,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page title should be displayed")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the page should display the logged in user")
@@ -404,7 +399,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page title is displayed")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the logged in user is displayed")
@@ -517,7 +512,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             //Check Page Title of HTML Response Body
           Then("the page title is displayed")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
            Then("the logged in user is displayed")
@@ -577,7 +572,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           )
             Then("the page title is displayed")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the logged in user is displayed")
@@ -652,7 +647,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page title should be")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the page displays the correct user")
@@ -741,7 +736,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           )
           Then("the page title")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the page title")
@@ -808,7 +803,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page title should be")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the page should display the correct user")
@@ -911,7 +906,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page title should be")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the page should display the correct user")
@@ -1020,7 +1015,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page title is displayed")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the business section is displayed under Business income")
@@ -1078,7 +1073,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           )
           Then("the page title is displayed")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the property section is displayed under Property income")
@@ -1142,7 +1137,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page title is displayed")
           res should have(
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("an error message for property obligations is displayed")

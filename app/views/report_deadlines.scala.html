@@ -35,7 +35,7 @@
 
     <section id="obligations">
 
-        <h1 id="page-heading">@messages("obligations.heading")</h1>
+        <h1 id="page-heading" class="heading-xlarge">@messages("obligations.heading")</h1>
 
         @if(incomeSources.allReportDeadlinesErroredForAllIncomeSources) {
             @allReportDeadlinesErrored
@@ -50,7 +50,10 @@
             }
                 @incomeSources.businessIncomeSources.zipWithIndex.map{ case (business, i) =>
                     @defining("bi-" + (i + 1).toString) { id =>
-                        <h2 id="@{id}-section">@business.tradingName</h2>
+                        <h2 id="@{id}-section" class="heading-large">@business.tradingName</h2>
+                        @if(business.cessationDate.isDefined) {
+                            <p id="@{id}-ceased">@messages("obligations.ceased", business.cessationDate.get.toLongDate)</p>
+                        }
                         @renderReportDeadlines(business.reportDeadlines, id)
                     }
                 }
@@ -63,7 +66,7 @@
                     } else {
                         <section>
                     }
-                    <h2 id="pi-section">@Messages("obligations.pi.subheading")</h2>
+                    <h2 id="pi-section" class="heading-large">@Messages("obligations.pi.subheading")</h2>
                     @renderReportDeadlines(p.reportDeadlines, "pi")
                 </section>
             }
