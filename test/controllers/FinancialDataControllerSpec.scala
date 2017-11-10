@@ -16,7 +16,8 @@
 
 package controllers
 
-import assets.Messages.{EstimatedTaxLiabilityError, EstimatedTaxLiability => messages}
+import assets.Messages
+import assets.Messages.EstimatedTaxLiabilityError
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyDetails._
@@ -42,6 +43,8 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]
   )
+
+  lazy val messages = new Messages.EstimatedTaxLiability(2018)
 
   "The FinancialDataController.getFinancialData(year) action" when {
 

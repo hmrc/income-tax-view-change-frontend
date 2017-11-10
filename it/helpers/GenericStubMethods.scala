@@ -23,9 +23,9 @@ import play.api.libs.ws.WSResponse
 
 trait GenericStubMethods extends CustomMatchers {
 
-  def authorised(bool: Boolean): Unit = {
+  def isAuthorisedUser(bool: Boolean): Unit = {
     if(bool){
-      Given("I wiremock stub an authorised user response")
+      Given("I wiremock stub an isAuthorisedUser user response")
       AuthStub.stubAuthorised()
     } else {
       Given("I wiremock stub an unatuhorised user response")

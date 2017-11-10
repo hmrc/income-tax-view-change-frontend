@@ -23,7 +23,7 @@ class TaxYearRenderHelperSpec extends TestSupport {
 
   "The TaxYearRenderHelper.renderTaxYear method" should {
     "Render the 2018 Tax Year as 2017/18" in {
-      TaxYearRenderHelper.renderTaxYear(2018) shouldBe "2017 to 2018 tax year"
+      TaxYearRenderHelper.renderTaxYear(2018) shouldBe "Tax year: 2017 to 2018"
     }
 
     "Render the 2018 Payment Date as 31 January 2019" in {

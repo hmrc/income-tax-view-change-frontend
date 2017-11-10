@@ -458,7 +458,9 @@ object TestConstants extends ImplicitDateFormatter {
         //Don't need these
         incomeTaxThisPeriod = 2000.00,
         totalIncomeReceived = 9000.00,
-        incomeTaxDue = 2072.05
+        incomeTaxDue = 2072.05,
+
+        eoyEstimate = Some(EoyEstimate(66000.00))
       )
 
     val busBropHRTCalcDataModel =

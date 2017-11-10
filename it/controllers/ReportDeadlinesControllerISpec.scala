@@ -31,13 +31,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
   "Calling the ReportDeadlinesController" when {
 
-    "authorised with an active enrolment" which {
+    "isAuthorisedUser with an active enrolment" which {
 
       "has a single business obligation" should {
 
         "display a single obligation with the correct dates and status" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -96,7 +96,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           "display a single obligation with the correct dates and status" in {
 
-            authorised(true)
+            isAuthorisedUser(true)
 
             stubUserDetails()
 
@@ -200,7 +200,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display the correct amount of obligations with the correct statuses" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -287,7 +287,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display only one of each received and open obligations and all overdue obligations" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -385,7 +385,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display a single obligation with the correct dates and status" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -433,7 +433,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display the correct amount of obligations with the correct statuses" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -493,7 +493,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display only one of each received and open obligations and all overdue obligations" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -559,7 +559,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display one obligation each for business and property with the correct dates and statuses" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetailsError()
 
@@ -614,7 +614,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display the obligation of each businesses" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -683,7 +683,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "display the obligation of each businesses" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -764,7 +764,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "Display an error message to the user" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -800,7 +800,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "Display an error message to the user" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -835,7 +835,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "Display an error message to the user" in {
 
-          authorised(true)
+          isAuthorisedUser(true)
 
           stubUserDetails()
 
@@ -876,7 +876,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
       "redirect to sign in" in {
 
-        authorised(false)
+        isAuthorisedUser(false)
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")
         val res = IncomeTaxViewChangeFrontend.getReportDeadlines

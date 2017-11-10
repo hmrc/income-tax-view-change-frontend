@@ -18,51 +18,31 @@ package controllers
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
-import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
+import models.{CalculationDataErrorModel, LastTaxCalculation}
 import play.api.http.Status._
+import utils.ImplicitCurrencyFormatter._
 
 class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
   "Calling the FinancialDataController.getEstimatedTaxLiability(year)" when {
 
-    "authorised with an active enrolment, valid last calc estimate and valid breakdown response" should {
+    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response and an EoY Estimate" should {
 
       "return the correct page with a valid total" in {
 
-        authorised(true)
+        isAuthorisedUser(true)
 
         stubUserDetails()
 
         stubPartial()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
-        val calc = GetCalculationData.calculationDataSuccessModel
-        val calculationResponse = CalculationDataModel(
-          calc.incomeTaxYTD,
-          calc.incomeTaxThisPeriod,
-          calc.profitFromSelfEmployment,
-          calc.profitFromUkLandAndProperty,
-          calc.totalIncomeReceived,
-          calc.proportionAllowance,
-          calc.totalIncomeOnWhichTaxIsDue,
-          calc.payPensionsProfitAtBRT,
-          calc.incomeTaxOnPayPensionsProfitAtBRT,
-          calc.payPensionsProfitAtHRT,
-          calc.incomeTaxOnPayPensionsProfitAtHRT,
-          calc.payPensionsProfitAtART,
-          calc.incomeTaxOnPayPensionsProfitAtART,
-          calc.incomeTaxDue,
-          calc.nationalInsuranceClass2Amount,
-          calc.totalClass4Charge,
-          calc.rateBRT,
-          calc.rateHRT,
-          calc.rateART
-        )
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, calculationResponse)
+        val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, calcBreakdownResponse)
 
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
@@ -81,45 +61,93 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
 
         res should have (
           httpStatus(OK),
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
+          pageTitle("Tax year: 2017 to 2018"),
           elementTextByID(id = "service-info-user-name")(testUserName),
-          elementTextByID("in-year-estimate")("£90,500"),
-          elementTextByID("tax-year")("2017 to 2018 tax year"),
-          elementTextByID("it-reference")("XAITSA123456"),
+          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calcBreakdownResponse.incomeTaxYTD.toCurrencyString}"),
+          elementTextByID("tax-year")("Tax year: 2017 to 2018"),
+          elementTextByID("it-reference")(testMtditid),
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
-          elementTextByID("acc-period-start")("1 January 2017"),
-          elementTextByID("page-heading")("Your in-year tax estimate")
-        )
-
-        Then("the view estimate breakdown section")
-        res should have(
-          elementTextByID("business-profit")("£200,000"),
-          elementTextByID("property-profit")("£10,000"),
-          elementTextByID("personal-allowance")("-£11,500"),
-          elementTextByID("taxable-income")("£198,500"),
-          elementTextByID("nic2-amount")("£10,000"),
-          elementTextByID("nic4-amount")("£14,000"),
-          elementTextByID("total-estimate")("£90,500"),
-          isElementVisibleById("calc-breakdown-inner-link")(true),
-          elementTextByID("total-estimate")("£90,500")
-
+          elementTextByID("page-heading")("Your Income Tax estimate"),
+          elementTextByID("business-profit")(calcBreakdownResponse.profitFromSelfEmployment.toCurrencyString),
+          elementTextByID("property-profit")(calcBreakdownResponse.profitFromUkLandAndProperty.toCurrencyString),
+          elementTextByID("personal-allowance")(s"-${calcBreakdownResponse.proportionAllowance.toCurrencyString}"),
+          elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
+          elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
+          elementTextByID("nic4-amount")(calcBreakdownResponse.totalClass4Charge.toCurrencyString),
+          elementTextByID("total-estimate")(calcBreakdownResponse.incomeTaxYTD.toCurrencyString),
+          isElementVisibleById("eoyEstimate")(expectedValue = true)
         )
       }
     }
 
-    "authorised with an active enrolment, valid last tax estimate response, but error in calc breakdown" should {
+    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response but NO EoY Estimate" should {
+
+      "return the correct page with a valid total" in {
+
+        isAuthorisedUser(true)
+
+        stubUserDetails()
+
+        stubPartial()
+
+        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+
+        And("I wiremock stub a successful Get CalculationData response")
+        val calcBreakdownResponse = GetCalculationData.calculationDataSuccessModel
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, calcBreakdownResponse)
+
+        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+        getPropDeets(GetPropertyDetails.successResponse())
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear")
+        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+
+        verifyBizDeetsCall()
+
+        verifyPropDeetsCall()
+
+        Then("I verify the Estimated Tax Liability response has been wiremocked")
+        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+        //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
+
+        res should have (
+          httpStatus(OK),
+          pageTitle("Tax year: 2017 to 2018"),
+          elementTextByID(id = "service-info-user-name")(testUserName),
+          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calcBreakdownResponse.incomeTaxYTD.toCurrencyString}"),
+          elementTextByID("tax-year")("Tax year: 2017 to 2018"),
+          elementTextByID("it-reference")(testMtditid),
+          elementTextByID("obligations-link")("View report deadlines"),
+          elementTextByID("sa-link")("View annual returns"),
+          elementTextByID("page-heading")("Your Income Tax estimate"),
+          elementTextByID("business-profit")(calcBreakdownResponse.profitFromSelfEmployment.toCurrencyString),
+          elementTextByID("property-profit")(calcBreakdownResponse.profitFromUkLandAndProperty.toCurrencyString),
+          elementTextByID("personal-allowance")(s"-${calcBreakdownResponse.proportionAllowance.toCurrencyString}"),
+          elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
+          elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
+          elementTextByID("nic4-amount")(calcBreakdownResponse.totalClass4Charge.toCurrencyString),
+          elementTextByID("total-estimate")(calcBreakdownResponse.incomeTaxYTD.toCurrencyString),
+          isElementVisibleById("eoyEstimate")(expectedValue = false)
+        )
+      }
+    }
+
+    "isAuthorisedUser with an active enrolment, valid last tax estimate response, but error in calc breakdown" should {
 
       "Return the estimated tax liability without the calculation breakdown" in {
 
-        authorised(true)
+        isAuthorisedUser(true)
 
         stubUserDetailsError()
 
         stubPartial()
 
         And("a successful Get Last Estimated Tax Liability response via wiremock stub")
-        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub an erroneous GetCalculationData response")
@@ -145,21 +173,19 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
         Then("a successful response is returned with the correct estimate")
         res should have(
           httpStatus(OK),
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
-          elementTextByID("in-year-estimate")("£90,500")
-
-          //Commented Out as may be required again later
-          //Check the Estimated Calculation Date is correct
-          //elementTextByID("in-year-estimate-date")("Estimate up to your 6 July 2017 submission")
+          pageTitle("Tax year: 2017 to 2018"),
+          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD.toCurrencyString}"),
+          elementTextByID("inYearP1")("This is an estimate of the tax you owe from 6 April 2017 to 6 July 2017."),
+          isElementVisibleById("inYearCalcBreakdown")(expectedValue = false)
         )
       }
     }
 
-    "authorised with an active enrolment no data found response from Last Calculation" should {
+    "isAuthorisedUser with an active enrolment no data found response from Last Calculation" should {
 
       "Return no data found response and render view explaining that this will be available once they've submitted income" in {
 
-        authorised(true)
+        isAuthorisedUser(true)
 
         stubUserDetails()
 
@@ -185,16 +211,16 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
         Then("a Not Found response is returned and correct view rendered")
         res should have(
           httpStatus(NOT_FOUND),
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate")
+          pageTitle("Tax year: 2017 to 2018")
         )
       }
     }
 
-    "authorised with an active enrolment but error response from Get Last Calculation" should {
+    "isAuthorisedUser with an active enrolment but error response from Get Last Calculation" should {
 
       "Render the Estimated Tax Liability Error Page" in {
 
-        authorised(true)
+        isAuthorisedUser(true)
 
         stubUserDetails()
 
@@ -220,7 +246,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
         Then("an Internal Server Error response is returned and correct view rendered")
         res should have(
           httpStatus(OK),
-          pageTitle("2017 to 2018 tax year Your in-year tax estimate"),
+          pageTitle("Tax year: 2017 to 2018"),
           elementTextByID("p1")("We can't display your estimated tax amount at the moment."),
           elementTextByID("p2")("Try refreshing the page in a few minutes.")
         )
@@ -233,7 +259,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
 
       "redirect to sign in" in {
 
-        authorised(false)
+        isAuthorisedUser(false)
 
         When("I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
