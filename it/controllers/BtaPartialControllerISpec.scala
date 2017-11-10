@@ -16,39 +16,35 @@
 
 package controllers
 
-import helpers.ComponentSpecBase
+import helpers.{ComponentSpecBase, GenericStubMethods}
 import helpers.IntegrationTestConstants.GetReportDeadlinesData._
 import helpers.IntegrationTestConstants._
-import helpers.servicemocks.{IncomeTaxViewChangeStub, UserDetailsStub, SelfAssessmentStub, AuthStub}
+import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub, UserDetailsStub}
 import models.LastTaxCalculation
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
-class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
+class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
 
   "calling the BtaPartialController" when {
 
-    "authorised with na active enrolment" which {
+    "isAuthorisedUser with na active enrolment" which {
 
       "has a combination of Received business and property obligations with met = true" should {
 
         "display the bta partial with the correct information" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          isAuthorisedUser(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -59,19 +55,14 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
           val res = IncomeTaxViewChangeFrontend.getBtaPartial
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
-          Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+          verifyPropObsCall()
 
-          Then("the result should have a HTTP status of OK")
           res should have(
             httpStatus(OK)
           )
@@ -104,21 +95,17 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "display the bta partial with the correct information" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          isAuthorisedUser(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub obligation responses in different tax years")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleObligationPlusYearOpenModel)
@@ -127,19 +114,14 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
           val res = IncomeTaxViewChangeFrontend.getBtaPartial
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
-          Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+          verifyPropObsCall()
 
-          Then("the result should have a HTTP status of OK")
           res should have(
             httpStatus(OK)
           )
@@ -166,11 +148,9 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "display the bta partial with the correct information" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          isAuthorisedUser(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
@@ -178,11 +158,9 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, "2019", lastTaxCalcResponsePlusYear)
 
-          And("I wiremock stub a success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.otherSuccessResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.otherSuccessResponse(testSelfEmploymentId))
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub obligation responses in different tax years")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleObligationPlusYearOpenModel)
@@ -197,23 +175,18 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then("Verify that the last calc has been called for 2019")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, "2019")
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
-          Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+          verifyPropObsCall()
 
-          Then("the result should have a HTTP status of OK")
           res should have(
-
             httpStatus(OK)
           )
+
           Then("the BTA page should contains the text - Quarterly reporting")
           res should have(
             isElementVisibleById("it-quarterly-reporting-heading")(true)
@@ -236,21 +209,17 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "display the bta partial with the correct information" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          isAuthorisedUser(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
-          And("I wiremock stub a multiple success business details response")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetPropertyDetails(testNino, GetPropertyDetails.successResponse())
+          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response for each business")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -262,20 +231,14 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
           val res = IncomeTaxViewChangeFrontend.getBtaPartial
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
-          Then("Verify that the business obligations have been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId, otherTestSelfEmploymentId)
 
-          Then("Verify that property obligations has been called")
-          SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+          verifyPropObsCall()
 
-          Then("the result should have a HTTP status of OK")
           res should have(
             httpStatus(OK)
           )
@@ -310,17 +273,14 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "display the bta partial with the correct information" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          isAuthorisedUser(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
           And("I wiremock stub an error response from Get Last Estimated Tax Liability")
           IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
 
-          And("I wiremock stub a success business details response for 2018")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub a successful Property Details response")
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
@@ -334,19 +294,16 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then(s"Verify that the last calc has been called for $testYear")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK and a body containing one obligation")
           res should have(
             httpStatus(OK)
           )
+
            Then("the BTA page displays the text-  Quarterly reporting")
           res should have(
             isElementVisibleById("it-quarterly-reporting-heading")(true)
@@ -369,18 +326,15 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "display the bta partial with the correct information" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          isAuthorisedUser(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
-          And("I wiremock stub a success business details response for 2018")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub no Property Details response")
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
@@ -394,16 +348,12 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then(s"Verify that the last calc has been called for $testYear")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
-          Then("the result should have a HTTP status of OK")
           res should have(
             httpStatus(OK)
           )
@@ -415,10 +365,10 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           Then("the BTA page displays the error text for non retrieved next report due date")
           res should have(
-
             elementTextByID("obligation-error-p1")("We can't display your next report due date at the moment."),
             elementTextByID("obligation-error-p2")("Try refreshing the page in a few minutes.")
           )
+
           Then("the BTA page displays the text Your estimated tax amount is £90,500")
           res should have(
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500")
@@ -430,17 +380,14 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "display the bta partial with the correct information" in {
 
-          Given("I wiremock stub an authorised user response")
-          AuthStub.stubAuthorised()
+          isAuthorisedUser(true)
 
-          And("I wiremock stub a response from the User Details service")
-          UserDetailsStub.stubGetUserDetails()
+          stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
 
-          And("I wiremock stub a success business details response for 2018")
-          SelfAssessmentStub.stubGetBusinessDetails(testNino, GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub no Property Details response")
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
@@ -454,14 +401,11 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then(s"Verify that the last calc has been called for $testYear")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
-          Then("Verify business details has been called")
-          SelfAssessmentStub.verifyGetBusinessDetails(testNino)
+          verifyBizDeetsCall()
 
-          Then("Verify property details has been called")
-          SelfAssessmentStub.verifyGetPropertyDetails(testNino)
+          verifyPropDeetsCall()
 
-          Then("Verify that business obligations has been called")
-          SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, testSelfEmploymentId)
+          verifyBizObsCall(testSelfEmploymentId)
 
           Then("the result should have a HTTP status of OK")
           res should have(

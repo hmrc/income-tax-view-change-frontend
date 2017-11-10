@@ -25,7 +25,7 @@ case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
   val determineTaxYear = if(end isBefore s"${end.getYear}-4-6".toLocalDate)
     end.getYear
   else
-    end.getYear+1
+    end.getYear + 1
 }
 
 object AccountingPeriodModel {
