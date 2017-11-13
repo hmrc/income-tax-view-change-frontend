@@ -44,8 +44,8 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = you may earn m
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that''s not reported in your software
 
 ## ReportDeadlines Page ##
-obligations.title                                               = Your report deadlines
-obligations.heading                                             = Your report deadlines
+obligations.title                                               = Your Income Tax report deadlines
+obligations.heading                                             = Your Income Tax report deadlines
 obligations.info                                                = You must submit a report once every quarter using your accounting software.
 obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
@@ -53,6 +53,7 @@ obligations.bi.subheading                                       = Business incom
 obligations.pi.subheading                                       = Property income
 obligations.error.p1                                            = We can''t display your next report due date at the moment.
 obligations.error.p2                                            = Try refreshing the page in a few minutes.
+obligations.ceased                                              = This business ceased trading on {0}.
 
 ## Statuses ##
 status.received                                                 = Received

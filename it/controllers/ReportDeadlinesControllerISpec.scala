@@ -62,7 +62,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the view displays the correct title, username and links")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "service-info-user-name")(testUserName),
             elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
             elementTextByID(id = "sa-link")("View annual returns"),
@@ -115,13 +115,12 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the correct title, username and links are displayed")
             res should have(
               httpStatus(OK),
-              pageTitle("Your report deadlines"),
+              pageTitle("Your Income Tax report deadlines"),
               elementTextByID(id = "service-info-user-name")(testUserName),
               elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
               elementTextByID(id = "sa-link")("View annual returns"),
               elementTextByID(id = "service-info-manage-account-link")("Manage account"),
-              elementTextByID(id = "service-info-messages-link")("Messages"),
-              elementTextByID(id = "page-heading")("Your report deadlines")
+              elementTextByID(id = "service-info-messages-link")("Messages")
             )
 
             Then("the page displays four business obligations and four property obligations")
@@ -225,7 +224,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the view should display the title and username")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "service-info-user-name")(testUserName)
           )
 
@@ -309,11 +308,10 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           verifyBizObsCall(testSelfEmploymentId)
 
-
           Then("the view should display the title and username")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "service-info-user-name")(testUserName)
           )
 
@@ -410,7 +408,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the view should display the title and username")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "service-info-user-name")(testUserName)
           )
 
@@ -456,7 +454,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the view should display the title and username")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "service-info-user-name")(testUserName)
           )
 
@@ -516,7 +514,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the view should display the title and username")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "service-info-user-name")(testUserName)
           )
 
@@ -586,7 +584,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines")
+            pageTitle("Your Income Tax report deadlines")
           )
 
           Then("the page title")
@@ -641,7 +639,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the page should display the correct title, username and links")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "service-info-user-name")(testUserName),
             elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
             elementTextByID(id = "sa-link")("View annual returns"),
@@ -710,7 +708,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the page should display the correct title, username and links")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "service-info-user-name")(testUserName),
             elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
             elementTextByID(id = "sa-link")("View annual returns"),
@@ -788,7 +786,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the view is displayed with an error message under the business income section")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "bi-1-section")("business"),
             elementTextByID(id = "bi-1-p1")("We can't display your next report due date at the moment."),
             elementTextByID(id = "bi-1-p2")("Try refreshing the page in a few minutes.")
@@ -823,7 +821,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the view is displayed with an error message under the property income section")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "pi-section")("Property income"),
             elementTextByID(id = "pi-p1")("We can't display your next report due date at the moment."),
             elementTextByID(id = "pi-p2")("Try refreshing the page in a few minutes.")
@@ -863,7 +861,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("an error message for property obligations is returned and the correct view is displayed")
           res should have(
             httpStatus(OK),
-            pageTitle("Your report deadlines"),
+            pageTitle("Your Income Tax report deadlines"),
             elementTextByID(id = "p1")("We can't display your next report due date at the moment."),
             elementTextByID(id = "p2")("Try refreshing the page in a few minutes.")
           )
