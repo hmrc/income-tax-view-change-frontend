@@ -130,6 +130,7 @@ Where:
   "rateBRT":20.00,
   "rateHRT":40.00,
   "rateART":50.00,
+  "eoyEstimate":2000.22
   ... (excluded elements our app doesn't use)
 }
 ```
@@ -151,7 +152,7 @@ Where:
 * **totalClass4Charge** is the total charge on class 4 national insurance contributions
 * **nationalInsuranceClass2Amount** is the charge on class 2 national insurance contributions
 * **rateBRT**, **rateHRT** and **rateART** are the basic, higher and additional higher rates of tax respectively
-
+* **eoyEstimate** is the estimated amount of income tax to be owed at the end of the tax year
 
 ### GET /self-assessment/ni/:nino/uk-properties
 
