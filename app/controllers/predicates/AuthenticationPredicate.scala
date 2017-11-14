@@ -58,19 +58,19 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
             f(buildMtdUser(enrolments))
         }
       }
-    }.recoverWith {
+    }.recover {
       case _: InsufficientEnrolments =>
         Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
-        Future.successful(Redirect(controllers.notEnrolled.routes.NotEnrolledController.show()))
+        Redirect(controllers.notEnrolled.routes.NotEnrolledController.show())
       case _: BearerTokenExpired =>
         Logger.debug("[AuthenticationPredicate][async] Bearer Token Timed Out.")
-        Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
+        Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
       case _: AuthorisationException =>
         Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
-        Future.successful(Redirect(controllers.routes.SignInController.signIn()))
+        Redirect(controllers.routes.SignInController.signIn())
       case _ =>
         Logger.debug("[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.")
-        Future.successful(itvcErrorHandler.showInternalServerError)
+        itvcErrorHandler.showInternalServerError
     }
   }
 
