@@ -19,21 +19,11 @@ package config
 import auth.FrontendAuthorisedFunctions
 import com.google.inject.AbstractModule
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost, WSPut}
-import uk.gov.hmrc.http.{ HttpDelete, HttpGet, HttpPatch, HttpPost, HttpPut }
+import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClient}
 
 class DIModule extends AbstractModule{
   def configure(): Unit = {
     bind(classOf[AuthorisedFunctions]).to(classOf[FrontendAuthorisedFunctions]).asEagerSingleton()
-    bind(classOf[WSGet]).to(classOf[WSHttp]).asEagerSingleton()
-    bind(classOf[HttpGet]).to(classOf[WSHttp]).asEagerSingleton()
-    bind(classOf[WSPost]).to(classOf[WSHttp]).asEagerSingleton()
-    bind(classOf[HttpPost]).to(classOf[WSHttp]).asEagerSingleton()
-    bind(classOf[WSDelete]).to(classOf[WSHttp]).asEagerSingleton()
-    bind(classOf[HttpDelete]).to(classOf[WSHttp]).asEagerSingleton()
-    bind(classOf[WSPut]).to(classOf[WSHttp]).asEagerSingleton()
-    bind(classOf[HttpPut]).to(classOf[WSHttp]).asEagerSingleton()
-    bind(classOf[HttpPatch]).to(classOf[WSHttp]).asEagerSingleton()
+    bind(classOf[HttpClient]).to(classOf[DefaultHttpClient]).asEagerSingleton()
   }
 }

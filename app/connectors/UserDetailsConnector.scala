@@ -21,13 +21,14 @@ import javax.inject.{Inject, Singleton}
 import models._
 import play.api.Logger
 import play.api.http.Status.OK
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class UserDetailsConnector @Inject()(val http: HttpGet) extends RawResponseReads {
+class UserDetailsConnector @Inject()(val http: HttpClient) extends RawResponseReads {
 
   def getUserDetails(userDetailsUrl: String)(implicit headerCarrier: HeaderCarrier): Future[UserDetailsResponseModel] = {
     Logger.debug(s"[UserDetailsConnector][getUserDetails] - GET $userDetailsUrl")

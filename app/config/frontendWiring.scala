@@ -25,6 +25,7 @@ import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
 import uk.gov.hmrc.play.bootstrap.config.LoadAuditingConfig
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.config.{AppName, ServicesConfig}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 
@@ -40,7 +41,7 @@ class FrontendAuditConnector @Inject()(val environment: Environment,
 @Singleton
 class FrontendAuthConnector @Inject()(val environment: Environment,
                                       val conf: Configuration,
-                                      val WSHttp: WSHttp) extends PlayAuthConnector with ServicesConfig {
+                                      val WSHttp: HttpClient) extends PlayAuthConnector with ServicesConfig {
   override protected def runModeConfiguration: Configuration = conf
   override protected def mode: Mode = environment.mode
   lazy val serviceUrl: String = baseUrl("auth")

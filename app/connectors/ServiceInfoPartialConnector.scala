@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import play.api.Logger
 import play.twirl.api.Html
-import uk.gov.hmrc.http.HttpGet
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.play.partials.HtmlPartial._
 import uk.gov.hmrc.play.partials.{HeaderCarrierForPartials, HtmlPartial}
@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.partials.{HeaderCarrierForPartials, HtmlPartial}
 import scala.concurrent.Future
 
 @Singleton
-class ServiceInfoPartialConnector @Inject()(http: HttpGet,
+class ServiceInfoPartialConnector @Inject()(val http: HttpClient,
                                             headerCarrierConverter: ItvcHeaderCarrierForPartialsConverter,
                                             val config: FrontendAppConfig) extends RawResponseReads {
 
