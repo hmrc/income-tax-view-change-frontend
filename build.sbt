@@ -8,7 +8,7 @@ import sbt.Tests.{Group, SubProcess}
 
 val appName = "income-tax-view-change-frontend"
 
-val frontendBootstrapVersion  = "0.14.0"
+val bootstrapPlayVersion      = "1.0.0"
 val govTemplateVersion        = "5.14.0"
 val playPartialsVersion       = "6.1.0"
 val authClientVersion         = "2.3.0"
@@ -25,7 +25,7 @@ val wiremockVersion           = "2.5.1"
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-25" % frontendBootstrapVersion,
+  "uk.gov.hmrc" %% "bootstrap-play-25" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,

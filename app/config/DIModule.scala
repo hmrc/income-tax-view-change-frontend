@@ -24,6 +24,5 @@ import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClient}
 class DIModule extends AbstractModule{
   def configure(): Unit = {
     bind(classOf[AuthorisedFunctions]).to(classOf[FrontendAuthorisedFunctions]).asEagerSingleton()
-    bind(classOf[HttpClient]).to(classOf[DefaultHttpClient]).asEagerSingleton()
   }
 }
