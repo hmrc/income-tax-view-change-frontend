@@ -19,7 +19,7 @@ package controllers.feedback
 import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
 
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter, WSHttp}
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,6 +29,7 @@ import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.controller.{FrontendController, UnauthorisedAction}
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials._
 import views.html.feedback.feedback_thankyou
 
@@ -36,7 +37,7 @@ import scala.concurrent.Future
 
 @Singleton
 class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
-                                   val wsHttp: WSHttp,
+                                   val wsHttp: HttpClient,
                                    val messagesApi: MessagesApi,
                                    val sessionCookieCrypto: SessionCookieCrypto,
                                    val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter

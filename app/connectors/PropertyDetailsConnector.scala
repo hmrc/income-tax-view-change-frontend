@@ -23,14 +23,15 @@ import models._
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{NOT_FOUND, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import utils.ImplicitDateFormatter
 
 import scala.concurrent.Future
 
 @Singleton
-class PropertyDetailsConnector @Inject()(val http: HttpGet,
+class PropertyDetailsConnector @Inject()(val http: HttpClient,
                                          val config: FrontendAppConfig) extends RawResponseReads with ImplicitDateFormatter {
 
   lazy val getPropertyDetailsUrl: String => String = nino => s"${config.saApiService}/ni/$nino/uk-properties"

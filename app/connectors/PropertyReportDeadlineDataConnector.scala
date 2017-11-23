@@ -23,13 +23,14 @@ import models._
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class PropertyReportDeadlineDataConnector @Inject()(val http: HttpGet,
+class PropertyReportDeadlineDataConnector @Inject()(val http: HttpClient,
                                                     val config: FrontendAppConfig) extends RawResponseReads {
 
   lazy val getPropertyReportDeadlineDataUrl: String => String = nino => s"${config.saApiService}/ni/$nino/uk-properties/obligations"

@@ -43,20 +43,12 @@
         <appender-ref ref="STDOUT_IGNORE_NETTY" />
     </logger>
 
-    <logger name="com.google.inject" level="INFO"/>
-
-    <logger name="org.asynchttpclient.netty" level="INFO"/>
-    <logger name="io.netty" level="INFO"/>
-    <logger name="play.core.netty" level="INFO"/>
-    <logger name="org.eclipse.jetty" level="INFO"/>
-    <logger name="org.apache.http" level="INFO"/>
-
-    <logger name="uk.gov" level="INFO"/>
-
     <logger name="application" level="DEBUG"/>
-
-    <logger name="org.asynchttpclient.netty" level="WARN"/>
-
+    <logger name="com.google.inject" level="INFO"/>
+    <logger name="org.asynchttpclient.netty" level="INFO"/>
+    <logger name="uk.gov.hmrc.play.bootstrap.audit" level="WARN"/>
+    <logger name="uk.gov.hmrc.audit" level="WARN"/>
+    <logger name="io.netty" level="WARN"/>
     <logger name="play.core.netty.utils.ServerCookieDecoder" level="WARN"/>
 
     <logger name="connector" level="WARN">

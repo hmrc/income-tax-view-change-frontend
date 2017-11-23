@@ -23,13 +23,14 @@ import models._
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
 import scala.concurrent.Future
 
 @Singleton
-class BusinessDetailsConnector @Inject()(val http: HttpGet,
+class BusinessDetailsConnector @Inject()(val http: HttpClient,
                                          val config: FrontendAppConfig) extends RawResponseReads {
 
   lazy val getBusinessListUrl: String => String = nino => s"${config.saApiService}/ni/$nino/self-employments"
