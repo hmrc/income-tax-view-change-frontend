@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class NinoResponseModelSpec  extends UnitSpec with Matchers {
 
-  "The NINO Response model" should {
+  "The NINO model" should {
     "be formatted to JSON correctly" in {
       Json.toJson[Nino](testNinoModel) shouldBe testNinoModelJson
     }
@@ -56,6 +56,4 @@ class NinoResponseModelSpec  extends UnitSpec with Matchers {
       testNinoErrorModel.reason shouldBe testErrorMessage
     }
   }
-
-
 }
