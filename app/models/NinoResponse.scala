@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-import auth.FrontendAuthorisedFunctions
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import play.api.libs.json.{Json, OFormat}
 
-class DIModule extends AbstractModule{
-  def configure(): Unit = {
-    bind(classOf[AuthorisedFunctions]).to(classOf[FrontendAuthorisedFunctions]).asEagerSingleton()
-  }
+sealed trait NinoResponse
+
+case class Nino(nino: String) extends NinoResponse
+
+case class NinoResponseError(status: Int, reason: String) extends NinoResponse
+
+object Nino {
+  implicit val format: OFormat[Nino] = Json.format[Nino]
+}
+object NinoResponseError {
+  implicit val format: OFormat[NinoResponseError] = Json.format[NinoResponseError]
 }
