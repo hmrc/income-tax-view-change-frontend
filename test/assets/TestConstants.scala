@@ -870,4 +870,23 @@ object TestConstants extends ImplicitDateFormatter {
         None
       )
   }
+
+  object NinoLookup {
+    val testNinoModel: Nino = Nino(nino = testNino)
+    val testNinoModelJson: JsValue = Json.parse(
+      s"""{
+         |"nino":"$testNino"
+         |}
+       """.stripMargin)
+
+    val testNinoErrorModel: NinoResponseError = NinoResponseError(testErrorStatus, testErrorMessage)
+    val testNinoErrorModelJson: JsValue = Json.parse(
+      s"""
+         |{
+         |  "status":$testErrorStatus,
+         |  "reason":"$testErrorMessage"
+         |}
+       """.stripMargin
+    )
+  }
 }
