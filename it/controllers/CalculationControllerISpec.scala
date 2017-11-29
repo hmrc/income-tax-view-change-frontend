@@ -22,7 +22,7 @@ import models.{CalculationDataErrorModel, LastTaxCalculation}
 import play.api.http.Status._
 import utils.ImplicitCurrencyFormatter._
 
-class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMethods {
+class CalculationControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
   "Calling the FinancialDataController.getEstimatedTaxLiability(year)" when {
 

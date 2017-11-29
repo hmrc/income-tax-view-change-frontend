@@ -33,13 +33,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
-                                        implicit val messagesApi: MessagesApi,
-                                        val actionPredicate: AsyncActionPredicate,
-                                        val financialDataService: CalculationService,
-                                        val serviceInfoPartialService: ServiceInfoPartialService,
-                                        val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                        val auditingService: AuditingService
+class CalculationController @Inject()(implicit val config: FrontendAppConfig,
+                                      implicit val messagesApi: MessagesApi,
+                                      val actionPredicate: AsyncActionPredicate,
+                                      val calculationService: CalculationService,
+                                      val serviceInfoPartialService: ServiceInfoPartialService,
+                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                      val auditingService: AuditingService
                                        ) extends BaseController {
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
@@ -48,7 +48,7 @@ class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
       implicit user =>
         implicit sources =>
           serviceInfoPartialService.serviceInfoPartial().map { implicit serviceInfo =>
-            Redirect(controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get))
+            Redirect(controllers.routes.CalculationController.getFinancialData(sources.earliestTaxYear.get))
           }
   }
 
@@ -57,10 +57,14 @@ class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
       implicit user =>
         implicit sources =>
           serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-            financialDataService.getFinancialData(user.nino, taxYear).map {
+            calculationService.getFinancialData(user.nino, taxYear).map {
               case calcDisplayModel: CalcDisplayModel =>
                 submitData(user, sources, calcDisplayModel.calcAmount.toString)
-                Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+                if(calcDisplayModel.crystalisedFlag.equals("Crystalised")){
+                  Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+                } else {
+                  Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+                }
               case CalcDisplayNoDataFound =>
                 Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
                 submitData(user, sources, "No data found")
@@ -75,7 +79,7 @@ class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
   private def submitData(user: MtdItUser, sources: IncomeSourcesModel, estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
       EstimatesAuditModel(user, sources, estimate),
-      controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get).url
+      controllers.routes.CalculationController.getFinancialData(sources.earliestTaxYear.get).url
     )
 
 }

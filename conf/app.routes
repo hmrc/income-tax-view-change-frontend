@@ -8,8 +8,8 @@ GET        /assets/*file                            controllers.Assets.at(path="
 GET         /                                       controllers.HomeController.redirect
 
 #Estimated Tax Liability
-GET         /estimated-tax-liability                controllers.FinancialDataController.redirectToEarliestEstimatedTaxLiability
-GET         /estimated-tax-liability/:taxYear       controllers.FinancialDataController.getFinancialData(taxYear: Int)
+GET         /estimated-tax-liability                controllers.CalculationController.redirectToEarliestEstimatedTaxLiability
+GET         /estimated-tax-liability/:taxYear       controllers.CalculationController.getFinancialData(taxYear: Int)
 
 #ReportDeadlines
 GET         /obligations                            controllers.ReportDeadlinesController.getReportDeadlines

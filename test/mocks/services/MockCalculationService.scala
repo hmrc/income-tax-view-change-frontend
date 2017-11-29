@@ -32,15 +32,15 @@ import scala.concurrent.Future
 
 trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockFinancialDataService: CalculationService = mock[CalculationService]
+  val mockCalculationService: CalculationService = mock[CalculationService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockFinancialDataService)
+    reset(mockCalculationService)
   }
 
   def setupMockGetFinancialData(nino: String, taxYear: Int)(response: CalcDisplayResponseModel): Unit =
-    when(mockFinancialDataService
+    when(mockCalculationService
       .getFinancialData(
         ArgumentMatchers.eq(nino),
         ArgumentMatchers.eq(taxYear)
@@ -48,7 +48,7 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
       .thenReturn(Future.successful(response))
 
   def setupMockGetLastEstimatedTaxCalculation(nino: String, year: Int)(response: LastTaxCalculationResponseModel): Unit =
-    when(mockFinancialDataService
+    when(mockCalculationService
       .getLastEstimatedTaxCalculation(
         ArgumentMatchers.eq(nino),
         ArgumentMatchers.eq(year)

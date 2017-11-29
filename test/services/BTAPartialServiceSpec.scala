@@ -27,7 +27,7 @@ import utils.TestSupport
 
 class BTAPartialServiceSpec extends TestSupport with MockCalculationService with MockReportDeadlinesService {
 
-  object TestBTAPartialService extends BTAPartialService(mockFinancialDataService)
+  object TestBTAPartialService extends BTAPartialService(mockCalculationService)
 
   "The BTAPartialService getNextObligation method" when {
 
