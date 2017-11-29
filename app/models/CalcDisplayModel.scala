@@ -21,7 +21,8 @@ import play.api.libs.json.{Json, OFormat}
 sealed trait CalcDisplayResponseModel
 case class CalcDisplayModel(calcTimestamp: String,
                             calcAmount: BigDecimal,
-                            calcDataModel: Option[CalculationDataModel]) extends CalcDisplayResponseModel {
+                            calcDataModel: Option[CalculationDataModel],
+                            crystalisedFlag: String) extends CalcDisplayResponseModel {
 
   val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
   val hasEoyEstimate: Boolean = calcDataModel.fold(false)(_.eoyEstimate.nonEmpty)

@@ -27,8 +27,8 @@ import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
-class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector,
-                                      val calculationDataConnector: CalculationDataConnector) {
+class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector,
+                                   val calculationDataConnector: CalculationDataConnector) {
 
 
   def getFinancialData(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
@@ -41,10 +41,10 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
     } yield (lastCalc, calcBreakdown) match {
       case (calc: LastTaxCalculation, breakdown: CalculationDataModel) =>
         Logger.debug("[FinancialDataService] Retrieved all Financial Data")
-        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown))
+        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown), "Uncrystalised")
       case (calc: LastTaxCalculation, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
-        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None)
+        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None, "Uncrystalised")
       case (_: LastTaxCalculationError, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
@@ -73,8 +73,8 @@ class FinancialDataService @Inject()(val lastTaxCalculationConnector: LastTaxCal
     }
   }
 
-  private[FinancialDataService] def getCalculationData(nino: String,
-                                                       taxCalculationId: String
+  private[CalculationService] def getCalculationData(nino: String,
+                                                     taxCalculationId: String
                                                         )(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
 
     Logger.debug("[FinancialDataService][getCalculationData] - Requesting calculation data from self-assessment api via Connector")

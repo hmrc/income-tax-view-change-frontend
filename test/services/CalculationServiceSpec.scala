@@ -25,9 +25,9 @@ import mocks.connectors.{MockCalculationDataConnector, MockLastTaxCalculationCon
 import models.{CalcDisplayError, CalcDisplayNoDataFound}
 import utils.TestSupport
 
-class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationConnector with MockCalculationDataConnector {
+class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConnector with MockCalculationDataConnector {
 
-  object TestFinancialDataService extends FinancialDataService(mockLastTaxCalculationConnector, mockCalculationDataConnector)
+  object TestCalculationService$ extends CalculationService(mockLastTaxCalculationConnector, mockCalculationDataConnector)
 
   "The FinancialDataService.getCalculationData method" when {
 
@@ -37,7 +37,7 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
         setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
 
-        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
+        await(TestCalculationService$.getFinancialData(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
       }
     }
 
@@ -45,7 +45,7 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
 
       "return none" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
-        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe CalcDisplayError
+        await(TestCalculationService$.getFinancialData(testNino, testYear)) shouldBe CalcDisplayError
       }
     }
 
@@ -53,7 +53,7 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
 
       "return none" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcNotFound)
-        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe CalcDisplayNoDataFound
+        await(TestCalculationService$.getFinancialData(testNino, testYear)) shouldBe CalcDisplayNoDataFound
       }
     }
 
@@ -63,7 +63,7 @@ class FinancialDataServiceSpec extends TestSupport with MockLastTaxCalculationCo
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataErrorModel)
 
-        await(TestFinancialDataService.getFinancialData(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel
+        await(TestCalculationService$.getFinancialData(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel
       }
     }
   }

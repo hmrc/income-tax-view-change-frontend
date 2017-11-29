@@ -27,7 +27,7 @@ import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import services.{FinancialDataService, ServiceInfoPartialService}
+import services.{CalculationService, ServiceInfoPartialService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
                                         implicit val messagesApi: MessagesApi,
                                         val actionPredicate: AsyncActionPredicate,
-                                        val financialDataService: FinancialDataService,
+                                        val financialDataService: CalculationService,
                                         val serviceInfoPartialService: ServiceInfoPartialService,
                                         val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                         val auditingService: AuditingService

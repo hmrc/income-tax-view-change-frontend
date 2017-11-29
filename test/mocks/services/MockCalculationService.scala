@@ -24,15 +24,15 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import services.FinancialDataService
+import services.CalculationService
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
 
-trait MockFinancialDataService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockFinancialDataService: FinancialDataService = mock[FinancialDataService]
+  val mockFinancialDataService: CalculationService = mock[CalculationService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

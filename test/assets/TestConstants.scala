@@ -860,14 +860,16 @@ object TestConstants extends ImplicitDateFormatter {
       CalcDisplayModel(
         Estimates.lastTaxCalcSuccess.calcTimestamp,
         Estimates.lastTaxCalcSuccess.calcAmount,
-        Some(calcModel)
+        Some(calcModel),
+        "Uncrystalised"
       )
 
     val calculationDisplayNoBreakdownModel =
       CalcDisplayModel(
         Estimates.lastTaxCalcSuccess.calcTimestamp,
         Estimates.lastTaxCalcSuccess.calcAmount,
-        None
+        None,
+        "Uncrystalised"
       )
   }
 }
