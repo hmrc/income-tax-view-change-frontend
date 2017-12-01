@@ -23,6 +23,7 @@ import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import models.Nino
 import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.Results.Redirect
 import services.NinoLookupService
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
@@ -43,7 +44,7 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
       case (Some(nino), _) => Future.successful(Right(buildMtdUserWithNino(nino)))
       case (_, Some(nino)) => Future.successful(Right(buildMtdUserWithNino(nino)))
       case (_,_) => ninoLookupService.getNino(request.mtditid).map {
-        case nino: Nino => Right(buildMtdUserWithNino(nino.nino))
+        case nino: Nino => Left(Redirect(request.uri).addingToSession("nino" -> nino.nino)(request))
         case _ => Left(itvcErrorHandler.showInternalServerError(request))
       }
     }
