@@ -38,10 +38,11 @@ class IncomeSourceDetailsPredicate @Inject()(implicit val messagesApi: MessagesA
   override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUser[A]]] = {
 
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val req = request
 
     incomeSourceDetailsService.getIncomeSourceDetails(request.nino) map {
-      case sources: IncomeSourcesModel => Right(MtdItUser(request.mtditid, request.nino, request.userDetails, sources)(request))
-      case IncomeSourcesError => Left(itvcErrorHandler.showInternalServerError(request))
+      case sources: IncomeSourcesModel => Right(MtdItUser(request.mtditid, request.nino, request.userDetails, sources))
+      case IncomeSourcesError => Left(itvcErrorHandler.showInternalServerError)
     }
   }
 }

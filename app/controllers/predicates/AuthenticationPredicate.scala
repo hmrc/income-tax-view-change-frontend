@@ -47,14 +47,17 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
     with ActionFunction[Request, MtdItUserOptionNino] {
 
   override def invokeBlock[A](request: Request[A], f: (MtdItUserOptionNino[A]) => Future[Result]): Future[Result] = {
+
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val req = request
+
     authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and userDetailsUri) {
       case enrolments ~ userDetailsUrl => {
         userDetailsConnector.getUserDetails(userDetailsUrl.get).flatMap {
           case userDetails: UserDetailsModel =>
-            f(buildMtdUserOptionNino(enrolments, Some(userDetails))(request))
+            f(buildMtdUserOptionNino(enrolments, Some(userDetails)))
           case UserDetailsError =>
-            f(buildMtdUserOptionNino(enrolments)(request))
+            f(buildMtdUserOptionNino(enrolments))
         }
       }
     } recover {
@@ -69,7 +72,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
         Redirect(controllers.routes.SignInController.signIn())
       case _ =>
         Logger.debug("[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.")
-        itvcErrorHandler.showInternalServerError(request)
+        itvcErrorHandler.showInternalServerError
     }
   }
 

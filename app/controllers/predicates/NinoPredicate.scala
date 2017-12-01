@@ -37,15 +37,16 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
   override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
 
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val req = request
 
-    def buildMtdUserWithNino(nino: String) = MtdItUserWithNino(request.mtditid, nino, request.userDetails)(request)
+    def buildMtdUserWithNino(nino: String) = MtdItUserWithNino(request.mtditid, nino, request.userDetails)
 
     (request.nino, request.session.get("nino")) match {
       case (Some(nino), _) => Future.successful(Right(buildMtdUserWithNino(nino)))
       case (_, Some(nino)) => Future.successful(Right(buildMtdUserWithNino(nino)))
       case (_,_) => ninoLookupService.getNino(request.mtditid).map {
-        case nino: Nino => Left(Redirect(request.uri).addingToSession("nino" -> nino.nino)(request))
-        case _ => Left(itvcErrorHandler.showInternalServerError(request))
+        case nino: Nino => Left(Redirect(request.uri).addingToSession("nino" -> nino.nino))
+        case _ => Left(itvcErrorHandler.showInternalServerError)
       }
     }
   }
