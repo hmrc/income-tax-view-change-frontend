@@ -18,17 +18,18 @@ package controllers.predicates
 
 import javax.inject.{Inject, Singleton}
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.UserDetailsConnector
 import controllers.BaseController
 import models.{UserDetailsError, UserDetailsModel}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{AnyContent, Request, Result}
+import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import scala.concurrent.Future
@@ -41,24 +42,22 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
                                         implicit val messagesApi: MessagesApi,
                                         val userDetailsConnector: UserDetailsConnector,
                                         val itvcErrorHandler: ItvcErrorHandler
-                                       ) extends BaseController with AuthRedirects {
+                                       )
+  extends BaseController with AuthRedirects with ActionBuilder[MtdItUserOptionNino]
+    with ActionFunction[Request, MtdItUserOptionNino] {
 
-  lazy val mtdItEnrolmentKey: String = appConfig.mtdItEnrolmentKey
-  lazy val mtdItIdentifierKey: String = appConfig.mtdItIdentifierKey
-  lazy val ninoEnrolmentKey: String = appConfig.ninoEnrolmentKey
-  lazy val ninoIdentifierKey: String = appConfig.ninoIdentifierKey
-
-  def authorisedUser(f: MtdItUser => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
-    authorisedFunctions.authorised(Enrolment(mtdItEnrolmentKey) and Enrolment(ninoEnrolmentKey)).retrieve(authorisedEnrolments and userDetailsUri) {
+  override def invokeBlock[A](request: Request[A], f: (MtdItUserOptionNino[A]) => Future[Result]): Future[Result] = {
+    implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and userDetailsUri) {
       case enrolments ~ userDetailsUrl => {
         userDetailsConnector.getUserDetails(userDetailsUrl.get).flatMap {
           case userDetails: UserDetailsModel =>
-            f(buildMtdUser(enrolments, Some(userDetails)))
+            f(buildMtdUserOptionNino(enrolments, Some(userDetails))(request))
           case UserDetailsError =>
-            f(buildMtdUser(enrolments))
+            f(buildMtdUserOptionNino(enrolments)(request))
         }
       }
-    }.recover {
+    } recover {
       case _: InsufficientEnrolments =>
         Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
         Redirect(controllers.notEnrolled.routes.NotEnrolledController.show())
@@ -70,14 +69,15 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
         Redirect(controllers.routes.SignInController.signIn())
       case _ =>
         Logger.debug("[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.")
-        itvcErrorHandler.showInternalServerError
+        itvcErrorHandler.showInternalServerError(request)
     }
   }
 
-  private def buildMtdUser(enrolments: Enrolments, userDetails: Option[UserDetailsModel] = None): MtdItUser = {
-    MtdItUser(
-      mtditid = enrolments.getEnrolment(mtdItEnrolmentKey).flatMap(_.getIdentifier(mtdItIdentifierKey)).map(_.value).get,
-      nino = enrolments.getEnrolment(ninoEnrolmentKey).flatMap(_.getIdentifier(ninoIdentifierKey)).map(_.value).get,
+  private def buildMtdUserOptionNino[A](enrolments: Enrolments, userDetails: Option[UserDetailsModel] = None)
+                                       (implicit request: Request[A]): MtdItUserOptionNino[A] = {
+    MtdItUserOptionNino(
+      mtditid = enrolments.getEnrolment(appConfig.mtdItEnrolmentKey).flatMap(_.getIdentifier(appConfig.mtdItIdentifierKey)).map(_.value).get,
+      nino = enrolments.getEnrolment(appConfig.ninoEnrolmentKey).flatMap(_.getIdentifier(appConfig.ninoIdentifierKey)).map(_.value),
       userDetails
     )
   }

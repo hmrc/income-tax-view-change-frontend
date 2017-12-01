@@ -20,6 +20,7 @@ import auth.MtdItUser
 import models._
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
+import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core._
 import utils.ImplicitDateFormatter
@@ -32,8 +33,8 @@ object TestConstants extends ImplicitDateFormatter {
   val testUserName = "Albert Einstein"
   val testUserDetails = UserDetailsModel(testUserName, None, "n/a", "n/a")
   val testUserDetailsUrl = "/user/oid/potato"
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
-  val testMtdItUserNoUserDetails: MtdItUser = MtdItUser(testMtditid, testNino, None)
+  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
+  val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   val testSelfEmploymentId  = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testTaxCalculationId = "CALCID"

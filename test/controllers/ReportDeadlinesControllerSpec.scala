@@ -19,6 +19,7 @@ package controllers
 import assets.Messages.{ISE => errorMessages, ReportDeadlines => messages}
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockReportDeadlinesService
 import org.jsoup.Jsoup
@@ -33,7 +34,10 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAsyncActionPred
   object TestReportDeadlinesController extends ReportDeadlinesController()(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
-    MockAsyncActionPredicate,
+    app.injector.instanceOf[SessionTimeoutPredicate],
+    MockAuthenticationPredicate,
+    app.injector.instanceOf[NinoPredicate],
+    MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[ServiceInfoPartialService],
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]

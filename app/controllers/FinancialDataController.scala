@@ -22,60 +22,61 @@ import audit.AuditingService
 import audit.models.EstimatesAuditing.EstimatesAuditModel
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.AsyncActionPredicate
+import controllers.predicates._
 import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, ActionBuilder, AnyContent}
 import services.{FinancialDataService, ServiceInfoPartialService}
 import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
                                         implicit val messagesApi: MessagesApi,
-                                        val actionPredicate: AsyncActionPredicate,
+                                        val checkSessionTimeout: SessionTimeoutPredicate,
+                                        val authenticate: AuthenticationPredicate,
+                                        val retrieveNino: NinoPredicate,
+                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                         val financialDataService: FinancialDataService,
                                         val serviceInfoPartialService: ServiceInfoPartialService,
                                         val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                         val auditingService: AuditingService
                                        ) extends BaseController {
+
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
-  val redirectToEarliestEstimatedTaxLiability: Action[AnyContent] = actionPredicate.async {
-    implicit request =>
-      implicit user =>
-        implicit sources =>
-          serviceInfoPartialService.serviceInfoPartial().map { implicit serviceInfo =>
-            Redirect(controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get))
-          }
+  val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+
+  val redirectToEarliestEstimatedTaxLiability: Action[AnyContent] = action.async {
+    implicit user =>
+      serviceInfoPartialService.serviceInfoPartial().map { implicit serviceInfo =>
+        Redirect(controllers.routes.FinancialDataController.getFinancialData(user.incomeSources.earliestTaxYear.get))
+      }
   }
 
-  val getFinancialData: Int => Action[AnyContent] = taxYear => actionPredicate.async {
-    implicit request =>
-      implicit user =>
-        implicit sources =>
-          serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-            financialDataService.getFinancialData(user.nino, taxYear).map {
-              case calcDisplayModel: CalcDisplayModel =>
-                submitData(user, sources, calcDisplayModel.calcAmount.toString)
-                Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
-              case CalcDisplayNoDataFound =>
-                Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
-                submitData(user, sources, "No data found")
-                NotFound(views.html.noEstimatedTaxLiability(taxYear))
-              case CalcDisplayError =>
-                Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
-                Ok(views.html.estimatedTaxLiabilityError(taxYear))
-            }
-          }
+  val getFinancialData: Int => Action[AnyContent] = taxYear => action.async {
+    implicit user =>
+      implicit val sources = user.incomeSources
+      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+        financialDataService.getFinancialData(user.nino, taxYear).map {
+          case calcDisplayModel: CalcDisplayModel =>
+            auditEstimate(user, calcDisplayModel.calcAmount.toString)
+            Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+          case CalcDisplayNoDataFound =>
+            Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
+            auditEstimate(user, "No data found")
+            NotFound(views.html.noEstimatedTaxLiability(taxYear))
+          case CalcDisplayError =>
+            Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
+            Ok(views.html.estimatedTaxLiabilityError(taxYear))
+        }
+      }
   }
 
-  private def submitData(user: MtdItUser, sources: IncomeSourcesModel, estimate: String)(implicit hc: HeaderCarrier): Unit =
+  private def auditEstimate[A](user: MtdItUser[A], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
-      EstimatesAuditModel(user, sources, estimate),
-      controllers.routes.FinancialDataController.getFinancialData(sources.earliestTaxYear.get).url
+      EstimatesAuditModel(user, estimate),
+      controllers.routes.FinancialDataController.getFinancialData(user.incomeSources.earliestTaxYear.get).url
     )
 
 }

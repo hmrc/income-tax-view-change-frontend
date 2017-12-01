@@ -35,7 +35,7 @@ class BtaPartialViewSpec extends TestSupport {
 
   val model = openObligation
   val calcAmount = BigDecimal(1000)
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
+  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
 
   lazy val page = views.html.btaPartial(model, List(lastTaxCalcSuccessWithYear))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
   lazy val noEstimatePage = views.html.btaPartial(model, List())(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)

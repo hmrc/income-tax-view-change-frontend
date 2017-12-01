@@ -19,7 +19,7 @@
 @import views.helpers.BtaPartialHelper
 @import play.twirl.api.Html
 
-@(obMod: ReportDeadlinesResponseModel, estimates: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser)
+@(obMod: ReportDeadlinesResponseModel, estimates: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 <section id="section-it-qr">
     <p class="panel-indent alert--info">@messages("bta_partial.p1")</p>
