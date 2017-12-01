@@ -16,17 +16,13 @@
 
 package mocks.controllers.predicates
 
-import controllers.predicates.{AsyncActionPredicate, AuthenticationPredicate, IncomeSourceDetailsPredicate, SessionTimeoutPredicate}
-import play.api.i18n.MessagesApi
-import utils.TestSupport
-
 trait MockAsyncActionPredicate extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
-  object MockAsyncActionPredicate extends AsyncActionPredicate()(
-      app.injector.instanceOf[MessagesApi],
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
-      MockIncomeSourceDetailsPredicate
-  )
+//  object MockAsyncActionPredicate extends AsyncActionPredicate()(
+//      app.injector.instanceOf[MessagesApi],
+//      app.injector.instanceOf[SessionTimeoutPredicate],
+//      MockAuthenticationPredicate,
+//      MockIncomeSourceDetailsPredicate
+//  )
 
 }

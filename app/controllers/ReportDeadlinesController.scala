@@ -22,34 +22,36 @@ import audit.AuditingService
 import audit.models.ReportDeadlinesAuditing.ReportDeadlinesAuditModel
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.AsyncActionPredicate
-import models.IncomeSourcesModel
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import services.ServiceInfoPartialService
+import services.{IncomeSourceDetailsService, ServiceInfoPartialService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class ReportDeadlinesController @Inject()(implicit val config: FrontendAppConfig,
                                           implicit val messagesApi: MessagesApi,
-                                          val actionPredicate: AsyncActionPredicate,
+                                          val checkSessionTimeout: SessionTimeoutPredicate,
+                                          val authenticate: AuthenticationPredicate,
+                                          val retrieveNino: NinoPredicate,
+                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val serviceInfoPartialService: ServiceInfoPartialService,
                                           val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                           val auditingService: AuditingService
                                      ) extends BaseController {
+
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
-  val getReportDeadlines: Action[AnyContent] = actionPredicate.async {
-    implicit request =>
-      implicit user =>
-        implicit sources =>
-          submitData(user, sources)
-          serviceInfoPartialService.serviceInfoPartial.map { implicit serviceInfo =>
-            Ok(views.html.report_deadlines(sources))
-          }
+  val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+    implicit user =>
+      auditReportDeadlines(user)
+      serviceInfoPartialService.serviceInfoPartial map {
+        implicit serviceInfo =>
+          Ok(views.html.report_deadlines(user.incomeSources))
+      }
   }
 
-  private def submitData(user: MtdItUser, sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): Unit =
-    auditingService.audit(ReportDeadlinesAuditModel(user, sources), controllers.routes.ReportDeadlinesController.getReportDeadlines().url)
+  private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier): Unit =
+    auditingService.audit(ReportDeadlinesAuditModel(user), controllers.routes.ReportDeadlinesController.getReportDeadlines().url)
 
 }

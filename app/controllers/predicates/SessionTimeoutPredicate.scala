@@ -21,22 +21,26 @@ import javax.inject.{Inject, Singleton}
 import controllers.BaseController
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.mvc.{AnyContent, Request, Result}
+import play.api.mvc._
 import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.Future
 
 @Singleton
-class SessionTimeoutPredicate @Inject()(implicit val messagesApi: MessagesApi) extends BaseController {
+class SessionTimeoutPredicate @Inject()(implicit val messagesApi: MessagesApi)
+  extends BaseController with ActionBuilder[Request] with ActionFunction[Request, Request] {
 
-  def checkSessionTimeout(f: => Future[Result])(implicit request: Request[AnyContent]): Future[Result] = {
+  override def invokeBlock[A](request: Request[A], f: (Request[A]) => Future[Result]): Future[Result] = {
+
+    implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+
     (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {
-      case (Some(x), None) =>
+      case (Some(_), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
         Logger.debug("[AuthenticationPredicate][handleSessionTimeout] Session Time Out.")
         Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
-      case (_, _) => f
+      case (_, _) => f(request)
     }
   }
-
 }

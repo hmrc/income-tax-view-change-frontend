@@ -22,12 +22,14 @@ import assets.TestConstants.IncomeSourceDetails._
 import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import config.FrontendAppConfig
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.MockAsyncActionPredicate
 import mocks.services.MockBTAPartialService
 import models.LastTaxCalculation
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
+import services.BTAPartialService
 import utils.ImplicitCurrencyFormatter._
 import utils.TestSupport
 
@@ -36,7 +38,10 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
   object TestBTAPartialController extends BTAPartialController()(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
-    MockAsyncActionPredicate,
+    app.injector.instanceOf[SessionTimeoutPredicate],
+    MockAuthenticationPredicate,
+    app.injector.instanceOf[NinoPredicate],
+    MockIncomeSourceDetailsPredicate,
     mockBTAPartialService
   )
 

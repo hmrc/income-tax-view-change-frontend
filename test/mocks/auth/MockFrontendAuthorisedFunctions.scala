@@ -41,7 +41,7 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach with MockitoSug
   }
 
   def setupMockAuthRetrievalSuccess[X,Y](retrievalValue: X~Y): Unit = {
-    when(mockAuthService.authorised(Enrolment("HMRC-MTD-IT") and Enrolment("HMRC-NI")))
+    when(mockAuthService.authorised(Enrolment("HMRC-MTD-IT")))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
           override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
@@ -51,7 +51,7 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach with MockitoSug
   }
 
   def setupMockAuthorisationException(exception: AuthorisationException = new InvalidBearerToken): Unit =
-    when(mockAuthService.authorised(Enrolment("HMRC-MTD-IT") and Enrolment("HMRC-NI")))
+    when(mockAuthService.authorised(Enrolment("HMRC-MTD-IT")))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
           override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(exception)

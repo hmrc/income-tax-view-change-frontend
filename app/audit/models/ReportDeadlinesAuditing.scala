@@ -24,19 +24,19 @@ object ReportDeadlinesAuditing {
   val reportDeadlineTransactionName = "ITVCObligations"
   val reportDeadlineAuditType = "obligationsPageView"
 
-  case class ReportDeadlinesAuditModel(user: MtdItUser, sources: IncomeSourcesModel) extends AuditModel {
+  case class ReportDeadlinesAuditModel[A](user: MtdItUser[A]) extends AuditModel {
     override val transactionName: String = reportDeadlineTransactionName
     //TODO: Auditing needs to be revisited for multiple business scenario - speak to Kris McLackland
-    val business = sources.businessIncomeSources.headOption
+    val business = user.incomeSources.businessIncomeSources.headOption
     override val detail: Map[String, String] = Map(
       "mtdid" -> user.mtditid,
       "nino" -> user.nino,
-      "hasBusiness" -> sources.hasBusinessIncome.toString,
-      "hasProperty" -> sources.hasPropertyIncome.toString,
+      "hasBusiness" -> user.incomeSources.hasBusinessIncome.toString,
+      "hasProperty" -> user.incomeSources.hasPropertyIncome.toString,
       "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.start}"),
       "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.end}"),
-      "propAccPeriodStart" -> sources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "propAccPeriodEnd" -> sources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.end}")
+      "propAccPeriodStart" -> user.incomeSources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.start}"),
+      "propAccPeriodEnd" -> user.incomeSources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.end}")
     )
     override val auditType: String = reportDeadlineAuditType
   }
