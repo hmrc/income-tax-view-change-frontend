@@ -17,7 +17,7 @@
 package mocks.services
 
 import assets.TestConstants.{IncomeSourceDetails, testNino}
-import models.{IncomeSourcesModel, IncomeSourcesResponseModel}
+import models.{IncomeSourcesError, IncomeSourcesModel, IncomeSourcesResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.mockito.MockitoSugar
@@ -46,5 +46,6 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
   def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
   def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.noIncomeSourceSuccess)
   def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourcesSuccessBusinessAligned)
+  def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesError)
 
 }
