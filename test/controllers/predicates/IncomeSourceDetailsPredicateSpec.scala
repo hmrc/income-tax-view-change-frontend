@@ -22,32 +22,27 @@ import config.ItvcErrorHandler
 import mocks.services.MockIncomeSourceDetailsService
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.mvc.Result
 import utils.TestSupport
-
-import scala.concurrent.Future
 
 
 class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSourceDetailsService {
 
-  def setupResult(): Future[Either[Result, MtdItUser[_]]] = {
-    object TestPredicate extends IncomeSourceDetailsPredicate()(
-      app.injector.instanceOf[MessagesApi],
-      mockIncomeSourceDetailsService,
-      app.injector.instanceOf[ItvcErrorHandler]
-    )
-    TestPredicate.refine(MtdItUserWithNino(testMtditid, testNino, Some(testUserDetails))(fakeRequestWithActiveSession))
-  }
+  object IncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate()(
+    app.injector.instanceOf[MessagesApi],
+    mockIncomeSourceDetailsService,
+    app.injector.instanceOf[ItvcErrorHandler]
+  )
 
+  lazy val userWithNino = MtdItUserWithNino(testMtditid, testNino, Some(testUserDetails))
   lazy val successResponse = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.businessIncomeSourceSuccess)
 
-  "The IncomSourceDetailsPredicate" when {
+  "The IncomeSourceDetailsPredicate" when {
 
     "A valid response is received from the Income Source Details Service" should {
 
       "return the expected MtdItUser" in {
         mockSingleBusinessIncomeSource()
-        val result = setupResult()
+        val result = IncomeSourceDetailsPredicate.refine(userWithNino)
         result.right.get shouldBe successResponse
       }
 
@@ -57,7 +52,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
 
       "Return Status of 500 (ISE)" in {
         mockErrorIncomeSource()
-        val result = setupResult()
+        val result = IncomeSourceDetailsPredicate.refine(userWithNino)
         status(result.left.get) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
