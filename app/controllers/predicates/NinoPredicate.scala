@@ -34,7 +34,7 @@ import scala.concurrent.Future
 class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
                               val itvcErrorHandler: ItvcErrorHandler) extends ActionRefiner[MtdItUserOptionNino, MtdItUserWithNino] {
 
-  override protected def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
+  override def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
 
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     implicit val req = request
