@@ -17,6 +17,7 @@
 package mocks.services
 
 import config.FrontendAppConfig
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.i18n.Messages
@@ -27,9 +28,6 @@ import utils.TestSupport
 
 trait MockServiceInfoPartialService extends TestSupport with BeforeAndAfterEach {
 
-  implicit val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  implicit val messages: Messages = mock[Messages]
-
   val mockServiceInfoPartialService: ServiceInfoPartialService = mock[ServiceInfoPartialService]
 
   override def beforeEach(): Unit = {
@@ -38,7 +36,7 @@ trait MockServiceInfoPartialService extends TestSupport with BeforeAndAfterEach 
   }
 
   def setupMockServiceInfoPartial()(response: Html): Unit =
-    when(mockServiceInfoPartialService.serviceInfoPartial())
+    when(mockServiceInfoPartialService.serviceInfoPartial()(ArgumentMatchers.any(), ArgumentMatchers.any()))
     .thenReturn(response)
 
   def mockServiceInfoPartialSuccess(): Unit = setupMockServiceInfoPartial()(
