@@ -16,6 +16,7 @@
 
 package utils
 
+import assets.TestConstants
 import assets.TestConstants.IncomeSourceDetails
 import auth.MtdItUser
 import com.typesafe.config.Config
@@ -82,6 +83,7 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
   lazy val fakeRequestWithTimeoutSession = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
+  lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> TestConstants.testNino)
   lazy val fakeRequestNoSession = FakeRequest()
 
 }
