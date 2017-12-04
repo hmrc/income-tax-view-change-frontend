@@ -60,13 +60,15 @@
         </h1>
 
         <section id="whatYouOwe">
-            <h2 id="whatYouOweHeading" class="heading-large">
-                @Html(messages("crystalisation.whatYouOwe.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.incomeTaxYTD.toCurrency)}"))
-            </h2>
-            <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
-            <p id="inYearP2">@messages("crystalisation.whatYouOwe.directDebit")</p>
+            <div class="form-group">
+                <h2 id="whatYouOweHeading" class="heading-large">
+                    @Html(messages("crystalisation.whatYouOwe.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.incomeTaxYTD.toCurrency)}"))
+                </h2>
+                <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
+                <p id="inYearP2">@messages("crystalisation.whatYouOwe.directDebit")</p>
+            </div>
 
-            <div class="important-notice icon-min-height">
+            <div class="important-notice icon-min-height form-group">
                 <strong class="bold-small">
                     @messages("crystalisation.warning", s"$taxYear")
                 </strong>
@@ -93,7 +95,7 @@
             <h3 id="AdditionalPaymentHeading" class="heading-medium">@messages("crystalisation.additionalPayment.heading")</h3>
 
             <p id="advancedPayment">
-                @messages("crystalisation.additionalPayment.para")
+                @messages("crystalisation.additionalPayment.para", "your incompetance", "or else!")
             </p>
 
             <p id="aboutPayments">
