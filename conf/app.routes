@@ -14,6 +14,9 @@ GET         /estimated-tax-liability/:taxYear       controllers.CalculationContr
 #ReportDeadlines
 GET         /obligations                            controllers.ReportDeadlinesController.getReportDeadlines
 
+#Crystalisation
+GET         /crystalisation/:taxYear                controllers.CalculationController.getFinancialData(taxYear: Int)
+
 #Feedback Routes
 GET         /feedback                               controllers.feedback.FeedbackController.show
 POST        /feedback                               controllers.feedback.FeedbackController.submit

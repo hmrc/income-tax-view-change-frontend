@@ -60,11 +60,11 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
             calculationService.getFinancialData(user.nino, taxYear).map {
               case calcDisplayModel: CalcDisplayModel =>
                 submitData(user, sources, calcDisplayModel.calcAmount.toString)
-                if(calcDisplayModel.crystalisedFlag.equals("Crystalised")){
-                  Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
-                } else {
-                  Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
-                }
+//                if(calcDisplayModel.crystalisedFlag.equals("Crystalised")){
+                  Ok(views.html.crystalised(calcDisplayModel, taxYear))
+//                } else {
+//                  Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+//                }
               case CalcDisplayNoDataFound =>
                 Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
                 submitData(user, sources, "No data found")
