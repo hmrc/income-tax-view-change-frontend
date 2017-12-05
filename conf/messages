@@ -46,7 +46,7 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have i
 ## ReportDeadlines Page ##
 obligations.title                                               = Your Income Tax report deadlines
 obligations.heading                                             = Your Income Tax report deadlines
-obligations.info                                                = You must submit a report once every quarter using your accounting software.
+obligations.info                                                = You must submit a report once every quarter using accounting software.
 obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
 obligations.bi.subheading                                       = Business income
