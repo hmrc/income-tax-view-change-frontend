@@ -48,7 +48,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear")
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         verifyBizDeetsCall()
@@ -103,7 +103,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear")
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         verifyBizDeetsCall()
@@ -160,7 +160,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
+        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         verifyBizDeetsCall()
@@ -198,7 +198,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
+        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         verifyBizDeetsCall()
@@ -233,7 +233,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
+        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         verifyBizDeetsCall()
@@ -261,7 +261,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         isAuthorisedUser(false)
 
-        When("I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability")
+        When("I call GET /report-quarterly/income-and-expenses/view/calculation")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         Then("the http response for an unauthorised user is returned")
