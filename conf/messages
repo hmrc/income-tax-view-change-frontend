@@ -36,7 +36,6 @@ estimated_tax_liability.eoyEstimate.p2                          = It''s based on
 estimated_tax_liability.inYearEstimate.heading                  = Current estimate: {0}
 estimated_tax_liability.inYearEstimate.p1                       = This is an estimate of the tax you owe from 6 April {0} to {1}.
 estimated_tax_liability.inYearEstimate.p2                       = It''s based on the information you provide us in your quarterly reports.
-estimated_tax_liability.inYearEstimate.accuracy                 = Although more accurate than your annual estimate, your current estimate may not be a true reflection of the tax you owe.
 estimated_tax_liability.inYearEstimate.whyThisMayChange         = Why your current estimate may change
 estimated_tax_liability.inYearEstimate.whyThisMayChange.p1      = Your estimate could change because:
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = rates and allowances won''t be applied in full until the end of the tax year
