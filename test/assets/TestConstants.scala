@@ -864,6 +864,14 @@ object TestConstants extends ImplicitDateFormatter {
         "Uncrystalised"
       )
 
+    val calculationDisplaySuccessCrystalisationModel: CalculationDataModel => CalcDisplayModel = calcModel =>
+      CalcDisplayModel(
+        Estimates.lastTaxCalcSuccess.calcTimestamp,
+        Estimates.lastTaxCalcSuccess.calcAmount,
+        Some(calcModel),
+        "Crystalised"
+      )
+
     val calculationDisplayNoBreakdownModel =
       CalcDisplayModel(
         Estimates.lastTaxCalcSuccess.calcTimestamp,

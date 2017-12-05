@@ -58,14 +58,14 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
     val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
     import setup._
-    val messages = new Messages.EstimatedTaxLiability(taxYear = 2018)
+    val messages = new Messages.Calculation(taxYear = 2018)
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
     }
 
-    s"have the tax year '${messages.taxYearSubHeadiing}'" in {
-      document.getElementById("tax-year").text() shouldBe messages.taxYearSubHeadiing
+    s"have the tax year '${messages.taxYearSubHeading}'" in {
+      document.getElementById("tax-year").text() shouldBe messages.taxYearSubHeading
     }
 
     s"have the page heading '${messages.pageHeading}'" in {

@@ -21,10 +21,14 @@ import play.twirl.api.Html
 object Messages {
 
   // Estimated Tax Liability Page Messages
-  class EstimatedTaxLiability(taxYear: Int) {
+  class Calculation(taxYear: Int) {
     val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeadiing = s"Tax year: ${taxYear-1} to $taxYear"
-    val title = taxYearSubHeadiing
+    val taxYearSubHeading = s"Tax year: ${taxYear-1} to $taxYear"
+    val title = taxYearSubHeading
+    object Crystalised {
+      val tabTitle = "Your final submission"
+      val heading = "Your finalised Income Tax bill"
+    }
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
       val p1 = s"This is an estimate of what you'll pay for the whole of this tax year, beginning 6 April ${taxYear-1} and ending 5 April $taxYear."
@@ -61,16 +65,16 @@ object Messages {
   // No Estimated Tax Liability Page Messages
   object NoEstimatedTaxLiability {
     val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeadiing = "Tax year: 2017 to 2018"
-    val title = taxYearSubHeadiing
+    val taxYearSubheading = "Tax year: 2017 to 2018"
+    val title = taxYearSubheading
     val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
   }
 
   // Estimated Tax Liability Error Page Messages
   object EstimatedTaxLiabilityError {
     val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeadiing = "Tax year: 2017 to 2018"
-    val title = taxYearSubHeadiing
+    val taxYearSubheading = "Tax year: 2017 to 2018"
+    val title = taxYearSubheading
     val p1 = "We can't display your estimated tax amount at the moment."
     val p2 = "Try refreshing the page in a few minutes."
   }

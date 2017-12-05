@@ -44,7 +44,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
     app.injector.instanceOf[AuditingService]
   )
 
-  lazy val messages = new Messages.EstimatedTaxLiability(2018)
+  lazy val messages = new Messages.Calculation(2018)
 
   "The FinancialDataController.getFinancialData(year) action" when {
 
@@ -92,6 +92,27 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
         "render the EstimatedTaxLiability page" in {
           document.title() shouldBe messages.title
         }
+      }
+
+      "receives a crystalised payments from the calculationService" should {
+        lazy val result = TestCalculationController$.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+
+        "return Status OK (200)" in {
+          mockPropertyIncomeSource()
+          mockFinancialDataCrystalisationSuccess()
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the crystalisation page" in {
+          document.title() shouldBe messages.Crystalised.tabTitle
+        }
+
       }
 
       "receives Business Income source from the Income Sources predicate and an error from the FinancialData Service" should {
