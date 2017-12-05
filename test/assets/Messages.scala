@@ -78,7 +78,7 @@ object Messages {
   //ReportDeadlines Page Messages
   object ReportDeadlines {
     val title = "Your Income Tax report deadlines"
-    val info  = "You must submit a report once every quarter using your accounting software."
+    val info  = "You must submit a report once every quarter using accounting software."
     val propertyHeading = "Property income"
     val periodHeading = "Report period"
     val statusHeading = "Report due date"
