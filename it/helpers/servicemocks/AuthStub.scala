@@ -43,16 +43,17 @@ object AuthStub extends ComponentSpecBase {
   }
 
   def stubAuthorisedNoNino(): Unit = {
-    Json.parse(
+    WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
+      Json.parse(
       s"""
          |{
          |"allEnrolments": [{
          |  "key":"$testMtditidEnrolmentKey",
-         |  "identifiers":"[{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]"
+         |  "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
          |}],
          | "userDetailsUri":"$testUserDetailsWiremockUrl"
          |}
-       """.stripMargin
+       """.stripMargin).toString
     )
   }
 

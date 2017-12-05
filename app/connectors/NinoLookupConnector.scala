@@ -55,7 +55,7 @@ class NinoLookupConnector @Inject()(val http: HttpClient,
             )
           case _ =>
             Logger.debug(s"[NinoLookupConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(s"[NinoLookupConnector][getNino] - Response status: [${response.status}] from Latest Calc call")
+            Logger.warn(s"[NinoLookupConnector][getNino] - Response status: [${response.status}] from Get Nino call")
             NinoResponseError(response.status, response.body)
         }
     } recover {

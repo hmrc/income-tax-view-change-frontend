@@ -25,14 +25,14 @@ import assets.TestConstants.{IncomeSourceDetails, _}
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import mocks.controllers.predicates.MockAsyncActionPredicate
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockFinancialDataService, MockServiceInfoPartialService}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
 
-class FinancialDataControllerSpec extends TestSupport with MockFinancialDataService with MockAsyncActionPredicate with MockServiceInfoPartialService {
+class FinancialDataControllerSpec extends TestSupport with MockFinancialDataService with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService {
 
   object TestFinancialDataController extends FinancialDataController()(
     app.injector.instanceOf[FrontendAppConfig],
