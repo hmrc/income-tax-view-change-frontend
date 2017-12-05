@@ -22,8 +22,8 @@ import javax.inject.{Inject, Singleton}
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import models.Nino
-import play.api.mvc.{ActionRefiner, Result}
 import play.api.mvc.Results.Redirect
+import play.api.mvc.{ActionRefiner, Result}
 import services.NinoLookupService
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._

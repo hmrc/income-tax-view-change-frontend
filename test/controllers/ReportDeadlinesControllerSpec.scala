@@ -20,7 +20,7 @@ import assets.Messages.{ISE => errorMessages, ReportDeadlines => messages}
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import mocks.controllers.predicates.MockAsyncActionPredicate
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockReportDeadlinesService, MockServiceInfoPartialService}
 import org.jsoup.Jsoup
 import play.api.http.Status
@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import services.ServiceInfoPartialService
 import utils.TestSupport
 
-class ReportDeadlinesControllerSpec extends TestSupport with MockAsyncActionPredicate with MockReportDeadlinesService with MockServiceInfoPartialService {
+class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService with MockServiceInfoPartialService {
 
   object TestReportDeadlinesController extends ReportDeadlinesController()(
     app.injector.instanceOf[FrontendAppConfig],
