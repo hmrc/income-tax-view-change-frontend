@@ -109,10 +109,6 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           inYearSection.getElementById("inYearP2").text shouldBe messages.InYearEstimate.p2
         }
 
-        "has a disclaimer to warn them around the accuracy of the figure" in {
-          inYearSection.getElementById("accuracy").text shouldBe messages.InYearEstimate.accuracy
-        }
-
         "has progressive disclosure for why there estimate might change" which {
 
           s"has the heading '${messages.InYearEstimate.WhyThisMayChange.heading}'" in {
