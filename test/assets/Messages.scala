@@ -33,7 +33,7 @@ object Messages {
     object InYearEstimate {
       val heading: String => String = inYearEstimate => s"Current estimate: $inYearEstimate"
       val p1: String => String = calcDate => s"This is an estimate of the tax you owe from 6 April ${taxYear-1} to $calcDate."
-      val p2 = "It's based on the information you provide us in your quarterly reports."
+      val p2 = "It's based on the information you report through software."
       object CalculationBreakdown {
         val heading = "How your current estimate was calculated"
         val businessProfit = "Business profit"
