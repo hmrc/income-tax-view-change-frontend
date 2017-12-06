@@ -37,7 +37,7 @@ object Messages {
     object InYearEstimate {
       val heading: String => String = inYearEstimate => s"Current estimate: $inYearEstimate"
       val p1: String => String = calcDate => s"This is an estimate of the tax you owe from 6 April ${taxYear-1} to $calcDate."
-      val p2 = "It's based on the information you provide us in your quarterly reports."
+      val p2 = "It's based on the information you report through software."
       object CalculationBreakdown {
         val heading = "How your current estimate was calculated"
         val businessProfit = "Business profit"
@@ -82,7 +82,7 @@ object Messages {
   //ReportDeadlines Page Messages
   object ReportDeadlines {
     val title = "Your Income Tax report deadlines"
-    val info  = "You must submit a report once every quarter using your accounting software."
+    val info  = "You must submit a report once every quarter using accounting software."
     val propertyHeading = "Property income"
     val periodHeading = "Report period"
     val statusHeading = "Report due date"
