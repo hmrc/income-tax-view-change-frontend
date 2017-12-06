@@ -32,6 +32,7 @@ object TestConstants extends ImplicitDateFormatter {
   val testNino = "AB123456C"
   val testUserName = "Albert Einstein"
   val testUserDetails = UserDetailsModel(testUserName, None, "n/a", "n/a")
+  val testUserDetailsError = UserDetailsError
   val testUserDetailsUrl = "/user/oid/potato"
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())

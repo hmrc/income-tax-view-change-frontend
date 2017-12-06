@@ -17,6 +17,7 @@
 package controllers.predicates
 
 import assets.TestConstants._
+import auth.MtdItUserWithNino
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.IncomeSourcesError
@@ -56,7 +57,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
       "a HMRC-MTD-IT enrolment exists" when {
 
         "return Ok (200)" in {
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
           status(result) shouldBe Status.OK
         }
       }
@@ -71,6 +71,12 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
         "redirect to the Not Enrolled page" in {
           setupMockAuthorisationException(new InsufficientEnrolments)
           redirectLocation(result) shouldBe Some(controllers.notEnrolled.routes.NotEnrolledController.show().url)
+        }
+      }
+      "there is a HMRC-MTD-IT enrolment but a user details error from auth" should {
+        "return Ok (200)" in {
+          setupMockUserDetails()(testUserDetailsError)
+          status(result) shouldBe Status.OK
         }
       }
     }
