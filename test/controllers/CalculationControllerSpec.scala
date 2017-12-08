@@ -110,7 +110,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
         }
 
         "render the crystalisation page" in {
-          document.title() shouldBe messages.Crystalised.tabTitle
+          document.title() shouldBe messages.Crystallised.tabTitle
         }
 
       }

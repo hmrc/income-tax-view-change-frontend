@@ -15,6 +15,7 @@
  */
 package controllers
 
+import enums.Crystallised
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
@@ -81,7 +82,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
       }
     }
 
-    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response and crystalised EoY amount" should {
+    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response and Crystallised EoY amount" should {
       "return the correct page with a valid total" in {
 
         isAuthorisedUser(true)
@@ -91,7 +92,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         stubPartial()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, crystalisedFlag = Some("Crystalised"))
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, crystallisedFlag = Some(Crystallised))
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")

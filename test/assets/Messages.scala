@@ -25,7 +25,7 @@ object Messages {
     val pageHeading = "Your Income Tax estimate"
     val taxYearSubHeading = s"Tax year: ${taxYear-1} to $taxYear"
     val title = taxYearSubHeading
-    object Crystalised {
+    object Crystallised {
       val tabTitle = "Your final submission"
       val heading = "Your finalised Income Tax bill"
     }
