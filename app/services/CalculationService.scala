@@ -74,6 +74,10 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
     }
   }
 
+  def getAllLatestCalculations(nino: String, taxYears: List[Int]): List[LastTaxCalculationWithYear] = {
+    taxYears.map(taxYear => LastTaxCalculationWithYear(getLastEstimatedTaxCalculation(nino, taxYear).map(x => x), taxYear))
+  }
+
   private[CalculationService] def getCalculationData(nino: String,
                                                      taxCalculationId: String
                                                         )(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
