@@ -78,6 +78,18 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
+  val viewEstimateCalculations: Action[AnyContent] = actionPredicate.async {
+    implicit request =>
+      implicit user =>
+        implicit sources =>
+          serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+            calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { model =>
+              Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $model")
+              Ok(views.html.estimates(List(), sources.earliestTaxYear.get))
+            }
+          }
+  }
+
   val viewCrystallisedCalculations: Action[AnyContent] = action.async {
     implicit user =>
       implicit val sources = user.incomeSources
@@ -103,20 +115,10 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
 
   private def calcListHasErrors(calcs: List[LastTaxCalculationWithYear]): Boolean = calcs.exists(_.isErrored)
 
-  val viewEstimateCalculations: Action[AnyContent] = actionPredicate.async {
-    implicit request =>
-      implicit user =>
-        implicit sources =>
-      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { model =>
-          Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $model")
-          Ok(views.html.estimates(List(), sources.earliestTaxYear.get))
-        }
-      }
-  }
 
 
   private def auditEstimate[A](user: MtdItUser[A], estimate: String)(implicit hc: HeaderCarrier): Unit =
+
     auditingService.audit(
       EstimatesAuditModel(user, estimate),
       controllers.routes.CalculationController.getFinancialData(user.incomeSources.earliestTaxYear.get).url
