@@ -28,12 +28,12 @@ object Messages {
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
       val p1 = s"This is an estimate of what you'll pay for the whole of this tax year, beginning 6 April ${taxYear-1} and ending 5 April $taxYear."
-      val p2 = "It's based on your current estimate and is a total of all income tax, from any source that you report through software."
+      val p2 = "It's based on your current estimate and is a total of all income tax, from any source that you report through accounting software."
     }
     object InYearEstimate {
       val heading: String => String = inYearEstimate => s"Current estimate: $inYearEstimate"
       val p1: String => String = calcDate => s"This is an estimate of the tax you owe from 6 April ${taxYear-1} to $calcDate."
-      val p2 = "It's based on the information you report through software."
+      val p2 = "It's based on the information you report through accounting software."
       object CalculationBreakdown {
         val heading = "How your current estimate was calculated"
         val businessProfit = "Business profit"
@@ -53,7 +53,7 @@ object Messages {
         val p1 = "Your estimate could change because:"
         val bullet1 = "rates and allowances won't be applied in full until the end of the tax year"
         val bullet2 = "you may earn more money"
-        val bullet3 = "you may have income that's not reported in your software"
+        val bullet3 = "you may have income that's not reported in your accounting software"
       }
     }
   }
@@ -83,6 +83,7 @@ object Messages {
     val periodHeading = "Report period"
     val statusHeading = "Report due date"
     val ceased: String => String = date => s"This business ceased trading on $date."
+    val portfolio = "This covers all properties that you earn income from."
     object Errors {
       val p1 = "We can't display your next report due date at the moment."
       val p2 = "Try refreshing the page in a few minutes."

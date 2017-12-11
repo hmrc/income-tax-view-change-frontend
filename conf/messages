@@ -32,15 +32,15 @@ estimated_tax_liability.error.p1                                = We can''t disp
 estimated_tax_liability.error.p2                                = Try refreshing the page in a few minutes.
 estimated_tax_liability.eoyEstimate.heading                     = Annual estimate: {0}
 estimated_tax_liability.eoyEstimate.p1                          = This is an estimate of what you''ll pay for the whole of this tax year, beginning 6 April {0} and ending 5 April {1}.
-estimated_tax_liability.eoyEstimate.p2                          = It''s based on your current estimate and is a total of all income tax, from any source that you report through software.
+estimated_tax_liability.eoyEstimate.p2                          = It''s based on your current estimate and is a total of all income tax, from any source that you report through accounting software.
 estimated_tax_liability.inYearEstimate.heading                  = Current estimate: {0}
 estimated_tax_liability.inYearEstimate.p1                       = This is an estimate of the tax you owe from 6 April {0} to {1}.
-estimated_tax_liability.inYearEstimate.p2                       = It''s based on the information you report through software.
+estimated_tax_liability.inYearEstimate.p2                       = It''s based on the information you report through accounting software.
 estimated_tax_liability.inYearEstimate.whyThisMayChange         = Why your current estimate may change
 estimated_tax_liability.inYearEstimate.whyThisMayChange.p1      = Your estimate could change because:
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = rates and allowances won''t be applied in full until the end of the tax year
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = you may earn more money
-estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that''s not reported in your software
+estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that''s not reported in your accounting software
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Your Income Tax report deadlines
@@ -50,6 +50,7 @@ obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
 obligations.bi.subheading                                       = Business income
 obligations.pi.subheading                                       = Property income
+obligations.pi.portfolio                                        = This covers all properties that you earn income from.
 obligations.error.p1                                            = We can''t display your next report due date at the moment.
 obligations.error.p2                                            = Try refreshing the page in a few minutes.
 obligations.ceased                                              = This business ceased trading on {0}.
