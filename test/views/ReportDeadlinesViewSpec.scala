@@ -121,6 +121,10 @@ class ReportDeadlinesViewSpec extends TestSupport {
         document.getElementById("pi-section").text() shouldBe messages.propertyHeading
       }
 
+      "contain a paragraph to explain that it is all properties in their portfolio" in {
+        document.getElementById("portfolio").text() shouldBe messages.portfolio
+      }
+
       "not contain Business ReportDeadlines section" in {
         document.getElementById("bi-1-section") shouldBe null
       }
