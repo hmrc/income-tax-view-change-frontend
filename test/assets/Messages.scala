@@ -83,6 +83,7 @@ object Messages {
     val periodHeading = "Report period"
     val statusHeading = "Report due date"
     val ceased: String => String = date => s"This business ceased trading on $date."
+    val portfolio = "This covers all properties that you earn income from."
     object Errors {
       val p1 = "We can't display your next report due date at the moment."
       val p2 = "Try refreshing the page in a few minutes."
