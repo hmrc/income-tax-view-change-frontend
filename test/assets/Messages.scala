@@ -21,10 +21,14 @@ import play.twirl.api.Html
 object Messages {
 
   // Estimated Tax Liability Page Messages
-  class EstimatedTaxLiability(taxYear: Int) {
+  class Calculation(taxYear: Int) {
     val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeadiing = s"Tax year: ${taxYear-1} to $taxYear"
-    val title = taxYearSubHeadiing
+    val taxYearSubHeading = s"Tax year: ${taxYear-1} to $taxYear"
+    val title = taxYearSubHeading
+    object Crystallised {
+      val tabTitle = "Your final submission"
+      val heading = "Your finalised Income Tax bill"
+    }
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
       val p1 = s"This is an estimate of what you'll pay for the whole of this tax year, beginning 6 April ${taxYear-1} and ending 5 April $taxYear."
@@ -33,7 +37,7 @@ object Messages {
     object InYearEstimate {
       val heading: String => String = inYearEstimate => s"Current estimate: $inYearEstimate"
       val p1: String => String = calcDate => s"This is an estimate of the tax you owe from 6 April ${taxYear-1} to $calcDate."
-      val p2 = "It's based on the information you provide us in your quarterly reports."
+      val p2 = "It's based on the information you report through software."
       object CalculationBreakdown {
         val heading = "How your current estimate was calculated"
         val businessProfit = "Business profit"
@@ -61,16 +65,16 @@ object Messages {
   // No Estimated Tax Liability Page Messages
   object NoEstimatedTaxLiability {
     val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeadiing = "Tax year: 2017 to 2018"
-    val title = taxYearSubHeadiing
+    val taxYearSubheading = "Tax year: 2017 to 2018"
+    val title = taxYearSubheading
     val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
   }
 
   // Estimated Tax Liability Error Page Messages
   object EstimatedTaxLiabilityError {
     val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeadiing = "Tax year: 2017 to 2018"
-    val title = taxYearSubHeadiing
+    val taxYearSubheading = "Tax year: 2017 to 2018"
+    val title = taxYearSubheading
     val p1 = "We can't display your estimated tax amount at the moment."
     val p2 = "Try refreshing the page in a few minutes."
   }
@@ -78,7 +82,7 @@ object Messages {
   //ReportDeadlines Page Messages
   object ReportDeadlines {
     val title = "Your Income Tax report deadlines"
-    val info  = "You must submit a report once every quarter using your accounting software."
+    val info  = "You must submit a report once every quarter using accounting software."
     val propertyHeading = "Property income"
     val periodHeading = "Report period"
     val statusHeading = "Report due date"

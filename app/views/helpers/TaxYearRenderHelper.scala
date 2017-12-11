@@ -25,8 +25,12 @@ object TaxYearRenderHelper {
     messages("estimated_tax_liability.tax-year", s"${taxYear - 1}", s"$taxYear")
   }
 
-  def renderTitle(taxYear: Int)(implicit messages: Messages): String = {
-    messages("estimated_tax_liability.title", s"${taxYear - 1}", s"$taxYear")
+  def renderTitle(taxYear: Int, crystalised: Boolean = false)(implicit messages: Messages): String = {
+    crystalised match {
+      case false => messages("estimated_tax_liability.title", s"${taxYear - 1}", s"$taxYear")
+      case true => messages("crystalisation.title", s"${taxYear - 1}", s"$taxYear")
+    }
+
   }
 
   def renderPaymentDueDate(taxYear: Int): String = {

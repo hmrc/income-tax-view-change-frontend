@@ -17,6 +17,7 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
+import enums.CalcStatus
 
 import scala.concurrent.Future
 
@@ -24,7 +25,8 @@ sealed trait LastTaxCalculationResponseModel
 
 case class LastTaxCalculation(calcID: String,
                               calcTimestamp: String,
-                              calcAmount: BigDecimal) extends LastTaxCalculationResponseModel
+                              calcAmount: BigDecimal,
+                              calcStatus: Option[CalcStatus] = None) extends LastTaxCalculationResponseModel
 
 case class LastTaxCalculationWithYear(calculation: LastTaxCalculationResponseModel,
                                       taxYear: Int)

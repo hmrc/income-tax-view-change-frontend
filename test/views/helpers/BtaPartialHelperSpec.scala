@@ -81,7 +81,7 @@ class BtaPartialHelperSpec extends TestSupport {
         s"""<div class="form-group">
           |<p id="current-estimate-2018">Your estimated tax amount is &pound;543.21</p>
 
-          |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability 2018" id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
+          |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability 2018" id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/calculation/2018">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       "passed a number the Html is returned" in {
@@ -95,13 +95,13 @@ class BtaPartialHelperSpec extends TestSupport {
       val success1: String =
         s"""<div class="form-group">
           |<p id="current-estimate-2018">Your estimated tax amount for 2017 to 2018 is &pound;543.21</p>
-          |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability 2018" id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
+          |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability 2018" id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/calculation/2018">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       val success2: String =
         s"""<div class="form-group">
           |<p id="current-estimate-2019">Your estimated tax amount for 2018 to 2019 is &pound;6,543.21</p>
-          |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability 2019" id="estimates-link-2019" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2019">View details</a>
+          |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability 2019" id="estimates-link-2019" href="$baseUrl/report-quarterly/income-and-expenses/view/calculation/2019">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       "return Html corresponding to the estimated tax for misaligned tax years" in {
@@ -116,7 +116,7 @@ class BtaPartialHelperSpec extends TestSupport {
       val success: String =
         s"""<div class="form-group">
           |<p id="current-estimate-2018">Your estimated tax amount for 2017 to 2018 is &pound;543.21</p>
-          |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability 2018" id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/estimated-tax-liability/2018">View details</a>
+          |<a data-journey-click="itvcPartial:clickedLink:View Estimated Tax Liability 2018" id="estimates-link-2018" href="$baseUrl/report-quarterly/income-and-expenses/view/calculation/2018">View details</a>
           |</div>""".stripMargin.replaceAll("\n","")
 
       val noCalc: String =

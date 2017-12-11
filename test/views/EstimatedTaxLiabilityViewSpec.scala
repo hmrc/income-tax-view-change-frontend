@@ -58,14 +58,14 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
     val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
     import setup._
-    val messages = new Messages.EstimatedTaxLiability(taxYear = 2018)
+    val messages = new Messages.Calculation(taxYear = 2018)
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
     }
 
-    s"have the tax year '${messages.taxYearSubHeadiing}'" in {
-      document.getElementById("tax-year").text() shouldBe messages.taxYearSubHeadiing
+    s"have the tax year '${messages.taxYearSubHeading}'" in {
+      document.getElementById("tax-year").text() shouldBe messages.taxYearSubHeading
     }
 
     s"have the page heading '${messages.pageHeading}'" in {
@@ -107,10 +107,6 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         s"has the correct estimate p2 paragraph '${messages.InYearEstimate.p2}'" in {
           inYearSection.getElementById("inYearP2").text shouldBe messages.InYearEstimate.p2
-        }
-
-        "has a disclaimer to warn them around the accuracy of the figure" in {
-          inYearSection.getElementById("accuracy").text shouldBe messages.InYearEstimate.accuracy
         }
 
         "has progressive disclosure for why there estimate might change" which {

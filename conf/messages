@@ -35,8 +35,7 @@ estimated_tax_liability.eoyEstimate.p1                          = This is an est
 estimated_tax_liability.eoyEstimate.p2                          = It''s based on your current estimate and is a total of all income tax, from any source that you report through software.
 estimated_tax_liability.inYearEstimate.heading                  = Current estimate: {0}
 estimated_tax_liability.inYearEstimate.p1                       = This is an estimate of the tax you owe from 6 April {0} to {1}.
-estimated_tax_liability.inYearEstimate.p2                       = It''s based on the information you provide us in your quarterly reports.
-estimated_tax_liability.inYearEstimate.accuracy                 = Although more accurate than your annual estimate, your current estimate may not be a true reflection of the tax you owe.
+estimated_tax_liability.inYearEstimate.p2                       = It''s based on the information you report through software.
 estimated_tax_liability.inYearEstimate.whyThisMayChange         = Why your current estimate may change
 estimated_tax_liability.inYearEstimate.whyThisMayChange.p1      = Your estimate could change because:
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = rates and allowances won''t be applied in full until the end of the tax year
@@ -46,7 +45,7 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have i
 ## ReportDeadlines Page ##
 obligations.title                                               = Your Income Tax report deadlines
 obligations.heading                                             = Your Income Tax report deadlines
-obligations.info                                                = You must submit a report once every quarter using your accounting software.
+obligations.info                                                = You must submit a report once every quarter using accounting software.
 obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
 obligations.bi.subheading                                       = Business income
@@ -54,6 +53,24 @@ obligations.pi.subheading                                       = Property incom
 obligations.error.p1                                            = We can''t display your next report due date at the moment.
 obligations.error.p2                                            = Try refreshing the page in a few minutes.
 obligations.ceased                                              = This business ceased trading on {0}.
+
+## Crystalisation Page ##
+crystalisation.title                                            = Your final submission
+crystalisation.heading                                          = Your finalised Income Tax bill
+crystalisation.whatYouOwe.heading                               = What you owe: {0}
+crystalisation.whatYouOwe.para                                  = This figure is based on the information you provided in your quarterly reports and final report. You told us this information is accurate.
+crystalisation.whatYouOwe.directDebit                           = Check if you already pay by direct debit.
+crystalisation.warning                                          = If you pay this bill after 31 January {0} you''ll get penalties.
+crystalisation.adjustments                                      = If there are any errors, you can make adjustments through your software.
+crystalisation.changes                                          = If you make changes before 31 January {0} you will not be penalised.
+crystalisation.additionalPayment.heading                        = Additional payment
+crystalisation.additionalPayment.para                           = An advanced payment on account of {0} will be also due by 31 July {1}
+crystalisation.additionalPayment.aboutPayments                  = About payments on account
+crystalisation.paymentsOnAccount.para1                          = These are obligatory payments towards your next tax year. You make two of them: one is paid at the end of the tax year, the other is paid 6 months later.
+crystalisation.paymentsOnAccount.para2                          = Each payment is half of the tax you owed this year.
+crystalisation.paymentsOnAccount.para3                          = You''ll be prompted to pay this through your Income Tax account.
+crystalisation.paymentsOnAccount.para4                          = If you think you will earn less next tax year, you can reduce your payment on account online.
+crystalisation.payNow                                           = Pay this now
 
 ## Statuses ##
 status.received                                                 = Received

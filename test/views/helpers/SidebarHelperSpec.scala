@@ -61,8 +61,8 @@ class SidebarHelperSpec extends TestSupport {
                 document.getElementById("estimate-link-2019").text() shouldBe messages.estimatesLinkYear(2019)
               }
 
-              s"have a link to '${controllers.routes.FinancialDataController.getFinancialData(2019)}'" in {
-                document.getElementById("estimate-link-2019").attr("href") shouldBe controllers.routes.FinancialDataController.getFinancialData(2019).url
+              s"have a link to '${controllers.routes.CalculationController.getFinancialData(2019)}'" in {
+                document.getElementById("estimate-link-2019").attr("href") shouldBe controllers.routes.CalculationController.getFinancialData(2019).url
               }
             }
           }
@@ -107,8 +107,8 @@ class SidebarHelperSpec extends TestSupport {
                 document.getElementById("estimate-link-2018").text() shouldBe messages.estimatesLinkYear(2018)
               }
 
-              s"have a link to '${controllers.routes.FinancialDataController.getFinancialData(2019)}'" in {
-                document.getElementById("estimate-link-2018").attr("href") shouldBe controllers.routes.FinancialDataController.getFinancialData(2018).url
+              s"have a link to '${controllers.routes.CalculationController.getFinancialData(2019)}'" in {
+                document.getElementById("estimate-link-2018").attr("href") shouldBe controllers.routes.CalculationController.getFinancialData(2018).url
               }
             }
 
@@ -194,8 +194,8 @@ class SidebarHelperSpec extends TestSupport {
                 document.getElementById("estimate-link-2018").text() shouldBe messages.estimatesLinkYear(2018)
               }
 
-              s"have a link to '${controllers.routes.FinancialDataController.getFinancialData(2018)}'" in {
-                document.getElementById("estimate-link-2018").attr("href") shouldBe controllers.routes.FinancialDataController.getFinancialData(2018).url
+              s"have a link to '${controllers.routes.CalculationController.getFinancialData(2018)}'" in {
+                document.getElementById("estimate-link-2018").attr("href") shouldBe controllers.routes.CalculationController.getFinancialData(2018).url
               }
             }
 
@@ -205,8 +205,8 @@ class SidebarHelperSpec extends TestSupport {
                 document.getElementById("estimate-link-2019").text() shouldBe messages.estimatesLinkYear(2019)
               }
 
-              s"have a link to '${controllers.routes.FinancialDataController.getFinancialData(2019)}'" in {
-                document.getElementById("estimate-link-2019").attr("href") shouldBe controllers.routes.FinancialDataController.getFinancialData(2019).url
+              s"have a link to '${controllers.routes.CalculationController.getFinancialData(2019)}'" in {
+                document.getElementById("estimate-link-2019").attr("href") shouldBe controllers.routes.CalculationController.getFinancialData(2019).url
               }
             }
           }
@@ -251,8 +251,8 @@ class SidebarHelperSpec extends TestSupport {
               document.getElementById("estimate-link-2018").text() shouldBe messages.estimatesLinkYear(2018)
             }
 
-            s"have a link to '${controllers.routes.FinancialDataController.getFinancialData(2019)}'" in {
-              document.getElementById("estimate-link-2018").attr("href") shouldBe controllers.routes.FinancialDataController.getFinancialData(2018).url
+            s"have a link to '${controllers.routes.CalculationController.getFinancialData(2019)}'" in {
+              document.getElementById("estimate-link-2018").attr("href") shouldBe controllers.routes.CalculationController.getFinancialData(2018).url
             }
           }
         }

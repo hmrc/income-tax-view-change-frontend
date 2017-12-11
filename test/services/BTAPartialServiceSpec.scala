@@ -21,13 +21,13 @@ import assets.TestConstants.IncomeSourceDetails._
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
 import assets.TestConstants.ReportDeadlines._
-import mocks.services.{MockFinancialDataService, MockReportDeadlinesService}
+import mocks.services.{MockCalculationService, MockReportDeadlinesService}
 import models._
 import utils.TestSupport
 
-class BTAPartialServiceSpec extends TestSupport with MockFinancialDataService with MockReportDeadlinesService {
+class BTAPartialServiceSpec extends TestSupport with MockCalculationService with MockReportDeadlinesService {
 
-  object TestBTAPartialService extends BTAPartialService(mockFinancialDataService)
+  object TestBTAPartialService extends BTAPartialService(mockCalculationService)
 
   "The BTAPartialService getNextObligation method" when {
 

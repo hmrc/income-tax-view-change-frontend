@@ -15,6 +15,7 @@
  */
 package controllers
 
+import enums.Crystallised
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
@@ -22,7 +23,7 @@ import models.{CalculationDataErrorModel, LastTaxCalculation}
 import play.api.http.Status._
 import utils.ImplicitCurrencyFormatter._
 
-class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMethods {
+class CalculationControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
   "Calling the FinancialDataController.getEstimatedTaxLiability(year)" when {
 
@@ -48,7 +49,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
 
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear")
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         verifyBizDeetsCall()
@@ -81,6 +82,59 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
       }
     }
 
+    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response and Crystallised EoY amount" should {
+      "return the correct page with a valid total" in {
+
+        isAuthorisedUser(true)
+
+        stubUserDetails()
+
+        stubPartial()
+
+        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, calcStatus = Some(Crystallised))
+        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+
+        And("I wiremock stub a successful Get CalculationData response")
+        val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, calcBreakdownResponse)
+
+        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+        getPropDeets(GetPropertyDetails.successResponse())
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
+        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+
+        verifyBizDeetsCall()
+
+        verifyPropDeetsCall()
+
+        Then("I verify the Estimated Tax Liability response has been wiremocked")
+        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+        //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
+
+        res should have (
+          httpStatus(OK),
+          pageTitle("Your final submission"),
+          elementTextByID(id = "service-info-user-name")(testUserName),
+          elementTextByID("whatYouOweHeading")(s"What you owe: ${calcBreakdownResponse.incomeTaxYTD.toCurrencyString}"),
+          elementTextByID("tax-year")("Tax year: 2017 to 2018"),
+          elementTextByID("it-reference")(testMtditid),
+          elementTextByID("obligations-link")("View report deadlines"),
+          elementTextByID("sa-link")("View annual returns"),
+          elementTextByID("page-heading")("Your finalised Income Tax bill"),
+          elementTextByID("business-profit")(calcBreakdownResponse.profitFromSelfEmployment.toCurrencyString),
+          elementTextByID("property-profit")(calcBreakdownResponse.profitFromUkLandAndProperty.toCurrencyString),
+          elementTextByID("personal-allowance")(s"-${calcBreakdownResponse.proportionAllowance.toCurrencyString}"),
+          elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
+          elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
+          elementTextByID("nic4-amount")(calcBreakdownResponse.totalClass4Charge.toCurrencyString),
+          elementTextByID("total-estimate")(calcBreakdownResponse.incomeTaxYTD.toCurrencyString)
+        )
+      }
+    }
+
     "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response but NO EoY Estimate" should {
 
       "return the correct page with a valid total" in {
@@ -103,7 +157,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
 
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear")
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         verifyBizDeetsCall()
@@ -160,7 +214,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
 
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
+        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         verifyBizDeetsCall()
@@ -198,7 +252,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
 
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
+        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         verifyBizDeetsCall()
@@ -233,7 +287,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
 
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/estimated-tax-liability/$testYear ")
+        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         verifyBizDeetsCall()
@@ -261,7 +315,7 @@ class FinancialDataControllerISpec extends ComponentSpecBase with GenericStubMet
 
         isAuthorisedUser(false)
 
-        When("I call GET /report-quarterly/income-and-expenses/view/estimated-tax-liability")
+        When("I call GET /report-quarterly/income-and-expenses/view/calculation")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
         Then("the http response for an unauthorised user is returned")

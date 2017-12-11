@@ -16,12 +16,14 @@
 
 package models
 
+import enums.CalcStatus
 import play.api.libs.json.{Json, OFormat}
 
 sealed trait CalcDisplayResponseModel
 case class CalcDisplayModel(calcTimestamp: String,
                             calcAmount: BigDecimal,
-                            calcDataModel: Option[CalculationDataModel]) extends CalcDisplayResponseModel {
+                            calcDataModel: Option[CalculationDataModel],
+                            calcStatus: CalcStatus) extends CalcDisplayResponseModel {
 
   val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
   val hasEoyEstimate: Boolean = calcDataModel.fold(false)(_.eoyEstimate.nonEmpty)

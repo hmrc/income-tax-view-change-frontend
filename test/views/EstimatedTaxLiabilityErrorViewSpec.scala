@@ -49,8 +49,8 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
       document.title() shouldBe messages.title
     }
 
-    s"have the tax year '${messages.taxYearSubHeadiing}'" in {
-      document.getElementById("tax-year").text() shouldBe messages.taxYearSubHeadiing
+    s"have the tax year '${messages.taxYearSubheading}'" in {
+      document.getElementById("tax-year").text() shouldBe messages.taxYearSubheading
     }
 
     s"have the page heading '${messages.pageHeading}'" in {
