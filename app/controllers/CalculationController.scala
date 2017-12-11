@@ -23,7 +23,7 @@ import audit.models.EstimatesAuditing.EstimatesAuditModel
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.AsyncActionPredicate
-import enums.Crystallised
+import enums.{Crystallised, Estimate}
 import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
@@ -61,10 +61,9 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
             calculationService.getFinancialData(user.nino, taxYear).map {
               case calcDisplayModel: CalcDisplayModel =>
                 submitData(user, sources, calcDisplayModel.calcAmount.toString)
-                if(calcDisplayModel.crystallisedFlag.equals(Crystallised)){
-                  Ok(views.html.crystallised(calcDisplayModel, taxYear))
-                } else {
-                  Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+                calcDisplayModel.calcStatus match {
+                  case Crystallised => Ok(views.html.crystallised(calcDisplayModel, taxYear))
+                  case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
                 }
               case CalcDisplayNoDataFound =>
                 Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")

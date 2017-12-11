@@ -42,10 +42,10 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
     } yield (lastCalc, calcBreakdown) match {
       case (calc: LastTaxCalculation, breakdown: CalculationDataModel) =>
         Logger.debug("[FinancialDataService] Retrieved all Financial Data")
-        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown), calc.crystallisedFlag.getOrElse(Estimate))
+        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown), calc.calcStatus.getOrElse(Estimate))
       case (calc: LastTaxCalculation, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
-        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None, calc.crystallisedFlag.getOrElse(Estimate))
+        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None, calc.calcStatus.getOrElse(Estimate))
       case (_: LastTaxCalculationError, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
@@ -86,13 +86,6 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
       case error: CalculationDataErrorModel =>
         Logger.debug(s"[FinancialDataService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
         error
-    }
-  }
-
-  private[CalculationService] def getStuff(calcStatus: String): CalcStatus = {
-    calcStatus match {
-      case status if status.toLowerCase.equals("crystalised") => Crystallised
-      case _ => Estimate
     }
   }
 }
