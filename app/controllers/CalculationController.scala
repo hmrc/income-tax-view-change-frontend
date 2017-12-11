@@ -77,6 +77,16 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
+  val viewCrystallisedCalculations: Action[AnyContent] = action.async {
+    implicit user =>
+      implicit val sources = user.incomeSources
+      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
+          model => Ok(views.html.allBills(model))
+        }
+      }
+  }
+
   private def auditEstimate[A](user: MtdItUser[A], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
       EstimatesAuditModel(user, estimate),
