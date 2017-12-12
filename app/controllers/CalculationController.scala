@@ -51,7 +51,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
 
   val redirectToEarliestEstimatedTaxLiability: Action[AnyContent] = action.async {
     implicit user =>
-      serviceInfoPartialService.serviceInfoPartial().map { implicit serviceInfo =>
+      serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)).map { implicit serviceInfo =>
         Redirect(controllers.routes.CalculationController.getFinancialData(user.incomeSources.earliestTaxYear.get))
       }
   }
@@ -59,7 +59,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   val getFinancialData: Int => Action[AnyContent] = taxYear => action.async {
     implicit user =>
       implicit val sources = user.incomeSources
-      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+      serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)).flatMap { implicit serviceInfo =>
         calculationService.getFinancialData(user.nino, taxYear).map {
           case calcDisplayModel: CalcDisplayModel =>
             auditEstimate(user, calcDisplayModel.calcAmount.toString)

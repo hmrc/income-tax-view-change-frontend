@@ -45,7 +45,7 @@ class ReportDeadlinesController @Inject()(implicit val config: FrontendAppConfig
   val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       auditReportDeadlines(user)
-      serviceInfoPartialService.serviceInfoPartial map {
+      serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)) map {
         implicit serviceInfo =>
           Ok(views.html.report_deadlines(user.incomeSources))
       }
