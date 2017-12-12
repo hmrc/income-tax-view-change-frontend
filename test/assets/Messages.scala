@@ -20,6 +20,11 @@ import play.twirl.api.Html
 
 object Messages {
 
+  //Estimates Page Messages
+  class Estimates {
+    val title = "Income Tax Estimates"
+  }
+
   // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {
     val pageHeading = "Your Income Tax estimate"
