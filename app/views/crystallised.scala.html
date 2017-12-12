@@ -38,10 +38,10 @@
 
 @aboutPaymentsOnAccount = {
 <div id="paymentsOnAccount" class="panel-indent">
-    <p>@messages("crystalisation.paymentsOnAccount.para1")</p>
-    <p>@messages("crystalisation.paymentsOnAccount.para2")</p>
-    <p>@messages("crystalisation.paymentsOnAccount.para3")</p>
-    <p>@messages("crystalisation.paymentsOnAccount.para4")</p>
+    <p id="PoA-p1">@messages("crystalisation.paymentsOnAccount.para1")</p>
+    <p id="PoA-p2">@messages("crystalisation.paymentsOnAccount.para2")</p>
+    <p id="PoA-p3">@messages("crystalisation.paymentsOnAccount.para3")</p>
+    <p id="PoA-p4">@messages("crystalisation.paymentsOnAccount.para4")</p>
 </div>
 }
 
@@ -69,7 +69,7 @@
             </div>
 
             <div class="important-notice icon-min-height form-group">
-                <strong class="bold-small">
+                <strong class="bold-small" id="late-warning">
                     @messages("crystalisation.warning", s"${taxYear+1}")
                 </strong>
             </div>
@@ -99,7 +99,7 @@
             </p>
 
             <p id="aboutPayments">
-                @accordionHelper("whyEstimateMayChange", messages("crystalisation.additionalPayment.aboutPayments"), aboutPaymentsOnAccount)
+                @accordionHelper("aboutPoA", messages("crystalisation.additionalPayment.aboutPayments"), aboutPaymentsOnAccount)
             </p>
         </section>
 
