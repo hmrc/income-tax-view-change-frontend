@@ -61,6 +61,7 @@ crystalisation.whatYouOwe.heading                               = What you owe: 
 crystalisation.whatYouOwe.para                                  = This figure is based on the information you provided in your quarterly reports and final report. You told us this information is accurate.
 crystalisation.whatYouOwe.directDebit                           = Check if you already pay by direct debit.
 crystalisation.warning                                          = If you pay this bill after 31 January {0} you''ll get penalties.
+crystalisation.calc-breakdown.heading                           = How this figure was calculated
 crystalisation.adjustments                                      = If there are any errors, you can make adjustments through your software.
 crystalisation.changes                                          = If you make changes before 31 January {0} you will not be penalised.
 crystalisation.additionalPayment.heading                        = Additional payment
