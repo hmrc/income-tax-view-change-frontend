@@ -18,17 +18,31 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import config.FrontendAppConfig
+import auth.MtdItUserWithNino
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import controllers.predicates.{AuthenticationPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import services.ServiceInfoPartialService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.Future
-
 @Singleton
-class HomeController @Inject()(implicit val config: FrontendAppConfig, val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+                               val authenticate: AuthenticationPredicate,
+                               val retrieveNino: NinoPredicate,
+                               val serviceInfoPartialService: ServiceInfoPartialService,
+                               val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                               implicit val config: FrontendAppConfig,
+                               val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
-  val redirect: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(config.businessTaxAccount))
+  import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
+
+  val action: ActionBuilder[MtdItUserWithNino] = checkSessionTimeout andThen authenticate andThen retrieveNino
+
+  val redirect: Action[AnyContent] = action.async { implicit user =>
+    val userName: Option[String] = user.userDetails.map(_.name)
+    serviceInfoPartialService.serviceInfoPartial(userName) map { implicit serviceInfo =>
+      Ok(views.html.home())
+    }
   }
 }
