@@ -20,7 +20,7 @@ import assets.Messages.{HomePage => messages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.PropertyIncome._
 import assets.TestConstants._
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserWithNino}
 import config.FrontendAppConfig
 import models.IncomeSourcesModel
 import org.jsoup.Jsoup
@@ -34,8 +34,7 @@ class HomePageViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), testIncomeSources)(FakeRequest())
+  val testMtdItUser: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testUserDetails))(FakeRequest())
 
   "The HomePage view" should {
 

@@ -15,10 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import auth.MtdItUser
 @import templates.govuk_wrapper
-@import helpers.renderServiceInfoPartial
-@import helpers.renderServiceInfoHelper
 
 @(title: String,
   sidebarLinks: Option[Html] = None,
@@ -27,18 +24,10 @@
   mainClass: Option[String] = None,
   scriptElem: Option[Html] = None,
   showLogout: Boolean = true,
-  user: Option[MtdItUser[_]] = None,
   showBtaHeader: Boolean = true
 )(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: FrontendAppConfig, serviceInfo: Html = Html(""))
 
 @import uk.gov.hmrc.play.views.html.layouts
-
-
-@serviceInfoContent = {
-    @if(showBtaHeader){
-        @renderServiceInfoPartial(user)
-    }
-}
 
 @defaultScriptElem = {
     <script type="text/javascript" src=@routes.Assets.at("javascripts/ga-reporting.js")></script>
@@ -59,7 +48,7 @@
                sidebar = sidebar,
                contentHeader = contentHeader,
                mainContent = layouts.article(mainContent),
-               serviceInfoContent = serviceInfoContent,
+               serviceInfoContent = serviceInfo,
                scriptElem = Some(defaultScriptElem),
                showLogout = showLogout
 )
