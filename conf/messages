@@ -11,7 +11,7 @@ bta.home                                                        = Business tax h
 bta.messages                                                    = Messages
 bta.manage-account                                              = Manage account
 
-#Estimates
+## Estimates Page ##
 estimates.title                                                 = Income Tax Estimates
 
 ## Estimated Tax Liability Page ##
