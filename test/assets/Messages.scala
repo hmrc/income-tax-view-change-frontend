@@ -16,9 +16,34 @@
 
 package assets
 
-import play.twirl.api.Html
-
 object Messages {
+
+  // Home Page Messages
+  object HomePage {
+    val title = "Your Income Tax"
+    val pageHeading = "Your Income Tax"
+    val pageSubHeading: String => String = mtditid => s"Ref: $mtditid"
+    object EstimatesSection {
+      val heading = "Estimates"
+      val paragraph = "See what we think you might owe so far and at the end of your tax year."
+      val link = "View your estimates"
+    }
+    object BillsSection {
+      val heading = "Bills"
+      val paragraph = "See your current and previous Income Tax bills."
+      val link = "View your bills"
+    }
+    object StatementsSection {
+      val heading = "Statements"
+      val paragraph = "View your income tax transactions, including charges and payments."
+      val link = "View your statement"
+    }
+    object ReportDeadlinesSection {
+      val heading = "Report deadlines"
+      val paragraph = "Check your report deadlines and if we've received them."
+      val link = "View your deadlines"
+    }
+  }
 
   // Estimated Tax Liability Page Messages
   class EstimatedTaxLiability(taxYear: Int) {
