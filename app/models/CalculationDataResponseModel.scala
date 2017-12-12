@@ -30,11 +30,11 @@ case class CalculationDataModel(
                                  totalIncomeReceived: BigDecimal,
                                  proportionAllowance: BigDecimal,
                                  totalIncomeOnWhichTaxIsDue: BigDecimal,
-                                 payPensionsProfitAtBRT: Option[BigDecimal],
+                                 payPensionsProfitAtBRT: BigDecimal,
                                  incomeTaxOnPayPensionsProfitAtBRT: BigDecimal,
-                                 payPensionsProfitAtHRT: Option[BigDecimal],
+                                 payPensionsProfitAtHRT: BigDecimal,
                                  incomeTaxOnPayPensionsProfitAtHRT: BigDecimal,
-                                 payPensionsProfitAtART: Option[BigDecimal],
+                                 payPensionsProfitAtART: BigDecimal,
                                  incomeTaxOnPayPensionsProfitAtART: BigDecimal,
                                  incomeTaxDue: BigDecimal,
                                  totalClass4Charge: BigDecimal,
@@ -59,11 +59,11 @@ object CalculationDataModel {
       defaultZero(__ \ "totalIncomeReceived") and
       defaultZero(__ \ "proportionAllowance") and
       defaultZero(__ \ "totalIncomeOnWhichTaxIsDue") and
-      (__ \ "payPensionsProfitAtBRT").readNullable[BigDecimal] and
+      defaultZero(__ \ "payPensionsProfitAtBRT") and
       defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtBRT") and
-      (__ \ "payPensionsProfitAtHRT").readNullable[BigDecimal] and
+      defaultZero(__ \ "payPensionsProfitAtHRT") and
       defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtHRT") and
-      (__ \ "payPensionsProfitAtART").readNullable[BigDecimal] and
+      defaultZero(__ \ "payPensionsProfitAtART") and
       defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtART") and
       defaultZero(__ \ "incomeTaxDue") and
       defaultZero(__ \ "totalClass4Charge") and

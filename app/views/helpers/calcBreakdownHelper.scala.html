@@ -50,7 +50,7 @@
             <td id="brt-it-calc-heading">
                 <p>
                     @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                    (<span id="brt-it-calc">@breakdown.payPensionsProfitAtBRT.get.toCurrencyString</span> at
+                    (<span id="brt-it-calc">@breakdown.payPensionsProfitAtBRT.toCurrencyString</span> at
                     <span id="brt-rate">@breakdown.rateBRT</span>%)
                 </p>
             </td>
@@ -63,7 +63,7 @@
                 <td id="hrt-it-calc-heading">
                     <p>
                         @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                        (<span id="hrt-it-calc">@breakdown.payPensionsProfitAtHRT.get.toCurrencyString</span> at
+                        (<span id="hrt-it-calc">@breakdown.payPensionsProfitAtHRT.toCurrencyString</span> at
                         <span id="hrt-rate">@breakdown.rateHRT</span>%)
                     </p>
                 </td>
@@ -75,7 +75,7 @@
                     <td id="art-it-calc-heading">
                         <p>
                             @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                            (<span id="art-it-calc">@breakdown.payPensionsProfitAtART.get.toCurrencyString</span> at
+                            (<span id="art-it-calc">@breakdown.payPensionsProfitAtART.toCurrencyString</span> at
                             <span id="art-rate">@breakdown.rateART</span>%)
                         </p>
                     </td>
