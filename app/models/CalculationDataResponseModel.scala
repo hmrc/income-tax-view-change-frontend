@@ -52,8 +52,8 @@ case class EoyEstimate(incomeTaxNicAmount: BigDecimal)
 object CalculationDataModel {
   val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](BigDecimal(0)))
   implicit val reads: Reads[CalculationDataModel] = (
-    defaultZero(__ \ "incomeTaxYTD") and
-      defaultZero(__ \ "incomeTaxThisPeriod") and
+    (__ \ "incomeTaxYTD").read[BigDecimal] and
+      (__ \ "incomeTaxThisPeriod").read[BigDecimal] and
       defaultZero(__ \ "profitFromSelfEmployment") and
       defaultZero(__ \ "profitFromUkLandAndProperty") and
       defaultZero(__ \ "totalIncomeReceived") and
@@ -86,8 +86,8 @@ object EoyEstimate {
 }
 
 case class DesCalculationDataModel(
-                                    incomeTaxYTD: Option[BigDecimal],
-                                    incomeTaxThisPeriod: Option[BigDecimal],
+                                    incomeTaxYTD: BigDecimal,
+                                    incomeTaxThisPeriod: BigDecimal,
                                     profitFromSelfEmployment: Option[BigDecimal],
                                     profitFromUkLandAndProperty: Option[BigDecimal],
                                     totalIncomeReceived: Option[BigDecimal],

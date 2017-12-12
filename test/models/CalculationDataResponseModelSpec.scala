@@ -61,8 +61,8 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
       Json.parse(calculationDataFullString).as[CalculationDataModel] shouldBe calculationDataSuccessModel
     }
 
-    "If optional values aren't returned from DES they should be defaulted to 0" in {
-      Json.parse("{}").as[CalculationDataModel] shouldBe zeroDataModel
+    "If only mandatory values aren returned from DES then defaulted others to 0" in {
+      Json.parse(mandatoryCalculationDataSuccessString).as[CalculationDataModel] shouldBe mandatoryOnlyDataModel
     }
   }
 

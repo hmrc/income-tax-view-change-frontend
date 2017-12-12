@@ -581,7 +581,7 @@ object TestConstants extends ImplicitDateFormatter {
         incomeTaxDue = 2072.05
       )
 
-    val zeroDataModel =
+    val mandatoryOnlyDataModel =
       CalculationDataModel(
         profitFromSelfEmployment = 0,
         profitFromUkLandAndProperty = 0,
@@ -598,11 +598,19 @@ object TestConstants extends ImplicitDateFormatter {
         incomeTaxOnPayPensionsProfitAtART = 0,
         nationalInsuranceClass2Amount = 0,
         totalClass4Charge = 0,
-        incomeTaxYTD = 0,
-        incomeTaxThisPeriod = 0,
+        incomeTaxYTD = 90500,
+        incomeTaxThisPeriod = 2000,
         totalIncomeReceived = 0,
         incomeTaxDue = 0
       )
+
+    val mandatoryCalculationDataSuccessString: String =
+      """
+        |{
+        | "incomeTaxYTD": 90500,
+        | "incomeTaxThisPeriod": 2000
+        |}
+      """.stripMargin
 
     val calculationDataSuccessString: String =
       """
