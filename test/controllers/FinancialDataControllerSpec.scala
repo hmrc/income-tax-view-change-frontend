@@ -24,22 +24,25 @@ import assets.TestConstants.PropertyDetails._
 import assets.TestConstants.{IncomeSourceDetails, _}
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import mocks.controllers.predicates.MockAsyncActionPredicate
-import mocks.services.MockFinancialDataService
+import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.{MockFinancialDataService, MockServiceInfoPartialService}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{contentType, _}
-import services.ServiceInfoPartialService
 import utils.TestSupport
 
-class FinancialDataControllerSpec extends TestSupport with MockFinancialDataService with MockAsyncActionPredicate {
+class FinancialDataControllerSpec extends TestSupport with MockFinancialDataService with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService {
 
   object TestFinancialDataController extends FinancialDataController()(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
-    MockAsyncActionPredicate,
+    app.injector.instanceOf[SessionTimeoutPredicate],
+    MockAuthenticationPredicate,
+    app.injector.instanceOf[NinoPredicate],
+    MockIncomeSourceDetailsPredicate,
     mockFinancialDataService,
-    app.injector.instanceOf[ServiceInfoPartialService],
+    mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]
   )
@@ -57,6 +60,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           mockFinancialDataSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           status(result) shouldBe Status.OK
@@ -79,6 +83,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           mockPropertyIncomeSource()
           mockFinancialDataSuccess()
           status(result) shouldBe Status.OK
@@ -100,6 +105,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           mockFinancialDataNoBreakdown()
           status(result) shouldBe Status.OK
@@ -121,6 +127,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           mockFinancialDataError()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.OK
@@ -151,6 +158,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
         lazy val document = result.toHtmlDocument
 
         "return a 404" in {
+          mockServiceInfoPartialSuccess()
           mockFinancialDataNotFound()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.NOT_FOUND
@@ -171,6 +179,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
     "Called with an Unauthenticated User" should {
 
       "return redirect SEE_OTHER (303)" in {
+        mockServiceInfoPartialSuccess()
         setupMockAuthorisationException()
         mockPropertyIncomeSource()
         val result = TestFinancialDataController.getFinancialData(testYear)(fakeRequestWithActiveSession)
@@ -189,6 +198,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
         lazy val result = TestFinancialDataController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
         "return Status SEE_OTHER (303) (redirect)" in {
+          mockServiceInfoPartialSuccess()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.SEE_OTHER
         }
@@ -207,6 +217,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
         lazy val result = TestFinancialDataController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
         "return Status SEE_OTHER (303) (redirect)" in {
+          mockServiceInfoPartialSuccess()
           mockPropertyIncomeSource()
           status(result) shouldBe Status.SEE_OTHER
         }
@@ -227,6 +238,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
           lazy val result = TestFinancialDataController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
           "return Status SEE_OTHER (303) (redirect)" in {
+            mockServiceInfoPartialSuccess()
             mockBothIncomeSourcesBusinessAligned()
             status(result) shouldBe Status.SEE_OTHER
           }
@@ -246,6 +258,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
           lazy val result = TestFinancialDataController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
           "return Status SEE_OTHER (303) (redirect)" in {
+            mockServiceInfoPartialSuccess()
             mockBothIncomeSources()
             status(result) shouldBe Status.SEE_OTHER
           }
@@ -266,6 +279,7 @@ class FinancialDataControllerSpec extends TestSupport with MockFinancialDataServ
         lazy val result = TestFinancialDataController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
         "return Status ISE (500)" in {
+          mockServiceInfoPartialSuccess()
           mockNoIncomeSources()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }

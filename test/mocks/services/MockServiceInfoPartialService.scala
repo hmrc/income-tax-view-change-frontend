@@ -16,38 +16,17 @@
 
 package mocks.services
 
-import auth.MtdItUser
 import config.FrontendAppConfig
-import models.UserDetailsModel
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import services.ServiceInfoPartialService
-import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
-import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.http.HeaderCarrier
+import utils.TestSupport
 
 
-trait MockServiceInfoPartialService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
-
-  implicit val hcwc = HeaderCarrierForPartials(HeaderCarrier(), "")
-  implicit val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
-  implicit val user: MtdItUser = MtdItUser(
-    mtditid = "12341234",
-    nino = "AA123456A",
-    userDetails =
-      Some(
-        UserDetailsModel(
-          name = "Test User",
-          email = None,
-          affinityGroup = "",
-          credentialRole = ""
-        )
-      )
-  )
-  implicit val messages: Messages = mock[Messages]
+trait MockServiceInfoPartialService extends TestSupport with BeforeAndAfterEach {
 
   val mockServiceInfoPartialService: ServiceInfoPartialService = mock[ServiceInfoPartialService]
 
@@ -57,7 +36,7 @@ trait MockServiceInfoPartialService extends UnitSpec with MockitoSugar with Befo
   }
 
   def setupMockServiceInfoPartial()(response: Html): Unit =
-    when(mockServiceInfoPartialService.serviceInfoPartial())
+    when(mockServiceInfoPartialService.serviceInfoPartial()(ArgumentMatchers.any(), ArgumentMatchers.any()))
     .thenReturn(response)
 
   def mockServiceInfoPartialSuccess(): Unit = setupMockServiceInfoPartial()(

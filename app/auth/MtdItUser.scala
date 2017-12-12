@@ -16,6 +16,20 @@
 
 package auth
 
-import models.UserDetailsModel
+import models.{IncomeSourcesModel, UserDetailsModel}
+import play.api.mvc.{Request, WrappedRequest}
 
-case class MtdItUser(mtditid: String, nino: String, userDetails: Option[UserDetailsModel])
+case class MtdItUserOptionNino[A](mtditid: String,
+                                  nino: Option[String],
+                                  userDetails: Option[UserDetailsModel])(implicit request: Request[A]) extends WrappedRequest[A](request)
+
+case class MtdItUserWithNino[A](mtditid: String,
+                                nino: String,
+                                userDetails: Option[UserDetailsModel])(implicit request: Request[A]) extends WrappedRequest[A](request)
+
+case class MtdItUser[A](mtditid: String,
+                        nino: String,
+                        userDetails: Option[UserDetailsModel],
+                        incomeSources: IncomeSourcesModel
+                       )(implicit request: Request[A]) extends WrappedRequest[A](request)
+

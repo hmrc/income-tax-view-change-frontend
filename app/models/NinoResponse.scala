@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
-@import auth.MtdItUser
-@import connectors.ServiceInfoPartialConnector
+package models
 
-@(user: Option[MtdItUser[_]])(implicit messages: Messages, appConfig: FrontendAppConfig, serviceInfo: Html)
+import play.api.libs.json.{Json, OFormat}
 
-@serviceInfo
+sealed trait NinoResponse
 
+case class Nino(nino: String) extends NinoResponse
+
+case class NinoResponseError(status: Int, reason: String) extends NinoResponse
+
+object Nino {
+  implicit val format: OFormat[Nino] = Json.format[Nino]
+}
+object NinoResponseError {
+  implicit val format: OFormat[NinoResponseError] = Json.format[NinoResponseError]
+}

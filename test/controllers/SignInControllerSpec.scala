@@ -28,8 +28,7 @@ class SignInControllerSpec extends TestSupport {
   object TestSignInController extends SignInController(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[Configuration],
-    app.injector.instanceOf[Environment],
-    app.injector.instanceOf[MessagesApi]
+    app.injector.instanceOf[Environment]
   )
 
   "navigating to SignIn page" should {

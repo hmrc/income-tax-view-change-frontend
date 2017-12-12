@@ -20,6 +20,7 @@ import auth.MtdItUser
 import models._
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
+import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core._
 import utils.ImplicitDateFormatter
@@ -31,9 +32,10 @@ object TestConstants extends ImplicitDateFormatter {
   val testNino = "AB123456C"
   val testUserName = "Albert Einstein"
   val testUserDetails = UserDetailsModel(testUserName, None, "n/a", "n/a")
+  val testUserDetailsError = UserDetailsError
   val testUserDetailsUrl = "/user/oid/potato"
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
-  val testMtdItUserNoUserDetails: MtdItUser = MtdItUser(testMtditid, testNino, None)
+  lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
+  lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   val testSelfEmploymentId  = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testTaxCalculationId = "CALCID"
@@ -869,5 +871,24 @@ object TestConstants extends ImplicitDateFormatter {
         Estimates.lastTaxCalcSuccess.calcAmount,
         None
       )
+  }
+
+  object NinoLookup {
+    val testNinoModel: Nino = Nino(nino = testNino)
+    val testNinoModelJson: JsValue = Json.parse(
+      s"""{
+         |"nino":"$testNino"
+         |}
+       """.stripMargin)
+
+    val testNinoErrorModel: NinoResponseError = NinoResponseError(testErrorStatus, testErrorMessage)
+    val testNinoErrorModelJson: JsValue = Json.parse(
+      s"""
+         |{
+         |  "status":$testErrorStatus,
+         |  "reason":"$testErrorMessage"
+         |}
+       """.stripMargin
+    )
   }
 }

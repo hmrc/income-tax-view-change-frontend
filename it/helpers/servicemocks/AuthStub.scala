@@ -29,7 +29,7 @@ object AuthStub extends ComponentSpecBase {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
       Json.parse(
           s"""{
-          | "authorisedEnrolments": [{
+          | "allEnrolments": [{
           | "key":"$testMtditidEnrolmentKey",
           | "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
           | },
@@ -42,6 +42,21 @@ object AuthStub extends ComponentSpecBase {
           |}""".stripMargin).toString())
   }
 
+  def stubAuthorisedNoNino(): Unit = {
+    WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
+      Json.parse(
+      s"""
+         |{
+         |"allEnrolments": [{
+         |  "key":"$testMtditidEnrolmentKey",
+         |  "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
+         |}],
+         | "userDetailsUri":"$testUserDetailsWiremockUrl"
+         |}
+       """.stripMargin).toString
+    )
+  }
+
   def stubUnauthorised():Unit = {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.UNAUTHORIZED, "{}")
   }
@@ -50,7 +65,7 @@ object AuthStub extends ComponentSpecBase {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.INTERNAL_SERVER_ERROR,
       Json.parse(
         s"""{
-           |"authorisedEnrolments":[{}],
+           |"allEnrolments":[{}],
            |"userDetailsUri":"$testUserDetailsWiremockUrl"
            |}
          """.stripMargin).toString()
@@ -61,7 +76,7 @@ object AuthStub extends ComponentSpecBase {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.UNAUTHORIZED,
       Json.parse(
         s"""{
-           | "authorisedEnrolments": [{
+           | "allEnrolments": [{
            | "key":"ANOTHER-KEY",
            | "identifiers": [{"key":"ANOTHER-ID", "value":"XA123456789"}]
            | }],
