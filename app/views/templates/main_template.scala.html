@@ -27,7 +27,7 @@
   mainClass: Option[String] = None,
   scriptElem: Option[Html] = None,
   showLogout: Boolean = true,
-  user: Option[MtdItUser] = None,
+  user: Option[MtdItUser[_]] = None,
   showBtaHeader: Boolean = true
 )(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: FrontendAppConfig, serviceInfo: Html = Html(""))
 

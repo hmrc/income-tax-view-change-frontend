@@ -24,19 +24,19 @@ object EstimatesAuditing {
   val estimatesTransactionName = "ITVCEstimates"
   val estimatesAuditType = "estimatesPageView"
 
-  case class EstimatesAuditModel(user: MtdItUser, sources: IncomeSourcesModel, estimate: String) extends AuditModel {
+  case class EstimatesAuditModel[A](user: MtdItUser[A], estimate: String) extends AuditModel {
     override val transactionName: String = estimatesTransactionName
     //TODO: Auditing needs to be revisited for multiple business scenario - speak to Kris McLackland
-    val business = sources.businessIncomeSources.headOption
+    val business = user.incomeSources.businessIncomeSources.headOption
     override val detail: Map[String, String] = Map(
       "mtdid" -> user.mtditid,
       "nino" -> user.nino,
-      "hasBusiness" -> sources.hasBusinessIncome.toString,
-      "hasProperty" -> sources.hasPropertyIncome.toString,
+      "hasBusiness" -> user.incomeSources.hasBusinessIncome.toString,
+      "hasProperty" -> user.incomeSources.hasPropertyIncome.toString,
       "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.start}"),
       "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.end}"),
-      "propAccPeriodStart" -> sources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "propAccPeriodEnd" -> sources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.end}"),
+      "propAccPeriodStart" -> user.incomeSources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.start}"),
+      "propAccPeriodEnd" -> user.incomeSources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.end}"),
       "currentEstimate" -> estimate
     )
     override val auditType: String = estimatesAuditType

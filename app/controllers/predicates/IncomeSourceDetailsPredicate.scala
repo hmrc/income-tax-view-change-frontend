@@ -18,13 +18,14 @@ package controllers.predicates
 
 import javax.inject.{Inject, Singleton}
 
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
 import models.{IncomeSourcesError, IncomeSourcesModel}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{AnyContent, Request, Result}
+import play.api.mvc.{ActionRefiner, Result}
 import services.IncomeSourceDetailsService
+import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.Future
 
@@ -32,12 +33,16 @@ import scala.concurrent.Future
 class IncomeSourceDetailsPredicate @Inject()(implicit val messagesApi: MessagesApi,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              val itvcErrorHandler: ItvcErrorHandler
-                                            ) extends BaseController {
+                                            ) extends BaseController with ActionRefiner[MtdItUserWithNino, MtdItUser] {
 
-  def retrieveIncomeSources(f: IncomeSourcesModel => Future[Result])(implicit request: Request[AnyContent], user: MtdItUser): Future[Result] = {
-    incomeSourceDetailsService.getIncomeSourceDetails(user.nino).flatMap {
-      case x: IncomeSourcesModel => f(x)
-      case IncomeSourcesError => Future.successful(itvcErrorHandler.showInternalServerError)
+  override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUser[A]]] = {
+
+    implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val req = request
+
+    incomeSourceDetailsService.getIncomeSourceDetails(request.nino) map {
+      case sources: IncomeSourcesModel => Right(MtdItUser(request.mtditid, request.nino, request.userDetails, sources))
+      case IncomeSourcesError => Left(itvcErrorHandler.showInternalServerError)
     }
   }
 }

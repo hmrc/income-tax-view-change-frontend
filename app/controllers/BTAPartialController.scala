@@ -19,7 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import config.FrontendAppConfig
-import controllers.predicates.AsyncActionPredicate
+import controllers.predicates._
 import models._
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
@@ -31,17 +31,18 @@ import scala.concurrent.Future
 @Singleton
 class BTAPartialController @Inject()(implicit val config: FrontendAppConfig,
                                      implicit val messagesApi: MessagesApi,
-                                     val actionPredicate: AsyncActionPredicate,
+                                     val checkSessionTimeout: SessionTimeoutPredicate,
+                                     val authenticate: AuthenticationPredicate,
+                                     val retrieveNino: NinoPredicate,
+                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                      val btaPartialService: BTAPartialService
                                     ) extends BaseController {
 
-  val setupPartial: Action[AnyContent] = actionPredicate.async {
-    implicit request =>
-      implicit user =>
-        implicit sources =>
-          getAllEstimates(user.nino, sources.orderedTaxYears).map { allEstimates =>
-            Ok(views.html.btaPartial(btaPartialService.getNextObligation(sources), allEstimates))
-          }
+  val setupPartial: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+    implicit user =>
+      getAllEstimates(user.nino, user.incomeSources.orderedTaxYears).map { allEstimates =>
+        Ok(views.html.btaPartial(btaPartialService.getNextObligation(user.incomeSources), allEstimates))
+      }
   }
 
   private def getAllEstimates(nino: String, orderedYears: List[Int])(implicit headerCarrier: HeaderCarrier): Future[List[LastTaxCalculationWithYear]] =

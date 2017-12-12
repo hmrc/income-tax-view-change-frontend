@@ -16,6 +16,8 @@
 
 package utils
 
+import assets.TestConstants
+import assets.TestConstants.IncomeSourceDetails
 import auth.MtdItUser
 import com.typesafe.config.Config
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
@@ -25,11 +27,10 @@ import org.jsoup.nodes.Document
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Suite}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.{Configuration, Environment}
-import play.api.Mode.Mode
 import play.api.i18n.MessagesApi
 import play.api.mvc.Result
 import play.api.test.FakeRequest
+import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
@@ -54,7 +55,7 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
   implicit val frontendAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   implicit val config: Config = app.configuration.underlying
 
-  implicit val user: MtdItUser = MtdItUser(
+  implicit val user: MtdItUser[_] = MtdItUser(
     mtditid = "12341234",
     nino = "AA123456A",
     userDetails =
@@ -65,8 +66,9 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
           affinityGroup = "",
           credentialRole = ""
         )
-      )
-  )
+      ),
+    incomeSources = IncomeSourceDetails.bothIncomeSourcesSuccessBusinessAligned
+  )(FakeRequest())
 
   implicit val serviceInfo: Html = Html("")
 
@@ -81,6 +83,7 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
   lazy val fakeRequestWithTimeoutSession = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
+  lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> TestConstants.testNino)
   lazy val fakeRequestNoSession = FakeRequest()
 
 }

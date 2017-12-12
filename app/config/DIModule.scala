@@ -19,7 +19,6 @@ package config
 import auth.FrontendAuthorisedFunctions
 import com.google.inject.AbstractModule
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClient}
 
 class DIModule extends AbstractModule{
   def configure(): Unit = {

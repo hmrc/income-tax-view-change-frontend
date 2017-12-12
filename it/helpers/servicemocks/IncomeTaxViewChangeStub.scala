@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import helpers.WiremockHelper
-import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
+import models._
 import play.api.http.Status
 import play.api.libs.json.Json
 
@@ -27,6 +27,8 @@ object IncomeTaxViewChangeStub {
     s"/income-tax-view-change/estimated-tax-liability/$nino/$year/it"
 
   val calcUrl: (String,String) => String = (nino, taxCalculationId) => s"/ni/$nino/calculations/$taxCalculationId"
+
+  val ninoLookupUrl: (String) => String = mtdRef => s"/income-tax-view-change/nino-lookup/$mtdRef"
 
   def stubGetLastTaxCalc(nino: String, year: String, lastCalc: LastTaxCalculation): Unit = {
     WiremockHelper.stubGet(lastCalcUrl(nino, year), Status.OK, Json.toJson(lastCalc).toString())
@@ -54,4 +56,14 @@ object IncomeTaxViewChangeStub {
 
   def verifyGetCalcData(nino: String, taxCalculationId: String): Unit =
     WiremockHelper.verifyGet(calcUrl(nino, taxCalculationId))
+
+  def stubGetNinoResponse(mtdRef: String, nino: Nino): Unit =
+    WiremockHelper.stubGet(ninoLookupUrl(mtdRef), Status.OK, Json.toJson(nino).toString)
+
+  def stubGetNinoError(mtdRef: String, error: NinoResponseError): Unit =
+    WiremockHelper.stubGet(ninoLookupUrl(mtdRef), Status.OK, Json.toJson(error).toString)
+
+  def verifyGetNino(mtdRef: String): Unit =
+    WiremockHelper.verifyGet(ninoLookupUrl(mtdRef))
+
 }

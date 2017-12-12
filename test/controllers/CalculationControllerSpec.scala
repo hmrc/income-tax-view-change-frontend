@@ -24,22 +24,25 @@ import assets.TestConstants.PropertyDetails._
 import assets.TestConstants.{IncomeSourceDetails, _}
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import mocks.controllers.predicates.MockAsyncActionPredicate
-import mocks.services.MockCalculationService
+import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.{MockCalculationService, MockServiceInfoPartialService}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{contentType, _}
-import services.ServiceInfoPartialService
 import utils.TestSupport
 
-class CalculationControllerSpec extends TestSupport with MockCalculationService with MockAsyncActionPredicate {
+class CalculationControllerSpec extends TestSupport with MockCalculationService with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService {
 
-  object TestCalculationController$ extends CalculationController()(
+  object TestCalculationController extends CalculationController()(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
-    MockAsyncActionPredicate,
+    app.injector.instanceOf[SessionTimeoutPredicate],
+    MockAuthenticationPredicate,
+    app.injector.instanceOf[NinoPredicate],
+    MockIncomeSourceDetailsPredicate,
     mockCalculationService,
-    app.injector.instanceOf[ServiceInfoPartialService],
+    mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]
   )
@@ -53,10 +56,11 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
       "that successfully retrieves Business only income from the Income Sources predicate" +
         "and financial data from the FinancialData Service" should {
 
-        lazy val result = TestCalculationController$.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           mockFinancialDataSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           status(result) shouldBe Status.OK
@@ -75,10 +79,11 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
       "receives Property only income from the Income Sources predicate" +
         "and financial data from the FinancialData Service" should {
 
-        lazy val result = TestCalculationController$.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           mockPropertyIncomeSource()
           mockFinancialDataSuccess()
           status(result) shouldBe Status.OK
@@ -94,11 +99,12 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
         }
       }
 
-      "receives a crystalised payments from the calculationService" should {
-        lazy val result = TestCalculationController$.getFinancialData(testYear)(fakeRequestWithActiveSession)
+      "receives a crystalised payment from the calculationService" should {
+        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           mockPropertyIncomeSource()
           mockFinancialDataCrystalisationSuccess()
           status(result) shouldBe Status.OK
@@ -117,10 +123,11 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
 
       "receives Business Income source from the Income Sources predicate and an error from the FinancialData Service" should {
 
-        lazy val result = TestCalculationController$.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           mockFinancialDataNoBreakdown()
           status(result) shouldBe Status.OK
@@ -138,10 +145,11 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
 
       "receives Business Income from the Income Sources predicate and an error from the FinancialData Service" should {
 
-        lazy val result = TestCalculationController$.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           mockFinancialDataError()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.OK
@@ -168,10 +176,11 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
 
       "receives Business Income from the Income Sources predicate and No Data Found from the FinancialData Service" should {
 
-        lazy val result = TestCalculationController$.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return a 404" in {
+          mockServiceInfoPartialSuccess()
           mockFinancialDataNotFound()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.NOT_FOUND
@@ -192,9 +201,10 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
     "Called with an Unauthenticated User" should {
 
       "return redirect SEE_OTHER (303)" in {
+        mockServiceInfoPartialSuccess()
         setupMockAuthorisationException()
         mockPropertyIncomeSource()
-        val result = TestCalculationController$.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -207,9 +217,10 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
 
       "successfully retrieves Business only income from the Income Sources predicate" should {
 
-        lazy val result = TestCalculationController$.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
         "return Status SEE_OTHER (303) (redirect)" in {
+          mockServiceInfoPartialSuccess()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.SEE_OTHER
         }
@@ -225,9 +236,10 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
 
       "successfully retrieves Property only income from the Income Sources predicate" should {
 
-        lazy val result = TestCalculationController$.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
         "return Status SEE_OTHER (303) (redirect)" in {
+          mockServiceInfoPartialSuccess()
           mockPropertyIncomeSource()
           status(result) shouldBe Status.SEE_OTHER
         }
@@ -245,9 +257,10 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
 
         "the Business Accounting Period is aligned to the Tax Year and the Property Income" should {
 
-          lazy val result = TestCalculationController$.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
+          lazy val result = TestCalculationController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
           "return Status SEE_OTHER (303) (redirect)" in {
+            mockServiceInfoPartialSuccess()
             mockBothIncomeSourcesBusinessAligned()
             status(result) shouldBe Status.SEE_OTHER
           }
@@ -264,9 +277,10 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
 
         "the Property Income Accounting Period is prior to the Business Income Accounting Period" should {
 
-          lazy val result = TestCalculationController$.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
+          lazy val result = TestCalculationController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
           "return Status SEE_OTHER (303) (redirect)" in {
+            mockServiceInfoPartialSuccess()
             mockBothIncomeSources()
             status(result) shouldBe Status.SEE_OTHER
           }
@@ -284,9 +298,10 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
 
       "retrieves no Income Sources via the Income Sources predicate" should {
 
-        lazy val result = TestCalculationController$.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.redirectToEarliestEstimatedTaxLiability(fakeRequestWithActiveSession)
 
         "return Status ISE (500)" in {
+          mockServiceInfoPartialSuccess()
           mockNoIncomeSources()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -297,7 +312,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
 
       "return redirect SEE_OTHER (303)" in {
         setupMockAuthorisationException()
-        val result = TestCalculationController$.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }

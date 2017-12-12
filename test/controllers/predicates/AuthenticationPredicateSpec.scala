@@ -17,9 +17,12 @@
 package controllers.predicates
 
 import assets.TestConstants._
+import auth.MtdItUserWithNino
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.IncomeSourcesError
 import org.scalatest.mockito.MockitoSugar
+import play.api.{Configuration, Environment}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Ok
@@ -30,46 +33,31 @@ import uk.gov.hmrc.auth.core._
 
 import scala.concurrent.Future
 
-class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
-  "The authentication async method" when {
+  "The AuthenticationPredicate" when {
 
     def setupResult(): Action[AnyContent] =
-      new AsyncActionPredicate()(
+      new AuthenticationPredicate(
+        mockAuthService,
+        app.injector.instanceOf[FrontendAppConfig],
+        app.injector.instanceOf[Configuration],
+        app.injector.instanceOf[Environment],
         app.injector.instanceOf[MessagesApi],
-        app.injector.instanceOf[SessionTimeoutPredicate],
-        MockAuthenticationPredicate,
-        MockIncomeSourceDetailsPredicate
-      ).async {
-        implicit request => implicit user => implicit sources =>
-          Future.successful(Ok(user.mtditid + " " + user.nino))
+        mockUserDetailsConnector,
+        app.injector.instanceOf[ItvcErrorHandler]).async {
+        implicit request =>
+          Future.successful(Ok(testMtditid + " " + testNino))
       }
 
     "called with an authenticated user" when {
 
       def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
 
-      "a HMRC-MTD-IT enrolment exists with a NINO" when {
+      "a HMRC-MTD-IT enrolment exists" when {
 
-        "valid income source details are retrieved" should {
-
-          "return Ok (200)" in {
-            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
-            status(result) shouldBe Status.OK
-          }
-
-          "should have a body with the expected user details" in {
-            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
-            bodyOf(await(result)) shouldBe testMtditid + " " + testNino
-          }
-        }
-
-        "no valid income source details are retrieved" should {
-
-          "return ISE (500)" in {
-            setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesError)
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
+        "return Ok (200)" in {
+          status(result) shouldBe Status.OK
         }
       }
 
@@ -78,12 +66,17 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
         "have a redirect (303 - SEE_OTHER) status" in {
           setupMockAuthorisationException(new InsufficientEnrolments)
           status(result) shouldBe Status.SEE_OTHER
-
         }
 
         "redirect to the Not Enrolled page" in {
           setupMockAuthorisationException(new InsufficientEnrolments)
           redirectLocation(result) shouldBe Some(controllers.notEnrolled.routes.NotEnrolledController.show().url)
+        }
+      }
+      "there is a HMRC-MTD-IT enrolment but a user details error from auth" should {
+        "return Ok (200)" in {
+          setupMockUserDetails()(testUserDetailsError)
+          status(result) shouldBe Status.OK
         }
       }
     }
@@ -99,19 +92,6 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
 
       "should redirect to GG Sign In" in {
         setupMockAuthorisationException(new BearerTokenExpired)
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
-      }
-    }
-
-    "called with an Authenticated User with a Timed Out session (Session Expired)" should {
-
-      lazy val result = setupResult()(fakeRequestWithTimeoutSession)
-
-      "should be a rerdirect (303)" in {
-        status(result) shouldBe Status.SEE_OTHER
-      }
-
-      "should redirect to GG Sign In" in {
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
       }
     }
@@ -133,13 +113,16 @@ class AsyncActionPredicateSpec extends TestSupport with MockitoSugar with MockAu
     "When an exception which is not an authorisation exception" should {
 
       def setupFailedFutureResult(): Action[AnyContent] =
-        new AsyncActionPredicate()(
+        new AuthenticationPredicate(
+          mockAuthService,
+          app.injector.instanceOf[FrontendAppConfig],
+          app.injector.instanceOf[Configuration],
+          app.injector.instanceOf[Environment],
           app.injector.instanceOf[MessagesApi],
-          app.injector.instanceOf[SessionTimeoutPredicate],
-          MockAuthenticationPredicate,
-          MockIncomeSourceDetailsPredicate
+          mockUserDetailsConnector,
+          app.injector.instanceOf[ItvcErrorHandler]
         ).async {
-          implicit request => implicit user => implicit sources =>
+          implicit request =>
             Future.failed(new Exception("Unexpected Error"))
         }
 

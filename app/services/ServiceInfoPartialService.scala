@@ -35,7 +35,7 @@ class ServiceInfoPartialService @Inject()(implicit val config: FrontendAppConfig
                                           val serviceInfoPartialConnector: ServiceInfoPartialConnector
                                          ) extends I18nSupport {
 
-  def serviceInfoPartial()(implicit hc: HeaderCarrierForPartials, user: MtdItUser): Future[Html] = {
+  def serviceInfoPartial[A]()(implicit hc: HeaderCarrierForPartials, user: MtdItUser[A]): Future[Html] = {
     serviceInfoPartialConnector.getServiceInfoPartial().map { htmlResult =>
       if (htmlResult.body.isEmpty) {
         Logger.warn("[ServiceInfoPartialService][serviceInfoPartial] - could not retrieve BTA Service Info Partial")

@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package mocks.controllers.predicates
+package services
 
-import controllers.predicates.{AsyncActionPredicate, AuthenticationPredicate, IncomeSourceDetailsPredicate, SessionTimeoutPredicate}
-import play.api.i18n.MessagesApi
-import utils.TestSupport
+import javax.inject.{Inject, Singleton}
 
-trait MockAsyncActionPredicate extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+import connectors.NinoLookupConnector
+import models._
+import play.api.Logger
+import uk.gov.hmrc.http.HeaderCarrier
 
-  object MockAsyncActionPredicate extends AsyncActionPredicate()(
-      app.injector.instanceOf[MessagesApi],
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
-      MockIncomeSourceDetailsPredicate
-  )
+import scala.concurrent.Future
 
+@Singleton
+class NinoLookupService @Inject()(val ninoLookupConnector: NinoLookupConnector
+                                      ) {
+
+  def getNino(mtdRef:String)(implicit hc: HeaderCarrier): Future[NinoResponse] = {
+    Logger.debug(
+      s"[NinoLookupService][getNino] - Requesting NINO from connector for user with MtdRef: $mtdRef")
+    ninoLookupConnector.getNino(mtdRef)
+  }
 }
