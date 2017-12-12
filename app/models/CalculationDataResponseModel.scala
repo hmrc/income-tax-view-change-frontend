@@ -43,36 +43,36 @@ case class CalculationDataModel(
                                  rateHRT: BigDecimal,
                                  rateART: BigDecimal,
                                  eoyEstimate: Option[EoyEstimate] = None
-                                 ) extends CalculationDataResponseModel
+                               ) extends CalculationDataResponseModel
 
 case class CalculationDataErrorModel(code: Int, message: String) extends CalculationDataResponseModel
 
 case class EoyEstimate(incomeTaxNicAmount: BigDecimal)
 
 object CalculationDataModel {
-  val zero: Reads[BigDecimal] = Reads.pure[BigDecimal](0)
+  val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](BigDecimal(0)))
   implicit val reads: Reads[CalculationDataModel] = (
-      (__ \ "incomeTaxYTD").read[BigDecimal].orElse(zero) and
-      (__ \ "incomeTaxThisPeriod").read[BigDecimal].orElse(zero) and
-      (__ \ "profitFromSelfEmployment").read[BigDecimal].orElse(zero) and
-      (__ \ "profitFromUkLandAndProperty").read[BigDecimal].orElse(zero) and
-      (__ \ "totalIncomeReceived").read[BigDecimal].orElse(zero) and
-      (__ \ "proportionAllowance").read[BigDecimal].orElse(zero) and
-      (__ \ "totalIncomeOnWhichTaxIsDue").read[BigDecimal].orElse(zero) and
+    defaultZero(__ \ "incomeTaxYTD") and
+      defaultZero(__ \ "incomeTaxThisPeriod") and
+      defaultZero(__ \ "profitFromSelfEmployment") and
+      defaultZero(__ \ "profitFromUkLandAndProperty") and
+      defaultZero(__ \ "totalIncomeReceived") and
+      defaultZero(__ \ "proportionAllowance") and
+      defaultZero(__ \ "totalIncomeOnWhichTaxIsDue") and
       (__ \ "payPensionsProfitAtBRT").readNullable[BigDecimal] and
-      (__ \ "incomeTaxOnPayPensionsProfitAtBRT").read[BigDecimal].orElse(zero) and
+      defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtBRT") and
       (__ \ "payPensionsProfitAtHRT").readNullable[BigDecimal] and
-      (__ \ "incomeTaxOnPayPensionsProfitAtHRT").read[BigDecimal].orElse(zero) and
+      defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtHRT") and
       (__ \ "payPensionsProfitAtART").readNullable[BigDecimal] and
-      (__ \ "incomeTaxOnPayPensionsProfitAtART").read[BigDecimal].orElse(zero) and
-      (__ \ "incomeTaxDue").read[BigDecimal].orElse(zero) and
-      (__ \ "totalClass4Charge").read[BigDecimal].orElse(zero) and
-      (__ \ "nationalInsuranceClass2Amount").read[BigDecimal].orElse(zero) and
-      (__ \ "rateBRT").read[BigDecimal].orElse(zero) and
-      (__ \ "rateHRT").read[BigDecimal].orElse(zero) and
-      (__ \ "rateART").read[BigDecimal].orElse(zero) and
+      defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtART") and
+      defaultZero(__ \ "incomeTaxDue") and
+      defaultZero(__ \ "totalClass4Charge") and
+      defaultZero(__ \ "nationalInsuranceClass2Amount") and
+      defaultZero(__ \ "rateBRT") and
+      defaultZero(__ \ "rateHRT") and
+      defaultZero(__ \ "rateART") and
       (__ \ "eoyEstimate").readNullable[EoyEstimate]
-    )(CalculationDataModel.apply _)
+    ) (CalculationDataModel.apply _)
   implicit val writes: Writes[CalculationDataModel] = Json.writes[CalculationDataModel]
 }
 
