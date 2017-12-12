@@ -31,7 +31,7 @@ class SidebarHelperSpec extends TestSupport {
 
   lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  def html(page: Page, user: MtdItUser, taxYear: Option[Int], incomeSourcesModel: IncomeSourcesModel): Html =
+  def html(page: Page, user: MtdItUser[_], taxYear: Option[Int], incomeSourcesModel: IncomeSourcesModel): Html =
     sidebarHelper(page, incomeSourcesModel, taxYear)(
       applicationMessages,
       appConfig,

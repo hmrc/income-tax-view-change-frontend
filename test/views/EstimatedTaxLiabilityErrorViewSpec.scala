@@ -36,8 +36,8 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModel), Some(propertyIncomeModel))
+  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), testIncomeSources)(FakeRequest())
 
   "The EstimatedTaxLiabilityError view" should {
 

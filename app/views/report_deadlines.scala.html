@@ -20,7 +20,7 @@
 @import views.helpers.ReportDeadlinesPage
 @import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
 
-@(incomeSources: models.IncomeSourcesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser, serviceInfo: Html)
+@(incomeSources: models.IncomeSourcesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], serviceInfo: Html)
 
 @sidebar = {
     @sidebarHelper(ReportDeadlinesPage, incomeSources)
@@ -67,6 +67,7 @@
                         <section>
                     }
                     <h2 id="pi-section" class="heading-large">@Messages("obligations.pi.subheading")</h2>
+                    <p id="portfolio">@Messages("obligations.pi.portfolio")</p>
                     @renderReportDeadlines(p.reportDeadlines, "pi")
                 </section>
             }
