@@ -581,6 +581,29 @@ object TestConstants extends ImplicitDateFormatter {
         incomeTaxDue = 2072.05
       )
 
+    val zeroDataModel =
+      CalculationDataModel(
+        profitFromSelfEmployment = 0,
+        profitFromUkLandAndProperty = 0,
+        proportionAllowance = 0,
+        totalIncomeOnWhichTaxIsDue = 0,
+        payPensionsProfitAtBRT = None,
+        rateBRT = 0,
+        incomeTaxOnPayPensionsProfitAtBRT = 0,
+        payPensionsProfitAtHRT = None,
+        rateHRT = 0,
+        incomeTaxOnPayPensionsProfitAtHRT = 0,
+        payPensionsProfitAtART = None,
+        rateART = 0,
+        incomeTaxOnPayPensionsProfitAtART = 0,
+        nationalInsuranceClass2Amount = 0,
+        totalClass4Charge = 0,
+        incomeTaxYTD = 0,
+        incomeTaxThisPeriod = 0,
+        totalIncomeReceived = 0,
+        incomeTaxDue = 0
+      )
+
     val calculationDataSuccessString: String =
       """
         |{
@@ -845,6 +868,8 @@ object TestConstants extends ImplicitDateFormatter {
         |    }
         |}
       """.stripMargin
+
+    val calculationDataSuccessMinString: String = "{}"
 
     val calculationDataSuccessJson: JsValue = Json.parse(calculationDataSuccessString)
 

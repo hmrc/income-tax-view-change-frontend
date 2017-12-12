@@ -60,6 +60,10 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
     "be able to parse a full JSON string into the Model" in {
       Json.parse(calculationDataFullString).as[CalculationDataModel] shouldBe calculationDataSuccessModel
     }
+
+    "If optional values aren't returned from DES they should be defaulted to 0" in {
+      Json.parse("{}").as[CalculationDataModel] shouldBe zeroDataModel
+    }
   }
 
   "The CalculationDataErrorModel" should {

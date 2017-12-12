@@ -16,7 +16,9 @@
 
 package models
 
-import play.api.libs.json.{OFormat, Json}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
+import play.api.libs.json.{Json, OFormat, Reads, _}
 
 sealed trait CalculationDataResponseModel
 
@@ -48,7 +50,30 @@ case class CalculationDataErrorModel(code: Int, message: String) extends Calcula
 case class EoyEstimate(incomeTaxNicAmount: BigDecimal)
 
 object CalculationDataModel {
-  implicit val format: OFormat[CalculationDataModel] = Json.format[CalculationDataModel]
+  val zero: Reads[BigDecimal] = Reads.pure[BigDecimal](0)
+  implicit val reads: Reads[CalculationDataModel] = (
+      (__ \ "incomeTaxYTD").read[BigDecimal].orElse(zero) and
+      (__ \ "incomeTaxThisPeriod").read[BigDecimal].orElse(zero) and
+      (__ \ "profitFromSelfEmployment").read[BigDecimal].orElse(zero) and
+      (__ \ "profitFromUkLandAndProperty").read[BigDecimal].orElse(zero) and
+      (__ \ "totalIncomeReceived").read[BigDecimal].orElse(zero) and
+      (__ \ "proportionAllowance").read[BigDecimal].orElse(zero) and
+      (__ \ "totalIncomeOnWhichTaxIsDue").read[BigDecimal].orElse(zero) and
+      (__ \ "payPensionsProfitAtBRT").readNullable[BigDecimal] and
+      (__ \ "incomeTaxOnPayPensionsProfitAtBRT").read[BigDecimal].orElse(zero) and
+      (__ \ "payPensionsProfitAtHRT").readNullable[BigDecimal] and
+      (__ \ "incomeTaxOnPayPensionsProfitAtHRT").read[BigDecimal].orElse(zero) and
+      (__ \ "payPensionsProfitAtART").readNullable[BigDecimal] and
+      (__ \ "incomeTaxOnPayPensionsProfitAtART").read[BigDecimal].orElse(zero) and
+      (__ \ "incomeTaxDue").read[BigDecimal].orElse(zero) and
+      (__ \ "totalClass4Charge").read[BigDecimal].orElse(zero) and
+      (__ \ "nationalInsuranceClass2Amount").read[BigDecimal].orElse(zero) and
+      (__ \ "rateBRT").read[BigDecimal].orElse(zero) and
+      (__ \ "rateHRT").read[BigDecimal].orElse(zero) and
+      (__ \ "rateART").read[BigDecimal].orElse(zero) and
+      (__ \ "eoyEstimate").readNullable[EoyEstimate]
+    )(CalculationDataModel.apply _)
+  implicit val writes: Writes[CalculationDataModel] = Json.writes[CalculationDataModel]
 }
 
 
@@ -58,4 +83,31 @@ object CalculationDataErrorModel {
 
 object EoyEstimate {
   implicit val format: OFormat[EoyEstimate] = Json.format[EoyEstimate]
+}
+
+case class DesCalculationDataModel(
+                                    incomeTaxYTD: Option[BigDecimal],
+                                    incomeTaxThisPeriod: Option[BigDecimal],
+                                    profitFromSelfEmployment: Option[BigDecimal],
+                                    profitFromUkLandAndProperty: Option[BigDecimal],
+                                    totalIncomeReceived: Option[BigDecimal],
+                                    proportionAllowance: Option[BigDecimal],
+                                    totalIncomeOnWhichTaxIsDue: Option[BigDecimal],
+                                    payPensionsProfitAtBRT: Option[BigDecimal],
+                                    incomeTaxOnPayPensionsProfitAtBRT: Option[BigDecimal],
+                                    payPensionsProfitAtHRT: Option[BigDecimal],
+                                    incomeTaxOnPayPensionsProfitAtHRT: Option[BigDecimal],
+                                    payPensionsProfitAtART: Option[BigDecimal],
+                                    incomeTaxOnPayPensionsProfitAtART: Option[BigDecimal],
+                                    incomeTaxDue: Option[BigDecimal],
+                                    totalClass4Charge: Option[BigDecimal],
+                                    nationalInsuranceClass2Amount: Option[BigDecimal],
+                                    rateBRT: Option[BigDecimal],
+                                    rateHRT: Option[BigDecimal],
+                                    rateART: Option[BigDecimal],
+                                    eoyEstimate: Option[EoyEstimate]
+                                  )
+
+object DesCalculationDataModel {
+  implicit val format: Format[DesCalculationDataModel] = Json.format[DesCalculationDataModel]
 }
