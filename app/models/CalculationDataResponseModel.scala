@@ -85,7 +85,7 @@ object EoyEstimate {
   implicit val format: OFormat[EoyEstimate] = Json.format[EoyEstimate]
 }
 
-case class DesCalculationDataModel(
+case class ApiCalculationResponse(
                                     incomeTaxYTD: BigDecimal,
                                     incomeTaxThisPeriod: BigDecimal,
                                     profitFromSelfEmployment: Option[BigDecimal],
@@ -108,6 +108,6 @@ case class DesCalculationDataModel(
                                     eoyEstimate: Option[EoyEstimate]
                                   )
 
-object DesCalculationDataModel {
-  implicit val format: Format[DesCalculationDataModel] = Json.format[DesCalculationDataModel]
+object ApiCalculationResponse {
+  implicit val format: Format[ApiCalculationResponse] = Json.format[ApiCalculationResponse]
 }
