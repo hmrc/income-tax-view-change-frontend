@@ -17,6 +17,7 @@
 package controllers.predicates
 
 import assets.TestConstants._
+import audit.AuditingService
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.MockNinoLookupService
@@ -46,7 +47,8 @@ class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLooku
 
     object TestPredicate extends NinoPredicate(
       mockNinoLookupService,
-      app.injector.instanceOf[ItvcErrorHandler]
+      app.injector.instanceOf[ItvcErrorHandler],
+      app.injector.instanceOf[AuditingService]
     )
 
     "called with a user with a NINO enrolment" should {
