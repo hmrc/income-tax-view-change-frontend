@@ -16,28 +16,58 @@
 
 package controllers
 
-import config.FrontendAppConfig
+import assets.Messages
+import config.{FeatureSwitchConfig, FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import mocks.config.MockFeatureSwitchConfig
+import mocks.controllers.predicates.MockAuthenticationPredicate
+import mocks.services.MockServiceInfoPartialService
+import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
-import utils.TestSupport
 
-class HomeControllerSpec extends TestSupport {
+class HomeControllerSpec extends MockAuthenticationPredicate with MockServiceInfoPartialService with MockFeatureSwitchConfig {
 
-  object TestHomeController extends HomeController()(
+  object TestHomeController extends HomeController(
+    app.injector.instanceOf[SessionTimeoutPredicate],
+    MockAuthenticationPredicate,
+    app.injector.instanceOf[NinoPredicate],
+    mockServiceInfoPartialService,
+    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
+    mockFeatureSwitchConfig,
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi]
   )
 
-  "navigating to the home page" should {
-    lazy val result = TestHomeController.redirect(fakeRequestWithActiveSession)
+  "navigating to the home page" when {
 
-    "return OK (303)" in {
-      status(result) shouldBe Status.SEE_OTHER
+    "the home page feature is disabled" should {
+
+      lazy val result = TestHomeController.home(fakeRequestWithActiveSession)
+
+      "return Redirect (303)" in {
+        setupMockHomePageEnabled(false)
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the BTA home page" in {
+        redirectLocation(result) shouldBe Some(TestHomeController.config.businessTaxAccount)
+      }
     }
 
-    "redirect to the BTA home page" in {
-      redirectLocation(result) shouldBe Some(TestHomeController.config.businessTaxAccount)
+    "the home page feature is enabled" should {
+
+      lazy val result = TestHomeController.home(fakeRequestWithActiveSession)
+
+      "return OK (200)" in {
+        setupMockHomePageEnabled(true)
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the Income Tax Home Page" in {
+        Jsoup.parse(bodyOf(result)).title shouldBe Some(Messages.HomePage.title)
+      }
     }
 
   }

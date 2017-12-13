@@ -17,6 +17,7 @@
 package controllers
 
 import assets.Messages.{ISE => errorMessages, ReportDeadlines => messages}
+import assets.TestConstants.testUserName
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -53,7 +54,7 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationP
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           mockSingleBusinessIncomeSource()
           mockBusinessSuccess()
           status(result) shouldBe Status.OK
@@ -75,7 +76,7 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationP
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
@@ -97,7 +98,7 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationP
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           mockBothIncomeSources()
           mockBusinessSuccess()
           mockPropertySuccess()
@@ -120,7 +121,7 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationP
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           mockNoIncomeSources()
           status(result) shouldBe Status.OK
         }
