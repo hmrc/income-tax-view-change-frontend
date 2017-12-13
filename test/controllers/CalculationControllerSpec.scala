@@ -209,6 +209,4 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
       }
     }
   }
-
 }
-
