@@ -321,8 +321,10 @@ class CalculationControllerSpec extends TestSupport
         lazy val messages = new Messages.Estimates
 
         "return status OK (200)" in {
+
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
           mockGetAllLatestCalcSuccess()
+
           status(result) shouldBe Status.OK
         }
         "return HTML" in {
@@ -335,6 +337,7 @@ class CalculationControllerSpec extends TestSupport
       }
     }
   }
+  
   "the CalculationController.viewCrystallisedCalculations action" when {
 
       "Called with an Authenticated HMRC-MTD-IT User" which {

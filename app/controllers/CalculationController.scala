@@ -95,7 +95,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
           model => {
-            if(calcListHasErrors(model)) InternalServerError
+            if (calcListHasErrors(model)) InternalServerError
             else Ok(views.html.allBills(model.filter(calc => calc.matchesStatus(Crystallised))))
           }
         }
