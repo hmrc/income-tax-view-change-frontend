@@ -97,10 +97,9 @@ class HomePageViewSpec extends TestSupport {
           estimatesSection.getElementById("estimates-link").text shouldBe EstimatesSection.link
         }
 
-//        TODO: Uncomment when the method exist
-//        "links to the estimates page" in {
-//          estimatesSection.getElementById("estimates-link").attr("href") shouldBe controllers.routes.CalculationController.viewEstimateCalculations().url
-//        }
+        "links to the estimates page" in {
+          estimatesSection.getElementById("estimates-link").attr("href") shouldBe controllers.routes.CalculationController.viewEstimateCalculations().url
+        }
       }
     }
 

@@ -19,12 +19,14 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUserWithNino
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FeatureSwitchConfig, FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.ServiceInfoPartialService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+
+import scala.concurrent.Future
 
 @Singleton
 class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -32,6 +34,7 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val retrieveNino: NinoPredicate,
                                val serviceInfoPartialService: ServiceInfoPartialService,
                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                               val featureSwitchConfig: FeatureSwitchConfig,
                                implicit val config: FrontendAppConfig,
                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
@@ -40,9 +43,16 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
   val action: ActionBuilder[MtdItUserWithNino] = checkSessionTimeout andThen authenticate andThen retrieveNino
 
   val redirect: Action[AnyContent] = action.async { implicit user =>
-    val userName: Option[String] = user.userDetails.map(_.name)
-    serviceInfoPartialService.serviceInfoPartial(userName) map { implicit serviceInfo =>
-      Ok(views.html.home())
+    featureSwitchConfig.homePageEnabled match {
+      case true => renderView
+      case _ => redirectToBTA
     }
+  }
+
+  private[HomeController] def redirectToBTA: Future[Result] = Future.successful(Redirect(config.businessTaxAccount))
+
+  private[HomeController] def renderView[A](implicit user: MtdItUserWithNino[A]): Future[Result] =
+    serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)) map { implicit serviceInfo =>
+      Ok(views.html.home())
   }
 }
