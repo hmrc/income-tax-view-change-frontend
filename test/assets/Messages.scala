@@ -21,10 +21,29 @@ import play.twirl.api.Html
 object Messages {
 
   // Estimated Tax Liability Page Messages
-  class EstimatedTaxLiability(taxYear: Int) {
+  class Calculation(taxYear: Int) {
     val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeadiing = s"Tax year: ${taxYear-1} to $taxYear"
-    val title = taxYearSubHeadiing
+    val taxYearSubHeading = s"Tax year: ${taxYear-1} to $taxYear"
+    val title = taxYearSubHeading
+    object Crystallised {
+      val tabTitle = "Your final submission"
+      val heading = "Your finalised Income Tax bill"
+      val subHeading = s"Tax year: ${taxYear-1} to $taxYear"
+      val wyoHeading: String => String = whatYouOwe => s"What you owe: $whatYouOwe"
+      val p1 = "This figure is based on the information you provided in your quarterly reports and final report. You told us this information is accurate."
+      val directDebit = "Check if you already pay by direct debit."
+      val warning = s"If you pay this bill after 31 January ${taxYear + 1} you'll get penalties."
+      val breakdownHeading = "How this figure was calculated"
+      val errors = "If there are any errors, you can make adjustments through your software."
+      val changes = s"If you make changes before 31 January ${taxYear + 1} you will not be penalised."
+      val aPHeading = "Additional payment"
+      val advancedPayment = s"An advanced payment on account of ADVANCED-PAYMENT-AMOUNT will be also due by 31 July ${taxYear + 1}" //needs changing once the advanced payment amount is returned
+      val aboutPoA = "About payments on account"
+      val aPp1 = "These are obligatory payments towards your next tax year. You make two of them: one is paid at the end of the tax year, the other is paid 6 months later."
+      val aPp2 = "Each payment is half of the tax you owed this year."
+      val aPp3 = "You'll be prompted to pay this through your Income Tax account."
+      val aPp4 = "If you think you will earn less next tax year, you can reduce your payment on account online."
+    }
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
       val p1 = s"This is an estimate of what you'll pay for the whole of this tax year, beginning 6 April ${taxYear-1} and ending 5 April $taxYear."
@@ -61,16 +80,16 @@ object Messages {
   // No Estimated Tax Liability Page Messages
   object NoEstimatedTaxLiability {
     val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeadiing = "Tax year: 2017 to 2018"
-    val title = taxYearSubHeadiing
+    val taxYearSubheading = "Tax year: 2017 to 2018"
+    val title = taxYearSubheading
     val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
   }
 
   // Estimated Tax Liability Error Page Messages
   object EstimatedTaxLiabilityError {
     val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeadiing = "Tax year: 2017 to 2018"
-    val title = taxYearSubHeadiing
+    val taxYearSubheading = "Tax year: 2017 to 2018"
+    val title = taxYearSubheading
     val p1 = "We can't display your estimated tax amount at the moment."
     val p2 = "Try refreshing the page in a few minutes."
   }

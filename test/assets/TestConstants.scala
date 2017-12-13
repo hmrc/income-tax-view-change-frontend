@@ -17,6 +17,7 @@
 package assets
 
 import auth.MtdItUser
+import enums.{Crystallised, Estimate}
 import models._
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
@@ -862,14 +863,24 @@ object TestConstants extends ImplicitDateFormatter {
       CalcDisplayModel(
         Estimates.lastTaxCalcSuccess.calcTimestamp,
         Estimates.lastTaxCalcSuccess.calcAmount,
-        Some(calcModel)
+        Some(calcModel),
+        Estimate
+      )
+
+    val calculationDisplaySuccessCrystalisationModel: CalculationDataModel => CalcDisplayModel = calcModel =>
+      CalcDisplayModel(
+        Estimates.lastTaxCalcSuccess.calcTimestamp,
+        Estimates.lastTaxCalcSuccess.calcAmount,
+        Some(calcModel),
+        Crystallised
       )
 
     val calculationDisplayNoBreakdownModel =
       CalcDisplayModel(
         Estimates.lastTaxCalcSuccess.calcTimestamp,
         Estimates.lastTaxCalcSuccess.calcAmount,
-        None
+        None,
+        Estimate
       )
   }
 

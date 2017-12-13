@@ -23,21 +23,22 @@ import audit.models.EstimatesAuditing.EstimatesAuditModel
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
+import enums.{Crystallised, Estimate}
 import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, ActionBuilder, AnyContent}
-import services.{FinancialDataService, ServiceInfoPartialService}
+import services.{CalculationService, ServiceInfoPartialService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
-class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
+class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                                         implicit val messagesApi: MessagesApi,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val authenticate: AuthenticationPredicate,
                                         val retrieveNino: NinoPredicate,
                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                        val financialDataService: FinancialDataService,
+                                        val calculationService: CalculationService,
                                         val serviceInfoPartialService: ServiceInfoPartialService,
                                         val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                         val auditingService: AuditingService
@@ -50,7 +51,7 @@ class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
   val redirectToEarliestEstimatedTaxLiability: Action[AnyContent] = action.async {
     implicit user =>
       serviceInfoPartialService.serviceInfoPartial().map { implicit serviceInfo =>
-        Redirect(controllers.routes.FinancialDataController.getFinancialData(user.incomeSources.earliestTaxYear.get))
+        Redirect(controllers.routes.CalculationController.getFinancialData(user.incomeSources.earliestTaxYear.get))
       }
   }
 
@@ -58,10 +59,13 @@ class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
     implicit user =>
       implicit val sources = user.incomeSources
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-        financialDataService.getFinancialData(user.nino, taxYear).map {
+        calculationService.getFinancialData(user.nino, taxYear).map {
           case calcDisplayModel: CalcDisplayModel =>
             auditEstimate(user, calcDisplayModel.calcAmount.toString)
-            Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+            calcDisplayModel.calcStatus match {
+              case Crystallised => Ok(views.html.crystallised(calcDisplayModel, taxYear))
+              case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+            }
           case CalcDisplayNoDataFound =>
             Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
             auditEstimate(user, "No data found")
@@ -76,7 +80,7 @@ class FinancialDataController @Inject()(implicit val config: FrontendAppConfig,
   private def auditEstimate[A](user: MtdItUser[A], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
       EstimatesAuditModel(user, estimate),
-      controllers.routes.FinancialDataController.getFinancialData(user.incomeSources.earliestTaxYear.get).url
+      controllers.routes.CalculationController.getFinancialData(user.incomeSources.earliestTaxYear.get).url
     )
 
 }

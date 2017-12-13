@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import assets.TestConstants.CalcBreakdown.{calculationDataSuccessModel, calculationDisplayNoBreakdownModel, calculationDisplaySuccessModel}
+import assets.TestConstants.CalcBreakdown.{calculationDataSuccessModel, calculationDisplayNoBreakdownModel, calculationDisplaySuccessModel,calculationDisplaySuccessCrystalisationModel}
 import assets.TestConstants.Estimates.testYear
 import assets.TestConstants.testNino
 import models.{LastTaxCalculationResponseModel, CalcDisplayError, CalcDisplayNoDataFound, CalcDisplayResponseModel}
@@ -24,23 +24,23 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import services.FinancialDataService
+import services.CalculationService
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
 
-trait MockFinancialDataService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockFinancialDataService: FinancialDataService = mock[FinancialDataService]
+  val mockCalculationService: CalculationService = mock[CalculationService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockFinancialDataService)
+    reset(mockCalculationService)
   }
 
   def setupMockGetFinancialData(nino: String, taxYear: Int)(response: CalcDisplayResponseModel): Unit =
-    when(mockFinancialDataService
+    when(mockCalculationService
       .getFinancialData(
         ArgumentMatchers.eq(nino),
         ArgumentMatchers.eq(taxYear)
@@ -48,7 +48,7 @@ trait MockFinancialDataService extends UnitSpec with MockitoSugar with BeforeAnd
       .thenReturn(Future.successful(response))
 
   def setupMockGetLastEstimatedTaxCalculation(nino: String, year: Int)(response: LastTaxCalculationResponseModel): Unit =
-    when(mockFinancialDataService
+    when(mockCalculationService
       .getLastEstimatedTaxCalculation(
         ArgumentMatchers.eq(nino),
         ArgumentMatchers.eq(year)
@@ -56,6 +56,7 @@ trait MockFinancialDataService extends UnitSpec with MockitoSugar with BeforeAnd
       .thenReturn(Future.successful(response))
 
   def mockFinancialDataSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
+  def mockFinancialDataCrystalisationSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel))
   def mockFinancialDataNoBreakdown(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplayNoBreakdownModel)
   def mockFinancialDataError(): Unit = setupMockGetFinancialData(testNino, testYear)(CalcDisplayError)
   def mockFinancialDataNotFound(): Unit = setupMockGetFinancialData(testNino, testYear)(CalcDisplayNoDataFound)

@@ -7,12 +7,12 @@ GET        /assets/*file                            controllers.Assets.at(path="
 #Home Controller
 GET         /                                       controllers.HomeController.redirect
 
-#Estimated Tax Liability
-GET         /estimated-tax-liability                controllers.FinancialDataController.redirectToEarliestEstimatedTaxLiability
-GET         /estimated-tax-liability/:taxYear       controllers.FinancialDataController.getFinancialData(taxYear: Int)
-
 #ReportDeadlines
 GET         /obligations                            controllers.ReportDeadlinesController.getReportDeadlines
+
+#Calculation
+GET         /calculation                            controllers.CalculationController.redirectToEarliestEstimatedTaxLiability
+GET         /calculation/:taxYear                   controllers.CalculationController.getFinancialData(taxYear: Int)
 
 #Feedback Routes
 GET         /feedback                               controllers.feedback.FeedbackController.show

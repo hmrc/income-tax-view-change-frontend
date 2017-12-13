@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 
 @Singleton
-class BTAPartialService @Inject()(val financialDataService: FinancialDataService) extends ImplicitListMethods {
+class BTAPartialService @Inject()(val financialDataService: CalculationService) extends ImplicitListMethods {
 
   def getNextObligation(sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): ReportDeadlinesResponseModel = {
     if (sources.allReportDeadlinesErrored) {

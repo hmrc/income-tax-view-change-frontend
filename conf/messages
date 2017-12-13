@@ -55,6 +55,25 @@ obligations.error.p1                                            = We can''t disp
 obligations.error.p2                                            = Try refreshing the page in a few minutes.
 obligations.ceased                                              = This business ceased trading on {0}.
 
+## Crystalisation Page ##
+crystalisation.title                                            = Your final submission
+crystalisation.heading                                          = Your finalised Income Tax bill
+crystalisation.whatYouOwe.heading                               = What you owe: {0}
+crystalisation.whatYouOwe.para                                  = This figure is based on the information you provided in your quarterly reports and final report. You told us this information is accurate.
+crystalisation.whatYouOwe.directDebit                           = Check if you already pay by direct debit.
+crystalisation.warning                                          = If you pay this bill after 31 January {0} you''ll get penalties.
+crystalisation.calc-breakdown.heading                           = How this figure was calculated
+crystalisation.adjustments                                      = If there are any errors, you can make adjustments through your software.
+crystalisation.changes                                          = If you make changes before 31 January {0} you will not be penalised.
+crystalisation.additionalPayment.heading                        = Additional payment
+crystalisation.additionalPayment.para                           = An advanced payment on account of {0} will be also due by 31 July {1}
+crystalisation.additionalPayment.aboutPayments                  = About payments on account
+crystalisation.paymentsOnAccount.para1                          = These are obligatory payments towards your next tax year. You make two of them: one is paid at the end of the tax year, the other is paid 6 months later.
+crystalisation.paymentsOnAccount.para2                          = Each payment is half of the tax you owed this year.
+crystalisation.paymentsOnAccount.para3                          = You''ll be prompted to pay this through your Income Tax account.
+crystalisation.paymentsOnAccount.para4                          = If you think you will earn less next tax year, you can reduce your payment on account online.
+crystalisation.payNow                                           = Pay this now
+
 ## Statuses ##
 status.received                                                 = Received
 status.overdue                                                  = Overdue

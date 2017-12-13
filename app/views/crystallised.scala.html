@@ -1,0 +1,107 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.main_template
+@import utils.ImplicitCurrencyFormatter._
+@import utils.ImplicitDateFormatter._
+@import views.helpers.TaxYearRenderHelper._
+@import views.html.helpers.accordionHelper
+@import models.CalculationDataResponseModel
+@import views.html.helpers.sidebarHelper
+@import views.helpers.EstimatesPage
+@import views.html.helpers.calcBreakdownHelper
+
+@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel, serviceInfo: Html)
+
+@sidebar = {
+    @sidebarHelper(EstimatesPage, sources, Some(taxYear))
+}
+
+@calcBreakdown = {
+<section id="inYearCalcBreakdown">
+    @calcBreakdownHelper(calcModel, taxYear)
+</section>
+}
+
+@aboutPaymentsOnAccount = {
+<div id="paymentsOnAccount" class="panel-indent">
+    <p id="PoA-p1">@messages("crystalisation.paymentsOnAccount.para1")</p>
+    <p id="PoA-p2">@messages("crystalisation.paymentsOnAccount.para2")</p>
+    <p id="PoA-p3">@messages("crystalisation.paymentsOnAccount.para3")</p>
+    <p id="PoA-p4">@messages("crystalisation.paymentsOnAccount.para4")</p>
+</div>
+}
+
+@main_template(
+    title = renderTitle(taxYear, true),
+    bodyClasses = None,
+    scriptElem = None,
+    sidebarLinks = Some(sidebar),
+    user = Some(user)
+) {
+    <section id="owed-tax">
+
+        <h1>
+            <span id="tax-year" class="pre-heading">@renderTaxYear(taxYear)</span>
+            <span id="page-heading" class="heading-xlarge">@messages("crystalisation.heading")</span>
+        </h1>
+
+        <section id="whatYouOwe">
+            <div class="form-group">
+                <h2 id="whatYouOweHeading" class="heading-large">
+                    @Html(messages("crystalisation.whatYouOwe.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.incomeTaxYTD.toCurrency)}"))
+                </h2>
+                <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
+                <p id="inYearP2">@messages("crystalisation.whatYouOwe.directDebit")</p>
+            </div>
+
+            <div class="important-notice icon-min-height form-group">
+                <strong class="bold-small" id="late-warning">
+                    @messages("crystalisation.warning", s"${taxYear+1}")
+                </strong>
+            </div>
+
+            <p>
+                <a class="button" href="#">
+                    @messages("crystalisation.payNow")
+                </a>
+            </p>
+
+            @if(calcModel.breakdownNonEmpty){
+            <h3 id="howCalculatedHeading" class="heading-medium">@messages("crystalisation.calc-breakdown.heading")</h3>
+            @calcBreakdown
+            }
+
+            <p id="adjustments">@messages("crystalisation.adjustments")</p>
+
+            <p id="changes">@messages("crystalisation.changes", s"${taxYear+1}")</p>
+
+        </section>
+
+        <section id="Additional payment">
+            <h3 id="AdditionalPaymentHeading" class="heading-medium">@messages("crystalisation.additionalPayment.heading")</h3>
+
+            <p id="advancedPayment">
+                @messages("crystalisation.additionalPayment.para", "ADVANCED-PAYMENT-AMOUNT", s"${taxYear+1}")
+            </p>
+
+            <p id="aboutPayments">
+                @accordionHelper("aboutPoA", messages("crystalisation.additionalPayment.aboutPayments"), aboutPaymentsOnAccount)
+            </p>
+        </section>
+
+    </section>
+}
