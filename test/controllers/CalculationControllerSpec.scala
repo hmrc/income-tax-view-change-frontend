@@ -33,10 +33,9 @@ import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
 
-class CalculationControllerSpec
-  extends TestSupport with MockCalculationService
-    with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
-    with MockServiceInfoPartialService {
+class CalculationControllerSpec extends TestSupport
+  with MockCalculationService with MockAuthenticationPredicate
+  with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService {
 
   object TestCalculationController extends CalculationController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -217,7 +216,6 @@ class CalculationControllerSpec
 
   "The CalculationController.redirectToEarliestEstimatedTaxLiability() action" when {
 
-
     "Called with an Authenticated HMRC-MTD-IT User" which {
 
       "successfully retrieves Business only income from the Income Sources predicate" should {
@@ -337,8 +335,7 @@ class CalculationControllerSpec
       }
     }
   }
-
-    "the CalculationController.viewCrystallisedCalculations action" when {
+  "the CalculationController.viewCrystallisedCalculations action" when {
 
       "Called with an Authenticated HMRC-MTD-IT User" which {
 
@@ -419,15 +416,5 @@ class CalculationControllerSpec
       }
 
     }
-
-    "Called with an Unauthenticated User" should {
-
-      "return redirect SEE_OTHER (303)" in {
-        setupMockAuthorisationException()
-        val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-
 
 }
