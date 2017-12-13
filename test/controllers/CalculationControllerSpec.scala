@@ -370,14 +370,14 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
       "successfully retrieves income sources, but the list returned from the service has an error model" should {
 
-        lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+          lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
 
-        "return an ISE (500)" in {
-          mockServiceInfoPartialSuccess()
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
-          mockGetAllLatestCrystallisedCalcWithError()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
+          "return an ISE (500)" in {
+            mockServiceInfoPartialSuccess()
+            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+            mockGetAllLatestCrystallisedCalcWithError()
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
 
       }
 
@@ -402,19 +402,19 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           document.title() shouldBe messages.Bills.billsTitle
         }
 
+        }
+
+      }
+
+      "Called with an Unauthenticated User" should {
+
+        "return redirect SEE_OTHER (303)" in {
+          setupMockAuthorisationException()
+          val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.SEE_OTHER
+        }
       }
 
     }
-
-    "Called with an Unauthenticated User" should {
-
-      "return redirect SEE_OTHER (303)" in {
-        setupMockAuthorisationException()
-        val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-
-  }
 
 }
