@@ -214,31 +214,9 @@ class CalculationControllerSpec
     }
   }
 
-  "The CalculationController.viewEstimateCalculation action" when {
-    "called with an authenticated HMRC-MTD-IT user" which {
-      "successfully retrieves Business only income from the Income Sources predicate" should {
-
-        lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
-        lazy val messages = new Messages.Estimates
-
-        "return status OK (200)" in {
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
-          mockGetAllLatestCalcSuccess()
-          status(result) shouldBe Status.OK
-        }
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-        "render the Estimates sub-page" in {
-          document.title shouldBe messages.title
-        }
-      }
-    }
-  }
 
   "The CalculationController.redirectToEarliestEstimatedTaxLiability() action" when {
+
 
     "Called with an Authenticated HMRC-MTD-IT User" which {
 
@@ -334,29 +312,31 @@ class CalculationControllerSpec
         }
       }
     }
+  }
 
-    "The CalculationController.viewEstimateCalculation action" when {
-      "called with an authenticated HMRC-MTD-IT user" which {
-        "successfully retrieves Business only income from the Income Sources predicate" should {
+  "The CalculationController.viewEstimateCalculation action" when {
+    "called with an authenticated HMRC-MTD-IT user" which {
+      "successfully retrieves Business only income from the Income Sources predicate" should {
 
-          lazy val result = TestCalculationController.viewEstimateCalculations()(fakeRequestWithActiveSession)
-          lazy val document = result.toHtmlDocument
-          lazy val messages = new Messages.Estimates
+        lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+        lazy val messages = new Messages.Estimates
 
-          "return status OK (200)" in {
-            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
-            status(result) shouldBe Status.OK
-          }
-          "return HTML" in {
-            contentType(result) shouldBe Some("text/html")
-            charset(result) shouldBe Some("utf-8")
-          }
-          "render the Estimates sub-page" in {
-            document.title shouldBe messages.title
-          }
+        "return status OK (200)" in {
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
+          mockGetAllLatestCalcSuccess()
+          status(result) shouldBe Status.OK
+        }
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+        "render the Estimates sub-page" in {
+          document.title shouldBe messages.title
         }
       }
     }
+  }
 
     "the CalculationController.viewCrystallisedCalculations action" when {
 
@@ -448,5 +428,6 @@ class CalculationControllerSpec
         status(result) shouldBe Status.SEE_OTHER
       }
     }
-  }
+
+
 }
