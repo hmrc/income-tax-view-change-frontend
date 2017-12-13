@@ -353,7 +353,6 @@ object TestConstants extends ImplicitDateFormatter {
       calcStatus = Crystallised
     )
     val lastTaxCalcError = LastTaxCalculationError(testErrorStatus, testErrorMessage)
-
     val lastTaxCalcNotFound: LastTaxCalculationResponseModel = NoLastTaxCalculation
 
     //Last Tax Calculation With Years (for sub pages)
