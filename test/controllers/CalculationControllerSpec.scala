@@ -213,7 +213,6 @@ class CalculationControllerSpec extends TestSupport
     }
   }
 
-
   "The CalculationController.redirectToEarliestEstimatedTaxLiability() action" when {
 
     "Called with an Authenticated HMRC-MTD-IT User" which {
@@ -311,7 +310,6 @@ class CalculationControllerSpec extends TestSupport
       }
     }
   }
-
   "The CalculationController.viewEstimateCalculation action" when {
     "called with an authenticated HMRC-MTD-IT user" which {
       "successfully retrieves Business only income from the Income Sources predicate" should {
@@ -321,10 +319,8 @@ class CalculationControllerSpec extends TestSupport
         lazy val messages = new Messages.Estimates
 
         "return status OK (200)" in {
-
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
           mockGetAllLatestCalcSuccess()
-
           status(result) shouldBe Status.OK
         }
         "return HTML" in {
@@ -337,7 +333,7 @@ class CalculationControllerSpec extends TestSupport
       }
     }
   }
-  
+
   "the CalculationController.viewCrystallisedCalculations action" when {
 
       "Called with an Authenticated HMRC-MTD-IT User" which {
