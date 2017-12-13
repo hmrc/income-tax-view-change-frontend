@@ -17,7 +17,7 @@
 package models
 
 import play.api.libs.json.{Json, OFormat}
-import enums.CalcStatus
+import enums.{CalcStatus, Estimate}
 
 import scala.concurrent.Future
 
@@ -29,7 +29,12 @@ case class LastTaxCalculation(calcID: String,
                               calcStatus: Option[CalcStatus] = None) extends LastTaxCalculationResponseModel
 
 case class LastTaxCalculationWithYear(calculation: LastTaxCalculationResponseModel,
-                                      taxYear: Int)
+                                      taxYear: Int) {
+  val matchesStatus: CalcStatus => Boolean = status => calculation match {
+    case model: LastTaxCalculation if model.calcStatus.isDefined => if(model.calcStatus.get == status) true else false
+    case _ => false
+  }
+}
 
 case class LastTaxCalculationError(status: Int, message: String) extends LastTaxCalculationResponseModel
 case object NoLastTaxCalculation extends LastTaxCalculationResponseModel

@@ -74,6 +74,14 @@ crystalisation.paymentsOnAccount.para3                          = You''ll be pro
 crystalisation.paymentsOnAccount.para4                          = If you think you will earn less next tax year, you can reduce your payment on account online.
 crystalisation.payNow                                           = Pay this now
 
+## Bills Page ##
+bills.title                                                     = Previous statements
+bills.heading                                                   = Income Tax bills
+bills.viewBills                                                 = View finalised bills.
+bills.billLink                                                  = Tax year: {0} to {1}
+bills.noBills                                                   = You''ve had no bills since you started reporting through software.
+bills.earlierBills                                              = For earlier bills, <a href="#">view your self assessment calculations</a>.
+
 ## Statuses ##
 status.received                                                 = Received
 status.overdue                                                  = Overdue

@@ -15,7 +15,6 @@
  *@
 
 @import views.html.templates.main_template
-@import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
@@ -23,6 +22,7 @@
 @import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
+@import enums.{Crystallised, Estimate}
 
 @(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel, serviceInfo: Html)
 
@@ -31,21 +31,35 @@
 }
 
 @main_template(
-title = "Something???",
+title = messages("bills.title"),
 bodyClasses = None,
 scriptElem = None,
 sidebarLinks = Some(sidebar),
 user = Some(user)
 ) {
     <section>
-        <h1>
-            <p>The Title</p>
+        <h1 class="heading-xlarge">
+            @messages("bills.heading")
         </h1>
 
         <div>
-            @for(calc <- calcModels){
-                <p>calc</p>
+            @if(calcModels.isEmpty){
+                <p>
+                    @messages("bills.noBills")
+                </p>
+            } else {
+                <p>@messages("bills.viewBills")</p>
+                <ul class="list list-bullet">
+                    @for(calc <- calcModels){
+                        <li>
+                            <a href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
+                        </li>
+                    }
+                </ul>
             }
+        </div>
+        <div>
+            @Html(messages("bills.earlierBills"))
         </div>
     </section>
 }
