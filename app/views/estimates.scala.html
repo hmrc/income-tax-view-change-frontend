@@ -23,17 +23,18 @@
 @(estimates: List[_], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel, serviceInfo: Html))
 
 @sidebar = {
-    sidebarHelper(EstimatesPage, sources, Some(taxYear))
+    @sidebarHelper(EstimatesPage, sources, Some(taxYear))
 }
 
 @main_template(
     title = messages("estimates.title"),
     bodyClasses = None,
     sidebarLinks = Some(sidebar),
-    user = Some(user)) {
+    user = Some(user)
+) {
 
     <section>
-        <h1>messages("estimates.title")</h1>
+        <h1>@messages("estimates.title")</h1>
 
     </section>
 

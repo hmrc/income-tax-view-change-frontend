@@ -109,6 +109,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
         implicit sources =>
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { model =>
+          Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $model")
           Ok(views.html.estimates(List(), sources.earliestTaxYear.get))
         }
       }
