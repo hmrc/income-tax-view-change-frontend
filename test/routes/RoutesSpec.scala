@@ -25,7 +25,7 @@ class RoutesSpec extends TestSupport {
   //Context Route
   "The 'home' url for the HomeController.show action" should {
     s"be equal to $contextRoute" in {
-      controllers.routes.HomeController.redirect().url shouldBe contextRoute
+      controllers.routes.HomeController.home().url shouldBe contextRoute
     }
   }
 

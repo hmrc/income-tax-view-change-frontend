@@ -35,11 +35,11 @@ trait MockServiceInfoPartialService extends TestSupport with BeforeAndAfterEach 
     reset(mockServiceInfoPartialService)
   }
 
-  def setupMockServiceInfoPartial()(response: Html): Unit =
-    when(mockServiceInfoPartialService.serviceInfoPartial()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+  def setupMockServiceInfoPartial(userName: Option[String])(response: Html): Unit =
+    when(mockServiceInfoPartialService.serviceInfoPartial(userName)(ArgumentMatchers.any(), ArgumentMatchers.any()))
     .thenReturn(response)
 
-  def mockServiceInfoPartialSuccess(): Unit = setupMockServiceInfoPartial()(
+  def mockServiceInfoPartialSuccess(userName: Option[String]): Unit = setupMockServiceInfoPartial(userName)(
     Html("""
     <a id="service-info-home-link"
        class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides"
@@ -72,6 +72,6 @@ trait MockServiceInfoPartialService extends TestSupport with BeforeAndAfterEach 
   """)
   )
 
-  def mockServiceInfoPartialError(): Unit = setupMockServiceInfoPartial()(Html(""))
+  def mockServiceInfoPartialError(userName: Option[String]): Unit = setupMockServiceInfoPartial(userName)(Html(""))
 
 }

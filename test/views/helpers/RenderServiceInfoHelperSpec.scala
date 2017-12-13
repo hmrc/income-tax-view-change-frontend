@@ -30,7 +30,7 @@ class RenderServiceInfoHelperSpec extends TestSupport {
 
   lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  def html(user: Option[MtdItUser[_]]): Html = renderServiceInfoHelper(user)(
+  def html(user: Option[MtdItUser[_]]): Html = renderServiceInfoHelper(Some(testUserName))(
     applicationMessages,
     appConfig
   )
