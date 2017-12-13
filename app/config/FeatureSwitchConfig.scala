@@ -25,13 +25,17 @@ import uk.gov.hmrc.play.config.ServicesConfig
 
 @Singleton
 class FeatureSwitchConfig @Inject()(val environment: Environment,
-                                    val conf: Configuration) extends ServicesConfig {
+                                    val conf: Configuration) extends FeatureSwitches with ServicesConfig {
 
   override protected def runModeConfiguration: Configuration = conf
   override protected def mode: Mode = environment.mode
   private def loadFeatureSwitch(key: String) = runModeConfiguration.getBoolean(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   //Features
-  val homePageEnabled = loadFeatureSwitch("features.homePageEnabled")
+  override val homePageEnabled: Boolean = loadFeatureSwitch("features.homePageEnabled")
 
+}
+
+trait FeatureSwitches {
+  val homePageEnabled: Boolean = true
 }

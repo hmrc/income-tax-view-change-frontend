@@ -42,7 +42,7 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
 
   val action: ActionBuilder[MtdItUserWithNino] = checkSessionTimeout andThen authenticate andThen retrieveNino
 
-  val redirect: Action[AnyContent] = action.async { implicit user =>
+  val home: Action[AnyContent] = action.async { implicit user =>
     featureSwitchConfig.homePageEnabled match {
       case true => renderView
       case _ => redirectToBTA
