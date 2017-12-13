@@ -107,6 +107,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
           model => {
             if(calcListHasErrors(model)) itvcErrorHandler.showInternalServerError
+
             else Ok(views.html.allBills(model.filter(calc => calc.matchesStatus(Crystallised))))
           }
         }
