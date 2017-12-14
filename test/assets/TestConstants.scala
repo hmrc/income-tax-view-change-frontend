@@ -362,11 +362,11 @@ object TestConstants extends ImplicitDateFormatter {
       totalIncomeReceived = 230000.00,
       proportionAllowance = 11500.00,
       totalIncomeOnWhichTaxIsDue = 198500.00,
-      payPensionsProfitAtBRT = Some(20000.00),
+      payPensionsProfitAtBRT = 20000.00,
       incomeTaxOnPayPensionsProfitAtBRT = 4000.00,
-      payPensionsProfitAtHRT = Some(100000.00),
+      payPensionsProfitAtHRT = 100000.00,
       incomeTaxOnPayPensionsProfitAtHRT = 40000.00,
-      payPensionsProfitAtART = Some(50000.00),
+      payPensionsProfitAtART = 50000.00,
       incomeTaxOnPayPensionsProfitAtART = 22500.00,
       incomeTaxDue = 66500.00,
       nationalInsuranceClass2Amount = 10000.00,
@@ -384,15 +384,15 @@ object TestConstants extends ImplicitDateFormatter {
         proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 0,
 
-        payPensionsProfitAtBRT = Some(0.00),
+        payPensionsProfitAtBRT = 0.00,
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 0.00,
 
-        payPensionsProfitAtHRT = Some(0.00),
+        payPensionsProfitAtHRT = 0.00,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = Some(0),
+        payPensionsProfitAtART = 0,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -413,15 +413,15 @@ object TestConstants extends ImplicitDateFormatter {
         proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 0,
 
-        payPensionsProfitAtBRT = None,
+        payPensionsProfitAtBRT = 0,
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 0.00,
 
-        payPensionsProfitAtHRT = None,
+        payPensionsProfitAtHRT = 0,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = None,
+        payPensionsProfitAtART = 0,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -442,15 +442,15 @@ object TestConstants extends ImplicitDateFormatter {
         proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 132.00,
 
-        payPensionsProfitAtBRT = Some(132.00),
+        payPensionsProfitAtBRT = 132.00,
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 26.00,
 
-        payPensionsProfitAtHRT = None,
+        payPensionsProfitAtHRT = 0,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = None,
+        payPensionsProfitAtART = 0,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -473,15 +473,15 @@ object TestConstants extends ImplicitDateFormatter {
         proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 35007.00,
 
-        payPensionsProfitAtBRT = Some(8352.00),
+        payPensionsProfitAtBRT = 8352.00,
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 1670.00,
 
-        payPensionsProfitAtHRT = Some(26654.00),
+        payPensionsProfitAtHRT = 26654.00,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 10661.00,
 
-        payPensionsProfitAtART = None,
+        payPensionsProfitAtART = 0,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -502,15 +502,15 @@ object TestConstants extends ImplicitDateFormatter {
         proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 38007.00,
 
-        payPensionsProfitAtBRT = Some(8352.00),
+        payPensionsProfitAtBRT = 8352.00,
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 1670.00,
 
-        payPensionsProfitAtHRT = Some(29044.00),
+        payPensionsProfitAtHRT = 29044.00,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 11617.00,
 
-        payPensionsProfitAtART = Some(609.00),
+        payPensionsProfitAtART = 609.00,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 274.00,
 
@@ -531,15 +531,15 @@ object TestConstants extends ImplicitDateFormatter {
         proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 132.00,
 
-        payPensionsProfitAtBRT = Some(132.00),
+        payPensionsProfitAtBRT = 132.00,
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 26.00,
 
-        payPensionsProfitAtHRT = None,
+        payPensionsProfitAtHRT = 0,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = None,
+        payPensionsProfitAtART = 0,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -560,15 +560,15 @@ object TestConstants extends ImplicitDateFormatter {
         proportionAllowance = 2868.00,
         totalIncomeOnWhichTaxIsDue = 132.00,
 
-        payPensionsProfitAtBRT = Some(132.00),
+        payPensionsProfitAtBRT = 132.00,
         rateBRT = 20.00,
         incomeTaxOnPayPensionsProfitAtBRT = 26.00,
 
-        payPensionsProfitAtHRT = None,
+        payPensionsProfitAtHRT = 0,
         rateHRT = 40.00,
         incomeTaxOnPayPensionsProfitAtHRT = 0,
 
-        payPensionsProfitAtART = None,
+        payPensionsProfitAtART = 0,
         rateART = 45.00,
         incomeTaxOnPayPensionsProfitAtART = 0,
 
@@ -581,6 +581,37 @@ object TestConstants extends ImplicitDateFormatter {
         totalIncomeReceived = 9000.00,
         incomeTaxDue = 2072.05
       )
+
+    val mandatoryOnlyDataModel =
+      CalculationDataModel(
+        profitFromSelfEmployment = 0,
+        profitFromUkLandAndProperty = 0,
+        proportionAllowance = 0,
+        totalIncomeOnWhichTaxIsDue = 0,
+        payPensionsProfitAtBRT = 0,
+        rateBRT = 0,
+        incomeTaxOnPayPensionsProfitAtBRT = 0,
+        payPensionsProfitAtHRT = 0,
+        rateHRT = 0,
+        incomeTaxOnPayPensionsProfitAtHRT = 0,
+        payPensionsProfitAtART = 0,
+        rateART = 0,
+        incomeTaxOnPayPensionsProfitAtART = 0,
+        nationalInsuranceClass2Amount = 0,
+        totalClass4Charge = 0,
+        incomeTaxYTD = 90500,
+        incomeTaxThisPeriod = 2000,
+        totalIncomeReceived = 0,
+        incomeTaxDue = 0
+      )
+
+    val mandatoryCalculationDataSuccessString: String =
+      """
+        |{
+        | "incomeTaxYTD": 90500,
+        | "incomeTaxThisPeriod": 2000
+        |}
+      """.stripMargin
 
     val calculationDataSuccessString: String =
       """
@@ -846,6 +877,8 @@ object TestConstants extends ImplicitDateFormatter {
         |    }
         |}
       """.stripMargin
+
+    val calculationDataSuccessMinString: String = "{}"
 
     val calculationDataSuccessJson: JsValue = Json.parse(calculationDataSuccessString)
 

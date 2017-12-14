@@ -51,7 +51,7 @@ object IncomeTaxViewChangeStub {
   }
 
   def stubGetCalcError(nino: String, year: String, error: CalculationDataErrorModel): Unit = {
-    WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, Json.toJson(error).toString())
+    WiremockHelper.stubGet(calcUrl(nino, year), Status.INTERNAL_SERVER_ERROR, Json.toJson(error).toString())
   }
 
   def verifyGetCalcData(nino: String, taxCalculationId: String): Unit =
@@ -61,7 +61,7 @@ object IncomeTaxViewChangeStub {
     WiremockHelper.stubGet(ninoLookupUrl(mtdRef), Status.OK, Json.toJson(nino).toString)
 
   def stubGetNinoError(mtdRef: String, error: NinoResponseError): Unit =
-    WiremockHelper.stubGet(ninoLookupUrl(mtdRef), Status.OK, Json.toJson(error).toString)
+    WiremockHelper.stubGet(ninoLookupUrl(mtdRef), Status.INTERNAL_SERVER_ERROR, Json.toJson(error).toString)
 
   def verifyGetNino(mtdRef: String): Unit =
     WiremockHelper.verifyGet(ninoLookupUrl(mtdRef))

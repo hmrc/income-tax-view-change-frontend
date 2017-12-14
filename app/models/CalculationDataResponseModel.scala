@@ -16,7 +16,9 @@
 
 package models
 
-import play.api.libs.json.{OFormat, Json}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
+import play.api.libs.json.{Json, OFormat, Reads, _}
 
 sealed trait CalculationDataResponseModel
 
@@ -28,11 +30,11 @@ case class CalculationDataModel(
                                  totalIncomeReceived: BigDecimal,
                                  proportionAllowance: BigDecimal,
                                  totalIncomeOnWhichTaxIsDue: BigDecimal,
-                                 payPensionsProfitAtBRT: Option[BigDecimal],
+                                 payPensionsProfitAtBRT: BigDecimal,
                                  incomeTaxOnPayPensionsProfitAtBRT: BigDecimal,
-                                 payPensionsProfitAtHRT: Option[BigDecimal],
+                                 payPensionsProfitAtHRT: BigDecimal,
                                  incomeTaxOnPayPensionsProfitAtHRT: BigDecimal,
-                                 payPensionsProfitAtART: Option[BigDecimal],
+                                 payPensionsProfitAtART: BigDecimal,
                                  incomeTaxOnPayPensionsProfitAtART: BigDecimal,
                                  incomeTaxDue: BigDecimal,
                                  totalClass4Charge: BigDecimal,
@@ -41,14 +43,37 @@ case class CalculationDataModel(
                                  rateHRT: BigDecimal,
                                  rateART: BigDecimal,
                                  eoyEstimate: Option[EoyEstimate] = None
-                                 ) extends CalculationDataResponseModel
+                               ) extends CalculationDataResponseModel
 
 case class CalculationDataErrorModel(code: Int, message: String) extends CalculationDataResponseModel
 
 case class EoyEstimate(incomeTaxNicAmount: BigDecimal)
 
 object CalculationDataModel {
-  implicit val format: OFormat[CalculationDataModel] = Json.format[CalculationDataModel]
+  val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](BigDecimal(0)))
+  implicit val reads: Reads[CalculationDataModel] = (
+    (__ \ "incomeTaxYTD").read[BigDecimal] and
+      (__ \ "incomeTaxThisPeriod").read[BigDecimal] and
+      defaultZero(__ \ "profitFromSelfEmployment") and
+      defaultZero(__ \ "profitFromUkLandAndProperty") and
+      defaultZero(__ \ "totalIncomeReceived") and
+      defaultZero(__ \ "proportionAllowance") and
+      defaultZero(__ \ "totalIncomeOnWhichTaxIsDue") and
+      defaultZero(__ \ "payPensionsProfitAtBRT") and
+      defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtBRT") and
+      defaultZero(__ \ "payPensionsProfitAtHRT") and
+      defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtHRT") and
+      defaultZero(__ \ "payPensionsProfitAtART") and
+      defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtART") and
+      defaultZero(__ \ "incomeTaxDue") and
+      defaultZero(__ \ "totalClass4Charge") and
+      defaultZero(__ \ "nationalInsuranceClass2Amount") and
+      defaultZero(__ \ "rateBRT") and
+      defaultZero(__ \ "rateHRT") and
+      defaultZero(__ \ "rateART") and
+      (__ \ "eoyEstimate").readNullable[EoyEstimate]
+    ) (CalculationDataModel.apply _)
+  implicit val writes: Writes[CalculationDataModel] = Json.writes[CalculationDataModel]
 }
 
 
@@ -58,4 +83,31 @@ object CalculationDataErrorModel {
 
 object EoyEstimate {
   implicit val format: OFormat[EoyEstimate] = Json.format[EoyEstimate]
+}
+
+case class ApiCalculationResponse(
+                                    incomeTaxYTD: BigDecimal,
+                                    incomeTaxThisPeriod: BigDecimal,
+                                    profitFromSelfEmployment: Option[BigDecimal],
+                                    profitFromUkLandAndProperty: Option[BigDecimal],
+                                    totalIncomeReceived: Option[BigDecimal],
+                                    proportionAllowance: Option[BigDecimal],
+                                    totalIncomeOnWhichTaxIsDue: Option[BigDecimal],
+                                    payPensionsProfitAtBRT: Option[BigDecimal],
+                                    incomeTaxOnPayPensionsProfitAtBRT: Option[BigDecimal],
+                                    payPensionsProfitAtHRT: Option[BigDecimal],
+                                    incomeTaxOnPayPensionsProfitAtHRT: Option[BigDecimal],
+                                    payPensionsProfitAtART: Option[BigDecimal],
+                                    incomeTaxOnPayPensionsProfitAtART: Option[BigDecimal],
+                                    incomeTaxDue: Option[BigDecimal],
+                                    totalClass4Charge: Option[BigDecimal],
+                                    nationalInsuranceClass2Amount: Option[BigDecimal],
+                                    rateBRT: Option[BigDecimal],
+                                    rateHRT: Option[BigDecimal],
+                                    rateART: Option[BigDecimal],
+                                    eoyEstimate: Option[EoyEstimate]
+                                  )
+
+object ApiCalculationResponse {
+  implicit val format: Format[ApiCalculationResponse] = Json.format[ApiCalculationResponse]
 }

@@ -28,36 +28,14 @@ case class CalcDisplayModel(calcTimestamp: String,
   val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
   val hasEoyEstimate: Boolean = calcDataModel.fold(false)(_.eoyEstimate.nonEmpty)
 
-  val hasBRTSection: Boolean = {
-    if (calcDataModel.nonEmpty)
-      calcDataModel.get.payPensionsProfitAtBRT.getOrElse[BigDecimal](0) > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtBRT > 0
-    else false
-  }
-  val hasHRTSection: Boolean = {
-    if (calcDataModel.nonEmpty)
-      calcDataModel.get.payPensionsProfitAtHRT.getOrElse[BigDecimal](0) > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtHRT > 0
-    else false
-  }
-  val hasARTSection: Boolean = {
-    if (calcDataModel.nonEmpty)
-      calcDataModel.get.payPensionsProfitAtART.getOrElse[BigDecimal](0) > 0 || calcDataModel.get.incomeTaxOnPayPensionsProfitAtART > 0
-    else false
-  }
-  val hasNISection: Boolean = {
-    if(calcDataModel.nonEmpty)
-      calcDataModel.get.nationalInsuranceClass2Amount > 0 || calcDataModel.get.totalClass4Charge > 0
-    else false
-  }
-  val hasNic2Amount: Boolean = {
-    if(calcDataModel.nonEmpty)
-      calcDataModel.get.nationalInsuranceClass2Amount > 0
-    else false
-  }
-  val hasNic4Amount: Boolean = {
-    if(calcDataModel.nonEmpty)
-      calcDataModel.get.totalClass4Charge > 0
-    else false
-  }
+  val hasBRTSection: Boolean = calcDataModel.fold(false)(x => x.payPensionsProfitAtBRT > 0 || x.incomeTaxOnPayPensionsProfitAtBRT > 0)
+  val hasHRTSection: Boolean = calcDataModel.fold(false)(x => x.payPensionsProfitAtHRT > 0 || x.incomeTaxOnPayPensionsProfitAtHRT > 0)
+  val hasARTSection: Boolean = calcDataModel.fold(false)(x => x.payPensionsProfitAtART > 0 || x.incomeTaxOnPayPensionsProfitAtART > 0)
+
+  val hasNic2Amount: Boolean = calcDataModel.fold(false)(_.nationalInsuranceClass2Amount > 0)
+  val hasNic4Amount: Boolean = calcDataModel.fold(false)(_.totalClass4Charge > 0)
+  val hasNISection: Boolean = hasNic2Amount || hasNic4Amount
+
 }
 case object CalcDisplayError extends CalcDisplayResponseModel
 case object CalcDisplayNoDataFound extends CalcDisplayResponseModel

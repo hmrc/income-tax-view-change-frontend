@@ -36,11 +36,11 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
         calculationDataSuccessModel.totalIncomeReceived shouldBe 230000
         calculationDataSuccessModel.proportionAllowance shouldBe 11500
         calculationDataSuccessModel.totalIncomeOnWhichTaxIsDue shouldBe 198500
-        calculationDataSuccessModel.payPensionsProfitAtBRT shouldBe Some(20000)
+        calculationDataSuccessModel.payPensionsProfitAtBRT shouldBe 20000
         calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtBRT shouldBe 4000
-        calculationDataSuccessModel.payPensionsProfitAtHRT shouldBe Some(100000)
+        calculationDataSuccessModel.payPensionsProfitAtHRT shouldBe 100000
         calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtHRT shouldBe 40000
-        calculationDataSuccessModel.payPensionsProfitAtART shouldBe Some(50000)
+        calculationDataSuccessModel.payPensionsProfitAtART shouldBe 50000
         calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtART shouldBe 22500
         calculationDataSuccessModel.incomeTaxDue shouldBe 66500
         calculationDataSuccessModel.nationalInsuranceClass2Amount shouldBe 10000
@@ -59,6 +59,10 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
 
     "be able to parse a full JSON string into the Model" in {
       Json.parse(calculationDataFullString).as[CalculationDataModel] shouldBe calculationDataSuccessModel
+    }
+
+    "If only mandatory values aren returned from DES then defaulted others to 0" in {
+      Json.parse(mandatoryCalculationDataSuccessString).as[CalculationDataModel] shouldBe mandatoryOnlyDataModel
     }
   }
 
