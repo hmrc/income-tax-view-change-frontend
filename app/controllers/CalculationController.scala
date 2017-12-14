@@ -84,10 +84,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
           model => {
             if(calcListHasErrors(model)) InternalServerError
-            else{
-              println("\n!!!!!!!!!!\n\n" + model.filter(calc => calc.matchesStatus(Estimate)) + "\n\n!!!!!!!!!!\n")
-              Ok(views.html.allBills(model.filter(calc => calc.matchesStatus(Estimate))))
-            }
+            else Ok(views.html.allBills(model.filter(calc => calc.matchesStatus(Estimate))))
           }
         }
       }
