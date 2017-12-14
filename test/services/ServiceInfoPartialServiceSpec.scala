@@ -57,7 +57,7 @@ class ServiceInfoPartialServiceSpec extends TestSupport with MockServiceInfoPart
         }
 
         "displays the user's name" in {
-          document.getElementById("service-info-user-name").text shouldBe "Test User"
+          document.getElementById("service-info-user-name").text shouldBe testUserName
         }
 
         "has the 'Manage Account' link" in {
