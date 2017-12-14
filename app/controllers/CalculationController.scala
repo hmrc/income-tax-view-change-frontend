@@ -77,11 +77,10 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
         }
       }
   }
-  
-  val viewCrystallisedCalculations: Action[AnyContent] = actionPredicate.async {
-    implicit request =>
-      implicit user =>
-        implicit sources =>
+
+  val viewCrystallisedCalculations: Action[AnyContent] = action.async {
+    implicit user =>
+      implicit val sources = user.incomeSources
           serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
             calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
               model => Ok(views.html.allBills(model))
