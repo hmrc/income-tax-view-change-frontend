@@ -27,7 +27,6 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
-import services.ServiceInfoPartialService
 import utils.TestSupport
 
 class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService with MockServiceInfoPartialService {
