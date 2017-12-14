@@ -36,7 +36,7 @@ trait MockServiceInfoPartialService extends TestSupport with BeforeAndAfterEach 
   }
 
   def setupMockServiceInfoPartial(userName: Option[String])(response: Html): Unit =
-    when(mockServiceInfoPartialService.serviceInfoPartial(userName)(ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(mockServiceInfoPartialService.serviceInfoPartial(ArgumentMatchers.eq(userName))(ArgumentMatchers.any()))
     .thenReturn(response)
 
   def mockServiceInfoPartialSuccess(userName: Option[String]): Unit = setupMockServiceInfoPartial(userName)(

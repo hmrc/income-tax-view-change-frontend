@@ -17,6 +17,7 @@
 package controllers
 
 import assets.Messages
+import assets.TestConstants.testUserName
 import config.{FeatureSwitchConfig, FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.config.MockFeatureSwitchConfig
@@ -62,11 +63,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockServiceInf
 
       "return OK (200)" in {
         setupMockHomePageEnabled(true)
-        status(result) shouldBe Status.SEE_OTHER
+        mockServiceInfoPartialSuccess(Some(testUserName))
+        status(result) shouldBe Status.OK
       }
 
       "redirect to the Income Tax Home Page" in {
-        Jsoup.parse(bodyOf(result)).title shouldBe Some(Messages.HomePage.title)
+        Jsoup.parse(bodyOf(result)).title shouldBe Messages.HomePage.title
       }
     }
 

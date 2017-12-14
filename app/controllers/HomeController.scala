@@ -40,13 +40,8 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
 
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
-  val action: ActionBuilder[MtdItUserWithNino] = checkSessionTimeout andThen authenticate andThen retrieveNino
-
-  val home: Action[AnyContent] = action.async { implicit user =>
-    featureSwitchConfig.homePageEnabled match {
-      case true => renderView
-      case _ => redirectToBTA
-    }
+  val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino).async { implicit user =>
+    if (featureSwitchConfig.homePageEnabled) renderView else redirectToBTA
   }
 
   private[HomeController] def redirectToBTA: Future[Result] = Future.successful(Redirect(config.businessTaxAccount))
