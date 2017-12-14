@@ -133,7 +133,7 @@ class CrystallisedViewSpec extends TestSupport {
 
           s"have an income tax section" which {
             "has the correct amount of income taxed at BRT" in {
-              document.getElementById("brt-it-calc").text shouldBe model.payPensionsProfitAtBRT.get.toCurrencyString
+              document.getElementById("brt-it-calc").text shouldBe model.payPensionsProfitAtBRT.toCurrencyString
             }
             "has the correct BRT rate" in {
               document.getElementById("brt-rate").text shouldBe model.rateBRT.toString
@@ -167,7 +167,7 @@ class CrystallisedViewSpec extends TestSupport {
             }
 
             "has the correct amount of income taxed at HRT" in {
-              document.getElementById("hrt-it-calc").text shouldBe model.payPensionsProfitAtHRT.get.toCurrencyString
+              document.getElementById("hrt-it-calc").text shouldBe model.payPensionsProfitAtHRT.toCurrencyString
             }
             "has the correct HRT rate" in {
               document.getElementById("hrt-rate").text shouldBe model.rateHRT.toString
@@ -195,7 +195,7 @@ class CrystallisedViewSpec extends TestSupport {
             }
 
             "has the correct amount of income taxed at ART" in {
-              document.getElementById("art-it-calc").text shouldBe model.payPensionsProfitAtART.get.toCurrencyString
+              document.getElementById("art-it-calc").text shouldBe model.payPensionsProfitAtART.toCurrencyString
             }
             "has the correct ART rate" in {
               document.getElementById("art-rate").text shouldBe model.rateART.toString
