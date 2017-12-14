@@ -24,10 +24,10 @@
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
 
-@(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser, sources: models.IncomeSourcesModel, serviceInfo: Html)
+@(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel, serviceInfo: Html)
 
 @sidebar = {
-@sidebarHelper(EstimatesPage, sources, Some(calcModels(0).taxYear))
+    @sidebarHelper(EstimatesPage, sources, Some(calcModels(0).taxYear))
 }
 
 @main_template(
