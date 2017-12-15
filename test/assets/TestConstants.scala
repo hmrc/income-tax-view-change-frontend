@@ -308,6 +308,15 @@ object TestConstants extends ImplicitDateFormatter {
         AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5"),
         obligationsDataSuccessModel
       )
+
+    val business2019IncomeModel =
+      BusinessIncomeModel(
+        testSelfEmploymentId,
+        testTradeName,
+        None,
+        AccountingPeriodModel(start = "2018-3-5", end = "2019-3-6"),
+        obligationsDataSuccessModel
+      )
   }
 
   object PropertyIncome {
@@ -355,6 +364,14 @@ object TestConstants extends ImplicitDateFormatter {
       LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYear),
       LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYearPlusOne)
     )
+    val lastTaxCalcWithYearListWithError = List(
+      LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYear),
+      LastTaxCalculationWithYear(lastTaxCalcError, testYearPlusOne)
+    )
+    val lastTaxCalcWithYearListWithCalcNotFound = List(
+      LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYear),
+      LastTaxCalculationWithYear(lastTaxCalcNotFound, testYearPlusOne)
+    )
     val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, testYear)
   }
 
@@ -364,6 +381,7 @@ object TestConstants extends ImplicitDateFormatter {
     val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesModel(List(BusinessDetails.businessIncomeModel, BusinessDetails.businessIncomeModel2), Some(PropertyIncome.propertyIncomeModel))
     val businessIncomeSourceSuccess = IncomeSourcesModel(List(BusinessDetails.businessIncomeModel), None)
     val business2018IncomeSourceSuccess = IncomeSourcesModel(List(BusinessDetails.business2018IncomeModel), None)
+    val business2018And19IncomeSourceSuccess = IncomeSourcesModel(List(BusinessDetails.business2018IncomeModel, BusinessDetails.business2019IncomeModel), None)
     val propertyIncomeSourceSuccess = IncomeSourcesModel(List.empty, Some(PropertyIncome.propertyIncomeModel))
     val noIncomeSourceSuccess = IncomeSourcesModel(List.empty, None)
     val bothIncomeSourcesSuccessBusinessAligned =

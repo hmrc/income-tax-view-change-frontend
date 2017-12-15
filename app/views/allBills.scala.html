@@ -38,28 +38,30 @@ sidebarLinks = Some(sidebar),
 user = Some(user)
 ) {
     <section>
-        <h1 class="heading-xlarge">
+        <h1 class="heading-xlarge" id="page-heading">
             @messages("bills.heading")
         </h1>
 
         <div>
             @if(calcModels.isEmpty){
-                <p>
+                <p id="no-bills">
                     @messages("bills.noBills")
                 </p>
             } else {
-                <p>@messages("bills.viewBills")</p>
+                <p id="finalised-bills">@messages("bills.viewBills")</p>
                 <ul class="list list-bullet">
                     @for(calc <- calcModels){
                         <li>
-                            <a href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
+                            <a href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}" id="bills-link-@{calc.taxYear}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
                         </li>
                     }
                 </ul>
             }
         </div>
         <div>
-            @Html(messages("bills.earlierBills"))
+            <p id="earlier-bills">
+                @Html(messages("bills.earlierBills"))
+            </p>
         </div>
     </section>
 }

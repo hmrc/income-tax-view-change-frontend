@@ -80,7 +80,7 @@ bills.heading                                                   = Income Tax bil
 bills.viewBills                                                 = View finalised bills.
 bills.billLink                                                  = Tax year: {0} to {1}
 bills.noBills                                                   = You''ve had no bills since you started reporting through software.
-bills.earlierBills                                              = For earlier bills, <a href="#">view your self assessment calculations</a>.
+bills.earlierBills                                              = For earlier bills, <a href="#" id="view-sa-calcs">view your self assessment calculations</a>.
 
 ## Statuses ##
 status.received                                                 = Received
