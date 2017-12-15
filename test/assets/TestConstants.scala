@@ -326,19 +326,36 @@ object TestConstants extends ImplicitDateFormatter {
   object Estimates {
 
     val testYear = 2018
+    val testYearPlusOne = 2019
+    val testYearPlusTwo = 2020
     val testCalcType = "it"
 
+    //Last Tax Calculations
     val lastTaxCalcSuccess = LastTaxCalculation(
       calcID = testTaxCalculationId,
       calcTimestamp = "2017-07-06T12:34:56.789Z",
-      calcAmount = 543.21
+      calcAmount = 543.21,
+      calcStatus = Some(Estimate)
     )
-
+    val lastTaxCalcCrystallisedSuccess = LastTaxCalculation(
+      calcID = testTaxCalculationId,
+      calcTimestamp = "2017-07-06T12:34:56.789Z",
+      calcAmount = 543.21,
+      calcStatus = Some(Crystallised)
+    )
     val lastTaxCalcError = LastTaxCalculationError(testErrorStatus, testErrorMessage)
     val lastTaxCalcNotFound = NoLastTaxCalculation
 
-    val lastTaxCalcSuccessWithYear = LastTaxCalculationWithYear(lastTaxCalcSuccess, 2018)
-    val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, 2018)
+    //Last Tax Calculation With Years (for sub pages)
+    val lastTaxCalcSuccessWithYear = LastTaxCalculationWithYear(lastTaxCalcSuccess, testYear)
+    val lastTaxCalcWithYearList = List(
+      LastTaxCalculationWithYear(lastTaxCalcSuccess, testYear),
+      LastTaxCalculationWithYear(lastTaxCalcSuccess, testYearPlusOne))
+    val lastTaxCalcWithYearCrystallisedList = List(
+      LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYear),
+      LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYearPlusOne)
+    )
+    val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, testYear)
   }
 
   object IncomeSourceDetails {
