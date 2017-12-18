@@ -12,7 +12,11 @@ bta.messages                                                    = Messages
 bta.manage-account                                              = Manage account
 
 ## Estimates Page ##
-estimates.title                                                 = Income Tax Estimates
+estimates.title                                                 = Current estimates
+estimates.heading                                               = Income Tax Estimates
+estimates.viewEstimates                                         = View current estimates.
+estimates.estimatesLink                                         = Tax year: {0} to {1}
+estimates.noEstimates                                           = You''ve not got any current estimates.
 
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = Tax year: {0} to {1}

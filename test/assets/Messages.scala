@@ -22,7 +22,10 @@ object Messages {
 
   //Estimates Page Messages
   class Estimates {
-    val title = "Income Tax Estimates"
+    val title = "Current estimates"
+    val heading = "Income Tax Estimates"
+    val p1 = "View current estimates."
+    val taxYearLink: (String, String) => String = (year, yearPlusOne) => s"Tax year: $year to $yearPlusOne"
   }
 
   // Estimated Tax Liability Page Messages

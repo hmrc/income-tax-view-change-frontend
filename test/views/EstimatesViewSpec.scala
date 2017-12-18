@@ -24,7 +24,7 @@ import assets.TestConstants.PropertyIncome._
 import assets.TestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.IncomeSourcesModel
+import models.{IncomeSourcesModel, LastTaxCalculationWithYear}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -43,16 +43,15 @@ class EstimatesViewSpec extends TestSupport {
   val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), None)
   val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List.empty, Some(propertyIncomeModel))
 
-  private def pageSetup(incomeSources: IncomeSourcesModel) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.estimates(
-      List(),
-      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources, serviceInfo)
+  private def pageSetup(incomeSources: IncomeSourcesModel, calcs: List[LastTaxCalculationWithYear]) = new {
+    lazy val page: HtmlFormat.Appendable =
+      views.html.estimates(calcs,testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources, serviceInfo)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
   "The EstimatedTaxLiability view" should {
 
-    val setup = pageSetup(testIncomeSources)
+    val setup = pageSetup(testIncomeSources, lastTaxCalcWithYearList)
     import setup._
     val messages = new Messages.Estimates
 
@@ -63,5 +62,24 @@ class EstimatesViewSpec extends TestSupport {
     "have sidebar section " in {
       document.getElementById("sidebar") shouldNot be(null)
     }
+  }
+
+  it when {
+    "the user has estimates for two tax years" should {
+      val setup = pageSetup(testIncomeSources, lastTaxCalcWithYearList)
+      import setup._
+      val messages = new Messages.Estimates
+
+      "have the paragraph 'View current estimates.'" in {
+        document.getElementById("view-estimates").text shouldBe messages.p1
+      }
+
+      "display the links for both of the tax years with estimates" in {
+        document.getElementById(s"estimate-$testYear").text shouldBe messages.taxYearLink((testYear - 1).toString, testYear.toString)
+        document.getElementById(s"estimate-$testYearPlusOne").text shouldBe messages.taxYearLink(testYear.toString, testYearPlusOne.toString)
+      }
+
+    }
+
   }
 }
