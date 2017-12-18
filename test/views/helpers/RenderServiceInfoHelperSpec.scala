@@ -30,7 +30,7 @@ class RenderServiceInfoHelperSpec extends TestSupport {
 
   lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  def html(user: Option[MtdItUser[_]]): Html = renderServiceInfoHelper(user)(
+  def html(user: Option[String]): Html = renderServiceInfoHelper(user)(
     applicationMessages,
     appConfig
   )
@@ -39,7 +39,7 @@ class RenderServiceInfoHelperSpec extends TestSupport {
 
     "user details are passed to it" should {
 
-      lazy val document = Jsoup.parse(html(Some(testMtdItUser)).body)
+      lazy val document = Jsoup.parse(html(Some(testUserName)).body)
 
       "render the user name" in {
         document.getElementById("service-info-user-name").text() shouldBe testUserName
@@ -90,7 +90,7 @@ class RenderServiceInfoHelperSpec extends TestSupport {
 
     "no user details are passed to it" should {
 
-      lazy val document = Jsoup.parse(html(Some(testMtdItUserNoUserDetails)).body)
+      lazy val document = Jsoup.parse(html(None).body)
 
       "Not render the service-info-user-name" in {
         document.getElementById("service-info-user-name") shouldBe null

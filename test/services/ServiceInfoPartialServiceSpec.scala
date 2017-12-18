@@ -17,6 +17,7 @@
 package services
 
 import assets.TestConstants.ServiceInfoPartial._
+import assets.TestConstants.testUserName
 import config.FrontendAppConfig
 import mocks.connectors.MockServiceInfoPartialConnector
 import org.jsoup.Jsoup
@@ -37,14 +38,14 @@ class ServiceInfoPartialServiceSpec extends TestSupport with MockServiceInfoPart
     "valid HTML is retrieved from the connector" should {
       "return the expected HMTL" in {
         setupMockGetServiceInfoPartial()(serviceInfoPartialSuccess)
-        await(TestServiceInfoPartialService.serviceInfoPartial()) shouldBe serviceInfoPartialSuccess
+        await(TestServiceInfoPartialService.serviceInfoPartial(Some(testUserName))) shouldBe serviceInfoPartialSuccess
       }
     }
     "no HTML is retrieved from the connector" should {
 
       setupMockGetServiceInfoPartial()(Html(""))
 
-      val result = await(TestServiceInfoPartialService.serviceInfoPartial()).toString()
+      val result = await(TestServiceInfoPartialService.serviceInfoPartial(Some(testUserName))).toString()
       val document = Jsoup.parse(result.toString)
 
       "return the fallback HTML" which {
@@ -56,7 +57,7 @@ class ServiceInfoPartialServiceSpec extends TestSupport with MockServiceInfoPart
         }
 
         "displays the user's name" in {
-          document.getElementById("service-info-user-name").text shouldBe "Test User"
+          document.getElementById("service-info-user-name").text shouldBe testUserName
         }
 
         "has the 'Manage Account' link" in {

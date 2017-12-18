@@ -17,7 +17,6 @@
 package services
 import javax.inject.{Inject, Singleton}
 
-import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.ServiceInfoPartialConnector
 import play.api.Logger
@@ -35,11 +34,11 @@ class ServiceInfoPartialService @Inject()(implicit val config: FrontendAppConfig
                                           val serviceInfoPartialConnector: ServiceInfoPartialConnector
                                          ) extends I18nSupport {
 
-  def serviceInfoPartial[A]()(implicit hc: HeaderCarrierForPartials, user: MtdItUser[A]): Future[Html] = {
+  def serviceInfoPartial(userName: Option[String])(implicit hc: HeaderCarrierForPartials): Future[Html] = {
     serviceInfoPartialConnector.getServiceInfoPartial().map { htmlResult =>
       if (htmlResult.body.isEmpty) {
         Logger.warn("[ServiceInfoPartialService][serviceInfoPartial] - could not retrieve BTA Service Info Partial")
-        renderServiceInfoHelper(Some(user))
+        renderServiceInfoHelper(userName)
       }
       else {
         Logger.debug("[ServiceInfoPartialService][serviceInfoPartial] - retrieved BTA Service Info Partial")
