@@ -77,6 +77,29 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
+  val viewCrystallisedCalculations: Action[AnyContent] = action.async {
+    implicit user =>
+      implicit val sources = user.incomeSources
+      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
+          model => {
+            if(calcListHasErrors(model)) InternalServerError
+            else Ok(views.html.allBills(model.filter(calc => calc.matchesStatus(Crystallised))))
+          }
+        }
+      }
+  }
+
+  private def calcListHasErrors(calcs: List[LastTaxCalculationWithYear]): Boolean = {
+    if(calcs.isEmpty) false
+    else {
+      calcs.head.calculation match {
+        case _: LastTaxCalculation => calcListHasErrors(calcs.tail)
+        case _ => true
+      }
+    }
+  }
+
   private def auditEstimate[A](user: MtdItUser[A], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
       EstimatesAuditModel(user, estimate),
