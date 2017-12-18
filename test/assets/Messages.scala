@@ -80,6 +80,14 @@ object Messages {
         val bullet3 = "you may have income that's not reported in your accounting software"
       }
     }
+    object Bills {
+      val billsTitle = "Previous statements"
+      val billsHeading = "Income Tax bills"
+      val viewBills = "View finalised bills."
+      val billLink = s"Tax year: ${taxYear-1} to $taxYear"
+      val noBills = "You've had no bills since you started reporting through software."
+      val earlierBills = "For earlier bills, view your self assessment calculations."
+    }
   }
 
   // No Estimated Tax Liability Page Messages

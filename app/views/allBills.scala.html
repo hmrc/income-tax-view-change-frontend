@@ -23,29 +23,48 @@
 @import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
+@import enums.{Crystallised, Estimate}
+
 
 @(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel, serviceInfo: Html)
 
 @sidebar = {
-    @sidebarHelper(EstimatesPage, sources, Some(calcModels(0).taxYear))
+@sidebarHelper(EstimatesPage, sources, None)
 }
 
 @main_template(
-title = "Something???",
+title = messages("bills.title"),
+
 bodyClasses = None,
 scriptElem = None,
 sidebarLinks = Some(sidebar),
 user = Some(user)
 ) {
     <section>
-        <h1>
-            <p>The Title</p>
+        <h1 class="heading-xlarge" id="page-heading">
+            @messages("bills.heading")
         </h1>
 
         <div>
-            @for(calc <- calcModels){
-                <p>calc</p>
+            @if(calcModels.isEmpty){
+                <p id="no-bills">
+                    @messages("bills.noBills")
+                </p>
+            } else {
+                <p id="finalised-bills">@messages("bills.viewBills")</p>
+                <ul class="list list-bullet">
+                    @for(calc <- calcModels){
+                        <li>
+                            <a href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}" id="bills-link-@{calc.taxYear}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
+                        </li>
+                    }
+                </ul>
             }
+        </div>
+        <div>
+            <p id="earlier-bills">
+                @Html(messages("bills.earlierBills"))
+            </p>
         </div>
     </section>
 }
