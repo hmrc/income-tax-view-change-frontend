@@ -37,6 +37,7 @@ class CalculationControllerSpec extends TestSupport
   with MockCalculationService with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService {
 
+
   object TestCalculationController extends CalculationController()(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
@@ -50,7 +51,7 @@ class CalculationControllerSpec extends TestSupport
     app.injector.instanceOf[AuditingService]
   )
 
-  lazy val messages = new Messages.Calculation(2018)
+  lazy val messages = new Messages.Calculation(testYear)
 
   "The CalculationController.getFinancialData(year) action" when {
 
@@ -319,6 +320,7 @@ class CalculationControllerSpec extends TestSupport
         lazy val messages = new Messages.Estimates
 
         "return status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
           mockGetAllLatestCalcSuccess()
           status(result) shouldBe Status.OK
