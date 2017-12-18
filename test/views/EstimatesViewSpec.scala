@@ -38,39 +38,32 @@ class EstimatesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testMtdItUser: MtdItUser = MtdItUser(testMtditid, testNino, Some(testUserDetails))
   val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
   val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), None)
   val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List.empty, Some(propertyIncomeModel))
 
   private def pageSetup(incomeSources: IncomeSourcesModel, calcs: List[LastTaxCalculationWithYear]) = new {
+    val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), incomeSources)
     lazy val page: HtmlFormat.Appendable =
-      views.html.estimates(calcs,testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources, serviceInfo)
+      views.html.estimates(calcs,testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
-  "The EstimatedTaxLiability view" should {
-
-    val setup = pageSetup(testIncomeSources, lastTaxCalcWithYearList)
-    import setup._
-    val messages = new Messages.Estimates
-
-    s"have the title '${messages.title}'" in {
-      document.title() shouldBe messages.title
-    }
-
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
-    }
-  }
-
-  it when {
+  "The EstimatedTaxLiability view" when {
     "the user has estimates for two tax years" should {
       val setup = pageSetup(testIncomeSources, lastTaxCalcWithYearList)
       import setup._
       val messages = new Messages.Estimates
 
-      "have the paragraph 'View current estimates.'" in {
+      s"have the title '${messages.title}'" in {
+        document.title() shouldBe messages.title
+      }
+
+      "have sidebar section " in {
+        document.getElementById("sidebar") shouldNot be(null)
+      }
+
+      s"have the paragraph '${messages.p1}'" in {
         document.getElementById("view-estimates").text shouldBe messages.p1
       }
 
@@ -78,7 +71,24 @@ class EstimatesViewSpec extends TestSupport {
         document.getElementById(s"estimate-$testYear").text shouldBe messages.taxYearLink((testYear - 1).toString, testYear.toString)
         document.getElementById(s"estimate-$testYearPlusOne").text shouldBe messages.taxYearLink(testYear.toString, testYearPlusOne.toString)
       }
+    }
 
+    "the user has no estimates" should {
+      val setup = pageSetup(testIncomeSources, List())
+      import setup._
+      val messages = new Messages.Estimates
+
+      s"have the title '${messages.title}'" in {
+        document.title() shouldBe messages.title
+      }
+
+      "have sidebar section " in {
+        document.getElementById("sidebar") shouldNot be(null)
+      }
+
+      s"have the paragraph '${messages.noEstimates}'" in {
+        document.getElementById("no-estimates").text shouldBe messages.noEstimates
+      }
     }
 
   }
