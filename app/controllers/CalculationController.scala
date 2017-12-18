@@ -78,19 +78,18 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
-  val viewEstimateCalculations: Action[AnyContent] = actionPredicate.async {
-    implicit request =>
-      implicit user =>
-        implicit sources =>
-          serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-            calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
-              Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
-              if (calcListHasErrors(lastTaxCalcs)) InternalServerError
-              else {
-                Ok(views.html.estimates(lastTaxCalcs.filter(!_.matchesStatus(Estimate)), sources.earliestTaxYear.get))
-              }
-            }
+  val viewEstimateCalculations: Action[AnyContent] = action.async {
+    implicit user =>
+      implicit val sources = user.incomeSources
+      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
+          Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
+          if (calcListHasErrors(lastTaxCalcs)) InternalServerError
+          else {
+            Ok(views.html.estimates(lastTaxCalcs.filter(_.matchesStatus(Estimate)), sources.earliestTaxYear.get))
           }
+        }
+      }
   }
 
   val viewCrystallisedCalculations: Action[AnyContent] = action.async {
@@ -105,13 +104,12 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
         }
       }
   }
-
   private def calcListHasErrors(calcs: List[LastTaxCalculationWithYear]): Boolean = calcs.exists(_.isErrored)
 
 
 
-  private def auditEstimate[A](user: MtdItUser[A], estimate: String)(implicit hc: HeaderCarrier): Unit =
 
+  private def auditEstimate(user: MtdItUser[_], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
       EstimatesAuditModel(user, estimate),
       controllers.routes.CalculationController.getFinancialData(user.incomeSources.earliestTaxYear.get).url

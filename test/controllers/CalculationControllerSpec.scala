@@ -50,7 +50,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     app.injector.instanceOf[AuditingService]
   )
 
-  lazy val messages = new Messages.Calculation(2018)
+  lazy val messages = new Messages.Calculation(testYear)
 
   "The CalculationController.getFinancialData(year) action" when {
 
@@ -213,7 +213,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     }
   }
 
-
   "The CalculationController.redirectToEarliestEstimatedTaxLiability() action" when {
 
     "Called with an Authenticated HMRC-MTD-IT User" which {
@@ -311,7 +310,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
       }
     }
   }
-
   "The CalculationController.viewEstimateCalculation action" when {
     "called with an authenticated HMRC-MTD-IT user" which {
       "successfully retrieves Business only income from the Income Sources predicate" should {
@@ -321,10 +319,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val messages = new Messages.Estimates
 
         "return status OK (200)" in {
-
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
           mockGetAllLatestCalcSuccess()
-
           status(result) shouldBe Status.OK
         }
         "return HTML" in {
@@ -337,7 +333,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
       }
     }
   }
-  
+
   "the CalculationController.viewCrystallisedCalculations action" when {
 
       "Called with an Authenticated HMRC-MTD-IT User" which {
