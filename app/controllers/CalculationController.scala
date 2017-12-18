@@ -85,7 +85,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
           Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
           if (calcListHasErrors(lastTaxCalcs)) InternalServerError
           else {
-            Ok(views.html.estimates(lastTaxCalcs.filter(_.matchesStatus(Estimate)), sources.earliestTaxYear.get))
+            Ok(views.html.estimates(lastTaxCalcs.filter(!_.matchesStatus(Estimate)), sources.earliestTaxYear.get))
           }
         }
       }
