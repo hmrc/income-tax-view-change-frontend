@@ -368,7 +368,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         }
       }
 
-      "successfully retrives income sources, but the list returned from the service has an error model" should {
+      "successfully retrieves income sources, but the list returned from the service has an error model" should {
 
         lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
 
@@ -381,15 +381,25 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
       }
 
-      "successfully retrives income sources, but the list returned from the service has a calcNotFound" should {
+      "successfully retrieves income sources, but the list returned from the service has a calcNotFound" should {
 
         lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
 
-        "return an ISE (500)" in {
+        "return Status OK (200)" in {
           mockServiceInfoPartialSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
-          mockGetAllLatestCrystallisedCalcWithCalcNotFound()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          mockGetAllLatestCalcSuccessEmpty()
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the Bills page" in {
+          document.title() shouldBe messages.Bills.billsTitle
         }
 
       }

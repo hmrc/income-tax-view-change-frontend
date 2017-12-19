@@ -91,15 +91,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
-  private def calcListHasErrors(calcs: List[LastTaxCalculationWithYear]): Boolean = {
-    if(calcs.isEmpty) false
-    else {
-      calcs.head.calculation match {
-        case _: LastTaxCalculation => calcListHasErrors(calcs.tail)
-        case _ => true
-      }
-    }
-  }
+  private def calcListHasErrors(calcs: List[LastTaxCalculationWithYear]): Boolean = calcs.exists(_.isErrored)
 
   private def auditEstimate[A](user: MtdItUser[A], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
