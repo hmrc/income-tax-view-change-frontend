@@ -84,7 +84,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
           Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
-          if (calcListHasErrors(lastTaxCalcs)) InternalServerError
+          if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
           else {
             Ok(views.html.estimates(lastTaxCalcs.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
           }
