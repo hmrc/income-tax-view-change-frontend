@@ -15,6 +15,7 @@
  *@
 
 @import views.html.templates.main_template
+@import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
@@ -24,6 +25,7 @@
 @import views.html.helpers.calcBreakdownHelper
 @import enums.{Crystallised, Estimate}
 
+
 @(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel, serviceInfo: Html)
 
 @sidebar = {
@@ -32,6 +34,7 @@
 
 @main_template(
 title = messages("bills.title"),
+
 bodyClasses = None,
 scriptElem = None,
 sidebarLinks = Some(sidebar),

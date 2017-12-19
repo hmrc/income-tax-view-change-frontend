@@ -11,6 +11,9 @@ bta.home                                                        = Business tax h
 bta.messages                                                    = Messages
 bta.manage-account                                              = Manage account
 
+## Estimates Page ##
+estimates.title                                                 = Income Tax Estimates
+
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = Tax year: {0} to {1}
 estimated_tax_liability.heading                                 = Your Income Tax estimate
