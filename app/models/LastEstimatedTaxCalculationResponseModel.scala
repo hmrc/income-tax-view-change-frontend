@@ -30,8 +30,8 @@ case class LastTaxCalculation(calcID: String,
 
 case class LastTaxCalculationWithYear(calculation: LastTaxCalculationResponseModel,
                                       taxYear: Int) {
-  val matchesStatus: CalcStatus => Boolean = status => calculation match {
-    case model: LastTaxCalculation if model.calcStatus.isDefined => if(model.calcStatus.get == status) true else false
+  def matchesStatus(status: CalcStatus): Boolean = calculation match {
+    case model: LastTaxCalculation => model.calcStatus.getOrElse(Estimate) == status
     case _ => false
   }
 }
