@@ -337,41 +337,41 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
   "the CalculationController.viewCrystallisedCalculations action" when {
 
-      "Called with an Authenticated HMRC-MTD-IT User" which {
+    "Called with an Authenticated HMRC-MTD-IT User" which {
 
-        "successfully receives income sources from the Income Sources predicate" should {
+      "successfully receives income sources from the Income Sources predicate" should {
 
-          lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
-          lazy val document = result.toHtmlDocument
+        lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
 
-          "return Status OK (200)" in {
-            mockServiceInfoPartialSuccess()
-            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
-            mockGetAllLatestCrystallisedCalcSuccess()
-            status(result) shouldBe Status.OK
-          }
-
-          "return HTML" in {
-            contentType(result) shouldBe Some("text/html")
-            charset(result) shouldBe Some("utf-8")
-          }
-
-          "render the Bills page" in {
-            document.title() shouldBe messages.Bills.billsTitle
-          }
+        "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+          mockGetAllLatestCrystallisedCalcSuccess()
+          status(result) shouldBe Status.OK
         }
 
-        "successfully receives income sources, but an empty list from the CalculationService" should {
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
 
-          lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
-          lazy val document = result.toHtmlDocument
+        "render the Bills page" in {
+          document.title() shouldBe messages.Bills.billsTitle
+        }
+      }
 
-          "return Status OK (200)" in {
-            mockServiceInfoPartialSuccess()
-            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
-            mockGetAllLatestCalcSuccessEmpty()
-            status(result) shouldBe Status.OK
-          }
+      "successfully receives income sources, but an empty list from the CalculationService" should {
+
+        lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+
+        "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+          mockGetAllLatestCalcSuccessEmpty()
+          status(result) shouldBe Status.OK
+        }
 
         "return HTML" in {
           contentType(result) shouldBe Some("text/html")
@@ -414,5 +414,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         }
       }
     }
+
   }
+
 }
