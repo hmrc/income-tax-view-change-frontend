@@ -61,7 +61,7 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
         ArgumentMatchers.eq(nino),
         ArgumentMatchers.eq(orderedYears)
       )(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
+    .thenReturn(Future.successful(response))
 
   def mockFinancialDataSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
   def mockFinancialDataCrystalisationSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel))
@@ -69,8 +69,8 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
   def mockFinancialDataError(): Unit = setupMockGetFinancialData(testNino, testYear)(CalcDisplayError)
   def mockFinancialDataNotFound(): Unit = setupMockGetFinancialData(testNino, testYear)(CalcDisplayNoDataFound)
   def mockGetAllLatestCalcSuccess():Unit = setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearList)
-  def mockGetAllLatestCrystallisedCalcSuccess():Unit = setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearCrystallisedList)
   def mockGetAllLatestCrystallisedCalcWithError():Unit = setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListWithError)
   def mockGetAllLatestCrystallisedCalcWithCalcNotFound():Unit = setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListWithCalcNotFound)
   def mockGetAllLatestCalcSuccessEmpty():Unit = setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(List())
+
 }
