@@ -79,13 +79,13 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
 
   val viewEstimateCalculations: Action[AnyContent] = action.async {
     implicit user =>
-      implicit val sources = user.incomeSources
+      implicit val sources: IncomeSourcesModel = user.incomeSources
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
           Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
           if (calcListHasErrors(lastTaxCalcs)) InternalServerError
           else {
-            Ok(views.html.estimates(lastTaxCalcs.filter(!_.matchesStatus(Estimate)), sources.earliestTaxYear.get))
+            Ok(views.html.estimates(lastTaxCalcs.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
           }
         }
       }
@@ -93,12 +93,12 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
 
   val viewCrystallisedCalculations: Action[AnyContent] = action.async {
     implicit user =>
-      implicit val sources = user.incomeSources
+      implicit val sources: IncomeSourcesModel = user.incomeSources
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
           model => {
             if (calcListHasErrors(model)) InternalServerError
-            else Ok(views.html.allBills(model.filter(calc => calc.matchesStatus(Crystallised))))
+            else Ok(views.html.allBills(model.filter(!_.matchesStatus(Estimate))))
           }
         }
       }

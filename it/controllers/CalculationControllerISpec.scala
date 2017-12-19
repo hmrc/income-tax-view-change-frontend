@@ -307,8 +307,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
       }
     }
 
-
-
     "unauthorised" should {
 
       "redirect to sign in" in {
