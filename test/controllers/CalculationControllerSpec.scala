@@ -319,6 +319,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val messages = new Messages.Estimates
 
         "return status OK (200)" in {
+          mockServiceInfoPartialSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
           mockGetAllLatestCalcSuccess()
           status(result) shouldBe Status.OK
@@ -382,21 +383,18 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         }
       }
 
-      "successfully retrieves income sources, but the list returned from the service has an error model" should {
-
-          lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
-
-          "return an ISE (500)" in {
-            mockServiceInfoPartialSuccess()
-            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
-            mockGetAllLatestCrystallisedCalcWithError()
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
-
-        }
-
       "successfully retrieves income sources, but the list returned from the service has a calcNotFound" should {
+        lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
 
+        "return an OK (200)" in {
+          mockServiceInfoPartialSuccess()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+          mockGetAllLatestCrystallisedCalcWithCalcNotFound()
+          status(result) shouldBe Status.OK
+        }
+      }
+
+      "successfully retrieves income sources, but the list returned from the service has an error model" should {
         lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
