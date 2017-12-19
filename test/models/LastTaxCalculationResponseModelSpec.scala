@@ -23,13 +23,28 @@ import enums._
 
 class LastTaxCalculationResponseModelSpec extends UnitSpec with Matchers {
 
-  "The LastTaxCalculationWithYear model" should {
-    "return 'true' when the CalcStatus of the model matches the given CalcStatus" in {
-      LastTaxCalculationWithYear(lastTaxCalcSuccess, testYear).matchesStatus(Estimate) shouldBe true
+  "The LastTaxCalculationWithYear model" when {
+
+    "contains an Estimate calc" should {
+
+      "return 'true' when the method matchesStatus is called with Estimate" in {
+        LastTaxCalculationWithYear(lastTaxCalcSuccess, testYear).matchesStatus(Estimate) shouldBe true
+      }
+
+      "return 'false' when the method matchesStatus is called with Crystallised" in {
+        LastTaxCalculationWithYear(lastTaxCalcSuccess, testYear).matchesStatus(Crystallised) shouldBe false
+      }
     }
 
-    "return 'false' when the CalcStatus of the model matches the given CalcStatus" in {
-      LastTaxCalculationWithYear(lastTaxCalcSuccess, testYear).matchesStatus(Crystallised) shouldBe false
+    "contains a Crystallised calc" should {
+
+      "return 'true' when the method matchesStatus is called with Crystallised" in {
+        LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYear).matchesStatus(Crystallised) shouldBe true
+      }
+
+      "return 'false' when the method matchesStatus is called with Estimate" in {
+        LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYear).matchesStatus(Estimate) shouldBe false
+      }
     }
 
     "return 'false' when the model passed in is not a LastTaxCalculation model" in {
