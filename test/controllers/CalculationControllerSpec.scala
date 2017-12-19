@@ -311,6 +311,7 @@ class CalculationControllerSpec extends TestSupport
       }
     }
   }
+
   "The CalculationController.viewEstimateCalculation action" when {
     "called with an authenticated HMRC-MTD-IT user" which {
       "successfully retrieves Business only income from the Income Sources predicate" should {
@@ -332,6 +333,35 @@ class CalculationControllerSpec extends TestSupport
         "render the Estimates sub-page" in {
           document.title shouldBe messages.title
         }
+      }
+      "successfully retrieves income sources, but the list returned from the service has a calcNotFound" should {
+        lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
+
+        "return an OK (200)" in {
+          mockServiceInfoPartialSuccess()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+          mockGetAllLatestCrystallisedCalcWithCalcNotFound()
+          status(result) shouldBe Status.OK
+        }
+      }
+
+      "successfully retrieves income sources, but the list returned from the service has an error model" should {
+        lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
+
+        "return an ISE (500)" in {
+          mockServiceInfoPartialSuccess()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+          mockGetAllLatestCrystallisedCalcWithError()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+      }
+    }
+    "Called with an Unauthenticated User" should {
+
+      "return redirect SEE_OTHER (303)" in {
+        setupMockAuthorisationException()
+        val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.SEE_OTHER
       }
     }
   }
@@ -396,7 +426,7 @@ class CalculationControllerSpec extends TestSupport
         "return an ISE (500)" in {
           mockServiceInfoPartialSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
-          mockGetAllLatestCrystallisedCalcWithCalcNotFound()
+          mockGetAllLatestCrystallisedCalcWithError()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
