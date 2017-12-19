@@ -400,17 +400,16 @@ class CalculationControllerSpec extends TestSupport
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
-
     }
     "Called with an Unauthenticated User" should {
 
       "return redirect SEE_OTHER (303)" in {
         setupMockAuthorisationException()
-        val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
-
   }
+
 
 }
