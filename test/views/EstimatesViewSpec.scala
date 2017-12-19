@@ -59,8 +59,8 @@ class EstimatesViewSpec extends TestSupport {
         document.title() shouldBe messages.title
       }
 
-      "have sidebar section " in {
-        document.getElementById("sidebar") shouldNot be(null)
+      "have no sidebar section " in {
+        document.getElementById("sidebar") should be(null)
       }
 
       s"have the paragraph '${messages.p1}'" in {
@@ -83,7 +83,7 @@ class EstimatesViewSpec extends TestSupport {
       }
 
       "have sidebar section " in {
-        document.getElementById("sidebar") shouldNot be(null)
+        document.getElementById("sidebar") should be(null)
       }
 
       s"have the paragraph '${messages.noEstimates}'" in {
