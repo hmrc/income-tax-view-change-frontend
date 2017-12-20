@@ -23,7 +23,7 @@ import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyDetails._
 import assets.TestConstants.{IncomeSourceDetails, _}
 import audit.AuditingService
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockServiceInfoPartialService}
@@ -48,6 +48,7 @@ class CalculationControllerSpec extends TestSupport
     mockCalculationService,
     mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
+    app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AuditingService]
   )
 
