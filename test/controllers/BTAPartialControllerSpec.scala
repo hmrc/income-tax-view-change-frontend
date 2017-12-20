@@ -23,6 +23,7 @@ import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import config.FrontendAppConfig
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import enums.Estimate
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockBTAPartialService
 import models.LastTaxCalculation
@@ -55,7 +56,8 @@ class BTAPartialControllerSpec extends TestSupport with MockBTAPartialService wi
         setupMockGetEstimate(testNino, 2019)(LastTaxCalculation(
           calcID = testTaxCalculationId,
           calcTimestamp = "2018-07-06T12:34:56.789Z",
-          calcAmount = 6543.21
+          calcAmount = 6543.21,
+          calcStatus = Estimate
         ))
         mockBothIncomeSources()
         status(result) shouldBe Status.OK

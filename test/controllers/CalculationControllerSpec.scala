@@ -21,18 +21,19 @@ import assets.Messages.EstimatedTaxLiabilityError
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyDetails._
-import assets.TestConstants.{IncomeSourceDetails, _}
+import assets.TestConstants._
 import audit.AuditingService
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockServiceInfoPartialService}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.test.Helpers.{contentType, _}
+import play.api.test.Helpers._
 import utils.TestSupport
 
-class CalculationControllerSpec extends TestSupport with MockCalculationService with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService {
+class CalculationControllerSpec extends TestSupport with MockCalculationService
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService {
 
   object TestCalculationController extends CalculationController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -44,12 +45,13 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
     mockCalculationService,
     mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
+    app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AuditingService]
   )
 
   lazy val messages = new Messages.Calculation(2018)
 
-  "The FinancialDataController.getFinancialData(year) action" when {
+  "The CalculationController.getFinancialData(year) action" when {
 
     "Called with an Authenticated HMRC-MTD-IT User" which {
 
@@ -211,7 +213,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
   }
 
 
-  "The FinancialDataController.redirectToEarliestEstimatedTaxLiability() action" when {
+  "The CalculationController.redirectToEarliestEstimatedTaxLiability() action" when {
 
     "Called with an Authenticated HMRC-MTD-IT User" which {
 
@@ -316,6 +318,103 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService 
         status(result) shouldBe Status.SEE_OTHER
       }
     }
+  }
+
+  "the CalculationController.viewCrystallisedCalculations action" when {
+
+    "Called with an Authenticated HMRC-MTD-IT User" which {
+
+      "successfully receives income sources from the Income Sources predicate" should {
+
+        lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+
+        "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+          mockGetAllLatestCrystallisedCalcSuccess()
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the Bills page" in {
+          document.title() shouldBe messages.Bills.billsTitle
+        }
+      }
+
+      "successfully receives income sources, but an empty list from the CalculationService" should {
+
+        lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+
+        "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+          mockGetAllLatestCalcSuccessEmpty()
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the Bills page" in {
+          document.title() shouldBe messages.Bills.billsTitle
+        }
+      }
+
+      "successfully retrieves income sources, but the list returned from the service has an error model" should {
+
+        lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+
+        "return an ISE (500)" in {
+          mockServiceInfoPartialSuccess()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+          mockGetAllLatestCrystallisedCalcWithError()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+      }
+
+      "successfully retrieves income sources, but the list returned from the service has a calcNotFound" should {
+
+        lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+
+        "return Status OK (200)" in {
+          mockServiceInfoPartialSuccess()
+          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+          mockGetAllLatestCalcSuccessEmpty()
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the Bills page" in {
+          document.title() shouldBe messages.Bills.billsTitle
+        }
+
+      }
+
+    }
+
+    "Called with an Unauthenticated User" should {
+
+      "return redirect SEE_OTHER (303)" in {
+        setupMockAuthorisationException()
+        val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+
   }
 
 }

@@ -21,15 +21,20 @@ import assets.TestConstants.Estimates._
 import assets.TestConstants.Estimates
 import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants._
+import enums.Estimate
 import mocks.connectors.{MockCalculationDataConnector, MockLastTaxCalculationConnector}
-import models.{CalcDisplayError, CalcDisplayNoDataFound}
+import mocks.services.MockCalculationService
+import models.{CalcDisplayError, CalcDisplayNoDataFound, LastTaxCalculation, LastTaxCalculationResponseModel}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestSupport
 
-class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConnector with MockCalculationDataConnector {
+import scala.concurrent.Future
 
-  object TestCalculationService$ extends CalculationService(mockLastTaxCalculationConnector, mockCalculationDataConnector)
+class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConnector with MockCalculationDataConnector with MockCalculationService {
 
-  "The FinancialDataService.getCalculationData method" when {
+  object TestCalculationService extends CalculationService(mockLastTaxCalculationConnector, mockCalculationDataConnector)
+
+  "The CalculationService.getCalculationData method" when {
 
     "successful responses are returned from the CalculationDataConnector & EstimatedTaxLiabilityConnector" should {
 
@@ -37,7 +42,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
         setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
 
-        await(TestCalculationService$.getFinancialData(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
+        await(TestCalculationService.getFinancialData(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
       }
     }
 
@@ -45,7 +50,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
 
       "return none" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
-        await(TestCalculationService$.getFinancialData(testNino, testYear)) shouldBe CalcDisplayError
+        await(TestCalculationService.getFinancialData(testNino, testYear)) shouldBe CalcDisplayError
       }
     }
 
@@ -53,7 +58,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
 
       "return none" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcNotFound)
-        await(TestCalculationService$.getFinancialData(testNino, testYear)) shouldBe CalcDisplayNoDataFound
+        await(TestCalculationService.getFinancialData(testNino, testYear)) shouldBe CalcDisplayNoDataFound
       }
     }
 
@@ -63,8 +68,30 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataErrorModel)
 
-        await(TestCalculationService$.getFinancialData(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel
+        await(TestCalculationService.getFinancialData(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel
       }
     }
+  }
+
+  "The CalculationService.getAllLatestCalculations method" when {
+
+    object TestCalculationService extends CalculationService(mockLastTaxCalculationConnector, mockCalculationDataConnector) {
+      override def getLastEstimatedTaxCalculation(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
+        lastTaxCalcSuccess
+      }
+    }
+
+    "passed an ordered list of years" should {
+
+      "return a list of LastTaxCalculationWithYear models" in {
+        await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
+      }
+
+      "passed an empty list of Ints" in {
+        await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
+      }
+
+    }
+
   }
 }

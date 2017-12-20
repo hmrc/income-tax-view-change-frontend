@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import audit.AuditingService
 import audit.models.EstimatesAuditing.EstimatesAuditModel
 import auth.MtdItUser
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import enums.{Crystallised, Estimate}
 import models._
@@ -41,6 +41,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                                         val calculationService: CalculationService,
                                         val serviceInfoPartialService: ServiceInfoPartialService,
                                         val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                        val itvcErrorHandler: ItvcErrorHandler,
                                         val auditingService: AuditingService
                                        ) extends BaseController {
 
@@ -76,6 +77,21 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
         }
       }
   }
+
+  val viewCrystallisedCalculations: Action[AnyContent] = action.async {
+    implicit user =>
+      implicit val sources = user.incomeSources
+      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
+          model => {
+            if(calcListHasErrors(model)) itvcErrorHandler.showInternalServerError
+            else Ok(views.html.allBills(model.filter(calc => calc.matchesStatus(Crystallised))))
+          }
+        }
+      }
+  }
+
+  private def calcListHasErrors(calcs: List[LastTaxCalculationWithYear]): Boolean = calcs.exists(_.isErrored)
 
   private def auditEstimate[A](user: MtdItUser[A], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(

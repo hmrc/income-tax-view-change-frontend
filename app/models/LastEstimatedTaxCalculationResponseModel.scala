@@ -16,27 +16,44 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
-import enums.CalcStatus
-
-import scala.concurrent.Future
+import enums.{CalcStatus, Estimate}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
+import play.api.libs.json.{Json, OFormat, Reads, _}
 
 sealed trait LastTaxCalculationResponseModel
 
 case class LastTaxCalculation(calcID: String,
                               calcTimestamp: String,
                               calcAmount: BigDecimal,
-                              calcStatus: Option[CalcStatus] = None) extends LastTaxCalculationResponseModel
+                              calcStatus: CalcStatus) extends LastTaxCalculationResponseModel
 
 case class LastTaxCalculationWithYear(calculation: LastTaxCalculationResponseModel,
-                                      taxYear: Int)
+                                      taxYear: Int) {
+
+  lazy val matchesStatus: CalcStatus => Boolean = status => calculation match {
+    case model: LastTaxCalculation => model.calcStatus == status
+    case _ => false
+  }
+
+  lazy val isErrored: Boolean = calculation match {
+    case _: LastTaxCalculationError => true
+    case _ => false
+  }
+}
 
 case class LastTaxCalculationError(status: Int, message: String) extends LastTaxCalculationResponseModel
 case object NoLastTaxCalculation extends LastTaxCalculationResponseModel
 
 
 object LastTaxCalculation {
-  implicit val format: OFormat[LastTaxCalculation] = Json.format[LastTaxCalculation]
+  implicit val reads: Reads[LastTaxCalculation] = (
+    (__ \ "calcID").read[String] and
+      (__ \ "calcTimestamp").read[String] and
+      (__ \ "calcAmount").read[BigDecimal] and
+      ((__ \ "calcStatus").read[CalcStatus] or Reads.pure[CalcStatus](Estimate))
+    ) (LastTaxCalculation.apply _)
+  implicit val writes: Writes[LastTaxCalculation] = Json.writes[LastTaxCalculation]
 }
 
 object LastTaxCalculationError {

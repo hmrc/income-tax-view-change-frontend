@@ -20,6 +20,7 @@ import assets.TestConstants.Estimates._
 import assets.TestConstants.ReportDeadlines._
 import assets.Messages.{BtaPartial => messages}
 import config.FrontendAppConfig
+import enums.Estimate
 import models._
 import play.api.i18n.Messages.Implicits._
 import utils.TestSupport
@@ -105,7 +106,7 @@ class BtaPartialHelperSpec extends TestSupport {
           |</div>""".stripMargin.replaceAll("\n","")
 
       "return Html corresponding to the estimated tax for misaligned tax years" in {
-        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(LastTaxCalculation("CALCID","2018-07-06T12:34:56.789Z", 6543.21), 2019)))(applicationMessages, mockAppConfig) shouldBe List(success1,success2)
+        BtaPartialHelper.showLastEstimate(List(lastTaxCalcSuccessWithYear, LastTaxCalculationWithYear(LastTaxCalculation("CALCID","2018-07-06T12:34:56.789Z", 6543.21, Estimate), 2019)))(applicationMessages, mockAppConfig) shouldBe List(success1,success2)
       }
     }
 
