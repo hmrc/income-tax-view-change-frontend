@@ -27,23 +27,24 @@ import enums.{Crystallised, Estimate}
 import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
+import play.api.libs.json.Json
 import play.api.mvc.{Action, ActionBuilder, AnyContent}
 import services.{CalculationService, ServiceInfoPartialService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class CalculationController @Inject()(implicit val config: FrontendAppConfig,
-                                      implicit val messagesApi: MessagesApi,
-                                      val checkSessionTimeout: SessionTimeoutPredicate,
-                                      val authenticate: AuthenticationPredicate,
-                                      val retrieveNino: NinoPredicate,
-                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                      val calculationService: CalculationService,
-                                      val serviceInfoPartialService: ServiceInfoPartialService,
-                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                      val itvcErrorHandler: ItvcErrorHandler,
-                                      val auditingService: AuditingService
-                                     ) extends BaseController {
+                                        implicit val messagesApi: MessagesApi,
+                                        val checkSessionTimeout: SessionTimeoutPredicate,
+                                        val authenticate: AuthenticationPredicate,
+                                        val retrieveNino: NinoPredicate,
+                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                        val calculationService: CalculationService,
+                                        val serviceInfoPartialService: ServiceInfoPartialService,
+                                        val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                        val itvcErrorHandler: ItvcErrorHandler,
+                                        val auditingService: AuditingService
+                                       ) extends BaseController {
 
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
@@ -98,7 +99,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
           Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
-          if (calcListHasErrors(lastTaxCalcs)) InternalServerError
+          if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
           else Ok(views.html.allBills(lastTaxCalcs.filter(!_.matchesStatus(Estimate))))
         }
       }
@@ -107,7 +108,6 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   private def calcListHasErrors(calcs: List[LastTaxCalculationWithYear]): Boolean = calcs.exists(_.isErrored)
 
   private def auditEstimate[A](user: MtdItUser[A], estimate: String)(implicit hc: HeaderCarrier): Unit =
-
     auditingService.audit(
       EstimatesAuditModel(user, estimate),
       controllers.routes.CalculationController.getFinancialData(user.incomeSources.earliestTaxYear.get).url
