@@ -69,7 +69,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           Then("the BTA page contains the text - Quarterly reporting")
           res should have(
-            isElementVisibleById("it-quarterly-reporting-heading")(true)
+            isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
 
           Then("the BTA page contains the text - Your latest report has been received")
@@ -86,7 +86,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then("the BTA page contains the text - Your estimated tax amount is £90,500")
           res should have(
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
-            isElementVisibleById("current-estimate-2019")(false)
+            isElementVisibleById("current-estimate-2019")(expectedValue = false)
           )
         }
       }
@@ -100,7 +100,8 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+          val lastTaxCalcResponse =
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -128,7 +129,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           Then("the BTA page contains the text - Quarterly reporting")
           res should have(
-            isElementVisibleById("it-quarterly-reporting-heading")(true)
+            isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
 
           Then("the BTA page contains the text - You have an overdue report")
@@ -139,7 +140,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then("the BTA page contains the text - Your estimated tax amount is £90,500")
           res should have(
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
-            isElementVisibleById("current-estimate-2019")(false)
+            isElementVisibleById("current-estimate-2019")(expectedValue = false)
           )
         }
       }
@@ -153,8 +154,10 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
-          val lastTaxCalcResponsePlusYear = LastTaxCalculation(testCalcId, "2018-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxDue)
+          val lastTaxCalcResponse =
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+          val lastTaxCalcResponsePlusYear =
+            LastTaxCalculation(testCalcId, "2018-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxDue)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, "2019", lastTaxCalcResponsePlusYear)
 
@@ -189,7 +192,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           Then("the BTA page should contains the text - Quarterly reporting")
           res should have(
-            isElementVisibleById("it-quarterly-reporting-heading")(true)
+            isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
 
           Then("the BTA page should contains the text - You have an overdue report")
@@ -214,7 +217,8 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+          val lastTaxCalcResponse =
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
@@ -245,7 +249,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           Then("the BTA page contains the text - Quarterly reporting")
           res should have(
-            isElementVisibleById("it-quarterly-reporting-heading")(true)
+            isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
 
           Then("the BTA page contains the text - You have an overdue report")
@@ -259,10 +263,11 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             elementTextByID("estimates-link-2018")("View details")
           )
 
-          Then("the BTA page contains the text - Your estimated tax amount is £90,500")
+          Then("the BTA page contains the text - Your estimated tax amount for 2017 to 2018 is £90,500")
           res should have(
-            elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500"),
-            isElementVisibleById("current-estimate-2019")(false)
+            elementTextByID("current-estimate-2018")("Your estimated tax amount for 2017 to 2018 is £90,500"),
+            elementTextByID("current-estimate-2019")(
+              "Your estimated tax amount for 2018 to 2019 is £66,500")
           )
 
         }
@@ -306,7 +311,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
            Then("the BTA page displays the text-  Quarterly reporting")
           res should have(
-            isElementVisibleById("it-quarterly-reporting-heading")(true)
+            isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
 
           Then("the BTA page displays the text-  Your latest report has been received")
@@ -331,7 +336,8 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+          val lastTaxCalcResponse =
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -360,7 +366,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
            Then("the text Quarterly reporting is displayed on the BTA page")
           res should have(
-            isElementVisibleById("it-quarterly-reporting-heading")(true)
+            isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
 
           Then("the BTA page displays the error text for non retrieved next report due date")
@@ -413,7 +419,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           )
           Then("the text Quarterly reporting is displayed on the BTA page")
           res should have(
-            isElementVisibleById("it-quarterly-reporting-heading")(true)
+            isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
           Then("the BTA page displays the error text for non retrieved next report due date and estimated tax amount")
           res should have(
