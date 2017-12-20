@@ -42,10 +42,10 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
     } yield (lastCalc, calcBreakdown) match {
       case (calc: LastTaxCalculation, breakdown: CalculationDataModel) =>
         Logger.debug("[FinancialDataService] Retrieved all Financial Data")
-        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown), calc.calcStatus.getOrElse(Estimate))
+        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown), calc.calcStatus)
       case (calc: LastTaxCalculation, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
-        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None, calc.calcStatus.getOrElse(Estimate))
+        CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None, calc.calcStatus)
       case (_: LastTaxCalculationError, _) =>
         Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError

@@ -344,13 +344,13 @@ object TestConstants extends ImplicitDateFormatter {
       calcID = testTaxCalculationId,
       calcTimestamp = "2017-07-06T12:34:56.789Z",
       calcAmount = 543.21,
-      calcStatus = Some(Estimate)
+      calcStatus = Estimate
     )
     val lastTaxCalcCrystallisedSuccess = LastTaxCalculation(
       calcID = testTaxCalculationId,
       calcTimestamp = "2017-07-06T12:34:56.789Z",
       calcAmount = 543.21,
-      calcStatus = Some(Crystallised)
+      calcStatus = Crystallised
     )
     val lastTaxCalcError = LastTaxCalculationError(testErrorStatus, testErrorMessage)
     val lastTaxCalcNotFound = NoLastTaxCalculation

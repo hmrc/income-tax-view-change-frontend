@@ -15,7 +15,7 @@
  */
 package controllers
 
-import enums.Crystallised
+import enums.{Crystallised, Estimate}
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
@@ -38,7 +38,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         stubPartial()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
@@ -92,7 +92,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         stubPartial()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, calcStatus = Some(Crystallised))
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Crystallised)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
@@ -146,7 +146,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         stubPartial()
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD, Estimate)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
@@ -201,7 +201,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         stubPartial()
 
         And("a successful Get Last Estimated Tax Liability response via wiremock stub")
-        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub an erroneous GetCalculationData response")

@@ -16,6 +16,7 @@
 
 package controllers
 
+import enums.Estimate
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import helpers.IntegrationTestConstants.GetReportDeadlinesData._
 import helpers.IntegrationTestConstants._
@@ -39,7 +40,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -100,7 +101,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -153,8 +154,8 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
-          val lastTaxCalcResponsePlusYear = LastTaxCalculation(testCalcId, "2018-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxDue)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
+          val lastTaxCalcResponsePlusYear = LastTaxCalculation(testCalcId, "2018-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxDue, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, "2019", lastTaxCalcResponsePlusYear)
 
@@ -214,7 +215,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
@@ -331,7 +332,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
