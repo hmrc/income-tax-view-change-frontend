@@ -96,11 +96,10 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
     implicit user =>
       implicit val sources: IncomeSourcesModel = user.incomeSources
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
-          model => {
-            if (calcListHasErrors(model)) itvcErrorHandler.showInternalServerError
-            else Ok(views.html.allBills(model.filter(!_.matchesStatus(Estimate))))
-          }
+        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
+          Logger.debug(s"[CalculationController][viewCrystallisedCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
+          if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
+          else Ok(views.html.allBills(lastTaxCalcs.filter(!_.matchesStatus(Estimate))))
         }
       }
   }

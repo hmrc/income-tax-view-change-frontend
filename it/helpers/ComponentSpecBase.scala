@@ -63,6 +63,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   object IncomeTaxViewChangeFrontend {
     def get(uri: String): WSResponse = await(buildClient(uri).get())
 
+    def getEstimates: WSResponse = get("/estimates")
+    def getBills: WSResponse = get("/bills")
     def getFinancialData(year: String): WSResponse = get(s"/calculation/$year")
     def getReportDeadlines: WSResponse = get(s"/obligations")
     def getBtaPartial: WSResponse = get(s"/partial")
