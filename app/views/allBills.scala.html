@@ -15,6 +15,7 @@
  *@
 
 @import views.html.templates.main_template
+@import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
@@ -34,7 +35,7 @@
 title = messages("bills.title"),
 bodyClasses = None,
 scriptElem = None,
-sidebarLinks = Some(sidebar),
+sidebarLinks = None,
 user = Some(user)
 ) {
     <section>
@@ -52,7 +53,7 @@ user = Some(user)
                 <ul class="list list-bullet">
                     @for(calc <- calcModels){
                         <li>
-                            <a href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}" id="bills-link-@{calc.taxYear}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
+                            <a href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}" class="bills-link" id="bills-link-@{calc.taxYear}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
                         </li>
                     }
                 </ul>

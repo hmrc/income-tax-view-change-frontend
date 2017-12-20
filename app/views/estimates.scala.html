@@ -1,0 +1,58 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.main_template
+@import utils.ImplicitDateFormatter._
+@import views.helpers.TaxYearRenderHelper._
+@import views.html.helpers.sidebarHelper
+@import views.helpers.EstimatesPage
+
+
+@(estimates: List[LastTaxCalculationWithYear], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], serviceInfo: Html)
+
+@sidebar = {
+    @sidebarHelper(EstimatesPage, user.incomeSources, Some(taxYear))
+}
+
+@main_template(
+    title = messages("estimates.title"),
+    bodyClasses = None,
+    sidebarLinks = None,
+    user = Some(user)
+) {
+
+    <section>
+        <h1>@messages("estimates.heading")</h1>
+        <div>
+            @if(estimates.isEmpty){
+                <p id="no-estimates">@messages("estimates.noEstimates")</p>
+            } else {
+            <p id="view-estimates">@messages("estimates.viewEstimates")</p>
+            <ul class="list list-bullet">
+                @for(calc <- estimates.reverse){
+                    <li>
+                        <a class="estimates-link" id="estimate-@{calc.taxYear}" href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}">
+                            @messages("estimates.estimatesLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")
+                        </a>
+                    </li>
+                }
+            </ul>
+            }
+        </div>
+
+    </section>
+
+}

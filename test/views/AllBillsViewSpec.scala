@@ -78,8 +78,8 @@ class AllBillsViewSpec extends TestSupport {
         document2Bills.getElementById("earlier-bills").text shouldBe messages.earlierBills
       }
 
-      "have sidebar section " in {
-        document2Bills.getElementById("sidebar") shouldNot be(null)
+      "have no sidebar section " in {
+        document2Bills.getElementById("sidebar") should be(null)
       }
 
     }
@@ -98,8 +98,8 @@ class AllBillsViewSpec extends TestSupport {
         documentNoBills.getElementById("earlier-bills").text shouldBe messages.earlierBills
       }
 
-      "have sidebar section " in {
-        documentNoBills.getElementById("sidebar") shouldNot be(null)
+      "have no sidebar section " in {
+        documentNoBills.getElementById("sidebar") should be(null)
       }
 
     }

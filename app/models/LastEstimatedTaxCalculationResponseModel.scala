@@ -30,7 +30,6 @@ case class LastTaxCalculation(calcID: String,
 
 case class LastTaxCalculationWithYear(calculation: LastTaxCalculationResponseModel,
                                       taxYear: Int) {
-
   lazy val matchesStatus: CalcStatus => Boolean = status => calculation match {
     case model: LastTaxCalculation => model.calcStatus == status
     case _ => false
@@ -38,6 +37,7 @@ case class LastTaxCalculationWithYear(calculation: LastTaxCalculationResponseMod
 
   lazy val isErrored: Boolean = calculation match {
     case _: LastTaxCalculationError => true
+
     case _ => false
   }
 }

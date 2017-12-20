@@ -27,6 +27,7 @@ import enums.{Crystallised, Estimate}
 import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
+import play.api.libs.json.Json
 import play.api.mvc.{Action, ActionBuilder, AnyContent}
 import services.{CalculationService, ServiceInfoPartialService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -78,15 +79,28 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
+  val viewEstimateCalculations: Action[AnyContent] = action.async {
+    implicit user =>
+      implicit val sources: IncomeSourcesModel = user.incomeSources
+      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
+          Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
+          if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
+          else {
+            Ok(views.html.estimates(lastTaxCalcs.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
+          }
+        }
+      }
+  }
+
   val viewCrystallisedCalculations: Action[AnyContent] = action.async {
     implicit user =>
-      implicit val sources = user.incomeSources
+      implicit val sources: IncomeSourcesModel = user.incomeSources
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
-          model => {
-            if(calcListHasErrors(model)) itvcErrorHandler.showInternalServerError
-            else Ok(views.html.allBills(model.filter(calc => calc.matchesStatus(Crystallised))))
-          }
+        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
+          Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
+          if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
+          else Ok(views.html.allBills(lastTaxCalcs.filter(!_.matchesStatus(Estimate))))
         }
       }
   }
