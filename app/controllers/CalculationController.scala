@@ -99,7 +99,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
           Logger.debug(s"[CalculationController][viewCrystallisedCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
           if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
-          else Ok(views.html.allBills(lastTaxCalcs.filter(!_.matchesStatus(Estimate))))
+          else Ok(views.html.allBills(lastTaxCalcs.filter(_.matchesStatus(Crystallised))))
         }
       }
   }

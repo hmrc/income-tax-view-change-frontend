@@ -341,7 +341,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse =
-          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
+          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
@@ -384,8 +384,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         getPropDeets(GetPropertyDetails.successResponse())
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD)
-        val lastTaxCalcResponse2 = LastTaxCalculation(testCalcId2, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD)
+        val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
+        val lastTaxCalcResponse2 = LastTaxCalculation(testCalcId2, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD, Estimate)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, lastTaxCalcResponse2)
 
@@ -441,13 +441,14 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             testCalcId,
             "2017-07-06T12:34:56.789Z",
             GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD,
-            Some(Crystallised)
+            Crystallised
           )
         val crystallisedLastTaxCalcResponse =
           LastTaxCalculation(
             testCalcId2,
             "2017-07-06T12:34:56.789Z",
-            GetCalculationData.calculationDataSuccessModel.incomeTaxYTD
+            GetCalculationData.calculationDataSuccessModel.incomeTaxYTD,
+            Estimate
           )
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, crystallisedLastTaxCalcResponse)
@@ -498,7 +499,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             testCalcId,
             "2017-07-06T12:34:56.789Z",
             GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD,
-            Some(Crystallised)
+            Crystallised
           )
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
@@ -564,7 +565,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           LastTaxCalculation(testCalcId,
             "2017-07-06T12:34:56.789Z",
             GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD,
-            Some(Crystallised)
+            Crystallised
           )
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
@@ -613,13 +614,13 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           LastTaxCalculation(testCalcId,
             "2017-07-06T12:34:56.789Z",
             GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD,
-            Some(Crystallised)
+            Crystallised
           )
         val lastTaxCalcResponse2 =
           LastTaxCalculation(testCalcId2,
             "2017-07-06T12:34:56.789Z",
             GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD,
-            Some(Crystallised)
+            Crystallised
           )
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, lastTaxCalcResponse2)
@@ -677,13 +678,14 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             testCalcId,
             "2017-07-06T12:34:56.789Z",
             GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD,
-            Some(Crystallised)
+            Crystallised
           )
         val crystallisedLastTaxCalcResponse =
           LastTaxCalculation(
             testCalcId2,
             "2017-07-06T12:34:56.789Z",
-            GetCalculationData.calculationDataSuccessModel.incomeTaxYTD
+            GetCalculationData.calculationDataSuccessModel.incomeTaxYTD,
+            Estimate
           )
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, crystallisedLastTaxCalcResponse)
@@ -735,7 +737,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           LastTaxCalculation(
             testCalcId,
             "2017-07-06T12:34:56.789Z",
-            GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD
+            GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD,
+            Estimate
           )
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 

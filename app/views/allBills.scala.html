@@ -26,10 +26,6 @@
 
 @(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel, serviceInfo: Html)
 
-@sidebar = {
-@sidebarHelper(EstimatesPage, sources, None)
-}
-
 @main_template(
 title = messages("bills.title"),
 bodyClasses = None,
