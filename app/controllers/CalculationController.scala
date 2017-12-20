@@ -33,17 +33,17 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class CalculationController @Inject()(implicit val config: FrontendAppConfig,
-                                        implicit val messagesApi: MessagesApi,
-                                        val checkSessionTimeout: SessionTimeoutPredicate,
-                                        val authenticate: AuthenticationPredicate,
-                                        val retrieveNino: NinoPredicate,
-                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                        val calculationService: CalculationService,
-                                        val serviceInfoPartialService: ServiceInfoPartialService,
-                                        val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                        val itvcErrorHandler: ItvcErrorHandler,
-                                        val auditingService: AuditingService
-                                       ) extends BaseController {
+                                      implicit val messagesApi: MessagesApi,
+                                      val checkSessionTimeout: SessionTimeoutPredicate,
+                                      val authenticate: AuthenticationPredicate,
+                                      val retrieveNino: NinoPredicate,
+                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                      val calculationService: CalculationService,
+                                      val serviceInfoPartialService: ServiceInfoPartialService,
+                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                      val itvcErrorHandler: ItvcErrorHandler,
+                                      val auditingService: AuditingService
+                                     ) extends BaseController {
 
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
@@ -96,11 +96,10 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
     implicit user =>
       implicit val sources: IncomeSourcesModel = user.incomeSources
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
-          model => {
-            if (calcListHasErrors(model)) InternalServerError
-            else Ok(views.html.allBills(model.filter(!_.matchesStatus(Estimate))))
-          }
+        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
+          Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
+          if (calcListHasErrors(lastTaxCalcs)) InternalServerError
+          else Ok(views.html.allBills(lastTaxCalcs.filter(!_.matchesStatus(Estimate))))
         }
       }
   }
