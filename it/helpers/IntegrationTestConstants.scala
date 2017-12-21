@@ -35,8 +35,10 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testNinoEnrolmentIdentifier = "NINO"
   val testNino = "AA123456A"
   val testCalcId = "01234567"
+  val testCalcId2 = "01234568"
 
   val testYear = "2018"
+  val testYearPlusOne = "2019"
   val testCalcType = "it"
 
   val testSelfEmploymentId = "ABC123456789"
@@ -145,7 +147,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "id": "$id1",
               "accountingPeriod":{"start":"2017-01-01","end":"2017-12-31"},
               "accountingType":"CASH",
-              "commencementDate":"2017-01-01",
+              "commencementDate":"2017-01-06",
               "cessationDate":"2017-12-31",
               "tradingName":"firstBusiness",
               "businessDescription":"a first business",
@@ -157,7 +159,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
             },
             {
               "id": "$id2",
-              "accountingPeriod":{"start":"2017-01-01","end":"2017-12-31"},
+              "accountingPeriod":{"start":"2018-01-01","end":"2018-12-31"},
               "accountingType":"CASH",
               "commencementDate":"2017-01-01",
               "cessationDate":"2017-12-31",

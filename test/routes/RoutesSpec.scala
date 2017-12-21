@@ -43,6 +43,13 @@ class RoutesSpec extends TestSupport {
     }
   }
 
+  //Estimates route
+  "The URL for the CalculationController.viewEstimateCalculations action" should {
+    s"be equal to $contextRoute/estimates" in {
+      controllers.routes.CalculationController.viewEstimateCalculations().url shouldBe s"$contextRoute/estimates"
+    }
+  }
+
   //Estimated Tax Liability
   "The URL for the FinancialDataController.redirectToEarliestEstimatedTaxLiability action" should {
     s"be equal to $contextRoute/calculation" in {

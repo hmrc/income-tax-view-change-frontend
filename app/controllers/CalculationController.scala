@@ -78,22 +78,37 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
-  val viewCrystallisedCalculations: Action[AnyContent] = action.async {
+  val viewEstimateCalculations: Action[AnyContent] = action.async {
     implicit user =>
-      implicit val sources = user.incomeSources
+      implicit val sources: IncomeSourcesModel = user.incomeSources
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map {
-          model => {
-            if(calcListHasErrors(model)) itvcErrorHandler.showInternalServerError
-            else Ok(views.html.allBills(model.filter(calc => calc.matchesStatus(Crystallised))))
+        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
+          Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
+          if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
+          else {
+            Ok(views.html.estimates(lastTaxCalcs.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
           }
         }
       }
   }
 
+  val viewCrystallisedCalculations: Action[AnyContent] = action.async {
+    implicit user =>
+      implicit val sources: IncomeSourcesModel = user.incomeSources
+      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
+          Logger.debug(s"[CalculationController][viewCrystallisedCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
+          if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
+          else Ok(views.html.allBills(lastTaxCalcs.filter(_.matchesStatus(Crystallised))))
+        }
+      }
+  }
   private def calcListHasErrors(calcs: List[LastTaxCalculationWithYear]): Boolean = calcs.exists(_.isErrored)
 
-  private def auditEstimate[A](user: MtdItUser[A], estimate: String)(implicit hc: HeaderCarrier): Unit =
+
+
+
+  private def auditEstimate(user: MtdItUser[_], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
       EstimatesAuditModel(user, estimate),
       controllers.routes.CalculationController.getFinancialData(user.incomeSources.earliestTaxYear.get).url

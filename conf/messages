@@ -11,6 +11,13 @@ bta.home                                                        = Business tax h
 bta.messages                                                    = Messages
 bta.manage-account                                              = Manage account
 
+## Estimates Page ##
+estimates.title                                                 = Current estimates
+estimates.heading                                               = View your estimates
+estimates.viewEstimates                                         = View your current estimates.
+estimates.estimatesLink                                         = Tax year: {0} to {1}
+estimates.noEstimates                                           = You''ve not got any current estimates.
+
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = Tax year: {0} to {1}
 estimated_tax_liability.heading                                 = Your Income Tax estimate
