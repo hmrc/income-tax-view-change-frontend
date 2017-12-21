@@ -68,8 +68,8 @@ class EstimatesViewSpec extends TestSupport {
       }
 
       "display the links for both of the tax years with estimates" in {
-        document.getElementById(s"estimate-$testYear").text shouldBe messages.taxYearLink((testYear - 1).toString, testYear.toString)
-        document.getElementById(s"estimate-$testYearPlusOne").text shouldBe messages.taxYearLink(testYear.toString, testYearPlusOne.toString)
+        document.getElementById(s"estimates-link-$testYear").text shouldBe messages.taxYearLink((testYear - 1).toString, testYear.toString)
+        document.getElementById(s"estimates-link-$testYearPlusOne").text shouldBe messages.taxYearLink(testYear.toString, testYearPlusOne.toString)
       }
     }
 

@@ -63,7 +63,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
           httpStatus(OK),
           pageTitle("Current estimates"),
           elementTextByID("view-estimates")("View your current estimates."),
-          elementTextByID(s"estimate-$testYear")(s"Tax year: 2017 to $testYear"),
+          elementTextByID(s"estimates-link-$testYear")(s"Tax year: 2017 to $testYear"),
           nElementsWithClass("estimates-link")(1)
         )
       }
@@ -112,8 +112,8 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
           httpStatus(OK),
           pageTitle("Current estimates"),
           elementTextByID("view-estimates")("View your current estimates."),
-          elementTextByID(s"estimate-$testYearPlusOne")(s"Tax year: $testYear to $testYearPlusOne"),
-          elementTextByID(s"estimate-$testYear")(s"Tax year: 2017 to $testYear"),
+          elementTextByID(s"estimates-link-$testYearPlusOne")(s"Tax year: $testYear to $testYearPlusOne"),
+          elementTextByID(s"estimates-link-$testYear")(s"Tax year: 2017 to $testYear"),
           nElementsWithClass("estimates-link")(2)
         )
       }
