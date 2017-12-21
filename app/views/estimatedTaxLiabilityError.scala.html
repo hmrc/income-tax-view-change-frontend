@@ -23,7 +23,7 @@
 @import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
 
-@(taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel, serviceInfo: Html)
+@(taxYear: Int)(serviceInfo: Html)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
 
 @sidebar = {
     @sidebarHelper(EstimatesPage, sources, Some(taxYear))
@@ -33,7 +33,9 @@
     title = renderTitle(taxYear),
     bodyClasses = None,
     scriptElem = None,
-    sidebarLinks = Some(sidebar)
+    sidebarLinks = Some(sidebar),
+    user = Some(user),
+    serviceInfo = serviceInfo
 ) {
 
     <section id="estimated-tax" data-metrics="handledError:estimatesError:noEstimates">

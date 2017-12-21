@@ -23,14 +23,17 @@ import assets.TestConstants._
 import config.FrontendAppConfig
 import models._
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import play.api.http.Status
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
 import utils.TestSupport
 
 class ReportDeadlinesViewSpec extends TestSupport {
 
-  lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val successModel = ReportDeadlinesModel(List(ReportDeadlineModel(
     start = "2017-1-1".toLocalDate,
@@ -38,7 +41,12 @@ class ReportDeadlinesViewSpec extends TestSupport {
     due = "2017-4-5".toLocalDate,
     met = true
   )))
-  val errorModel = ReportDeadlinesErrorModel(500,"ISE")
+  val errorModel = ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
+
+  private def pageSetup(model: IncomeSourcesModel) = new {
+    lazy val page: HtmlFormat.Appendable = views.html.report_deadlines(model)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+    lazy val document: Document = Jsoup.parse(contentAsString(page))
+  }
 
 
   "The ReportDeadlines view" should {
@@ -55,8 +63,8 @@ class ReportDeadlinesViewSpec extends TestSupport {
       None
     )
 
-    lazy val page = views.html.report_deadlines(businessIncomeSource)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
-    lazy val document = Jsoup.parse(contentAsString(page))
+    val setup = pageSetup(businessIncomeSource)
+    import setup._
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
@@ -92,8 +100,8 @@ class ReportDeadlinesViewSpec extends TestSupport {
 
     "when only business obligations are returned" should {
 
-      lazy val page = views.html.report_deadlines(businessIncomeSource)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
-      lazy val document = Jsoup.parse(contentAsString(page))
+      val setup = pageSetup(businessIncomeSource)
+      import setup._
 
       "contain a section for Business ReportDeadlines" in {
         document.getElementById("bi-1-section").text() shouldBe testTradeName
@@ -114,8 +122,8 @@ class ReportDeadlinesViewSpec extends TestSupport {
         ))
       )
 
-      lazy val page = views.html.report_deadlines(propertyIncomeModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
-      lazy val document = Jsoup.parse(contentAsString(page))
+      val setup = pageSetup(propertyIncomeModel)
+      import setup._
 
       "contain a section for Property ReportDeadlines" in {
         document.getElementById("pi-section").text() shouldBe messages.propertyHeading
@@ -144,8 +152,8 @@ class ReportDeadlinesViewSpec extends TestSupport {
         None
       )
 
-      lazy val page = views.html.report_deadlines(ceasedBusinessIncomeModel)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
-      lazy val document = Jsoup.parse(contentAsString(page))
+      val setup = pageSetup(ceasedBusinessIncomeModel)
+      import setup._
 
       "contains text under the business name stating the business has ceased trading" in {
         document.getElementById("bi-1-ceased").text() shouldBe messages.ceased("15 September 2017")
@@ -170,8 +178,8 @@ class ReportDeadlinesViewSpec extends TestSupport {
         ))
       )
 
-      lazy val page = views.html.report_deadlines(bothIncomeSourcesReportsErrored)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
-      lazy val document = Jsoup.parse(contentAsString(page))
+      val setup = pageSetup(bothIncomeSourcesReportsErrored)
+      import setup._
 
       "contains a no section Property ReportDeadlines" in {
         document.getElementById("pi-section") shouldBe null
@@ -208,8 +216,8 @@ class ReportDeadlinesViewSpec extends TestSupport {
         None
       )
 
-      lazy val page = views.html.report_deadlines(businessIncomeSourcesReportsErrored)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
-      lazy val document = Jsoup.parse(contentAsString(page))
+      val setup = pageSetup(businessIncomeSourcesReportsErrored)
+      import setup._
 
       "contain no section for Property ReportDeadlines" in {
         document.getElementById("pi-section") shouldBe null
@@ -241,8 +249,8 @@ class ReportDeadlinesViewSpec extends TestSupport {
         ))
       )
 
-      lazy val page = views.html.report_deadlines(propertyIncomeSourcesReportsErrored)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
-      lazy val document = Jsoup.parse(contentAsString(page))
+      val setup = pageSetup(propertyIncomeSourcesReportsErrored)
+      import setup._
 
       "contain no section for Business ReportDeadlines" in {
         document.getElementById("bi-1-section") shouldBe null

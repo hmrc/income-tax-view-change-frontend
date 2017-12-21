@@ -42,7 +42,7 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
   "The EstimatedTaxLiability view" should {
 
     lazy val page: HtmlFormat.Appendable =
-      views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources, serviceInfo)
+      views.html.noEstimatedTaxLiability(testYear)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {
