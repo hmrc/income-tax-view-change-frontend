@@ -19,6 +19,7 @@ package config
 import javax.inject.Singleton
 
 import com.google.inject.Inject
+import config.features.Features
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -83,4 +84,7 @@ class FrontendAppConfig @Inject()(val environment: Environment,
 
   //Exit Survey
   lazy val exitSurveyUrl: String = s"$itvcFrontendEnvironment/$baseUrl/exit-survey"
+
+  val features = new Features(runModeConfiguration)
+
 }

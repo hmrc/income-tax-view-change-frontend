@@ -18,5 +18,7 @@ POST        /test-only/itvc/stub-schema    @testOnly.controllers.StubSchemaContr
 GET         /test-only/itvc/stub-data      @testOnly.controllers.StubDataController.show
 POST        /test-only/itvc/stub-data      @testOnly.controllers.StubDataController.submit
 
+GET         /test-only/feature-switch      @testOnly.controllers.FeatureSwitchController.featureSwitch
+POST        /test-only/feature-switch      @testOnly.controllers.FeatureSwitchController.submitFeatureSwitch
 
-->         /                            prod.Routes
+->          /                              prod.Routes

@@ -18,9 +18,8 @@ package controllers
 
 import assets.Messages
 import assets.TestConstants.testUserName
-import config.{FeatureSwitchConfig, FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import mocks.config.MockFeatureSwitchConfig
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockServiceInfoPartialService
 import org.jsoup.Jsoup
@@ -28,7 +27,7 @@ import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 
-class HomeControllerSpec extends MockAuthenticationPredicate with MockServiceInfoPartialService with MockFeatureSwitchConfig {
+class HomeControllerSpec extends MockAuthenticationPredicate with MockServiceInfoPartialService {
 
   object TestHomeController extends HomeController(
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -36,7 +35,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockServiceInf
     app.injector.instanceOf[NinoPredicate],
     mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
-    mockFeatureSwitchConfig,
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi]
   )
@@ -48,7 +46,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockServiceInf
       lazy val result = TestHomeController.home(fakeRequestWithActiveSession)
 
       "return Redirect (303)" in {
-        setupMockHomePageEnabled(false)
+        TestHomeController.config.features.homePageEnabled(false)
         status(result) shouldBe Status.SEE_OTHER
       }
 
@@ -62,7 +60,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockServiceInf
       lazy val result = TestHomeController.home(fakeRequestWithActiveSession)
 
       "return OK (200)" in {
-        setupMockHomePageEnabled(true)
+        TestHomeController.config.features.homePageEnabled(true)
         mockServiceInfoPartialSuccess(Some(testUserName))
         status(result) shouldBe Status.OK
       }
