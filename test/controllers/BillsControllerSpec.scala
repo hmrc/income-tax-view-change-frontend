@@ -62,7 +62,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
           mockGetAllLatestCalcSuccess()
           status(result) shouldBe Status.OK
@@ -85,7 +85,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
           mockGetAllLatestCrystallisedCalcSuccess()
           status(result) shouldBe Status.OK
@@ -107,7 +107,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
           mockGetAllLatestCalcSuccessEmpty()
           status(result) shouldBe Status.OK
@@ -128,7 +128,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return an OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
           mockGetAllLatestCrystallisedCalcWithCalcNotFound()
           status(result) shouldBe Status.OK
@@ -148,7 +148,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
         lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
 
         "return an ISE (500)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
           mockGetAllLatestCrystallisedCalcWithError()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR

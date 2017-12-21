@@ -11,6 +11,20 @@ bta.home                                                        = Business tax h
 bta.messages                                                    = Messages
 bta.manage-account                                              = Manage account
 
+## Home Page ##
+home.title                                                      = Your Income Tax
+home.heading                                                    = Your Income Tax
+home.ref                                                        = Ref:
+home.bills.heading                                              = Bills
+home.bills.text                                                 = See your current and previous Income Tax bills.
+home.bills.link                                                 = View your bills
+home.estimates.heading                                          = Estimates
+home.estimates.text                                             = See what we think you might owe so far and at the end of your tax year.
+home.estimates.link                                             = View your estimates
+home.deadlines.heading                                          = Report deadlines
+home.deadlines.text                                             = Check your report deadlines and if we''ve received them.
+home.deadlines.link                                             = View your deadlines
+
 ## Estimates Page ##
 estimates.title                                                 = Current estimates
 estimates.heading                                               = View your estimates
@@ -71,7 +85,7 @@ crystalisation.whatYouOwe.directDebit                           = Check if you a
 crystalisation.warning                                          = If you pay this bill after 31 January {0} you''ll get penalties.
 crystalisation.calc-breakdown.heading                           = How this figure was calculated
 crystalisation.adjustments                                      = If there are any errors, you can make adjustments through your software.
-crystalisation.changes                                          = If you make changes before 31 January {0} you will not be penalised.
+crystalisation.changes                                          = If you make these changes before 31 January {0} you will not be penalised.
 crystalisation.additionalPayment.heading                        = Additional payment
 crystalisation.additionalPayment.para                           = An advanced payment on account of {0} will be also due by 31 July {1}
 crystalisation.additionalPayment.aboutPayments                  = About payments on account

@@ -14,11 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@import auth.MtdItUser
-@import connectors.ServiceInfoPartialConnector
+@(field: Field, label: String)(implicit messages: Messages)
 
-@(user: Option[MtdItUser[_]])(implicit messages: Messages, appConfig: FrontendAppConfig, serviceInfo: Html)
+@value = @{ field.value match { case Some(x) => x case None => "false" case x => x }}
 
-@serviceInfo
+<div class="multiple-choice">
+    <input id="@{field.name}" name="@{field.name}" type="checkbox" value="true" @if(value == "true"){ checked }>
+    <label for="@{field.name}">@label</label>
+</div>
 

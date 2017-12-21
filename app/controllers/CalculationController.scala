@@ -51,7 +51,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   val getFinancialData: Int => Action[AnyContent] = taxYear => action.async {
     implicit user =>
       implicit val sources: IncomeSourcesModel = user.incomeSources
-      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+      serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)).flatMap { implicit serviceInfo =>
         calculationService.getFinancialData(user.nino, taxYear).map {
           case calcDisplayModel: CalcDisplayModel =>
             auditEstimate(user, calcDisplayModel.calcAmount.toString)

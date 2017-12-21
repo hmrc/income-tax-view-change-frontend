@@ -24,14 +24,13 @@
 @import views.html.helpers.calcBreakdownHelper
 @import enums.{Crystallised, Estimate}
 
-@(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel, serviceInfo: Html)
+@(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, sources: models.IncomeSourcesModel, serviceInfo: Html)
 
 @main_template(
 title = messages("bills.title"),
 bodyClasses = None,
 scriptElem = None,
-sidebarLinks = None,
-user = Some(user)
+sidebarLinks = None
 ) {
     <section>
         <h1 class="heading-xlarge" id="page-heading">

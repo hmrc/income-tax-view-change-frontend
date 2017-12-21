@@ -36,21 +36,11 @@
 </section>
 }
 
-@aboutPaymentsOnAccount = {
-<div id="paymentsOnAccount" class="panel-indent">
-    <p id="PoA-p1">@messages("crystalisation.paymentsOnAccount.para1")</p>
-    <p id="PoA-p2">@messages("crystalisation.paymentsOnAccount.para2")</p>
-    <p id="PoA-p3">@messages("crystalisation.paymentsOnAccount.para3")</p>
-    <p id="PoA-p4">@messages("crystalisation.paymentsOnAccount.para4")</p>
-</div>
-}
-
 @main_template(
     title = renderTitle(taxYear, true),
     bodyClasses = None,
     scriptElem = None,
-    sidebarLinks = Some(sidebar),
-    user = Some(user)
+    sidebarLinks = Some(sidebar)
 ) {
     <section id="owed-tax">
 
@@ -65,42 +55,19 @@
                     @Html(messages("crystalisation.whatYouOwe.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.incomeTaxYTD.toCurrency)}"))
                 </h2>
                 <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
-                <p id="inYearP2">@messages("crystalisation.whatYouOwe.directDebit")</p>
             </div>
 
-            <div class="important-notice icon-min-height form-group">
-                <strong class="bold-small" id="late-warning">
-                    @messages("crystalisation.warning", s"${taxYear+1}")
-                </strong>
+            <div class="form-group">
+                @if(calcModel.breakdownNonEmpty){
+                    <h3 id="howCalculatedHeading" class="heading-medium">@messages("crystalisation.calc-breakdown.heading")</h3>
+                    @calcBreakdown
+                }
             </div>
-
-            <p>
-                <a class="button" href="#">
-                    @messages("crystalisation.payNow")
-                </a>
-            </p>
-
-            @if(calcModel.breakdownNonEmpty){
-            <h3 id="howCalculatedHeading" class="heading-medium">@messages("crystalisation.calc-breakdown.heading")</h3>
-            @calcBreakdown
-            }
 
             <p id="adjustments">@messages("crystalisation.adjustments")</p>
 
             <p id="changes">@messages("crystalisation.changes", s"${taxYear+1}")</p>
 
-        </section>
-
-        <section id="Additional payment">
-            <h3 id="AdditionalPaymentHeading" class="heading-medium">@messages("crystalisation.additionalPayment.heading")</h3>
-
-            <p id="advancedPayment">
-                @messages("crystalisation.additionalPayment.para", "ADVANCED-PAYMENT-AMOUNT", s"${taxYear+1}")
-            </p>
-
-            <p id="aboutPayments">
-                @accordionHelper("aboutPoA", messages("crystalisation.additionalPayment.aboutPayments"), aboutPaymentsOnAccount)
-            </p>
         </section>
 
     </section>

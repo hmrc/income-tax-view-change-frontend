@@ -5,7 +5,7 @@
 GET        /assets/*file                            controllers.Assets.at(path="/public", file)
 
 #Home Controller
-GET         /                                       controllers.HomeController.redirect
+GET         /                                       controllers.HomeController.home
 
 #ReportDeadlines
 GET         /obligations                            controllers.ReportDeadlinesController.getReportDeadlines

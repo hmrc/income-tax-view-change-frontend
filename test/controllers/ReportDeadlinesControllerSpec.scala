@@ -17,6 +17,7 @@
 package controllers
 
 import assets.Messages.{ISE => errorMessages, ReportDeadlines => messages}
+import assets.TestConstants.testUserName
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -26,7 +27,6 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
-import services.ServiceInfoPartialService
 import utils.TestSupport
 
 class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService with MockServiceInfoPartialService {
@@ -53,7 +53,7 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationP
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           mockSingleBusinessIncomeSource()
           mockBusinessSuccess()
           status(result) shouldBe Status.OK
@@ -75,7 +75,7 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationP
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
@@ -97,7 +97,7 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationP
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           mockBothIncomeSources()
           mockBusinessSuccess()
           mockPropertySuccess()
@@ -120,7 +120,7 @@ class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationP
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess()
+          mockServiceInfoPartialSuccess(Some(testUserName))
           mockNoIncomeSources()
           status(result) shouldBe Status.OK
         }

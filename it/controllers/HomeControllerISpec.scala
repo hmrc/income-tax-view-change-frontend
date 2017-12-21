@@ -21,29 +21,82 @@ import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentSt
 import helpers.{ComponentSpecBase, GenericStubMethods, IntegrationTestConstants}
 import models.{Nino, NinoResponseError}
 import play.api.http.Status._
-import play.api.libs.ws.WSResponse
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.{Application, Environment, Mode}
 import utils.ImplicitDateFormatter
 
 class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with ImplicitDateFormatter {
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  "Navigating to /report-quarterly/income-and-expenses/view" should {
+  "Navigating to /report-quarterly/income-and-expenses/view" when {
 
-    "redirect to the Business Tax Account" in {
+    "Authorised and" when {
 
-      When("I call GET /report-quarterly/income-and-expenses/view")
-      val res = IncomeTaxViewChangeFrontend.getHome
+      "the home page feature is enabled" should {
 
-      Then("the result should have a HTTP status of SEE_OTHER (303) and redirect me to BTA home")
-      res should have(
+        "render the home page" in {
+          appConfig.features.homePageEnabled(true)
 
-        //Check Status OK (200) Result
-        httpStatus(SEE_OTHER),
+          isAuthorisedUser(true)
+          stubUserDetails()
+          stubPartial()
 
-        //Check Redirect Location
-        redirectURI(appConfig.businessTaxAccount)
-      )
+          When("I call GET /report-quarterly/income-and-expenses/view")
+          val res = IncomeTaxViewChangeFrontend.getHome
+
+          Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Redirect Location
+            pageTitle("Your Income Tax")
+          )
+        }
+      }
+
+      "the home page feature is disabled" should {
+
+        "redirect to the Business Tax Account" in {
+          appConfig.features.homePageEnabled(false)
+
+          isAuthorisedUser(true)
+          stubUserDetails()
+          stubPartial()
+
+          When("I call GET /report-quarterly/income-and-expenses/view")
+          val res = IncomeTaxViewChangeFrontend.getHome
+
+          Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+          res should have(
+
+            //Check Status SEE_OTHER (303) Result
+            httpStatus(SEE_OTHER),
+
+            //Check Redirect Location
+            redirectURI(appConfig.businessTaxAccount)
+          )
+        }
+      }
+
+    }
+
+    "unauthorised" should {
+
+      "redirect to sign in" in {
+
+        isAuthorisedUser(false)
+
+        When("I call GET /report-quarterly/income-and-expenses/view")
+        val res = IncomeTaxViewChangeFrontend.getHome
+
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.SignInController.signIn().url)
+        )
+      }
     }
   }
 
