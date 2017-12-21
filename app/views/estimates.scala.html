@@ -35,7 +35,7 @@
 ) {
 
     <section>
-        <h1>@messages("estimates.heading")</h1>
+        <h1 id="page-heading">@messages("estimates.heading")</h1>
         <div>
             @if(estimates.isEmpty){
                 <p id="no-estimates">@messages("estimates.noEstimates")</p>
@@ -44,7 +44,7 @@
             <ul class="list list-bullet">
                 @for(calc <- estimates.reverse){
                     <li>
-                        <a class="estimates-link" id="estimate-@{calc.taxYear}" href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}">
+                        <a class="estimates-link" id="estimates-link-@{calc.taxYear}" href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}">
                             @messages("estimates.estimatesLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")
                         </a>
                     </li>
