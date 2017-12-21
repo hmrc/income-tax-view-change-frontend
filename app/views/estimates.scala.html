@@ -21,21 +21,16 @@
 @import views.helpers.EstimatesPage
 
 
-@(estimates: List[LastTaxCalculationWithYear], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], serviceInfo: Html)
-
-@sidebar = {
-    @sidebarHelper(EstimatesPage, user.incomeSources, Some(taxYear))
-}
+@(estimates: List[LastTaxCalculationWithYear], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, serviceInfo: Html)
 
 @main_template(
     title = messages("estimates.title"),
     bodyClasses = None,
-    sidebarLinks = None,
-    user = Some(user)
+    sidebarLinks = None
 ) {
 
     <section>
-        <h1 id="page-heading">@messages("estimates.heading")</h1>
+        <h1 id="page-heading" class="heading-xlarge">@messages("estimates.heading")</h1>
         <div>
             @if(estimates.isEmpty){
                 <p id="no-estimates">@messages("estimates.noEstimates")</p>

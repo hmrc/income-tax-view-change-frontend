@@ -43,23 +43,20 @@
         <div class="grid-row">
 
             <div id="bills-section" class="column-one-half">
-                <h3 id="bills-heading">@messages("home.bills.heading")</h3>
+                <h3 id="bills-heading" class="heading-medium">@messages("home.bills.heading")</h3>
                 <p id="bills-text">@messages("home.bills.text")</p>
-                <!-- TODO: Add the link to the bills page when controller action available -->
-                <p><a id="bills-link" href="#">@messages("home.bills.link")</a></p>
+                <p><a id="bills-link" href="@{controllers.routes.CalculationController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
             </div>
 
             <div id="estimates-section" class="column-one-half">
-                <h3 id="estimates-heading">@messages("home.estimates.heading")</h3>
+                <h3 id="estimates-heading" class="heading-medium">@messages("home.estimates.heading")</h3>
                 <p id="estimates-text">@messages("home.estimates.text")</p>
-                <!-- TODO: Add the link to the bills page when controller action available -->
-                <p><a id="estimates-link" href="#">@messages("home.estimates.link")</a></p>
+                <p><a id="estimates-link" href="@{controllers.routes.CalculationController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
             </div>
 
             <div id="deadlines-section" class="column-one-half">
-                <h3 id="deadlines-heading">@messages("home.deadlines.heading")</h3>
+                <h3 id="deadlines-heading" class="heading-medium">@messages("home.deadlines.heading")</h3>
                 <p id="deadlines-text">@messages("home.deadlines.text")</p>
-                <!-- TODO: Add the link to the bills page when controller action available -->
                 <p><a id="deadlines-link" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">@messages("home.deadlines.link")</a></p>
             </div>
 
