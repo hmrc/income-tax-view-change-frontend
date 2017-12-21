@@ -88,14 +88,6 @@ class CrystallisedViewSpec extends TestSupport {
           wyoSection.getElementById("inYearP1").text shouldBe crysMessages.p1
         }
 
-        s"has the correct 'whatYouOwe' p2 paragraph '${crysMessages.directDebit}'" in {
-          wyoSection.getElementById("inYearP2").text shouldBe crysMessages.directDebit
-        }
-
-        s"has the correct warning message for late payments '${crysMessages.warning}'" in {
-          wyoSection.getElementById("late-warning").text shouldBe crysMessages.warning
-        }
-
       }
 
     }
@@ -311,36 +303,7 @@ class CrystallisedViewSpec extends TestSupport {
       document.getElementById("adjustments").text shouldBe crysMessages.errors
       document.getElementById("changes").text shouldBe crysMessages.changes
     }
-
-    "have an Additional Payments section" that {
-
-      lazy val aPSection = document.getElementById("Additional payment")
-
-      s"has a heading of ${crysMessages.aPHeading}" in {
-        aPSection.getElementById("AdditionalPaymentHeading").text shouldBe crysMessages.aPHeading
-      }
-
-      s"has a paragraph about advanced payments" in {
-        aPSection.getElementById("advancedPayment").text shouldBe crysMessages.advancedPayment
-      }
-
-      "have a progressive disclosure section" that {
-
-        s"has a label of ${}" in {
-          aPSection.getElementById("aboutPoA").text shouldBe crysMessages.aboutPoA
-        }
-
-        "has multiple paragraphs with information about payments on account" in {
-          aPSection.getElementById("PoA-p1").text shouldBe crysMessages.aPp1
-          aPSection.getElementById("PoA-p2").text shouldBe crysMessages.aPp2
-          aPSection.getElementById("PoA-p3").text shouldBe crysMessages.aPp3
-          aPSection.getElementById("PoA-p4").text shouldBe crysMessages.aPp4
-        }
-
-      }
-
-    }
-
+    
   }
 
 }

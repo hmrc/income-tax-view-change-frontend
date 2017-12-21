@@ -67,18 +67,10 @@ object Messages {
       val subHeading = s"Tax year: ${taxYear-1} to $taxYear"
       val wyoHeading: String => String = whatYouOwe => s"What you owe: $whatYouOwe"
       val p1 = "This figure is based on the information you provided in your quarterly reports and final report. You told us this information is accurate."
-      val directDebit = "Check if you already pay by direct debit."
       val warning = s"If you pay this bill after 31 January ${taxYear + 1} you'll get penalties."
       val breakdownHeading = "How this figure was calculated"
       val errors = "If there are any errors, you can make adjustments through your software."
-      val changes = s"If you make changes before 31 January ${taxYear + 1} you will not be penalised."
-      val aPHeading = "Additional payment"
-      val advancedPayment = s"An advanced payment on account of ADVANCED-PAYMENT-AMOUNT will be also due by 31 July ${taxYear + 1}" //needs changing once the advanced payment amount is returned
-      val aboutPoA = "About payments on account"
-      val aPp1 = "These are obligatory payments towards your next tax year. You make two of them: one is paid at the end of the tax year, the other is paid 6 months later."
-      val aPp2 = "Each payment is half of the tax you owed this year."
-      val aPp3 = "You'll be prompted to pay this through your Income Tax account."
-      val aPp4 = "If you think you will earn less next tax year, you can reduce your payment on account online."
+      val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
     }
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
