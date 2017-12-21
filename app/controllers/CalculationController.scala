@@ -41,7 +41,6 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                                         val calculationService: CalculationService,
                                         val serviceInfoPartialService: ServiceInfoPartialService,
                                         val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                        val itvcErrorHandler: ItvcErrorHandler,
                                         val auditingService: AuditingService
                                        ) extends BaseController {
 
@@ -49,16 +48,9 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
 
   val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
-  val redirectToEarliestEstimatedTaxLiability: Action[AnyContent] = action.async {
-    implicit user =>
-      serviceInfoPartialService.serviceInfoPartial().map { implicit serviceInfo =>
-        Redirect(controllers.routes.CalculationController.getFinancialData(user.incomeSources.earliestTaxYear.get))
-      }
-  }
-
   val getFinancialData: Int => Action[AnyContent] = taxYear => action.async {
     implicit user =>
-      implicit val sources = user.incomeSources
+      implicit val sources: IncomeSourcesModel = user.incomeSources
       serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
         calculationService.getFinancialData(user.nino, taxYear).map {
           case calcDisplayModel: CalcDisplayModel =>
@@ -77,36 +69,6 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
         }
       }
   }
-
-  val viewEstimateCalculations: Action[AnyContent] = action.async {
-    implicit user =>
-      implicit val sources: IncomeSourcesModel = user.incomeSources
-      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
-          Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
-          if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
-          else {
-            Ok(views.html.estimates(lastTaxCalcs.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
-          }
-        }
-      }
-  }
-
-  val viewCrystallisedCalculations: Action[AnyContent] = action.async {
-    implicit user =>
-      implicit val sources: IncomeSourcesModel = user.incomeSources
-      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
-        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
-          Logger.debug(s"[CalculationController][viewCrystallisedCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
-          if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
-          else Ok(views.html.allBills(lastTaxCalcs.filter(_.matchesStatus(Crystallised))))
-        }
-      }
-  }
-  private def calcListHasErrors(calcs: List[LastTaxCalculationWithYear]): Boolean = calcs.exists(_.isErrored)
-
-
-
 
   private def auditEstimate(user: MtdItUser[_], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
