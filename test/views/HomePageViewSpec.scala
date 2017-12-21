@@ -72,10 +72,9 @@ class HomePageViewSpec extends TestSupport {
           billsSection.getElementById("bills-link").text shouldBe BillsSection.link
         }
 
-//        TODO: Uncomment when the method exist
-//        "links to the bills page" in {
-//          billsSection.getElementById("bills-link").attr("href") shouldBe controllers.routes.CalculationController.viewCrystallisedCalculations().url
-//        }
+        "links to the bills page" in {
+          billsSection.getElementById("bills-link").attr("href") shouldBe controllers.routes.CalculationController.viewCrystallisedCalculations().url
+        }
       }
     }
 
@@ -97,10 +96,9 @@ class HomePageViewSpec extends TestSupport {
           estimatesSection.getElementById("estimates-link").text shouldBe EstimatesSection.link
         }
 
-//        TODO: Uncomment when the method exist
-//        "links to the estimates page" in {
-//          estimatesSection.getElementById("estimates-link").attr("href") shouldBe controllers.routes.CalculationController.viewEstimateCalculations().url
-//        }
+        "links to the estimates page" in {
+          estimatesSection.getElementById("estimates-link").attr("href") shouldBe controllers.routes.CalculationController.viewEstimateCalculations().url
+        }
       }
     }
 

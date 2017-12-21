@@ -81,7 +81,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   val viewEstimateCalculations: Action[AnyContent] = action.async {
     implicit user =>
       implicit val sources: IncomeSourcesModel = user.incomeSources
-      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+      serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)).flatMap { implicit serviceInfo =>
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
           Logger.debug(s"[CalculationController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
           if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
@@ -95,7 +95,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   val viewCrystallisedCalculations: Action[AnyContent] = action.async {
     implicit user =>
       implicit val sources: IncomeSourcesModel = user.incomeSources
-      serviceInfoPartialService.serviceInfoPartial().flatMap { implicit serviceInfo =>
+      serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)).flatMap { implicit serviceInfo =>
         calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
           Logger.debug(s"[CalculationController][viewCrystallisedCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
           if (calcListHasErrors(lastTaxCalcs)) itvcErrorHandler.showInternalServerError
@@ -103,10 +103,8 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
         }
       }
   }
+
   private def calcListHasErrors(calcs: List[LastTaxCalculationWithYear]): Boolean = calcs.exists(_.isErrored)
-
-
-
 
   private def auditEstimate(user: MtdItUser[_], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(

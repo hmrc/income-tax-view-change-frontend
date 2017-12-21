@@ -44,11 +44,11 @@ class AllBillsViewSpec extends TestSupport {
 
   private def pageSetup(incomeSources: IncomeSourcesModel) = new {
     lazy val pageNoBills: HtmlFormat.Appendable = views.html.allBills(
-        List())(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources, serviceInfo)
+        List())(FakeRequest(),applicationMessages, mockAppConfig, incomeSources, serviceInfo)
     lazy val documentNoBills: Document = Jsoup.parse(contentAsString(pageNoBills))
 
     lazy val page2Bills: HtmlFormat.Appendable = views.html.allBills(
-        lastTaxCalcWithYearCrystallisedList)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources, serviceInfo)
+        lastTaxCalcWithYearCrystallisedList)(FakeRequest(),applicationMessages, mockAppConfig, incomeSources, serviceInfo)
     lazy val document2Bills: Document = Jsoup.parse(contentAsString(page2Bills))
   }
 
