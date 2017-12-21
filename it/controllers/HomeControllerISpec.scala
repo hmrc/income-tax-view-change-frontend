@@ -29,31 +29,58 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .in(Environment.simple(mode = Mode.Dev))
-    .configure(config ++ Map("features.homePageEnabled" -> true))
-    .build
-
   "Navigating to /report-quarterly/income-and-expenses/view" when {
 
-    "Authorised, should show the Income Tax Home page" in {
+    "Authorised and" when {
 
-      isAuthorisedUser(true)
-      stubUserDetails()
-      stubPartial()
+      "the home page feature is enabled" should {
 
-      When("I call GET /report-quarterly/income-and-expenses/view")
-      val res = IncomeTaxViewChangeFrontend.getHome
+        "render the home page" in {
+          appConfig.features.homePageEnabled(true)
 
-      Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
-      res should have(
+          isAuthorisedUser(true)
+          stubUserDetails()
+          stubPartial()
 
-        //Check Status OK (200) Result
-        httpStatus(OK),
+          When("I call GET /report-quarterly/income-and-expenses/view")
+          val res = IncomeTaxViewChangeFrontend.getHome
 
-        //Check Redirect Location
-        pageTitle("Your Income Tax")
-      )
+          Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+          res should have(
+
+            //Check Status OK (200) Result
+            httpStatus(OK),
+
+            //Check Redirect Location
+            pageTitle("Your Income Tax")
+          )
+        }
+      }
+
+      "the home page feature is disabled" should {
+
+        "redirect to the Business Tax Account" in {
+          appConfig.features.homePageEnabled(false)
+
+          isAuthorisedUser(true)
+          stubUserDetails()
+          stubPartial()
+
+          When("I call GET /report-quarterly/income-and-expenses/view")
+          val res = IncomeTaxViewChangeFrontend.getHome
+
+          Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+          res should have(
+
+            //Check Status SEE_OTHER (303) Result
+            httpStatus(SEE_OTHER),
+
+            //Check Redirect Location
+            redirectURI(appConfig.businessTaxAccount)
+          )
+        }
+      }
+
     }
 
     "unauthorised" should {

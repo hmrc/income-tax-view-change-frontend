@@ -19,7 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUserWithNino
-import config.{FeatureSwitchConfig, FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
@@ -34,14 +34,13 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val retrieveNino: NinoPredicate,
                                val serviceInfoPartialService: ServiceInfoPartialService,
                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                               val featureSwitchConfig: FeatureSwitchConfig,
                                implicit val config: FrontendAppConfig,
                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino).async { implicit user =>
-    if (featureSwitchConfig.homePageEnabled) renderView else redirectToBTA
+    if (config.features.homePageEnabled()) renderView else redirectToBTA
   }
 
   private[HomeController] def redirectToBTA: Future[Result] = Future.successful(Redirect(config.businessTaxAccount))
