@@ -11,14 +11,13 @@ GET         /                                       controllers.HomeController.r
 GET         /obligations                            controllers.ReportDeadlinesController.getReportDeadlines
 
 #Calculation
-GET         /calculation                            controllers.CalculationController.redirectToEarliestEstimatedTaxLiability
 GET         /calculation/:taxYear                   controllers.CalculationController.getFinancialData(taxYear: Int)
 
 #Estimates
-GET         /estimates                              controllers.CalculationController.viewEstimateCalculations
+GET         /estimates                              controllers.EstimatesController.viewEstimateCalculations
 
 #Bills
-GET         /bills                                  controllers.CalculationController.viewCrystallisedCalculations
+GET         /bills                                  controllers.BillsController.viewCrystallisedCalculations
 
 #Feedback Routes
 GET         /feedback                               controllers.feedback.FeedbackController.show

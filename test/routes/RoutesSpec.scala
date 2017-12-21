@@ -44,24 +44,27 @@ class RoutesSpec extends TestSupport {
   }
 
   //Estimates route
-  "The URL for the CalculationController.viewEstimateCalculations action" should {
+  "The URL for the EstimatesController.viewEstimateCalculations action" should {
     s"be equal to $contextRoute/estimates" in {
-      controllers.routes.CalculationController.viewEstimateCalculations().url shouldBe s"$contextRoute/estimates"
+      controllers.routes.EstimatesController.viewEstimateCalculations().url shouldBe s"$contextRoute/estimates"
     }
   }
 
-  //Estimated Tax Liability
-  "The URL for the FinancialDataController.redirectToEarliestEstimatedTaxLiability action" should {
-    s"be equal to $contextRoute/calculation" in {
-      controllers.routes.CalculationController.redirectToEarliestEstimatedTaxLiability().url shouldBe s"$contextRoute/calculation"
-    }
-  }
-
-  "The URL for the FinancialDataController.redirectToEarliestEstimatedTaxLiability(year) action" should {
+  //Calculation
+  "The URL for the CalculationController.getFinancialData(year) action" should {
     s"be equal to $contextRoute/calculation/2018" in {
       controllers.routes.CalculationController.getFinancialData(2018).url shouldBe s"$contextRoute/calculation/2018"
     }
   }
+
+  //Bills route
+  "The URL for the BillsController.viewCrystallisedCalculations action" should {
+    s"be equal to $contextRoute/estimates" in {
+      controllers.routes.BillsController.viewCrystallisedCalculations().url shouldBe s"$contextRoute/bills"
+    }
+  }
+
+
 
   //Not-Enrolled route
   "The URL for the NotEnrolledController.show action" should {
