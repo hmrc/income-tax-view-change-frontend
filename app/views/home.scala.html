@@ -45,13 +45,13 @@
             <div id="bills-section" class="column-one-half">
                 <h3 id="bills-heading" class="heading-medium">@messages("home.bills.heading")</h3>
                 <p id="bills-text">@messages("home.bills.text")</p>
-                <p><a id="bills-link" href="@{controllers.routes.CalculationController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
+                <p><a id="bills-link" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
             </div>
 
             <div id="estimates-section" class="column-one-half">
                 <h3 id="estimates-heading" class="heading-medium">@messages("home.estimates.heading")</h3>
                 <p id="estimates-text">@messages("home.estimates.text")</p>
-                <p><a id="estimates-link" href="@{controllers.routes.CalculationController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
+                <p><a id="estimates-link" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
             </div>
 
             <div id="deadlines-section" class="column-one-half">
