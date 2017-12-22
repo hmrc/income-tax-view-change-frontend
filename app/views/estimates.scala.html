@@ -21,12 +21,13 @@
 @import views.helpers.EstimatesPage
 
 
-@(estimates: List[LastTaxCalculationWithYear], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, serviceInfo: Html)
+@(estimates: List[LastTaxCalculationWithYear], taxYear: Int)(serviceInfo: Html)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @main_template(
     title = messages("estimates.title"),
     bodyClasses = None,
-    sidebarLinks = None
+    sidebarLinks = None,
+    serviceInfo = serviceInfo
 ) {
 
     <section>

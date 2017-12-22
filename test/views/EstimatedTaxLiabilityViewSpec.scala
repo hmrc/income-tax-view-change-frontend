@@ -48,7 +48,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
     val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), incomeSources)(FakeRequest())
     lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
       CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
-      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources, serviceInfo)
+      testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     implicit val model: CalculationDataModel = calcDataModel
@@ -58,7 +58,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
     val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
     import setup._
-    val messages = new Messages.Calculation(taxYear = 2018)
+    val messages = new Messages.Calculation(testYear)
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
@@ -80,8 +80,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         lazy val eoySection = estimateSection.getElementById("eoyEstimate")
 
-        s"has the correct Annual Tax Amount Estimate Heading of '${messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.incomeTaxNicAmount.toCurrencyString)}" in {
-          eoySection.getElementById("eoyEstimateHeading").text shouldBe messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.incomeTaxNicAmount.toCurrencyString)
+        s"has the correct Annual Tax Amount Estimate Heading of '${
+          messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.incomeTaxNicAmount.toCurrencyString)
+        }" in {
+          eoySection.getElementById("eoyEstimateHeading").text shouldBe
+            messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.incomeTaxNicAmount.toCurrencyString)
         }
 
         s"has the correct estimate p1 paragraph '${messages.EoyEstimate.p1}'" in {
@@ -98,11 +101,13 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         lazy val inYearSection = estimateSection.getElementById("inYearEstimate")
 
         s"has the correct Annual Tax Amount Estimate Heading of '${messages.InYearEstimate.heading(busPropBRTCalcDataModel.incomeTaxYTD.toCurrencyString)}" in {
-          inYearSection.getElementById("inYearEstimateHeading").text shouldBe messages.InYearEstimate.heading(busPropBRTCalcDataModel.incomeTaxYTD.toCurrencyString)
+          inYearSection.getElementById("inYearEstimateHeading").text shouldBe
+            messages.InYearEstimate.heading(busPropBRTCalcDataModel.incomeTaxYTD.toCurrencyString)
         }
 
         s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(Estimates.lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)}'" in {
-          inYearSection.getElementById("inYearP1").text shouldBe messages.InYearEstimate.p1(Estimates.lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)
+          inYearSection.getElementById("inYearP1").text shouldBe
+            messages.InYearEstimate.p1(Estimates.lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)
         }
 
         s"has the correct estimate p2 paragraph '${messages.InYearEstimate.p2}'" in {
@@ -153,7 +158,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
           s"have a personal allowance amount of ${model.proportionAllowance}" in {
             document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
-            document.getElementById("personal-allowance").text shouldBe "-"+model.proportionAllowance.toCurrencyString
+            document.getElementById("personal-allowance").text shouldBe
+              "-"+model.proportionAllowance.toCurrencyString
           }
 
           s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
@@ -272,7 +278,13 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources, serviceInfo)
+          CalcBreakdown.calculationDisplayNoBreakdownModel,
+          testYear)(serviceInfo)(
+          FakeRequest(),
+          applicationMessages,
+          mockAppConfig,
+          testMtdItUser,
+          testIncomeSources)
         lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
 
         "not display a breakdown section" in {

@@ -22,7 +22,7 @@ import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.Crystallised
-import models.{IncomeSourcesModel, LastTaxCalculationWithYear}
+import models.IncomeSourcesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
@@ -46,13 +46,15 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
   val viewEstimateCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       implicit val sources: IncomeSourcesModel = user.incomeSources
-      serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)).flatMap { implicit serviceInfo =>
-        calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map { lastTaxCalcs =>
-          Logger.debug(s"[EstimatesController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
-          if (lastTaxCalcs.exists(_.isErrored)) itvcErrorHandler.showInternalServerError
-          else {
-            Ok(views.html.estimates(lastTaxCalcs.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
-          }
+
+      for{
+        serviceInfo <- serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name))
+        estimatesResponse <- calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears)
+      } yield {
+        Logger.debug(s"[EstimatesController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $estimatesResponse")
+        if (estimatesResponse.exists(_.isErrored)) itvcErrorHandler.showInternalServerError
+        else {
+          Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get)(serviceInfo))
         }
       }
   }

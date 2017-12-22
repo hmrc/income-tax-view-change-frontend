@@ -29,7 +29,10 @@ import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import utils.TestSupport
 
-class ReportDeadlinesControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService with MockServiceInfoPartialService {
+class ReportDeadlinesControllerSpec
+  extends TestSupport with MockAuthenticationPredicate
+    with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService
+    with MockServiceInfoPartialService {
 
   object TestReportDeadlinesController extends ReportDeadlinesController()(
     app.injector.instanceOf[FrontendAppConfig],

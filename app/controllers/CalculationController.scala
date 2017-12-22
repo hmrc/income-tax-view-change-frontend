@@ -33,16 +33,16 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class CalculationController @Inject()(implicit val config: FrontendAppConfig,
-                                        implicit val messagesApi: MessagesApi,
-                                        val checkSessionTimeout: SessionTimeoutPredicate,
-                                        val authenticate: AuthenticationPredicate,
-                                        val retrieveNino: NinoPredicate,
-                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                        val calculationService: CalculationService,
-                                        val serviceInfoPartialService: ServiceInfoPartialService,
-                                        val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                        val auditingService: AuditingService
-                                       ) extends BaseController {
+                                      implicit val messagesApi: MessagesApi,
+                                      val checkSessionTimeout: SessionTimeoutPredicate,
+                                      val authenticate: AuthenticationPredicate,
+                                      val retrieveNino: NinoPredicate,
+                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                      val calculationService: CalculationService,
+                                      val serviceInfoPartialService: ServiceInfoPartialService,
+                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                      val auditingService: AuditingService
+                                     ) extends BaseController {
 
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
@@ -51,25 +51,26 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   val getFinancialData: Int => Action[AnyContent] = taxYear => action.async {
     implicit user =>
       implicit val sources: IncomeSourcesModel = user.incomeSources
-      serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)).flatMap { implicit serviceInfo =>
-        calculationService.getFinancialData(user.nino, taxYear).map {
+
+      for {
+        serviceInfo <- serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name))
+        calcResponse <- calculationService.getFinancialData(user.nino, taxYear)
+      } yield calcResponse match {
           case calcDisplayModel: CalcDisplayModel =>
             auditEstimate(user, calcDisplayModel.calcAmount.toString)
             calcDisplayModel.calcStatus match {
-              case Crystallised => Ok(views.html.crystallised(calcDisplayModel, taxYear))
-              case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+              case Crystallised => Ok(views.html.crystallised(calcDisplayModel, taxYear)(serviceInfo))
+              case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear)(serviceInfo))
             }
           case CalcDisplayNoDataFound =>
             Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
             auditEstimate(user, "No data found")
-            NotFound(views.html.noEstimatedTaxLiability(taxYear))
+            NotFound(views.html.noEstimatedTaxLiability(taxYear)(serviceInfo))
           case CalcDisplayError =>
             Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
-            Ok(views.html.estimatedTaxLiabilityError(taxYear))
+            Ok(views.html.estimatedTaxLiabilityError(taxYear)(serviceInfo))
         }
-      }
   }
-
   private def auditEstimate(user: MtdItUser[_], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
       EstimatesAuditModel(user, estimate),
