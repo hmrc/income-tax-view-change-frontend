@@ -41,7 +41,6 @@ estimated_tax_liability.calc-breakdown.heading                  = How your curre
 estimated_tax_liability.calc-breakdown.business-profit          = Business profit
 estimated_tax_liability.calc-breakdown.property-profit          = Property profit
 estimated_tax_liability.calc-breakdown.personal-allowance       = Personal Allowance (for the period you''ve reported)
-estimated_tax_liability.calc-breakdown.savings-income           = Income from savings
 estimated_tax_liability.calc-breakdown.taxable-income           = Your taxable income
 estimated_tax_liability.calc-breakdown.income-tax               = Income Tax
 estimated_tax_liability.calc-breakdown.at                       = at
