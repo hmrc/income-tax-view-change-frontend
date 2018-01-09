@@ -39,6 +39,7 @@ case class CalculationDataModel(
                                  incomeTaxDue: BigDecimal,
                                  totalClass4Charge: BigDecimal,
                                  nationalInsuranceClass2Amount: BigDecimal,
+                                 bbsiIncome: BigDecimal,
                                  rateBRT: BigDecimal,
                                  rateHRT: BigDecimal,
                                  rateART: BigDecimal,
@@ -68,6 +69,7 @@ object CalculationDataModel {
       defaultZero(__ \ "incomeTaxDue") and
       defaultZero(__ \ "totalClass4Charge") and
       defaultZero(__ \ "nationalInsuranceClass2Amount") and
+      defaultZero(__ \ "bbsiIncome") and
       defaultZero(__ \ "rateBRT") and
       defaultZero(__ \ "rateHRT") and
       defaultZero(__ \ "rateART") and
@@ -102,6 +104,7 @@ case class ApiCalculationResponse(
                                     incomeTaxDue: Option[BigDecimal],
                                     totalClass4Charge: Option[BigDecimal],
                                     nationalInsuranceClass2Amount: Option[BigDecimal],
+                                    bbsiIncome: Option[BigDecimal],
                                     rateBRT: Option[BigDecimal],
                                     rateHRT: Option[BigDecimal],
                                     rateART: Option[BigDecimal],
