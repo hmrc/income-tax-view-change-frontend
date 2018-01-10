@@ -373,19 +373,4 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       document.getElementById("sidebar") shouldNot be(null)
     }
   }
-
-  "The EstimatedTaxLiability view with bbsiIncome" should {
-
-    val setup = pageSetup(calculationDataSuccessModel, testIncomeSources)
-    import setup._
-
-    "have a calc breakdown" which {
-
-      "when the user has both businesses and property" in {
-
-      }
-
-    }
-
-  }
 }
