@@ -51,6 +51,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
+    lazy val cPage: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
+      CalcBreakdown.calculationDisplaySuccessCrystalisationModel(calcDataModel),
+      testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+    lazy val cDocument: Document = Jsoup.parse(contentAsString(cPage))
+
     implicit val model: CalculationDataModel = calcDataModel
   }
 
@@ -300,6 +305,70 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         "display the business profit amount including the income from savings" in {
           document.getElementById("business-profit").text shouldBe totalProfit
+        }
+
+      }
+
+      "for users with both property and a business with income from savings on the bills page" should {
+
+        val setup = pageSetup(calculationDataSuccessModel, testIncomeSources)
+        import setup._
+        val totalProfit = (model.profitFromSelfEmployment + model.profitFromUkLandAndProperty).toCurrencyString
+
+        "display the business profit heading with income from savings included" in {
+          cDocument.getElementById("business-profit-heading").text shouldBe "Business profit"
+        }
+
+        "display the business profit amount including the income from savings" in {
+          cDocument.getElementById("business-profit").text shouldBe totalProfit
+        }
+
+        "display the income from savings heading" in {
+          cDocument.getElementById("savings-income-heading").text shouldBe "Income from savings"
+        }
+
+        "display the income from savings amount" in {
+          cDocument.getElementById("savings-income").text shouldBe model.bbsiIncome.toCurrencyString
+        }
+
+      }
+
+      "for users with only property and with income from savings on the bills page" should {
+
+        val setup = pageSetup(justPropertyWithSavingsCalcDataModel, testPropertyIncomeSource)
+        import setup._
+        val totalProfit = (model.profitFromSelfEmployment + model.profitFromUkLandAndProperty).toCurrencyString
+
+        "display the business profit heading with income from savings included" in {
+          cDocument.getElementById("business-profit-heading").text shouldBe "Property profit"
+        }
+
+        "display the business profit amount including the income from savings" in {
+          cDocument.getElementById("business-profit").text shouldBe totalProfit
+        }
+
+        "display the income from savings heading" in {
+          cDocument.getElementById("savings-income-heading").text shouldBe "Income from savings"
+        }
+
+        "display the income from savings amount" in {
+          cDocument.getElementById("savings-income").text shouldBe model.bbsiIncome.toCurrencyString
+        }
+
+      }
+
+      "for users with income from savings of zero on the bills page" should {
+
+        val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
+        import setup._
+        val totalProfit = (model.profitFromSelfEmployment + model.profitFromUkLandAndProperty).toCurrencyString
+
+        "display the income from savings heading" in {
+          cDocument.getElementById("savings-income-heading") shouldBe null
+        }
+
+        "display the income from savings amount" in {
+          cDocument.getElementById("savings-income") shouldBe null
         }
 
       }

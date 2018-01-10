@@ -38,9 +38,17 @@
             <td id="business-profit"  class="summary-data">
                 @{
                     if(calcModel.calcStatus == Estimate){(breakdown.profitFromSelfEmployment + breakdown.profitFromUkLandAndProperty + breakdown.bbsiIncome).toCurrency}
+                    else { (breakdown.profitFromSelfEmployment + breakdown.profitFromUkLandAndProperty).toCurrency}
                 }
             </td>
         </tr>
+
+        @if(calcModel.calcStatus == Crystallised && breakdown.bbsiIncome > 0){
+            <tr id="savings-income-section"  class="no-border-bottom">
+                <td id="savings-income-heading">@messages("estimated_tax_liability.calc-breakdown.income-savings")</td>
+                <td id="savings-income" class="summary-data">@breakdown.bbsiIncome.toCurrency</td>
+            </tr>
+        }
 
         <tr id="personal-allowance-section">
             <td id="personal-allowance-heading">@messages("estimated_tax_liability.calc-breakdown.personal-allowance")</td>
