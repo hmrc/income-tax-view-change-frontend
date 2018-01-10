@@ -625,6 +625,36 @@ object TestConstants extends ImplicitDateFormatter {
         incomeTaxDue = 2072.05
       )
 
+    val justPropertyWithSavingsCalcDataModel: CalculationDataModel =
+      CalculationDataModel(
+        profitFromSelfEmployment = 0,
+        profitFromUkLandAndProperty = 3000.00,
+        proportionAllowance = 2868.00,
+        totalIncomeOnWhichTaxIsDue = 132.00,
+
+        payPensionsProfitAtBRT = 132.00,
+        rateBRT = 20.00,
+        incomeTaxOnPayPensionsProfitAtBRT = 26.00,
+
+        payPensionsProfitAtHRT = 0,
+        rateHRT = 40.00,
+        incomeTaxOnPayPensionsProfitAtHRT = 0,
+
+        payPensionsProfitAtART = 0,
+        rateART = 45.00,
+        incomeTaxOnPayPensionsProfitAtART = 0,
+
+        nationalInsuranceClass2Amount=100.00,
+        totalClass4Charge = 23.86,
+        incomeTaxYTD = 149.86,
+        bbsiIncome = 2500.00,
+
+        //Don't need these
+        incomeTaxThisPeriod = 2000.00,
+        totalIncomeReceived = 9000.00,
+        incomeTaxDue = 2072.05
+      )
+
     val mandatoryOnlyDataModel =
       CalculationDataModel(
         profitFromSelfEmployment = 0,

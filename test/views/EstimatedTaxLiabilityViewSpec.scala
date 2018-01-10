@@ -272,7 +272,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         }
       }
 
-      "for users with both property and a business with income form savings" should {
+      "for users with both property and a business with income from savings" should {
 
         val setup = pageSetup(calculationDataSuccessModel, testIncomeSources)
         import setup._
@@ -280,6 +280,22 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         "display the business profit heading with income from savings included" in {
           document.getElementById("business-profit-heading").text shouldBe "Business profit and income from savings"
+        }
+
+        "display the business profit amount including the income from savings" in {
+          document.getElementById("business-profit").text shouldBe totalProfit
+        }
+
+      }
+
+      "for users with only property and with income from savings" should {
+
+        val setup = pageSetup(justPropertyWithSavingsCalcDataModel, testPropertyIncomeSource)
+        import setup._
+        val totalProfit = (model.bbsiIncome + model.profitFromSelfEmployment + model.profitFromUkLandAndProperty).toCurrencyString
+
+        "display the business profit heading with income from savings included" in {
+          document.getElementById("business-profit-heading").text shouldBe "Property profit and income from savings"
         }
 
         "display the business profit amount including the income from savings" in {
