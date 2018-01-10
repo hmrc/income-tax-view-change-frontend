@@ -96,6 +96,7 @@ class CrystallisedViewSpec extends TestSupport {
 
       "for users with both a property and a business" which {
         "have just the basic rate of tax" should {
+          val total = (model.profitFromUkLandAndProperty + model.profitFromSelfEmployment).toCurrencyString
           val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
           import setup._
 
@@ -105,12 +106,7 @@ class CrystallisedViewSpec extends TestSupport {
 
           s"have a business profit section amount of ${model.profitFromSelfEmployment}" in {
             document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
-            document.getElementById("business-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
-          }
-
-          s"have a property profit amount of ${model.profitFromUkLandAndProperty}" in {
-            document.getElementById("property-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.propertyProfit
-            document.getElementById("property-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
+            document.getElementById("business-profit").text shouldBe total
           }
 
           s"have a personal allowance amount of ${model.proportionAllowance}" in {
@@ -259,12 +255,11 @@ class CrystallisedViewSpec extends TestSupport {
       "when the user only has a business registered but has a property profit value" should {
         val setup = pageSetup(busPropBRTCalcDataModel, testBusinessIncomeSource)
         import setup._
-
-        "display the business profit amount" in {
-          document.getElementById("business-profit").text shouldBe "£1,500"
+        "display the business heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Business profit"
         }
-        "display the property profit amount" in {
-          document.getElementById("property-profit").text shouldBe "£1,500"
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
 
@@ -273,11 +268,11 @@ class CrystallisedViewSpec extends TestSupport {
         val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
         import setup._
 
-        "display the property profit section" in {
-          document.getElementById("property-profit").text shouldBe "£3,000"
+        "display the property heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Property profit"
         }
-        "not display the business profit section" in {
-          document.getElementById("business-profit") shouldBe null
+        "display the property profit section" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
 
@@ -285,11 +280,11 @@ class CrystallisedViewSpec extends TestSupport {
         val setup = pageSetup(busPropBRTCalcDataModel, testPropertyIncomeSource)
         import setup._
 
-        "display the business profit amount" in {
-          document.getElementById("business-profit").text shouldBe "£1,500"
+        "display the business heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Business profit"
         }
-        "display the property profit amount" in {
-          document.getElementById("property-profit").text shouldBe "£1,500"
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
 

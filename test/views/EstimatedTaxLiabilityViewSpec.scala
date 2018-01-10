@@ -143,17 +143,13 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       "for users with both a property and a business" which {
         "have just the basic rate of tax" should {
+          val total = (model.profitFromSelfEmployment + model.profitFromUkLandAndProperty + model.bbsiIncome).toCurrencyString
           val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
           import setup._
 
-          s"have a business profit section amount of ${model.profitFromSelfEmployment}" in {
+          s"have a business profit section amount of $total" in {
             document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
-            document.getElementById("business-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
-          }
-
-          s"have a property profit amount of ${model.profitFromUkLandAndProperty}" in {
-            document.getElementById("property-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.propertyProfit
-            document.getElementById("property-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
+            document.getElementById("business-profit").text shouldBe total
           }
 
           s"have a personal allowance amount of ${model.proportionAllowance}" in {
@@ -276,6 +272,22 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         }
       }
 
+      "for users with both property and a business with income form savings" should {
+
+        val setup = pageSetup(calculationDataSuccessModel, testIncomeSources)
+        import setup._
+        val totalProfit = (model.bbsiIncome + model.profitFromSelfEmployment + model.profitFromUkLandAndProperty).toCurrencyString
+
+        "display the business profit heading with income from savings included" in {
+          document.getElementById("business-profit-heading").text shouldBe "Business profit and income from savings"
+        }
+
+        "display the business profit amount including the income from savings" in {
+          document.getElementById("business-profit").text shouldBe totalProfit
+        }
+
+      }
+
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
           CalcBreakdown.calculationDisplayNoBreakdownModel,
@@ -301,20 +313,17 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           document.getElementById("business-profit").text shouldBe "£3,000"
         }
 
-        "not display the property profit section" in {
-          document.getElementById("property-profit-section") shouldBe null
-        }
       }
 
       "when the user only has a business registered but has a property profit value" should {
         val setup = pageSetup(busPropBRTCalcDataModel, testBusinessIncomeSource)
         import setup._
 
-        "display the business profit amount" in {
-          document.getElementById("business-profit").text shouldBe "£1,500"
+        "display the business profit heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Business profit"
         }
-        "display the property profit amount" in {
-          document.getElementById("property-profit").text shouldBe "£1,500"
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
 
@@ -323,11 +332,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
         import setup._
 
-        "display the property profit section" in {
-          document.getElementById("property-profit").text shouldBe "£3,000"
+        "display the property profit heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Property profit"
         }
-        "not display the business profit section" in {
-          document.getElementById("business-profit") shouldBe null
+        "display the property profit section" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
 
@@ -335,11 +344,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         val setup = pageSetup(busPropBRTCalcDataModel, testPropertyIncomeSource)
         import setup._
 
-        "display the business profit amount" in {
-          document.getElementById("business-profit").text shouldBe "£1,500"
+        "display the Business profit heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Business profit"
         }
-        "display the property profit amount" in {
-          document.getElementById("property-profit").text shouldBe "£1,500"
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
     }
@@ -347,5 +356,20 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
     "have sidebar section " in {
       document.getElementById("sidebar") shouldNot be(null)
     }
+  }
+
+  "The EstimatedTaxLiability view with bbsiIncome" should {
+
+    val setup = pageSetup(calculationDataSuccessModel, testIncomeSources)
+    import setup._
+
+    "have a calc breakdown" which {
+
+      "when the user has both businesses and property" in {
+
+      }
+
+    }
+
   }
 }

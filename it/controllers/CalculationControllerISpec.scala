@@ -61,6 +61,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
         //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
 
+        val totalProfit = (calcBreakdownResponse.profitFromSelfEmployment + calcBreakdownResponse.profitFromUkLandAndProperty + calcBreakdownResponse.bbsiIncome).toCurrencyString
+
         res should have (
           httpStatus(OK),
           pageTitle("Tax year: 2017 to 2018"),
@@ -71,8 +73,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
           elementTextByID("page-heading")("Your Income Tax estimate"),
-          elementTextByID("business-profit")(calcBreakdownResponse.profitFromSelfEmployment.toCurrencyString),
-          elementTextByID("property-profit")(calcBreakdownResponse.profitFromUkLandAndProperty.toCurrencyString),
+          elementTextByID("business-profit")(totalProfit),
           elementTextByID("personal-allowance")(s"-${calcBreakdownResponse.proportionAllowance.toCurrencyString}"),
           elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
           elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
@@ -126,8 +127,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
           elementTextByID("page-heading")("Your finalised Income Tax bill"),
-          elementTextByID("business-profit")(calcBreakdownResponse.profitFromSelfEmployment.toCurrencyString),
-          elementTextByID("property-profit")(calcBreakdownResponse.profitFromUkLandAndProperty.toCurrencyString),
+          elementTextByID("business-profit")(""),
           elementTextByID("personal-allowance")(s"-${calcBreakdownResponse.proportionAllowance.toCurrencyString}"),
           elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
           elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
@@ -171,6 +171,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
         //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
 
+        val totalProfit = (calcBreakdownResponse.profitFromSelfEmployment + calcBreakdownResponse.profitFromUkLandAndProperty + calcBreakdownResponse.bbsiIncome).toCurrencyString
+
         res should have (
           httpStatus(OK),
           pageTitle("Tax year: 2017 to 2018"),
@@ -181,8 +183,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
           elementTextByID("page-heading")("Your Income Tax estimate"),
-          elementTextByID("business-profit")(calcBreakdownResponse.profitFromSelfEmployment.toCurrencyString),
-          elementTextByID("property-profit")(calcBreakdownResponse.profitFromUkLandAndProperty.toCurrencyString),
+          elementTextByID("business-profit")(totalProfit),
           elementTextByID("personal-allowance")(s"-${calcBreakdownResponse.proportionAllowance.toCurrencyString}"),
           elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
           elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
