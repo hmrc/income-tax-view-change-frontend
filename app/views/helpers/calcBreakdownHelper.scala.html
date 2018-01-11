@@ -87,15 +87,21 @@
         @if(calcModel.hasNISection) {
         <section id ="ni-section">
             @if(calcModel.hasNic2Amount) {
-                <tr @if(calcModel.hasNic4Amount){class="no-border-bottom"}>
+                <tr @if(calcModel.hasNic4Amount || calcModel.hasTaxReliefs){class="no-border-bottom"}>
                     <td id="nic2-amount-heading">@messages("estimated_tax_liability.calc-breakdown.nic2")</td>
                     <td id="nic2-amount" class="summary-data">@breakdown.nationalInsuranceClass2Amount.toCurrency</td>
                 </tr>
             }
             @if(calcModel.hasNic4Amount) {
-                <tr>
+                <tr @if(calcModel.hasTaxReliefs){class="no-border-bottom"}>
                     <td id="nic4-amount-heading">@messages("estimated_tax_liability.calc-breakdown.nic4")</td>
                     <td id="nic4-amount" class="summary-data">@breakdown.totalClass4Charge.toCurrency</td>
+                </tr>
+            }
+            @if(calcModel.hasTaxReliefs) {
+                <tr>
+                    <td id="tax-relief-heading">@messages("estimated_tax_liability.calc-breakdown.reliefs")</td>
+                    <td id="tax-relief" class="summary-data">-@breakdown.taxReliefs.toCurrency</td>
                 </tr>
             }
         </section>
