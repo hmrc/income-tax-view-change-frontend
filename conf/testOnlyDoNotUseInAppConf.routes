@@ -12,13 +12,13 @@
 # Add all the application routes to the prod.routes file
 
 
-GET         /test-only/itvc/stub-schema    @testOnly.controllers.StubSchemaController.show
-POST        /test-only/itvc/stub-schema    @testOnly.controllers.StubSchemaController.submit
+GET         /report-quarterly/income-and-expenses/view/test-only/stub-schema    @testOnly.controllers.StubSchemaController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema    @testOnly.controllers.StubSchemaController.submit
 
-GET         /test-only/itvc/stub-data      @testOnly.controllers.StubDataController.show
-POST        /test-only/itvc/stub-data      @testOnly.controllers.StubDataController.submit
+GET         /report-quarterly/income-and-expenses/view/test-only/stub-data      @testOnly.controllers.StubDataController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-data      @testOnly.controllers.StubDataController.submit
 
-GET         /test-only/feature-switch      @testOnly.controllers.FeatureSwitchController.featureSwitch
-POST        /test-only/feature-switch      @testOnly.controllers.FeatureSwitchController.submitFeatureSwitch
+GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch      @testOnly.controllers.FeatureSwitchController.featureSwitch
+POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch      @testOnly.controllers.FeatureSwitchController.submitFeatureSwitch
 
 ->          /                              prod.Routes
