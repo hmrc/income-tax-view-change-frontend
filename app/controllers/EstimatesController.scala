@@ -21,7 +21,7 @@ import javax.inject.Inject
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import enums.Crystallised
+import enums.{Crystallised, Estimate}
 import models.IncomeSourcesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
@@ -53,6 +53,9 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
       } yield {
         Logger.debug(s"[EstimatesController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $estimatesResponse")
         if (estimatesResponse.exists(_.isErrored)) itvcErrorHandler.showInternalServerError
+        else if(estimatesResponse.count(_.matchesStatus(Estimate)) == 1) {
+          Redirect(controllers.routes.CalculationController.getFinancialData(estimatesResponse.filter(!_.matchesStatus(Crystallised)).head.taxYear))
+        }
         else {
           Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get)(serviceInfo))
         }
