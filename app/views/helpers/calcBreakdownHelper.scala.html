@@ -51,8 +51,19 @@
         }
 
         <tr id="personal-allowance-section">
-            <td id="personal-allowance-heading">@messages("estimated_tax_liability.calc-breakdown.personal-allowance")</td>
-            <td id="personal-allowance" class="summary-data">-@breakdown.proportionAllowance.toCurrency</td>
+            <td id="personal-allowance-heading">
+                @{
+                    (calcModel.calcStatus, breakdown.bbsiIncome > 0) match {
+                        case (Estimate, false) => messages("estimated_tax_liability.calc-breakdown.pa-estimates")
+                        case (Estimate, _)     => messages("estimated_tax_liability.calc-breakdown.pa-estimates-savings")
+                        case (_, false)        => messages("estimated_tax_liability.calc-breakdown.pa-bills")
+                        case (_, _)            => messages("estimated_tax_liability.calc-breakdown.pa-bills-savings")
+                    }
+                }
+            </td>
+            <td id="personal-allowance" class="summary-data">
+                -@{breakdown.proportionAllowance + breakdown.incomeTaxOnInterestReceivedAtStartingRate + breakdown.incomeTaxOnInterestReceivedAtZeroRate}.toCurrency
+            </td>
         </tr>
 
         <tr id="taxable-income-section" class="total-section">

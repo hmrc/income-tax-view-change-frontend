@@ -291,6 +291,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           document.getElementById("business-profit").text shouldBe totalProfit
         }
 
+        "display the personal allowances heading with income savings" in {
+          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsEstimates
+        }
+
       }
 
       "for users with only property and with income from savings" should {
@@ -305,6 +309,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         "display the business profit amount including the income from savings" in {
           document.getElementById("business-profit").text shouldBe totalProfit
+        }
+
+        "display the personal allowances heading with income savings" in {
+          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsEstimates
         }
 
       }
@@ -331,6 +339,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           cDocument.getElementById("savings-income").text shouldBe model.bbsiIncome.toCurrencyString
         }
 
+        "display the personal allowances heading with income savings" in {
+          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsBills
+        }
+
       }
 
       "for users with only property and with income from savings on the bills page" should {
@@ -355,6 +367,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           cDocument.getElementById("savings-income").text shouldBe model.bbsiIncome.toCurrencyString
         }
 
+        "display the personal allowances heading with income savings" in {
+          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsEstimates
+        }
+
       }
 
       "for users with income from savings of zero on the bills page" should {
@@ -369,6 +385,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         "display the income from savings amount" in {
           cDocument.getElementById("savings-income") shouldBe null
+        }
+
+        "display the personal allowances heading with income savings" in {
+          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
         }
 
       }
