@@ -45,6 +45,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
         calculationDataSuccessModel.incomeTaxDue shouldBe 66500
         calculationDataSuccessModel.nationalInsuranceClass2Amount shouldBe 10000
         calculationDataSuccessModel.totalClass4Charge shouldBe 14000
+        calculationDataSuccessModel.taxReliefs shouldBe 0
         calculationDataSuccessModel.rateBRT shouldBe 20
         calculationDataSuccessModel.rateHRT shouldBe 40
         calculationDataSuccessModel.rateART shouldBe 45

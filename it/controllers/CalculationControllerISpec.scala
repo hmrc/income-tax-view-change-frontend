@@ -77,6 +77,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
           elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
           elementTextByID("nic4-amount")(calcBreakdownResponse.totalClass4Charge.toCurrencyString),
+          elementTextByID("tax-relief")(s"-${calcBreakdownResponse.taxReliefs.toCurrencyString}"),
           elementTextByID("total-estimate")(calcBreakdownResponse.incomeTaxYTD.toCurrencyString),
           isElementVisibleById("eoyEstimate")(expectedValue = true)
         )
@@ -132,6 +133,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
           elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
           elementTextByID("nic4-amount")(calcBreakdownResponse.totalClass4Charge.toCurrencyString),
+          elementTextByID("tax-relief")(s"-${calcBreakdownResponse.taxReliefs.toCurrencyString}"),
           elementTextByID("total-estimate")(calcBreakdownResponse.incomeTaxYTD.toCurrencyString)
         )
       }
@@ -187,6 +189,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
           elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
           elementTextByID("nic4-amount")(calcBreakdownResponse.totalClass4Charge.toCurrencyString),
+          elementTextByID("tax-relief")(s"-${calcBreakdownResponse.taxReliefs.toCurrencyString}"),
           elementTextByID("total-estimate")(calcBreakdownResponse.incomeTaxYTD.toCurrencyString),
           isElementVisibleById("eoyEstimate")(expectedValue = false)
         )

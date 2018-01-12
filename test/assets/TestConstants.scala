@@ -406,6 +406,7 @@ object TestConstants extends ImplicitDateFormatter {
       incomeTaxDue = 66500.00,
       nationalInsuranceClass2Amount = 10000.00,
       totalClass4Charge =14000.00,
+      taxReliefs=0,
       rateBRT = 20.00,
       rateHRT = 40.00,
       rateART = 45.00,
@@ -433,6 +434,7 @@ object TestConstants extends ImplicitDateFormatter {
 
         nationalInsuranceClass2Amount = 0,
         totalClass4Charge =0,
+        taxReliefs=0,
         incomeTaxYTD = 0,
 
         //Don't need these
@@ -462,6 +464,7 @@ object TestConstants extends ImplicitDateFormatter {
 
         nationalInsuranceClass2Amount=20.05,
         totalClass4Charge = 17.05,
+        taxReliefs=10.05,
         incomeTaxYTD = 37.05,
 
         //Don't need these
@@ -491,6 +494,7 @@ object TestConstants extends ImplicitDateFormatter {
 
         nationalInsuranceClass2Amount=110,
         totalClass4Charge = 13.86,
+        taxReliefs=24.90,
         incomeTaxYTD = 149.86,
 
         //Don't need these
@@ -522,6 +526,7 @@ object TestConstants extends ImplicitDateFormatter {
 
         nationalInsuranceClass2Amount=500.71,
         totalClass4Charge = 896.00,
+        taxReliefs=0,
         incomeTaxYTD = 13727.71,
 
         //Don't need these
@@ -551,6 +556,7 @@ object TestConstants extends ImplicitDateFormatter {
 
         nationalInsuranceClass2Amount=1000.00,
         totalClass4Charge = 456.71,
+        taxReliefs=0,
         incomeTaxYTD = 15017.71,
 
         //Don't need these
@@ -580,6 +586,7 @@ object TestConstants extends ImplicitDateFormatter {
 
         nationalInsuranceClass2Amount=100.00,
         totalClass4Charge = 23.86,
+        taxReliefs=0,
         incomeTaxYTD = 149.86,
 
         //Don't need these
@@ -609,6 +616,7 @@ object TestConstants extends ImplicitDateFormatter {
 
         nationalInsuranceClass2Amount=100.00,
         totalClass4Charge = 23.86,
+        taxReliefs=0,
         incomeTaxYTD = 149.86,
 
         //Don't need these
@@ -634,6 +642,7 @@ object TestConstants extends ImplicitDateFormatter {
         incomeTaxOnPayPensionsProfitAtART = 0,
         nationalInsuranceClass2Amount = 0,
         totalClass4Charge = 0,
+        taxReliefs=0,
         incomeTaxYTD = 90500,
         incomeTaxThisPeriod = 2000,
         totalIncomeReceived = 0,
@@ -667,6 +676,7 @@ object TestConstants extends ImplicitDateFormatter {
         | "incomeTaxDue": 66500,
         | "nationalInsuranceClass2Amount": 10000,
         | "totalClass4Charge": 14000,
+        | "taxReliefs": 0,
         | "rateBRT": 20,
         | "rateHRT": 40,
         | "rateART": 45,

@@ -186,6 +186,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             document.getElementById("nic4-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic4
             document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
           }
+          s"have a Tax reliefs amount of ${model.taxReliefs}" in {
+            document.getElementById("tax-relief-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.reliefs
+            document.getElementById("tax-relief").text shouldBe "-"+model.taxReliefs.toCurrencyString
+          }
           s"have a total tax estimate of ${model.incomeTaxYTD}" in {
             document.getElementById("total-estimate-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.total
             document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
@@ -269,6 +273,9 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           }
           s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
             document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
+          }
+          s"have a Tax reliefs amount of ${model.taxReliefs}" in {
+            document.getElementById("tax-relief").text shouldBe "-"+model.taxReliefs.toCurrencyString
           }
           s"have a total tax estimate of ${model.incomeTaxYTD}" in {
             document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
