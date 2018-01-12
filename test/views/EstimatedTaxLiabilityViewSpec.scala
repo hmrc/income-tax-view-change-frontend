@@ -57,6 +57,12 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
     lazy val cDocument: Document = Jsoup.parse(contentAsString(cPage))
 
     implicit val model: CalculationDataModel = calcDataModel
+
+    def personalAllowanceTotal: String = "-" + (
+      model.proportionAllowance +
+        model.incomeInterest.incomeTaxOnInterestReceivedAtStartingRate +
+        model.incomeInterest.incomeTaxOnInterestReceivedAtZeroRate
+      ).toCurrencyString
   }
 
   "The EstimatedTaxLiability view" should {
@@ -159,8 +165,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
           s"have a personal allowance amount of ${model.proportionAllowance}" in {
             document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
-            document.getElementById("personal-allowance").text shouldBe
-              "-"+model.proportionAllowance.toCurrencyString
+            document.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
           }
 
           s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
@@ -295,6 +300,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsEstimates
         }
 
+        "display the correct personal allowance amount" in {
+          cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+        }
+
       }
 
       "for users with only property and with income from savings" should {
@@ -313,6 +322,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         "display the personal allowances heading with income savings" in {
           document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsEstimates
+        }
+
+        "display the correct personal allowance amount" in {
+          cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
         }
 
       }
@@ -340,7 +353,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         }
 
         "display the personal allowances heading with income savings" in {
-          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsBills
+          cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsBills
+        }
+
+        "display the correct personal allowance amount" in {
+          cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
         }
 
       }
@@ -368,7 +385,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         }
 
         "display the personal allowances heading with income savings" in {
-          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsEstimates
+          cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsBills
+        }
+
+        "display the correct personal allowance amount" in {
+          cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
         }
 
       }

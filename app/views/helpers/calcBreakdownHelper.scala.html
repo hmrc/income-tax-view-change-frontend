@@ -62,7 +62,7 @@
                 }
             </td>
             <td id="personal-allowance" class="summary-data">
-                -@{breakdown.proportionAllowance + breakdown.incomeTaxOnInterestReceivedAtStartingRate + breakdown.incomeTaxOnInterestReceivedAtZeroRate}.toCurrency
+                -@{(breakdown.proportionAllowance + breakdown.incomeInterest.incomeTaxOnInterestReceivedAtStartingRate + breakdown.incomeInterest.incomeTaxOnInterestReceivedAtZeroRate).toCurrency}
             </td>
         </tr>
 
