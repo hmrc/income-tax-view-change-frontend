@@ -53,7 +53,7 @@
         <section id="whatYouOwe">
             <div class="form-group">
                 <h2 id="whatYouOweHeading" class="heading-large">
-                    @Html(messages("crystalisation.whatYouOwe.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.incomeTaxYTD.toCurrency)}"))
+                    @Html(messages("crystalisation.whatYouOwe.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.totalIncomeTaxNicYtd.toCurrency)}"))
                 </h2>
                 <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
             </div>

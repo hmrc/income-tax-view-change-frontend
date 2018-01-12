@@ -72,7 +72,7 @@
 
         <section id="inYearEstimate">
             <h2 id="inYearEstimateHeading" class="heading-large">
-                @Html(messages("estimated_tax_liability.inYearEstimate.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.incomeTaxYTD.toCurrency)}"))
+                @Html(messages("estimated_tax_liability.inYearEstimate.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.totalIncomeTaxNicYtd.toCurrency)}"))
             </h2>
             <p id="inYearP1">@messages("estimated_tax_liability.inYearEstimate.p1", s"${taxYear - 1}", s"${calcModel.calcTimestamp.toLocalDateTime.toLongDateTime}")</p>
             <p id="inYearP2">@messages("estimated_tax_liability.inYearEstimate.p2")</p>

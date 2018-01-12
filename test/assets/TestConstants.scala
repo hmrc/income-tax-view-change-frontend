@@ -390,341 +390,869 @@ object TestConstants extends ImplicitDateFormatter {
 
   object CalcBreakdown {
 
-    val calculationDataSuccessModel = CalculationDataModel(incomeTaxYTD = 90500.00,
-      incomeTaxThisPeriod = 2000.00,
-      profitFromSelfEmployment = 200000.00,
-      profitFromUkLandAndProperty = 10000.00,
-      totalIncomeReceived = 230000.00,
-      proportionAllowance = 11500.00,
-      totalIncomeOnWhichTaxIsDue = 198500.00,
-      payPensionsProfitAtBRT = 20000.00,
-      incomeTaxOnPayPensionsProfitAtBRT = 4000.00,
-      payPensionsProfitAtHRT = 100000.00,
-      incomeTaxOnPayPensionsProfitAtHRT = 40000.00,
-      payPensionsProfitAtART = 50000.00,
-      incomeTaxOnPayPensionsProfitAtART = 22500.00,
-      incomeTaxDue = 66500.00,
-      nationalInsuranceClass2Amount = 10000.00,
-      totalClass4Charge =14000.00,
-      bbsiIncome = 1999.00,
-      incomeInterest = IncomeInterest(1.00, 20.00),
-      rateBRT = 20.00,
-      rateHRT = 40.00,
-      rateART = 45.00,
+    val calculationDataSuccessModel = CalculationDataModel(
+      totalIncomeTaxNicYtd = 90500.00,
+      totalTaxableIncome = 198500.00,
+      personalAllowance = 11500.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 200000.00,
+        ukProperty = 10000.00,
+        bankBuildingSocietyInterest = 1999.00,
+        ukDividends = 0.0
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 20000.00,
+          taxRate = 20.0,
+          taxAmount = 4000.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 100000.00,
+          taxRate = 40.0,
+          taxAmount = 40000.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 50000.00,
+          taxRate = 45.0,
+          taxAmount = 22500.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 1.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 20.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 0.0,
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 10000.00,
+        class4 = 14000.00
+      ),
       eoyEstimate = Some(EoyEstimate(66000.00))
     )
 
-    val noTaxOrNICalcDataModel =
-      CalculationDataModel(
-        profitFromSelfEmployment = 500.00,
-        profitFromUkLandAndProperty = 500.00,
-        proportionAllowance = 2868.00,
-        totalIncomeOnWhichTaxIsDue = 0,
-
-        payPensionsProfitAtBRT = 0.00,
-        rateBRT = 20.00,
-        incomeTaxOnPayPensionsProfitAtBRT = 0.00,
-
-        payPensionsProfitAtHRT = 0.00,
-        rateHRT = 40.00,
-        incomeTaxOnPayPensionsProfitAtHRT = 0,
-
-        payPensionsProfitAtART = 0,
-        rateART = 45.00,
-        incomeTaxOnPayPensionsProfitAtART = 0,
-
-        nationalInsuranceClass2Amount = 0,
-        totalClass4Charge =0,
-        bbsiIncome = 0.00,
-        incomeTaxYTD = 0,
-
-        incomeInterest = IncomeInterest(0.00, 0.00),
-
-        //Don't need these
-        incomeTaxThisPeriod = 2000.00,
-        totalIncomeReceived = 9000.00,
-        incomeTaxDue = 2072.05
+    val noTaxOrNICalcDataModel = CalculationDataModel(
+      totalIncomeTaxNicYtd = 0.00,
+      totalTaxableIncome = 0.00,
+      personalAllowance = 2868.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 500.00,
+        ukProperty = 500.00,
+        bankBuildingSocietyInterest = 0.00,
+        ukDividends = 0.0
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 20.0,
+          taxAmount = 0.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 40.0,
+          taxAmount = 0.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 45.0,
+          taxAmount = 0.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 0.0,
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 0.00,
+        class4 = 0.00
       )
+    )
 
-    val noTaxJustNICalcDataModel =
-      CalculationDataModel(
-        profitFromSelfEmployment = 1506.25,
-        profitFromUkLandAndProperty = 0,
-        proportionAllowance = 2868.00,
-        totalIncomeOnWhichTaxIsDue = 0,
-
-        payPensionsProfitAtBRT = 0,
-        rateBRT = 20.00,
-        incomeTaxOnPayPensionsProfitAtBRT = 0.00,
-
-        payPensionsProfitAtHRT = 0,
-        rateHRT = 40.00,
-        incomeTaxOnPayPensionsProfitAtHRT = 0,
-
-        payPensionsProfitAtART = 0,
-        rateART = 45.00,
-        incomeTaxOnPayPensionsProfitAtART = 0,
-
-        nationalInsuranceClass2Amount=20.05,
-        totalClass4Charge = 17.05,
-        incomeTaxYTD = 37.05,
-        bbsiIncome = 0.00,
-        incomeInterest = IncomeInterest(0.00, 0.00),
-
-        //Don't need these
-        incomeTaxThisPeriod = 2000.00,
-        totalIncomeReceived = 9000.00,
-        incomeTaxDue = 2072.05
+    val noTaxJustNICalcDataModel = CalculationDataModel(
+      totalIncomeTaxNicYtd = 37.05,
+      totalTaxableIncome = 0.00,
+      personalAllowance = 2868.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 1506.25,
+        ukProperty = 0.00,
+        bankBuildingSocietyInterest = 0.00,
+        ukDividends = 0.0
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 20.0,
+          taxAmount = 0.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 40.0,
+          taxAmount = 0.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 45.0,
+          taxAmount = 0.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 0.0,
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 20.05,
+        class4 = 17.05
       )
+    )
 
-    val busPropBRTCalcDataModel =
-      CalculationDataModel(
-        profitFromSelfEmployment = 1500.00,
-        profitFromUkLandAndProperty = 1500.00,
-        proportionAllowance = 2868.00,
-        totalIncomeOnWhichTaxIsDue = 132.00,
+    val busPropBRTCalcDataModel = CalculationDataModel(
+      totalIncomeTaxNicYtd = 149.86,
+      totalTaxableIncome = 132.00,
+      personalAllowance = 2868.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 1500.00,
+        ukProperty = 1500.00,
+        bankBuildingSocietyInterest = 0.00,
+        ukDividends = 0.0
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 132.00,
+          taxRate = 20.0,
+          taxAmount = 26.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 40.0,
+          taxAmount = 0.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 45.0,
+          taxAmount = 0.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 0.0,
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 110,
+        class4 = 13.86
+      ),
+      eoyEstimate = Some(EoyEstimate(66000.00))
+    )
 
-        payPensionsProfitAtBRT = 132.00,
-        rateBRT = 20.00,
-        incomeTaxOnPayPensionsProfitAtBRT = 26.00,
-
-        payPensionsProfitAtHRT = 0,
-        rateHRT = 40.00,
-        incomeTaxOnPayPensionsProfitAtHRT = 0,
-
-        payPensionsProfitAtART = 0,
-        rateART = 45.00,
-        incomeTaxOnPayPensionsProfitAtART = 0,
-
-        nationalInsuranceClass2Amount=110,
-        totalClass4Charge = 13.86,
-        incomeTaxYTD = 149.86,
-        bbsiIncome = 0.00,
-        incomeInterest = IncomeInterest(0.00, 0.00),
-
-        //Don't need these
-        incomeTaxThisPeriod = 2000.00,
-        totalIncomeReceived = 9000.00,
-        incomeTaxDue = 2072.05,
-
-        eoyEstimate = Some(EoyEstimate(66000.00))
+    val busBropHRTCalcDataModel = CalculationDataModel(
+      totalIncomeTaxNicYtd = 13727.71,
+      totalTaxableIncome = 35007.00,
+      personalAllowance = 2868.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 30000.00,
+        ukProperty = 7875.00,
+        bankBuildingSocietyInterest = 0.00,
+        ukDividends = 0.0
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 8352.00,
+          taxRate = 20.0,
+          taxAmount = 1670.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 26654.00,
+          taxRate = 40.0,
+          taxAmount = 10661.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 45.0,
+          taxAmount = 0.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 0.0,
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 500.71,
+        class4 = 896.00
       )
+    )
 
-    val busBropHRTCalcDataModel =
-      CalculationDataModel(
-        profitFromSelfEmployment = 30000.00,
-        profitFromUkLandAndProperty = 7875.00,
-        proportionAllowance = 2868.00,
-        totalIncomeOnWhichTaxIsDue = 35007.00,
-
-        payPensionsProfitAtBRT = 8352.00,
-        rateBRT = 20.00,
-        incomeTaxOnPayPensionsProfitAtBRT = 1670.00,
-
-        payPensionsProfitAtHRT = 26654.00,
-        rateHRT = 40.00,
-        incomeTaxOnPayPensionsProfitAtHRT = 10661.00,
-
-        payPensionsProfitAtART = 0,
-        rateART = 45.00,
-        incomeTaxOnPayPensionsProfitAtART = 0,
-
-        nationalInsuranceClass2Amount=500.71,
-        totalClass4Charge = 896.00,
-        incomeTaxYTD = 13727.71,
-        bbsiIncome = 0.00,
-        incomeInterest = IncomeInterest(0.00, 0.00),
-
-        //Don't need these
-        incomeTaxThisPeriod = 2000.00,
-        totalIncomeReceived = 9000.00,
-        incomeTaxDue = 2072.05
+    val busPropARTCalcDataModel = CalculationDataModel(
+      totalIncomeTaxNicYtd = 15017.71,
+      totalTaxableIncome = 38007.00,
+      personalAllowance = 2868.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 875.00,
+        ukProperty = 40000.00,
+        bankBuildingSocietyInterest = 0.00,
+        ukDividends = 0.0
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 8352.00,
+          taxRate = 20.0,
+          taxAmount = 1670.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 29044.00,
+          taxRate = 40.0,
+          taxAmount = 11617.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 609.00,
+          taxRate = 45.0,
+          taxAmount = 274.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 0.0,
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 1000,
+        class4 = 456.71
       )
+    )
 
-    val busPropARTCalcDataModel =
-      CalculationDataModel(
-        profitFromSelfEmployment = 875.00,
-        profitFromUkLandAndProperty = 40000.00,
-        proportionAllowance = 2868.00,
-        totalIncomeOnWhichTaxIsDue = 38007.00,
-
-        payPensionsProfitAtBRT = 8352.00,
-        rateBRT = 20.00,
-        incomeTaxOnPayPensionsProfitAtBRT = 1670.00,
-
-        payPensionsProfitAtHRT = 29044.00,
-        rateHRT = 40.00,
-        incomeTaxOnPayPensionsProfitAtHRT = 11617.00,
-
-        payPensionsProfitAtART = 609.00,
-        rateART = 45.00,
-        incomeTaxOnPayPensionsProfitAtART = 274.00,
-
-        nationalInsuranceClass2Amount=1000.00,
-        totalClass4Charge = 456.71,
-        incomeTaxYTD = 15017.71,
-        bbsiIncome = 0.00,
-        incomeInterest = IncomeInterest(0.00, 0.00),
-
-        //Don't need these
-        incomeTaxThisPeriod = 2000.00,
-        totalIncomeReceived = 9000.00,
-        incomeTaxDue = 2072.05
+    val justBusinessCalcDataModel = CalculationDataModel(
+      totalIncomeTaxNicYtd = 149.86,
+      totalTaxableIncome = 132.00,
+      personalAllowance = 2868.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 3000.00,
+        ukProperty = 0.00,
+        bankBuildingSocietyInterest = 0.00,
+        ukDividends = 0.0
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 132.00,
+          taxRate = 20.0,
+          taxAmount = 26.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 40.0,
+          taxAmount = 0.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 45.0,
+          taxAmount = 0.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 0.0,
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 100.0,
+        class4 = 23.86
       )
+    )
 
-    val justBusinessCalcDataModel =
-      CalculationDataModel(
-        profitFromSelfEmployment = 3000.00,
-        profitFromUkLandAndProperty = 0,
-        proportionAllowance = 2868.00,
-        totalIncomeOnWhichTaxIsDue = 132.00,
-
-        payPensionsProfitAtBRT = 132.00,
-        rateBRT = 20.00,
-        incomeTaxOnPayPensionsProfitAtBRT = 26.00,
-
-        payPensionsProfitAtHRT = 0,
-        rateHRT = 40.00,
-        incomeTaxOnPayPensionsProfitAtHRT = 0,
-
-        payPensionsProfitAtART = 0,
-        rateART = 45.00,
-        incomeTaxOnPayPensionsProfitAtART = 0,
-
-        nationalInsuranceClass2Amount=100.00,
-        totalClass4Charge = 23.86,
-        incomeTaxYTD = 149.86,
-        bbsiIncome = 0.00,
-        incomeInterest = IncomeInterest(0.00, 0.00),
-
-        //Don't need these
-        incomeTaxThisPeriod = 2000.00,
-        totalIncomeReceived = 9000.00,
-        incomeTaxDue = 2072.05
+    val justPropertyCalcDataModel = CalculationDataModel(
+      totalIncomeTaxNicYtd = 149.86,
+      totalTaxableIncome = 132.00,
+      personalAllowance = 2868.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 0.00,
+        ukProperty = 3000.00,
+        bankBuildingSocietyInterest = 0.00,
+        ukDividends = 0.0
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 132.00,
+          taxRate = 20.0,
+          taxAmount = 26.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 40.0,
+          taxAmount = 0.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 45.0,
+          taxAmount = 0.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 0.0,
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 100.0,
+        class4 = 23.86
       )
+    )
 
-    val justPropertyCalcDataModel: CalculationDataModel =
-      CalculationDataModel(
-        profitFromSelfEmployment = 0,
-        profitFromUkLandAndProperty = 3000.00,
-        proportionAllowance = 2868.00,
-        totalIncomeOnWhichTaxIsDue = 132.00,
-
-        payPensionsProfitAtBRT = 132.00,
-        rateBRT = 20.00,
-        incomeTaxOnPayPensionsProfitAtBRT = 26.00,
-
-        payPensionsProfitAtHRT = 0,
-        rateHRT = 40.00,
-        incomeTaxOnPayPensionsProfitAtHRT = 0,
-
-        payPensionsProfitAtART = 0,
-        rateART = 45.00,
-        incomeTaxOnPayPensionsProfitAtART = 0,
-
-        nationalInsuranceClass2Amount=100.00,
-        totalClass4Charge = 23.86,
-        incomeTaxYTD = 149.86,
-        bbsiIncome = 0.00,
-        incomeInterest = IncomeInterest(0.00, 0.00),
-
-        //Don't need these
-        incomeTaxThisPeriod = 2000.00,
-        totalIncomeReceived = 9000.00,
-        incomeTaxDue = 2072.05
+    val justPropertyWithSavingsCalcDataModel = CalculationDataModel(
+      totalIncomeTaxNicYtd = 149.86,
+      totalTaxableIncome = 132.00,
+      personalAllowance = 2868.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 0.00,
+        ukProperty = 3000.00,
+        bankBuildingSocietyInterest = 2500.00,
+        ukDividends = 0.0
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 132.00,
+          taxRate = 20.0,
+          taxAmount = 26.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 40.0,
+          taxAmount = 0.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 45.0,
+          taxAmount = 0.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 2500.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 0.0,
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 100.0,
+        class4 = 23.86
       )
+    )
 
-    val justPropertyWithSavingsCalcDataModel: CalculationDataModel =
-      CalculationDataModel(
-        profitFromSelfEmployment = 0,
-        profitFromUkLandAndProperty = 3000.00,
-        proportionAllowance = 2868.00,
-        totalIncomeOnWhichTaxIsDue = 132.00,
-
-        payPensionsProfitAtBRT = 132.00,
-        rateBRT = 20.00,
-        incomeTaxOnPayPensionsProfitAtBRT = 26.00,
-
-        payPensionsProfitAtHRT = 0,
-        rateHRT = 40.00,
-        incomeTaxOnPayPensionsProfitAtHRT = 0,
-
-        payPensionsProfitAtART = 0,
-        rateART = 45.00,
-        incomeTaxOnPayPensionsProfitAtART = 0,
-
-        nationalInsuranceClass2Amount=100.00,
-        totalClass4Charge = 23.86,
-        incomeTaxYTD = 149.86,
-        bbsiIncome = 2500.00,
-        incomeInterest = IncomeInterest(0.00, 0.00),
-
-        //Don't need these
-        incomeTaxThisPeriod = 2000.00,
-        totalIncomeReceived = 9000.00,
-        incomeTaxDue = 2072.05
+    val mandatoryOnlyDataModel = CalculationDataModel(
+      totalIncomeTaxNicYtd = 90500.0,
+      totalTaxableIncome = 0.00,
+      personalAllowance = 0.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 0.00,
+        ukProperty = 0.00,
+        bankBuildingSocietyInterest = 0.00,
+        ukDividends = 0.0
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 0.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 0.0,
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 0.0,
+        class4 = 0.0
       )
-
-    val mandatoryOnlyDataModel =
-      CalculationDataModel(
-        profitFromSelfEmployment = 0,
-        profitFromUkLandAndProperty = 0,
-        proportionAllowance = 0,
-        totalIncomeOnWhichTaxIsDue = 0,
-        payPensionsProfitAtBRT = 0,
-        rateBRT = 0,
-        incomeTaxOnPayPensionsProfitAtBRT = 0,
-        payPensionsProfitAtHRT = 0,
-        rateHRT = 0,
-        incomeTaxOnPayPensionsProfitAtHRT = 0,
-        payPensionsProfitAtART = 0,
-        rateART = 0,
-        incomeTaxOnPayPensionsProfitAtART = 0,
-        nationalInsuranceClass2Amount = 0,
-        totalClass4Charge = 0,
-        bbsiIncome = 0.00,
-        incomeInterest = IncomeInterest(0.00, 0.00),
-        incomeTaxYTD = 90500.00,
-        incomeTaxThisPeriod = 2000.00,
-        totalIncomeReceived = 0,
-        incomeTaxDue = 0
-      )
+    )
 
     val mandatoryCalculationDataSuccessString: String =
-      """
-        |{
-        | "incomeTaxYTD": 90500,
-        | "incomeTaxThisPeriod": 2000
-        |}
-      """.stripMargin
+      """{"incomeTaxYTD": 90500,"incomeTaxThisPeriod": 2000}"""
 
     val calculationDataSuccessString: String =
       """
         |{
-        | "incomeTaxYTD": 90500,
-        | "incomeTaxThisPeriod": 2000,
-        | "profitFromSelfEmployment": 200000,
-        | "profitFromUkLandAndProperty": 10000,
-        | "totalIncomeReceived": 230000,
-        | "proportionAllowance": 11500,
-        | "totalIncomeOnWhichTaxIsDue": 198500,
-        | "payPensionsProfitAtBRT": 20000,
-        | "incomeTaxOnPayPensionsProfitAtBRT": 4000,
-        | "payPensionsProfitAtHRT": 100000,
-        | "incomeTaxOnPayPensionsProfitAtHRT": 40000,
-        | "payPensionsProfitAtART": 50000,
-        | "incomeTaxOnPayPensionsProfitAtART": 22500,
-        | "incomeTaxDue": 66500,
-        | "nationalInsuranceClass2Amount": 10000,
-        | "totalClass4Charge": 14000,
-        | "bbsiIncome": 1999,
-        | "incomeInterest": {
-        |   "incomeTaxOnInterestReceivedAtStartingRate": 1.00,
-        |   "incomeTaxOnInterestReceivedAtZeroRate": 20.00
+        | "totalTaxableIncome": 198500,
+        | "totalIncomeTaxNicYtd": 90500,
+        | "personalAllowance": 11500,
+        | "incomeReceived": {
+        |    "selfEmployment": 200000,
+        |    "ukProperty": 10000,
+        |    "bankBuildingSocietyInterest": 1999,
+        |    "ukDividends": 0
         | },
-        | "rateBRT": 20,
-        | "rateHRT": 40,
-        | "rateART": 45,
+        | "payPensionsProfit": {
+        |   "basicBand": {
+        |     "taxableIncome": 20000,
+        |     "taxRate": 20,
+        |     "taxAmount": 4000
+        |   },
+        |   "higherBand": {
+        |     "taxableIncome": 100000,
+        |     "taxRate": 40,
+        |     "taxAmount": 40000
+        |   },
+        |   "additionalBand": {
+        |     "taxableIncome": 50000,
+        |     "taxRate": 45,
+        |     "taxAmount": 22500
+        |   }
+        | },
+        | "savingsAndGains": {
+        |   "startBand": {
+        |     "taxableIncome": 1.00,
+        |     "taxRate": 0,
+        |     "taxAmount": 0
+        |   },
+        |   "zeroBand": {
+        |     "taxableIncome": 20.00,
+        |     "taxRate": 0,
+        |     "taxAmount": 0
+        |   },
+        |   "basicBand": {
+        |     "taxableIncome": 0,
+        |     "taxRate": 20,
+        |     "taxAmount": 0
+        |   },
+        |   "higherBand": {
+        |     "taxableIncome": 0,
+        |     "taxRate": 40,
+        |     "taxAmount": 0
+        |   },
+        |   "additionalBand": {
+        |     "taxableIncome": 0,
+        |     "taxRate": 45,
+        |     "taxAmount": 0
+        |   }
+        | },
+        | "dividends": {
+        |   "allowance": 0,
+        |   "basicBand": {
+        |     "taxableIncome": 0,
+        |     "taxRate": 0,
+        |     "taxAmount": 0
+        |   },
+        |   "higherBand": {
+        |     "taxableIncome": 0,
+        |     "taxRate": 0,
+        |     "taxAmount": 0
+        |   },
+        |   "additionalBand": {
+        |     "taxableIncome": 0,
+        |     "taxRate": 0,
+        |     "taxAmount": 0
+        |   }
+        | },
+        | "nic": {
+        |   "class2": 10000,
+        |   "class4": 14000
+        | },
         | "eoyEstimate": {
         |   "incomeTaxNicAmount": 66000
         | }
@@ -737,212 +1265,206 @@ object TestConstants extends ImplicitDateFormatter {
         |{
         | "incomeTaxYTD": 90500,
         | "incomeTaxThisPeriod": 2000,
-        | "payFromAllEmployments": 888,
-        | "benefitsAndExpensesReceived": 888,
-        | "allowableExpenses": 888,
-        | "payFromAllEmploymentsAfterExpenses": 888,
-        | "shareSchemes": 888,
+        | "payFromAllEmployments": 0,
+        | "benefitsAndExpensesReceived": 0,
+        | "allowableExpenses": 0,
+        | "payFromAllEmploymentsAfterExpenses": 0,
+        | "shareSchemes": 0,
         | "profitFromSelfEmployment": 200000,
-        | "profitFromPartnerships": 888,
+        | "profitFromPartnerships": 0,
         | "profitFromUkLandAndProperty": 10000,
-        | "dividendsFromForeignCompanies": 888,
-        | "foreignIncome": 888,
-        | "trustsAndEstates": 888,
-        | "interestReceivedFromUkBanksAndBuildingSocieties": 888,
-        | "dividendsFromUkCompanies": 888,
-        | "ukPensionsAndStateBenefits": 888,
-        | "gainsOnLifeInsurance": 888,
-        | "otherIncome": 888,
+        | "dividendsFromForeignCompanies": 0,
+        | "foreignIncome": 0,
+        | "trustsAndEstates": 0,
+        | "interestReceivedFromUkBanksAndBuildingSocieties": 0,
+        | "dividendsFromUkCompanies": 0,
+        | "ukPensionsAndStateBenefits": 0,
+        | "gainsOnLifeInsurance": 0,
+        | "otherIncome": 0,
         | "totalIncomeReceived": 230000,
-        | "paymentsIntoARetirementAnnuity": 888,
-        | "foreignTaxOnEstates": 888,
-        | "incomeTaxRelief": 888,
-        | "incomeTaxReliefReducedToMaximumAllowable": 888,
-        | "annuities": 888,
-        | "giftOfInvestmentsAndPropertyToCharity": 888,
+        | "paymentsIntoARetirementAnnuity": 0,
+        | "foreignTaxOnEstates": 0,
+        | "incomeTaxRelief": 0,
+        | "incomeTaxReliefReducedToMaximumAllowable": 0,
+        | "annuities": 0,
+        | "giftOfInvestmentsAndPropertyToCharity": 0,
         | "personalAllowance": 11500,
-        | "marriageAllowanceTransfer": 888,
-        | "blindPersonAllowance": 888,
-        | "blindPersonSurplusAllowanceFromSpouse": 888,
-        | "incomeExcluded": 888,
-        | "totalIncomeAllowancesUsed": 888,
+        | "marriageAllowanceTransfer": 0,
+        | "blindPersonAllowance": 0,
+        | "blindPersonSurplusAllowanceFromSpouse": 0,
+        | "incomeExcluded": 0,
+        | "totalIncomeAllowancesUsed": 0,
         | "totalIncomeOnWhichTaxIsDue": 198500,
-        | "payPensionsExtender": 888,
-        | "giftExtender": 888,
-        | "extendedBR": 888,
+        | "payPensionsExtender": 0,
+        | "giftExtender": 0,
+        | "extendedBR": 0,
         | "payPensionsProfitAtBRT": 20000,
         | "incomeTaxOnPayPensionsProfitAtBRT": 4000,
         | "payPensionsProfitAtHRT": 100000,
         | "incomeTaxOnPayPensionsProfitAtHRT": 40000,
         | "payPensionsProfitAtART": 50000,
         | "incomeTaxOnPayPensionsProfitAtART": 22500,
-        | "netPropertyFinanceCosts": 888,
-        | "interestReceivedAtStartingRate": 888,
-        | "incomeTaxOnInterestReceivedAtStartingRate": 888,
-        | "interestReceivedAtZeroRate": 888,
-        | "incomeTaxOnInterestReceivedAtZeroRate": 888,
-        | "interestReceivedAtBRT": 888,
-        | "incomeTaxOnInterestReceivedAtBRT": 888,
-        | "interestReceivedAtHRT": 888,
-        | "incomeTaxOnInterestReceivedAtHRT": 888,
-        | "interestReceivedAtART": 888,
-        | "incomeTaxOnInterestReceivedAtART": 888,
-        | "dividendsAtZeroRate": 888,
-        | "incomeTaxOnDividendsAtZeroRate": 888,
-        | "dividendsAtBRT": 888,
-        | "incomeTaxOnDividendsAtBRT": 888,
-        | "dividendsAtHRT": 888,
-        | "incomeTaxOnDividendsAtHRT": 888,
-        | "dividendsAtART": 888,
-        | "incomeTaxOnDividendsAtART": 888,
-        | "totalIncomeOnWhichTaxHasBeenCharged": 888,
-        | "taxOnOtherIncome": 888,
+        | "netPropertyFinanceCosts": 0,
+        | "interestReceivedAtStartingRate": 1,
+        | "incomeTaxOnInterestReceivedAtStartingRate": 0,
+        | "interestReceivedAtZeroRate": 20,
+        | "incomeTaxOnInterestReceivedAtZeroRate": 0,
+        | "interestReceivedAtBRT": 0,
+        | "incomeTaxOnInterestReceivedAtBRT": 0,
+        | "interestReceivedAtHRT": 0,
+        | "incomeTaxOnInterestReceivedAtHRT": 0,
+        | "interestReceivedAtART": 0,
+        | "incomeTaxOnInterestReceivedAtART": 0,
+        | "dividendsAtZeroRate": 0,
+        | "incomeTaxOnDividendsAtZeroRate": 0,
+        | "dividendsAtBRT": 0,
+        | "incomeTaxOnDividendsAtBRT": 0,
+        | "dividendsAtHRT": 0,
+        | "incomeTaxOnDividendsAtHRT": 0,
+        | "dividendsAtART": 0,
+        | "incomeTaxOnDividendsAtART": 0,
+        | "totalIncomeOnWhichTaxHasBeenCharged": 0,
+        | "taxOnOtherIncome": 0,
         | "incomeTaxDue": 66500,
-        | "incomeTaxCharged": 888,
-        | "deficiencyRelief": 888,
-        | "topSlicingRelief": 888,
-        | "ventureCapitalTrustRelief": 888,
-        | "enterpriseInvestmentSchemeRelief": 888,
-        | "seedEnterpriseInvestmentSchemeRelief": 888,
-        | "communityInvestmentTaxRelief": 888,
-        | "socialInvestmentTaxRelief": 888,
-        | "maintenanceAndAlimonyPaid": 888,
-        | "marriedCouplesAllowance": 888,
-        | "marriedCouplesAllowanceRelief": 888,
-        | "surplusMarriedCouplesAllowance": 888,
-        | "surplusMarriedCouplesAllowanceRelief": 888,
-        | "notionalTaxFromLifePolicies": 888,
-        | "notionalTaxFromDividendsAndOtherIncome": 888,
-        | "foreignTaxCreditRelief": 888,
-        | "incomeTaxDueAfterAllowancesAndReliefs": 888,
-        | "giftAidPaymentsAmount": 888,
-        | "giftAidTaxDue": 888,
-        | "capitalGainsTaxDue": 888,
-        | "remittanceForNonDomiciles": 888,
-        | "highIncomeChildBenefitCharge": 888,
-        | "totalGiftAidTaxReduced": 888,
-        | "incomeTaxDueAfterGiftAidReduction": 888,
-        | "annuityAmount": 888,
-        | "taxDueOnAnnuity": 888,
-        | "taxCreditsOnDividendsFromUkCompanies": 888,
-        | "incomeTaxDueAfterDividendTaxCredits": 888,
-        | "nationalInsuranceContributionAmount": 888,
-        | "nationalInsuranceContributionCharge": 888,
-        | "nationalInsuranceContributionSupAmount": 888,
-        | "nationalInsuranceContributionSupCharge": 888,
+        | "incomeTaxCharged": 0,
+        | "deficiencyRelief": 0,
+        | "topSlicingRelief": 0,
+        | "ventureCapitalTrustRelief": 0,
+        | "enterpriseInvestmentSchemeRelief": 0,
+        | "seedEnterpriseInvestmentSchemeRelief": 0,
+        | "communityInvestmentTaxRelief": 0,
+        | "socialInvestmentTaxRelief": 0,
+        | "maintenanceAndAlimonyPaid": 0,
+        | "marriedCouplesAllowance": 0,
+        | "marriedCouplesAllowanceRelief": 0,
+        | "surplusMarriedCouplesAllowance": 0,
+        | "surplusMarriedCouplesAllowanceRelief": 0,
+        | "notionalTaxFromLifePolicies": 0,
+        | "notionalTaxFromDividendsAndOtherIncome": 0,
+        | "foreignTaxCreditRelief": 0,
+        | "incomeTaxDueAfterAllowancesAndReliefs": 0,
+        | "giftAidPaymentsAmount": 0,
+        | "giftAidTaxDue": 0,
+        | "capitalGainsTaxDue": 0,
+        | "remittanceForNonDomiciles": 0,
+        | "highIncomeChildBenefitCharge": 0,
+        | "totalGiftAidTaxReduced": 0,
+        | "incomeTaxDueAfterGiftAidReduction": 0,
+        | "annuityAmount": 0,
+        | "taxDueOnAnnuity": 0,
+        | "taxCreditsOnDividendsFromUkCompanies": 0,
+        | "incomeTaxDueAfterDividendTaxCredits": 0,
+        | "nationalInsuranceContributionAmount": 0,
+        | "nationalInsuranceContributionCharge": 0,
+        | "nationalInsuranceContributionSupAmount": 0,
+        | "nationalInsuranceContributionSupCharge": 0,
         | "totalClass4Charge": 14000,
-        | "nationalInsuranceClass1Amount": 888,
+        | "nationalInsuranceClass1Amount": 0,
         | "nationalInsuranceClass2Amount": 10000,
         | "nicTotal": 24000,
-        | "underpaidTaxForPreviousYears": 888,
-        | "studentLoanRepayments": 888,
-        | "pensionChargesGross": 888,
-        | "pensionChargesTaxPaid": 888,
-        | "totalPensionSavingCharges": 888,
-        | "pensionLumpSumAmount": 888,
-        | "pensionLumpSumRate": 888,
-        | "statePensionLumpSumAmount": 888,
-        | "remittanceBasisChargeForNonDomiciles": 888,
-        | "additionalTaxDueOnPensions": 888,
-        | "additionalTaxReliefDueOnPensions": 888,
-        | "incomeTaxDueAfterPensionDeductions": 888,
-        | "employmentsPensionsAndBenefits": 888,
-        | "outstandingDebtCollectedThroughPaye": 888,
-        | "payeTaxBalance": 888,
-        | "cisAndTradingIncome": 888,
-        | "partnerships": 888,
-        | "ukLandAndPropertyTaxPaid": 888,
-        | "foreignIncomeTaxPaid": 888,
-        | "trustAndEstatesTaxPaid": 888,
-        | "overseasIncomeTaxPaid": 888,
-        | "interestReceivedTaxPaid": 888,
-        | "voidISAs": 888,
-        | "otherIncomeTaxPaid": 888,
-        | "underpaidTaxForPriorYear": 888,
-        | "totalTaxDeducted": 888,
-        | "incomeTaxOverpaid": 888,
-        | "incomeTaxDueAfterDeductions": 888,
-        | "propertyFinanceTaxDeduction": 888,
-        | "taxableCapitalGains": 888,
-        | "capitalGainAtEntrepreneurRate": 888,
-        | "incomeTaxOnCapitalGainAtEntrepreneurRate": 888,
-        | "capitalGrainsAtLowerRate": 888,
-        | "incomeTaxOnCapitalGainAtLowerRate": 888,
-        | "capitalGainAtHigherRate": 888,
-        | "incomeTaxOnCapitalGainAtHigherTax": 888,
-        | "capitalGainsTaxAdjustment": 888,
-        | "foreignTaxCreditReliefOnCapitalGains": 888,
-        | "liabilityFromOffShoreTrusts": 888,
-        | "taxOnGainsAlreadyCharged": 888,
-        | "totalCapitalGainsTax": 888,
-        | "incomeAndCapitalGainsTaxDue": 888,
-        | "taxRefundedInYear": 888,
-        | "unpaidTaxCalculatedForEarlierYears": 888,
-        | "marriageAllowanceTransferAmount": 888,
-        | "marriageAllowanceTransferRelief": 888,
-        | "marriageAllowanceTransferMaximumAllowable": 888,
-        | "nationalRegime": "888",
-        | "allowance": 888,
-        | "limitBRT": 888,
-        | "limitHRT": 888,
+        | "underpaidTaxForPreviousYears": 0,
+        | "studentLoanRepayments": 0,
+        | "pensionChargesGross": 0,
+        | "pensionChargesTaxPaid": 0,
+        | "totalPensionSavingCharges": 0,
+        | "pensionLumpSumAmount": 0,
+        | "pensionLumpSumRate": 0,
+        | "statePensionLumpSumAmount": 0,
+        | "remittanceBasisChargeForNonDomiciles": 0,
+        | "additionalTaxDueOnPensions": 0,
+        | "additionalTaxReliefDueOnPensions": 0,
+        | "incomeTaxDueAfterPensionDeductions": 0,
+        | "employmentsPensionsAndBenefits": 0,
+        | "outstandingDebtCollectedThroughPaye": 0,
+        | "payeTaxBalance": 0,
+        | "cisAndTradingIncome": 0,
+        | "partnerships": 0,
+        | "ukLandAndPropertyTaxPaid": 0,
+        | "foreignIncomeTaxPaid": 0,
+        | "trustAndEstatesTaxPaid": 0,
+        | "overseasIncomeTaxPaid": 0,
+        | "interestReceivedTaxPaid": 0,
+        | "voidISAs": 0,
+        | "otherIncomeTaxPaid": 0,
+        | "underpaidTaxForPriorYear": 0,
+        | "totalTaxDeducted": 0,
+        | "incomeTaxOverpaid": 0,
+        | "incomeTaxDueAfterDeductions": 0,
+        | "propertyFinanceTaxDeduction": 0,
+        | "taxableCapitalGains": 0,
+        | "capitalGainAtEntrepreneurRate": 0,
+        | "incomeTaxOnCapitalGainAtEntrepreneurRate": 0,
+        | "capitalGrainsAtLowerRate": 0,
+        | "incomeTaxOnCapitalGainAtLowerRate": 0,
+        | "capitalGainAtHigherRate": 0,
+        | "incomeTaxOnCapitalGainAtHigherTax": 0,
+        | "capitalGainsTaxAdjustment": 0,
+        | "foreignTaxCreditReliefOnCapitalGains": 0,
+        | "liabilityFromOffShoreTrusts": 0,
+        | "taxOnGainsAlreadyCharged": 0,
+        | "totalCapitalGainsTax": 0,
+        | "incomeAndCapitalGainsTaxDue": 0,
+        | "taxRefundedInYear": 0,
+        | "unpaidTaxCalculatedForEarlierYears": 0,
+        | "marriageAllowanceTransferAmount": 0,
+        | "marriageAllowanceTransferRelief": 0,
+        | "marriageAllowanceTransferMaximumAllowable": 0,
+        | "nationalRegime": "0",
+        | "allowance": 0,
+        | "limitBRT": 0,
+        | "limitHRT": 0,
         | "rateBRT": 20,
         | "rateHRT": 40,
         | "rateART": 45,
-        | "limitAIA": 888,
-        | "limitAIA": 888,
-        | "allowanceBRT": 888,
-        | "interestAllowanceHRT": 888,
-        | "interestAllowanceBRT": 888,
-        | "dividendAllowance": 888,
-        | "dividendBRT": 888,
-        | "dividendHRT": 888,
-        | "dividendART": 888,
-        | "class2NICsLimit": 888,
-        | "class2NICsPerWeek": 888,
-        | "class4NICsLimitBR": 888,
-        | "class4NICsLimitHR": 888,
-        | "class4NICsBRT": 888,
-        | "class4NICsHRT": 888,
+        | "limitAIA": 0,
+        | "limitAIA": 0,
+        | "allowanceBRT": 0,
+        | "interestAllowanceHRT": 0,
+        | "interestAllowanceBRT": 0,
+        | "dividendAllowance": 0,
+        | "dividendBRT": 0,
+        | "dividendHRT": 0,
+        | "dividendART": 0,
+        | "class2NICsLimit": 0,
+        | "class2NICsPerWeek": 0,
+        | "class4NICsLimitBR": 0,
+        | "class4NICsLimitHR": 0,
+        | "class4NICsBRT": 0,
+        | "class4NICsHRT": 0,
         | "proportionAllowance": 11500,
-        | "proportionLimitBRT": 888,
-        | "proportionLimitHRT": 888,
-        | "proportionalTaxDue": 888,
-        | "proportionInterestAllowanceBRT": 888,
-        | "proportionInterestAllowanceHRT": 888,
-        | "proportionDividendAllowance": 888,
-        | "proportionPayPensionsProfitAtART": 888,
-        | "proportionIncomeTaxOnPayPensionsProfitAtART": 888,
-        | "proportionPayPensionsProfitAtBRT": 888,
-        | "proportionIncomeTaxOnPayPensionsProfitAtBRT": 888,
-        | "proportionPayPensionsProfitAtHRT": 888,
-        | "proportionIncomeTaxOnPayPensionsProfitAtHRT": 888,
-        | "proportionInterestReceivedAtZeroRate": 888,
-        | "proportionIncomeTaxOnInterestReceivedAtZeroRate": 888,
-        | "proportionInterestReceivedAtBRT": 888,
-        | "proportionIncomeTaxOnInterestReceivedAtBRT": 888,
-        | "proportionInterestReceivedAtHRT": 888,
-        | "proportionIncomeTaxOnInterestReceivedAtHRT": 888,
-        | "proportionInterestReceivedAtART": 888,
-        | "proportionIncomeTaxOnInterestReceivedAtART": 888,
-        | "proportionDividendsAtZeroRate": 888,
-        | "proportionIncomeTaxOnDividendsAtZeroRate": 888,
-        | "proportionDividendsAtBRT": 888,
-        | "proportionIncomeTaxOnDividendsAtBRT": 888,
-        | "proportionDividendsAtHRT": 888,
-        | "proportionIncomeTaxOnDividendsAtHRT": 888,
-        | "proportionDividendsAtART": 888,
-        | "proportionIncomeTaxOnDividendsAtART": 888,
-        | "proportionClass2NICsLimit": 888,
-        | "proportionClass4NICsLimitBR": 888,
-        | "proportionClass4NICsLimitHR": 888,
-        | "proportionReducedAllowanceLimit": 888,
-        |
-        | "bbsiIncome": 1999,
-        | "incomeInterest": {
-        |   "incomeTaxOnInterestReceivedAtStartingRate": 1.00,
-        |   "incomeTaxOnInterestReceivedAtZeroRate": 20.00
-        | },
-        |
+        | "proportionLimitBRT": 0,
+        | "proportionLimitHRT": 0,
+        | "proportionalTaxDue": 0,
+        | "proportionInterestAllowanceBRT": 0,
+        | "proportionInterestAllowanceHRT": 0,
+        | "proportionDividendAllowance": 0,
+        | "proportionPayPensionsProfitAtART": 0,
+        | "proportionIncomeTaxOnPayPensionsProfitAtART": 0,
+        | "proportionPayPensionsProfitAtBRT": 0,
+        | "proportionIncomeTaxOnPayPensionsProfitAtBRT": 0,
+        | "proportionPayPensionsProfitAtHRT": 0,
+        | "proportionIncomeTaxOnPayPensionsProfitAtHRT": 0,
+        | "proportionInterestReceivedAtZeroRate": 0,
+        | "proportionIncomeTaxOnInterestReceivedAtZeroRate": 0,
+        | "proportionInterestReceivedAtBRT": 0,
+        | "proportionIncomeTaxOnInterestReceivedAtBRT": 0,
+        | "proportionInterestReceivedAtHRT": 0,
+        | "proportionIncomeTaxOnInterestReceivedAtHRT": 0,
+        | "proportionInterestReceivedAtART": 0,
+        | "proportionIncomeTaxOnInterestReceivedAtART": 0,
+        | "proportionDividendsAtZeroRate": 0,
+        | "proportionIncomeTaxOnDividendsAtZeroRate": 0,
+        | "proportionDividendsAtBRT": 0,
+        | "proportionIncomeTaxOnDividendsAtBRT": 0,
+        | "proportionDividendsAtHRT": 0,
+        | "proportionIncomeTaxOnDividendsAtHRT": 0,
+        | "proportionDividendsAtART": 0,
+        | "proportionIncomeTaxOnDividendsAtART": 0,
+        | "proportionClass2NICsLimit": 0,
+        | "proportionClass4NICsLimitBR": 0,
+        | "proportionClass4NICsLimitHR": 0,
+        | "proportionReducedAllowanceLimit": 0,
+        | "interestReceivedFromUkBanksAndBuildingSocieties": 1999,
         | "eoyEstimate": {
         |        "selfEmployment": [
         |            {
