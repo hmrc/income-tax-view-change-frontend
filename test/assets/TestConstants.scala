@@ -1276,7 +1276,7 @@ object TestConstants extends ImplicitDateFormatter {
         | "dividendsFromForeignCompanies": 0,
         | "foreignIncome": 0,
         | "trustsAndEstates": 0,
-        | "interestReceivedFromUkBanksAndBuildingSocieties": 0,
+        | "interestReceivedFromUkBanksAndBuildingSocieties": 1999,
         | "dividendsFromUkCompanies": 0,
         | "ukPensionsAndStateBenefits": 0,
         | "gainsOnLifeInsurance": 0,
@@ -1464,7 +1464,6 @@ object TestConstants extends ImplicitDateFormatter {
         | "proportionClass4NICsLimitBR": 0,
         | "proportionClass4NICsLimitHR": 0,
         | "proportionReducedAllowanceLimit": 0,
-        | "interestReceivedFromUkBanksAndBuildingSocieties": 1999,
         | "eoyEstimate": {
         |        "selfEmployment": [
         |            {
