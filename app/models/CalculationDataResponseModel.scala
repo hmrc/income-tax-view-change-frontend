@@ -26,6 +26,7 @@ case class CalculationDataModel(
                                  totalTaxableIncome: BigDecimal,
                                  totalIncomeTaxNicYtd: BigDecimal,
                                  personalAllowance: BigDecimal,
+                                 additionalAllowances: BigDecimal,
                                  incomeReceived: IncomeReceivedModel,
                                  payPensionsProfit: PayPensionsProfitModel,
                                  savingsAndGains: SavingsAndGainsModel,
@@ -69,6 +70,7 @@ object CalculationDataModel {
     defaultZero(__ \ "totalIncomeOnWhichTaxIsDue") and
       (__ \ "incomeTaxYTD").read[BigDecimal] and
       defaultZero(__ \ "proportionAllowance") and
+      defaultZero(__ \ "totalAllowancesAndDeductions") and
       __.read[IncomeReceivedModel] and
       __.read[PayPensionsProfitModel] and
       __.read[SavingsAndGainsModel] and
