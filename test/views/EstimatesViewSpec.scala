@@ -19,6 +19,7 @@ package views
 import assets.Messages
 import assets.Messages.{Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.CalcBreakdown.busPropBRTCalcDataModel
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
 import assets.TestConstants._
@@ -71,6 +72,20 @@ class EstimatesViewSpec extends TestSupport {
         document.getElementById(s"estimates-link-$testYear").text shouldBe messages.taxYearLink((testYear - 1).toString, testYear.toString)
         document.getElementById(s"estimates-link-$testYearPlusOne").text shouldBe messages.taxYearLink(testYear.toString, testYearPlusOne.toString)
       }
+
+      "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
+        mockAppConfig.features.homePageEnabled(false)
+        val setup = pageSetup(testIncomeSources, lastTaxCalcWithYearList)
+        import setup._
+        document.getElementById("it-home-back") should be(null)
+      }
+
+      "show a back link to the Income Tax home page, when the home page feature is enabled" in {
+        mockAppConfig.features.homePageEnabled(true)
+        val setup = pageSetup(testIncomeSources, lastTaxCalcWithYearList)
+        import setup._
+        document.getElementById("it-home-back") shouldNot be(null)
+      }
     }
 
     "the user has no estimates" should {
@@ -89,7 +104,17 @@ class EstimatesViewSpec extends TestSupport {
       s"have the paragraph '${messages.noEstimates}'" in {
         document.getElementById("no-estimates").text shouldBe messages.noEstimates
       }
-    }
 
+      "show a back link to the Income Tax home page, when the home page feature is enabled" in {
+        document.getElementById("it-home-back") shouldNot be(null)
+      }
+
+      "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
+        mockAppConfig.features.homePageEnabled(false)
+        val setup = pageSetup(testIncomeSources, List())
+        import setup._
+        document.getElementById("it-home-back") should be(null)
+      }
+    }
   }
 }

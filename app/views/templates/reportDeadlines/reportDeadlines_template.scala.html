@@ -19,7 +19,7 @@
 @import views.helpers.ReportDeadlineStatusHelper
 
 @(model: ReportDeadlinesModel, id: String)(implicit messages: Messages)
-    <table>
+    <table class="form-group">
         <thead>
             <tr>
                 <th id="@{id}-period-heading">@Messages("obligations.accountingPeriod")</th>
@@ -30,9 +30,7 @@
             @model.obligations.zipWithIndex.map { case (report: ReportDeadlineModel, index: Int) =>
                 <tr class="obligation no-border-bottom">
                     <td>
-                        <p>
-                            <span id="@{id}-ob-@{index + 1}-start">@report.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@report.end.toLongDate</span>
-                        </p>
+                        <span id="@{id}-ob-@{index + 1}-start">@report.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@report.end.toLongDate</span>
                     </td>
                     <td id="@{id}-ob-@{index+1}-status">
                         @ReportDeadlineStatusHelper.statusHtml(report.getReportDeadlineStatus)

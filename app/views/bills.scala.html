@@ -23,6 +23,7 @@
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
 @import enums.{Crystallised, Estimate}
+@import views.html.helpers.backToHomeHelper
 
 @(calcModels: List[LastTaxCalculationWithYear])(serviceInfo: Html)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, sources: models.IncomeSourcesModel)
 
@@ -59,5 +60,10 @@
                 @Html(messages("bills.earlierBills"))
             </p>
         </div>
+
+        @if(appConfig.features.homePageEnabled()){
+            @backToHomeHelper()
+        }
+
     </section>
 }
