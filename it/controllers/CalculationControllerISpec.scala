@@ -196,16 +196,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
         //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
 
-        val totalProfit = {
-          import calcBreakdownResponse.incomeReceived._
-          selfEmployment + ukProperty + bankBuildingSocietyInterest + ukDividends
-        }.toCurrencyString
-
-        val totalAllowance = {
-          import calcBreakdownResponse._
-          personalAllowance + savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
-        }.toCurrencyString
-
         res should have (
           httpStatus(OK),
           pageTitle("Tax year: 2017 to 2018"),
@@ -216,8 +206,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
           elementTextByID("page-heading")("Your Income Tax estimate"),
-          elementTextByID("business-profit")(totalProfit),
-          elementTextByID("personal-allowance")(s"-$totalAllowance"),
+          elementTextByID("business-profit")(totalProfit(calcBreakdownResponse)),
+          elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
           elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
           elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
           elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toString.replace(".0","")),
