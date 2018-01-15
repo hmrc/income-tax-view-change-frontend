@@ -25,6 +25,7 @@ trait ImplicitCurrencyFormatter {
     val f = new DecimalFormat("#,##0.00")
     def toCurrency: Html = Html("&pound;" + f.format(x).replace(".00",""))
     def toCurrencyString: String = "£" + f.format(x).replace(".00","")
+    def toStringNoDecimal: String = x.toString.replace(".0","")
   }
 }
 
