@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(calculationDataSuccessModel)))
+  val successResponse = HttpResponse(Status.OK, Some(Json.parse(mandatoryCalculationDataSuccessString)))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{\"incomeTaxYTD\":\"somethingBad\"}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
@@ -42,7 +42,7 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
     "return a CalculationDataModel with JSON in case of success" in {
       setupMockHttpGet(url)(successResponse)
-      await(result) shouldBe calculationDataSuccessModel
+      await(result) shouldBe mandatoryOnlyDataModel
     }
 
     "return CalculationDataErrorModel model in case of failure" in {

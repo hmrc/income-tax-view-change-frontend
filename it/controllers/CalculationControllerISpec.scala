@@ -19,11 +19,19 @@ import enums.{Crystallised, Estimate}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
 import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.{CalculationDataErrorModel, LastTaxCalculation}
+import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
 import play.api.http.Status._
 import utils.ImplicitCurrencyFormatter._
 
 class CalculationControllerISpec extends ComponentSpecBase with GenericStubMethods {
+
+  def totalProfit(calc: CalculationDataModel, includeInterest: Boolean = true): String = {
+    import calc.incomeReceived._
+    selfEmployment + ukProperty + ukDividends + (if(includeInterest) bankBuildingSocietyInterest else 0)
+  }.toCurrencyString
+
+  def totalAllowance(calc: CalculationDataModel): String =
+    (calc.personalAllowance + calc.savingsAndGains.startBand.taxableIncome + calc.savingsAndGains.zeroBand.taxableIncome).toCurrencyString
 
   "Calling the CalculationController.getEstimatedTaxLiability(year)" when {
 
@@ -39,12 +47,12 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse =
-          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
+          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, calcBreakdownResponse)
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
 
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
@@ -65,19 +73,27 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           httpStatus(OK),
           pageTitle("Tax year: 2017 to 2018"),
           elementTextByID(id = "service-info-user-name")(testUserName),
-          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calcBreakdownResponse.incomeTaxYTD.toCurrencyString}"),
+          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
           elementTextByID("tax-year")("Tax year: 2017 to 2018"),
           elementTextByID("it-reference")(testMtditid),
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
           elementTextByID("page-heading")("Your Income Tax estimate"),
-          elementTextByID("business-profit")(calcBreakdownResponse.profitFromSelfEmployment.toCurrencyString),
-          elementTextByID("property-profit")(calcBreakdownResponse.profitFromUkLandAndProperty.toCurrencyString),
-          elementTextByID("personal-allowance")(s"-${calcBreakdownResponse.proportionAllowance.toCurrencyString}"),
-          elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
-          elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
-          elementTextByID("nic4-amount")(calcBreakdownResponse.totalClass4Charge.toCurrencyString),
-          elementTextByID("total-estimate")(calcBreakdownResponse.incomeTaxYTD.toCurrencyString),
+          elementTextByID("business-profit")(totalProfit(calcBreakdownResponse)),
+          elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
+          elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
+          elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
+          elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toString.replace(".0","")),
+          elementTextByID("brt-amount")((calcBreakdownResponse.payPensionsProfit.basicBand.taxAmount + calcBreakdownResponse.savingsAndGains.basicBand.taxAmount).toCurrencyString),
+          elementTextByID("hrt-it-calc")((calcBreakdownResponse.payPensionsProfit.higherBand.taxableIncome + calcBreakdownResponse.savingsAndGains.higherBand.taxableIncome).toCurrencyString),
+          elementTextByID("hrt-rate")(calcBreakdownResponse.payPensionsProfit.higherBand.taxRate.toString.replace(".0","")),
+          elementTextByID("hrt-amount")((calcBreakdownResponse.payPensionsProfit.higherBand.taxAmount + calcBreakdownResponse.savingsAndGains.higherBand.taxAmount).toCurrencyString),
+          elementTextByID("art-it-calc")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxableIncome + calcBreakdownResponse.savingsAndGains.additionalBand.taxableIncome).toCurrencyString),
+          elementTextByID("art-rate")(calcBreakdownResponse.payPensionsProfit.additionalBand.taxRate.toString.replace(".0","")),
+          elementTextByID("art-amount")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxAmount + calcBreakdownResponse.savingsAndGains.additionalBand.taxAmount).toCurrencyString),
+          elementTextByID("nic2-amount")(calcBreakdownResponse.nic.class2.toCurrencyString),
+          elementTextByID("nic4-amount")(calcBreakdownResponse.nic.class4.toCurrencyString),
+          elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString),
           isElementVisibleById("eoyEstimate")(expectedValue = true)
         )
       }
@@ -94,12 +110,12 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse =
-          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Crystallised)
+          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Crystallised)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, calcBreakdownResponse)
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
 
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
@@ -120,19 +136,28 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           httpStatus(OK),
           pageTitle("Your final submission"),
           elementTextByID(id = "service-info-user-name")(testUserName),
-          elementTextByID("whatYouOweHeading")(s"What you owe: ${calcBreakdownResponse.incomeTaxYTD.toCurrencyString}"),
+          elementTextByID("whatYouOweHeading")(s"What you owe: ${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
           elementTextByID("tax-year")("Tax year: 2017 to 2018"),
           elementTextByID("it-reference")(testMtditid),
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
           elementTextByID("page-heading")("Your finalised Income Tax bill"),
-          elementTextByID("business-profit")(calcBreakdownResponse.profitFromSelfEmployment.toCurrencyString),
-          elementTextByID("property-profit")(calcBreakdownResponse.profitFromUkLandAndProperty.toCurrencyString),
-          elementTextByID("personal-allowance")(s"-${calcBreakdownResponse.proportionAllowance.toCurrencyString}"),
-          elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
-          elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
-          elementTextByID("nic4-amount")(calcBreakdownResponse.totalClass4Charge.toCurrencyString),
-          elementTextByID("total-estimate")(calcBreakdownResponse.incomeTaxYTD.toCurrencyString)
+          elementTextByID("business-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
+          elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
+          elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
+          elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
+          elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
+          elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toString.replace(".0","")),
+          elementTextByID("brt-amount")((calcBreakdownResponse.payPensionsProfit.basicBand.taxAmount + calcBreakdownResponse.savingsAndGains.basicBand.taxAmount).toCurrencyString),
+          elementTextByID("hrt-it-calc")((calcBreakdownResponse.payPensionsProfit.higherBand.taxableIncome + calcBreakdownResponse.savingsAndGains.higherBand.taxableIncome).toCurrencyString),
+          elementTextByID("hrt-rate")(calcBreakdownResponse.payPensionsProfit.higherBand.taxRate.toString.replace(".0","")),
+          elementTextByID("hrt-amount")((calcBreakdownResponse.payPensionsProfit.higherBand.taxAmount + calcBreakdownResponse.savingsAndGains.higherBand.taxAmount).toCurrencyString),
+          elementTextByID("art-it-calc")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxableIncome + calcBreakdownResponse.savingsAndGains.additionalBand.taxableIncome).toCurrencyString),
+          elementTextByID("art-rate")(calcBreakdownResponse.payPensionsProfit.additionalBand.taxRate.toString.replace(".0","")),
+          elementTextByID("art-amount")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxAmount + calcBreakdownResponse.savingsAndGains.additionalBand.taxAmount).toCurrencyString),
+          elementTextByID("nic2-amount")(calcBreakdownResponse.nic.class2.toCurrencyString),
+          elementTextByID("nic4-amount")(calcBreakdownResponse.nic.class4.toCurrencyString),
+          elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)
         )
       }
     }
@@ -149,12 +174,12 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse =
-          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.incomeTaxYTD, Estimate)
+          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.totalIncomeTaxNicYtd, Estimate)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, calcBreakdownResponse)
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessString)
 
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
@@ -175,19 +200,27 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           httpStatus(OK),
           pageTitle("Tax year: 2017 to 2018"),
           elementTextByID(id = "service-info-user-name")(testUserName),
-          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calcBreakdownResponse.incomeTaxYTD.toCurrencyString}"),
+          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
           elementTextByID("tax-year")("Tax year: 2017 to 2018"),
           elementTextByID("it-reference")(testMtditid),
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
           elementTextByID("page-heading")("Your Income Tax estimate"),
-          elementTextByID("business-profit")(calcBreakdownResponse.profitFromSelfEmployment.toCurrencyString),
-          elementTextByID("property-profit")(calcBreakdownResponse.profitFromUkLandAndProperty.toCurrencyString),
-          elementTextByID("personal-allowance")(s"-${calcBreakdownResponse.proportionAllowance.toCurrencyString}"),
-          elementTextByID("taxable-income")(calcBreakdownResponse.totalIncomeOnWhichTaxIsDue.toCurrencyString),
-          elementTextByID("nic2-amount")(calcBreakdownResponse.nationalInsuranceClass2Amount.toCurrencyString),
-          elementTextByID("nic4-amount")(calcBreakdownResponse.totalClass4Charge.toCurrencyString),
-          elementTextByID("total-estimate")(calcBreakdownResponse.incomeTaxYTD.toCurrencyString),
+          elementTextByID("business-profit")(totalProfit(calcBreakdownResponse)),
+          elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
+          elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
+          elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
+          elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toString.replace(".0","")),
+          elementTextByID("brt-amount")((calcBreakdownResponse.payPensionsProfit.basicBand.taxAmount + calcBreakdownResponse.savingsAndGains.basicBand.taxAmount).toCurrencyString),
+          elementTextByID("hrt-it-calc")((calcBreakdownResponse.payPensionsProfit.higherBand.taxableIncome + calcBreakdownResponse.savingsAndGains.higherBand.taxableIncome).toCurrencyString),
+          elementTextByID("hrt-rate")(calcBreakdownResponse.payPensionsProfit.higherBand.taxRate.toString.replace(".0","")),
+          elementTextByID("hrt-amount")((calcBreakdownResponse.payPensionsProfit.higherBand.taxAmount + calcBreakdownResponse.savingsAndGains.higherBand.taxAmount).toCurrencyString),
+          elementTextByID("art-it-calc")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxableIncome + calcBreakdownResponse.savingsAndGains.additionalBand.taxableIncome).toCurrencyString),
+          elementTextByID("art-rate")(calcBreakdownResponse.payPensionsProfit.additionalBand.taxRate.toString.replace(".0","")),
+          elementTextByID("art-amount")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxAmount + calcBreakdownResponse.savingsAndGains.additionalBand.taxAmount).toCurrencyString),
+          elementTextByID("nic2-amount")(calcBreakdownResponse.nic.class2.toCurrencyString),
+          elementTextByID("nic4-amount")(calcBreakdownResponse.nic.class4.toCurrencyString),
+          elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString),
           isElementVisibleById("eoyEstimate")(expectedValue = false)
         )
       }
@@ -205,7 +238,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("a successful Get Last Estimated Tax Liability response via wiremock stub")
         val lastTaxCalcResponse =
-          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
+          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
         And("I wiremock stub an erroneous GetCalculationData response")
@@ -232,7 +265,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         res should have(
           httpStatus(OK),
           pageTitle("Tax year: 2017 to 2018"),
-          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD.toCurrencyString}"),
+          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString}"),
           elementTextByID("inYearP1")("This is an estimate of the tax you owe from 6 April 2017 to 6 July 2017."),
           isElementVisibleById("inYearCalcBreakdown")(expectedValue = false)
         )
