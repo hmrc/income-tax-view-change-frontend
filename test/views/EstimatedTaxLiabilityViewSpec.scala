@@ -153,7 +153,9 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
     "have a Calculation Breakdown section" that {
 
       "for users with both a property and a business" which {
+
         "have just the basic rate of tax" should {
+
           val total = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty + model.incomeReceived.bankBuildingSocietyInterest).toCurrencyString
           val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
           import setup._
@@ -291,6 +293,238 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
           }
         }
+      }
+
+      "for users with income from Dividends at the Basic Rate" should {
+
+        val setup = pageSetup(dividendAtBRT, testIncomeSources)
+        import setup._
+
+        "display income from dividends" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendIncome}" in {
+            document.getElementById("dividend-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.dividendIncome
+          }
+
+          s"should have the amount ${dividendAtBRT.incomeReceived.ukDividends}" in {
+            document.getElementById("dividend-income").text shouldBe dividendAtBRT.incomeReceived.ukDividends.toCurrencyString
+          }
+
+        }
+
+        "display the dividend allowance that applies" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendAllowance}" in {
+            document.getElementById("dividend-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.dividendAllowance
+          }
+
+          s"should have the amount ${dividendAtBRT.dividends.allowance}" in {
+            document.getElementById("dividend-allowance").text shouldBe "-" + dividendAtBRT.dividends.allowance.toCurrencyString
+          }
+
+        }
+
+        "display the total taxable dividends" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.taxableDividends}" in {
+            document.getElementById("taxable-dividend-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.taxableDividends
+          }
+
+          s"should have the amount ${dividendAtBRT.taxableDividendIncome}" in {
+            document.getElementById("taxable-dividend-income").text shouldBe dividendAtBRT.taxableDividendIncome.toCurrencyString
+          }
+
+        }
+
+        "have a section for Dividends charged at the Basic Rate" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+            dividendAtBRT.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtBRT.dividends.basicBand.taxRate.toString.replace(".0","")
+          )}" in {
+            document.getElementById("dividend-brt-calc-heading").text shouldBe
+              messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+                dividendAtBRT.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtBRT.dividends.basicBand.taxRate.toString.replace(".0","")
+              )
+          }
+
+          s"should have the amount ${dividendAtBRT.dividends.basicBand.taxAmount}" in {
+            document.getElementById("dividend-brt-amount").text shouldBe dividendAtBRT.dividends.basicBand.taxAmount.toCurrencyString
+          }
+
+        }
+
+      }
+
+      "for users with income from Dividends at the Higher Rate" should {
+
+        val setup = pageSetup(dividendAtHRT, testIncomeSources)
+        import setup._
+
+        "display income from dividends" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendIncome}" in {
+            document.getElementById("dividend-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.dividendIncome
+          }
+
+          s"should have the amount ${dividendAtHRT.incomeReceived.ukDividends}" in {
+            document.getElementById("dividend-income").text shouldBe dividendAtHRT.incomeReceived.ukDividends.toCurrencyString
+          }
+
+        }
+
+        "display the dividend allowance that applies" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendAllowance}" in {
+            document.getElementById("dividend-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.dividendAllowance
+          }
+
+          s"should have the amount ${dividendAtHRT.dividends.allowance}" in {
+            document.getElementById("dividend-allowance").text shouldBe "-" + dividendAtHRT.dividends.allowance.toCurrencyString
+          }
+
+        }
+
+        "display the total taxable dividends" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.taxableDividends}" in {
+            document.getElementById("taxable-dividend-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.taxableDividends
+          }
+
+          s"should have the amount ${dividendAtHRT.taxableDividendIncome}" in {
+            document.getElementById("taxable-dividend-income").text shouldBe dividendAtHRT.taxableDividendIncome.toCurrencyString
+          }
+
+        }
+
+        "have a section for Dividends charged at the Basic Rate" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+            dividendAtHRT.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtHRT.dividends.basicBand.taxRate.toString.replace(".0","")
+          )}" in {
+            document.getElementById("dividend-brt-calc-heading").text shouldBe
+              messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+                dividendAtHRT.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtHRT.dividends.basicBand.taxRate.toString.replace(".0","")
+              )
+          }
+
+          s"should have the amount ${dividendAtHRT.dividends.basicBand.taxAmount}" in {
+            document.getElementById("dividend-brt-amount").text shouldBe dividendAtHRT.dividends.basicBand.taxAmount.toCurrencyString
+          }
+
+        }
+
+        "have a section for Dividends charged at the Higher Rate" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+            dividendAtHRT.dividends.higherBand.taxableIncome.toCurrencyString, dividendAtHRT.dividends.higherBand.taxRate.toString.replace(".0","")
+          )}" in {
+            document.getElementById("dividend-hrt-calc-heading").text shouldBe
+              messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+                dividendAtHRT.dividends.higherBand.taxableIncome.toCurrencyString, dividendAtHRT.dividends.higherBand.taxRate.toString.replace(".0","")
+              )
+          }
+
+          s"should have the amount ${dividendAtHRT.dividends.higherBand.taxAmount}" in {
+            document.getElementById("dividend-hrt-amount").text shouldBe dividendAtHRT.dividends.higherBand.taxAmount.toCurrencyString
+          }
+
+        }
+
+      }
+
+      "for users with income from Dividends at the Additional Rate" should {
+
+        val setup = pageSetup(dividendAtART, testIncomeSources)
+        import setup._
+
+        "display income from dividends" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendIncome}" in {
+            document.getElementById("dividend-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.dividendIncome
+          }
+
+          s"should have the amount ${dividendAtART.incomeReceived.ukDividends}" in {
+            document.getElementById("dividend-income").text shouldBe dividendAtART.incomeReceived.ukDividends.toCurrencyString
+          }
+
+        }
+
+        "display the dividend allowance that applies" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendAllowance}" in {
+            document.getElementById("dividend-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.dividendAllowance
+          }
+
+          s"should have the amount ${dividendAtART.dividends.allowance}" in {
+            document.getElementById("dividend-allowance").text shouldBe "-" + dividendAtART.dividends.allowance.toCurrencyString
+          }
+
+        }
+
+        "display the total taxable dividends" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.taxableDividends}" in {
+            document.getElementById("taxable-dividend-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.taxableDividends
+          }
+
+          s"should have the amount ${dividendAtART.taxableDividendIncome}" in {
+            document.getElementById("taxable-dividend-income").text shouldBe dividendAtART.taxableDividendIncome.toCurrencyString
+          }
+
+        }
+
+        "have a section for Dividends charged at the Basic Rate" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+            dividendAtART.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtART.dividends.basicBand.taxRate.toString.replace(".0","")
+          )}" in {
+            document.getElementById("dividend-brt-calc-heading").text shouldBe
+              messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+                dividendAtART.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtART.dividends.basicBand.taxRate.toString.replace(".0","")
+              )
+          }
+
+          s"should have the amount ${dividendAtART.dividends.basicBand.taxAmount}" in {
+            document.getElementById("dividend-brt-amount").text shouldBe dividendAtART.dividends.basicBand.taxAmount.toCurrencyString
+          }
+
+        }
+
+        "have a section for Dividends charged at the Higher Rate" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+            dividendAtART.dividends.higherBand.taxableIncome.toCurrencyString, dividendAtART.dividends.higherBand.taxRate.toString.replace(".0","")
+          )}" in {
+            document.getElementById("dividend-hrt-calc-heading").text shouldBe
+              messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+                dividendAtART.dividends.higherBand.taxableIncome.toCurrencyString, dividendAtART.dividends.higherBand.taxRate.toString.replace(".0","")
+              )
+          }
+
+          s"should have the amount ${dividendAtART.dividends.higherBand.taxAmount}" in {
+            document.getElementById("dividend-hrt-amount").text shouldBe dividendAtART.dividends.higherBand.taxAmount.toCurrencyString
+          }
+
+        }
+
+        "have a section for Dividends charged at the Additional Rate" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+            dividendAtART.dividends.additionalBand.taxableIncome.toCurrencyString, dividendAtART.dividends.additionalBand.taxRate.toString.replace(".0","")
+          )}" in {
+            document.getElementById("dividend-art-calc-heading").text shouldBe
+              messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
+                dividendAtART.dividends.additionalBand.taxableIncome.toCurrencyString, dividendAtART.dividends.additionalBand.taxRate.toString.replace(".0","")
+              )
+          }
+
+          s"should have the amount ${dividendAtART.dividends.additionalBand.taxAmount}" in {
+            document.getElementById("dividend-art-amount").text shouldBe dividendAtART.dividends.additionalBand.taxAmount.toCurrencyString
+          }
+
+        }
+
+
       }
 
       "for users with both property and a business with income from savings and additional allowances" should {

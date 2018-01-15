@@ -36,7 +36,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
         calculationDataSuccessModel.incomeReceived.selfEmployment shouldBe 200000
         calculationDataSuccessModel.incomeReceived.ukProperty shouldBe 10000
         calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest shouldBe 1999
-        calculationDataSuccessModel.incomeReceived.ukDividends shouldBe 0
+        calculationDataSuccessModel.incomeReceived.ukDividends shouldBe 10000
 
         calculationDataSuccessModel.payPensionsProfit.basicBand.taxableIncome shouldBe 20000
         calculationDataSuccessModel.payPensionsProfit.basicBand.taxRate shouldBe 20
@@ -69,6 +69,18 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
         calculationDataSuccessModel.savingsAndGains.additionalBand.taxableIncome shouldBe 0
         calculationDataSuccessModel.savingsAndGains.additionalBand.taxRate shouldBe 45
         calculationDataSuccessModel.savingsAndGains.additionalBand.taxAmount shouldBe 0
+
+        calculationDataSuccessModel.dividends.basicBand.taxableIncome shouldBe 1000
+        calculationDataSuccessModel.dividends.basicBand.taxRate shouldBe 7.5
+        calculationDataSuccessModel.dividends.basicBand.taxAmount shouldBe 75
+
+        calculationDataSuccessModel.dividends.higherBand.taxableIncome shouldBe 2000
+        calculationDataSuccessModel.dividends.higherBand.taxRate shouldBe 37.5
+        calculationDataSuccessModel.dividends.higherBand.taxAmount shouldBe 750
+
+        calculationDataSuccessModel.dividends.additionalBand.taxableIncome shouldBe 3000
+        calculationDataSuccessModel.dividends.additionalBand.taxRate shouldBe 38.1
+        calculationDataSuccessModel.dividends.additionalBand.taxAmount shouldBe 1143
 
         calculationDataSuccessModel.nic.class2 shouldBe 10000
         calculationDataSuccessModel.nic.class4 shouldBe 14000

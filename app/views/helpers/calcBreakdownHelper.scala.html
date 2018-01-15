@@ -83,14 +83,29 @@
             <td id="taxable-income" class="summary-data">@breakdown.totalTaxableIncome.toCurrency</td>
         </tr>
 
+        @if(breakdown.incomeReceived.ukDividends > 0) {
+            <tr class="no-border-bottom">
+                <td id="dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-income")</td>
+                <td id="dividend-income" class="summary-data">@breakdown.incomeReceived.ukDividends.toCurrency</td>
+            </tr>
+
+            <tr>
+                <td id="dividend-allowance-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-allowance")</td>
+                <td id="dividend-allowance" class="summary-data">-@breakdown.dividends.allowance.toCurrency</td>
+            </tr>
+            <tr class="total-section">
+                <td id="taxable-dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-dividend-income")</td>
+                <td id="taxable-dividend-income" class="summary-data">@breakdown.taxableDividendIncome.toCurrency</td>
+            </tr>
+        }
+
+        <!-- Income Tax Section -->
         @if(calcModel.hasBRTSection) {
             <tr id="brt-section" class="no-border-bottom">
                 <td id="brt-it-calc-heading">
-                    <p>
-                        @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                        (<span id="brt-it-calc">@{(breakdown.payPensionsProfit.basicBand.taxableIncome + breakdown.savingsAndGains.basicBand.taxableIncome).toCurrencyString}</span> at
-                        <span id="brt-rate">@breakdown.payPensionsProfit.basicBand.taxRate</span>%)
-                    </p>
+                    @messages("estimated_tax_liability.calc-breakdown.income-tax")
+                    (<span id="brt-it-calc">@{(breakdown.payPensionsProfit.basicBand.taxableIncome + breakdown.savingsAndGains.basicBand.taxableIncome).toCurrencyString}</span> at
+                    <span id="brt-rate">@breakdown.payPensionsProfit.basicBand.taxRate</span>%)
                 </td>
                 <td id="brt-amount" class="summary-data">@{(breakdown.payPensionsProfit.basicBand.taxAmount + breakdown.savingsAndGains.basicBand.taxAmount).toCurrency}</td>
             </tr>
@@ -98,11 +113,9 @@
             @if(calcModel.hasHRTSection){
                 <tr id="hrt-section" class="no-border-bottom">
                     <td id="hrt-it-calc-heading">
-                        <p>
-                            @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                            (<span id="hrt-it-calc">@{(breakdown.payPensionsProfit.higherBand.taxableIncome + breakdown.savingsAndGains.higherBand.taxableIncome).toCurrencyString}</span> at
-                            <span id="hrt-rate">@breakdown.payPensionsProfit.higherBand.taxRate</span>%)
-                        </p>
+                        @messages("estimated_tax_liability.calc-breakdown.income-tax")
+                        (<span id="hrt-it-calc">@{(breakdown.payPensionsProfit.higherBand.taxableIncome + breakdown.savingsAndGains.higherBand.taxableIncome).toCurrencyString}</span> at
+                        <span id="hrt-rate">@breakdown.payPensionsProfit.higherBand.taxRate</span>%)
                     </td>
                     <td id="hrt-amount" class="summary-data">@{(breakdown.payPensionsProfit.higherBand.taxAmount + breakdown.savingsAndGains.higherBand.taxAmount).toCurrency}</td>
                 </tr>
@@ -110,17 +123,53 @@
                 @if(calcModel.hasARTSection){
                     <tr id="art-section" class="no-border-bottom">
                         <td id="art-it-calc-heading">
-                            <p>
-                                @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                                (<span id="art-it-calc">@{(breakdown.payPensionsProfit.additionalBand.taxableIncome + breakdown.savingsAndGains.additionalBand.taxableIncome).toCurrencyString}</span> at
-                                <span id="art-rate">@breakdown.payPensionsProfit.additionalBand.taxRate</span>%)
-                            </p>
+                            @messages("estimated_tax_liability.calc-breakdown.income-tax")
+                            (<span id="art-it-calc">@{(breakdown.payPensionsProfit.additionalBand.taxableIncome + breakdown.savingsAndGains.additionalBand.taxableIncome).toCurrencyString}</span> at
+                            <span id="art-rate">@breakdown.payPensionsProfit.additionalBand.taxRate</span>%)
                         </td>
                         <td id="art-amount" class="summary-data">@{(breakdown.payPensionsProfit.additionalBand.taxAmount + breakdown.savingsAndGains.additionalBand.taxAmount).toCurrency}</td>
                     </tr>
                 }
             }
         }
+
+
+        <!-- Dividends Section -->
+        @if(breakdown.hasDividendsAtBRT) {
+            <tr id="dividend-brt-section" class="no-border-bottom">
+                <td id="dividend-brt-calc-heading">
+                    @messages("estimated_tax_liability.calc-breakdown.dividend-tax")
+                    (<span id="dividend-brt-calc">@breakdown.dividends.basicBand.taxableIncome.toCurrencyString</span> at
+                    <span id="dividend-brt-rate">@breakdown.dividends.basicBand.taxRate</span>%)
+                </td>
+                <td id="dividend-brt-amount" class="summary-data">@breakdown.dividends.basicBand.taxAmount.toCurrency</td>
+            </tr>
+
+            @if(breakdown.hasDividendsAtHRT) {
+                <tr id="dividend-hrt-section" class="no-border-bottom">
+                    <td id="dividend-hrt-calc-heading">
+                        @messages("estimated_tax_liability.calc-breakdown.dividend-tax")
+                        (<span id="dividend-hrt-calc">@breakdown.dividends.higherBand.taxableIncome.toCurrencyString</span> at
+                        <span id="dividend-hrt-rate">@breakdown.dividends.higherBand.taxRate</span>%)
+                    </td>
+                    <td id="dividend-hrt-amount" class="summary-data">@breakdown.dividends.higherBand.taxAmount.toCurrency</td>
+                </tr>
+
+                @if(breakdown.hasDividendsAtHRT) {
+                    <tr id="dividend-art-section" class="no-border-bottom">
+                        <td id="dividend-art-calc-heading">
+                            @messages("estimated_tax_liability.calc-breakdown.dividend-tax")
+                            (<span id="dividend-art-calc">@breakdown.dividends.additionalBand.taxableIncome.toCurrencyString</span> at
+                            <span id="dividend-art-rate">@breakdown.dividends.additionalBand.taxRate</span>%)
+                        </td>
+                        <td id="dividend-art-amount" class="summary-data">@breakdown.dividends.additionalBand.taxAmount.toCurrency</td>
+                    </tr>
+                }
+            }
+        }
+
+
+
         @if(calcModel.hasNISection) {
         <section id ="ni-section">
             @if(calcModel.hasNic2Amount) {

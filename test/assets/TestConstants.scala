@@ -399,7 +399,7 @@ object TestConstants extends ImplicitDateFormatter {
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
         bankBuildingSocietyInterest = 1999.00,
-        ukDividends = 0.0
+        ukDividends = 10000.00
       ),
       payPensionsProfit = PayPensionsProfitModel(
         basicBand = BandModel(
@@ -446,21 +446,21 @@ object TestConstants extends ImplicitDateFormatter {
         )
       ),
       dividends = DividendsModel(
-        allowance = 0.0,
+        allowance = 5000.0,
         basicBand = BandModel(
-          taxableIncome = 0.0,
-          taxRate = 0.0,
-          taxAmount = 0.0
+          taxableIncome = 1000.0,
+          taxRate = 7.5,
+          taxAmount = 75.0
         ),
         higherBand = BandModel(
-          taxableIncome = 0.0,
-          taxRate = 0.0,
-          taxAmount = 0.0
+          taxableIncome = 2000.0,
+          taxRate = 37.5,
+          taxAmount = 750.0
         ),
         additionalBand = BandModel(
-          taxableIncome = 0.0,
-          taxRate = 0.0,
-          taxAmount = 0.0
+          taxableIncome = 3000.0,
+          taxRate = 38.1,
+          taxAmount = 1143.0
         )
       ),
       nic = NicModel(
@@ -866,6 +866,243 @@ object TestConstants extends ImplicitDateFormatter {
       )
     )
 
+    val dividendAtBRT = CalculationDataModel(
+      totalIncomeTaxNicYtd = 90500.00,
+      totalTaxableIncome = 198500.00,
+      personalAllowance = 11500.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 200000.00,
+        ukProperty = 10000.00,
+        bankBuildingSocietyInterest = 1999.00,
+        ukDividends = 10000.00
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 20000.00,
+          taxRate = 20.0,
+          taxAmount = 4000.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 100000.00,
+          taxRate = 40.0,
+          taxAmount = 40000.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 50000.00,
+          taxRate = 45.0,
+          taxAmount = 22500.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 1.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 20.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 5000.0,
+        basicBand = BandModel(
+          taxableIncome = 1000.0,
+          taxRate = 7.5,
+          taxAmount = 75.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 10000.00,
+        class4 = 14000.00
+      ),
+      eoyEstimate = Some(EoyEstimate(66000.00))
+    )
+
+    val dividendAtHRT = CalculationDataModel(
+      totalIncomeTaxNicYtd = 90500.00,
+      totalTaxableIncome = 198500.00,
+      personalAllowance = 11500.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 200000.00,
+        ukProperty = 10000.00,
+        bankBuildingSocietyInterest = 1999.00,
+        ukDividends = 10000.00
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 20000.00,
+          taxRate = 20.0,
+          taxAmount = 4000.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 100000.00,
+          taxRate = 40.0,
+          taxAmount = 40000.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 50000.00,
+          taxRate = 45.0,
+          taxAmount = 22500.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 1.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 20.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 5000.0,
+        basicBand = BandModel(
+          taxableIncome = 1000.0,
+          taxRate = 7.5,
+          taxAmount = 75.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 2000.0,
+          taxRate = 37.5,
+          taxAmount = 750.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 10000.00,
+        class4 = 14000.00
+      ),
+      eoyEstimate = Some(EoyEstimate(66000.00))
+    )
+
+    val dividendAtART = CalculationDataModel(
+      totalIncomeTaxNicYtd = 90500.00,
+      totalTaxableIncome = 198500.00,
+      personalAllowance = 11500.00,
+      incomeReceived = IncomeReceivedModel(
+        selfEmployment = 200000.00,
+        ukProperty = 10000.00,
+        bankBuildingSocietyInterest = 1999.00,
+        ukDividends = 10000.00
+      ),
+      payPensionsProfit = PayPensionsProfitModel(
+        basicBand = BandModel(
+          taxableIncome = 20000.00,
+          taxRate = 20.0,
+          taxAmount = 4000.00
+        ),
+        higherBand = BandModel(
+          taxableIncome = 100000.00,
+          taxRate = 40.0,
+          taxAmount = 40000.00
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 50000.00,
+          taxRate = 45.0,
+          taxAmount = 22500.00
+        )
+      ),
+      savingsAndGains = SavingsAndGainsModel(
+        startBand = BandModel(
+          taxableIncome = 1.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        zeroBand = BandModel(
+          taxableIncome = 20.00,
+          taxRate = 0.0,
+          taxAmount = 0.0
+        ),
+        basicBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 20.0,
+          taxAmount = 0.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 40.0,
+          taxAmount = 0.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 0.0,
+          taxRate = 45.0,
+          taxAmount = 0.0
+        )
+      ),
+      dividends = DividendsModel(
+        allowance = 5000.0,
+        basicBand = BandModel(
+          taxableIncome = 1000.0,
+          taxRate = 7.5,
+          taxAmount = 75.0
+        ),
+        higherBand = BandModel(
+          taxableIncome = 2000.0,
+          taxRate = 37.5,
+          taxAmount = 750.0
+        ),
+        additionalBand = BandModel(
+          taxableIncome = 3000.0,
+          taxRate = 38.1,
+          taxAmount = 1143.0
+        )
+      ),
+      nic = NicModel(
+        class2 = 10000.00,
+        class4 = 14000.00
+      ),
+      eoyEstimate = Some(EoyEstimate(66000.00))
+    )
+
     val justBusinessCalcDataModel = CalculationDataModel(
       totalIncomeTaxNicYtd = 149.86,
       totalTaxableIncome = 132.00,
@@ -1196,7 +1433,7 @@ object TestConstants extends ImplicitDateFormatter {
         |    "selfEmployment": 200000,
         |    "ukProperty": 10000,
         |    "bankBuildingSocietyInterest": 1999,
-        |    "ukDividends": 0
+        |    "ukDividends": 10000
         | },
         | "payPensionsProfit": {
         |   "basicBand": {
@@ -1243,21 +1480,21 @@ object TestConstants extends ImplicitDateFormatter {
         |   }
         | },
         | "dividends": {
-        |   "allowance": 0,
+        |   "allowance": 5000,
         |   "basicBand": {
-        |     "taxableIncome": 0,
-        |     "taxRate": 0,
-        |     "taxAmount": 0
+        |     "taxableIncome": 1000,
+        |     "taxRate": 7.5,
+        |     "taxAmount": 75
         |   },
         |   "higherBand": {
-        |     "taxableIncome": 0,
-        |     "taxRate": 0,
-        |     "taxAmount": 0
+        |     "taxableIncome": 2000,
+        |     "taxRate": 37.5,
+        |     "taxAmount": 750
         |   },
         |   "additionalBand": {
-        |     "taxableIncome": 0,
-        |     "taxRate": 0,
-        |     "taxAmount": 0
+        |     "taxableIncome": 3000,
+        |     "taxRate": 38.1,
+        |     "taxAmount": 1143
         |   }
         | },
         | "nic": {
@@ -1289,7 +1526,7 @@ object TestConstants extends ImplicitDateFormatter {
         | "foreignIncome": 0,
         | "trustsAndEstates": 0,
         | "interestReceivedFromUkBanksAndBuildingSocieties": 1999,
-        | "dividendsFromUkCompanies": 0,
+        | "dividendsFromUkCompanies": 10000,
         | "ukPensionsAndStateBenefits": 0,
         | "gainsOnLifeInsurance": 0,
         | "otherIncome": 0,
@@ -1329,12 +1566,12 @@ object TestConstants extends ImplicitDateFormatter {
         | "incomeTaxOnInterestReceivedAtART": 0,
         | "dividendsAtZeroRate": 0,
         | "incomeTaxOnDividendsAtZeroRate": 0,
-        | "dividendsAtBRT": 0,
-        | "incomeTaxOnDividendsAtBRT": 0,
-        | "dividendsAtHRT": 0,
-        | "incomeTaxOnDividendsAtHRT": 0,
-        | "dividendsAtART": 0,
-        | "incomeTaxOnDividendsAtART": 0,
+        | "dividendsAtBRT": 1000,
+        | "incomeTaxOnDividendsAtBRT": 75,
+        | "dividendsAtHRT": 2000,
+        | "incomeTaxOnDividendsAtHRT": 750,
+        | "dividendsAtART": 3000,
+        | "incomeTaxOnDividendsAtART": 1143,
         | "totalIncomeOnWhichTaxHasBeenCharged": 0,
         | "taxOnOtherIncome": 0,
         | "incomeTaxDue": 66500,
@@ -1433,10 +1670,10 @@ object TestConstants extends ImplicitDateFormatter {
         | "allowanceBRT": 0,
         | "interestAllowanceHRT": 0,
         | "interestAllowanceBRT": 0,
-        | "dividendAllowance": 0,
-        | "dividendBRT": 0,
-        | "dividendHRT": 0,
-        | "dividendART": 0,
+        | "dividendAllowance": 5000,
+        | "dividendBRT": 7.5,
+        | "dividendHRT": 37.5,
+        | "dividendART": 38.1,
         | "class2NICsLimit": 0,
         | "class2NICsPerWeek": 0,
         | "class4NICsLimitBR": 0,
