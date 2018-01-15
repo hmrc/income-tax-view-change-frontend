@@ -45,12 +45,12 @@ class CalculationDataConnector @Inject()(val http: HttpClient,
         response.status match {
           case OK =>
             Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[ApiCalculationResponse].fold(
+            response.json.validate[CalculationDataModel].fold(
               invalid => {
                 Logger.warn(s"[CalculationDataConnector][getCalculationData] - Json Validation Error. Parsing Calc Breakdown Response. Invalid=$invalid")
                 CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Calc Breakdown Response")
               },
-              valid => response.json.as[CalculationDataModel]
+              valid => valid
             )
           case _ =>
             Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, body: ${response.body}")

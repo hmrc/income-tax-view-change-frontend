@@ -51,7 +51,18 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
+    lazy val cPage: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
+      CalcBreakdown.calculationDisplaySuccessCrystalisationModel(calcDataModel),
+      testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+    lazy val cDocument: Document = Jsoup.parse(contentAsString(cPage))
+
     implicit val model: CalculationDataModel = calcDataModel
+
+    def personalAllowanceTotal: String = "-" + (
+      model.personalAllowance +
+        model.savingsAndGains.startBand.taxableIncome +
+        model.savingsAndGains.zeroBand.taxableIncome
+      ).toCurrencyString
   }
 
   "The EstimatedTaxLiability view" should {
@@ -100,9 +111,9 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         lazy val inYearSection = estimateSection.getElementById("inYearEstimate")
 
-        s"has the correct Annual Tax Amount Estimate Heading of '${messages.InYearEstimate.heading(busPropBRTCalcDataModel.incomeTaxYTD.toCurrencyString)}" in {
+        s"has the correct Annual Tax Amount Estimate Heading of '${messages.InYearEstimate.heading(busPropBRTCalcDataModel.totalIncomeTaxNicYtd.toCurrencyString)}" in {
           inYearSection.getElementById("inYearEstimateHeading").text shouldBe
-            messages.InYearEstimate.heading(busPropBRTCalcDataModel.incomeTaxYTD.toCurrencyString)
+            messages.InYearEstimate.heading(busPropBRTCalcDataModel.totalIncomeTaxNicYtd.toCurrencyString)
         }
 
         s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(Estimates.lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)}'" in {
@@ -143,52 +154,49 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       "for users with both a property and a business" which {
         "have just the basic rate of tax" should {
+          val total = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty + model.incomeReceived.bankBuildingSocietyInterest).toCurrencyString
           val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
           import setup._
 
-          s"have a business profit section amount of ${model.profitFromSelfEmployment}" in {
+          s"have a business profit section amount of $total" in {
             document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
-            document.getElementById("business-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
+            document.getElementById("business-profit").text shouldBe total
           }
 
-          s"have a property profit amount of ${model.profitFromUkLandAndProperty}" in {
-            document.getElementById("property-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.propertyProfit
-            document.getElementById("property-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
-          }
-
-          s"have a personal allowance amount of ${model.proportionAllowance}" in {
+          s"have a personal allowance amount of ${model.personalAllowance}" in {
             document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
-            document.getElementById("personal-allowance").text shouldBe
-              "-"+model.proportionAllowance.toCurrencyString
+            document.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
           }
 
-          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
+          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
             document.getElementById("taxable-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableIncome
-            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
+            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
           }
 
           s"have an income tax section" which {
             "has the correct amount of income taxed at BRT" in {
-              document.getElementById("brt-it-calc").text shouldBe model.payPensionsProfitAtBRT.toCurrencyString
+              document.getElementById("brt-it-calc").text shouldBe
+                (model.payPensionsProfit.basicBand.taxableIncome + model.savingsAndGains.basicBand.taxableIncome).toCurrencyString
             }
             "has the correct BRT rate" in {
-              document.getElementById("brt-rate").text shouldBe model.rateBRT.toString
+              document.getElementById("brt-rate").text shouldBe model.payPensionsProfit.basicBand.taxRate.toString
             }
             "has the correct tax charged at BRT" in {
-              document.getElementById("brt-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtBRT.toCurrencyString
+              document.getElementById("brt-amount").text shouldBe
+                (model.payPensionsProfit.basicBand.taxAmount + model.savingsAndGains.basicBand.taxAmount).toCurrencyString
             }
           }
-          s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
+          s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
             document.getElementById("nic2-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic2
-            document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
+            document.getElementById("nic2-amount").text shouldBe model.nic.class2.toCurrencyString
           }
-          s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
+          s"have a National Insurance Class 4 amount of ${model.nic.class4}" in {
             document.getElementById("nic4-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic4
-            document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
+            document.getElementById("nic4-amount").text shouldBe model.nic.class4.toCurrencyString
           }
-          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
+          s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
             document.getElementById("total-estimate-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.total
-            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
+            document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
           }
         }
 
@@ -203,13 +211,16 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             }
 
             "has the correct amount of income taxed at HRT" in {
-              document.getElementById("hrt-it-calc").text shouldBe model.payPensionsProfitAtHRT.toCurrencyString
+              document.getElementById("hrt-it-calc").text shouldBe
+                (model.payPensionsProfit.higherBand.taxableIncome + model.savingsAndGains.higherBand.taxableIncome).toCurrencyString
             }
             "has the correct HRT rate" in {
-              document.getElementById("hrt-rate").text shouldBe model.rateHRT.toString
+              document.getElementById("hrt-rate").text shouldBe model.payPensionsProfit.higherBand.taxRate.toString
             }
             "has the correct tax charged at HRT" in {
-              document.getElementById("hrt-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtHRT.toCurrencyString
+              document.getElementById("hrt-amount").text shouldBe
+                (model.payPensionsProfit.higherBand.taxAmount + model.savingsAndGains.higherBand.taxAmount).toCurrencyString
+
             }
 
             "does not have an ART section" in {
@@ -231,13 +242,15 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             }
 
             "has the correct amount of income taxed at ART" in {
-              document.getElementById("art-it-calc").text shouldBe model.payPensionsProfitAtART.toCurrencyString
+              document.getElementById("art-it-calc").text shouldBe
+                (model.payPensionsProfit.additionalBand.taxableIncome + model.savingsAndGains.additionalBand.taxableIncome).toCurrencyString
             }
             "has the correct ART rate" in {
-              document.getElementById("art-rate").text shouldBe model.rateART.toString
+              document.getElementById("art-rate").text shouldBe model.payPensionsProfit.additionalBand.taxRate.toString
             }
             "has the correct tax charged at ART" in {
-              document.getElementById("art-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtART.toCurrencyString
+              document.getElementById("art-amount").text shouldBe
+                (model.payPensionsProfit.additionalBand.taxAmount + model.savingsAndGains.additionalBand.taxAmount).toCurrencyString
             }
           }
         }
@@ -246,14 +259,14 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           val setup = pageSetup(noTaxOrNICalcDataModel, testIncomeSources)
           import ImplicitCurrencyFormatter._
           import setup._
-          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
-            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
+          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
+            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
           }
           s"not have a National Insurance amount" in {
             document.getElementById("ni-amount") shouldBe null
           }
-          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
-            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
+          s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
+            document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
           }
         }
 
@@ -261,19 +274,151 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           val setup = pageSetup(noTaxJustNICalcDataModel, testIncomeSources)
           import ImplicitCurrencyFormatter._
           import setup._
-          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
-            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
+          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
+            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
           }
-          s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
-            document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
+          s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
+            document.getElementById("nic2-amount").text shouldBe model.nic.class2.toCurrencyString
           }
-          s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
-            document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
+          s"have a National Insurance Class 4 amount of ${model.nic.class4}" in {
+            document.getElementById("nic4-amount").text shouldBe model.nic.class4.toCurrencyString
           }
-          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
-            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
+          s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
+            document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
           }
         }
+      }
+
+      "for users with both property and a business with income from savings" should {
+
+        val setup = pageSetup(calculationDataSuccessModel, testIncomeSources)
+        import setup._
+        val totalProfit = (model.incomeReceived.bankBuildingSocietyInterest + model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
+
+        "display the business profit heading with income from savings included" in {
+          document.getElementById("business-profit-heading").text shouldBe "Business profit and income from savings"
+        }
+
+        "display the business profit amount including the income from savings" in {
+          document.getElementById("business-profit").text shouldBe totalProfit
+        }
+
+        "display the personal allowances heading with income savings" in {
+          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsEstimates
+        }
+
+        "display the correct personal allowance amount" in {
+          cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+        }
+
+      }
+
+      "for users with only property and with income from savings" should {
+
+        val setup = pageSetup(justPropertyWithSavingsCalcDataModel, testPropertyIncomeSource)
+        import setup._
+        val totalProfit = (model.incomeReceived.bankBuildingSocietyInterest + model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
+
+        "display the business profit heading with income from savings included" in {
+          document.getElementById("business-profit-heading").text shouldBe "Property profit and income from savings"
+        }
+
+        "display the business profit amount including the income from savings" in {
+          document.getElementById("business-profit").text shouldBe totalProfit
+        }
+
+        "display the personal allowances heading with income savings" in {
+          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsEstimates
+        }
+
+        "display the correct personal allowance amount" in {
+          cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+        }
+
+      }
+
+      "for users with both property and a business with income from savings on the bills page" should {
+
+        val setup = pageSetup(calculationDataSuccessModel, testIncomeSources)
+        import setup._
+        val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
+
+        "display the business profit heading with income from savings included" in {
+          cDocument.getElementById("business-profit-heading").text shouldBe "Business profit"
+        }
+
+        "display the business profit amount including the income from savings" in {
+          cDocument.getElementById("business-profit").text shouldBe totalProfit
+        }
+
+        "display the income from savings heading" in {
+          cDocument.getElementById("savings-income-heading").text shouldBe "Income from savings"
+        }
+
+        "display the income from savings amount" in {
+          cDocument.getElementById("savings-income").text shouldBe model.incomeReceived.bankBuildingSocietyInterest.toCurrencyString
+        }
+
+        "display the personal allowances heading with income savings" in {
+          cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsBills
+        }
+
+        "display the correct personal allowance amount" in {
+          cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+        }
+
+      }
+
+      "for users with only property and with income from savings on the bills page" should {
+
+        val setup = pageSetup(justPropertyWithSavingsCalcDataModel, testPropertyIncomeSource)
+        import setup._
+        val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
+
+        "display the business profit heading with income from savings included" in {
+          cDocument.getElementById("business-profit-heading").text shouldBe "Property profit"
+        }
+
+        "display the business profit amount including the income from savings" in {
+          cDocument.getElementById("business-profit").text shouldBe totalProfit
+        }
+
+        "display the income from savings heading" in {
+          cDocument.getElementById("savings-income-heading").text shouldBe "Income from savings"
+        }
+
+        "display the income from savings amount" in {
+          cDocument.getElementById("savings-income").text shouldBe model.incomeReceived.bankBuildingSocietyInterest.toCurrencyString
+        }
+
+        "display the personal allowances heading with income savings" in {
+          cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsBills
+        }
+
+        "display the correct personal allowance amount" in {
+          cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+        }
+
+      }
+
+      "for users with income from savings of zero on the bills page" should {
+
+        val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
+        import setup._
+        val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
+
+        "display the income from savings heading" in {
+          cDocument.getElementById("savings-income-heading") shouldBe null
+        }
+
+        "display the income from savings amount" in {
+          cDocument.getElementById("savings-income") shouldBe null
+        }
+
+        "display the personal allowances heading with income savings" in {
+          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
+        }
+
       }
 
       "when no breakdown data is retrieved" should {
@@ -301,20 +446,17 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           document.getElementById("business-profit").text shouldBe "£3,000"
         }
 
-        "not display the property profit section" in {
-          document.getElementById("property-profit-section") shouldBe null
-        }
       }
 
       "when the user only has a business registered but has a property profit value" should {
         val setup = pageSetup(busPropBRTCalcDataModel, testBusinessIncomeSource)
         import setup._
 
-        "display the business profit amount" in {
-          document.getElementById("business-profit").text shouldBe "£1,500"
+        "display the business profit heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Business profit"
         }
-        "display the property profit amount" in {
-          document.getElementById("property-profit").text shouldBe "£1,500"
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
 
@@ -323,11 +465,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
         import setup._
 
-        "display the property profit section" in {
-          document.getElementById("property-profit").text shouldBe "£3,000"
+        "display the property profit heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Property profit"
         }
-        "not display the business profit section" in {
-          document.getElementById("business-profit") shouldBe null
+        "display the property profit section" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
 
@@ -335,11 +477,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         val setup = pageSetup(busPropBRTCalcDataModel, testPropertyIncomeSource)
         import setup._
 
-        "display the business profit amount" in {
-          document.getElementById("business-profit").text shouldBe "£1,500"
+        "display the Business profit heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Business profit"
         }
-        "display the property profit amount" in {
-          document.getElementById("property-profit").text shouldBe "£1,500"
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
     }

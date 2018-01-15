@@ -81,7 +81,7 @@ class CrystallisedViewSpec extends TestSupport {
         lazy val wyoSection = owedTaxSection.getElementById("whatYouOwe")
 
         s"has the correct 'What you owe' heading" in {
-          wyoSection.getElementById("whatYouOweHeading").text shouldBe crysMessages.wyoHeading(busPropBRTCalcDataModel.incomeTaxYTD.toCurrencyString)
+          wyoSection.getElementById("whatYouOweHeading").text shouldBe crysMessages.wyoHeading(busPropBRTCalcDataModel.totalIncomeTaxNicYtd.toCurrencyString)
         }
 
         s"has the correct 'whatYouOwe' p1 paragraph '${crysMessages.p1}'" in {
@@ -96,6 +96,7 @@ class CrystallisedViewSpec extends TestSupport {
 
       "for users with both a property and a business" which {
         "have just the basic rate of tax" should {
+          val total = (model.incomeReceived.ukProperty + model.incomeReceived.selfEmployment).toCurrencyString
           val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
           import setup._
 
@@ -103,48 +104,43 @@ class CrystallisedViewSpec extends TestSupport {
             document.getElementById("howCalculatedHeading").text shouldBe crysMessages.breakdownHeading
           }
 
-          s"have a business profit section amount of ${model.profitFromSelfEmployment}" in {
+          s"have a business profit section amount of ${model.incomeReceived.selfEmployment}" in {
             document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
-            document.getElementById("business-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
+            document.getElementById("business-profit").text shouldBe total
           }
 
-          s"have a property profit amount of ${model.profitFromUkLandAndProperty}" in {
-            document.getElementById("property-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.propertyProfit
-            document.getElementById("property-profit").text shouldBe model.profitFromSelfEmployment.toCurrencyString
-          }
-
-          s"have a personal allowance amount of ${model.proportionAllowance}" in {
+          s"have a personal allowance amount of ${model.personalAllowance}" in {
             document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
-            document.getElementById("personal-allowance").text shouldBe "-"+model.proportionAllowance.toCurrencyString
+            document.getElementById("personal-allowance").text shouldBe "-"+model.personalAllowance.toCurrencyString
           }
 
-          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
+          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
             document.getElementById("taxable-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableIncome
-            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
+            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
           }
 
           s"have an income tax section" which {
             "has the correct amount of income taxed at BRT" in {
-              document.getElementById("brt-it-calc").text shouldBe model.payPensionsProfitAtBRT.toCurrencyString
+              document.getElementById("brt-it-calc").text shouldBe model.payPensionsProfit.basicBand.taxableIncome.toCurrencyString
             }
             "has the correct BRT rate" in {
-              document.getElementById("brt-rate").text shouldBe model.rateBRT.toString
+              document.getElementById("brt-rate").text shouldBe model.payPensionsProfit.basicBand.taxRate.toString
             }
             "has the correct tax charged at BRT" in {
-              document.getElementById("brt-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtBRT.toCurrencyString
+              document.getElementById("brt-amount").text shouldBe model.payPensionsProfit.basicBand.taxAmount.toCurrencyString
             }
           }
-          s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
+          s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
             document.getElementById("nic2-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic2
-            document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
+            document.getElementById("nic2-amount").text shouldBe model.nic.class2.toCurrencyString
           }
-          s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
+          s"have a National Insurance Class 4 amount of ${model.nic.class4}" in {
             document.getElementById("nic4-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic4
-            document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
+            document.getElementById("nic4-amount").text shouldBe model.nic.class4.toCurrencyString
           }
-          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
+          s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
             document.getElementById("total-estimate-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.total
-            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
+            document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
           }
         }
 
@@ -159,13 +155,13 @@ class CrystallisedViewSpec extends TestSupport {
             }
 
             "has the correct amount of income taxed at HRT" in {
-              document.getElementById("hrt-it-calc").text shouldBe model.payPensionsProfitAtHRT.toCurrencyString
+              document.getElementById("hrt-it-calc").text shouldBe model.payPensionsProfit.higherBand.taxableIncome.toCurrencyString
             }
             "has the correct HRT rate" in {
-              document.getElementById("hrt-rate").text shouldBe model.rateHRT.toString
+              document.getElementById("hrt-rate").text shouldBe model.payPensionsProfit.higherBand.taxRate.toString
             }
             "has the correct tax charged at HRT" in {
-              document.getElementById("hrt-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtHRT.toCurrencyString
+              document.getElementById("hrt-amount").text shouldBe model.payPensionsProfit.higherBand.taxAmount.toCurrencyString
             }
 
             "does not have an ART section" in {
@@ -187,13 +183,13 @@ class CrystallisedViewSpec extends TestSupport {
             }
 
             "has the correct amount of income taxed at ART" in {
-              document.getElementById("art-it-calc").text shouldBe model.payPensionsProfitAtART.toCurrencyString
+              document.getElementById("art-it-calc").text shouldBe model.payPensionsProfit.additionalBand.taxableIncome.toCurrencyString
             }
             "has the correct ART rate" in {
-              document.getElementById("art-rate").text shouldBe model.rateART.toString
+              document.getElementById("art-rate").text shouldBe model.payPensionsProfit.additionalBand.taxRate.toString
             }
             "has the correct tax charged at ART" in {
-              document.getElementById("art-amount").text shouldBe model.incomeTaxOnPayPensionsProfitAtART.toCurrencyString
+              document.getElementById("art-amount").text shouldBe model.payPensionsProfit.additionalBand.taxAmount.toCurrencyString
             }
           }
         }
@@ -202,14 +198,14 @@ class CrystallisedViewSpec extends TestSupport {
           val setup = pageSetup(noTaxOrNICalcDataModel, testIncomeSources)
           import ImplicitCurrencyFormatter._
           import setup._
-          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
-            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
+          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
+            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
           }
           s"not have a National Insurance amount" in {
             document.getElementById("ni-amount") shouldBe null
           }
-          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
-            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
+          s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
+            document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
           }
         }
 
@@ -217,17 +213,17 @@ class CrystallisedViewSpec extends TestSupport {
           val setup = pageSetup(noTaxJustNICalcDataModel, testIncomeSources)
           import ImplicitCurrencyFormatter._
           import setup._
-          s"have a taxable income amount of ${model.totalIncomeOnWhichTaxIsDue}" in {
-            document.getElementById("taxable-income").text shouldBe model.totalIncomeOnWhichTaxIsDue.toCurrencyString
+          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
+            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
           }
-          s"have a National Insurance Class 2 amount of ${model.nationalInsuranceClass2Amount}" in {
-            document.getElementById("nic2-amount").text shouldBe model.nationalInsuranceClass2Amount.toCurrencyString
+          s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
+            document.getElementById("nic2-amount").text shouldBe model.nic.class2.toCurrencyString
           }
-          s"have a National Insurance Class 4 amount of ${model.totalClass4Charge}" in {
-            document.getElementById("nic4-amount").text shouldBe model.totalClass4Charge.toCurrencyString
+          s"have a National Insurance Class 4 amount of ${model.nic.class4}" in {
+            document.getElementById("nic4-amount").text shouldBe model.nic.class4.toCurrencyString
           }
-          s"have a total tax estimate of ${model.incomeTaxYTD}" in {
-            document.getElementById("total-estimate").text shouldBe model.incomeTaxYTD.toCurrencyString
+          s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
+            document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
           }
         }
       }
@@ -259,12 +255,11 @@ class CrystallisedViewSpec extends TestSupport {
       "when the user only has a business registered but has a property profit value" should {
         val setup = pageSetup(busPropBRTCalcDataModel, testBusinessIncomeSource)
         import setup._
-
-        "display the business profit amount" in {
-          document.getElementById("business-profit").text shouldBe "£1,500"
+        "display the business heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Business profit"
         }
-        "display the property profit amount" in {
-          document.getElementById("property-profit").text shouldBe "£1,500"
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
 
@@ -273,11 +268,11 @@ class CrystallisedViewSpec extends TestSupport {
         val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
         import setup._
 
-        "display the property profit section" in {
-          document.getElementById("property-profit").text shouldBe "£3,000"
+        "display the property heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Property profit"
         }
-        "not display the business profit section" in {
-          document.getElementById("business-profit") shouldBe null
+        "display the property profit section" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
 
@@ -285,11 +280,11 @@ class CrystallisedViewSpec extends TestSupport {
         val setup = pageSetup(busPropBRTCalcDataModel, testPropertyIncomeSource)
         import setup._
 
-        "display the business profit amount" in {
-          document.getElementById("business-profit").text shouldBe "£1,500"
+        "display the business heading" in {
+          document.getElementById("business-profit-heading").text shouldBe "Business profit"
         }
-        "display the property profit amount" in {
-          document.getElementById("property-profit").text shouldBe "£1,500"
+        "display the business profit amount" in {
+          document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
 

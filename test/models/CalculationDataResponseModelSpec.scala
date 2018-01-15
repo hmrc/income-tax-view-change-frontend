@@ -29,25 +29,50 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
     "for the test response" should {
 
       "have the same values as the calculationDataSuccessWithEoYModel" in {
-        calculationDataSuccessModel.incomeTaxYTD shouldBe 90500
-        calculationDataSuccessModel.incomeTaxThisPeriod shouldBe 2000
-        calculationDataSuccessModel.profitFromSelfEmployment shouldBe 200000
-        calculationDataSuccessModel.profitFromUkLandAndProperty shouldBe 10000
-        calculationDataSuccessModel.totalIncomeReceived shouldBe 230000
-        calculationDataSuccessModel.proportionAllowance shouldBe 11500
-        calculationDataSuccessModel.totalIncomeOnWhichTaxIsDue shouldBe 198500
-        calculationDataSuccessModel.payPensionsProfitAtBRT shouldBe 20000
-        calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtBRT shouldBe 4000
-        calculationDataSuccessModel.payPensionsProfitAtHRT shouldBe 100000
-        calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtHRT shouldBe 40000
-        calculationDataSuccessModel.payPensionsProfitAtART shouldBe 50000
-        calculationDataSuccessModel.incomeTaxOnPayPensionsProfitAtART shouldBe 22500
-        calculationDataSuccessModel.incomeTaxDue shouldBe 66500
-        calculationDataSuccessModel.nationalInsuranceClass2Amount shouldBe 10000
-        calculationDataSuccessModel.totalClass4Charge shouldBe 14000
-        calculationDataSuccessModel.rateBRT shouldBe 20
-        calculationDataSuccessModel.rateHRT shouldBe 40
-        calculationDataSuccessModel.rateART shouldBe 45
+        calculationDataSuccessModel.totalIncomeTaxNicYtd shouldBe 90500
+        calculationDataSuccessModel.totalTaxableIncome shouldBe 198500
+        calculationDataSuccessModel.personalAllowance shouldBe 11500
+
+        calculationDataSuccessModel.incomeReceived.selfEmployment shouldBe 200000
+        calculationDataSuccessModel.incomeReceived.ukProperty shouldBe 10000
+        calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest shouldBe 1999
+        calculationDataSuccessModel.incomeReceived.ukDividends shouldBe 0
+
+        calculationDataSuccessModel.payPensionsProfit.basicBand.taxableIncome shouldBe 20000
+        calculationDataSuccessModel.payPensionsProfit.basicBand.taxRate shouldBe 20
+        calculationDataSuccessModel.payPensionsProfit.basicBand.taxAmount shouldBe 4000
+
+        calculationDataSuccessModel.payPensionsProfit.higherBand.taxableIncome shouldBe 100000
+        calculationDataSuccessModel.payPensionsProfit.higherBand.taxRate shouldBe 40
+        calculationDataSuccessModel.payPensionsProfit.higherBand.taxAmount shouldBe 40000
+
+        calculationDataSuccessModel.payPensionsProfit.additionalBand.taxableIncome shouldBe 50000
+        calculationDataSuccessModel.payPensionsProfit.additionalBand.taxRate shouldBe 45
+        calculationDataSuccessModel.payPensionsProfit.additionalBand.taxAmount shouldBe 22500
+
+        calculationDataSuccessModel.savingsAndGains.startBand.taxableIncome shouldBe 1
+        calculationDataSuccessModel.savingsAndGains.startBand.taxRate shouldBe 0
+        calculationDataSuccessModel.savingsAndGains.startBand.taxAmount shouldBe 0
+
+        calculationDataSuccessModel.savingsAndGains.zeroBand.taxableIncome shouldBe 20
+        calculationDataSuccessModel.savingsAndGains.zeroBand.taxRate shouldBe 0
+        calculationDataSuccessModel.savingsAndGains.zeroBand.taxAmount shouldBe 0
+
+        calculationDataSuccessModel.savingsAndGains.basicBand.taxableIncome shouldBe 0
+        calculationDataSuccessModel.savingsAndGains.basicBand.taxRate shouldBe 20
+        calculationDataSuccessModel.savingsAndGains.basicBand.taxAmount shouldBe 0
+
+        calculationDataSuccessModel.savingsAndGains.higherBand.taxableIncome shouldBe 0
+        calculationDataSuccessModel.savingsAndGains.higherBand.taxRate shouldBe 40
+        calculationDataSuccessModel.savingsAndGains.higherBand.taxAmount shouldBe 0
+
+        calculationDataSuccessModel.savingsAndGains.additionalBand.taxableIncome shouldBe 0
+        calculationDataSuccessModel.savingsAndGains.additionalBand.taxRate shouldBe 45
+        calculationDataSuccessModel.savingsAndGains.additionalBand.taxAmount shouldBe 0
+
+        calculationDataSuccessModel.nic.class2 shouldBe 10000
+        calculationDataSuccessModel.nic.class4 shouldBe 14000
+
         calculationDataSuccessModel.eoyEstimate.get.incomeTaxNicAmount shouldBe 66000
       }
 
