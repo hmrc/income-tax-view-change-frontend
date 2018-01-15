@@ -80,11 +80,11 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
       "successfully retrieves income sources, but the list returned from the service has a calcNotFound" should {
         lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
 
-        "return an OK (200)" in {
+        "return an SEE_OTHER (303)" in {
           mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
           mockGetAllLatestCrystallisedCalcWithCalcNotFound()
-          status(result) shouldBe Status.OK
+          status(result) shouldBe Status.SEE_OTHER
         }
       }
 

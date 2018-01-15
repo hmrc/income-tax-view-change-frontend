@@ -60,11 +60,8 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
 
         Then("The view should have the correct headings and a single tax estimate link")
         res should have(
-          httpStatus(OK),
-          pageTitle("Current estimates"),
-          elementTextByID("view-estimates")("View your current estimates."),
-          elementTextByID(s"estimates-link-$testYear")(s"Tax year: 2017 to $testYear"),
-          nElementsWithClass("estimates-link")(1)
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.CalculationController.getFinancialData(2018).url)
         )
       }
     }
@@ -120,7 +117,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
     }
 
     "isAuthorisedUser with an active enrolment, with a crystallised calculation and a tax estimate" should {
-      "return the correct page with just the estimate tax link" in {
+      "return the correct estimate page" in {
 
         isAuthorisedUser(true)
 
@@ -137,22 +134,22 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         getPropDeets(GetPropertyDetails.successResponse())
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse =
+        val crystallisedLastTaxCalcResponse =
           LastTaxCalculation(
             testCalcId,
             "2017-07-06T12:34:56.789Z",
             GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
             Crystallised
           )
-        val crystallisedLastTaxCalcResponse =
+        val lastTaxCalcResponse =
           LastTaxCalculation(
             testCalcId2,
             "2017-07-06T12:34:56.789Z",
             GetCalculationData.calculationDataSuccessModel.totalIncomeTaxNicYtd,
             Estimate
           )
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, crystallisedLastTaxCalcResponse)
+        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
+        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, lastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
@@ -173,10 +170,8 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
 
         Then("The view should have the correct headings and a single tax estimate link")
         res should have(
-          httpStatus(OK),
-          pageTitle("Current estimates"),
-          elementTextByID("view-estimates")("View your current estimates."),
-          nElementsWithClass("estimates-link")(1)
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.CalculationController.getFinancialData(2019).url)
         )
       }
     }
