@@ -50,7 +50,8 @@
             </tr>
         }
 
-        <tr id="personal-allowance-section">
+        @if(breakdown.additionalAllowances == 0) {<tr id="personal-allowance-section">
+        } else {<tr id="personal-allowance-section" class="no-border-bottom">}
             <td id="personal-allowance-heading">
                 @{
                     (calcModel.calcStatus, breakdown.incomeReceived.bankBuildingSocietyInterest > 0) match {
@@ -65,6 +66,17 @@
                 -@{(breakdown.personalAllowance + breakdown.savingsAndGains.startBand.taxableIncome + breakdown.savingsAndGains.zeroBand.taxableIncome).toCurrency}
             </td>
         </tr>
+
+        @if(breakdown.additionalAllowances > 0) {
+        <tr id="additional-allowances-section">
+            <td id="additional-allowances-heading">
+                @messages("estimated_tax_liability.calc-breakdown.additional-allowances")
+            </td>
+            <td id="additional-allowances" class="summary-data">
+                -@{(breakdown.additionalAllowances).toCurrency}
+            </td>
+        </tr>
+        }
 
         <tr id="taxable-income-section" class="total-section">
             <td id="taxable-income-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-income")</td>
