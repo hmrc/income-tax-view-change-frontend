@@ -32,7 +32,15 @@ case class CalculationDataModel(
                                  savingsAndGains: SavingsAndGainsModel,
                                  dividends: DividendsModel,
                                  nic: NicModel,
-                                 eoyEstimate: Option[EoyEstimate] = None) extends CalculationDataResponseModel
+                                 eoyEstimate: Option[EoyEstimate] = None) extends CalculationDataResponseModel {
+
+  val taxableDividendIncome: BigDecimal = dividends.basicBand.taxableIncome + dividends.higherBand.taxableIncome + dividends.additionalBand.taxableIncome
+
+  val hasDividendsAtBRT: Boolean = dividends.basicBand.taxAmount > 0
+  val hasDividendsAtHRT: Boolean = dividends.higherBand.taxAmount > 0
+  val hasDividendsAtART: Boolean = dividends.additionalBand.taxAmount > 0
+
+}
 
 case class IncomeReceivedModel(selfEmployment: BigDecimal,
                                ukProperty: BigDecimal,
