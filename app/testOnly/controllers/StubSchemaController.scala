@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import controllers.BaseController
 import play.api.data.Form
 import play.api.i18n.MessagesApi
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.api.{Configuration, Environment}
 import testOnly.connectors.DynamicStubConnector
@@ -57,6 +58,22 @@ class StubSchemaController @Inject()(implicit val appConfig: FrontendAppConfig,
         }
       )
   }
+
+  val stubProxy: Action[JsValue] = Action.async(parse.json) { implicit request => withJsonBody[SchemaModel](
+    json => dynamicStubConnector.addSchema(json).map(
+      response => response.status match {
+        case OK => Ok(s"The following JSON was added to the stub: \n\n${Json.toJson(json)}")
+        case _ => InternalServerError(response.body)
+      }
+    )
+  )}
+
+  val deleteAllProxy: Action[AnyContent] = Action.async { implicit request => dynamicStubConnector.deleteAllSchemas().map(
+    response => response.status match {
+      case OK => Ok("Deleting All Schemas from the Stub...")
+      case _ => InternalServerError(response.body)
+    }
+  )}
 
   private def view(form: Form[SchemaModel], showSuccess: Boolean = false, errorMessage: Option[String] = None)(implicit request: Request[AnyContent]) =
     testOnly.views.html.stubSchemaView(
