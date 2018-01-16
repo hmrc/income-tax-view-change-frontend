@@ -103,16 +103,5 @@ class BillsViewSpec extends TestSupport {
       }
 
     }
-
-    "when the home page feature is disabled" should {
-
-      "not show a back link to the Income Tax home page" in {
-        mockAppConfig.features.homePageEnabled(false)
-        val setup = pageSetup(testIncomeSources)
-        import setup._
-        documentNoBills.getElementById("it-home-back") should be(null)
-        document2Bills.getElementById("it-home-back") should be(null)
-      }
-    }
   }
 }
