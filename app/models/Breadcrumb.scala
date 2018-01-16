@@ -16,13 +16,5 @@
 
 package models
 
-import play.twirl.api.Html
-
 case class BreadcrumbItem(text: String, url: String)
-case class Breadcrumb(items: Vector[BreadcrumbItem]){
-  def buildBreadcrumb(): Html = {
-    items.map { item =>
-
-    }
-  }
-}
+case class Breadcrumb(items: Vector[BreadcrumbItem])
