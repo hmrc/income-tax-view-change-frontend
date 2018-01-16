@@ -168,6 +168,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             document.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
           }
 
+          "not show the additional allowances section" in {
+            document.getElementById("additionalAllowances") shouldBe null
+          }
+
           s"have a taxable income amount of ${model.totalTaxableIncome}" in {
             document.getElementById("taxable-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableIncome
             document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
@@ -297,7 +301,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
         }
       }
 
-      "for users with both property and a business with income from savings" should {
+      "for users with both property and a business with income from savings and additional allowances" should {
 
         val setup = pageSetup(calculationDataSuccessModel, testIncomeSources)
         import setup._
@@ -317,6 +321,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
         "display the correct personal allowance amount" in {
           cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+        }
+
+        s"have an additional allowances section with an amount of ${model.additionalAllowances}" in {
+          document.getElementById("additional-allowances-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.additionalAllowances
+          document.getElementById("additional-allowances").text shouldBe "-" + model.additionalAllowances.toCurrencyString
         }
 
       }

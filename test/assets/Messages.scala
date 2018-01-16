@@ -88,6 +88,7 @@ object Messages {
         val personalAllowance = "Personal Allowance (for period reported)"
         val personalAllowanceSavingsEstimates = "Personal Allowance, incl. Savings (for period reported)"
         val personalAllowanceSavingsBills = "Personal Allowance (Income Tax and savings)"
+        val additionalAllowances = "Additional allowances"
         val yourTaxableIncome = "Your taxable income"
         val atBR: String => String = amount => s"Income Tax ($amount at 20%)"
         val atHR: String => String = amount => s"Income Tax ($amount at 40%)"
