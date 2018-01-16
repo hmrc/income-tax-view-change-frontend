@@ -40,7 +40,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           stubUserDetails()
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
+          val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -102,7 +102,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
-            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -156,9 +156,9 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
-            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
           val lastTaxCalcResponsePlusYear =
-            LastTaxCalculation(testCalcId, "2018-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxDue, Estimate)
+            LastTaxCalculation(testCalcId, "2018-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, "2019", lastTaxCalcResponsePlusYear)
 
@@ -204,7 +204,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then("the BTA page should contains the links for 2018 and 2019 tax years")
           res should have(
             elementTextByID("current-estimate-2018")("Your estimated tax amount for 2017 to 2018 is £90,500"),
-            elementTextByID("current-estimate-2019")("Your estimated tax amount for 2018 to 2019 is £66,500")
+            elementTextByID("current-estimate-2019")("Your estimated tax amount for 2018 to 2019 is £90,500")
           )
         }
       }
@@ -219,7 +219,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
-            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
@@ -268,7 +268,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           res should have(
             elementTextByID("current-estimate-2018")("Your estimated tax amount for 2017 to 2018 is £90,500"),
             elementTextByID("current-estimate-2019")(
-              "Your estimated tax amount for 2018 to 2019 is £66,500")
+              "Your estimated tax amount for 2018 to 2019 is £90,500")
           )
 
         }
@@ -338,7 +338,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
-            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.incomeTaxYTD, Estimate)
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))

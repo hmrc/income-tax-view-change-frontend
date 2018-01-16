@@ -46,8 +46,8 @@ object IncomeTaxViewChangeStub {
     WiremockHelper.verifyGet(lastCalcUrl(nino, year))
 
 
-  def stubGetCalcData(nino: String, year: String, calc: CalculationDataModel): Unit = {
-    WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, Json.toJson(calc).toString())
+  def stubGetCalcData(nino: String, year: String, calc: String): Unit = {
+    WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, calc)
   }
 
   def stubGetCalcError(nino: String, year: String, error: CalculationDataErrorModel): Unit = {
