@@ -877,6 +877,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalIncomeTaxNicYtd = 90500.00,
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
+      taxReliefs = 0,
       additionalAllowances = 0.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
@@ -957,6 +958,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalIncomeTaxNicYtd = 90500.00,
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
+      taxReliefs = 0,
       additionalAllowances = 0.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
@@ -1037,6 +1039,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalIncomeTaxNicYtd = 90500.00,
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
+      taxReliefs = 0,
       additionalAllowances = 0.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
