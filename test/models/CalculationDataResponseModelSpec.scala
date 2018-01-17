@@ -29,6 +29,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
     "for the test response" should {
 
       "have the same values as the calculationDataSuccessWithEoYModel" in {
+
         calculationDataSuccessModel.totalIncomeTaxNicYtd shouldBe 90500
         calculationDataSuccessModel.totalTaxableIncome shouldBe 198500
         calculationDataSuccessModel.personalAllowance shouldBe 11500
@@ -37,6 +38,8 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
         calculationDataSuccessModel.incomeReceived.ukProperty shouldBe 10000
         calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest shouldBe 1999
         calculationDataSuccessModel.incomeReceived.ukDividends shouldBe 10000
+
+        calculationDataSuccessModel.taxReliefs shouldBe 0
 
         calculationDataSuccessModel.payPensionsProfit.basicBand.taxableIncome shouldBe 20000
         calculationDataSuccessModel.payPensionsProfit.basicBand.taxRate shouldBe 20

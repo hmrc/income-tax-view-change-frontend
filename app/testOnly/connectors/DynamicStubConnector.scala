@@ -41,4 +41,13 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     http.POST[DataModel, HttpResponse](url, dataModel)
   }
 
+  def deleteAllData()(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+    lazy val url = s"${appConfig.dynamicStubUrl}/setup/all-data"
+    http.DELETE[HttpResponse](url)
+  }
+
+  def deleteAllSchemas()(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+    lazy val url = s"${appConfig.dynamicStubUrl}/setup/all-schemas"
+    http.DELETE[HttpResponse](url)
+  }
 }

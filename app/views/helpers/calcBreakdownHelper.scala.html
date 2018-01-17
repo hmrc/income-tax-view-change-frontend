@@ -171,21 +171,29 @@
 
 
         @if(calcModel.hasNISection) {
-        <section id ="ni-section">
-            @if(calcModel.hasNic2Amount) {
-                <tr @if(calcModel.hasNic4Amount){class="no-border-bottom"}>
-                    <td id="nic2-amount-heading">@messages("estimated_tax_liability.calc-breakdown.nic2")</td>
-                    <td id="nic2-amount" class="summary-data">@breakdown.nic.class2.toCurrency</td>
-                </tr>
-            }
-            @if(calcModel.hasNic4Amount) {
-                <tr>
-                    <td id="nic4-amount-heading">@messages("estimated_tax_liability.calc-breakdown.nic4")</td>
-                    <td id="nic4-amount" class="summary-data">@breakdown.nic.class4.toCurrency</td>
-                </tr>
-            }
-        </section>
+            <section id ="ni-section">
+                @if(calcModel.hasNic2Amount) {
+                    <tr @if(calcModel.hasNic4Amount || calcModel.hasTaxReliefs){class="no-border-bottom"}>
+                        <td id="nic2-amount-heading">@messages("estimated_tax_liability.calc-breakdown.nic2")</td>
+                        <td id="nic2-amount" class="summary-data">@breakdown.nic.class2.toCurrency</td>
+                    </tr>
+                }
+                @if(calcModel.hasNic4Amount) {
+                    <tr @if(calcModel.hasTaxReliefs){class="no-border-bottom"}>
+                        <td id="nic4-amount-heading">@messages("estimated_tax_liability.calc-breakdown.nic4")</td>
+                        <td id="nic4-amount" class="summary-data">@breakdown.nic.class4.toCurrency</td>
+                    </tr>
+                }
+            </section>
         }
+
+        @if(calcModel.hasTaxReliefs) {
+        <tr>
+            <td id="tax-relief-heading">@messages("estimated_tax_liability.calc-breakdown.reliefs")</td>
+            <td id="tax-relief" class="summary-data">-@breakdown.taxReliefs.toCurrency</td>
+        </tr>
+        }
+
         <tr id ="total-estimate-section" class="total-section">
             <td id="total-estimate-heading">@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
             <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>

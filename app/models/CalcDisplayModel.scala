@@ -36,6 +36,9 @@ case class CalcDisplayModel(calcTimestamp: String,
   val hasNic4Amount: Boolean = calcDataModel.fold(false)(_.nic.class4 > 0)
   val hasNISection: Boolean = hasNic2Amount || hasNic4Amount
 
+  val hasTaxReliefs: Boolean = calcDataModel.fold(false)(_.taxReliefs > 0)
+
+
 }
 case object CalcDisplayError extends CalcDisplayResponseModel
 case object CalcDisplayNoDataFound extends CalcDisplayResponseModel

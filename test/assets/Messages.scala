@@ -99,6 +99,7 @@ object Messages {
         def dividendAtRate(amount: String, rate: String): String = s"Dividend tax ($amount at $rate%)"
         val nic2 = "Class 2 National Insurance"
         val nic4 = "Class 4 National Insurance"
+        val reliefs = "Your tax reliefs"
         val total = "Your Income Tax and National Insurance estimate"
       }
       val accuracy = "Although more accurate than your annual estimate, your current estimate may not be a true reflection of the tax you owe."
