@@ -78,6 +78,7 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val businessTaxAccount: String = loadConfig("business-tax-account.url")
   lazy val btaManageAccountUrl: String = s"$businessTaxAccount/manage-account"
   lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"
+  lazy val selfAssessmentUrl: String = s"$businessTaxAccount/self-assessment"
 
   //Subscription Service
   lazy val signUpUrl: String = loadConfig("mtd-subscription-service.url")
