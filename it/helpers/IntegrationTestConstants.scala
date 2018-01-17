@@ -50,6 +50,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       totalIncomeTaxNicYtd = 90500.00,
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
+      taxReliefs = 1000,
       additionalAllowances = 505.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
@@ -130,6 +131,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       totalIncomeTaxNicYtd = 90500.00,
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
+      taxReliefs = 1000,
       additionalAllowances = 505.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
