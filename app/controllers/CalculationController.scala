@@ -28,7 +28,7 @@ import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, ActionBuilder, AnyContent}
-import services.{CalculationService, ServiceInfoPartialService}
+import services.CalculationService
 import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton

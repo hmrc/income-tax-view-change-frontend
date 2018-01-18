@@ -23,7 +23,6 @@ import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import services.ServiceInfoPartialService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
@@ -32,12 +31,9 @@ import scala.concurrent.Future
 class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val authenticate: AuthenticationPredicate,
                                val retrieveNino: NinoPredicate,
-                               val serviceInfoPartialService: ServiceInfoPartialService,
                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                implicit val config: FrontendAppConfig,
                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
-
-  import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino).async { implicit user =>
     if (config.features.homePageEnabled()) renderView else redirectToBTA

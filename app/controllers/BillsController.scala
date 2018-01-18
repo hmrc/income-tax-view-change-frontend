@@ -26,7 +26,7 @@ import models.{IncomeSourcesModel, LastTaxCalculationWithYear}
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import services.{CalculationService, ServiceInfoPartialService}
+import services.CalculationService
 
 class BillsController @Inject()(implicit val config: FrontendAppConfig,
                                 implicit val messagesApi: MessagesApi,

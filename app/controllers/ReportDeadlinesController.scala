@@ -25,7 +25,7 @@ import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import services.{IncomeSourceDetailsService, ServiceInfoPartialService}
+import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
