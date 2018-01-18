@@ -31,8 +31,11 @@
 }
 
 @calcBreakdown = {
-<section id="inYearCalcBreakdown">
+<section id="inYearCalcBreakdown" class="panel-indent">
     @calcBreakdownHelper(calcModel, taxYear)
+    <h3 class="heading-medium">@messages("crystalisation.incorrect")</h3>
+    <p id="adjustments">@messages("crystalisation.adjustments")</p>
+    <p id="changes">@messages("crystalisation.changes", s"${taxYear+1}")</p>
 </section>
 }
 
@@ -61,13 +64,9 @@
             <div class="form-group">
                 @if(calcModel.breakdownNonEmpty){
                     <h3 id="howCalculatedHeading" class="heading-medium">@messages("crystalisation.calc-breakdown.heading")</h3>
-                    @calcBreakdown
+                    @accordionHelper("calcBreakdown", messages("crystalisation.calc-breakdown.heading"),calcBreakdown)
                 }
             </div>
-
-            <p id="adjustments">@messages("crystalisation.adjustments")</p>
-
-            <p id="changes">@messages("crystalisation.changes", s"${taxYear+1}")</p>
 
         </section>
 

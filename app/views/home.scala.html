@@ -26,6 +26,14 @@
 
 @()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUserWithNino[_], serviceInfo: Html)
 
+@something = {
+    <div id="whyMayChange" class="panel-indent">
+        <p>@messages("home.dropdown.p1")</p>
+        <p>@messages("home.dropdown.p2")</p>
+        <!--<p>@messages("home.dropdown.p3") <a id="dropdown-link" href="">@messages("home.dropdown.link")</a></p>-->
+    </div>
+}
+
 @main_template(
     title = messages("home.title"),
     bodyClasses = None,
@@ -36,28 +44,49 @@
     <section id="home-page">
 
         <h1>
-            <span id="page-heading" class="heading-xlarge">@messages("home.heading")</span>
+            <span id="top-one" class="heading-secondary">@messages("home.heading.p1")</span>
+            <span id="top-two" class="heading-xlarge">@messages("home.heading.p2")</span>
+        </h1>
+        <section class="divider--bottom">
+            <p id="top-text" class="lede">@messages("home.text")</p>
+            <p>@accordionHelper("something", messages("home.dropdown.text"), something)</p>
+        </section>
+
+        <h1>
+            <span id="page-heading" class="heading-xlarge">@messages("home.subheading")</span>
             <span id="sub-heading" class="heading-secondary"><span id="ref">@messages("home.ref")</span><span id="it-reference"> @user.mtditid</span></span>
         </h1>
 
         <div class="grid-row">
 
             <div id="bills-section" class="column-one-half">
-                <h3 id="bills-heading" class="heading-medium">@messages("home.bills.heading")</h3>
+                <h3 id="bills-heading" class="heading-small">@messages("home.bills.heading")</h3>
                 <p id="bills-text">@messages("home.bills.text")</p>
                 <p><a id="bills-link" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
             </div>
 
-            <div id="estimates-section" class="column-one-half">
-                <h3 id="estimates-heading" class="heading-medium">@messages("home.estimates.heading")</h3>
-                <p id="estimates-text">@messages("home.estimates.text")</p>
-                <p><a id="estimates-link" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
-            </div>
-
             <div id="deadlines-section" class="column-one-half">
-                <h3 id="deadlines-heading" class="heading-medium">@messages("home.deadlines.heading")</h3>
+                <h3 id="deadlines-heading" class="heading-small">@messages("home.deadlines.heading")</h3>
                 <p id="deadlines-text">@messages("home.deadlines.text")</p>
                 <p><a id="deadlines-link" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">@messages("home.deadlines.link")</a></p>
+            </div>
+
+            <div id="account-section" class="column-one-half">
+                <h3 id="account-heading" class="heading-small">@messages("home.account.heading")</h3>
+                <p id="account-text">@messages("home.account.text")</p>
+                <p><a id="account-link" href="">@messages("home.account.link")</a></p>
+            </div>
+
+            <div id="statements-section" class="column-one-half">
+                <h3 id="statements-heading" class="heading-small">@messages("home.statements.heading")</h3>
+                <p id="statements-text">@messages("home.statements.text")</p>
+                <p><a id="statements-link" href="">@messages("home.statements.link")</a></p>
+            </div>
+
+            <div id="estimates-section" class="column-one-half">
+                <h3 id="estimates-heading" class="heading-small">@messages("home.estimates.heading")</h3>
+                <p id="estimates-text">@messages("home.estimates.text")</p>
+                <p><a id="estimates-link" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
             </div>
 
         </div>

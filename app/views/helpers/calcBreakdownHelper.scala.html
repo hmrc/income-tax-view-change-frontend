@@ -194,10 +194,17 @@
         </tr>
         }
 
-        <tr id ="total-estimate-section" class="total-section">
-            <td id="total-estimate-heading">@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
-            <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
-        </tr>
+        @if(calcModel.calcStatus == Estimate) {
+            <tr id ="total-estimate-section" class="total-section">
+                <td id="total-estimate-heading">@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
+                <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
+            </tr>
+        }else{
+            <tr id ="total-crystalised-section" class="total-section">
+                <td id="total-crystalised-heading">@messages("crystalisation.calc-breakdown.total", s"${taxYear+1}")</td>
+                <td id="total-crystalised" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
+            </tr>
+        }
         </tbody>
     </table>
 }
