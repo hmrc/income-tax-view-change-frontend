@@ -47,7 +47,7 @@ class CrystallisedViewSpec extends TestSupport {
   private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.crystallised(
       CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
-      testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     implicit val model: CalculationDataModel = calcDataModel
@@ -230,7 +230,7 @@ class CrystallisedViewSpec extends TestSupport {
 
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
         lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
 
         "not display a breakdown section" in {

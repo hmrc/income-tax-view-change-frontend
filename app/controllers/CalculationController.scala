@@ -30,7 +30,6 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, ActionBuilder, AnyContent}
 import services.{CalculationService, ServiceInfoPartialService}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.helpers.BreadcrumbHelper
 
 @Singleton
 class CalculationController @Inject()(implicit val config: FrontendAppConfig,
@@ -40,12 +39,9 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                                       val retrieveNino: NinoPredicate,
                                       val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                       val calculationService: CalculationService,
-                                      val serviceInfoPartialService: ServiceInfoPartialService,
                                       val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                       val auditingService: AuditingService
                                      ) extends BaseController {
-
-  import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
   val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
@@ -54,25 +50,21 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       implicit val sources: IncomeSourcesModel = user.incomeSources
 
       for {
-//        serviceInfo <- serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name))
-        serviceInfo <- BreadcrumbHelper.buildBreadcrumb(Breadcrumb(Vector(
-          BreadcrumbItem("text",controllers.routes.HomeController.home().url,"breadcrumb-it"),
-          BreadcrumbItem("text",controllers.routes.BillsController.viewCrystallisedCalculations().url,"breadcrumb-bills"))))
         calcResponse <- calculationService.getFinancialData(user.nino, taxYear)
       } yield calcResponse match {
           case calcDisplayModel: CalcDisplayModel =>
             auditEstimate(user, calcDisplayModel.calcAmount.toString)
             calcDisplayModel.calcStatus match {
-              case Crystallised => Ok(views.html.crystallised(calcDisplayModel, taxYear)(serviceInfo))
-              case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear)(serviceInfo))
+              case Crystallised => Ok(views.html.crystallised(calcDisplayModel, taxYear))
+              case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
             }
           case CalcDisplayNoDataFound =>
             Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
             auditEstimate(user, "No data found")
-            NotFound(views.html.noEstimatedTaxLiability(taxYear)(serviceInfo))
+            NotFound(views.html.noEstimatedTaxLiability(taxYear))
           case CalcDisplayError =>
             Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
-            Ok(views.html.estimatedTaxLiabilityError(taxYear)(serviceInfo))
+            Ok(views.html.estimatedTaxLiabilityError(taxYear))
         }
   }
   private def auditEstimate(user: MtdItUser[_], estimate: String)(implicit hc: HeaderCarrier): Unit =

@@ -35,25 +35,21 @@ class BillsController @Inject()(implicit val config: FrontendAppConfig,
                                 val retrieveNino: NinoPredicate,
                                 val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                 val calculationService: CalculationService,
-                                val serviceInfoPartialService: ServiceInfoPartialService,
                                 val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                 val itvcErrorHandler: ItvcErrorHandler,
                                 val auditingService: AuditingService
                                ) extends BaseController {
-
-  import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
   val viewCrystallisedCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       implicit val sources: IncomeSourcesModel = user.incomeSources
 
       for {
-        serviceInfo <- serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name))
         lastTaxCalcs <- calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears)
       } yield {
           Logger.debug(s"[BillsController][viewCrystallisedCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
           if (lastTaxCalcs.exists(_.isErrored)) itvcErrorHandler.showInternalServerError
-          else Ok(views.html.bills(lastTaxCalcs.filter(_.matchesStatus(Crystallised)))(serviceInfo))
+          else Ok(views.html.bills(lastTaxCalcs.filter(_.matchesStatus(Crystallised))))
       }
   }
 }

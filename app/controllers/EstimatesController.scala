@@ -35,20 +35,16 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
                                 val retrieveNino: NinoPredicate,
                                 val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                 val calculationService: CalculationService,
-                                val serviceInfoPartialService: ServiceInfoPartialService,
                                 val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                 val itvcErrorHandler: ItvcErrorHandler,
                                 val auditingService: AuditingService
                                ) extends BaseController {
-
-  import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
   val viewEstimateCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       implicit val sources: IncomeSourcesModel = user.incomeSources
 
       for{
-        serviceInfo <- serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name))
         estimatesResponse <- calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears)
       } yield {
         Logger.debug(s"[EstimatesController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $estimatesResponse")
@@ -57,7 +53,7 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
           Redirect(controllers.routes.CalculationController.getFinancialData(estimatesResponse.filter(!_.matchesStatus(Crystallised)).head.taxYear))
         }
         else {
-          Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get)(serviceInfo))
+          Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
         }
       }
   }

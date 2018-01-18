@@ -38,7 +38,7 @@ class HomePageViewSpec extends TestSupport {
 
   "The HomePage view" should {
 
-    lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
+    lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document = Jsoup.parse(contentAsString(page))
     import messages._
 

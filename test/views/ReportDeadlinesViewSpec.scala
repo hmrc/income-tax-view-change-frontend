@@ -44,7 +44,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
   val errorModel = ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
   private def pageSetup(model: IncomeSourcesModel) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.report_deadlines(model)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+    lazy val page: HtmlFormat.Appendable = views.html.report_deadlines(model)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 

@@ -45,8 +45,5 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
 
   private[HomeController] def redirectToBTA: Future[Result] = Future.successful(Redirect(config.businessTaxAccount))
 
-  private[HomeController] def renderView[A](implicit user: MtdItUserWithNino[A]): Future[Result] =
-    serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)) map { implicit serviceInfo =>
-      Ok(views.html.home())
-  }
+  private[HomeController] def renderView[A](implicit user: MtdItUserWithNino[A]): Future[Result] = Future.successful(Ok(views.html.home()))
 }

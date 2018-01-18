@@ -34,7 +34,7 @@ import play.api.test.Helpers._
 import utils.TestSupport
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
   object TestCalculationController extends CalculationController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -44,7 +44,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
     mockCalculationService,
-    mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]
   )
@@ -62,7 +61,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockFinancialDataSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           status(result) shouldBe Status.OK
@@ -85,7 +83,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockFinancialDataSuccess()
           status(result) shouldBe Status.OK
@@ -106,7 +103,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockFinancialDataCrystalisationSuccess()
           status(result) shouldBe Status.OK
@@ -129,7 +125,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           mockFinancialDataNoBreakdown()
           status(result) shouldBe Status.OK
@@ -151,7 +146,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockFinancialDataError()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.OK
@@ -182,7 +176,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return a 404" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockFinancialDataNotFound()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.NOT_FOUND

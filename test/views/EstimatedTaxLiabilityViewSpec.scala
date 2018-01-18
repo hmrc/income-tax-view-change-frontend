@@ -48,12 +48,12 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
     val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), incomeSources)(FakeRequest())
     lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
       CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
-      testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     lazy val cPage: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
       CalcBreakdown.calculationDisplaySuccessCrystalisationModel(calcDataModel),
-      testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val cDocument: Document = Jsoup.parse(contentAsString(cPage))
 
     implicit val model: CalculationDataModel = calcDataModel
@@ -675,7 +675,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
           CalcBreakdown.calculationDisplayNoBreakdownModel,
-          testYear)(serviceInfo)(
+          testYear)(
           FakeRequest(),
           applicationMessages,
           mockAppConfig,

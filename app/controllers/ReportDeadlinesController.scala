@@ -28,6 +28,8 @@ import play.api.mvc.{Action, AnyContent}
 import services.{IncomeSourceDetailsService, ServiceInfoPartialService}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.Future
+
 @Singleton
 class ReportDeadlinesController @Inject()(implicit val config: FrontendAppConfig,
                                           implicit val messagesApi: MessagesApi,
@@ -35,19 +37,14 @@ class ReportDeadlinesController @Inject()(implicit val config: FrontendAppConfig
                                           val authenticate: AuthenticationPredicate,
                                           val retrieveNino: NinoPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                          val serviceInfoPartialService: ServiceInfoPartialService,
                                           val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                           val auditingService: AuditingService
                                      ) extends BaseController {
 
-  import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
-
   val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       auditReportDeadlines(user)
-      serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name)) map { serviceInfo =>
-          Ok(views.html.report_deadlines(user.incomeSources)(serviceInfo))
-      }
+      Future.successful(Ok(views.html.report_deadlines(user.incomeSources)))
   }
 
   private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier): Unit =
