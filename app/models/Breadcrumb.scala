@@ -16,5 +16,5 @@
 
 package models
 
-case class BreadcrumbItem(text: String, url: String)
+case class BreadcrumbItem(text: String, url: String, id: String)
 case class Breadcrumb(items: Vector[BreadcrumbItem])
