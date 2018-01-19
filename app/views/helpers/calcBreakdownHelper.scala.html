@@ -200,9 +200,9 @@
                 <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
             </tr>
         }else{
-            <tr id ="total-crystalised-section" class="total-section">
-                <td id="total-crystalised-heading">@messages("crystalisation.calc-breakdown.total", s"${taxYear+1}")</td>
-                <td id="total-crystalised" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
+            <tr id ="total-estimate-section" class="total-section">
+                <td id="total-estimate-heading">@messages("crystalisation.calc-breakdown.total", s"${taxYear+1}")</td>
+                <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
             </tr>
         }
         </tbody>

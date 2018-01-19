@@ -100,10 +100,6 @@ class CrystallisedViewSpec extends TestSupport {
           val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
           import setup._
 
-          s"have a heading of ${crysMessages.breakdownHeading}" in {
-            document.getElementById("howCalculatedHeading").text shouldBe crysMessages.breakdownHeading
-          }
-
           s"have a business profit section amount of ${model.incomeReceived.selfEmployment}" in {
             document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
             document.getElementById("business-profit").text shouldBe total
@@ -295,6 +291,7 @@ class CrystallisedViewSpec extends TestSupport {
     }
 
     "have a couple of sentences about adjustments" in {
+      document.getElementById("incorrect").text shouldBe messages.Crystallised.incorrect
       document.getElementById("adjustments").text shouldBe crysMessages.errors
       document.getElementById("changes").text shouldBe crysMessages.changes
     }
