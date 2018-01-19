@@ -16,9 +16,11 @@
 
 package assets
 
-import play.twirl.api.Html
-
 object Messages {
+
+  object Base {
+    val backToHome = "Back to Income Tax home"
+  }
 
   //Estimates Page Messages
   class Estimates {
