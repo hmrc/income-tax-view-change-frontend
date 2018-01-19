@@ -32,12 +32,6 @@ home.estimates.link                                             = View your esti
 home.deadlines.heading                                          = Report deadlines
 home.deadlines.text                                             = Check your report deadlines and if we''ve received them.
 home.deadlines.link                                             = View your deadlines
-home.account.heading                                            = Account details
-home.account.text                                               = See contact information and other details we have for your businesses.
-home.account.link                                               = Check your account details
-home.statements.heading                                         = Statements
-home.statements.text                                            = View your income tax transactions, including charges and payments.
-home.statements.link                                            = View your statement
 
 ## Estimates Page ##
 estimates.title                                                 = Current estimates
@@ -52,7 +46,7 @@ estimated_tax_liability.heading                                 = Your Income Ta
 estimated_tax_liability.tax-year                                = Tax year: {0} to {1}
 estimated_tax_liability.estimated-tax.payment                   = You don''t need to pay anything yet, but you must pay what you owe for the whole tax year by
 estimated_tax_liability.calc-breakdown.heading                  = How your current estimate was calculated
-estimated_tax_liability.calc-breakdown.business-profit          = Business profit and income from savings
+estimated_tax_liability.calc-breakdown.business-profit          = Business profit
 estimated_tax_liability.calc-breakdown.property-profit          = Property profit
 estimated_tax_liability.calc-breakdown.and-savings              = and income from savings
 estimated_tax_liability.calc-breakdown.income-savings           = Income from savings
@@ -111,7 +105,7 @@ crystalisation.whatYouOwe.directDebit                           = Check if you a
 crystalisation.warning                                          = If you pay this bill after 31 January {0} you''ll get penalties.
 crystalisation.calc-breakdown.heading                           = How this figure was calculated
 
-crystalisation.calc-breakdown.total                    = Total owed, due
+crystalisation.calc-breakdown.total                             = Total owed, due 31 January {0}
 
 crystalisation.incorrect                                        = Incorrect figures
 crystalisation.adjustments                                      = If there are any errors, you can make adjustments through your software.
