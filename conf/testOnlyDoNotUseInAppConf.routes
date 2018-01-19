@@ -12,13 +12,26 @@
 # Add all the application routes to the prod.routes file
 
 
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-schema    @testOnly.controllers.StubSchemaController.show
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema    @testOnly.controllers.StubSchemaController.submit
+GET         /report-quarterly/income-and-expenses/view/test-only/stub-schema          @testOnly.controllers.StubSchemaController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema          @testOnly.controllers.StubSchemaController.submit
 
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-data      @testOnly.controllers.StubDataController.show
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-data      @testOnly.controllers.StubDataController.submit
+# NOCSRF
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema/proxy    @testOnly.controllers.StubSchemaController.stubProxy
 
-GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch      @testOnly.controllers.FeatureSwitchController.featureSwitch
-POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch      @testOnly.controllers.FeatureSwitchController.submitFeatureSwitch
+# NOCSRF
+DELETE      /report-quarterly/income-and-expenses/view/test-only/all-schemas/proxy    @testOnly.controllers.StubSchemaController.deleteAllProxy
 
-->          /                              prod.Routes
+
+GET         /report-quarterly/income-and-expenses/view/test-only/stub-data            @testOnly.controllers.StubDataController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-data            @testOnly.controllers.StubDataController.submit
+
+# NOCSRF
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-data/proxy      @testOnly.controllers.StubDataController.stubProxy
+
+# NOCSRF
+DELETE      /report-quarterly/income-and-expenses/view/test-only/all-data/proxy       @testOnly.controllers.StubDataController.deleteAllProxy
+
+GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch       @testOnly.controllers.FeatureSwitchController.featureSwitch
+POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch       @testOnly.controllers.FeatureSwitchController.submitFeatureSwitch
+
+->          /                                                                          prod.Routes

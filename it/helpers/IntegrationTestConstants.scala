@@ -50,11 +50,13 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       totalIncomeTaxNicYtd = 90500.00,
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
+      taxReliefs = 1000,
+      additionalAllowances = 505.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
         bankBuildingSocietyInterest = 2000.00,
-        ukDividends = 0.0
+        ukDividends = 11000.00
       ),
       payPensionsProfit = PayPensionsProfitModel(
         basicBand = BandModel(
@@ -101,21 +103,21 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         )
       ),
       dividends = DividendsModel(
-        allowance = 0.0,
+        allowance = 5000.0,
         basicBand = BandModel(
-          taxableIncome = 0.0,
-          taxRate = 0.0,
-          taxAmount = 0.0
+          taxableIncome = 1000.0,
+          taxRate = 7.5,
+          taxAmount = 75.0
         ),
         higherBand = BandModel(
-          taxableIncome = 0.0,
-          taxRate = 0.0,
-          taxAmount = 0.0
+          taxableIncome = 2000.0,
+          taxRate = 37.5,
+          taxAmount = 750.0
         ),
         additionalBand = BandModel(
-          taxableIncome = 0.0,
-          taxRate = 0.0,
-          taxAmount = 0.0
+          taxableIncome = 3000.0,
+          taxRate = 38.1,
+          taxAmount = 1143.0
         )
       ),
       nic = NicModel(
@@ -129,11 +131,13 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       totalIncomeTaxNicYtd = 90500.00,
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
+      taxReliefs = 1000,
+      additionalAllowances = 505.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
         bankBuildingSocietyInterest = 2000.00,
-        ukDividends = 0.0
+        ukDividends = 11000.00
       ),
       payPensionsProfit = PayPensionsProfitModel(
         basicBand = BandModel(
@@ -180,21 +184,21 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         )
       ),
       dividends = DividendsModel(
-        allowance = 0.0,
+        allowance = 5000.0,
         basicBand = BandModel(
-          taxableIncome = 0.0,
-          taxRate = 0.0,
-          taxAmount = 0.0
+          taxableIncome = 1000.0,
+          taxRate = 7.5,
+          taxAmount = 75.0
         ),
         higherBand = BandModel(
-          taxableIncome = 0.0,
-          taxRate = 0.0,
-          taxAmount = 0.0
+          taxableIncome = 2000.0,
+          taxRate = 37.5,
+          taxAmount = 750.0
         ),
         additionalBand = BandModel(
-          taxableIncome = 0.0,
-          taxRate = 0.0,
-          taxAmount = 0.0
+          taxableIncome = 3000.0,
+          taxRate = 38.1,
+          taxAmount = 1143.0
         )
       ),
       nic = NicModel(
@@ -212,6 +216,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "incomeTaxThisPeriod": 2000,
         | "payFromAllEmployments": 0,
         | "benefitsAndExpensesReceived": 0,
+        | "totalAllowancesAndDeductions": 505,
         | "allowableExpenses": 0,
         | "payFromAllEmploymentsAfterExpenses": 0,
         | "shareSchemes": 0,
@@ -222,7 +227,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "foreignIncome": 0,
         | "trustsAndEstates": 0,
         | "interestReceivedFromUkBanksAndBuildingSocieties": 2000,
-        | "dividendsFromUkCompanies": 0,
+        | "dividendsFromUkCompanies": 11000,
         | "ukPensionsAndStateBenefits": 0,
         | "gainsOnLifeInsurance": 0,
         | "otherIncome": 0,
@@ -262,12 +267,12 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "incomeTaxOnInterestReceivedAtART": 215.55,
         | "dividendsAtZeroRate": 0,
         | "incomeTaxOnDividendsAtZeroRate": 0,
-        | "dividendsAtBRT": 0,
-        | "incomeTaxOnDividendsAtBRT": 0,
-        | "dividendsAtHRT": 0,
-        | "incomeTaxOnDividendsAtHRT": 0,
-        | "dividendsAtART": 0,
-        | "incomeTaxOnDividendsAtART": 0,
+        | "dividendsAtBRT": 1000,
+        | "incomeTaxOnDividendsAtBRT": 75,
+        | "dividendsAtHRT": 2000,
+        | "incomeTaxOnDividendsAtHRT": 750,
+        | "dividendsAtART": 3000,
+        | "incomeTaxOnDividendsAtART": 1143,
         | "totalIncomeOnWhichTaxHasBeenCharged": 0,
         | "taxOnOtherIncome": 0,
         | "incomeTaxDue": 66500,
@@ -366,10 +371,10 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "allowanceBRT": 0,
         | "interestAllowanceHRT": 0,
         | "interestAllowanceBRT": 0,
-        | "dividendAllowance": 0,
-        | "dividendBRT": 0,
-        | "dividendHRT": 0,
-        | "dividendART": 0,
+        | "dividendAllowance": 5000,
+        | "dividendBRT": 7.5,
+        | "dividendHRT": 37.5,
+        | "dividendART": 38.1,
         | "class2NICsLimit": 0,
         | "class2NICsPerWeek": 0,
         | "class4NICsLimitBR": 0,
@@ -447,6 +452,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "incomeTaxYTD": 90500,
         | "incomeTaxThisPeriod": 2000,
         | "payFromAllEmployments": 0,
+        | "totalAllowancesAndDeductions": 505,
         | "benefitsAndExpensesReceived": 0,
         | "allowableExpenses": 0,
         | "payFromAllEmploymentsAfterExpenses": 0,
@@ -458,7 +464,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "foreignIncome": 0,
         | "trustsAndEstates": 0,
         | "interestReceivedFromUkBanksAndBuildingSocieties": 2000,
-        | "dividendsFromUkCompanies": 0,
+        | "dividendsFromUkCompanies": 11000,
         | "ukPensionsAndStateBenefits": 0,
         | "gainsOnLifeInsurance": 0,
         | "otherIncome": 0,
@@ -498,12 +504,12 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "incomeTaxOnInterestReceivedAtART": 215.55,
         | "dividendsAtZeroRate": 0,
         | "incomeTaxOnDividendsAtZeroRate": 0,
-        | "dividendsAtBRT": 0,
-        | "incomeTaxOnDividendsAtBRT": 0,
-        | "dividendsAtHRT": 0,
-        | "incomeTaxOnDividendsAtHRT": 0,
-        | "dividendsAtART": 0,
-        | "incomeTaxOnDividendsAtART": 0,
+        | "dividendsAtBRT": 1000,
+        | "incomeTaxOnDividendsAtBRT": 75,
+        | "dividendsAtHRT": 2000,
+        | "incomeTaxOnDividendsAtHRT": 750,
+        | "dividendsAtART": 3000,
+        | "incomeTaxOnDividendsAtART": 1143,
         | "totalIncomeOnWhichTaxHasBeenCharged": 0,
         | "taxOnOtherIncome": 0,
         | "incomeTaxDue": 66500,
@@ -602,10 +608,10 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "allowanceBRT": 0,
         | "interestAllowanceHRT": 0,
         | "interestAllowanceBRT": 0,
-        | "dividendAllowance": 0,
-        | "dividendBRT": 0,
-        | "dividendHRT": 0,
-        | "dividendART": 0,
+        | "dividendAllowance": 5000,
+        | "dividendBRT": 7.5,
+        | "dividendHRT": 37.5,
+        | "dividendART": 38.1,
         | "class2NICsLimit": 0,
         | "class2NICsPerWeek": 0,
         | "class4NICsLimitBR": 0,

@@ -16,9 +16,11 @@
 
 package assets
 
-import play.twirl.api.Html
-
 object Messages {
+
+  object Base {
+    val backToHome = "Back to Income Tax home"
+  }
 
   //Estimates Page Messages
   class Estimates {
@@ -88,12 +90,18 @@ object Messages {
         val personalAllowance = "Personal Allowance (for period reported)"
         val personalAllowanceSavingsEstimates = "Personal Allowance, incl. Savings (for period reported)"
         val personalAllowanceSavingsBills = "Personal Allowance (Income Tax and savings)"
-        val yourTaxableIncome = "Your taxable income"
+        val additionalAllowances = "Additional allowances"
+        val yourTaxableIncome = "Your taxable income (Income Tax)"
         val atBR: String => String = amount => s"Income Tax ($amount at 20%)"
         val atHR: String => String = amount => s"Income Tax ($amount at 40%)"
         val atAR: String => String = amount => s"Income Tax ($amount at 45%)"
+        val dividendIncome = "Income from dividends"
+        val dividendAllowance = "Personal Allowance (dividends)"
+        val taxableDividends = "Your taxable income (dividends)"
+        def dividendAtRate(amount: String, rate: String): String = s"Dividend tax ($amount at $rate%)"
         val nic2 = "Class 2 National Insurance"
         val nic4 = "Class 4 National Insurance"
+        val reliefs = "Your tax reliefs"
         val total = "Your Income Tax and National Insurance estimate"
       }
       val accuracy = "Although more accurate than your annual estimate, your current estimate may not be a true reflection of the tax you owe."

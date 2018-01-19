@@ -5,6 +5,7 @@ base.phase                                                      = BETA
 base.sign-out                                                   = Sign out
 base.submit                                                     = Submit
 base.error_heading                                              = There''s a problem
+base.backToHome                                                 = Back to Income Tax home
 
 #BTA Links
 bta.home                                                        = Business tax home
@@ -46,11 +47,18 @@ estimated_tax_liability.calc-breakdown.pa-estimates             = Personal Allow
 estimated_tax_liability.calc-breakdown.pa-estimates-savings     = Personal Allowance, incl. Savings (for period reported)
 estimated_tax_liability.calc-breakdown.pa-bills                 = Personal Allowance (for period reported)
 estimated_tax_liability.calc-breakdown.pa-bills-savings         = Personal Allowance (Income Tax and savings)
-estimated_tax_liability.calc-breakdown.taxable-income           = Your taxable income
+estimated_tax_liability.calc-breakdown.additional-allowances    = Additional allowances
+estimated_tax_liability.calc-breakdown.taxable-income           = Your taxable income (Income Tax)
+estimated_tax_liability.calc-breakdown.dividend-income          = Income from dividends
+estimated_tax_liability.calc-breakdown.dividend-allowance       = Personal Allowance (dividends)
+estimated_tax_liability.calc-breakdown.taxable-dividend-income  = Your taxable income (dividends)
 estimated_tax_liability.calc-breakdown.income-tax               = Income Tax
+estimated_tax_liability.calc-breakdown.dividend-tax             = Dividend tax
 estimated_tax_liability.calc-breakdown.at                       = at
 estimated_tax_liability.calc-breakdown.nic2                     = Class 2 National Insurance
 estimated_tax_liability.calc-breakdown.nic4                     = Class 4 National Insurance
+estimated_tax_liability.calc-breakdown.reliefs                  = Your tax reliefs
+
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
 estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
 estimated_tax_liability.no-data                                 = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
@@ -106,7 +114,8 @@ bills.heading                                                   = Income Tax bil
 bills.viewBills                                                 = View finalised bills.
 bills.billLink                                                  = Tax year: {0} to {1}
 bills.noBills                                                   = You''ve had no bills since you started reporting through software.
-bills.earlierBills                                              = For earlier bills, <a href="#" id="view-sa-calcs">view your self assessment calculations</a>.
+bills.earlierBills                                              = For earlier bills,
+bills.earlierBillsLink                                          = view your self assessment calculations
 
 ## Statuses ##
 status.received                                                 = Received

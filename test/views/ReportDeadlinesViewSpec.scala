@@ -19,6 +19,7 @@ package views
 import assets.Messages.{ReportDeadlines => messages, Sidebar => sidebarMessages}
 import assets.TestConstants.IncomeSourceDetails._
 import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.Estimates.testYear
 import assets.TestConstants._
 import config.FrontendAppConfig
 import models._
@@ -270,6 +271,20 @@ class ReportDeadlinesViewSpec extends TestSupport {
           document.getElementById("pi-p2").text() shouldBe messages.Errors.p2
         }
       }
+    }
+
+    "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
+      mockAppConfig.features.homePageEnabled(false)
+      val setup = pageSetup(businessIncomeSource)
+      import setup._
+      document.getElementById("it-home-back") should be(null)
+    }
+
+    "show a back link to the Income Tax home page, when the home page feature is enabled" in {
+      mockAppConfig.features.homePageEnabled(true)
+      val setup = pageSetup(businessIncomeSource)
+      import setup._
+      document.getElementById("it-home-back") shouldNot be(null)
     }
   }
 }

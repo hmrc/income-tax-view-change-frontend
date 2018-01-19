@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package utils
-
-import java.text.DecimalFormat
-
-import play.twirl.api.Html
-
-trait ImplicitCurrencyFormatter {
-  implicit class CurrencyFormatter(x: BigDecimal) {
-    val f = new DecimalFormat("#,##0.00")
-    def toCurrency: Html = Html("&pound;" + f.format(x).replace(".00",""))
-    def toCurrencyString: String = "£" + f.format(x).replace(".00","")
-    def toStringNoDecimal: String = x.toString.replace(".0","")
-  }
-}
-
-object ImplicitCurrencyFormatter extends ImplicitCurrencyFormatter
+@()(implicit messages: Messages)
+<a id="it-home-back" class="link-back" href="@{controllers.routes.HomeController.home().url}">@messages("base.backToHome")</a>

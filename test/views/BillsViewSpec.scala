@@ -74,8 +74,9 @@ class BillsViewSpec extends TestSupport {
         document2Bills.getElementById(s"bills-link-$testYearPlusOne").text shouldBe messages2019.billLink
       }
 
-      "show a link to earlier bills" in {
+      "show a link to earlier bills, with the correct URL" in {
         document2Bills.getElementById("earlier-bills").text shouldBe messages.earlierBills
+        document2Bills.getElementById("view-sa-calcs").attr("href") shouldBe mockAppConfig.selfAssessmentUrl
       }
 
       "have no sidebar section " in {
@@ -94,8 +95,9 @@ class BillsViewSpec extends TestSupport {
         documentNoBills.getElementById("no-bills").text shouldBe messages.noBills
       }
 
-      "show a link to earlier bills" in {
+      "show a link to earlier bills, with the correct URL" in {
         documentNoBills.getElementById("earlier-bills").text shouldBe messages.earlierBills
+        documentNoBills.getElementById("view-sa-calcs").attr("href") shouldBe mockAppConfig.selfAssessmentUrl
       }
 
       "have no sidebar section " in {

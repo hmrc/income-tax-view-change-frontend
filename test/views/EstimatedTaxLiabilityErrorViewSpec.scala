@@ -18,6 +18,7 @@ package views
 
 import assets.Messages.{EstimatedTaxLiabilityError => messages, Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.CalcBreakdown.busPropBRTCalcDataModel
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
 import assets.TestConstants._
@@ -72,6 +73,22 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
 
     "have sidebar section " in {
       document.getElementById("sidebar") shouldNot be(null)
+    }
+
+    "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
+      mockAppConfig.features.homePageEnabled(false)
+      lazy val page: HtmlFormat.Appendable =
+        views.html.estimatedTaxLiabilityError(testYear)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+      lazy val document: Document = Jsoup.parse(contentAsString(page))
+      document.getElementById("it-home-back") should be(null)
+    }
+
+    "show a back link to the Income Tax home page, when the home page feature is enabled" in {
+      mockAppConfig.features.homePageEnabled(true)
+      lazy val page: HtmlFormat.Appendable =
+        views.html.estimatedTaxLiabilityError(testYear)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+      lazy val document: Document = Jsoup.parse(contentAsString(page))
+      document.getElementById("it-home-back") shouldNot be(null)
     }
   }
 }
