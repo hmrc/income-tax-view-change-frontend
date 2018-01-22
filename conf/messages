@@ -5,6 +5,7 @@ base.phase                                                      = BETA
 base.sign-out                                                   = Sign out
 base.submit                                                     = Submit
 base.error_heading                                              = There''s a problem
+base.backToHome                                                 = Back to Income Tax home
 
 #BTA Links
 bta.home                                                        = Business tax home

@@ -19,6 +19,7 @@
 @import views.html.helpers.{sidebarHelper, breadcrumbHelper}
 @import views.helpers.ReportDeadlinesPage
 @import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
+@import views.html.helpers.backToHomeHelper
 
 @(incomeSources: models.IncomeSourcesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
@@ -83,6 +84,10 @@
                     @renderReportDeadlines(p.reportDeadlines, "pi")
                 </section>
             }
+        }
+
+        @if(appConfig.features.homePageEnabled()){
+            @backToHomeHelper()
         }
     </section>
 }

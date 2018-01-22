@@ -20,6 +20,7 @@ import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.Messages.{Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.CalcBreakdown.busPropBRTCalcDataModel
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
 import assets.TestConstants._
@@ -97,6 +98,5 @@ class EstimatesViewSpec extends TestSupport {
         document.getElementById("no-estimates").text shouldBe messages.noEstimates
       }
     }
-
   }
 }
