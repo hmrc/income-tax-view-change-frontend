@@ -17,7 +17,7 @@
 package views
 
 import assets.Messages
-import assets.Messages.{Sidebar => sidebarMessages}
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants.Estimates._
@@ -73,6 +73,13 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
+    }
+
+    "have a breadcrumb trail" in {
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+      document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
+      document.getElementById("breadcrumb-it-estimate").text shouldBe breadcrumbMessages.itEstimate
     }
 
     s"have the tax year '${messages.taxYearSubHeading}'" in {

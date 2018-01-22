@@ -18,20 +18,27 @@
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
-@import models.CalculationDataResponseModel
+@import models.{CalculationDataResponseModel, Breadcrumb, BreadcrumbItem}
 @import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
-@import views.html.helpers.calcBreakdownHelper
+@import views.html.helpers.{calcBreakdownHelper, breadcrumbHelper}
 @import enums.{Crystallised, Estimate}
 
 @(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, sources: models.IncomeSourcesModel)
+
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-bills", None)
+    )))
+}
 
 @main_template(
     title = messages("bills.title"),
     bodyClasses = None,
     scriptElem = None,
     sidebarLinks = None,
-    serviceInfo = Html("")
+    serviceInfo = breadcrumb
 ) {
     <section>
         <h1 class="heading-xlarge" id="page-heading">

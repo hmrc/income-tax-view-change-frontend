@@ -16,7 +16,7 @@
 
 package views
 
-import assets.Messages.{NoEstimatedTaxLiability => messages, Sidebar => sidebarMessages}
+import assets.Messages.{NoEstimatedTaxLiability => messages, Sidebar => sidebarMessages, Breadcrumbs => breadcrumbMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
@@ -47,6 +47,12 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
+    }
+
+    "have a breadcrumb trail" in {
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+      document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
     }
 
     s"have the tax year '${messages.taxYearSubheading}'" in {

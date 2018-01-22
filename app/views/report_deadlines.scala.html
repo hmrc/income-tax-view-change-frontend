@@ -16,7 +16,7 @@
 
 @import utils.ImplicitDateFormatter._
 @import views.html.templates.main_template
-@import views.html.helpers.sidebarHelper
+@import views.html.helpers.{sidebarHelper, breadcrumbHelper}
 @import views.helpers.ReportDeadlinesPage
 @import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
 
@@ -31,7 +31,19 @@
     <p id="p2">@messages("obligations.error.p2")</p>
 }
 
-@main_template(title = messages("obligations.title"), bodyClasses = None, sidebarLinks = Some(sidebar)) {
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-obligations", None)
+    )))
+}
+
+@main_template(
+    title = messages("obligations.title"),
+    bodyClasses = None,
+    sidebarLinks = Some(sidebar),
+    serviceInfo = breadcrumb
+) {
 
     <section id="obligations">
 

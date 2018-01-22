@@ -17,7 +17,7 @@
 package views
 
 import assets.Messages
-import assets.Messages.{Sidebar => sidebarMessages}
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants.Estimates._
@@ -62,6 +62,13 @@ class CrystallisedViewSpec extends TestSupport {
 
     s"have the title '${crysMessages.tabTitle}'" in {
       document.title() shouldBe crysMessages.tabTitle
+    }
+
+    "have a breadcrumb trail" in {
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+      document.getElementById("breadcrumb-bills").text shouldBe breadcrumbMessages.bills
+      document.getElementById("breadcrumb-finalised-bill").text shouldBe breadcrumbMessages.finalisedBill
     }
 
     s"have the tax year '${crysMessages.subHeading}'" in {

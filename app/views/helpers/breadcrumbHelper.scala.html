@@ -23,10 +23,17 @@
         <ul class="breadcrumb-nav__list">
             <li class="breadcrumb-nav__item">
                 <a id="breadcrumb-bta" href=@appConfig.businessTaxAccount>@messages("breadcrumb-bta")</a>
-                @breadcrumb.items.map { item =>
-                    -><a id=@item.id href=@item.url> messages(@item.id) </a>
+            </li>
+            @breadcrumb.items.map { item =>
+            <li class="breadcrumb-nav__item breadcrumb-nav__item--trail"></li>
+            <li class="breadcrumb-nav__item">
+                @if(item.url.isDefined){
+                    <a id=@item.id href=@item.url> @messages(item.id) </a>
+                } else {
+                    <p id=@item.id> @messages(item.id) </p>
                 }
             </li>
+            }
         </ul>
     </nav>
 </div>

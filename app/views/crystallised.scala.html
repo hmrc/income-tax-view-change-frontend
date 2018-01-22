@@ -39,7 +39,11 @@
 }
 
 @breadcrumb = {
-    @breadcrumbHelper(Breadcrumb(Vector(BreadcrumbItem("test","someUrl","someId"))))
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-bills", Some(controllers.routes.BillsController.viewCrystallisedCalculations.url)),
+        BreadcrumbItem("breadcrumb-finalised-bill", None)
+    )))
 }
 
 @main_template(

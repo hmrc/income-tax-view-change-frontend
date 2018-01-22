@@ -17,6 +17,7 @@
 package views
 
 import assets.Messages
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.Messages.{Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
@@ -81,6 +82,12 @@ class BillsViewSpec extends TestSupport {
 
       "have no sidebar section " in {
         document2Bills.getElementById("sidebar") should be(null)
+      }
+
+      "have a breadcrumb trail" in {
+        document2Bills.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+        document2Bills.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+        document2Bills.getElementById("breadcrumb-bills").text shouldBe breadcrumbMessages.bills
       }
 
     }

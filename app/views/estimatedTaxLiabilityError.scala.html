@@ -20,8 +20,9 @@
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
 @import models.CalculationDataResponseModel
-@import views.html.helpers.sidebarHelper
+@import views.html.helpers.{sidebarHelper, breadcrumbHelper}
 @import views.helpers.EstimatesPage
+@import models.{Breadcrumb, BreadcrumbItem}
 
 @(taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
 
@@ -29,12 +30,20 @@
     @sidebarHelper(EstimatesPage, sources, Some(taxYear))
 }
 
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
+        BreadcrumbItem("breadcrumb-it-estimate", None)
+    )))
+}
+
 @main_template(
     title = renderTitle(taxYear),
     bodyClasses = None,
     scriptElem = None,
     sidebarLinks = Some(sidebar),
-    serviceInfo = Html("")
+    serviceInfo = breadcrumb
 ) {
 
     <section id="estimated-tax" data-metrics="handledError:estimatesError:noEstimates">

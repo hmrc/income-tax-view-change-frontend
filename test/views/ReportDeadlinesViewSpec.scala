@@ -16,7 +16,7 @@
 
 package views
 
-import assets.Messages.{ReportDeadlines => messages, Sidebar => sidebarMessages}
+import assets.Messages.{ReportDeadlines => messages, Sidebar => sidebarMessages, Breadcrumbs => breadcrumbMessages}
 import assets.TestConstants.IncomeSourceDetails._
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
@@ -68,6 +68,12 @@ class ReportDeadlinesViewSpec extends TestSupport {
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
+    }
+
+    "have a breadcrumb trail" in {
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+      document.getElementById("breadcrumb-obligations").text shouldBe breadcrumbMessages.obligations
     }
 
     s"have the an intro para '${messages.info}'" in {
