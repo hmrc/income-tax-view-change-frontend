@@ -90,6 +90,10 @@ class CrystallisedViewSpec extends TestSupport {
 
       }
 
+      s"has the correct 'warning' text '${crysMessages.p1}'" in {
+        document.getElementById("warning").text shouldBe messages.Crystallised.warning
+      }
+
     }
 
     "have a Calculation Breakdown" that {

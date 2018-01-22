@@ -63,6 +63,13 @@
             </div>
 
             <div class="form-group">
+                <i class="icon exclamation">
+                    <span class="visually-hidden">Warning</span>
+                </i>
+                <strong id="warning" class="bold-small">@messages("crystalisation.warning",s"${taxYear+1}")</strong>
+            </div>
+
+            <div class="form-group">
                 @if(calcModel.breakdownNonEmpty){
                     @accordionHelper("calcBreakdown", messages("crystalisation.calc-breakdown.heading"),calcBreakdown)
                 }
