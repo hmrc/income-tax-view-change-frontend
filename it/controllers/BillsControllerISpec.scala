@@ -289,15 +289,8 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
             GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
             Crystallised
           )
-        val crystallisedLastTaxCalcResponse =
-          LastTaxCalculation(
-            testCalcId2,
-            "2017-07-06T12:34:56.789Z",
-            GetCalculationData.calculationDataSuccessModel.totalIncomeTaxNicYtd,
-            Estimate
-          )
+
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, crystallisedLastTaxCalcResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
