@@ -67,6 +67,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           httpStatus(OK),
           pageTitle("Previous statements"),
           elementTextByID("finalised-bills")("View finalised bills."),
+          //elementTextByID("calcBreakdown")("How this figure was calculated"),
           elementTextByID(s"bills-link-$testYear")(s"Tax year: 2017 to $testYear"),
           nElementsWithClass("bills-link")(1),
           elementTextByID("earlier-bills")("For earlier bills, view your self assessment calculations.")
@@ -261,6 +262,65 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
         )
       }
     }
+
+
+    "isAuthorisedUser with an active enrolment, with a crystallised calculation" should {
+      "return the correct calculation page with the link - How this figure was calculated" in {
+
+        isAuthorisedUser(true)
+
+        stubUserDetails()
+
+        stubPartial()
+
+        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+        getPropDeets(GetPropertyDetails.successResponse())
+
+        getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+
+        getPropDeets(GetPropertyDetails.successResponse())
+
+        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+        val lastTaxCalcResponse =
+          LastTaxCalculation(
+            testCalcId,
+            "2017-07-06T12:34:56.789Z",
+            GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
+            Crystallised
+          )
+
+        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+
+        And("I wiremock stub a successful Get CalculationData response")
+        val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
+
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/bills/calculation")
+        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+
+        verifyBizDeetsCall()
+
+        verifyPropDeetsCall()
+
+        Then("I verify the Estimated Tax Liability response has been wiremocked")
+        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYearPlusOne)
+
+        Then("The view should have the correct headings and a single tax bill link")
+        res should have(
+          httpStatus(OK),
+          elementTextByID("calcBreakdown")("How this figure was calculated"),
+          elementTextByID("obligations-link")("View report deadlines"),
+          elementTextByID("sa-link")("View annual returns")
+        )
+      }
+    }
+
+
+
   }
 
 }

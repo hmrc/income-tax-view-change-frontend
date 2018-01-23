@@ -17,10 +17,10 @@
 package controllers
 
 import enums.Estimate
-import helpers.{ComponentSpecBase, GenericStubMethods}
 import helpers.IntegrationTestConstants.GetReportDeadlinesData._
 import helpers.IntegrationTestConstants._
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub, UserDetailsStub}
+import helpers.servicemocks.{IncomeTaxViewChangeStub, SelfAssessmentStub}
+import helpers.{ComponentSpecBase, GenericStubMethods}
 import models.LastTaxCalculation
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
@@ -310,7 +310,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             httpStatus(OK)
           )
 
-           Then("the BTA page displays the text-  Quarterly reporting")
+          Then("the BTA page displays the text-  Quarterly reporting")
           res should have(
             isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
@@ -365,7 +365,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             httpStatus(OK)
           )
 
-           Then("the text Quarterly reporting is displayed on the BTA page")
+          Then("the text Quarterly reporting is displayed on the BTA page")
           res should have(
             isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
@@ -382,6 +382,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           )
         }
       }
+
 
       "receives an error for both ReportDeadlines and last tax estimate" should {
 
@@ -431,7 +432,6 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           )
         }
       }
-
     }
 
   }
