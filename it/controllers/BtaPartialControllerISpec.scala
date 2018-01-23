@@ -310,7 +310,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             httpStatus(OK)
           )
 
-           Then("the BTA page displays the text-  Quarterly reporting")
+          Then("the BTA page displays the text-  Quarterly reporting")
           res should have(
             isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
@@ -365,7 +365,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             httpStatus(OK)
           )
 
-           Then("the text Quarterly reporting is displayed on the BTA page")
+          Then("the text Quarterly reporting is displayed on the BTA page")
           res should have(
             isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
           )
@@ -379,6 +379,56 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then("the BTA page displays the text Your estimated tax amount is £90,500")
           res should have(
             elementTextByID("current-estimate-2018")("Your estimated tax amount is £90,500")
+          )
+        }
+      }
+
+
+      "receives an error for both ReportDeadlines and last tax estimate" should {
+
+        "display the bta partial with the correct information" in {
+
+          isAuthorisedUser(true)
+
+          stubUserDetails()
+
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
+
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          And("I wiremock stub no Property Details response")
+          SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
+
+          And("I wiremock stub an error for business obligations response")
+          SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/partial")
+          val res = IncomeTaxViewChangeFrontend.getBtaPartial
+
+          Then(s"Verify that the last calc has been called for $testYear")
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+
+          verifyBizDeetsCall()
+
+          verifyPropDeetsCall()
+
+          verifyBizObsCall(testSelfEmploymentId)
+
+          Then("the result should have a HTTP status of OK")
+          res should have(
+            httpStatus(OK)
+          )
+          Then("the text Quarterly reporting is displayed on the BTA page")
+          res should have(
+            isElementVisibleById("it-quarterly-reporting-heading")(expectedValue = true)
+          )
+          Then("the BTA page displays the error text for non retrieved next report due date and estimated tax amount")
+          res should have(
+            elementTextByID("obligation-error-p1")("We can't display your next report due date at the moment."),
+            elementTextByID("obligation-error-p2")("Try refreshing the page in a few minutes."),
+            elementTextByID("estimate-error-p1")("We can't display your estimated tax amount at the moment."),
+            elementTextByID("estimate-error-p2")("Try refreshing the page in a few minutes.")
           )
         }
       }
