@@ -19,10 +19,14 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import config.FrontendAppConfig
+import models.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import play.api.Logger
 import play.api.http.Status.OK
+
+import scala.concurrent.Future
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import play.api.http.Status
 
 
@@ -30,9 +34,9 @@ import play.api.http.Status
 class FinancialTransactionsConnector @Inject()(val http: HttpClient,
                                                val config: FrontendAppConfig) extends RawResponseReads {
 
-  lazy val getFinancialTransactionsUrl: String => String = nino => "SOMETHING HERE"
+  lazy val getFinancialTransactionsUrl: String => String = nino => s"${config.ftUrl}/financial-transactions/it/$nino"
 
-  def getFinancialTransactions(nino: String)(implicit headerCarrier: HeaderCarrier):Unit = {
+  def getFinancialTransactions(nino: String)(implicit headerCarrier: HeaderCarrier):Future[FinancialTransactionsResponseModel] = {
 
     val url = getFinancialTransactionsUrl(nino)
 
