@@ -233,4 +233,16 @@ object Messages {
     val line1 = "Your feedback will help us improve this service."
     val signInLink = "Go back to sign in."
   }
+
+  object Breadcrumbs {
+    val bta = "Business tax home"
+    val it = "Income Tax"
+    val estimates = "View your estimates"
+    val itEstimate = "Your Income Tax estimate"
+    val bills = "Income Tax bills"
+    val finalisedBill = "Your finalised Income Tax bill"
+    val obligations = "Your Income Tax report deadlines"
+    val statement = "Income Tax statement"
+    val details = "Account details"
+  }
 }

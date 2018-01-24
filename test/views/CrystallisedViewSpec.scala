@@ -17,7 +17,7 @@
 package views
 
 import assets.Messages
-import assets.Messages.{Sidebar => sidebarMessages}
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants.Estimates._
@@ -47,7 +47,7 @@ class CrystallisedViewSpec extends TestSupport {
   private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.crystallised(
       CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
-      testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     implicit val model: CalculationDataModel = calcDataModel
@@ -62,6 +62,13 @@ class CrystallisedViewSpec extends TestSupport {
 
     s"have the title '${crysMessages.tabTitle}'" in {
       document.title() shouldBe crysMessages.tabTitle
+    }
+
+    "have a breadcrumb trail" in {
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+      document.getElementById("breadcrumb-bills").text shouldBe breadcrumbMessages.bills
+      document.getElementById("breadcrumb-finalised-bill").text shouldBe breadcrumbMessages.finalisedBill
     }
 
     s"have the tax year '${crysMessages.subHeading}'" in {
@@ -230,7 +237,7 @@ class CrystallisedViewSpec extends TestSupport {
 
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
         lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
 
         "not display a breakdown section" in {
