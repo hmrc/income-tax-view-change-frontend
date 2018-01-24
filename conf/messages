@@ -117,6 +117,21 @@ bills.noBills                                                   = You''ve had no
 bills.earlierBills                                              = For earlier bills,
 bills.earlierBillsLink                                          = view your self assessment calculations
 
+## Statements Page ##
+statements.title                                                = Income Tax Statement
+statements.heading                                              = Income Tax Statement
+statements.p1                                                   = A record of your charges and payments.
+statements.taxYearStatement                                     = Tax year: {0}-{1}
+statements.totalCharges                                         = Total charges
+statements.stillToPay                                           = Still to pay:
+statements.dueBy                                                = This is due by {0}. You can <a href="#" id="{1}-pay-now">pay this now</a>.
+statements.nothingToPay                                         = Nothing left to pay
+statements.paidBill                                             = You''ve paid this bill.
+statements.transactions                                         = Your transactions
+statements.charge                                               = You had a charge of <span id="{0}-charge">{1}</span>.
+statements.youPaid                                              = You paid {0} on {1}
+statements.earlierTransactions                                  = For earlier transactions, <a href="#">view your self assessment</a>.
+
 ## Statuses ##
 status.received                                                 = Received
 status.overdue                                                  = Overdue

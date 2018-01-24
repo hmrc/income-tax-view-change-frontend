@@ -16,8 +16,31 @@
 
 @import views.html.templates.main_template
 
-@(incomeSources: models.FinancialTransactionsModel)(serviceInfo: Html)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(model: models.FinancialTransactionsModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
-@main_template(title = messages("statements.title"), bodyClasses = None, sidebarLinks = Some(sidebar), serviceInfo = serviceInfo) {
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-statements", None)
+    )))
+}
+
+@main_template(title = messages("statements.title"), bodyClasses = None, sidebarLinks = Some(sidebar), serviceInfo = breadcrumb) {
+
+<section id="statements">
+
+    <h1 id="page-heading" class="heading-xlarge">@messages("statements.heading")</h1>
+
+    <p id="statements-p1">@messages("statements.p1")</p>
+
+    @for(taxYear <- model.)
+    <ul>
+        <li>
+
+        </li>
+    </ul>
+
+
+</section>
 
 }
