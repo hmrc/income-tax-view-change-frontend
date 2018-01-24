@@ -155,6 +155,22 @@ object Messages {
     }
   }
 
+  // Statements Page Messages
+  object Statements {
+    val title = "Income Tax Statement"
+    val p1 = "A record of your charges and payments."
+    val taxYear: Int => String = taxYear => s"Tax year: ${taxYear-1}-$taxYear"
+    val totalCharges = "Total charges"
+    val stillToPay = "Still to pay:"
+    val dueBy: String => String = date => s"This is due by $date. You can pay this now."
+    val nothingToPay = "Nothing left to pay"
+    val paidBill = "You've paid this bill."
+    val transactions = "Your transactions"
+    val charge: Int => String = amount => s"You had a charge of $amount."
+    val youPaid: (Int, String) => String = (amount, date) => s"You paid $amount on $date"
+    val earlierTransactions = "For earlier transactions, view your self assessment."
+  }
+
   // Timeout Messages
   object Timeout {
     val title = "Your session has timed out"
