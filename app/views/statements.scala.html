@@ -40,6 +40,29 @@
         </li>
     </ul>
 
+    <section id=s"${taxYear}-tax-year">
+
+        <h2 id="{model.taxYear}-tax-year">@messages("statements.taxYearStatement", taxYear-1, taxYear)</h2>
+
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <div class="grey-highlight">
+                    <div class="data">
+                        <p id=s"${model.taxYear}-total" class="data-item bold-xlarge">model.totalAmount</p>
+                        <p id=s"${model.taxYear}-total-subheading" class="data-item bold-small">@messages("statements.totalCharges")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 id=s"${model.taxYear}-still-to-pay" class="heading-small">@messages("statements.stillToPay") model.leftToPay</h2>
+
+        <p id=s"${model.taxYear}-due-by">@messages("statements.dueBy", model.dueBy, model.taxYear)</p>
+
+        <h2 id=s"${model.taxYear}-transactions" class="heading-small">@messages("")</h2>
+
+    </section>
+
 
 </section>
 
