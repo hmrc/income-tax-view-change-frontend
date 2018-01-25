@@ -51,12 +51,12 @@ class FinancialTransactionsConnectorSpec extends TestSupport with MockHttp{
       await(result) shouldBe FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Financial Transactions response")
     }
 
-    "return FinancialTransactionErrorModel when " in {
+    "return FinancialTransactionErrorModel when bad request recieved" in {
       setupMockHttpGet(testUrl)(badResponse)
       await(result) shouldBe FinancialTransactionsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
-    "return FinancialTransactionErrorModel when dsadsa" in {
+    "return FinancialTransactionErrorModel when GET fails" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
       await(result) shouldBe FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
     }

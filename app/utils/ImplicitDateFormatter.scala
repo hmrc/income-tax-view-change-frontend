@@ -38,7 +38,6 @@ trait ImplicitDateFormatter {
   }
 
   implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
-//  implicit def toZonedDateTime(s: String): ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
 
 }
 
