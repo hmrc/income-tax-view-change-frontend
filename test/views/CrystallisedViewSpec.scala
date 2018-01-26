@@ -90,6 +90,10 @@ class CrystallisedViewSpec extends TestSupport {
 
       }
 
+      s"has the correct 'warning' text '${crysMessages.p1}'" in {
+        document.getElementById("warning").text shouldBe messages.Crystallised.warning
+      }
+
     }
 
     "have a Calculation Breakdown" that {
@@ -99,10 +103,6 @@ class CrystallisedViewSpec extends TestSupport {
           val total = (model.incomeReceived.ukProperty + model.incomeReceived.selfEmployment).toCurrencyString
           val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
           import setup._
-
-          s"have a heading of ${crysMessages.breakdownHeading}" in {
-            document.getElementById("howCalculatedHeading").text shouldBe crysMessages.breakdownHeading
-          }
 
           s"have a business profit section amount of ${model.incomeReceived.selfEmployment}" in {
             document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
@@ -295,6 +295,7 @@ class CrystallisedViewSpec extends TestSupport {
     }
 
     "have a couple of sentences about adjustments" in {
+      document.getElementById("incorrect").text shouldBe messages.Crystallised.incorrect
       document.getElementById("adjustments").text shouldBe crysMessages.errors
       document.getElementById("changes").text shouldBe crysMessages.changes
     }

@@ -187,11 +187,6 @@
             </section>
         }
 
-        <tr id ="total-estimate-section" class="total-section">
-            <td id="total-estimate-heading">@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
-            <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
-        </tr>
-
 
         @if(calcModel.hasTaxReliefs) {
         <tr>
@@ -200,15 +195,25 @@
         </tr>
         }
 
-        @if(transactionModel.isEmpty){
-        <tr>
-            <td>paid</td>
-            <td class=summary-data">1111</td>
-        </tr>
-        <tr id ="sub-total-section" class="total-section">
-            <td>total</td>
-            <td class=summary-data">2222</td>
-        </tr>
+
+        @if(calcModel.calcStatus == Estimate) {
+            <tr class="total-section">
+                <td id="total-estimate-heading">@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
+                <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
+            </tr>
+        }else{
+            <tr class="total-section">
+                <td id="total-estimate-heading">@messages("crystalisation.calc-breakdown.subtotal")</td>
+                <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
+            </tr>
+            <tr>
+                <td id="payment-heading">@messages("crystalisation.calc-breakdown.payment")</td>
+                <td id="payment" class="summary-data">-@transactionModel.get.clearedAmount.get.toCurrency</td>
+            </tr>
+            <tr class="total-section">
+                <td id="owed-heading">@messages("crystalisation.calc-breakdown.owed", s"${taxYear+1}")</td>
+                <td id="owed" class="summary-data">@transactionModel.get.outstandingAmount.get.toCurrency</td>
+            </tr>
         }
 
         </tbody>
