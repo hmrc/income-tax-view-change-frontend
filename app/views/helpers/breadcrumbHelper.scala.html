@@ -23,14 +23,17 @@
         <li>
             <a id="breadcrumb-bta" href=@appConfig.businessTaxAccount>@messages("breadcrumb-bta")</a>
         </li>
-        @breadcrumb.items.map { item =>
-        <li>
-            @if(item.url.isDefined){
-                <a id=@item.id href=@item.url>@messages(item.id)</a>
-            } else {
-                <span id=@item.id>@messages(item.id)</span>
+
+        @if(appConfig.features.homePageEnabled()) {
+            @breadcrumb.items.map { item =>
+            <li>
+                @if(item.url.isDefined){
+                    <a id=@item.id href=@item.url>@messages(item.id)</a>
+                } else {
+                    <span id=@item.id>@messages(item.id)</span>
+                }
+            </li>
             }
-        </li>
         }
     </ol>
 </nav>

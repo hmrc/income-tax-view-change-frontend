@@ -44,7 +44,7 @@ object Messages {
     val pageSubHeading: String => String = mtditid => s"Ref: $mtditid"
     object EstimatesSection {
       val heading = "Estimates"
-      val paragraph = "See what we think you might owe so far and at the end of your tax year."
+      val paragraph = "See what we think you'll owe."
       val link = "View your estimates"
     }
     object BillsSection {

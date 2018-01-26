@@ -16,10 +16,8 @@
 
 package views
 
-import assets.Messages.{ReportDeadlines => messages, Sidebar => sidebarMessages, Breadcrumbs => breadcrumbMessages}
-import assets.TestConstants.IncomeSourceDetails._
+import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages, Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.Estimates.testYear
 import assets.TestConstants._
 import config.FrontendAppConfig
 import models._
