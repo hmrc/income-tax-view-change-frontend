@@ -19,6 +19,9 @@ GET         /estimates                              controllers.EstimatesControl
 #Bills
 GET         /bills                                  controllers.BillsController.viewCrystallisedCalculations
 
+#Statements
+GET         /view-statement                         controllers.StatementsController.getStatements
+
 #Feedback Routes
 GET         /feedback                               controllers.feedback.FeedbackController.show
 POST        /feedback                               controllers.feedback.FeedbackController.submit

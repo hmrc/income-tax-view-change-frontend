@@ -1,31 +1,27 @@
 @*
-* Copyright 2018 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import views.html.templates.main_template
+@import models._
 
-@(model: models.FinancialTransactionsModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(model: Seq[TransactionModelWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
-@breadcrumb = {
-    @breadcrumbHelper(Breadcrumb(Vector(
-        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-statements", None)
-    )))
-}
 
-@main_template(title = messages("statements.title"), bodyClasses = None, sidebarLinks = Some(sidebar), serviceInfo = breadcrumb) {
+
+@main_template(title = messages("statements.title"), bodyClasses = None) {
 
 <section id="statements">
 
@@ -33,36 +29,38 @@
 
     <p id="statements-p1">@messages("statements.p1")</p>
 
-    @for(taxYear <- model.)
-    <ul>
-        <li>
+    @model.map { tmwy =>
+        <ul class="list list-bullet">
+            <li>
+                <a id=s"statement-${tmwy.taxYear}" href="#">tmwy.taxYear</a>
+            </li>
+        </ul>
+    }
 
-        </li>
-    </ul>
+    @model.map { tmwy =>
+        <section id=s"${tmwy.taxYear}-tax-year">
 
-    <section id=s"${taxYear}-tax-year">
+            <h2 id="{tmwy.taxYear}-tax-year">@messages("statements.taxYearStatement", tmwy.taxYear - 1, tmwy.taxYear)</h2>
 
-        <h2 id="{model.taxYear}-tax-year">@messages("statements.taxYearStatement", taxYear-1, taxYear)</h2>
-
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <div class="grey-highlight">
-                    <div class="data">
-                        <p id=s"${model.taxYear}-total" class="data-item bold-xlarge">model.totalAmount</p>
-                        <p id=s"${model.taxYear}-total-subheading" class="data-item bold-small">@messages("statements.totalCharges")</p>
+            <div class="grid-row">
+                <div class="column-two-thirds">
+                    <div class="grey-highlight">
+                        <div class="data">
+                            <p id=s"${tmwy.taxYear}-total" class="data-item bold-xlarge">model.totalAmount</p>
+                            <p id=s"${tmwy.taxYear}-total-subheading" class="data-item bold-small">@messages("statements.totalCharges")</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <h2 id=s"${model.taxYear}-still-to-pay" class="heading-small">@messages("statements.stillToPay") model.leftToPay</h2>
+            <h2 id=s"${tmwy.taxYear}-still-to-pay" class="heading-small">@messages("statements.stillToPay")</h2>
 
-        <p id=s"${model.taxYear}-due-by">@messages("statements.dueBy", model.dueBy, model.taxYear)</p>
+            <p id=s"${tmwy.taxYear}-due-by">@messages("statements.dueBy", "", tmwy.taxYear)</p>
 
-        <h2 id=s"${model.taxYear}-transactions" class="heading-small">@messages("")</h2>
+            <h2 id=s"${tmwy.taxYear}-transactions" class="heading-small">@messages("")</h2>
 
-    </section>
-
+        </section>
+    }
 
 </section>
 
