@@ -17,6 +17,7 @@
 package views
 
 import assets.Messages
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.Messages.{Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.CalcBreakdown.busPropBRTCalcDataModel
@@ -46,7 +47,7 @@ class EstimatesViewSpec extends TestSupport {
   private def pageSetup(incomeSources: IncomeSourcesModel, calcs: List[LastTaxCalculationWithYear]) = new {
     val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), incomeSources)
     lazy val page: HtmlFormat.Appendable =
-      views.html.estimates(calcs,testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig)
+      views.html.estimates(calcs,testYear)(FakeRequest(),applicationMessages, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
@@ -58,6 +59,12 @@ class EstimatesViewSpec extends TestSupport {
 
       s"have the title '${messages.title}'" in {
         document.title() shouldBe messages.title
+      }
+
+      "have a breadcrumb trail" in {
+        document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+        document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+        document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
       }
 
       "have no sidebar section " in {

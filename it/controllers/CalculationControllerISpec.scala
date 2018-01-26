@@ -72,7 +72,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         res should have (
           httpStatus(OK),
           pageTitle("Tax year: 2017 to 2018"),
-          elementTextByID(id = "service-info-user-name")(testUserName),
           elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
           elementTextByID("tax-year")("Tax year: 2017 to 2018"),
           elementTextByID("it-reference")(testMtditid),
@@ -148,7 +147,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         res should have (
           httpStatus(OK),
           pageTitle("Your final submission"),
-          elementTextByID(id = "service-info-user-name")(testUserName),
           elementTextByID("whatYouOweHeading")(s"What you owe: ${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
           elementTextByID("tax-year")("Tax year: 2017 to 2018"),
           elementTextByID("it-reference")(testMtditid),
@@ -225,7 +223,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         res should have (
           httpStatus(OK),
           pageTitle("Tax year: 2017 to 2018"),
-          elementTextByID(id = "service-info-user-name")(testUserName),
           elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
           elementTextByID("tax-year")("Tax year: 2017 to 2018"),
           elementTextByID("it-reference")(testMtditid),
