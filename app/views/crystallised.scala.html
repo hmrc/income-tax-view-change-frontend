@@ -25,7 +25,7 @@
 @import views.html.helpers.calcBreakdownHelper
 @import views.html.helpers.backToHomeHelper
 
-@(calcModel: CalcDisplayModel, taxYear: Int)(serviceInfo: Html)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
+@(calcModel: CalcDisplayModel, transactionModel: Option[TransactionModel], taxYear: Int)(serviceInfo: Html)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
 
 @sidebar = {
     @sidebarHelper(EstimatesPage, sources, Some(taxYear))
@@ -33,7 +33,7 @@
 
 @calcBreakdown = {
 <section id="inYearCalcBreakdown">
-    @calcBreakdownHelper(calcModel, taxYear)
+    @calcBreakdownHelper(calcModel, transactionModel, taxYear)
 </section>
 }
 

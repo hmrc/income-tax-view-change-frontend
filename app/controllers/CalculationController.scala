@@ -59,8 +59,8 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
           case calcDisplayModel: CalcDisplayModel =>
             auditEstimate(user, calcDisplayModel.calcAmount.toString)
             calcDisplayModel.calcStatus match {
-              case Crystallised => Ok(views.html.crystallised(calcDisplayModel, taxYear)(serviceInfo))
-              case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear)(serviceInfo))
+              case Crystallised => Ok(views.html.crystallised(calcDisplayModel, None, taxYear)(serviceInfo))
+              case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel,taxYear)(serviceInfo))
             }
           case CalcDisplayNoDataFound =>
             Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
