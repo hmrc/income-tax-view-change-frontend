@@ -34,7 +34,13 @@ object Messages {
   // Home Page Messages
   object HomePage {
     val title = "Your Income Tax"
-    val pageHeading = "Your Income Tax"
+    val topHeading = "Reporting through software"
+    val topSubHeading = "Income Tax"
+    val topText = "You send HMRC your Income Tax reports using accounting software"
+    val dropDown = "How to do this"
+    val dropDownText1 = "You'll send four reports during the year."
+    val dropDownText2 = "After that, you'll need to confirm and finalise your figures in your accounting software."
+    val pageHeading = "Your account"
     val pageSubHeading: String => String = mtditid => s"Ref: $mtditid"
     object EstimatesSection {
       val heading = "Estimates"
@@ -45,11 +51,6 @@ object Messages {
       val heading = "Bills"
       val paragraph = "See your current and previous Income Tax bills."
       val link = "View your bills"
-    }
-    object StatementsSection {
-      val heading = "Statements"
-      val paragraph = "View your income tax transactions, including charges and payments."
-      val link = "View your statement"
     }
     object ReportDeadlinesSection {
       val heading = "Report deadlines"
@@ -71,6 +72,7 @@ object Messages {
       val p1 = "This figure is based on the information you provided in your quarterly reports and final report. You told us this information is accurate."
       val warning = s"If you pay this bill after 31 January ${taxYear + 1} you'll get penalties."
       val breakdownHeading = "How this figure was calculated"
+      val incorrect = "Incorrect figures"
       val errors = "If there are any errors, you can make adjustments through your software."
       val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
     }

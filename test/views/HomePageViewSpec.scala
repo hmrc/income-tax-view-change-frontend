@@ -52,6 +52,14 @@ class HomePageViewSpec extends TestSupport {
       document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
     }
 
+    s"have the top page heading '$topHeading'" in {
+      document.getElementById("top-heading").text() shouldBe topHeading
+    }
+
+    s"have the top page subheading '$topSubHeading'" in {
+      document.getElementById("top-sub-heading").text() shouldBe topSubHeading
+    }
+
     s"have the page heading '$pageHeading'" in {
       document.getElementById("page-heading").text() shouldBe pageHeading
     }
@@ -59,6 +67,17 @@ class HomePageViewSpec extends TestSupport {
     s"have the subheading with mtditid '${pageSubHeading(testMtditid)}'" in {
       document.getElementById("sub-heading").text() shouldBe pageSubHeading(testMtditid)
     }
+
+    s"have text at the top of the page '$topText'" in {
+      document.getElementById("top-text").text() shouldBe topText
+    }
+
+    s"have a dropdown link '$dropDown' containing text" in {
+      document.getElementById("howToDoThis").text() shouldBe dropDown
+      document.getElementById("why-may-change-1").text() shouldBe dropDownText1
+      document.getElementById("why-may-change-2").text() shouldBe dropDownText2
+    }
+
 
     s"have a Bills section" which {
 

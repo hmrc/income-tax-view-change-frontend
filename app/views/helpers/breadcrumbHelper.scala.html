@@ -18,22 +18,19 @@
 
 @(breadcrumb: Breadcrumb)(implicit messages: Messages, appConfig: config.FrontendAppConfig)
 
-<div>
-    <nav id="breadcrumbs" class="breadcrumb-nav breadcrumb-nav--slim service-info__left">
-        <ul class="breadcrumb-nav__list">
-            <li class="breadcrumb-nav__item">
-                <a id="breadcrumb-bta" href=@appConfig.businessTaxAccount>@messages("breadcrumb-bta")</a>
-            </li>
-            @breadcrumb.items.map { item =>
-            <li class="breadcrumb-nav__item breadcrumb-nav__item--trail"></li>
-            <li class="breadcrumb-nav__item">
-                @if(item.url.isDefined){
-                    <a id=@item.id href=@item.url> @messages(item.id) </a>
-                } else {
-                    <p id=@item.id> @messages(item.id) </p>
-                }
-            </li>
+<nav id="breadcrumbs" class="breadcrumbs breadcrumbs-2-7">
+    <ol>
+        <li>
+            <a id="breadcrumb-bta" href=@appConfig.businessTaxAccount>@messages("breadcrumb-bta")</a>
+        </li>
+        @breadcrumb.items.map { item =>
+        <li>
+            @if(item.url.isDefined){
+                <a id=@item.id href=@item.url>@messages(item.id)</a>
+            } else {
+                <span id=@item.id>@messages(item.id)</span>
             }
-        </ul>
-    </nav>
-</div>
+        </li>
+        }
+    </ol>
+</nav>

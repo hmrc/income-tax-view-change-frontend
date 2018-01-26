@@ -14,7 +14,15 @@ bta.manage-account                                              = Manage account
 
 ## Home Page ##
 home.title                                                      = Your Income Tax
-home.heading                                                    = Your Income Tax
+home.subheading                                                 = Income Tax
+home.heading.1                                                  = Reporting through software
+home.text                                                       = You send HMRC your Income Tax reports using accounting software
+home.dropdown.text                                              = How to do this
+home.dropdown.p1                                                = You''ll send four reports during the year.
+home.dropdown.p2                                                = After that, you''ll need to confirm and finalise your figures in your accounting software.
+home.dropdown.p3                                                = If you don''t have accounting software, you can see
+home.dropdown.link                                              = what accounting software is available (opens in new tab).
+home.heading.2                                                  = Your account
 home.ref                                                        = Ref:
 home.bills.heading                                              = Bills
 home.bills.text                                                 = See your current and previous Income Tax bills.
@@ -97,6 +105,10 @@ crystalisation.whatYouOwe.para                                  = This figure is
 crystalisation.whatYouOwe.directDebit                           = Check if you already pay by direct debit.
 crystalisation.warning                                          = If you pay this bill after 31 January {0} you''ll get penalties.
 crystalisation.calc-breakdown.heading                           = How this figure was calculated
+
+crystalisation.calc-breakdown.total                             = Total owed, due 31 January {0}
+
+crystalisation.incorrect                                        = Incorrect figures
 crystalisation.adjustments                                      = If there are any errors, you can make adjustments through your software.
 crystalisation.changes                                          = If you make these changes before 31 January {0} you will not be penalised.
 crystalisation.additionalPayment.heading                        = Additional payment
