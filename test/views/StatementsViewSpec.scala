@@ -35,10 +35,33 @@ class StatementsViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val successSubItemModel: SubItemModel = SubItemModel(
-    subItem = Some(""),
+  val charge2018: SubItemModel = SubItemModel(
+    subItem = Some("000"),
     dueDate = Some("2018-1-1".toLocalDate),
-    amount = Some(0.00),
+    amount = Some(1000.00),
+    clearingDate = None,
+    clearingReason = None,
+    outgoingPaymentMethod = None,
+    paymentLock = None,
+    clearingLock = None,
+    interestLock = None,
+    dunningLock = None,
+    returnFlag = None,
+    paymentReference = None,
+    paymentAmount = None,
+    paymentMethod = None,
+    paymentLot = None,
+    paymentLotItem = None,
+    clearingSAPDocument = None,
+    statisticalDocument = None,
+    returnReason = None,
+    promiseToPay = None
+  )
+
+  val payment2018: SubItemModel = SubItemModel(
+    subItem = Some("002"),
+    dueDate = None,
+    amount = None,
     clearingDate = Some("2018-1-1".toLocalDate),
     clearingReason = Some(""),
     outgoingPaymentMethod = Some(""),
@@ -47,8 +70,8 @@ class StatementsViewSpec extends TestSupport {
     interestLock = Some(""),
     dunningLock = Some(""),
     returnFlag = Some(false),
-    paymentReference = Some(""),
-    paymentAmount = Some(0.00),
+    paymentReference = Some("XX005000002273"),
+    paymentAmount = Some(600.00),
     paymentMethod = Some(""),
     paymentLot = Some(""),
     paymentLotItem = Some(""),
@@ -58,13 +81,59 @@ class StatementsViewSpec extends TestSupport {
     promiseToPay = Some("")
   )
 
-  val successTransactionModel: TransactionModel = TransactionModel(
+  val charge2019: SubItemModel = SubItemModel(
+    subItem = Some("000"),
+    dueDate = Some("2019-1-2".toLocalDate),
+    amount = Some(1200.00),
+    clearingDate = None,
+    clearingReason = None,
+    outgoingPaymentMethod = None,
+    paymentLock = None,
+    clearingLock = None,
+    interestLock = None,
+    dunningLock = None,
+    returnFlag = None,
+    paymentReference = None,
+    paymentAmount = None,
+    paymentMethod = None,
+    paymentLot = None,
+    paymentLotItem = None,
+    clearingSAPDocument = None,
+    statisticalDocument = None,
+    returnReason = None,
+    promiseToPay = None
+  )
+
+  val payment2019: SubItemModel = SubItemModel(
+    subItem = Some("002"),
+    dueDate = None,
+    amount = None,
+    clearingDate = Some("2019-1-2".toLocalDate),
+    clearingReason = Some(""),
+    outgoingPaymentMethod = Some(""),
+    paymentLock = Some(""),
+    clearingLock = Some(""),
+    interestLock = Some(""),
+    dunningLock = Some(""),
+    returnFlag = Some(false),
+    paymentReference = Some("XX005000002274"),
+    paymentAmount = Some(610.00),
+    paymentMethod = Some(""),
+    paymentLot = Some(""),
+    paymentLotItem = Some(""),
+    clearingSAPDocument = Some(""),
+    statisticalDocument = Some(""),
+    returnReason = Some(""),
+    promiseToPay = Some("")
+  )
+
+  val transactionModel2018: TransactionModelWithYear = TransactionModelWithYear(TransactionModel(
     chargeType = Some(""),
     mainType = Some(""),
     periodKey = Some(""),
     periodKeyDescription = Some(""),
-    taxPeriodFrom = Some("2018-1-1".toLocalDate),
-    taxPeriodTo = Some("2018-1-2".toLocalDate),
+    taxPeriodFrom = Some("2017-4-6".toLocalDate),
+    taxPeriodTo = Some("2018-4-5".toLocalDate),
     businessPartner = Some(""),
     contractAccountCategory = Some(""),
     contractAccount = Some(""),
@@ -75,28 +144,46 @@ class StatementsViewSpec extends TestSupport {
     chargeReference = Some(""),
     mainTransaction = Some(""),
     subTransaction = Some(""),
-    originalAmount = Some(0.00),
-    outstandingAmount = Some(0.00),
-    clearedAmount = Some(0.00),
+    originalAmount = Some(1000.00),
+    outstandingAmount = Some(400.00),
+    clearedAmount = Some(600.00),
     accruedInterest = Some(0.00),
-    items = Seq(successSubItemModel)
-  )
+    items = Seq(charge2018, payment2018)
+  ), 2018)
+
+  val transactionModel2019: TransactionModelWithYear = TransactionModelWithYear(TransactionModel(
+    chargeType = Some(""),
+    mainType = Some(""),
+    periodKey = Some(""),
+    periodKeyDescription = Some(""),
+    taxPeriodFrom = Some("2018-4-6".toLocalDate),
+    taxPeriodTo = Some("2019-4-5".toLocalDate),
+    businessPartner = Some(""),
+    contractAccountCategory = Some(""),
+    contractAccount = Some(""),
+    contractObjectType = Some(""),
+    contractObject = Some(""),
+    sapDocumentNumber = Some(""),
+    sapDocumentNumberItem = Some(""),
+    chargeReference = Some(""),
+    mainTransaction = Some(""),
+    subTransaction = Some(""),
+    originalAmount = Some(1200.00),
+    outstandingAmount = Some(590.00),
+    clearedAmount = Some(610.00),
+    accruedInterest = Some(0.00),
+    items = Seq(charge2019, payment2019)
+  ), 2019)
+
   val errorModel: FinancialTransactionsErrorModel = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
-  private def pageSetup(model: FinancialTransactionsModel) = new {
+  private def pageSetup(model: Seq[TransactionModelWithYear]) = new {
     lazy val page: HtmlFormat.Appendable = views.html.statements(model)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
   "The Statements view" should {
-    lazy val statementsModel = FinancialTransactionsModel(
-      idType = "",
-      idNumber = "",
-      regimeType = "",
-      processingDate = ZonedDateTime,
-      financialTransactions = Seq(successTransactionModel)
-    )
-
+    lazy val statementsModel = Seq(transactionModel2018, transactionModel2019)
 
     val setup = pageSetup(statementsModel)
     import setup._
@@ -107,6 +194,15 @@ class StatementsViewSpec extends TestSupport {
 
     s"have the an intro para '${messages.p1}'" in {
       document.getElementById("statements-p1").text() shouldBe messages.p1
+    }
+
+    "have a link to jump to the specified tax year section" in {
+      document.getElementById("statement-2018").text() shouldBe messages.taxYear(2018)
+      document.getElementById("statement-2019").text() shouldBe messages.taxYear(2019)
+    }
+
+    "have a heading for each taxYear" in {
+      
     }
   }
 

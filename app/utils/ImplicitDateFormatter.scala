@@ -33,6 +33,10 @@ trait ImplicitDateFormatter {
     def toLongDate: String = d.getDayOfMonth + " " + d.getMonth.getDisplayName(FULL, UK) + " " + d.getYear
   }
 
+  implicit class shortDate(date: LocalDate) {
+    def toShortDate: String = date.format(DateTimeFormatter.ofPattern("d/MM/uuuu"))
+  }
+
   implicit class longDateTime(dt: LocalDateTime) {
     def toLongDateTime: String = dt.getDayOfMonth + " " + dt.getMonth.getDisplayName(FULL, UK) + " " + dt.getYear
   }

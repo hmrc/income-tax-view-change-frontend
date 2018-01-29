@@ -40,7 +40,13 @@ case class TransactionModel(chargeType: Option[String],
                        outstandingAmount: Option[BigDecimal],
                        clearedAmount: Option[BigDecimal],
                        accruedInterest: Option[BigDecimal],
-                       items: Seq[SubItemModel])
+                       items: Seq[SubItemModel]){
+
+  def charges(): Seq[SubItemModel] = items.filter(_.dueDate.isDefined)
+
+  def payments(): Seq[SubItemModel] = items.filter(_.paymentReference.isDefined)
+
+}
 
 case class TransactionModelWithYear(model: TransactionModel,
                                     taxYear: Int)

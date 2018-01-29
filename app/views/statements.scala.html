@@ -16,6 +16,9 @@
 
 @import views.html.templates.main_template
 @import models._
+@import play.twirl.api.Html
+@import utils.ImplicitCurrencyFormatter._
+@import utils.ImplicitDateFormatter._
 
 @(model: Seq[TransactionModelWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
@@ -32,32 +35,42 @@
     @model.map { tmwy =>
         <ul class="list list-bullet">
             <li>
-                <a id=s"statement-${tmwy.taxYear}" href="#">tmwy.taxYear</a>
+                <a id="statement-@tmwy.taxYear" href="#@tmwy.taxYear-tax-year-section">@messages("statements.taxYearStatement", s"${tmwy.taxYear-1}", s"${tmwy.taxYear}")</a>
             </li>
         </ul>
     }
 
     @model.map { tmwy =>
-        <section id=s"${tmwy.taxYear}-tax-year">
+        <section id="@tmwy.taxYear-tax-year-section">
 
-            <h2 id="{tmwy.taxYear}-tax-year">@messages("statements.taxYearStatement", tmwy.taxYear - 1, tmwy.taxYear)</h2>
+            <h2 id="@tmwy.taxYear-tax-year" class="heading-large">@messages("statements.taxYearStatement", s"${tmwy.taxYear - 1}", s"${tmwy.taxYear}")</h2>
 
             <div class="grid-row">
                 <div class="column-two-thirds">
                     <div class="grey-highlight">
                         <div class="data">
-                            <p id=s"${tmwy.taxYear}-total" class="data-item bold-xlarge">model.totalAmount</p>
-                            <p id=s"${tmwy.taxYear}-total-subheading" class="data-item bold-small">@messages("statements.totalCharges")</p>
+                            <p id="@tmwy.taxYear-total" class="data-item bold-xlarge">@tmwy.model.originalAmount.get.toCurrency</p>
+                            <p id="@tmwy.taxYear-total-subheading" class="data-item bold-small">@messages("statements.totalCharges")</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <h2 id=s"${tmwy.taxYear}-still-to-pay" class="heading-small">@messages("statements.stillToPay")</h2>
+            <h2 id="@tmwy.taxYear-still-to-pay" class="heading-small">@messages("statements.stillToPay", tmwy.model.outstandingAmount.get.toCurrencyString)</h2>
 
-            <p id=s"${tmwy.taxYear}-due-by">@messages("statements.dueBy", "", tmwy.taxYear)</p>
+            <p id="@tmwy.taxYear-due-by">@Html(messages("statements.dueBy", "31 January " + s"${tmwy.taxYear+1}", s"${tmwy.taxYear}"))</p>
 
-            <h2 id=s"${tmwy.taxYear}-transactions" class="heading-small">@messages("")</h2>
+            <h2 id="@tmwy.taxYear-transactions" class="heading-small">@messages("statements.transactions")</h2>
+
+            <p id="@tmwy.taxYear-charge-text">@Html(messages("statements.charge", s"${tmwy.taxYear}", tmwy.model.charges.head.amount.get.toCurrency))</p>
+
+            @if(tmwy.model.payments.nonEmpty){
+            <ul class="list list-bullet">
+                @tmwy.model.payments.map { payment =>
+                    <li id="@tmwy.taxYear-paid-index">@messages("statements.youPaid", payment.paymentAmount.get.toCurrencyString, payment.clearingDate.get.toShortDate)</li>
+                }
+            </ul>
+            }
 
         </section>
     }

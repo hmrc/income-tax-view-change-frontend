@@ -44,21 +44,10 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
       for {
         financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.nino)
       } yield financialTransactionsResponse match {
-        case model: FinancialTransactionsModel => Ok(views.html.statements(withYears(model)))
+        case model: FinancialTransactionsModel => Ok(views.html.statements(model.withYears()))
         case _: FinancialTransactionsErrorModel => InternalServerError
       }
 
-  }
-
-  def withYears(model: FinancialTransactionsModel): Seq[TransactionModelWithYear] = {
-    model.financialTransactions.map { ft =>
-      if(ft.taxPeriodTo.isDefined){
-        ft.taxPeriodTo.get match {
-          case endDate if endDate isBefore s"${endDate.getYear}-4-6" => TransactionModelWithYear(ft, endDate.getYear)
-          case endDate => TransactionModelWithYear(ft, endDate.getYear + 1)
-        }
-      } else TransactionModelWithYear(ft, -1)
-    }
   }
 
 //  private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier): Unit =

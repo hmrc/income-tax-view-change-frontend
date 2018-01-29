@@ -26,7 +26,16 @@ case class FinancialTransactionsModel(idType: String,
                                       idNumber: String,
                                       regimeType: String,
                                       processingDate: ZonedDateTime,
-                                      financialTransactions: Seq[TransactionModel]) extends FinancialTransactionsResponseModel
+                                      financialTransactions: Seq[TransactionModel]) extends FinancialTransactionsResponseModel {
+
+  def withYears(): Seq[TransactionModelWithYear] = {
+    financialTransactions.flatMap { ft =>
+      ft.taxPeriodTo.map {
+        toDate => TransactionModelWithYear(ft, toDate.getYear)
+      }
+    }
+  }
+}
 
 
 case class FinancialTransactionsErrorModel(code: Int, message: String) extends FinancialTransactionsResponseModel
