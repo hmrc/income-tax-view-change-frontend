@@ -31,6 +31,7 @@ import models.IncomeSourcesModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
+import services.FinancialTransactionsService
 import utils.TestSupport
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
@@ -46,7 +47,9 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     mockCalculationService,
     mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
-    app.injector.instanceOf[AuditingService]
+    app.injector.instanceOf[AuditingService],
+    app.injector.instanceOf[FinancialTransactionsService],
+    app.injector.instanceOf[ItvcErrorHandler]
   )
 
   lazy val messages = new Messages.Calculation(testYear)

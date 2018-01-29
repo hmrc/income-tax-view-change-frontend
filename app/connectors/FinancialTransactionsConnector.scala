@@ -34,11 +34,11 @@ import play.api.http.Status
 class FinancialTransactionsConnector @Inject()(val http: HttpClient,
                                                val config: FrontendAppConfig) extends RawResponseReads {
 
-  lazy val getFinancialTransactionsUrl: String => String = nino => s"${config.ftUrl}/financial-transactions/it/$nino"
+  lazy val getFinancialTransactionsUrl: String => String = mtditid => s"${config.ftUrl}/financial-transactions/it/$mtditid"
 
-  def getFinancialTransactions(nino: String)(implicit headerCarrier: HeaderCarrier):Future[FinancialTransactionsResponseModel] = {
+  def getFinancialTransactions(mtditid: String)(implicit headerCarrier: HeaderCarrier):Future[FinancialTransactionsResponseModel] = {
 
-    val url = getFinancialTransactionsUrl(nino)
+    val url = getFinancialTransactionsUrl(mtditid)
 
     Logger.debug(s"[FinancialTransactionsConnector][getFincancialTransactions] - GET $url")
 

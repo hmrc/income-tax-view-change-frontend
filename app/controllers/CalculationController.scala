@@ -27,9 +27,13 @@ import enums.{Crystallised, Estimate}
 import models._
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, ActionBuilder, AnyContent}
-import services.{CalculationService, ServiceInfoPartialService}
+import play.api.mvc.{Action, ActionBuilder, AnyContent, Result}
+import play.twirl.api.Html
+import services.{CalculationService, FinancialTransactionsService, ServiceInfoPartialService}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.ImplicitDateFormatter
+
+import scala.concurrent.Future
 
 @Singleton
 class CalculationController @Inject()(implicit val config: FrontendAppConfig,
@@ -41,8 +45,10 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                                       val calculationService: CalculationService,
                                       val serviceInfoPartialService: ServiceInfoPartialService,
                                       val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                      val auditingService: AuditingService
-                                     ) extends BaseController {
+                                      val auditingService: AuditingService,
+                                      val financialTransactionsService: FinancialTransactionsService,
+                                      val itvcErrorHandler: ItvcErrorHandler
+                                     ) extends BaseController with ImplicitDateFormatter{
 
   import itvcHeaderCarrierForPartialsConverter.headerCarrierEncryptingSessionCookieFromRequest
 
@@ -55,22 +61,40 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       for {
         serviceInfo <- serviceInfoPartialService.serviceInfoPartial(user.userDetails.map(_.name))
         calcResponse <- calculationService.getFinancialData(user.nino, taxYear)
+        ftResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
       } yield calcResponse match {
           case calcDisplayModel: CalcDisplayModel =>
             auditEstimate(user, calcDisplayModel.calcAmount.toString)
             calcDisplayModel.calcStatus match {
-              case Crystallised => Ok(views.html.crystallised(calcDisplayModel, None, taxYear)(serviceInfo))
-              case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel,taxYear)(serviceInfo))
+              case Crystallised => renderCrystallisedView(calcDisplayModel, taxYear, ftResponse)(user, serviceInfo)
+              case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear)(serviceInfo))
             }
           case CalcDisplayNoDataFound =>
-            Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
+            Logger.debug(s"[CalculationController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
             auditEstimate(user, "No data found")
             NotFound(views.html.noEstimatedTaxLiability(taxYear)(serviceInfo))
           case CalcDisplayError =>
-            Logger.debug(s"[FinancialDataController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
+            Logger.debug(s"[CalculationController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
             Ok(views.html.estimatedTaxLiabilityError(taxYear)(serviceInfo))
         }
   }
+
+  def renderCrystallisedView(calcDisplayModel: CalcDisplayModel, taxYear: Int, ftResponse: FinancialTransactionsResponseModel)
+                            (implicit user: MtdItUser[_], serviceInfo: Html): Result = {
+    implicit val sources: IncomeSourcesModel = user.incomeSources
+    ftResponse match {
+      case transactions: FinancialTransactionsModel => transactions.findChargeForTaxYear(taxYear) match {
+        case Some(charge) => Ok(views.html.crystallised(calcDisplayModel, charge, taxYear)(serviceInfo))
+        case _ =>
+          Logger.debug(s"[CalculationController][renderCrystallisedView[$taxYear]] No transaction could be retrieved for given year.")
+          itvcErrorHandler.showInternalServerError
+      }
+      case _: FinancialTransactionsErrorModel =>
+        Logger.debug(s"[CalculationController][renderCrystallisedView[$taxYear]] FinancialTransactionErrorModel returned from ftResponse")
+        itvcErrorHandler.showInternalServerError
+    }
+  }
+
   private def auditEstimate(user: MtdItUser[_], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
       EstimatesAuditModel(user, estimate),

@@ -42,6 +42,9 @@ case class TransactionModel(chargeType: Option[String],
                        accruedInterest: Option[BigDecimal],
                        items: Seq[SubItemModel])
 
+case class TransactionModelWithYear(model: TransactionModel,
+                                    taxYear: Int)
+
 object TransactionModel {
   implicit val format: Format[TransactionModel] = Json.format[TransactionModel]
 }

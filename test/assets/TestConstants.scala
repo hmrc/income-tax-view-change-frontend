@@ -232,7 +232,50 @@ object TestConstants extends ImplicitDateFormatter {
         )
       )
 
-
+    val transactionModel = TransactionModel(
+      chargeType = Some("PAYE"),
+      mainType = Some("2100"),
+      periodKey = Some("13RL"),
+      periodKeyDescription = Some("abcde"),
+      taxPeriodFrom = Some("2017-4-6"),
+      taxPeriodTo = Some("2018-4-5"),
+      businessPartner = Some("6622334455"),
+      contractAccountCategory = Some("02"),
+      contractAccount = Some("X"),
+      contractObjectType = Some("ABCD"),
+      contractObject = Some("00000003000000002757"),
+      sapDocumentNumber = Some("1040000872"),
+      sapDocumentNumberItem = Some("XM00"),
+      chargeReference = Some("XM002610011594"),
+      mainTransaction = Some("1234"),
+      subTransaction = Some("5678"),
+      originalAmount = Some(3400.0),
+      outstandingAmount = Some(1400.0),
+      clearedAmount = Some(2000.0),
+      accruedInterest = Some(0.23),
+      items = Seq(SubItemModel(
+        subItem = Some("000"),
+        dueDate = Some("2018-2-14"),
+        amount = Some(3400.00),
+        clearingDate = Some("2018-2-17"),
+        clearingReason = Some("A"),
+        outgoingPaymentMethod = Some("B"),
+        paymentLock = Some("C"),
+        clearingLock = Some("D"),
+        interestLock = Some("E"),
+        dunningLock = Some("1"),
+        returnFlag = Some(false),
+        paymentReference = Some("F"),
+        paymentAmount = Some(2000.00),
+        paymentMethod = Some("G"),
+        paymentLot = Some("H"),
+        paymentLotItem = Some("112"),
+        clearingSAPDocument = Some("3350000253"),
+        statisticalDocument = Some("I"),
+        returnReason = Some("J"),
+        promiseToPay = Some("K")
+      ))
+    )
 
     val financialTransactionsModel = FinancialTransactionsModel(
       idType = testIdType,
@@ -240,50 +283,7 @@ object TestConstants extends ImplicitDateFormatter {
       regimeType = testRegimeType,
       processingDate = testProcessingDate,
 
-      financialTransactions = Seq(TransactionModel(
-        chargeType = Some("PAYE"),
-        mainType = Some("2100"),
-        periodKey = Some("13RL"),
-        periodKeyDescription = Some("abcde"),
-        taxPeriodFrom = Some("2017-4-6"),
-        taxPeriodTo = Some("2018-4-5"),
-        businessPartner = Some("6622334455"),
-        contractAccountCategory = Some("02"),
-        contractAccount = Some("X"),
-        contractObjectType = Some("ABCD"),
-        contractObject = Some("00000003000000002757"),
-        sapDocumentNumber = Some("1040000872"),
-        sapDocumentNumberItem = Some("XM00"),
-        chargeReference = Some("XM002610011594"),
-        mainTransaction = Some("1234"),
-        subTransaction = Some("5678"),
-        originalAmount = Some(3400.0),
-        outstandingAmount = Some(1400.0),
-        clearedAmount = Some(2000.0),
-        accruedInterest = Some(0.23),
-        items = Seq(SubItemModel(
-          subItem = Some("000"),
-          dueDate = Some("2018-2-14"),
-          amount = Some(3400.00),
-          clearingDate = Some("2018-2-17"),
-          clearingReason = Some("A"),
-          outgoingPaymentMethod = Some("B"),
-          paymentLock = Some("C"),
-          clearingLock = Some("D"),
-          interestLock = Some("E"),
-          dunningLock = Some("1"),
-          returnFlag = Some(false),
-          paymentReference = Some("F"),
-          paymentAmount = Some(2000.00),
-          paymentMethod = Some("G"),
-          paymentLot = Some("H"),
-          paymentLotItem = Some("112"),
-          clearingSAPDocument = Some("3350000253"),
-          statisticalDocument = Some("I"),
-          returnReason = Some("J"),
-          promiseToPay = Some("K")
-        ))
-      ))
+      financialTransactions = Seq(transactionModel)
     )
 
   }

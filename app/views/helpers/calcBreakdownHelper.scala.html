@@ -208,11 +208,11 @@
             </tr>
             <tr>
                 <td id="payment-heading">@messages("crystalisation.calc-breakdown.payment")</td>
-                <td id="payment" class="summary-data">-@transactionModel.get.clearedAmount.get.toCurrency</td>
+                <td id="payment" class="summary-data">-@transactionModel.get.clearedAmount.getOrElse[BigDecimal](0).toCurrency</td>
             </tr>
             <tr class="total-section">
                 <td id="owed-heading">@messages("crystalisation.calc-breakdown.owed", s"${taxYear+1}")</td>
-                <td id="owed" class="summary-data">@transactionModel.get.outstandingAmount.get.toCurrency</td>
+                <td id="owed" class="summary-data">@transactionModel.get.outstandingAmount.getOrElse[BigDecimal](0).toCurrency</td>
             </tr>
         }
 
