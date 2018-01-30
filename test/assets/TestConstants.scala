@@ -282,7 +282,6 @@ object TestConstants extends ImplicitDateFormatter {
       idNumber = testIdNumber,
       regimeType = testRegimeType,
       processingDate = testProcessingDate,
-
       financialTransactions = Seq(transactionModel)
     )
 

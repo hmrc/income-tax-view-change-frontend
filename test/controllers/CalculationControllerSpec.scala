@@ -26,7 +26,7 @@ import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.{MockCalculationService, MockServiceInfoPartialService}
+import mocks.services.{MockCalculationService, MockFinancialTransactionsService, MockServiceInfoPartialService}
 import models.IncomeSourcesModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
@@ -35,7 +35,7 @@ import services.FinancialTransactionsService
 import utils.TestSupport
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService with MockFinancialTransactionsService{
 
   object TestCalculationController extends CalculationController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -48,7 +48,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService],
-    app.injector.instanceOf[FinancialTransactionsService],
+    mockFinancialTransactionsService,
     app.injector.instanceOf[ItvcErrorHandler]
   )
 
@@ -65,6 +65,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockFinancialTransactionSuccess()
           mockServiceInfoPartialSuccess(Some(testUserName))
           mockFinancialDataSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
@@ -88,6 +89,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockFinancialTransactionSuccess()
           mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockFinancialDataSuccess()
@@ -109,6 +111,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockFinancialTransactionSuccess()
           mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockFinancialDataCrystalisationSuccess()
@@ -132,6 +135,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockFinancialTransactionSuccess()
           mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           mockFinancialDataNoBreakdown()
@@ -154,6 +158,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockFinancialTransactionSuccess()
           mockServiceInfoPartialSuccess(Some(testUserName))
           mockFinancialDataError()
           mockSingleBusinessIncomeSource()
@@ -185,6 +190,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return a 404" in {
+          mockFinancialTransactionSuccess()
           mockServiceInfoPartialSuccess(Some(testUserName))
           mockFinancialDataNotFound()
           mockSingleBusinessIncomeSource()
@@ -200,6 +206,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           document.title() shouldBe messages.title
         }
       }
+
 
     }
 

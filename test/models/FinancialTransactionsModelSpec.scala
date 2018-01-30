@@ -87,6 +87,22 @@ class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
 
     }
 
+    "the findChargeForTaxYear" when {
+
+      "there is a transaction with the correct year should return a single transaction" in {
+        financialTransactionsModel.findChargeForTaxYear(2018) shouldBe Some(transactionModel)
+      }
+
+      "there is a no transaction with the correct year should None" in {
+        financialTransactionsModel.findChargeForTaxYear(1000) shouldBe None
+      }
+
+    }
+
+
+
+    "return None when"
+
     "be formatted to JSON correctly" in {
       Json.toJson[FinancialTransactionsModel](financialTransactionsModel) shouldBe financialTransactionsJson
     }
