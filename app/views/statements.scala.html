@@ -66,8 +66,8 @@
 
             @if(tmwy.model.payments.nonEmpty){
             <ul class="list list-bullet">
-                @tmwy.model.payments.map { payment =>
-                    <li id="@tmwy.taxYear-paid-index">@messages("statements.youPaid", payment.paymentAmount.get.toCurrencyString, payment.clearingDate.get.toShortDate)</li>
+                @tmwy.model.payments.zipWithIndex.map { case (payment, index) =>
+                    <li id="@tmwy.taxYear-paid-@index">@messages("statements.youPaid", payment.paymentAmount.get.toCurrencyString, payment.clearingDate.get.toShortDate)</li>
                 }
             </ul>
             }

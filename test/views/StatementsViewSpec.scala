@@ -30,10 +30,14 @@ import play.api.test.Helpers._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import models._
+import utils.ImplicitCurrencyFormatter._
 
 class StatementsViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
+  val testYear1 = 2018
+  val testYear2 = 2019
 
   val charge2018: SubItemModel = SubItemModel(
     subItem = Some("000"),
@@ -149,7 +153,7 @@ class StatementsViewSpec extends TestSupport {
     clearedAmount = Some(600.00),
     accruedInterest = Some(0.00),
     items = Seq(charge2018, payment2018)
-  ), 2018)
+  ), testYear1)
 
   val transactionModel2019: TransactionModelWithYear = TransactionModelWithYear(TransactionModel(
     chargeType = Some(""),
@@ -173,7 +177,7 @@ class StatementsViewSpec extends TestSupport {
     clearedAmount = Some(610.00),
     accruedInterest = Some(0.00),
     items = Seq(charge2019, payment2019)
-  ), 2019)
+  ), testYear2)
 
   val errorModel: FinancialTransactionsErrorModel = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
@@ -197,12 +201,39 @@ class StatementsViewSpec extends TestSupport {
     }
 
     "have a link to jump to the specified tax year section" in {
-      document.getElementById("statement-2018").text() shouldBe messages.taxYear(2018)
-      document.getElementById("statement-2019").text() shouldBe messages.taxYear(2019)
+      document.getElementById(s"statement-$testYear1").text() shouldBe messages.taxYear(testYear1)
+      document.getElementById(s"statement-$testYear2").text() shouldBe messages.taxYear(testYear2)
     }
 
     "have a heading for each taxYear" in {
-      
+      document.getElementById(s"$testYear1-tax-year").text() shouldBe messages.taxYear(testYear1)
+      document.getElementById(s"$testYear2-tax-year").text() shouldBe messages.taxYear(testYear2)
+    }
+
+    "display the original charge for each taxYear" in {
+      document.getElementById(s"$testYear1-total").text() shouldBe transactionModel2018.model.originalAmount.get.toCurrencyString
+      document.getElementById(s"$testYear2-total").text() shouldBe transactionModel2019.model.originalAmount.get.toCurrencyString
+    }
+
+    "state the amount left to pay for each tax year" in {
+      document.getElementById(s"$testYear1-still-to-pay").text() shouldBe messages.stillToPay(transactionModel2018.model.outstandingAmount.get.toCurrencyString)
+      document.getElementById(s"$testYear2-still-to-pay").text() shouldBe messages.stillToPay(transactionModel2019.model.outstandingAmount.get.toCurrencyString)
+    }
+
+    "state the due date for each tax year" in {
+      document.getElementById(s"$testYear1-due-by").text() shouldBe messages.dueBy("31 January " + (testYear1 + 1))
+      document.getElementById(s"$testYear2-due-by").text() shouldBe messages.dueBy("31 January " + (testYear2 + 1))
+    }
+
+    "Have a heading of 'Your transactions' which contains details of charges and bullet points of payments made" in {
+      document.getElementById(s"$testYear1-transactions").text() shouldBe messages.transactions
+      document.getElementById(s"$testYear2-transactions").text() shouldBe messages.transactions
+
+      document.getElementById(s"$testYear1-charge-text").text() shouldBe messages.charge(charge2018.amount.get.toCurrencyString)
+      document.getElementById(s"$testYear2-charge-text").text() shouldBe messages.charge(charge2019.amount.get.toCurrencyString)
+
+      document.getElementById(s"$testYear1-paid-0").text() shouldBe messages.youPaid(payment2018.paymentAmount.get.toCurrencyString, payment2018.clearingDate.get.toShortDate)
+      document.getElementById(s"$testYear2-paid-0").text() shouldBe messages.youPaid(payment2019.paymentAmount.get.toCurrencyString, payment2019.clearingDate.get.toShortDate)
     }
   }
 
