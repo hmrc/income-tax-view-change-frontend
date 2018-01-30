@@ -17,16 +17,24 @@
 @import views.html.templates.main_template
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
-@import views.html.helpers.sidebarHelper
+@import views.html.helpers.{sidebarHelper, breadcrumbHelper}
 @import views.helpers.EstimatesPage
+@import models.{Breadcrumb, BreadcrumbItem}
 
-@(estimates: List[LastTaxCalculationWithYear], taxYear: Int)(serviceInfo: Html)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(estimates: List[LastTaxCalculationWithYear], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-estimates", None)
+    )))
+}
 
 @main_template(
     title = messages("estimates.title"),
     bodyClasses = None,
     sidebarLinks = None,
-    serviceInfo = serviceInfo
+    serviceInfo = breadcrumb
 ) {
 
     <section>

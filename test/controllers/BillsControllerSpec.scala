@@ -26,7 +26,7 @@ import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.{MockCalculationService, MockServiceInfoPartialService}
+import mocks.services.MockCalculationService
 import models.IncomeSourcesModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
@@ -34,7 +34,7 @@ import play.api.test.Helpers._
 import utils.TestSupport
 
 class BillsControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
   object TestCalculationController extends BillsController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -44,7 +44,6 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
     mockCalculationService,
-    mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AuditingService]
@@ -62,7 +61,6 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
           mockGetAllLatestCalcSuccess()
           status(result) shouldBe Status.OK
@@ -85,7 +83,6 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
           mockGetAllLatestCrystallisedCalcSuccess()
           status(result) shouldBe Status.OK
@@ -107,7 +104,6 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
           mockGetAllLatestCalcSuccessEmpty()
           status(result) shouldBe Status.OK
@@ -128,7 +124,6 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return an OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
           mockGetAllLatestCrystallisedCalcWithCalcNotFound()
           status(result) shouldBe Status.OK
@@ -148,7 +143,6 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
         lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
 
         "return an ISE (500)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
           mockGetAllLatestCrystallisedCalcWithError()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR

@@ -44,7 +44,7 @@ object Messages {
     val pageSubHeading: String => String = mtditid => s"Ref: $mtditid"
     object EstimatesSection {
       val heading = "Estimates"
-      val paragraph = "See what we think you might owe so far and at the end of your tax year."
+      val paragraph = "See what we think you'll owe."
       val link = "View your estimates"
     }
     object BillsSection {
@@ -250,5 +250,17 @@ object Messages {
     val heading = "Thank you"
     val line1 = "Your feedback will help us improve this service."
     val signInLink = "Go back to sign in."
+  }
+
+  object Breadcrumbs {
+    val bta = "Business tax home"
+    val it = "Income Tax"
+    val estimates = "View your estimates"
+    val itEstimate = "Your Income Tax estimate"
+    val bills = "Income Tax bills"
+    val finalisedBill = "Your finalised Income Tax bill"
+    val obligations = "Your Income Tax report deadlines"
+    val statement = "Income Tax statement"
+    val details = "Account details"
   }
 }
