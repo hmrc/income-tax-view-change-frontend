@@ -156,17 +156,17 @@ class HomePageViewSpec extends TestSupport {
       lazy val statementsSection = document.getElementById("statements-section")
 
       s"has the heading '${ReportDeadlinesSection.heading}'" in {
-        statementsSection.getElementById("statements-heading").text shouldBe StatementsSection.heading
+        statementsSection.getElementById("statements-heading").text shouldBe StatementSection.heading
       }
 
       s"has the paragraph '${ReportDeadlinesSection.paragraph}'" in {
-        statementsSection.getElementById("statements-text").text shouldBe StatementsSection.paragraph
+        statementsSection.getElementById("statements-text").text shouldBe StatementSection.paragraph
       }
 
       "has a link to statements" which {
 
         s"has the text '${ReportDeadlinesSection.link}'" in {
-          statementsSection.getElementById("statements-link").text shouldBe StatementsSection.link
+          statementsSection.getElementById("statements-link").text shouldBe StatementSection.link
         }
 
         "links to the statements page" in {

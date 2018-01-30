@@ -64,6 +64,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String): WSResponse = await(buildClient(uri).get())
 
     def getEstimates: WSResponse = get("/estimates")
+    def getStatements: WSResponse = get("/view-statement")
     def getBills: WSResponse = get("/bills")
     def getFinancialData(year: String): WSResponse = get(s"/calculation/$year")
     def getReportDeadlines: WSResponse = get(s"/obligations")

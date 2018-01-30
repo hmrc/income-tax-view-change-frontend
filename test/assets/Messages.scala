@@ -57,6 +57,11 @@ object Messages {
       val paragraph = "Check your report deadlines and if we've received them."
       val link = "View your deadlines"
     }
+    object StatementSection {
+      val heading = "Statements"
+      val paragraph = "View your income tax transactions, including charges and payments."
+      val link = "View your statement"
+    }
   }
 
   // Estimated Tax Liability Page Messages

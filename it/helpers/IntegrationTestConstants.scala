@@ -39,6 +39,9 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
 
   val testYear = "2018"
   val testYearPlusOne = "2019"
+  val testYearInt = 2018
+  val testYearPlusOneInt = 2019
+
   val testCalcType = "it"
 
   val testSelfEmploymentId = "ABC123456789"
@@ -872,5 +875,81 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
 
 
     val emptyModel = ReportDeadlinesModel(List())
+  }
+
+  object GetStatementsData {
+    def successResponse(statementModel: TransactionModelWithYear): JsValue = {
+      Json.toJson(statementModel)
+    }
+
+    def emptyResponse(): JsValue = {
+      Json.parse(
+        """[]"""
+      )
+    }
+
+    def failureResponse(code: String, reason: String): JsValue =
+      Json.parse(
+        s"""
+           |{
+           |  "code": $code,
+           |  "reason": $reason
+           |}
+         """.stripMargin)
+
+    val charge2018: SubItemModel = SubItemModel(
+      subItem = Some("000"),
+      dueDate = Some("2018-1-1".toLocalDate),
+      amount = Some(1000.00),
+      clearingDate = None,
+      clearingReason = None,
+      outgoingPaymentMethod = None,
+      paymentLock = None,
+      clearingLock = None,
+      interestLock = None,
+      dunningLock = None,
+      returnFlag = None,
+      paymentReference = None,
+      paymentAmount = None,
+      paymentMethod = None,
+      paymentLot = None,
+      paymentLotItem = None,
+      clearingSAPDocument = None,
+      statisticalDocument = None,
+      returnReason = None,
+      promiseToPay = None
+    )
+
+    val singleChargeTransactionModel = TransactionModel(
+      chargeType = Some(""),
+      mainType = Some(""),
+      periodKey = Some(""),
+      periodKeyDescription = Some(""),
+      taxPeriodFrom = Some("2017-4-6".toLocalDate),
+      taxPeriodTo = Some("2018-4-5".toLocalDate),
+      businessPartner = Some(""),
+      contractAccountCategory = Some(""),
+      contractAccount = Some(""),
+      contractObjectType = Some(""),
+      contractObject = Some(""),
+      sapDocumentNumber = Some(""),
+      sapDocumentNumberItem = Some(""),
+      chargeReference = Some(""),
+      mainTransaction = Some(""),
+      subTransaction = Some(""),
+      originalAmount = Some(1000.00),
+      outstandingAmount = Some(400.00),
+      clearedAmount = Some(600.00),
+      accruedInterest = Some(0.00),
+      items = Seq(charge2018)
+    )
+
+    val singleFinancialTransactionsModel = FinancialTransactionsModel(
+      idType = "",
+      idNumber = "",
+      regimeType = "",
+      processingDate = "2017-03-07T09:30:00.000Z".toZonedDateTime,
+      financialTransactions = Seq(singleChargeTransactionModel)
+    )
   }
 }
