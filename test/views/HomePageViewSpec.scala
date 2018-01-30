@@ -17,6 +17,7 @@
 package views
 
 import assets.Messages.{HomePage => messages}
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.PropertyIncome._
 import assets.TestConstants._
@@ -38,12 +39,17 @@ class HomePageViewSpec extends TestSupport {
 
   "The HomePage view" should {
 
-    lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, serviceInfo)
+    lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document = Jsoup.parse(contentAsString(page))
     import messages._
 
     s"have the title '$title'" in {
       document.title() shouldBe title
+    }
+
+    "have a breadcrumb trail" in {
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
     }
 
     s"have the top page heading '$topHeading'" in {

@@ -21,19 +21,17 @@ import assets.TestConstants.testUserName
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.MockAuthenticationPredicate
-import mocks.services.MockServiceInfoPartialService
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 
-class HomeControllerSpec extends MockAuthenticationPredicate with MockServiceInfoPartialService {
+class HomeControllerSpec extends MockAuthenticationPredicate {
 
   object TestHomeController extends HomeController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
-    mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi]
@@ -61,7 +59,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockServiceInf
 
       "return OK (200)" in {
         TestHomeController.config.features.homePageEnabled(true)
-        mockServiceInfoPartialSuccess(Some(testUserName))
         status(result) shouldBe Status.OK
       }
 
