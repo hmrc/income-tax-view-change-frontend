@@ -33,6 +33,9 @@ home.estimates.link                                             = View your esti
 home.deadlines.heading                                          = Report deadlines
 home.deadlines.text                                             = Check your report deadlines and if we''ve received them.
 home.deadlines.link                                             = View your deadlines
+home.statements.heading                                         = Statements
+home.statements.text                                            = View your income tax transactions, including charges and payments.
+home.statements.link                                            = View your statement
 
 ## Estimates Page ##
 estimates.title                                                 = Current estimates

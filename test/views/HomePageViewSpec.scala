@@ -151,6 +151,30 @@ class HomePageViewSpec extends TestSupport {
       }
     }
 
+    s"have a Statements section" which {
+
+      lazy val statementsSection = document.getElementById("statements-section")
+
+      s"has the heading '${ReportDeadlinesSection.heading}'" in {
+        statementsSection.getElementById("statements-heading").text shouldBe StatementsSection.heading
+      }
+
+      s"has the paragraph '${ReportDeadlinesSection.paragraph}'" in {
+        statementsSection.getElementById("statements-text").text shouldBe StatementsSection.paragraph
+      }
+
+      "has a link to statements" which {
+
+        s"has the text '${ReportDeadlinesSection.link}'" in {
+          statementsSection.getElementById("statements-link").text shouldBe StatementsSection.link
+        }
+
+        "links to the statements page" in {
+          statementsSection.getElementById("statements-link").attr("href") shouldBe controllers.routes.StatementsController.getStatements().url
+        }
+      }
+    }
+
     "have no sidebar section " in {
       document.getElementById("sidebar") shouldBe null
     }
