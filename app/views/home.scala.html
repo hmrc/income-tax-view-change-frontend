@@ -19,45 +19,70 @@
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
-@import models.CalculationDataResponseModel
+@import models.{CalculationDataResponseModel, Breadcrumb, BreadcrumbItem}
 @import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
-@import views.html.helpers.calcBreakdownHelper
+@import views.html.helpers.{calcBreakdownHelper, breadcrumbHelper}
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUserWithNino[_], serviceInfo: Html)
+@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUserWithNino[_])
+
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", None)
+    )))
+}
+
+@howToDoThis = {
+    <div id="whyMayChange" class="panel-indent">
+        <p id="why-may-change-1">@messages("home.dropdown.p1")</p>
+        <p id="why-may-change-2">@messages("home.dropdown.p2")</p>
+        <!--<p>@messages("home.dropdown.p3") <a id="dropdown-link" href="">@messages("home.dropdown.link")</a></p>-->
+    </div>
+}
 
 @main_template(
     title = messages("home.title"),
     bodyClasses = None,
     scriptElem = None,
-    sidebarLinks = None
+    sidebarLinks = None,
+    serviceInfo = breadcrumb
 ) {
 
     <section id="home-page">
 
+        <h1 class="heading-xlarge">
+            <span id="top-sub-heading" class="heading-secondary">@messages("home.subheading")</span>
+            <span id="top-heading">Reporting through software</span>
+        </h1>
+
+        <section class="divider--bottom">
+            <p id="top-text" class="lede">@messages("home.text")</p>
+            <p>@accordionHelper("howToDoThis", messages("home.dropdown.text"), howToDoThis)</p>
+        </section>
+
         <h1>
-            <span id="page-heading" class="heading-xlarge">@messages("home.heading")</span>
+            <span id="page-heading" class="heading-large">@messages("home.heading.2")</span>
             <span id="sub-heading" class="heading-secondary"><span id="ref">@messages("home.ref")</span><span id="it-reference"> @user.mtditid</span></span>
         </h1>
 
         <div class="grid-row">
 
             <div id="bills-section" class="column-one-half">
-                <h3 id="bills-heading" class="heading-medium">@messages("home.bills.heading")</h3>
+                <h3 id="bills-heading" class="heading-small">@messages("home.bills.heading")</h3>
                 <p id="bills-text">@messages("home.bills.text")</p>
                 <p><a id="bills-link" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
             </div>
 
-            <div id="estimates-section" class="column-one-half">
-                <h3 id="estimates-heading" class="heading-medium">@messages("home.estimates.heading")</h3>
-                <p id="estimates-text">@messages("home.estimates.text")</p>
-                <p><a id="estimates-link" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
-            </div>
-
             <div id="deadlines-section" class="column-one-half">
-                <h3 id="deadlines-heading" class="heading-medium">@messages("home.deadlines.heading")</h3>
+                <h3 id="deadlines-heading" class="heading-small">@messages("home.deadlines.heading")</h3>
                 <p id="deadlines-text">@messages("home.deadlines.text")</p>
                 <p><a id="deadlines-link" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">@messages("home.deadlines.link")</a></p>
+            </div>
+
+            <div id="estimates-section" class="column-one-half">
+                <h3 id="estimates-heading" class="heading-small">@messages("home.estimates.heading")</h3>
+                <p id="estimates-text">@messages("home.estimates.text")</p>
+                <p><a id="estimates-link" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
             </div>
 
             <div id="statements-section" class="column-one-half">

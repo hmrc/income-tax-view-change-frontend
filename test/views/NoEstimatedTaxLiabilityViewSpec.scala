@@ -16,7 +16,7 @@
 
 package views
 
-import assets.Messages.{NoEstimatedTaxLiability => messages, Sidebar => sidebarMessages}
+import assets.Messages.{NoEstimatedTaxLiability => messages, Sidebar => sidebarMessages, Breadcrumbs => breadcrumbMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
@@ -42,11 +42,17 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
   "The EstimatedTaxLiability view" should {
 
     lazy val page: HtmlFormat.Appendable =
-      views.html.noEstimatedTaxLiability(testYear)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+      views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
+    }
+
+    "have a breadcrumb trail" in {
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+      document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
     }
 
     s"have the tax year '${messages.taxYearSubheading}'" in {
@@ -73,7 +79,7 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
     "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
       mockAppConfig.features.homePageEnabled(false)
       lazy val page: HtmlFormat.Appendable =
-        views.html.noEstimatedTaxLiability(testYear)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+        views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
       lazy val document: Document = Jsoup.parse(contentAsString(page))
       document.getElementById("it-home-back") should be(null)
     }
@@ -81,7 +87,7 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
     "show a back link to the Income Tax home page, when the home page feature is enabled" in {
       mockAppConfig.features.homePageEnabled(true)
       lazy val page: HtmlFormat.Appendable =
-        views.html.noEstimatedTaxLiability(testYear)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+        views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
       lazy val document: Document = Jsoup.parse(contentAsString(page))
       document.getElementById("it-home-back") shouldNot be(null)
     }

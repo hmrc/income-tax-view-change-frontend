@@ -17,6 +17,7 @@
 package views
 
 import assets.Messages
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.Messages.{Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
@@ -44,11 +45,11 @@ class BillsViewSpec extends TestSupport {
 
   private def pageSetup(incomeSources: IncomeSourcesModel) = new {
     lazy val pageNoBills: HtmlFormat.Appendable = views.html.bills(
-        List())(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, incomeSources)
+        List())(FakeRequest(),applicationMessages, mockAppConfig, incomeSources)
     lazy val documentNoBills: Document = Jsoup.parse(contentAsString(pageNoBills))
 
     lazy val page2Bills: HtmlFormat.Appendable = views.html.bills(
-        lastTaxCalcWithYearCrystallisedList)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, incomeSources)
+        lastTaxCalcWithYearCrystallisedList)(FakeRequest(),applicationMessages, mockAppConfig, incomeSources)
     lazy val document2Bills: Document = Jsoup.parse(contentAsString(page2Bills))
   }
 
@@ -81,6 +82,12 @@ class BillsViewSpec extends TestSupport {
 
       "have no sidebar section " in {
         document2Bills.getElementById("sidebar") should be(null)
+      }
+
+      "have a breadcrumb trail" in {
+        document2Bills.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+        document2Bills.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+        document2Bills.getElementById("breadcrumb-bills").text shouldBe breadcrumbMessages.bills
       }
 
     }
