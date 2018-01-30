@@ -65,7 +65,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockFinancialTransactionSuccess()
+          mockFinancialTransactionFailed()
           mockServiceInfoPartialSuccess(Some(testUserName))
           mockFinancialDataSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
@@ -89,7 +89,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockFinancialTransactionSuccess()
+          mockFinancialTransactionFailed()
           mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockFinancialDataSuccess()
@@ -106,7 +106,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         }
       }
 
-      "receives a crystallised calculation from the calculationService" should {
+      "receives a crystallised calculation from the calculationService and a transaction from the financialTransactionService" should {
         lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
@@ -125,6 +125,34 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "render the crystalisation page" in {
           document.title() shouldBe messages.Crystallised.tabTitle
+        }
+
+      }
+
+      "receives a crystallised calculation from the calculationService and an error model from the financialTransactionService" should {
+        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+
+        "return Status Internal Server Error (500)" in {
+          mockFinancialTransactionFailed()
+          mockServiceInfoPartialSuccess(Some(testUserName))
+          mockPropertyIncomeSource()
+          mockFinancialDataCrystalisationSuccess()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+      }
+
+      "receives a crystallised calculation from the calculationService and no transaction with the correct date" should {
+        lazy val result = TestCalculationController.getFinancialData(testYearPlusTwo)(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+
+        "return Status Internal Server Error (500)" in {
+          mockFinancialTransactionFailed()
+          mockServiceInfoPartialSuccess(Some(testUserName))
+          mockPropertyIncomeSource()
+          mockFinancialDataCrystalisationSuccess()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
       }
