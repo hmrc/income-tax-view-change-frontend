@@ -68,7 +68,7 @@
 
             <h2 id="@tmwy.taxYear-still-to-pay" class="heading-small">@messages("statements.stillToPay", tmwy.model.outstandingAmount.get.toCurrencyString)</h2>
 
-            <p id="@tmwy.taxYear-due-by">@Html(messages("statements.dueBy", "31 January " + s"${tmwy.taxYear+1}", s"${tmwy.taxYear}"))</p>
+            <p id="@tmwy.taxYear-due-by">@Html(messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}"))</p>
 
             <h2 id="@tmwy.taxYear-transactions" class="heading-small">@messages("statements.transactions")</h2>
 
