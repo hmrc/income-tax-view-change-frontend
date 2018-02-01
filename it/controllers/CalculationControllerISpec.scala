@@ -20,6 +20,7 @@ import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
+import play.api.http.Status
 import play.api.http.Status._
 import utils.ImplicitCurrencyFormatter._
 
@@ -111,79 +112,155 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
       }
     }
 
-    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response and Crystallised EoY amount" should {
-      "return the correct page with a valid total" in {
+    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response and Crystallised EoY amount" when {
 
-        isAuthorisedUser(true)
+      "a successful response is retrieved for the financial transactions and there is an outstanding amount (unpaid)" should {
 
-        stubUserDetails()
+        "return the correct page with a valid total" in {
 
-        stubPartial()
+          isAuthorisedUser(true)
+          stubUserDetails()
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getPropDeets(GetPropertyDetails.successResponse())
 
-        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse =
-          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Crystallised)
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          val lastTaxCalcResponse =
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Crystallised)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
-        And("I wiremock stub a successful Get CalculationData response")
-        val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+          And("I wiremock stub a successful Get CalculationData response")
+          val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
 
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+          And("I wiremock stub a successful Unpaid Financial Transactions response")
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, GetFinancialTransactions.financialTransactionsJson(1000.0))
 
-        getPropDeets(GetPropertyDetails.successResponse())
+          When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
+          val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
-        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+          verifyBizDeetsCall()
+          verifyPropDeetsCall()
+          verifyFinancialTransactionsCall()
 
-        verifyBizDeetsCall()
+          Then("I verify the Estimated Tax Liability response has been wiremocked")
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+          //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
 
-        verifyPropDeetsCall()
-
-        Then("I verify the Estimated Tax Liability response has been wiremocked")
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-        //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
-
-        res should have (
-          httpStatus(OK),
-          pageTitle("Your final submission"),
-          elementTextByID("whatYouOweHeading")(s"What you owe: ${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
-          elementTextByID("tax-year")("Tax year: 2017 to 2018"),
-          elementTextByID("it-reference")(testMtditid),
-          elementTextByID("obligations-link")("View report deadlines"),
-          elementTextByID("sa-link")("View annual returns"),
-          elementTextByID("page-heading")("Your finalised Income Tax bill"),
-          elementTextByID("business-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
-          elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
-          elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
-          elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
-          elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
-          elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
-          elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
-          elementTextByID("brt-amount")((calcBreakdownResponse.payPensionsProfit.basicBand.taxAmount + calcBreakdownResponse.savingsAndGains.basicBand.taxAmount).toCurrencyString),
-          elementTextByID("hrt-it-calc")((calcBreakdownResponse.payPensionsProfit.higherBand.taxableIncome + calcBreakdownResponse.savingsAndGains.higherBand.taxableIncome).toCurrencyString),
-          elementTextByID("hrt-rate")(calcBreakdownResponse.payPensionsProfit.higherBand.taxRate.toStringNoDecimal),
-          elementTextByID("hrt-amount")((calcBreakdownResponse.payPensionsProfit.higherBand.taxAmount + calcBreakdownResponse.savingsAndGains.higherBand.taxAmount).toCurrencyString),
-          elementTextByID("art-it-calc")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxableIncome + calcBreakdownResponse.savingsAndGains.additionalBand.taxableIncome).toCurrencyString),
-          elementTextByID("art-rate")(calcBreakdownResponse.payPensionsProfit.additionalBand.taxRate.toStringNoDecimal),
-          elementTextByID("art-amount")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxAmount + calcBreakdownResponse.savingsAndGains.additionalBand.taxAmount).toCurrencyString),
-          elementTextByID("dividend-income")(calcBreakdownResponse.incomeReceived.ukDividends.toCurrencyString),
-          elementTextByID("dividend-allowance")(s"-${calcBreakdownResponse.dividends.allowance.toCurrencyString}"),
-          elementTextByID("taxable-dividend-income")(calcBreakdownResponse.taxableDividendIncome.toCurrencyString),
-          elementTextByID("dividend-brt-calc")(calcBreakdownResponse.dividends.basicBand.taxableIncome.toCurrencyString),
-          elementTextByID("dividend-brt-rate")(calcBreakdownResponse.dividends.basicBand.taxRate.toStringNoDecimal),
-          elementTextByID("dividend-brt-amount")(calcBreakdownResponse.dividends.basicBand.taxAmount.toCurrencyString),
-          elementTextByID("dividend-hrt-calc")(calcBreakdownResponse.dividends.higherBand.taxableIncome.toCurrencyString),
-          elementTextByID("dividend-hrt-rate")(calcBreakdownResponse.dividends.higherBand.taxRate.toStringNoDecimal),
-          elementTextByID("dividend-hrt-amount")(calcBreakdownResponse.dividends.higherBand.taxAmount.toCurrencyString),
-          elementTextByID("dividend-art-calc")(calcBreakdownResponse.dividends.additionalBand.taxableIncome.toCurrencyString),
-          elementTextByID("dividend-art-rate")(calcBreakdownResponse.dividends.additionalBand.taxRate.toStringNoDecimal),
-          elementTextByID("dividend-art-amount")(calcBreakdownResponse.dividends.additionalBand.taxAmount.toCurrencyString),
-          elementTextByID("nic2-amount")(calcBreakdownResponse.nic.class2.toCurrencyString),
-          elementTextByID("nic4-amount")(calcBreakdownResponse.nic.class4.toCurrencyString),
-          elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)
-        )
+          res should have(
+            httpStatus(OK),
+            pageTitle("Your final submission"),
+            elementTextByID("tax-year")("Tax year: 2017 to 2018"),
+            elementTextByID("page-heading")("Your finalised Income Tax bill"),
+            elementTextByID("whatYouOweHeading")(s"What you owe: ${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
+            isElementVisibleById("calcBreakdown")(expectedValue = true),
+            elementTextByID("calcBreakdown")("How this figure was calculated"),
+            elementTextByID("business-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
+            elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
+            elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
+            elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
+            elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
+            elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
+            elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
+            elementTextByID("brt-amount")((calcBreakdownResponse.payPensionsProfit.basicBand.taxAmount + calcBreakdownResponse.savingsAndGains.basicBand.taxAmount).toCurrencyString),
+            elementTextByID("hrt-it-calc")((calcBreakdownResponse.payPensionsProfit.higherBand.taxableIncome + calcBreakdownResponse.savingsAndGains.higherBand.taxableIncome).toCurrencyString),
+            elementTextByID("hrt-rate")(calcBreakdownResponse.payPensionsProfit.higherBand.taxRate.toStringNoDecimal),
+            elementTextByID("hrt-amount")((calcBreakdownResponse.payPensionsProfit.higherBand.taxAmount + calcBreakdownResponse.savingsAndGains.higherBand.taxAmount).toCurrencyString),
+            elementTextByID("art-it-calc")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxableIncome + calcBreakdownResponse.savingsAndGains.additionalBand.taxableIncome).toCurrencyString),
+            elementTextByID("art-rate")(calcBreakdownResponse.payPensionsProfit.additionalBand.taxRate.toStringNoDecimal),
+            elementTextByID("art-amount")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxAmount + calcBreakdownResponse.savingsAndGains.additionalBand.taxAmount).toCurrencyString),
+            elementTextByID("dividend-income")(calcBreakdownResponse.incomeReceived.ukDividends.toCurrencyString),
+            elementTextByID("dividend-allowance")(s"-${calcBreakdownResponse.dividends.allowance.toCurrencyString}"),
+            elementTextByID("taxable-dividend-income")(calcBreakdownResponse.taxableDividendIncome.toCurrencyString),
+            elementTextByID("dividend-brt-calc")(calcBreakdownResponse.dividends.basicBand.taxableIncome.toCurrencyString),
+            elementTextByID("dividend-brt-rate")(calcBreakdownResponse.dividends.basicBand.taxRate.toStringNoDecimal),
+            elementTextByID("dividend-brt-amount")(calcBreakdownResponse.dividends.basicBand.taxAmount.toCurrencyString),
+            elementTextByID("dividend-hrt-calc")(calcBreakdownResponse.dividends.higherBand.taxableIncome.toCurrencyString),
+            elementTextByID("dividend-hrt-rate")(calcBreakdownResponse.dividends.higherBand.taxRate.toStringNoDecimal),
+            elementTextByID("dividend-hrt-amount")(calcBreakdownResponse.dividends.higherBand.taxAmount.toCurrencyString),
+            elementTextByID("dividend-art-calc")(calcBreakdownResponse.dividends.additionalBand.taxableIncome.toCurrencyString),
+            elementTextByID("dividend-art-rate")(calcBreakdownResponse.dividends.additionalBand.taxRate.toStringNoDecimal),
+            elementTextByID("dividend-art-amount")(calcBreakdownResponse.dividends.additionalBand.taxAmount.toCurrencyString),
+            elementTextByID("nic2-amount")(calcBreakdownResponse.nic.class2.toCurrencyString),
+            elementTextByID("nic4-amount")(calcBreakdownResponse.nic.class4.toCurrencyString),
+            elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)
+          )
+        }
       }
+
+      "a successful response is retrieved for the financial transactions and there is no outstanding amount (paid)" should {
+
+        "return the correct page with a valid total" in {
+
+          isAuthorisedUser(true)
+          stubUserDetails()
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          val lastTaxCalcResponse =
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Crystallised)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+
+          And("I wiremock stub a successful Get CalculationData response")
+          val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+
+          And("I wiremock stub a successful paid Financial Transactions response")
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, GetFinancialTransactions.financialTransactionsJson(0.0))
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
+          val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+
+          verifyBizDeetsCall()
+          verifyPropDeetsCall()
+          verifyFinancialTransactionsCall()
+
+          Then("I verify the Estimated Tax Liability response has been wiremocked")
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+          //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
+
+
+          println(res.body)
+
+          res should have(
+            httpStatus(OK),
+            pageTitle("Your final submission"),
+            elementTextByID("page-heading")("Your finalised Income Tax bill"),
+            elementTextByID("tax-year")("Tax year: 2017 to 2018"),
+            isElementVisibleById("calcBreakdown")(expectedValue = false),
+            elementTextByID("business-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
+            elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
+            elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
+            elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
+            elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
+            elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
+            elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
+            elementTextByID("brt-amount")((calcBreakdownResponse.payPensionsProfit.basicBand.taxAmount + calcBreakdownResponse.savingsAndGains.basicBand.taxAmount).toCurrencyString),
+            elementTextByID("hrt-it-calc")((calcBreakdownResponse.payPensionsProfit.higherBand.taxableIncome + calcBreakdownResponse.savingsAndGains.higherBand.taxableIncome).toCurrencyString),
+            elementTextByID("hrt-rate")(calcBreakdownResponse.payPensionsProfit.higherBand.taxRate.toStringNoDecimal),
+            elementTextByID("hrt-amount")((calcBreakdownResponse.payPensionsProfit.higherBand.taxAmount + calcBreakdownResponse.savingsAndGains.higherBand.taxAmount).toCurrencyString),
+            elementTextByID("art-it-calc")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxableIncome + calcBreakdownResponse.savingsAndGains.additionalBand.taxableIncome).toCurrencyString),
+            elementTextByID("art-rate")(calcBreakdownResponse.payPensionsProfit.additionalBand.taxRate.toStringNoDecimal),
+            elementTextByID("art-amount")((calcBreakdownResponse.payPensionsProfit.additionalBand.taxAmount + calcBreakdownResponse.savingsAndGains.additionalBand.taxAmount).toCurrencyString),
+            elementTextByID("dividend-income")(calcBreakdownResponse.incomeReceived.ukDividends.toCurrencyString),
+            elementTextByID("dividend-allowance")(s"-${calcBreakdownResponse.dividends.allowance.toCurrencyString}"),
+            elementTextByID("taxable-dividend-income")(calcBreakdownResponse.taxableDividendIncome.toCurrencyString),
+            elementTextByID("dividend-brt-calc")(calcBreakdownResponse.dividends.basicBand.taxableIncome.toCurrencyString),
+            elementTextByID("dividend-brt-rate")(calcBreakdownResponse.dividends.basicBand.taxRate.toStringNoDecimal),
+            elementTextByID("dividend-brt-amount")(calcBreakdownResponse.dividends.basicBand.taxAmount.toCurrencyString),
+            elementTextByID("dividend-hrt-calc")(calcBreakdownResponse.dividends.higherBand.taxableIncome.toCurrencyString),
+            elementTextByID("dividend-hrt-rate")(calcBreakdownResponse.dividends.higherBand.taxRate.toStringNoDecimal),
+            elementTextByID("dividend-hrt-amount")(calcBreakdownResponse.dividends.higherBand.taxAmount.toCurrencyString),
+            elementTextByID("dividend-art-calc")(calcBreakdownResponse.dividends.additionalBand.taxableIncome.toCurrencyString),
+            elementTextByID("dividend-art-rate")(calcBreakdownResponse.dividends.additionalBand.taxRate.toStringNoDecimal),
+            elementTextByID("dividend-art-amount")(calcBreakdownResponse.dividends.additionalBand.taxAmount.toCurrencyString),
+            elementTextByID("nic2-amount")(calcBreakdownResponse.nic.class2.toCurrencyString),
+            elementTextByID("nic4-amount")(calcBreakdownResponse.nic.class4.toCurrencyString),
+            elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)
+          )
+        }
+      }
+
     }
 
     "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response but NO EoY Estimate" should {

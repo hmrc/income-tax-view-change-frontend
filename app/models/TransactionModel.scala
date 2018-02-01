@@ -40,7 +40,11 @@ case class TransactionModel(chargeType: Option[String],
                        outstandingAmount: Option[BigDecimal],
                        clearedAmount: Option[BigDecimal],
                        accruedInterest: Option[BigDecimal],
-                       items: Seq[SubItemModel])
+                       items: Seq[SubItemModel]) {
+
+  val isPaid: Boolean = outstandingAmount.fold(true)(_ == 0)
+
+}
 
 case class TransactionModelWithYear(model: TransactionModel,
                                     taxYear: Int)

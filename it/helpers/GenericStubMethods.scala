@@ -15,11 +15,9 @@
  */
 package helpers
 
-import helpers.IntegrationTestConstants.testNino
-import helpers.servicemocks.{AuthStub, BtaPartialStub, SelfAssessmentStub, UserDetailsStub}
-import org.scalatest.Assertion
+import helpers.IntegrationTestConstants.{testMtditid, testNino}
+import helpers.servicemocks._
 import play.api.libs.json.{JsNull, JsValue}
-import play.api.libs.ws.WSResponse
 
 trait GenericStubMethods extends CustomMatchers {
 
@@ -83,6 +81,11 @@ trait GenericStubMethods extends CustomMatchers {
   def verifyPropObsCall(): Unit = {
     Then("Verify that property obligations has been called")
     SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
+  }
+
+  def verifyFinancialTransactionsCall(): Unit = {
+    Then("Verify that Financial Transactions has been called")
+    FinancialTransactionsStub.verifyFinancialTransactions(testMtditid)
   }
 
 }

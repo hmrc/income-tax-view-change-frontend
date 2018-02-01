@@ -38,13 +38,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "display a single obligation with the correct dates and status" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
-          stubPartial()
-
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response")
@@ -54,9 +49,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyBizObsCall(testSelfEmploymentId)
 
           Then("the view displays the correct title, username and links")
@@ -94,11 +87,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display a single obligation with the correct dates and status" in {
 
             isAuthorisedUser(true)
-
             stubUserDetails()
-
             getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
             getPropDeets(GetPropertyDetails.successResponse())
 
             And("I wiremock stub a single property and business obligation response")
@@ -194,13 +184,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "display the correct amount of obligations with the correct statuses" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
-          stubPartial()
-
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple business obligations response")
@@ -210,9 +195,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyBizObsCall(testSelfEmploymentId)
 
           Then("the view should display the title and username")
@@ -280,13 +263,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "display only one of each received and open obligations and all overdue obligations" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
-          stubPartial()
-
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple business obligations response")
@@ -296,9 +274,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyBizObsCall(testSelfEmploymentId)
 
           Then("the view should display the title and username")
@@ -376,13 +352,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "display a single obligation with the correct dates and status" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
-          stubPartial()
-
           getBizDeets()
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business obligation response")
@@ -392,9 +363,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyPropObsCall()
 
           Then("the view should display the title and username")
@@ -423,11 +392,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "display the correct amount of obligations with the correct statuses" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
           getBizDeets()
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple property obligations response")
@@ -437,9 +403,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyPropObsCall()
 
           Then("the view should display the title and username")
@@ -482,11 +446,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "display only one of each received and open obligations and all overdue obligations" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
           getBizDeets()
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple property open and received obligations response")
@@ -496,9 +457,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyPropObsCall()
 
           Then("the view should display the title and username")
@@ -547,13 +506,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "display one obligation each for business and property with the correct dates and statuses" in {
 
           isAuthorisedUser(true)
-
           stubUserDetailsError()
-
-          stubPartial()
-
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a single business and property obligation response")
@@ -564,11 +518,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyBizObsCall(testSelfEmploymentId)
-
           verifyPropObsCall()
 
           res should have(
@@ -602,11 +553,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "display the obligation of each businesses" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
-          stubPartial()
-
           getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
 
           And("I wiremock stub a successful Property Details response")
@@ -620,9 +567,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyBizObsCall(testSelfEmploymentId, otherTestSelfEmploymentId)
 
           Then("the page should display the correct title, username and links")
@@ -668,13 +613,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "display the obligation of each businesses" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
-          stubPartial()
-
           getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub multiple business obligations and a single property obligation response")
@@ -686,9 +626,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyBizObsCall(testSelfEmploymentId, otherTestSelfEmploymentId)
 
           Then("the page should display the correct title, username and links")
@@ -746,9 +684,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "Display an error message to the user" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
           And("I wiremock stub a successful Property Details response, with no Property Income Source")
@@ -761,9 +697,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyBizObsCall(testSelfEmploymentId)
 
           Then("the view is displayed with an error message under the business income section")
@@ -782,11 +716,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "Display an error message to the user" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
           getBizDeets()
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub an error for the property obligations response")
@@ -796,9 +727,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyPropObsCall()
 
           Then("the view is displayed with an error message under the property income section")
@@ -817,11 +746,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "Display an error message to the user" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub an error for the property obligations response")
@@ -834,11 +760,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyBizDeetsCall()
-
           verifyPropDeetsCall()
-
           verifyBizObsCall(testSelfEmploymentId)
-
           verifyPropObsCall()
 
           Then("an error message for property obligations is returned and the correct view is displayed")
@@ -869,5 +792,4 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
       }
     }
   }
-
 }
