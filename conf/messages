@@ -139,13 +139,17 @@ statements.p1                                                   = A record of yo
 statements.taxYearStatement                                     = Tax year: {0}-{1}
 statements.totalCharges                                         = Total charges
 statements.stillToPay                                           = Still to pay: {0}
-statements.dueBy                                                = This is due by {0}. You can <a href="#" id="{1}-pay-now">pay this now</a>.
+statements.dueBy                                                = This is due by {0}.
 statements.nothingToPay                                         = Nothing left to pay
 statements.paidBill                                             = You''ve paid this bill.
 statements.transactions                                         = Your transactions
 statements.charge                                               = You had a charge of <span id="{0}-charge">{1}</span>.
 statements.youPaid                                              = You paid {0} on {1}
 statements.earlierTransactions                                  = For earlier transactions, <a href="#">view your self assessment</a>.
+statements.noTransactions                                       = You''ve had no transactions since you started reporting through accounting software.
+
+statements.error.heading                                        = We can''t show your statement right now
+statements.error.para                                           = Try reloading the page or coming back later.
 
 ## Statuses ##
 status.received                                                 = Received

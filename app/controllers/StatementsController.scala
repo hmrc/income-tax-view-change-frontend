@@ -44,8 +44,8 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
       for {
         financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.nino)
       } yield financialTransactionsResponse match {
-        case model: FinancialTransactionsModel => Ok(views.html.statements(model.withYears()))
-        case _: FinancialTransactionsErrorModel => InternalServerError
+        case model: FinancialTransactionsModel => Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
+        case _: FinancialTransactionsErrorModel => InternalServerError(views.html.errorPages.statementsError())
       }
 
   }

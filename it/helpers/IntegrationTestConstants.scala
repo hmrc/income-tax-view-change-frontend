@@ -1052,5 +1052,13 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       processingDate = "2017-03-07T09:30:00.000Z".toZonedDateTime,
       financialTransactions = Seq(singleChargeTransactionModel, singleCharge2PaymentsTransactionModel)
     )
+
+    val emptyFTModel = FinancialTransactionsModel(
+      idType = "",
+      idNumber = "",
+      regimeType = "",
+      processingDate = "2017-03-07T09:30:00.000Z".toZonedDateTime,
+      financialTransactions = Seq()
+    )
   }
 }

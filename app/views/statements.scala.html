@@ -20,6 +20,7 @@
 @import views.html.helpers.breadcrumbHelper
 @import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
+@import views.html.helpers.backToHomeHelper
 
 @(model: Seq[TransactionModelWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
@@ -40,7 +41,11 @@
 
     <h1 id="page-heading" class="heading-xlarge">@messages("statements.heading")</h1>
 
-    <p id="statements-p1">@messages("statements.p1")</p>
+    @if(model.isEmpty){
+        <p id="statements-no-transactions">@messages("statements.noTransactions")</p>
+    } else {
+        <p id="statements-p1">@messages("statements.p1")</p>
+    }
 
     @model.map { tmwy =>
         <ul class="list list-bullet">
@@ -51,7 +56,7 @@
     }
 
     @model.map { tmwy =>
-        <section id="@tmwy.taxYear-tax-year-section">
+        <section id="@tmwy.taxYear-tax-year-section" @if(model.reverse.head.taxYear != tmwy.taxYear) {class="divider--bottom"}>
 
             <h2 id="@tmwy.taxYear-tax-year" class="heading-large">@messages("statements.taxYearStatement", s"${tmwy.taxYear - 1}", s"${tmwy.taxYear}")</h2>
 
@@ -59,16 +64,20 @@
                 <div class="column-two-thirds">
                     <div class="grey-highlight">
                         <div class="data">
-                            <p id="@tmwy.taxYear-total" class="data-item bold-xlarge">@tmwy.model.originalAmount.get.toCurrency</p>
-                            <p id="@tmwy.taxYear-total-subheading" class="data-item bold-small">@messages("statements.totalCharges")</p>
+                            <span id="@tmwy.taxYear-total" class="data-item bold-xlarge">@tmwy.model.originalAmount.get.toCurrency</span>
+                            <span id="@tmwy.taxYear-total-subheading" class="data-item bold-small">@messages("statements.totalCharges")</span>
                         </div>
                     </div>
                 </div>
             </div>
 
+            @if(tmwy.model.outstandingAmount.get > 0){
             <h2 id="@tmwy.taxYear-still-to-pay" class="heading-small">@messages("statements.stillToPay", tmwy.model.outstandingAmount.get.toCurrencyString)</h2>
-
-            <p id="@tmwy.taxYear-due-by">@Html(messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}"))</p>
+            <p id="@tmwy.taxYear-due-by">@messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}")</p>
+            } else {
+            <h2 id="@tmwy.taxYear-nothing-to-pay" class="heading-small">@messages("statements.nothingToPay")</h2>
+            <p id="@tmwy.taxYear-paid-bill">@messages("statements.paidBill")</p>
+            }
 
             <h2 id="@tmwy.taxYear-transactions" class="heading-small">@messages("statements.transactions")</h2>
 
@@ -83,6 +92,10 @@
             }
 
         </section>
+    }
+
+    @if(appConfig.features.homePageEnabled()){
+        @backToHomeHelper()
     }
 
 </section>

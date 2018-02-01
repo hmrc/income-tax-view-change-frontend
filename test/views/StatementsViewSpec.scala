@@ -186,55 +186,71 @@ class StatementsViewSpec extends TestSupport {
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
-  "The Statements view" should {
-    lazy val statementsModel = Seq(transactionModel2018, transactionModel2019)
+  "The Statements view" when {
 
-    val setup = pageSetup(statementsModel)
-    import setup._
+    "a 'Seq' of 2 transaction models are passed through" should {
+      lazy val statementsModel = Seq(transactionModel2018, transactionModel2019)
 
-    s"have the title '${messages.title}'" in {
-      document.title() shouldBe messages.title
+      val setup = pageSetup(statementsModel)
+      import setup._
+
+      s"have the title '${messages.title}'" in {
+        document.title() shouldBe messages.title
+      }
+
+      s"have the an intro para '${messages.p1}'" in {
+        document.getElementById("statements-p1").text() shouldBe messages.p1
+      }
+
+      "have a link to jump to the specified tax year section" in {
+        document.getElementById(s"statement-$testYear1").text() shouldBe messages.taxYear(testYear1)
+        document.getElementById(s"statement-$testYear2").text() shouldBe messages.taxYear(testYear2)
+      }
+
+      "have a heading for each taxYear" in {
+        document.getElementById(s"$testYear1-tax-year").text() shouldBe messages.taxYear(testYear1)
+        document.getElementById(s"$testYear2-tax-year").text() shouldBe messages.taxYear(testYear2)
+      }
+
+      "display the original charge for each taxYear" in {
+        document.getElementById(s"$testYear1-total").text() shouldBe transactionModel2018.model.originalAmount.get.toCurrencyString
+        document.getElementById(s"$testYear2-total").text() shouldBe transactionModel2019.model.originalAmount.get.toCurrencyString
+      }
+
+      "state the amount left to pay for each tax year" in {
+        document.getElementById(s"$testYear1-still-to-pay").text() shouldBe messages.stillToPay(transactionModel2018.model.outstandingAmount.get.toCurrencyString)
+        document.getElementById(s"$testYear2-still-to-pay").text() shouldBe messages.stillToPay(transactionModel2019.model.outstandingAmount.get.toCurrencyString)
+      }
+
+      "state the due date for each tax year" in {
+        document.getElementById(s"$testYear1-due-by").text() shouldBe messages.dueBy("31 January " + (testYear1 + 1))
+        document.getElementById(s"$testYear2-due-by").text() shouldBe messages.dueBy("31 January " + (testYear2 + 1))
+      }
+
+      "Have a heading of 'Your transactions' which contains details of charges and bullet points of payments made" in {
+        document.getElementById(s"$testYear1-transactions").text() shouldBe messages.transactions
+        document.getElementById(s"$testYear2-transactions").text() shouldBe messages.transactions
+
+        document.getElementById(s"$testYear1-charge-text").text() shouldBe messages.charge(charge2018.amount.get.toCurrencyString)
+        document.getElementById(s"$testYear2-charge-text").text() shouldBe messages.charge(charge2019.amount.get.toCurrencyString)
+
+        document.getElementById(s"$testYear1-paid-0").text() shouldBe messages.youPaid(payment2018.paymentAmount.get.toCurrencyString, payment2018.clearingDate.get.toShortDate)
+        document.getElementById(s"$testYear2-paid-0").text() shouldBe messages.youPaid(payment2019.paymentAmount.get.toCurrencyString, payment2019.clearingDate.get.toShortDate)
+      }
     }
 
-    s"have the an intro para '${messages.p1}'" in {
-      document.getElementById("statements-p1").text() shouldBe messages.p1
-    }
+    "an empty 'Seq' is passed through" should {
+      val setup = pageSetup(Seq())
+      import setup._
 
-    "have a link to jump to the specified tax year section" in {
-      document.getElementById(s"statement-$testYear1").text() shouldBe messages.taxYear(testYear1)
-      document.getElementById(s"statement-$testYear2").text() shouldBe messages.taxYear(testYear2)
-    }
+      s"have the title '${messages.title}'" in {
+        document.title() shouldBe messages.title
+      }
 
-    "have a heading for each taxYear" in {
-      document.getElementById(s"$testYear1-tax-year").text() shouldBe messages.taxYear(testYear1)
-      document.getElementById(s"$testYear2-tax-year").text() shouldBe messages.taxYear(testYear2)
-    }
+      "state that you've currently had no transactions since you started reporting" in {
+        document.getElementById("statements-no-transactions").text() shouldBe messages.noTransactions
+      }
 
-    "display the original charge for each taxYear" in {
-      document.getElementById(s"$testYear1-total").text() shouldBe transactionModel2018.model.originalAmount.get.toCurrencyString
-      document.getElementById(s"$testYear2-total").text() shouldBe transactionModel2019.model.originalAmount.get.toCurrencyString
-    }
-
-    "state the amount left to pay for each tax year" in {
-      document.getElementById(s"$testYear1-still-to-pay").text() shouldBe messages.stillToPay(transactionModel2018.model.outstandingAmount.get.toCurrencyString)
-      document.getElementById(s"$testYear2-still-to-pay").text() shouldBe messages.stillToPay(transactionModel2019.model.outstandingAmount.get.toCurrencyString)
-    }
-
-    "state the due date for each tax year" in {
-      document.getElementById(s"$testYear1-due-by").text() shouldBe messages.dueBy("31 January " + (testYear1 + 1))
-      document.getElementById(s"$testYear2-due-by").text() shouldBe messages.dueBy("31 January " + (testYear2 + 1))
-    }
-
-    "Have a heading of 'Your transactions' which contains details of charges and bullet points of payments made" in {
-      document.getElementById(s"$testYear1-transactions").text() shouldBe messages.transactions
-      document.getElementById(s"$testYear2-transactions").text() shouldBe messages.transactions
-
-      document.getElementById(s"$testYear1-charge-text").text() shouldBe messages.charge(charge2018.amount.get.toCurrencyString)
-      document.getElementById(s"$testYear2-charge-text").text() shouldBe messages.charge(charge2019.amount.get.toCurrencyString)
-
-      document.getElementById(s"$testYear1-paid-0").text() shouldBe messages.youPaid(payment2018.paymentAmount.get.toCurrencyString, payment2018.clearingDate.get.toShortDate)
-      document.getElementById(s"$testYear2-paid-0").text() shouldBe messages.youPaid(payment2019.paymentAmount.get.toCurrencyString, payment2019.clearingDate.get.toShortDate)
     }
   }
-
 }

@@ -169,13 +169,14 @@ object Messages {
     val taxYear: Int => String = taxYear => s"Tax year: ${taxYear-1}-$taxYear"
     val totalCharges = "Total charges"
     val stillToPay: String => String = amount => s"Still to pay: $amount"
-    val dueBy: String => String = date => s"This is due by $date. You can pay this now."
+    val dueBy: String => String = date => s"This is due by $date."
     val nothingToPay = "Nothing left to pay"
     val paidBill = "You've paid this bill."
     val transactions = "Your transactions"
     val charge: String => String = amount => s"You had a charge of $amount."
     val youPaid: (String, String) => String = (amount, date) => s"You paid $amount on $date"
     val earlierTransactions = "For earlier transactions, view your self assessment."
+    val noTransactions = "You've had no transactions since you started reporting through accounting software."
   }
 
   // Timeout Messages

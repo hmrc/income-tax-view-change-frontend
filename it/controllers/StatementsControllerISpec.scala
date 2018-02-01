@@ -124,6 +124,44 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
       }
 
+      "has no financial transactions" should {
+
+        "state that the user has no transactions since tey started reporting via software" in {
+
+          isAuthorisedUser(true)
+
+          stubUserDetails()
+
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Get Financial Transactions response")
+          val statementResponse = GetStatementsData.emptyFTModel
+          FinancialTransactionsStub.stubGetFinancialTransactions(testNino, statementResponse)
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/view-statement")
+          val res = IncomeTaxViewChangeFrontend.getStatements
+
+          Then("I verify the Financial Transactions response has been wiremocked")
+          FinancialTransactionsStub.verifyGetFinancialTransactions(testNino)
+
+          verifyBizDeetsCall()
+          verifyPropDeetsCall()
+
+          Then("The view should have the correct headings and single statement")
+          res should have(
+            httpStatus(OK),
+            pageTitle("Income Tax Statement"),
+            elementTextByID("statements-no-transactions")(s"You've had no transactions since you started reporting through accounting software."),
+            isElementVisibleById("2018-tax-year-section")(false),
+            isElementVisibleById("2019-tax-year-section")(false)
+          )
+
+        }
+
+      }
+
     }
   }
 
