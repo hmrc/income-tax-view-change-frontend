@@ -19,12 +19,18 @@
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
-@import models.CalculationDataResponseModel
+@import models.{CalculationDataResponseModel, Breadcrumb, BreadcrumbItem}
 @import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
-@import views.html.helpers.calcBreakdownHelper
+@import views.html.helpers.{calcBreakdownHelper, breadcrumbHelper}
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUserWithNino[_], serviceInfo: Html)
+@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUserWithNino[_])
+
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", None)
+    )))
+}
 
 @howToDoThis = {
     <div id="whyMayChange" class="panel-indent">
@@ -38,15 +44,17 @@
     title = messages("home.title"),
     bodyClasses = None,
     scriptElem = None,
-    sidebarLinks = None
+    sidebarLinks = None,
+    serviceInfo = breadcrumb
 ) {
 
     <section id="home-page">
 
-        <h1>
+        <h1 class="heading-xlarge">
             <span id="top-sub-heading" class="heading-secondary">@messages("home.subheading")</span>
-            <span id="top-heading" class="heading-xlarge">@messages("home.heading.1")</span>
+            <span id="top-heading">Reporting through software</span>
         </h1>
+
         <section class="divider--bottom">
             <p id="top-text" class="lede">@messages("home.text")</p>
             <p>@accordionHelper("howToDoThis", messages("home.dropdown.text"), howToDoThis)</p>

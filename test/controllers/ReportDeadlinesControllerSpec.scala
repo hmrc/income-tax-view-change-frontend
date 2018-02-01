@@ -22,7 +22,7 @@ import audit.AuditingService
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.{MockReportDeadlinesService, MockServiceInfoPartialService}
+import mocks.services.MockReportDeadlinesService
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
@@ -31,8 +31,7 @@ import utils.TestSupport
 
 class ReportDeadlinesControllerSpec
   extends TestSupport with MockAuthenticationPredicate
-    with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService
-    with MockServiceInfoPartialService {
+    with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService {
 
   object TestReportDeadlinesController extends ReportDeadlinesController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -41,7 +40,6 @@ class ReportDeadlinesControllerSpec
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
-    mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService]
   )
@@ -56,7 +54,6 @@ class ReportDeadlinesControllerSpec
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockSingleBusinessIncomeSource()
           mockBusinessSuccess()
           status(result) shouldBe Status.OK
@@ -78,7 +75,6 @@ class ReportDeadlinesControllerSpec
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockPropertySuccess()
           status(result) shouldBe Status.OK
@@ -100,7 +96,6 @@ class ReportDeadlinesControllerSpec
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockBothIncomeSources()
           mockBusinessSuccess()
           mockPropertySuccess()
@@ -123,7 +118,6 @@ class ReportDeadlinesControllerSpec
         lazy val document = Jsoup.parse(bodyOf(result))
 
         "return Status OK (200)" in {
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockNoIncomeSources()
           status(result) shouldBe Status.OK
         }

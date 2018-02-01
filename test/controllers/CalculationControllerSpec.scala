@@ -18,24 +18,21 @@ package controllers
 
 import assets.Messages
 import assets.Messages.EstimatedTaxLiabilityError
-import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyDetails._
 import assets.TestConstants._
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.{MockCalculationService, MockFinancialTransactionsService, MockServiceInfoPartialService}
-import models.IncomeSourcesModel
+import mocks.services.MockFinancialTransactionsService
+import mocks.services.MockCalculationService
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
-import services.FinancialTransactionsService
 import utils.TestSupport
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockServiceInfoPartialService with MockFinancialTransactionsService{
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService {
 
   object TestCalculationController extends CalculationController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -45,7 +42,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
     mockCalculationService,
-    mockServiceInfoPartialService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService],
     mockFinancialTransactionsService,
@@ -66,7 +62,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status OK (200)" in {
           mockFinancialTransactionFailed()
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockFinancialDataSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           status(result) shouldBe Status.OK
@@ -90,7 +85,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status OK (200)" in {
           mockFinancialTransactionFailed()
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockFinancialDataSuccess()
           status(result) shouldBe Status.OK
@@ -112,7 +106,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status OK (200)" in {
           mockFinancialTransactionSuccess()
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockFinancialDataCrystalisationSuccess()
           status(result) shouldBe Status.OK
@@ -135,7 +128,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status Internal Server Error (500)" in {
           mockFinancialTransactionFailed()
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockFinancialDataCrystalisationSuccess()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -149,7 +141,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status Internal Server Error (500)" in {
           mockFinancialTransactionFailed()
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockPropertyIncomeSource()
           mockFinancialDataCrystalisationSuccess()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -164,7 +155,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status OK (200)" in {
           mockFinancialTransactionSuccess()
-          mockServiceInfoPartialSuccess(Some(testUserName))
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           mockFinancialDataNoBreakdown()
           status(result) shouldBe Status.OK
@@ -187,7 +177,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status OK (200)" in {
           mockFinancialTransactionSuccess()
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockFinancialDataError()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.OK
@@ -219,7 +208,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return a 404" in {
           mockFinancialTransactionSuccess()
-          mockServiceInfoPartialSuccess(Some(testUserName))
           mockFinancialDataNotFound()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.NOT_FOUND

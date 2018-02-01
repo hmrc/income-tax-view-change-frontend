@@ -16,12 +16,12 @@
 
 @import utils.ImplicitDateFormatter._
 @import views.html.templates.main_template
-@import views.html.helpers.sidebarHelper
+@import views.html.helpers.{sidebarHelper, breadcrumbHelper}
 @import views.helpers.ReportDeadlinesPage
 @import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
 @import views.html.helpers.backToHomeHelper
 
-@(incomeSources: models.IncomeSourcesModel)(serviceInfo: Html)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(incomeSources: models.IncomeSourcesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @sidebar = {
     @sidebarHelper(ReportDeadlinesPage, incomeSources)
@@ -32,7 +32,19 @@
     <p id="p2">@messages("obligations.error.p2")</p>
 }
 
-@main_template(title = messages("obligations.title"), bodyClasses = None, sidebarLinks = Some(sidebar), serviceInfo = serviceInfo) {
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-obligations", None)
+    )))
+}
+
+@main_template(
+    title = messages("obligations.title"),
+    bodyClasses = None,
+    sidebarLinks = Some(sidebar),
+    serviceInfo = breadcrumb
+) {
 
     <section id="obligations">
 

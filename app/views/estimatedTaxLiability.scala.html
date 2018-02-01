@@ -19,13 +19,13 @@
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
-@import models.CalculationDataResponseModel
-@import views.html.helpers.sidebarHelper
+@import models.{CalculationDataResponseModel, Breadcrumb, BreadcrumbItem}
+@import views.html.helpers.{sidebarHelper, breadcrumbHelper}
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
 @import views.html.helpers.backToHomeHelper
 
-@(calcModel: CalcDisplayModel, taxYear: Int)(serviceInfo: Html)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
+@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
 
 @sidebar = {
     @sidebarHelper(EstimatesPage, sources, Some(taxYear))
@@ -48,12 +48,20 @@
     </div>
 }
 
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
+        BreadcrumbItem("breadcrumb-it-estimate", None)
+    )))
+}
+
 @main_template(
     title = renderTitle(taxYear),
     bodyClasses = None,
     scriptElem = None,
     sidebarLinks = Some(sidebar),
-    serviceInfo = serviceInfo
+    serviceInfo = breadcrumb
 ) {
 
     <section id="estimated-tax">
