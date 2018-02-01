@@ -41,7 +41,7 @@ class StatementsViewSpec extends TestSupport {
 
   val charge2018: SubItemModel = SubItemModel(
     subItem = Some("000"),
-    dueDate = Some("2018-1-1".toLocalDate),
+    dueDate = Some("2019-1-31".toLocalDate),
     amount = Some(1000.00),
     clearingDate = None,
     clearingReason = None,
@@ -87,7 +87,7 @@ class StatementsViewSpec extends TestSupport {
 
   val charge2019: SubItemModel = SubItemModel(
     subItem = Some("000"),
-    dueDate = Some("2019-1-2".toLocalDate),
+    dueDate = Some("2020-1-31".toLocalDate),
     amount = Some(1200.00),
     clearingDate = None,
     clearingReason = None,

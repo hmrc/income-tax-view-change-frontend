@@ -100,6 +100,8 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then("The view should have the correct headings and single statement")
           val statement1Model = GetStatementsData.singleChargeTransactionModel
           val statement2Model = GetStatementsData.singleCharge2PaymentsTransactionModel
+          val payment = GetStatementsData.payment2019
+          val payment2 = GetStatementsData.otherPayment2019
           res should have(
             httpStatus(OK),
             pageTitle("Income Tax Statement"),
@@ -109,7 +111,13 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
             elementTextByID(s"$testYear-total")(statement1Model.originalAmount.get.toCurrencyString),
             elementTextByID(s"$testYear-still-to-pay")(s"Still to pay: ${statement1Model.outstandingAmount.get.toCurrencyString}"),
             elementTextByID(s"$testYear-charge")(GetStatementsData.charge2018.amount.get.toCurrencyString),
-            isElementVisibleById(s"$testYear-paid-0")(false)
+            isElementVisibleById(s"$testYear-paid-0")(false),
+            elementTextByID(s"$testYearPlusOne-tax-year")(s"Tax year: ${testYearPlusOneInt - 1}-$testYearPlusOne"),
+            elementTextByID(s"$testYearPlusOne-total")(statement2Model.originalAmount.get.toCurrencyString),
+            elementTextByID(s"$testYearPlusOne-still-to-pay")(s"Still to pay: ${statement2Model.outstandingAmount.get.toCurrencyString}"),
+            elementTextByID(s"$testYearPlusOne-charge")(GetStatementsData.charge2019.amount.get.toCurrencyString),
+            elementTextByID(s"$testYearPlusOne-paid-0")(s"You paid " + payment.paymentAmount.get.toCurrencyString + " on " + payment.clearingDate.get.toShortDate),
+            elementTextByID(s"$testYearPlusOne-paid-1")(s"You paid " + payment2.paymentAmount.get.toCurrencyString + " on " + payment2.clearingDate.get.toShortDate)
           )
 
         }
