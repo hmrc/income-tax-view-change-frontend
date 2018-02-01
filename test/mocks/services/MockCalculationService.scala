@@ -41,7 +41,7 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
 
   def setupMockGetFinancialData(nino: String, taxYear: Int)(response: CalcDisplayResponseModel): Unit =
     when(mockCalculationService
-      .getFinancialData(
+      .getCalculationDetail(
         ArgumentMatchers.eq(nino),
         ArgumentMatchers.eq(taxYear)
       )(ArgumentMatchers.any()))

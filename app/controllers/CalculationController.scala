@@ -49,12 +49,11 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
 
   val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
-  val getFinancialData: Int => Action[AnyContent] = taxYear => action.async {
+  val showCalculationForYear: Int => Action[AnyContent] = taxYear => action.async {
     implicit user =>
       implicit val sources: IncomeSourcesModel = user.incomeSources
-
       for {
-        calcResponse <- calculationService.getFinancialData(user.nino, taxYear)
+        calcResponse <- calculationService.getCalculationDetail(user.nino, taxYear)
         ftResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
       } yield calcResponse match {
           case calcDisplayModel: CalcDisplayModel =>
@@ -64,11 +63,11 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
               case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
             }
           case CalcDisplayNoDataFound =>
-            Logger.debug(s"[CalculationController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Not found")
+            Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Not found")
             auditEstimate(user, "No data found")
             NotFound(views.html.noEstimatedTaxLiability(taxYear))
           case CalcDisplayError =>
-            Logger.debug(s"[CalculationController][getFinancialData[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
+            Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
             Ok(views.html.estimatedTaxLiabilityError(taxYear))
         }
   }
@@ -92,7 +91,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   private def auditEstimate(user: MtdItUser[_], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
       EstimatesAuditModel(user, estimate),
-      controllers.routes.CalculationController.getFinancialData(user.incomeSources.earliestTaxYear.get).url
+      controllers.routes.CalculationController.showCalculationForYear(user.incomeSources.earliestTaxYear.get).url
     )
 
 }

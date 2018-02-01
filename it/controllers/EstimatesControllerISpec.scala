@@ -61,7 +61,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         Then("The view should have the correct headings and a single tax estimate link")
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.CalculationController.getFinancialData(2018).url)
+          redirectURI(controllers.routes.CalculationController.showCalculationForYear(2018).url)
         )
       }
     }
@@ -171,7 +171,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         Then("The view should have the correct headings and a single tax estimate link")
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.CalculationController.getFinancialData(2019).url)
+          redirectURI(controllers.routes.CalculationController.showCalculationForYear(2019).url)
         )
       }
     }
