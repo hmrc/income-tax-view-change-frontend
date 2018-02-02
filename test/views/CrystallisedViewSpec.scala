@@ -17,7 +17,7 @@
 package views
 
 import assets.Messages
-import assets.Messages.{Sidebar => sidebarMessages}
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants.Estimates._
@@ -47,7 +47,7 @@ class CrystallisedViewSpec extends TestSupport {
   private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.crystallised(
       CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
-      testYear)(serviceInfo)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     implicit val model: CalculationDataModel = calcDataModel
@@ -62,6 +62,13 @@ class CrystallisedViewSpec extends TestSupport {
 
     s"have the title '${crysMessages.tabTitle}'" in {
       document.title() shouldBe crysMessages.tabTitle
+    }
+
+    "have a breadcrumb trail" in {
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+      document.getElementById("breadcrumb-bills").text shouldBe breadcrumbMessages.bills
+      document.getElementById("breadcrumb-finalised-bill").text shouldBe breadcrumbMessages.finalisedBill
     }
 
     s"have the tax year '${crysMessages.subHeading}'" in {
@@ -90,6 +97,10 @@ class CrystallisedViewSpec extends TestSupport {
 
       }
 
+      s"has the correct 'warning' text '${crysMessages.p1}'" in {
+        document.getElementById("warning").text shouldBe messages.Crystallised.warning
+      }
+
     }
 
     "have a Calculation Breakdown" that {
@@ -99,10 +110,6 @@ class CrystallisedViewSpec extends TestSupport {
           val total = (model.incomeReceived.ukProperty + model.incomeReceived.selfEmployment).toCurrencyString
           val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
           import setup._
-
-          s"have a heading of ${crysMessages.breakdownHeading}" in {
-            document.getElementById("howCalculatedHeading").text shouldBe crysMessages.breakdownHeading
-          }
 
           s"have a business profit section amount of ${model.incomeReceived.selfEmployment}" in {
             document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
@@ -230,7 +237,7 @@ class CrystallisedViewSpec extends TestSupport {
 
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
         lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
 
         "not display a breakdown section" in {
@@ -295,6 +302,7 @@ class CrystallisedViewSpec extends TestSupport {
     }
 
     "have a couple of sentences about adjustments" in {
+      document.getElementById("incorrect").text shouldBe messages.Crystallised.incorrect
       document.getElementById("adjustments").text shouldBe crysMessages.errors
       document.getElementById("changes").text shouldBe crysMessages.changes
     }

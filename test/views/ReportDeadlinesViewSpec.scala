@@ -16,10 +16,8 @@
 
 package views
 
-import assets.Messages.{ReportDeadlines => messages, Sidebar => sidebarMessages}
-import assets.TestConstants.IncomeSourceDetails._
+import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages, Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.Estimates.testYear
 import assets.TestConstants._
 import config.FrontendAppConfig
 import models._
@@ -45,7 +43,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
   val errorModel = ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
   private def pageSetup(model: IncomeSourcesModel) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.report_deadlines(model)(serviceInfo)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+    lazy val page: HtmlFormat.Appendable = views.html.report_deadlines(model)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
@@ -69,6 +67,12 @@ class ReportDeadlinesViewSpec extends TestSupport {
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
+    }
+
+    "have a breadcrumb trail" in {
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+      document.getElementById("breadcrumb-obligations").text shouldBe breadcrumbMessages.obligations
     }
 
     s"have the an intro para '${messages.info}'" in {
