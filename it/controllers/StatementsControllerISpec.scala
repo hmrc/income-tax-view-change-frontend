@@ -22,7 +22,7 @@ import utils.ImplicitDateFormatter
 import utils.ImplicitCurrencyFormatter._
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, INTERNAL_SERVER_ERROR}
 
 class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
 
@@ -46,7 +46,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           val statementResponse = GetStatementsData.singleFinancialTransactionsModel
           FinancialTransactionsStub.stubGetFinancialTransactions(testNino, statementResponse)
 
-          When(s"I call GET /report-quarterly/income-and-expenses/view/view-statement")
+          When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
           val res = IncomeTaxViewChangeFrontend.getStatements
 
           Then("I verify the Financial Transactions response has been wiremocked")
@@ -88,7 +88,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           val statementResponse = GetStatementsData.singleFTModel1charge2payments
           FinancialTransactionsStub.stubGetFinancialTransactions(testNino, statementResponse)
 
-          When(s"I call GET /report-quarterly/income-and-expenses/view/view-statement")
+          When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
           val res = IncomeTaxViewChangeFrontend.getStatements
 
           Then("I verify the Financial Transactions response has been wiremocked")
@@ -140,7 +140,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           val statementResponse = GetStatementsData.emptyFTModel
           FinancialTransactionsStub.stubGetFinancialTransactions(testNino, statementResponse)
 
-          When(s"I call GET /report-quarterly/income-and-expenses/view/view-statement")
+          When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
           val res = IncomeTaxViewChangeFrontend.getStatements
 
           Then("I verify the Financial Transactions response has been wiremocked")
@@ -156,6 +156,41 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
             elementTextByID("statements-no-transactions")(s"You've had no transactions since you started reporting through accounting software."),
             isElementVisibleById("2018-tax-year-section")(false),
             isElementVisibleById("2019-tax-year-section")(false)
+          )
+
+        }
+
+      }
+
+      "is returned a FinancialTransactionsErrorModel" should {
+
+        "return an error page" in {
+
+          isAuthorisedUser(true)
+
+          stubUserDetails()
+
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Get Financial Transactions response")
+          FinancialTransactionsStub.stubFinancialTransactionsError(testNino)
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
+          val res = IncomeTaxViewChangeFrontend.getStatements
+
+          Then("I verify the Financial Transactions response has been wiremocked")
+          FinancialTransactionsStub.verifyGetFinancialTransactions(testNino)
+
+          verifyBizDeetsCall()
+          verifyPropDeetsCall()
+
+          Then("The view should have the correct headings and single statement")
+          res should have(
+            httpStatus(INTERNAL_SERVER_ERROR),
+            pageTitle("Income Tax Statement"),
+            elementTextByID("page-heading")("We can't show your statement right now")
           )
 
         }

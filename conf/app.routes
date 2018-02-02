@@ -20,7 +20,7 @@ GET         /estimates                              controllers.EstimatesControl
 GET         /bills                                  controllers.BillsController.viewCrystallisedCalculations
 
 #Statements
-GET         /view-statement                         controllers.StatementsController.getStatements
+GET         /statements                             controllers.StatementsController.getStatements
 
 #Feedback Routes
 GET         /feedback                               controllers.feedback.FeedbackController.show
