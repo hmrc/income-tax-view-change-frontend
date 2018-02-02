@@ -16,13 +16,11 @@
 
 package models
 
-import assets.TestConstants.CalcBreakdown.calculationDataFullString
-import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
-import assets.TestConstants._
 import assets.TestConstants.FinancialTransactions._
+import assets.TestConstants._
+import org.scalatest.Matchers
 import play.api.libs.json.Json
-import utils.ImplicitDateFormatter
+import uk.gov.hmrc.play.test.UnitSpec
 
 
 class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
@@ -87,7 +85,15 @@ class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
 
     }
 
-    "the findChargeForTaxYear" when {
+    "be formatted to JSON correctly" in {
+      Json.toJson[FinancialTransactionsModel](financialTransactionsModel) shouldBe financialTransactionsJson
+    }
+
+    "be able to parse a full Json string into the Model" in {
+      financialTransactionsJson.as[FinancialTransactionsModel] shouldBe financialTransactionsModel
+    }
+
+    "the findChargeForTaxYear method" when {
 
       "there is a transaction with the correct year should return a single transaction" in {
         financialTransactionsModel.findChargeForTaxYear(2018) shouldBe Some(transactionModel)
@@ -97,18 +103,6 @@ class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
         financialTransactionsModel.findChargeForTaxYear(1000) shouldBe None
       }
 
-    }
-
-
-
-    "return None when"
-
-    "be formatted to JSON correctly" in {
-      Json.toJson[FinancialTransactionsModel](financialTransactionsModel) shouldBe financialTransactionsJson
-    }
-
-    "be able to parse a full Json string into the Model" in {
-      financialTransactionsJson.as[FinancialTransactionsModel] shouldBe financialTransactionsModel
     }
   }
 
