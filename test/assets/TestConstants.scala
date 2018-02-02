@@ -232,13 +232,13 @@ object TestConstants extends ImplicitDateFormatter {
         )
       )
 
-    val transactionModel = TransactionModel(
+    def transactionModel(taxYear: String = "2018-04-05") = TransactionModel(
       chargeType = Some("PAYE"),
       mainType = Some("2100"),
       periodKey = Some("13RL"),
       periodKeyDescription = Some("abcde"),
       taxPeriodFrom = Some("2017-4-6"),
-      taxPeriodTo = Some("2018-4-5"),
+      taxPeriodTo = Some(taxYear),
       businessPartner = Some("6622334455"),
       contractAccountCategory = Some("02"),
       contractAccount = Some("X"),
@@ -253,7 +253,7 @@ object TestConstants extends ImplicitDateFormatter {
       outstandingAmount = Some(1400.0),
       clearedAmount = Some(2000.0),
       accruedInterest = Some(0.23),
-      items = Seq(SubItemModel(
+      items = Some(Seq(SubItemModel(
         subItem = Some("000"),
         dueDate = Some("2018-2-14"),
         amount = Some(3400.00),
@@ -274,15 +274,15 @@ object TestConstants extends ImplicitDateFormatter {
         statisticalDocument = Some("I"),
         returnReason = Some("J"),
         promiseToPay = Some("K")
-      ))
+      )))
     )
 
-    val financialTransactionsModel = FinancialTransactionsModel(
+    def financialTransactionsModel(taxYear: String = "2018-04-05") = FinancialTransactionsModel(
       idType = testIdType,
       idNumber = testIdNumber,
       regimeType = testRegimeType,
       processingDate = testProcessingDate,
-      financialTransactions = Seq(transactionModel)
+      financialTransactions = Seq(transactionModel(taxYear))
     )
 
   }

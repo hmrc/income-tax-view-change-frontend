@@ -47,7 +47,7 @@ class CrystallisedViewSpec extends TestSupport {
   private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.crystallised(
       CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
-      FinancialTransactions.transactionModel,testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+      FinancialTransactions.transactionModel(),testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     implicit val model: CalculationDataModel = calcDataModel

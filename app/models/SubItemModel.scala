@@ -20,26 +20,26 @@ import java.time.LocalDate
 
 import play.api.libs.json._
 
-case class SubItemModel(subItem: Option[String],
-                   dueDate: Option[LocalDate],
-                   amount: Option[BigDecimal],
-                   clearingDate: Option[LocalDate],
-                   clearingReason: Option[String],
-                   outgoingPaymentMethod: Option[String],
-                   paymentLock: Option[String],
-                   clearingLock: Option[String],
-                   interestLock: Option[String],
-                   dunningLock: Option[String],
-                   returnFlag: Option[Boolean],
-                   paymentReference: Option[String],
-                   paymentAmount: Option[BigDecimal],
-                   paymentMethod: Option[String],
-                   paymentLot: Option[String],
-                   paymentLotItem: Option[String],
-                   clearingSAPDocument: Option[String],
-                   statisticalDocument: Option[String],
-                   returnReason: Option[String],
-                   promiseToPay: Option[String])
+case class SubItemModel(subItem: Option[String] = None,
+                   dueDate: Option[LocalDate] = None,
+                   amount: Option[BigDecimal] = None,
+                   clearingDate: Option[LocalDate] = None,
+                   clearingReason: Option[String] = None,
+                   outgoingPaymentMethod: Option[String] = None,
+                   paymentLock: Option[String] = None,
+                   clearingLock: Option[String] = None,
+                   interestLock: Option[String] = None,
+                   dunningLock: Option[String] = None,
+                   returnFlag: Option[Boolean] = None,
+                   paymentReference: Option[String] = None,
+                   paymentAmount: Option[BigDecimal] = None,
+                   paymentMethod: Option[String] = None,
+                   paymentLot: Option[String] = None,
+                   paymentLotItem: Option[String] = None,
+                   clearingSAPDocument: Option[String] = None,
+                   statisticalDocument: Option[String] = None,
+                   returnReason: Option[String] = None,
+                   promiseToPay: Option[String] = None)
 
 object SubItemModel {
   implicit val format: Format[SubItemModel] = Json.format[SubItemModel]

@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 class FinancialTransactionsConnectorSpec extends TestSupport with MockHttp{
 
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(financialTransactionsModel)))
+  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(financialTransactionsModel())))
   val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
@@ -43,7 +43,7 @@ class FinancialTransactionsConnectorSpec extends TestSupport with MockHttp{
 
     "return a FinancialTransactionsModel with JSON in case of success" in {
       setupMockHttpGet(testUrl)(successResponse)
-      await(result) shouldBe financialTransactionsModel
+      await(result) shouldBe financialTransactionsModel()
     }
 
     "return FinancialTransactionsErrorModel when bad Json is recieved" in {

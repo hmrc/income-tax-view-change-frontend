@@ -41,7 +41,7 @@ trait MockFinancialTransactionsService extends UnitSpec with MockitoSugar with B
       ArgumentMatchers.eq(mtditid)
     )(ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
-  def mockFinancialTransactionSuccess(): Unit = setupMockGetFinancialTransactions(testMtditid)(FinancialTransactions.financialTransactionsModel)
+  def mockFinancialTransactionSuccess(taxYear: String = "2018-04-05"): Unit = setupMockGetFinancialTransactions(testMtditid)(FinancialTransactions.financialTransactionsModel(taxYear))
   def mockFinancialTransactionFailed(): Unit = setupMockGetFinancialTransactions(testMtditid)(FinancialTransactions.financialTransactionsErrorModel)
 
 }

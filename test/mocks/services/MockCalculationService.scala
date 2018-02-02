@@ -39,7 +39,7 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     reset(mockCalculationService)
   }
 
-  def setupMockGetFinancialData(nino: String, taxYear: Int)(response: CalcDisplayResponseModel): Unit =
+  def setupMockGetCalculation(nino: String, taxYear: Int)(response: CalcDisplayResponseModel): Unit =
     when(mockCalculationService
       .getCalculationDetail(
         ArgumentMatchers.eq(nino),
@@ -63,11 +63,11 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
       )(ArgumentMatchers.any()))
     .thenReturn(Future.successful(response))
 
-  def mockFinancialDataSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-  def mockFinancialDataCrystalisationSuccess(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel))
-  def mockFinancialDataNoBreakdown(): Unit = setupMockGetFinancialData(testNino, testYear)(calculationDisplayNoBreakdownModel)
-  def mockFinancialDataError(): Unit = setupMockGetFinancialData(testNino, testYear)(CalcDisplayError)
-  def mockFinancialDataNotFound(): Unit = setupMockGetFinancialData(testNino, testYear)(CalcDisplayNoDataFound)
+  def mockCalculationSuccess(): Unit = setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
+  def mockCalculationCrystalisationSuccess(): Unit = setupMockGetCalculation(testNino, testYear)(calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel))
+  def mockCalculationNoBreakdown(): Unit = setupMockGetCalculation(testNino, testYear)(calculationDisplayNoBreakdownModel)
+  def mockCalculationError(): Unit = setupMockGetCalculation(testNino, testYear)(CalcDisplayError)
+  def mockCalculationNotFound(): Unit = setupMockGetCalculation(testNino, testYear)(CalcDisplayNoDataFound)
   def mockGetAllLatestCalcSuccess():Unit = setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearList)
   def mockGetAllLatestCrystallisedCalcSuccess():Unit = setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearCrystallisedList)
   def mockGetAllLatestCrystallisedCalcWithError():Unit = setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListWithError)

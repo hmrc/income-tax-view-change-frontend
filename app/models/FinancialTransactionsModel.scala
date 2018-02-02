@@ -29,7 +29,7 @@ case class FinancialTransactionsModel(idType: String,
                                       financialTransactions: Seq[TransactionModel]) extends FinancialTransactionsResponseModel {
 
   def findChargeForTaxYear(taxYear: Int): Option[TransactionModel] = {
-    financialTransactions.find(_.taxPeriodTo.contains(LocalDate.parse(s"$taxYear-04-05")))
+    financialTransactions.find(_.taxPeriodTo.fold(false)(_ == LocalDate.parse(s"$taxYear-04-05")))
   }
 }
 
