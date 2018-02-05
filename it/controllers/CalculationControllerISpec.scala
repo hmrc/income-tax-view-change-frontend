@@ -19,7 +19,7 @@ import enums.{Crystallised, Estimate}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
 import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
+import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation, FinancialTransactionsModel}
 import play.api.http.Status
 import play.api.http.Status._
 import utils.ImplicitCurrencyFormatter._
@@ -68,7 +68,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-        //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
 
         res should have (
           httpStatus(OK),
@@ -133,6 +132,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
 
           And("I wiremock stub a successful Unpaid Financial Transactions response")
+          val financialTransactions = GetFinancialTransactions.financialTransactionsJson(1000.0).as[FinancialTransactionsModel]
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, GetFinancialTransactions.financialTransactionsJson(1000.0))
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
@@ -144,7 +144,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           Then("I verify the Estimated Tax Liability response has been wiremocked")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-          //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
 
           res should have(
             httpStatus(OK),
@@ -182,7 +181,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             elementTextByID("dividend-art-amount")(calcBreakdownResponse.dividends.additionalBand.taxAmount.toCurrencyString),
             elementTextByID("nic2-amount")(calcBreakdownResponse.nic.class2.toCurrencyString),
             elementTextByID("nic4-amount")(calcBreakdownResponse.nic.class4.toCurrencyString),
-            elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)
+            elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString),
+            elementTextByID("payment")("-" + financialTransactions.financialTransactions.head.clearedAmount.get.toCurrencyString),
+            elementTextByID("owed")(financialTransactions.financialTransactions.head.outstandingAmount.get.toCurrencyString)
           )
         }
       }
@@ -206,6 +207,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
 
           And("I wiremock stub a successful paid Financial Transactions response")
+          val financialTransactions = GetFinancialTransactions.financialTransactionsJson(0.0).as[FinancialTransactionsModel]
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, GetFinancialTransactions.financialTransactionsJson(0.0))
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
@@ -256,11 +258,48 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             elementTextByID("dividend-art-amount")(calcBreakdownResponse.dividends.additionalBand.taxAmount.toCurrencyString),
             elementTextByID("nic2-amount")(calcBreakdownResponse.nic.class2.toCurrencyString),
             elementTextByID("nic4-amount")(calcBreakdownResponse.nic.class4.toCurrencyString),
-            elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)
+            elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString),
+            elementTextByID("payment")("-" + financialTransactions.financialTransactions.head.clearedAmount.get.toCurrencyString),
+            elementTextByID("owed")(financialTransactions.financialTransactions.head.outstandingAmount.get.toCurrencyString)
           )
         }
       }
 
+      "an error response is retrieve for the financial transactions" should {
+
+        "return an Internal Server Error page" in {
+
+          isAuthorisedUser(true)
+          stubUserDetails()
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          val lastTaxCalcResponse =
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Crystallised)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+
+          And("I wiremock stub a successful Get CalculationData response")
+          val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+
+          And("I wiremock stub an errored Financial Transactions response")
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, GetFinancialTransactions.financialTransactionsSingleErrorJson)
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
+          val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+
+          verifyBizDeetsCall()
+          verifyPropDeetsCall()
+          verifyFinancialTransactionsCall()
+
+          Then("I verify the Estimated Tax Liability response has been wiremocked")
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+
+          res should have(httpStatus(INTERNAL_SERVER_ERROR))
+
+        }
+      }
     }
 
     "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response but NO EoY Estimate" should {
