@@ -36,7 +36,7 @@ home.deadlines.link                                             = View your dead
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Please help us improve our service
-banner.recruitment.enter                                        = Enter our survey
+banner.recruitment.link                                         = Enter our survey
 banner.recruitment.dismiss                                      = No thanks
 
 ## Estimates Page ##
