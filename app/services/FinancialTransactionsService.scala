@@ -28,11 +28,11 @@ import scala.concurrent.Future
 @Singleton
 class FinancialTransactionsService @Inject()(val financialTransactionsConnector: FinancialTransactionsConnector){
 
-  def getFinancialTransactions(nino: String)(implicit headCarrier: HeaderCarrier): Future[FinancialTransactionsResponseModel] = {
+  def getFinancialTransactions(mtditid: String)(implicit headCarrier: HeaderCarrier): Future[FinancialTransactionsResponseModel] = {
     Logger.debug(
-      s"[FinancialTransactionsService][getFinancialTransactions] - Requesting Financial Transactions from connector for nino: $nino"
+      s"[FinancialTransactionsService][getFinancialTransactions] - Requesting Financial Transactions from connector for mtditid: $mtditid"
     )
-    financialTransactionsConnector.getFinancialTransactions(nino)
+    financialTransactionsConnector.getFinancialTransactions(mtditid)
   }
 
 }

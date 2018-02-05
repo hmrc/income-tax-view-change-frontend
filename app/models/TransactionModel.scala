@@ -20,27 +20,34 @@ import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
 
-case class TransactionModel(chargeType: Option[String],
-                       mainType: Option[String],
-                       periodKey: Option[String],
-                       periodKeyDescription: Option[String],
-                       taxPeriodFrom: Option[LocalDate],
-                       taxPeriodTo: Option[LocalDate],
-                       businessPartner: Option[String],
-                       contractAccountCategory: Option[String],
-                       contractAccount: Option[String],
-                       contractObjectType: Option[String],
-                       contractObject: Option[String],
-                       sapDocumentNumber: Option[String],
-                       sapDocumentNumberItem: Option[String],
-                       chargeReference: Option[String],
-                       mainTransaction: Option[String],
-                       subTransaction: Option[String],
-                       originalAmount: Option[BigDecimal],
-                       outstandingAmount: Option[BigDecimal],
-                       clearedAmount: Option[BigDecimal],
-                       accruedInterest: Option[BigDecimal],
-                       items: Seq[SubItemModel])
+case class TransactionModel(chargeType: Option[String] = None,
+                       mainType: Option[String] = None,
+                       periodKey: Option[String] = None,
+                       periodKeyDescription: Option[String] = None,
+                       taxPeriodFrom: Option[LocalDate] = None,
+                       taxPeriodTo: Option[LocalDate] = None,
+                       businessPartner: Option[String] = None,
+                       contractAccountCategory: Option[String] = None,
+                       contractAccount: Option[String] = None,
+                       contractObjectType: Option[String] = None,
+                       contractObject: Option[String] = None,
+                       sapDocumentNumber: Option[String] = None,
+                       sapDocumentNumberItem: Option[String] = None,
+                       chargeReference: Option[String] = None,
+                       mainTransaction: Option[String] = None,
+                       subTransaction: Option[String] = None,
+                       originalAmount: Option[BigDecimal] = None,
+                       outstandingAmount: Option[BigDecimal] = None,
+                       clearedAmount: Option[BigDecimal] = None,
+                       accruedInterest: Option[BigDecimal] = None,
+                       items: Option[Seq[SubItemModel]] = None) {
+
+  val isPaid: Boolean = outstandingAmount.fold(true)(_ == 0)
+
+}
+
+case class TransactionModelWithYear(model: TransactionModel,
+                                    taxYear: Int)
 
 object TransactionModel {
   implicit val format: Format[TransactionModel] = Json.format[TransactionModel]

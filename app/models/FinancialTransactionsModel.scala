@@ -16,7 +16,7 @@
 
 package models
 
-import java.time.ZonedDateTime
+import java.time.{LocalDate, ZonedDateTime}
 
 import play.api.libs.json._
 
@@ -26,7 +26,12 @@ case class FinancialTransactionsModel(idType: String,
                                       idNumber: String,
                                       regimeType: String,
                                       processingDate: ZonedDateTime,
-                                      financialTransactions: Seq[TransactionModel]) extends FinancialTransactionsResponseModel
+                                      financialTransactions: Seq[TransactionModel]) extends FinancialTransactionsResponseModel {
+
+  def findChargeForTaxYear(taxYear: Int): Option[TransactionModel] = {
+    financialTransactions.find(_.taxPeriodTo.fold(false)(_ == LocalDate.parse(s"$taxYear-04-05")))
+  }
+}
 
 
 case class FinancialTransactionsErrorModel(code: Int, message: String) extends FinancialTransactionsResponseModel

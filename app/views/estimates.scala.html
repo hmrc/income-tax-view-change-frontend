@@ -47,7 +47,7 @@
             <ul class="list list-bullet">
                 @for(calc <- estimates.reverse){
                     <li>
-                        <a class="estimates-link" id="estimates-link-@{calc.taxYear}" href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}">
+                        <a class="estimates-link" id="estimates-link-@{calc.taxYear}" href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}">
                             @messages("estimates.estimatesLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")
                         </a>
                     </li>

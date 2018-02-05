@@ -16,13 +16,11 @@
 
 package models
 
-import assets.TestConstants.CalcBreakdown.calculationDataFullString
-import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
-import assets.TestConstants._
 import assets.TestConstants.FinancialTransactions._
+import assets.TestConstants._
+import org.scalatest.Matchers
 import play.api.libs.json.Json
-import utils.ImplicitDateFormatter
+import uk.gov.hmrc.play.test.UnitSpec
 
 
 class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
@@ -30,15 +28,15 @@ class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
   "The FinancialTransactionsModel" should {
 
     "have the correct idType, idNumber, regimeType, processingDate and transactions" in {
-      financialTransactionsModel.idType shouldBe testIdType
-      financialTransactionsModel.idNumber shouldBe testIdNumber
-      financialTransactionsModel.regimeType shouldBe testRegimeType
-      financialTransactionsModel.processingDate shouldBe testProcessingDate
+      financialTransactionsModel().idType shouldBe testIdType
+      financialTransactionsModel().idNumber shouldBe testIdNumber
+      financialTransactionsModel().regimeType shouldBe testRegimeType
+      financialTransactionsModel().processingDate shouldBe testProcessingDate
     }
 
     "for its transactions contain the return data for each field" in {
 
-      val transaction = financialTransactionsModel.financialTransactions.head
+      val transaction = financialTransactionsModel().financialTransactions.head
       transaction.chargeType shouldBe Some("PAYE")
       transaction.mainType shouldBe Some("2100")
       transaction.periodKey shouldBe Some("13RL")
@@ -63,7 +61,7 @@ class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
 
     "for its items return the correct data for each field" in {
 
-      val item = financialTransactionsModel.financialTransactions.head.items.head
+      val item = financialTransactionsModel().financialTransactions.head.items.get.head
       item.subItem shouldBe Some("000")
       item.dueDate shouldBe Some("2018-02-14".toLocalDate)
       item.amount shouldBe Some(3400.00)
@@ -88,11 +86,32 @@ class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson[FinancialTransactionsModel](financialTransactionsModel) shouldBe financialTransactionsJson
+      Json.toJson[FinancialTransactionsModel](financialTransactionsModel()) shouldBe financialTransactionsJson
     }
 
     "be able to parse a full Json string into the Model" in {
-      financialTransactionsJson.as[FinancialTransactionsModel] shouldBe financialTransactionsModel
+      financialTransactionsJson.as[FinancialTransactionsModel] shouldBe financialTransactionsModel()
+    }
+
+    "the findChargeForTaxYear method" when {
+
+      "there is a transaction with the correct year should return a single transaction" in {
+        financialTransactionsModel().findChargeForTaxYear(2018) shouldBe Some(transactionModel())
+      }
+
+      "there is a no transaction with the correct year should None" in {
+        financialTransactionsModel().findChargeForTaxYear(1000) shouldBe None
+      }
+
+      "there is a transaction but no taxPeriodTo date exists for it" in {
+        FinancialTransactionsModel(
+          testIdType,
+          testIdNumber,
+          testRegimeType,
+          testProcessingDate,
+          Seq(TransactionModel())
+        ).findChargeForTaxYear(2018) shouldBe None
+      }
     }
   }
 

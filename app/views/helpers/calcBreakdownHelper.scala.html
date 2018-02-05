@@ -17,7 +17,7 @@
 @import utils.ImplicitCurrencyFormatter._
 @import enums._
 
-@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
+@(calcModel: CalcDisplayModel, transactionModel: Option[TransactionModel], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
 
 @defining(calcModel.calcDataModel.get) { breakdown =>
     <table class="itvc-table">
@@ -187,6 +187,7 @@
             </section>
         }
 
+
         @if(calcModel.hasTaxReliefs) {
         <tr>
             <td id="tax-relief-heading">@messages("estimated_tax_liability.calc-breakdown.reliefs")</td>
@@ -194,17 +195,27 @@
         </tr>
         }
 
+
         @if(calcModel.calcStatus == Estimate) {
-            <tr id ="total-estimate-section" class="total-section">
+            <tr class="total-section">
                 <td id="total-estimate-heading">@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
                 <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
             </tr>
         }else{
-            <tr id ="total-estimate-section" class="total-section">
-                <td id="total-estimate-heading">@messages("crystalisation.calc-breakdown.total", s"${taxYear+1}")</td>
+            <tr class="total-section">
+                <td id="total-estimate-heading">@messages("crystalisation.calc-breakdown.subtotal")</td>
                 <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
             </tr>
+            <tr>
+                <td id="payment-heading">@messages("crystalisation.calc-breakdown.payment")</td>
+                <td id="payment" class="summary-data">-@transactionModel.get.clearedAmount.getOrElse[BigDecimal](0).toCurrency</td>
+            </tr>
+            <tr class="total-section">
+                <td id="owed-heading">@messages("crystalisation.calc-breakdown.owed", s"${taxYear+1}")</td>
+                <td id="owed" class="summary-data">@transactionModel.get.outstandingAmount.getOrElse[BigDecimal](0).toCurrency</td>
+            </tr>
         }
+
         </tbody>
     </table>
 }
