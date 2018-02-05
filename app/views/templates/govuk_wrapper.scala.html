@@ -23,7 +23,8 @@
   mainContent: Html = HtmlFormat.empty,
   serviceInfoContent: Html = HtmlFormat.empty,
   scriptElem: Option[Html] = None,
-  showLogout: Boolean = true)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+  showLogout: Boolean = true,
+  afterHeader: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import layouts.{govuk_template => hmrcGovUkTemplate}
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
@@ -53,8 +54,6 @@
       showBetaLink = false,
       navLinks = Some(headerNavLinks))
 }
-
-@afterHeader = {}
 
 @bodyEnd = {
     @uiLayouts.footer(
@@ -96,4 +95,4 @@
       sidebar = sidebar)
 }
 
-@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), nav=true)(content)
+@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader.getOrElse[Html](HtmlFormat.empty), footerTop, Some(uiLayouts.footer_links()), nav=true)(content)

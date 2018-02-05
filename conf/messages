@@ -34,6 +34,11 @@ home.deadlines.heading                                          = Report deadlin
 home.deadlines.text                                             = Check your report deadlines and if we''ve received them.
 home.deadlines.link                                             = View your deadlines
 
+## Recruitment Banner ##
+banner.recruitment.text                                         = Please help us improve our service
+banner.recruitment.enter                                        = Enter our survey
+banner.recruitment.dismiss                                      = No thanks
+
 ## Estimates Page ##
 estimates.title                                                 = Current estimates
 estimates.heading                                               = View your estimates

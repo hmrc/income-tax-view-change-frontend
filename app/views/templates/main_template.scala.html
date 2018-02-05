@@ -42,6 +42,19 @@
     }
 }
 
+@recruitmentBanner = {
+    <div class="js-hidden notice-banner" id="notice-banner">
+        <div class="notice-banner__wrapper grid-layout">
+            <div class="grid-layout__column--2-3">
+                <h3 class="notice-banner__content">@Messages("banner.recruitment.text")</h3>
+                <a class="notice-banner__content" href="#">@Messages("banner.recruitment.enter")</a>
+            </div>
+            <div class="grid-layout__column--1-3 text--right">
+                <a class="notice-banner__close notice-banner__content" href="#">@Messages("banner.recruitment.dismiss")</a>
+            </div>
+        </div>
+    </div>
+}
 
 @govuk_wrapper(title = title,
                mainClass = mainClass,
@@ -51,5 +64,8 @@
                mainContent = layouts.article(mainContent),
                serviceInfoContent = serviceInfo,
                scriptElem = Some(defaultScriptElem),
-               showLogout = showLogout
+               showLogout = showLogout,
+               afterHeader = Some(recruitmentBanner)
 )
+
+
