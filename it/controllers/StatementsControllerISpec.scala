@@ -154,7 +154,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           Then("The view should have the correct headings and single statement")
           res should have(
-            httpStatus(INTERNAL_SERVER_ERROR),
+            httpStatus(OK),
             pageTitle("Income Tax Statement"),
             elementTextByID("page-heading")("We can't show your statement right now")
           )

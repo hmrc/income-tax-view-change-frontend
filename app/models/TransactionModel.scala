@@ -42,7 +42,7 @@ case class TransactionModel(chargeType: Option[String] = None,
                        accruedInterest: Option[BigDecimal] = None,
                        items: Option[Seq[SubItemModel]] = None) {
 
-  val isPaid: Boolean = outstandingAmount.fold(true)(_ == 0)
+  val isPaid: Boolean = outstandingAmount.fold(true)(_ <= 0)
 
   def charges(): Seq[SubItemModel] = items.getOrElse(Seq()).filter(_.dueDate.isDefined)
 
