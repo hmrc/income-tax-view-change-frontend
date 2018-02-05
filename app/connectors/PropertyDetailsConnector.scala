@@ -36,9 +36,6 @@ class PropertyDetailsConnector @Inject()(val http: HttpClient,
 
   lazy val getPropertyDetailsUrl: String => String = nino => s"${config.saApiService}/ni/$nino/uk-properties"
 
-  // TODO: For MVP the only accounting period for Property is 2017/18. This needs to be enhanced post-MVP
-  val defaultSuccessResponse = PropertyDetailsModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
-
   def getPropertyDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[PropertyDetailsResponseModel] = {
 
     val url = getPropertyDetailsUrl(nino)
@@ -49,7 +46,14 @@ class PropertyDetailsConnector @Inject()(val http: HttpClient,
         response.status match {
           case OK =>
             Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
-            defaultSuccessResponse
+            response.json.validate[PropertyDetailsModel].fold(
+              invalid => {
+                Logger.warn(s"[PropertyDetailsConnector][getPropertyDetails] - Failed to parse JSON body of response to PropertyDetailsModel.")
+                Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - Json validation error: $invalid")
+                PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Failed to parse JSON body of response to PropertyDetailsModel.")
+              },
+              valid => valid
+            )
           case NOT_FOUND =>
             Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
             NoPropertyIncomeDetails
@@ -64,5 +68,4 @@ class PropertyDetailsConnector @Inject()(val http: HttpClient,
         PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
-
 }
