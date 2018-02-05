@@ -109,7 +109,9 @@ crystalisation.whatYouOwe.directDebit                           = Check if you a
 crystalisation.warning                                          = If you pay this bill after 31 January {0} you''ll get penalties.
 crystalisation.calc-breakdown.heading                           = How this figure was calculated
 
-crystalisation.calc-breakdown.total                             = Total owed, due 31 January {0}
+crystalisation.calc-breakdown.subtotal                          = Sub-total (excluding payments by you)
+crystalisation.calc-breakdown.payment                           = Your payments to date
+crystalisation.calc-breakdown.owed                              = Total owed, due 31 January {0}
 
 crystalisation.incorrect                                        = Incorrect figures
 crystalisation.adjustments                                      = If there are any errors, you can make adjustments through your software.

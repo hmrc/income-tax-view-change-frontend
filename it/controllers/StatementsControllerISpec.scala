@@ -22,7 +22,9 @@ import utils.ImplicitDateFormatter
 import utils.ImplicitCurrencyFormatter._
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
-import play.api.http.Status.{OK, INTERNAL_SERVER_ERROR}
+import play.api.http.Status
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.libs.json.Json
 
 class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
 
@@ -35,22 +37,19 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
         "display the tax year for the statement and the associated charge" in {
 
           isAuthorisedUser(true)
-
           stubUserDetails()
-
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a successful Get Financial Transactions response")
-          val statementResponse = GetStatementsData.singleFinancialTransactionsModel
-          FinancialTransactionsStub.stubGetFinancialTransactions(testNino, statementResponse)
+          val statementResponse = Json.toJson(GetStatementsData.singleFinancialTransactionsModel)
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
           val res = IncomeTaxViewChangeFrontend.getStatements
 
           Then("I verify the Financial Transactions response has been wiremocked")
-          FinancialTransactionsStub.verifyGetFinancialTransactions(testNino)
+          FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
 
           verifyBizDeetsCall()
           verifyPropDeetsCall()
@@ -85,14 +84,14 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a successful Get Financial Transactions response")
-          val statementResponse = GetStatementsData.singleFTModel1charge2payments
-          FinancialTransactionsStub.stubGetFinancialTransactions(testNino, statementResponse)
+          val statementResponse = Json.toJson(GetStatementsData.singleFTModel1charge2payments)
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
           val res = IncomeTaxViewChangeFrontend.getStatements
 
           Then("I verify the Financial Transactions response has been wiremocked")
-          FinancialTransactionsStub.verifyGetFinancialTransactions(testNino)
+          FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
 
           verifyBizDeetsCall()
           verifyPropDeetsCall()
@@ -137,14 +136,14 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a successful Get Financial Transactions response")
-          val statementResponse = GetStatementsData.emptyFTModel
-          FinancialTransactionsStub.stubGetFinancialTransactions(testNino, statementResponse)
+          val statementResponse = Json.toJson(GetStatementsData.emptyFTModel)
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
           val res = IncomeTaxViewChangeFrontend.getStatements
 
           Then("I verify the Financial Transactions response has been wiremocked")
-          FinancialTransactionsStub.verifyGetFinancialTransactions(testNino)
+          FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
 
           verifyBizDeetsCall()
           verifyPropDeetsCall()
@@ -175,13 +174,13 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a successful Get Financial Transactions response")
-          FinancialTransactionsStub.stubFinancialTransactionsError(testNino)
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.INTERNAL_SERVER_ERROR, Json.obj())
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
           val res = IncomeTaxViewChangeFrontend.getStatements
 
           Then("I verify the Financial Transactions response has been wiremocked")
-          FinancialTransactionsStub.verifyGetFinancialTransactions(testNino)
+          FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
 
           verifyBizDeetsCall()
           verifyPropDeetsCall()

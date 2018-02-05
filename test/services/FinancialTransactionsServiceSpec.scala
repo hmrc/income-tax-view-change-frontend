@@ -30,8 +30,8 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
     "a successful financial transaction repsonse is returned from the connector" should {
 
       "return a valid FinancialTransactions model" in {
-        setupFinancialTransactionsResponse(testNino)(FinancialTransactions.financialTransactionsModel)
-        await(TestFinancialTransactionsService.getFinancialTransactions(testNino)) shouldBe FinancialTransactions.financialTransactionsModel
+        setupFinancialTransactionsResponse(testNino)(FinancialTransactions.financialTransactionsModel())
+        await(TestFinancialTransactionsService.getFinancialTransactions(testNino)) shouldBe FinancialTransactions.financialTransactionsModel()
       }
 
     }

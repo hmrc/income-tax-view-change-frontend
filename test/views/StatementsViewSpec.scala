@@ -42,30 +42,11 @@ class StatementsViewSpec extends TestSupport {
   val charge2018: SubItemModel = SubItemModel(
     subItem = Some("000"),
     dueDate = Some("2019-1-31".toLocalDate),
-    amount = Some(1000.00),
-    clearingDate = None,
-    clearingReason = None,
-    outgoingPaymentMethod = None,
-    paymentLock = None,
-    clearingLock = None,
-    interestLock = None,
-    dunningLock = None,
-    returnFlag = None,
-    paymentReference = None,
-    paymentAmount = None,
-    paymentMethod = None,
-    paymentLot = None,
-    paymentLotItem = None,
-    clearingSAPDocument = None,
-    statisticalDocument = None,
-    returnReason = None,
-    promiseToPay = None
+    amount = Some(1000.00)
   )
 
   val payment2018: SubItemModel = SubItemModel(
     subItem = Some("002"),
-    dueDate = None,
-    amount = None,
     clearingDate = Some("2018-1-1".toLocalDate),
     clearingReason = Some(""),
     outgoingPaymentMethod = Some(""),
@@ -88,30 +69,11 @@ class StatementsViewSpec extends TestSupport {
   val charge2019: SubItemModel = SubItemModel(
     subItem = Some("000"),
     dueDate = Some("2020-1-31".toLocalDate),
-    amount = Some(1200.00),
-    clearingDate = None,
-    clearingReason = None,
-    outgoingPaymentMethod = None,
-    paymentLock = None,
-    clearingLock = None,
-    interestLock = None,
-    dunningLock = None,
-    returnFlag = None,
-    paymentReference = None,
-    paymentAmount = None,
-    paymentMethod = None,
-    paymentLot = None,
-    paymentLotItem = None,
-    clearingSAPDocument = None,
-    statisticalDocument = None,
-    returnReason = None,
-    promiseToPay = None
+    amount = Some(1200.00)
   )
 
   val payment2019: SubItemModel = SubItemModel(
     subItem = Some("002"),
-    dueDate = None,
-    amount = None,
     clearingDate = Some("2019-1-2".toLocalDate),
     clearingReason = Some(""),
     outgoingPaymentMethod = Some(""),
@@ -152,7 +114,7 @@ class StatementsViewSpec extends TestSupport {
     outstandingAmount = Some(400.00),
     clearedAmount = Some(600.00),
     accruedInterest = Some(0.00),
-    items = Seq(charge2018, payment2018)
+    items = Some(Seq(charge2018, payment2018))
   ), testYear1)
 
   val transactionModel2019: TransactionModelWithYear = TransactionModelWithYear(TransactionModel(
@@ -176,7 +138,7 @@ class StatementsViewSpec extends TestSupport {
     outstandingAmount = Some(590.00),
     clearedAmount = Some(610.00),
     accruedInterest = Some(0.00),
-    items = Seq(charge2019, payment2019)
+    items = Some(Seq(charge2019, payment2019))
   ), testYear2)
 
   val errorModel: FinancialTransactionsErrorModel = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")

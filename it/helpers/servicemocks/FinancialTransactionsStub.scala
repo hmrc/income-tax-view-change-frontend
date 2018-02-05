@@ -17,23 +17,17 @@
 package helpers.servicemocks
 
 import helpers.WiremockHelper
-import models.FinancialTransactionsModel
-import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.JsValue
 
 object FinancialTransactionsStub {
 
-  val financialTransactionsUrl: String => String = nino => s"/financial-transactions/it/$nino"
+  val financialTransactionsUrl: String => String = mtditid => s"/financial-transactions/it/$mtditid"
 
   //Financial Transactions
-  def stubGetFinancialTransactions(nino: String, ftData: FinancialTransactionsModel) : Unit =
-    WiremockHelper.stubGet(financialTransactionsUrl(nino), Status.OK, Json.toJson(ftData).toString())
-
-  def stubFinancialTransactionsError(nino: String) : Unit =
-    WiremockHelper.stubGet(financialTransactionsUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
+  def stubGetFinancialTransactions(mtditid: String)(status: Int, response: JsValue): Unit =
+    WiremockHelper.stubGet(financialTransactionsUrl(mtditid), status, response.toString())
 
   //Verifications
-  def verifyGetFinancialTransactions(nino: String): Unit =
-    WiremockHelper.verifyGetWithHeader(financialTransactionsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
-
+  def verifyGetFinancialTransactions(mtditid: String): Unit =
+    WiremockHelper.verifyGet(financialTransactionsUrl(mtditid))
 }

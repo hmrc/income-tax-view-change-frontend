@@ -29,13 +29,8 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
       "return the correct page with tax links" in {
 
         isAuthorisedUser(true)
-
         stubUserDetails()
-
-        stubPartial()
-
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
         getPropDeets(GetPropertyDetails.successResponse())
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
@@ -47,12 +42,10 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
         IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
 
-
         When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
         val res = IncomeTaxViewChangeFrontend.getEstimates
 
         verifyBizDeetsCall()
-
         verifyPropDeetsCall()
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
@@ -61,7 +54,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         Then("The view should have the correct headings and a single tax estimate link")
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.CalculationController.getFinancialData(2018).url)
+          redirectURI(controllers.routes.CalculationController.showCalculationForYear(2018).url)
         )
       }
     }
@@ -70,13 +63,8 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
       "return the correct page with tax links" in {
 
         isAuthorisedUser(true)
-
         stubUserDetails()
-
-        stubPartial()
-
         getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
-
         getPropDeets(GetPropertyDetails.successResponse())
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
@@ -92,12 +80,10 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
         IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
 
-
         When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
         val res = IncomeTaxViewChangeFrontend.getEstimates
 
         verifyBizDeetsCall()
-
         verifyPropDeetsCall()
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
@@ -120,17 +106,8 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
       "return the correct estimate page" in {
 
         isAuthorisedUser(true)
-
         stubUserDetails()
-
-        stubPartial()
-
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
-        getPropDeets(GetPropertyDetails.successResponse())
-
         getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
-
         getPropDeets(GetPropertyDetails.successResponse())
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
@@ -161,7 +138,6 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         val res = IncomeTaxViewChangeFrontend.getEstimates
 
         verifyBizDeetsCall()
-
         verifyPropDeetsCall()
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
@@ -171,7 +147,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         Then("The view should have the correct headings and a single tax estimate link")
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.CalculationController.getFinancialData(2019).url)
+          redirectURI(controllers.routes.CalculationController.showCalculationForYear(2019).url)
         )
       }
     }
@@ -180,13 +156,8 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
       "return the correct page with no estimates found message" in {
 
         isAuthorisedUser(true)
-
         stubUserDetails()
-
-        stubPartial()
-
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
         getPropDeets(GetPropertyDetails.successResponse())
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
@@ -208,7 +179,6 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         val res = IncomeTaxViewChangeFrontend.getEstimates
 
         verifyBizDeetsCall()
-
         verifyPropDeetsCall()
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
@@ -241,5 +211,4 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
       }
     }
   }
-
 }

@@ -42,7 +42,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
         setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
 
-        await(TestCalculationService.getFinancialData(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
+        await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
       }
     }
 
@@ -50,7 +50,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
 
       "return none" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
-        await(TestCalculationService.getFinancialData(testNino, testYear)) shouldBe CalcDisplayError
+        await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe CalcDisplayError
       }
     }
 
@@ -58,7 +58,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
 
       "return none" in {
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcNotFound)
-        await(TestCalculationService.getFinancialData(testNino, testYear)) shouldBe CalcDisplayNoDataFound
+        await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe CalcDisplayNoDataFound
       }
     }
 
@@ -68,7 +68,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
         setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataErrorModel)
 
-        await(TestCalculationService.getFinancialData(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel
+        await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel
       }
     }
   }

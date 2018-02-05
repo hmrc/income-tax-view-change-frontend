@@ -18,23 +18,21 @@ package controllers
 
 import assets.Messages
 import assets.Messages.EstimatedTaxLiabilityError
-import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyDetails._
 import assets.TestConstants._
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockFinancialTransactionsService
 import mocks.services.MockCalculationService
-import models.IncomeSourcesModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import utils.TestSupport
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService {
 
   object TestCalculationController extends CalculationController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -45,23 +43,26 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     MockIncomeSourceDetailsPredicate,
     mockCalculationService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
-    app.injector.instanceOf[AuditingService]
+    app.injector.instanceOf[AuditingService],
+    mockFinancialTransactionsService,
+    app.injector.instanceOf[ItvcErrorHandler]
   )
 
   lazy val messages = new Messages.Calculation(testYear)
 
-  "The CalculationController.getFinancialData(year) action" when {
+  "The CalculationController.showCalculationForYear(year) action" when {
 
-    "Called with an Authenticated HMRC-MTD-IT User" which {
+    "Called with an Authenticated HMRC-MTD-IT User" that {
 
-      "that successfully retrieves Business only income from the Income Sources predicate" +
-        "and financial data from the FinancialData Service" should {
+      "successfully retrieves Business only income from the Income Sources predicate" +
+        "and successful calculation from the Calculation Service" should {
 
-        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.showCalculationForYear(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockFinancialDataSuccess()
+          mockFinancialTransactionFailed()
+          mockCalculationSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
           status(result) shouldBe Status.OK
         }
@@ -77,14 +78,15 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
       }
 
       "receives Property only income from the Income Sources predicate" +
-        "and financial data from the FinancialData Service" should {
+        "and successful calculation from the Calculation Service" should {
 
-        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.showCalculationForYear(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockFinancialTransactionFailed()
           mockPropertyIncomeSource()
-          mockFinancialDataSuccess()
+          mockCalculationSuccess()
           status(result) shouldBe Status.OK
         }
 
@@ -98,13 +100,14 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         }
       }
 
-      "receives a crystallised calculation from the calculationService" should {
-        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+      "receives a crystallised calculation from the calculationService and a transaction from the financialTransactionService" should {
+        lazy val result = TestCalculationController.showCalculationForYear(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockFinancialTransactionSuccess()
           mockPropertyIncomeSource()
-          mockFinancialDataCrystalisationSuccess()
+          mockCalculationCrystalisationSuccess()
           status(result) shouldBe Status.OK
         }
 
@@ -119,14 +122,39 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
       }
 
-      "receives Business Income source from the Income Sources predicate and an error from the FinancialData Service" should {
+      "receives a crystallised calculation from the calculationService and an error model from the financialTransactionService" should {
+        lazy val result = TestCalculationController.showCalculationForYear(testYear)(fakeRequestWithActiveSession)
 
-        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        "return Status Internal Server Error (500)" in {
+          mockFinancialTransactionFailed()
+          mockPropertyIncomeSource()
+          mockCalculationCrystalisationSuccess()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+      }
+
+      "receives a crystallised calculation from the calculationService and no transaction with the correct date" should {
+        lazy val result = TestCalculationController.showCalculationForYear(testYear)(fakeRequestWithActiveSession)
+
+        "return Status Internal Server Error (500)" in {
+          mockFinancialTransactionSuccess("2020-04-05")
+          mockPropertyIncomeSource()
+          mockCalculationCrystalisationSuccess()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+      }
+
+      "receives Business Income source from the Income Sources predicate and an error from the Calculation Service" should {
+
+        lazy val result = TestCalculationController.showCalculationForYear(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          mockFinancialTransactionSuccess()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
-          mockFinancialDataNoBreakdown()
+          mockCalculationNoBreakdown()
           status(result) shouldBe Status.OK
         }
 
@@ -140,13 +168,14 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         }
       }
 
-      "receives Business Income from the Income Sources predicate and an error from the FinancialData Service" should {
+      "receives Business Income from the Income Sources predicate and an error from the Calculation Service" should {
 
-        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.showCalculationForYear(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          mockFinancialDataError()
+          mockFinancialTransactionSuccess()
+          mockCalculationError()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.OK
         }
@@ -170,13 +199,14 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
       }
 
-      "receives Business Income from the Income Sources predicate and No Data Found from the FinancialData Service" should {
+      "receives Business Income from the Income Sources predicate and No Data Found from the Calculation Service" should {
 
-        lazy val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        lazy val result = TestCalculationController.showCalculationForYear(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return a 404" in {
-          mockFinancialDataNotFound()
+          mockFinancialTransactionSuccess()
+          mockCalculationNotFound()
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.NOT_FOUND
         }
@@ -191,13 +221,14 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         }
       }
 
+
     }
 
     "Called with an Unauthenticated User" should {
 
       "return redirect SEE_OTHER (303)" in {
         setupMockAuthorisationException()
-        val result = TestCalculationController.getFinancialData(testYear)(fakeRequestWithActiveSession)
+        val result = TestCalculationController.showCalculationForYear(testYear)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }

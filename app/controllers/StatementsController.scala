@@ -42,7 +42,7 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
     implicit user =>
 //      auditReportDeadlines(user)
       for {
-        financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.nino)
+        financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
       } yield financialTransactionsResponse match {
         case model: FinancialTransactionsModel => Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
         case _: FinancialTransactionsErrorModel => InternalServerError(views.html.errorPages.statementsError())
