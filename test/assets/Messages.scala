@@ -165,6 +165,7 @@ object Messages {
   // Statements Page Messages
   object Statements {
     val title = "Income Tax Statement"
+    val pageHeading = title
     val p1 = "A record of your charges and payments."
     val taxYear: Int => String = taxYear => s"Tax year: ${taxYear-1}-$taxYear"
     val totalCharges = "Total charges"
@@ -177,6 +178,10 @@ object Messages {
     val youPaid: (String, String) => String = (amount, date) => s"You paid $amount on $date"
     val earlierTransactions = "For earlier transactions, view your self assessment."
     val noTransactions = "You've had no transactions since you started reporting through accounting software."
+    object Error {
+      val pageHeading = "We can't show your statement right now"
+      val p1 = "Try reloading the page or coming back later."
+    }
   }
 
   // Timeout Messages

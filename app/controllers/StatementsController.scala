@@ -33,8 +33,6 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
                                      implicit val messagesApi: MessagesApi,
                                      val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
-                                     val retrieveNino: NinoPredicate,
-                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                      val financialTransactionsService: FinancialTransactionsService
                                     ) extends BaseController {
 
@@ -44,7 +42,7 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
         financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
       } yield financialTransactionsResponse match {
         case model: FinancialTransactionsModel => Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
-        case _: FinancialTransactionsErrorModel => InternalServerError(views.html.errorPages.statementsError())
+        case _: FinancialTransactionsErrorModel => Ok(views.html.errorPages.statementsError())
       }
   }
 }

@@ -151,7 +151,7 @@ statements.earlierTransactions                                  = For earlier tr
 statements.noTransactions                                       = You''ve had no transactions since you started reporting through accounting software.
 
 statements.error.heading                                        = We can''t show your statement right now
-statements.error.para                                           = Try reloading the page or coming back later.
+statements.error.p1                                             = Try reloading the page or coming back later.
 
 ## Statuses ##
 status.received                                                 = Received
