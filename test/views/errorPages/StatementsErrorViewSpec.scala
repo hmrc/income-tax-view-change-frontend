@@ -16,14 +16,10 @@
 
 package views.errorPages
 
-import assets.Messages.{EstimatedTaxLiabilityError => messages, Sidebar => sidebarMessages}
-import assets.TestConstants.BusinessDetails._
+import assets.Messages.{Sidebar => sidebarMessages, Statements => messages}
 import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyIncome._
 import assets.TestConstants._
-import auth.MtdItUser
 import config.FrontendAppConfig
-import models.IncomeSourcesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -32,61 +28,28 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import utils.TestSupport
 
-class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
+class StatementsErrorViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModel), Some(propertyIncomeModel))
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), testIncomeSources)(FakeRequest())
-
   "The EstimatedTaxLiabilityError view" should {
 
-    lazy val page: HtmlFormat.Appendable =
-      views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+    lazy val page: HtmlFormat.Appendable = views.html.errorPages.statementsError()(FakeRequest(), applicationMessages, mockAppConfig, testMtdUserNoNino)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {
       document.title() shouldBe messages.title
     }
 
-    s"have the tax year '${messages.taxYearSubheading}'" in {
-      document.getElementById("tax-year").text() shouldBe messages.taxYearSubheading
-    }
-
     s"have the page heading '${messages.pageHeading}'" in {
-      document.getElementById("page-heading").text() shouldBe messages.pageHeading
+      document.getElementById("page-heading").text() shouldBe messages.Error.pageHeading
     }
 
-    s"have an Estimated Tax Liability section" which {
-
-      lazy val estimateSection = document.getElementById("estimated-tax")
-
-      s"has a paragraph with '${messages.p1}'" in {
-        estimateSection.getElementById("p1").text() shouldBe messages.p1
-      }
-
-      s"has a paragraph with '${messages.p2}'" in {
-        estimateSection.getElementById("p2").text() shouldBe messages.p2
-      }
+    s"have the p1 '${messages.Error.p1}'" in {
+      document.getElementById("statement-error-para").text() shouldBe messages.Error.p1
     }
 
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
-    }
-
-    "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
-      mockAppConfig.features.homePageEnabled(false)
-      lazy val page: HtmlFormat.Appendable =
-        views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
-      lazy val document: Document = Jsoup.parse(contentAsString(page))
-      document.getElementById("it-home-back") should be(null)
-    }
-
-    "show a back link to the Income Tax home page, when the home page feature is enabled" in {
-      mockAppConfig.features.homePageEnabled(true)
-      lazy val page: HtmlFormat.Appendable =
-        views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
-      lazy val document: Document = Jsoup.parse(contentAsString(page))
+    "show a back link to the Income Tax home page" in {
       document.getElementById("it-home-back") shouldNot be(null)
     }
   }

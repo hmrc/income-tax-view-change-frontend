@@ -16,21 +16,19 @@
 
 package views
 
-import java.time.ZonedDateTime
-
 import assets.Messages.{Statements => messages}
-import config.FrontendAppConfig
-import utils.TestSupport
 import assets.TestConstants._
-import play.api.http.Status
-import play.twirl.api.HtmlFormat
-import play.api.test.FakeRequest
-import play.api.i18n.Messages.Implicits._
-import play.api.test.Helpers._
+import config.FrontendAppConfig
+import models._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import models._
+import play.api.http.Status
+import play.api.i18n.Messages.Implicits._
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
 import utils.ImplicitCurrencyFormatter._
+import utils.TestSupport
 
 class StatementsViewSpec extends TestSupport {
 
@@ -199,6 +197,10 @@ class StatementsViewSpec extends TestSupport {
         document.getElementById(s"$testYear1-paid-0").text() shouldBe messages.youPaid(payment2018.paymentAmount.get.toCurrencyString, payment2018.clearingDate.get.toShortDate)
         document.getElementById(s"$testYear2-paid-0").text() shouldBe messages.youPaid(payment2019.paymentAmount.get.toCurrencyString, payment2019.clearingDate.get.toShortDate)
       }
+
+      "show a back link to the Income Tax home page" in {
+        document.getElementById("it-home-back") shouldNot be(null)
+      }
     }
 
     "an empty 'Seq' is passed through" should {
@@ -213,6 +215,9 @@ class StatementsViewSpec extends TestSupport {
         document.getElementById("statements-no-transactions").text() shouldBe messages.noTransactions
       }
 
+      "show a back link to the Income Tax home page" in {
+        document.getElementById("it-home-back") shouldNot be(null)
+      }
     }
   }
 }
