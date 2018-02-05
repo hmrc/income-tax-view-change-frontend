@@ -17,7 +17,7 @@
 @import views.html.templates.main_template
 @import views.html.helpers.breadcrumbHelper
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUserOptionNino[_])
 
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(
@@ -27,9 +27,9 @@
 }
 
 @main_template(
-title = messages("statements.title"),
-bodyClasses = None,
-serviceInfo = breadcrumb
+    title = messages("statements.title"),
+    bodyClasses = None,
+    serviceInfo = breadcrumb
 ) {
 
 <h1 id="page-heading" class="heading-xlarge">@messages("statements.error.heading")</h1>

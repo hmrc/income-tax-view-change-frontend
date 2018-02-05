@@ -144,7 +144,7 @@ class StatementsViewSpec extends TestSupport {
   val errorModel: FinancialTransactionsErrorModel = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
   private def pageSetup(model: Seq[TransactionModelWithYear]) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.statements(model)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+    lazy val page: HtmlFormat.Appendable = views.html.statements(model)(FakeRequest(), applicationMessages, mockAppConfig, testMtdUserNoNino)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 

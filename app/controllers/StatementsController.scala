@@ -38,19 +38,13 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
                                      val financialTransactionsService: FinancialTransactionsService
                                     ) extends BaseController {
 
-  val getStatements: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+  val getStatements: Action[AnyContent] = (checkSessionTimeout andThen authenticate).async {
     implicit user =>
-//      auditReportDeadlines(user)
       for {
         financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
       } yield financialTransactionsResponse match {
         case model: FinancialTransactionsModel => Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
         case _: FinancialTransactionsErrorModel => InternalServerError(views.html.errorPages.statementsError())
       }
-
   }
-
-//  private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier): Unit =
-//    auditingService.audit(StatementsAuditModel(user), controllers.routes.StatementsController.getStatements().url)
-
 }

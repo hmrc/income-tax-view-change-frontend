@@ -23,7 +23,7 @@ import utils.ImplicitCurrencyFormatter._
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
 import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
 
 class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
@@ -37,9 +37,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
         "display the tax year for the statement and the associated charge" in {
 
           isAuthorisedUser(true)
-          stubUserDetails()
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-          getPropDeets(GetPropertyDetails.successResponse())
 
           And("I wiremock stub a successful Get Financial Transactions response")
           val statementResponse = Json.toJson(GetStatementsData.singleFinancialTransactionsModel)
@@ -50,9 +47,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           Then("I verify the Financial Transactions response has been wiremocked")
           FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
-
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
 
           Then("The view should have the correct headings and single statement")
           val model = GetStatementsData.singleChargeTransactionModel
@@ -77,12 +71,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           isAuthorisedUser(true)
 
-          stubUserDetails()
-
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
-          getPropDeets(GetPropertyDetails.successResponse())
-
           And("I wiremock stub a successful Get Financial Transactions response")
           val statementResponse = Json.toJson(GetStatementsData.singleFTModel1charge2payments)
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
@@ -92,9 +80,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           Then("I verify the Financial Transactions response has been wiremocked")
           FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
-
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
 
           Then("The view should have the correct headings and single statement")
           val statement1Model = GetStatementsData.singleChargeTransactionModel
@@ -129,12 +114,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           isAuthorisedUser(true)
 
-          stubUserDetails()
-
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
-          getPropDeets(GetPropertyDetails.successResponse())
-
           And("I wiremock stub a successful Get Financial Transactions response")
           val statementResponse = Json.toJson(GetStatementsData.emptyFTModel)
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
@@ -144,9 +123,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           Then("I verify the Financial Transactions response has been wiremocked")
           FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
-
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
 
           Then("The view should have the correct headings and single statement")
           res should have(
@@ -167,12 +143,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           isAuthorisedUser(true)
 
-          stubUserDetails()
-
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
-          getPropDeets(GetPropertyDetails.successResponse())
-
           And("I wiremock stub a successful Get Financial Transactions response")
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.INTERNAL_SERVER_ERROR, Json.obj())
 
@@ -182,9 +152,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then("I verify the Financial Transactions response has been wiremocked")
           FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
-
           Then("The view should have the correct headings and single statement")
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR),
@@ -193,10 +160,24 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           )
 
         }
-
       }
+    }
 
+    "is Unauthorised" should {
+
+      "redirect to sign in" in {
+
+        isAuthorisedUser(false)
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
+        val res = IncomeTaxViewChangeFrontend.getStatements
+
+        Then("redirect to the Sign In Url")
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.SignInController.signIn().url)
+        )
+      }
     }
   }
-
 }
