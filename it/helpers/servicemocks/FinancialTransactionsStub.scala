@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package helpers.servicemocks
 
-import java.time.LocalDate
-import utils.ImplicitDateFormatter._
-import play.api.libs.json.Json
+import helpers.WiremockHelper
+import play.api.libs.json.JsValue
 
+object FinancialTransactionsStub {
 
-case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
-  val determineTaxYear = if(end isBefore s"${end.getYear}-4-6")
-    end.getYear
-  else
-    end.getYear + 1
-}
+  def financialTransactionsUrl(mtditid: String): String = s"/financial-transactions/it/$mtditid"
 
-object AccountingPeriodModel {
-  implicit val format = Json.format[AccountingPeriodModel]
+  def stubGetFinancialTransactions(mtditid: String)(status: Int, response: JsValue): Unit =
+    WiremockHelper.stubGet(financialTransactionsUrl(mtditid), status, response.toString())
+
+  def verifyFinancialTransactions(mtditid: String): Unit =
+    WiremockHelper.verifyGet(financialTransactionsUrl(mtditid))
 }
