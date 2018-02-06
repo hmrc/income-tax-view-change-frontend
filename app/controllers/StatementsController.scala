@@ -18,15 +18,13 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import auth.MtdItUser
 import config.FrontendAppConfig
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.{FinancialTransactionsErrorModel, FinancialTransactionsModel, TransactionModelWithYear}
+import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
+import models.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
+import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.FinancialTransactionsService
-import utils.ImplicitDateFormatter._
-import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class StatementsController @Inject()(implicit val config: FrontendAppConfig,
@@ -41,8 +39,12 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
       for {
         financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
       } yield financialTransactionsResponse match {
-        case model: FinancialTransactionsModel => Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
-        case _: FinancialTransactionsErrorModel => Ok(views.html.errorPages.statementsError())
+        case model: FinancialTransactionsModel =>
+          Logger.debug("[StatementsController][getStatements] Success Response received from financialTransactionsService")
+          Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
+        case _: FinancialTransactionsErrorModel =>
+          Logger.debug("[StatementsController][getStatements] Error Response received from financialTransactionsService")
+          Ok(views.html.errorPages.statementsError())
       }
   }
 }
