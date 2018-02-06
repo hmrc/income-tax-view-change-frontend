@@ -746,10 +746,12 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   }
 
   object GetPropertyDetails {
-    def successResponse(): JsValue =
-      Json.parse(
-        s"""{}"""
+    def successResponse(): JsValue = Json.obj(
+      "accountingPeriod" -> Json.obj(
+        "start" -> "2017-04-06",
+        "end" -> "2018-04-05"
       )
+    )
   }
 
   object GetReportDeadlinesData {
