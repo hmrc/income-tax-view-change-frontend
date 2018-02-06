@@ -37,6 +37,11 @@ home.statements.heading                                         = Statements
 home.statements.text                                            = View your income tax transactions, including charges and payments.
 home.statements.link                                            = View your statement
 
+## Recruitment Banner ##
+banner.recruitment.text                                         = Help improve this service
+banner.recruitment.link                                         = Join our research panel by answering a few questions.
+banner.recruitment.dismiss                                      = No, thankyou.
+
 ## Estimates Page ##
 estimates.title                                                 = Current estimates
 estimates.heading                                               = View your estimates
