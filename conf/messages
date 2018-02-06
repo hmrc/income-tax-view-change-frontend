@@ -35,9 +35,9 @@ home.deadlines.text                                             = Check your rep
 home.deadlines.link                                             = View your deadlines
 
 ## Recruitment Banner ##
-banner.recruitment.text                                         = Please help us improve our service
-banner.recruitment.link                                         = Enter our survey
-banner.recruitment.dismiss                                      = No thanks
+banner.recruitment.text                                         = Help improve this service
+banner.recruitment.link                                         = Join our research panel by answering a few questions.
+banner.recruitment.dismiss                                      = No, thankyou.
 
 ## Estimates Page ##
 estimates.title                                                 = Current estimates

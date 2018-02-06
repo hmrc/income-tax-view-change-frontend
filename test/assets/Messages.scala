@@ -23,9 +23,9 @@ object Messages {
   }
 
   object RecruitmentBanner {
-    val text = "Please help us improve our service"
-    val link = "Enter our survey"
-    val dismiss = "No thanks"
+    val text = "Help improve this service"
+    val link = "Join our research panel by answering a few questions."
+    val dismiss = "No, thankyou."
   }
 
   //Estimates Page Messages
