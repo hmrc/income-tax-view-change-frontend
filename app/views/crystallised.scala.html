@@ -69,7 +69,6 @@
                 <h2 id="whatYouOweHeading" class="heading-large">
                     @Html(messages("crystalisation.whatYouOwe.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.totalIncomeTaxNicYtd.toCurrency)}"))
                 </h2>
-                <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
             </div>
 
             <div class="form-group">
@@ -77,6 +76,10 @@
                     <span class="visually-hidden">Warning</span>
                 </i>
                 <strong id="warning" class="bold-small">@messages("crystalisation.warning",s"${taxYear+1}")</strong>
+            </div>
+
+            <div class="form-group">
+                <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
             </div>
 
             <div class="form-group">
