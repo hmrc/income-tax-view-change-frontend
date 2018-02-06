@@ -58,7 +58,7 @@ class PropertyEOPSDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
     "return ReportDeadlinesErrorModel when bad JSON is received" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response")
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property EOPS Deadlines Response")
     }
 
     "return ReportDeadlinesErrorModel model in case of future failed scenario" in {
