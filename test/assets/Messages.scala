@@ -22,6 +22,12 @@ object Messages {
     val backToHome = "Back to Income Tax home"
   }
 
+  object RecruitmentBanner {
+    val text = "Help improve this service"
+    val link = "Join our research panel by answering a few questions."
+    val dismiss = "No, thankyou."
+  }
+
   //Estimates Page Messages
   class Estimates {
     val title = "Current estimates"
