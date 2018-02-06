@@ -16,15 +16,14 @@
 
 package controllers
 
-import helpers.IntegrationTestConstants.GetReportDeadlinesData.singleReportDeadlinesDataSuccessModel
-import helpers.{ComponentSpecBase, GenericStubMethods}
-import utils.ImplicitDateFormatter
-import utils.ImplicitCurrencyFormatter._
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
+import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
+import utils.ImplicitCurrencyFormatter._
+import utils.ImplicitDateFormatter
 
 class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
 
