@@ -181,9 +181,9 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             document.getElementById("additionalAllowances") shouldBe null
           }
 
-          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
+          s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
             document.getElementById("taxable-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableIncome
-            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
+            document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
           }
 
           s"have an income tax section" which {
@@ -209,7 +209,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           }
           s"have a Tax reliefs amount of ${model.taxReliefs}" in {
             document.getElementById("tax-relief-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.reliefs
-            document.getElementById("tax-relief").text shouldBe "-"+model.taxReliefs.toCurrencyString
+            document.getElementById("tax-relief").text shouldBe "-" + model.taxReliefs.toCurrencyString
           }
           s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
 
@@ -277,8 +277,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           val setup = pageSetup(noTaxOrNICalcDataModel, testIncomeSources)
           import ImplicitCurrencyFormatter._
           import setup._
-          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
-            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
+          s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
+            document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
           }
           s"not have a National Insurance amount" in {
             document.getElementById("ni-amount") shouldBe null
@@ -292,8 +292,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           val setup = pageSetup(noTaxJustNICalcDataModel, testIncomeSources)
           import ImplicitCurrencyFormatter._
           import setup._
-          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
-            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
+          s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
+            document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
           }
           s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
             document.getElementById("nic2-amount").text shouldBe model.nic.class2.toCurrencyString
@@ -302,7 +302,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             document.getElementById("nic4-amount").text shouldBe model.nic.class4.toCurrencyString
           }
           s"have a Tax reliefs amount of ${model.taxReliefs}" in {
-            document.getElementById("tax-relief").text shouldBe "-"+model.taxReliefs.toCurrencyString
+            document.getElementById("tax-relief").text shouldBe "-" + model.taxReliefs.toCurrencyString
           }
           s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
             document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
