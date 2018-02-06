@@ -48,15 +48,15 @@ class PropertyEOPSDeadlinesConnector @Inject()(val http: HttpClient, val config:
             Logger.debug(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[ReportDeadlinesModel].fold(
               invalid => {
-                Logger.warn(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - Json Validation Error. Parsing Property Obligation Data Response")
-                ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property Obligation Data Response")
+                Logger.warn(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - Json Validation Error. Parsing Property EOPS Deadlines Response")
+                ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property EOPS Deadlines Response")
               },
               valid => valid
             )
           case _ =>
             Logger.debug(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - RESPONSE status: ${response.status}, body: ${response.body}")
             Logger.warn(
-              s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - Response status: [${response.status}] returned from Property ReportDeadlines call")
+              s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - Response status: [${response.status}] returned from Property EOPS Deadlines call")
             ReportDeadlinesErrorModel(response.status, response.body)
         }
     } recover {
