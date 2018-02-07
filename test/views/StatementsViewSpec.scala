@@ -188,6 +188,11 @@ class StatementsViewSpec extends TestSupport {
         document.getElementById(s"$testYear2-paid-0").text() shouldBe messages.youPaid(payment2019.paymentAmount.get.toCurrencyString, payment2019.clearingDate.get.toShortDate)
       }
 
+      "say where to find earlier transactions, with the correct link" in {
+        document.getElementById("earlier-statements").text() shouldBe messages.earlierTransactions
+        document.getElementById("view-sa-calcs").attr("href") shouldBe mockAppConfig.selfAssessmentUrl
+      }
+
       "show a back link to the Income Tax home page" in {
         document.getElementById("it-home-back") shouldNot be(null)
       }

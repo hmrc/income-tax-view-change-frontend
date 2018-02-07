@@ -79,11 +79,16 @@
 
 
     @model.map { tmwy =>
-        <div @if(model.reverse.head.taxYear != tmwy.taxYear) {class="divider--bottom"}>
+        <div class="divider--bottom">
             @taxYear(tmwy)
         </div>
     }
 
+    <div>
+        <p id="earlier-statements">
+            @messages("statements.earlierTransactions") <a href="@appConfig.selfAssessmentUrl" id="view-sa-calcs">@messages("statements.earlierTransactionsLink")</a>.
+        </p>
+    </div>
 
     @backToHomeHelper()
 
