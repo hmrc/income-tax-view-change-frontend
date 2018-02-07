@@ -29,9 +29,7 @@ import scala.concurrent.Future
 class FinancialTransactionsService @Inject()(val financialTransactionsConnector: FinancialTransactionsConnector){
 
   def getFinancialTransactions(mtditid: String)(implicit headCarrier: HeaderCarrier): Future[FinancialTransactionsResponseModel] = {
-    Logger.debug(
-      s"[FinancialTransactionsService][getFinancialTransactions] - Requesting Financial Transactions from connector for mtditid: $mtditid"
-    )
+    Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] - Requesting Financial Transactions from connector for mtditid: $mtditid")
     financialTransactionsConnector.getFinancialTransactions(mtditid)
   }
 

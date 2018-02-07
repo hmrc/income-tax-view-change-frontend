@@ -63,6 +63,11 @@ object Messages {
       val paragraph = "Check your report deadlines and if we've received them."
       val link = "View your deadlines"
     }
+    object StatementSection {
+      val heading = "Statements"
+      val paragraph = "View your income tax transactions, including charges and payments."
+      val link = "View your statement"
+    }
   }
 
   // Estimated Tax Liability Page Messages
@@ -160,6 +165,28 @@ object Messages {
     object Errors {
       val p1 = "We can't display your next report due date at the moment."
       val p2 = "Try refreshing the page in a few minutes."
+    }
+  }
+
+  // Statements Page Messages
+  object Statements {
+    val title = "Income Tax Statement"
+    val pageHeading = title
+    val p1 = "A record of your charges and payments."
+    val taxYear: Int => String = taxYear => s"Tax year: ${taxYear-1}-$taxYear"
+    val totalCharges = "Total charges"
+    val stillToPay: String => String = amount => s"Still to pay: $amount"
+    val dueBy: String => String = date => s"This is due by $date."
+    val nothingToPay = "Nothing left to pay"
+    val paidBill = "You've paid this bill."
+    val transactions = "Your transactions"
+    val charge: String => String = amount => s"You had a charge of $amount."
+    val youPaid: (String, String) => String = (amount, date) => s"You paid $amount on $date"
+    val earlierTransactions = "For earlier transactions, view your self assessment."
+    val noTransactions = "You've had no transactions since you started reporting through accounting software."
+    object Error {
+      val pageHeading = "We can't show your statement right now"
+      val p1 = "Try reloading the page or coming back later."
     }
   }
 

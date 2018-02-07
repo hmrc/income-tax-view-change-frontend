@@ -68,7 +68,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
             NotFound(views.html.noEstimatedTaxLiability(taxYear))
           case CalcDisplayError =>
             Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
-            Ok(views.html.estimatedTaxLiabilityError(taxYear))
+            Ok(views.html.errorPages.estimatedTaxLiabilityError(taxYear))
         }
   }
 
