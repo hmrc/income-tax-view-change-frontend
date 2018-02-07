@@ -33,6 +33,9 @@ home.estimates.link                                             = View your esti
 home.deadlines.heading                                          = Report deadlines
 home.deadlines.text                                             = Check your report deadlines and if we''ve received them.
 home.deadlines.link                                             = View your deadlines
+home.statements.heading                                         = Statements
+home.statements.text                                            = View your income tax transactions, including charges and payments.
+home.statements.link                                            = View your statement
 
 ## Estimates Page ##
 estimates.title                                                 = Current estimates
@@ -106,7 +109,9 @@ crystalisation.whatYouOwe.directDebit                           = Check if you a
 crystalisation.warning                                          = If you pay this bill after 31 January {0} you''ll get penalties.
 crystalisation.calc-breakdown.heading                           = How this figure was calculated
 
-crystalisation.calc-breakdown.total                             = Total owed, due 31 January {0}
+crystalisation.calc-breakdown.subtotal                          = Sub-total (excluding payments by you)
+crystalisation.calc-breakdown.payment                           = Your payments to date
+crystalisation.calc-breakdown.owed                              = Total owed, due 31 January {0}
 
 crystalisation.incorrect                                        = Incorrect figures
 crystalisation.adjustments                                      = If there are any errors, you can make adjustments through your software.
@@ -128,6 +133,25 @@ bills.billLink                                                  = Tax year: {0} 
 bills.noBills                                                   = You''ve had no bills since you started reporting through software.
 bills.earlierBills                                              = For earlier bills,
 bills.earlierBillsLink                                          = view your self assessment calculations
+
+## Statements Page ##
+statements.title                                                = Income Tax Statement
+statements.heading                                              = Income Tax Statement
+statements.p1                                                   = A record of your charges and payments.
+statements.taxYearStatement                                     = Tax year: {0}-{1}
+statements.totalCharges                                         = Total charges
+statements.stillToPay                                           = Still to pay: {0}
+statements.dueBy                                                = This is due by {0}.
+statements.nothingToPay                                         = Nothing left to pay
+statements.paidBill                                             = You''ve paid this bill.
+statements.transactions                                         = Your transactions
+statements.charge                                               = You had a charge of <span id="{0}-charge">{1}</span>.
+statements.youPaid                                              = You paid {0} on {1}
+statements.earlierTransactions                                  = For earlier transactions, <a href="#">view your self assessment</a>.
+statements.noTransactions                                       = You''ve had no transactions since you started reporting through accounting software.
+
+statements.error.heading                                        = We can''t show your statement right now
+statements.error.p1                                             = Try reloading the page or coming back later.
 
 ## Statuses ##
 status.received                                                 = Received

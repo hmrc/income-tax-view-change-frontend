@@ -16,28 +16,33 @@
 
 package utils
 
-import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle._
 import java.util.Locale._
 
 trait ImplicitDateFormatter {
 
-  implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
-
   implicit class localDate(s: String) {
     def toLocalDate: LocalDate = LocalDate.parse(s, DateTimeFormatter.ofPattern("uuuu-M-d"))
     def toLocalDateTime: LocalDateTime = LocalDateTime.parse(s, DateTimeFormatter.ISO_DATE_TIME)
+    def toZonedDateTime: ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
   }
 
   implicit class longDate(d: LocalDate) {
     def toLongDate: String = d.getDayOfMonth + " " + d.getMonth.getDisplayName(FULL, UK) + " " + d.getYear
   }
 
+  implicit class shortDate(date: LocalDate) {
+    def toShortDate: String = date.format(DateTimeFormatter.ofPattern("d/MM/uuuu"))
+  }
+
   implicit class longDateTime(dt: LocalDateTime) {
     def toLongDateTime: String = dt.getDayOfMonth + " " + dt.getMonth.getDisplayName(FULL, UK) + " " + dt.getYear
   }
+
+  implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
+
 }
 
 object ImplicitDateFormatter extends ImplicitDateFormatter {

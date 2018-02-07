@@ -32,7 +32,7 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
                                    val calculationDataConnector: CalculationDataConnector) {
 
 
-  def getFinancialData(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
+  def getCalculationDetail(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
     for {
       lastCalc <- getLastEstimatedTaxCalculation(nino, taxYear)
       calcBreakdown <- lastCalc match {

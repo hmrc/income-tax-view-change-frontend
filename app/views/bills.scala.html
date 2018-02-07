@@ -55,7 +55,7 @@
                 <ul class="list list-bullet">
                     @for(calc <- calcModels){
                         <li>
-                            <a href="@{controllers.routes.CalculationController.getFinancialData(calc.taxYear).url}" class="bills-link" id="bills-link-@{calc.taxYear}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
+                            <a href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}" class="bills-link" id="bills-link-@{calc.taxYear}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
                         </li>
                     }
                 </ul>
