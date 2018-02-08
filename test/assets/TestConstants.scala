@@ -16,7 +16,7 @@
 
 package assets
 
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserOptionNino}
 import enums.{Crystallised, Estimate}
 import models._
 import play.api.http.Status
@@ -35,6 +35,7 @@ object TestConstants extends ImplicitDateFormatter {
   val testUserDetails = UserDetailsModel(testUserName, None, "n/a", "n/a")
   val testUserDetailsError = UserDetailsError
   val testUserDetailsUrl = "/user/oid/potato"
+  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None)(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   val testSelfEmploymentId  = "XA00001234"

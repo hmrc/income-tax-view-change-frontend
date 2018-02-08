@@ -40,6 +40,9 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
 
   val testYear = "2018"
   val testYearPlusOne = "2019"
+  val testYearInt = 2018
+  val testYearPlusOneInt = 2019
+
   val testCalcType = "it"
 
   val testSelfEmploymentId = "ABC123456789"
@@ -870,9 +873,118 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       )
     ))
 
-
-
     val emptyModel = ReportDeadlinesModel(List())
+  }
+
+  object GetStatementsData {
+    //    def successResponse(statementModel: TransactionModelWithYear): JsValue = {
+    //      Json.toJson(statementModel)
+    //    }
+
+    def emptyResponse(): JsValue = Json.obj()
+
+    def failureResponse(code: String, reason: String): JsValue = Json.obj(
+      "code" -> code,
+      "reason" -> reason
+    )
+
+    val charge2018: SubItemModel = SubItemModel(
+      subItem = Some("000"),
+      dueDate = Some("2019-1-31".toLocalDate),
+      amount = Some(1000.00)
+    )
+
+    val charge2019: SubItemModel = SubItemModel(
+      subItem = Some("000"),
+      dueDate = Some("2020-1-31".toLocalDate),
+      amount = Some(7500.00)
+    )
+
+    val payment2019: SubItemModel = SubItemModel(
+      subItem = Some("001"),
+      clearingDate = Some("2019-8-6".toLocalDate),
+      paymentReference = Some("aPaymentReference"),
+      paymentAmount = Some(500.00)
+    )
+
+    val otherPayment2019: SubItemModel = SubItemModel(
+      subItem = Some("002"),
+      clearingDate = Some("2019-8-7".toLocalDate),
+      paymentReference = Some("aPaymentReference"),
+      paymentAmount = Some(250.00)
+    )
+
+    val singleChargeTransactionModel = TransactionModel(
+      chargeType = Some(""),
+      mainType = Some(""),
+      periodKey = Some(""),
+      periodKeyDescription = Some(""),
+      taxPeriodFrom = Some("2017-4-6".toLocalDate),
+      taxPeriodTo = Some("2018-4-5".toLocalDate),
+      businessPartner = Some(""),
+      contractAccountCategory = Some(""),
+      contractAccount = Some(""),
+      contractObjectType = Some(""),
+      contractObject = Some(""),
+      sapDocumentNumber = Some(""),
+      sapDocumentNumberItem = Some(""),
+      chargeReference = Some(""),
+      mainTransaction = Some(""),
+      subTransaction = Some(""),
+      originalAmount = Some(1000.00),
+      outstandingAmount = Some(1000.00),
+      clearedAmount = Some(0.00),
+      accruedInterest = Some(0.00),
+      items = Some(Seq(charge2018))
+    )
+
+    val singleCharge2PaymentsTransactionModel = TransactionModel(
+      chargeType = Some(""),
+      mainType = Some(""),
+      periodKey = Some(""),
+      periodKeyDescription = Some(""),
+      taxPeriodFrom = Some("2018-4-6".toLocalDate),
+      taxPeriodTo = Some("2019-4-5".toLocalDate),
+      businessPartner = Some(""),
+      contractAccountCategory = Some(""),
+      contractAccount = Some(""),
+      contractObjectType = Some(""),
+      contractObject = Some(""),
+      sapDocumentNumber = Some(""),
+      sapDocumentNumberItem = Some(""),
+      chargeReference = Some(""),
+      mainTransaction = Some(""),
+      subTransaction = Some(""),
+      originalAmount = Some(7500.00),
+      outstandingAmount = Some(6750.00),
+      clearedAmount = Some(750.00),
+      accruedInterest = Some(0.00),
+      items = Some(Seq(charge2019, payment2019, otherPayment2019))
+    )
+
+    val singleFinancialTransactionsModel = FinancialTransactionsModel(
+      idType = "",
+      idNumber = "",
+      regimeType = "",
+      processingDate = "2017-03-07T09:30:00.000Z".toZonedDateTime,
+      financialTransactions = Seq(singleChargeTransactionModel)
+    )
+
+    val singleFTModel1charge2payments = FinancialTransactionsModel(
+      idType = "",
+      idNumber = "",
+      regimeType = "",
+      processingDate = "2017-03-07T09:30:00.000Z".toZonedDateTime,
+      financialTransactions = Seq(singleChargeTransactionModel, singleCharge2PaymentsTransactionModel)
+    )
+
+    val emptyFTModel = FinancialTransactionsModel(
+      idType = "",
+      idNumber = "",
+      regimeType = "",
+      processingDate = "2017-03-07T09:30:00.000Z".toZonedDateTime,
+      financialTransactions = Seq()
+    )
   }
 
   object GetFinancialTransactions {

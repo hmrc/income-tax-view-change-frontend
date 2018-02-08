@@ -42,12 +42,15 @@ case class TransactionModel(chargeType: Option[String] = None,
                        accruedInterest: Option[BigDecimal] = None,
                        items: Option[Seq[SubItemModel]] = None) {
 
-  val isPaid: Boolean = outstandingAmount.fold(true)(_ == 0)
+  val isPaid: Boolean = outstandingAmount.fold(true)(_ <= 0)
+
+  def charges(): Seq[SubItemModel] = items.getOrElse(Seq()).filter(_.dueDate.isDefined)
+
+  def payments(): Seq[SubItemModel] = items.getOrElse(Seq()).filter(_.paymentReference.isDefined)
 
 }
 
-case class TransactionModelWithYear(model: TransactionModel,
-                                    taxYear: Int)
+case class TransactionModelWithYear(model: TransactionModel, taxYear: Int)
 
 object TransactionModel {
   implicit val format: Format[TransactionModel] = Json.format[TransactionModel]
