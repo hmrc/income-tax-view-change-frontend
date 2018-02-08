@@ -69,6 +69,7 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
 
       s"has a paragraph with '${messages.p1}'" in {
         estimateSection.getElementById("p1").text() shouldBe messages.p1
+        estimateSection.getElementById("p2").text() shouldBe messages.p2
       }
     }
 

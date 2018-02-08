@@ -136,7 +136,8 @@ object Messages {
     val pageHeading = "Your Income Tax estimate"
     val taxYearSubheading = "Tax year: 2017 to 2018"
     val title = taxYearSubheading
-    val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
+    val p1 = "Once you've submitted a report for this tax year, you can see your estimates."
+    val p2 = "If you've finalised a bill, you'll no longer see an estimate for this tax year."
   }
 
   // Estimated Tax Liability Error Page Messages

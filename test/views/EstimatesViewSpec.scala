@@ -47,7 +47,7 @@ class EstimatesViewSpec extends TestSupport {
   private def pageSetup(incomeSources: IncomeSourcesModel, calcs: List[LastTaxCalculationWithYear]) = new {
     val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), incomeSources)
     lazy val page: HtmlFormat.Appendable =
-      views.html.estimates(calcs,testYear)(FakeRequest(),applicationMessages, mockAppConfig)
+      views.html.estimates(calcs)(FakeRequest(),applicationMessages, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 

@@ -49,12 +49,13 @@
 
     <section id="estimated-tax">
 
-        <h1>
+        <h1 class="heading-xlarge">
             <span id="tax-year" class="pre-heading">@renderTaxYear(taxYear)</span>
             <span id="page-heading">@messages("estimated_tax_liability.heading")</span>
         </h1>
 
         <p id="p1">@messages("estimated_tax_liability.no-data")</p>
+        <p id="p2">@messages("estimated_tax_liability.finalised")</p>
 
         @if(appConfig.features.homePageEnabled()){
             @backToHomeHelper()

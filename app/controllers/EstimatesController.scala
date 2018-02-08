@@ -53,7 +53,7 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
           Redirect(controllers.routes.CalculationController.showCalculationForYear(estimatesResponse.filter(!_.matchesStatus(Crystallised)).head.taxYear))
         }
         else {
-          Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
+          Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised))))
         }
       }
   }
