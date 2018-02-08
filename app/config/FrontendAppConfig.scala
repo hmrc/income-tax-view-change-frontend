@@ -83,8 +83,12 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   //Subscription Service
   lazy val signUpUrl: String = loadConfig("mtd-subscription-service.url")
 
+  lazy val ftUrl: String = baseUrl("financial-transactions")
+
   //Exit Survey
   lazy val exitSurveyUrl: String = s"$itvcFrontendEnvironment/$baseUrl/exit-survey"
+
+  lazy val enterSurveyUrl: String = loadConfig("enter-survey.url")
 
   val features = new Features(runModeConfiguration)
 

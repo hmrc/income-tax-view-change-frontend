@@ -29,6 +29,7 @@
 @import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
 @import views.html.helpers.phaseBanner
+@import views.html.helpers.recruitmentBannerHelper
 
 @linksElem = {
     <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/itvc.css")'>
@@ -54,7 +55,7 @@
       navLinks = Some(headerNavLinks))
 }
 
-@afterHeader = {}
+@afterHeader = {@recruitmentBannerHelper()}
 
 @bodyEnd = {
     @uiLayouts.footer(

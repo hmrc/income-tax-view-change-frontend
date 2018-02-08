@@ -51,8 +51,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
-    lazy val cPage: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
-      CalcBreakdown.calculationDisplaySuccessCrystalisationModel(calcDataModel),
+    lazy val cPage: HtmlFormat.Appendable = views.html.crystallised(
+      CalcBreakdown.calculationDisplaySuccessCrystalisationModel(calcDataModel), FinancialTransactions.transactionModel(),
       testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val cDocument: Document = Jsoup.parse(contentAsString(cPage))
 

@@ -17,12 +17,11 @@ package controllers
 
 import config.FrontendAppConfig
 import helpers.IntegrationTestConstants.GetReportDeadlinesData.singleReportDeadlinesDataSuccessModel
+import helpers.IntegrationTestConstants._
 import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub}
-import helpers.{ComponentSpecBase, GenericStubMethods, IntegrationTestConstants}
+import helpers.{ComponentSpecBase, GenericStubMethods}
 import models.{Nino, NinoResponseError}
 import play.api.http.Status._
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.{Application, Environment, Mode}
 import utils.ImplicitDateFormatter
 
 class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with ImplicitDateFormatter {
@@ -40,7 +39,6 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
 
           isAuthorisedUser(true)
           stubUserDetails()
-          stubPartial()
 
           When("I call GET /report-quarterly/income-and-expenses/view")
           val res = IncomeTaxViewChangeFrontend.getHome
@@ -64,7 +62,6 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
 
           isAuthorisedUser(true)
           stubUserDetails()
-          stubPartial()
 
           When("I call GET /report-quarterly/income-and-expenses/view")
           val res = IncomeTaxViewChangeFrontend.getHome
@@ -104,20 +101,13 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
     "a user is without a HMRC-NI enrolment" should {
       "redirect to the report deadlines page" in {
 
-        val f = IntegrationTestConstants
-        import f._
-
         Given("I wiremock stub an authorised with no Nino user response")
         AuthStub.stubAuthorisedNoNino()
 
         IncomeTaxViewChangeStub.stubGetNinoResponse(testMtditid, Nino(testNino))
 
         stubUserDetails()
-
-        stubPartial()
-
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
         getPropDeets(GetPropertyDetails.successResponse())
 
         And("I wiremock stub a single business obligation response")
@@ -136,8 +126,6 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
       }
 
       "be displayed a technical error page" in {
-        val f = IntegrationTestConstants
-        import f._
 
         Given("I wiremock stub an authorised with no Nino user response")
         AuthStub.stubAuthorisedNoNino()
@@ -145,11 +133,7 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         IncomeTaxViewChangeStub.stubGetNinoError(testMtditid, NinoResponseError(INTERNAL_SERVER_ERROR, "Error Message"))
 
         stubUserDetails()
-
-        stubPartial()
-
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
         getPropDeets(GetPropertyDetails.successResponse())
 
         And("I wiremock stub a single business obligation response")
