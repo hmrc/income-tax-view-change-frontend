@@ -88,6 +88,8 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   //Exit Survey
   lazy val exitSurveyUrl: String = s"$itvcFrontendEnvironment/$baseUrl/exit-survey"
 
+  lazy val enterSurveyUrl: String = loadConfig("enter-survey.url")
+
   val features = new Features(runModeConfiguration)
 
 }
