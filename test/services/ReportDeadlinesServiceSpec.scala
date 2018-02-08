@@ -20,13 +20,16 @@ package services
 import assets.TestConstants
 import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
-import mocks.connectors.{MockBusinessReportDeadlinesConnector, MockPropertyReportDeadlinesConnector}
+import mocks.connectors.{MockBusinessEOPSDeadlinesConnector, MockBusinessReportDeadlinesConnector, MockPropertyEOPSDeadlinesConnector, MockPropertyReportDeadlinesConnector}
 import models._
 import utils.TestSupport
 
-class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDeadlinesConnector with MockPropertyReportDeadlinesConnector {
+class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDeadlinesConnector
+                                                     with MockPropertyReportDeadlinesConnector
+                                                     with MockBusinessEOPSDeadlinesConnector
+                                                     with MockPropertyEOPSDeadlinesConnector{
 
-  object TestReportDeadlinesService extends ReportDeadlinesService(mockBusinessObligationDataConnector, mockPropertyObligationDataConnector)
+  object TestReportDeadlinesService extends ReportDeadlinesService(mockBusinessObligationDataConnector, mockPropertyObligationDataConnector, mockBusinessEOPSDeadlinesConnector, mockPropertyEOPSDeadlinesConnector)
 
   "The ReportDeadlinesService.getNextObligation method" when {
 
@@ -81,6 +84,47 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDead
             )
           )
         await(TestReportDeadlinesService.getPropertyReportDeadlines(testNino)) shouldBe successfulReportDeadlinesResponse
+      }
+    }
+  }
+
+
+  "The ReportDeadlinesService.getBusinessEOPSDeadlines method" when {
+
+    "a successful single business" which {
+
+      "a single list of obligations is returned from the connector" should {
+
+        "return a valid list of obligations" in {
+          setupMockBusinessEOPSDeadline(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
+          await(TestReportDeadlinesService.getBusinessEOPSDeadline(testNino, testSelfEmploymentId)) shouldBe obligationsDataSuccessModel
+        }
+      }
+    }
+    "does not have a valid list of obligations returned from the connector" should {
+
+      "return a valid list of obligations" in {
+        setupMockBusinessEOPSDeadline(testNino, testSelfEmploymentId)(obligationsDataErrorModel)
+        await(TestReportDeadlinesService.getBusinessEOPSDeadline(testNino, testSelfEmploymentId)) shouldBe obligationsDataErrorModel
+      }
+    }
+  }
+
+  "The ReportDeadlinesService.getPropertyEOPSDeadlines method" when {
+
+    "a single list of obligations is returned from the connector" should {
+
+      "return a valid list of obligations" in {
+        setupMockPropertyEOPSDeadline(testNino)(obligationsDataSuccessModel)
+        await(TestReportDeadlinesService.getPropertyEOPSDeadline(testNino)) shouldBe obligationsDataSuccessModel
+      }
+    }
+
+    "does not have a valid list of obligations returned from the connector" should {
+
+      "return a valid list of obligations" in {
+        setupMockPropertyEOPSDeadline(testNino)(obligationsDataErrorModel)
+        await(TestReportDeadlinesService.getPropertyEOPSDeadline(testNino)) shouldBe obligationsDataErrorModel
       }
     }
   }
