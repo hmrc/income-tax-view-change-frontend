@@ -56,20 +56,20 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
         calcResponse <- calculationService.getCalculationDetail(user.nino, taxYear)
         ftResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
       } yield calcResponse match {
-          case calcDisplayModel: CalcDisplayModel =>
-            auditEstimate(user, calcDisplayModel.calcAmount.toString)
-            calcDisplayModel.calcStatus match {
-              case Crystallised => renderCrystallisedView(calcDisplayModel, taxYear, ftResponse)
-              case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
-            }
-          case CalcDisplayNoDataFound =>
-            Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Not found")
-            auditEstimate(user, "No data found")
-            NotFound(views.html.noEstimatedTaxLiability(taxYear))
-          case CalcDisplayError =>
-            Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
-            Ok(views.html.estimatedTaxLiabilityError(taxYear))
-        }
+        case calcDisplayModel: CalcDisplayModel =>
+          auditEstimate(user, calcDisplayModel.calcAmount.toString)
+          calcDisplayModel.calcStatus match {
+            case Crystallised => renderCrystallisedView(calcDisplayModel, taxYear, ftResponse)
+            case Estimate => Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear))
+          }
+        case CalcDisplayNoDataFound =>
+          Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Not found")
+          auditEstimate(user, "No data found")
+          NotFound(views.html.noEstimatedTaxLiability(taxYear))
+        case CalcDisplayError =>
+          Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
+          Ok(views.html.estimatedTaxLiabilityError(taxYear))
+      }
   }
 
   def renderCrystallisedView(calcDisplayModel: CalcDisplayModel, taxYear: Int, ftResponse: FinancialTransactionsResponseModel)

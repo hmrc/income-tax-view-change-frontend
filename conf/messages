@@ -74,7 +74,8 @@ estimated_tax_liability.calc-breakdown.reliefs                  = Your tax relie
 
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
 estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
-estimated_tax_liability.no-data                                 = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
+estimated_tax_liability.no-data                                 = Once you''ve submitted a report for this tax year, you can see your estimates.
+estimated_tax_liability.finalised                               = If you''ve finalised a bill, you''ll no longer see an estimate for this tax year.
 estimated_tax_liability.error.p1                                = We can''t display your estimated tax amount at the moment.
 estimated_tax_liability.error.p2                                = Try refreshing the page in a few minutes.
 estimated_tax_liability.eoyEstimate.heading                     = Annual estimate: {0}
