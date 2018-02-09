@@ -23,6 +23,7 @@ import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.ImplicitListMethods
+import utils.ImplicitDateFormatter.localDateOrdering
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -53,12 +54,6 @@ class BTAPartialService @Inject()(val financialDataService: CalculationService) 
     }
   }
 
-  private[BTAPartialService] def getMostRecentDueDate(reportDeadlinesList: List[ReportDeadlineModel]): ReportDeadlineModel = {
-    if(!reportDeadlinesList.exists(!_.met)){
-      reportDeadlinesList.reduceLeft((x,y) => if(x.due isAfter y.due) x else y)
-    } else {
-      reportDeadlinesList.filter(!_.met).reduceLeft((x,y) => if(x.due isBefore y.due) x else y)
-    }
-  }
-
+  private[BTAPartialService] def getMostRecentDueDate(reportDeadlinesList: List[ReportDeadlineModel]): ReportDeadlineModel =
+    if(reportDeadlinesList.forall(_.met)) reportDeadlinesList.maxBy(_.due) else reportDeadlinesList.filter(!_.met).minBy(_.due)
 }

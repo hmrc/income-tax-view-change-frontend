@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package views
+package views.errorPages
 
 import assets.Messages.{EstimatedTaxLiabilityError => messages, Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.CalcBreakdown.busPropBRTCalcDataModel
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
 import assets.TestConstants._
@@ -43,7 +42,7 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
   "The EstimatedTaxLiabilityError view" should {
 
     lazy val page: HtmlFormat.Appendable =
-      views.html.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+      views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {
@@ -78,7 +77,7 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
     "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
       mockAppConfig.features.homePageEnabled(false)
       lazy val page: HtmlFormat.Appendable =
-        views.html.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+        views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
       lazy val document: Document = Jsoup.parse(contentAsString(page))
       document.getElementById("it-home-back") should be(null)
     }
@@ -86,7 +85,7 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
     "show a back link to the Income Tax home page, when the home page feature is enabled" in {
       mockAppConfig.features.homePageEnabled(true)
       lazy val page: HtmlFormat.Appendable =
-        views.html.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+        views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
       lazy val document: Document = Jsoup.parse(contentAsString(page))
       document.getElementById("it-home-back") shouldNot be(null)
     }
