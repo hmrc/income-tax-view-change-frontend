@@ -64,20 +64,3 @@ class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: Bus
 
 
 }
-
-
-
-
-
-
-
-
-
-
-//ReportDeadlinesModel(List(ReportDeadlineModel(2017-04-01,2017-06-30,2017-07-31,true), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-30,false), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-31,false), ReportDeadlineModel(2017-04-01,2017-06-30,2017-07-31,true), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-30,false), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-31,false)))
-
-//ReportDeadlinesModel(List(ReportDeadlineModel(2017-04-01,2017-06-30,2017-07-31,true), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-30,false), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-31,false)))
-
-
-
-
