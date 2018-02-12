@@ -43,8 +43,21 @@ class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: Bus
       eopsObs <- businessEOPSDeadlinesConnector.getBusinessEOPSDeadline(nino, selfEmploymentId)
     } yield (quarterlyObs, eopsObs) match {
       case (x: ReportDeadlinesModel, y: ReportDeadlinesModel) =>
+        Logger.debug(s"[ReportDeadlinesService][getBusinessReportDeadlineData] - " +
+          s"ReportDeadlinesModel received from BusinessReportDeadlinesConnector and BusinessEOPSDeadlinesConnector with NINO: $nino")
         ReportDeadlinesModel(x.obligations ++ y.obligations)
-      case (x, _) => x
+      case (x: ReportDeadlinesModel, y: ReportDeadlinesErrorModel) =>
+        Logger.debug(s"[ReportDeadlinesService][getBusinessReportDeadlineData] - " +
+          s"ReportDeadlinesErrorModel received from BusinessEOPSDeadlineConnector with NINO: $nino")
+        x
+      case (x: ReportDeadlinesErrorModel, y: ReportDeadlinesModel) =>
+        Logger.debug(s"[ReportDeadlinesService][getBusinessReportDeadlineData] - " +
+          s"ReportDeadlinesErrorModel received from BusinessReportDeadlinesConnector with NINO: $nino")
+        x
+      case (x: ReportDeadlinesErrorModel, y: ReportDeadlinesErrorModel) =>
+        Logger.debug(s"[ReportDeadlinesService][getBusinessReportDeadlineData] - " +
+          s"ReportDeadlinesErrorModel received from BusinessReportDeadlinesConnector and BusinessEOPSDeadlinesConnector with NINO: $nino")
+        x
     }
   }
 
@@ -57,8 +70,21 @@ class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: Bus
       eopsObs <- propertyEOPSDeadlinesConnector.getPropertyEOPSDeadline(nino)
     } yield (quarterlyObs, eopsObs) match {
       case (x: ReportDeadlinesModel, y: ReportDeadlinesModel) =>
+        Logger.debug(s"[ReportDeadlinesService][getPropertyReportDeadlineData] - " +
+          s"ReportDeadlinesModel received from PropertyReportDeadlinesConnector and PropertyEOPSDeadlinesConnector with NINO: $nino")
         ReportDeadlinesModel(x.obligations ++ y.obligations)
-      case (x, _) => x
+      case (x: ReportDeadlinesModel, y: ReportDeadlinesErrorModel) =>
+        Logger.debug(s"[ReportDeadlinesService][getPropertyReportDeadlineData] - " +
+          s"ReportDeadlinesErrorModel received from PropertyEOPSDeadlineConnector with NINO: $nino")
+        x
+      case (x: ReportDeadlinesErrorModel, y: ReportDeadlinesModel) =>
+        Logger.debug(s"[ReportDeadlinesService][getPropertyReportDeadlineData] - " +
+          s"ReportDeadlinesErrorModel received from PropertyReportDeadlinesConnector with NINO: $nino")
+        x
+      case (x: ReportDeadlinesErrorModel, y: ReportDeadlinesErrorModel) =>
+        Logger.debug(s"[ReportDeadlinesService][getPropertyReportDeadlineData] - " +
+          s"ReportDeadlinesErrorModel received from PropertyReportDeadlinesConnector and PropertyEOPSDeadlinesConnector with NINO: $nino")
+        x
     }
   }
 
