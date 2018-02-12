@@ -96,6 +96,8 @@ obligations.pi.portfolio                                        = This covers al
 obligations.error.p1                                            = We can''t display your next report due date at the moment.
 obligations.error.p2                                            = Try refreshing the page in a few minutes.
 obligations.ceased                                              = This business ceased trading on {0}.
+obligations.quarterly.to                                        = to
+obligations.eops                                                = Whole tax year (final check)
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission

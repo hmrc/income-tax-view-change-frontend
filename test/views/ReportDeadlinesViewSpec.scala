@@ -16,7 +16,7 @@
 
 package views
 
-import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages, Sidebar => sidebarMessages}
+import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
 import config.FrontendAppConfig
@@ -30,6 +30,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import utils.TestSupport
 
+
 class ReportDeadlinesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
@@ -39,7 +40,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
     end = "2017-3-31".toLocalDate,
     due = "2017-4-5".toLocalDate,
     met = true
-  )))
+  ),ReportDeadlines.openEOPSObligation))
   val errorModel = ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
   private def pageSetup(model: IncomeSourcesModel) = new {
