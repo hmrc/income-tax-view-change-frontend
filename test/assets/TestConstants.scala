@@ -186,6 +186,7 @@ object TestConstants extends ImplicitDateFormatter {
     val obligationsEOPSDataSuccessJson = Json.parse(obligationsEOPSDataSuccessString)
 
     val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
+    val eopsAndQuarterlyObligationsError = ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Quarterly and EOPS Deadlines both returned errors")
     val obligationsDataErrorString =
       s"""
          |{
