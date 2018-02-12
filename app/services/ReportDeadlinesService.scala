@@ -22,6 +22,8 @@ import connectors.{BusinessEOPSDeadlinesConnector, BusinessReportDeadlinesConnec
 import models._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.ExecutionContext.Implicits.global
+
 
 import scala.concurrent.Future
 
@@ -36,23 +38,46 @@ class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: Bus
                                 (implicit hc: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
     Logger.debug(
       s"[ReportDeadlinesService][getBusinessReportDeadlineData] - Requesting Business Obligation details from connector for user with NINO: $nino")
-    businessReportDeadlinesConnector.getBusinessReportDeadlineData(nino, selfEmploymentId)
+    for {
+      quarterlyObs <- businessReportDeadlinesConnector.getBusinessReportDeadlineData(nino, selfEmploymentId)
+      eopsObs <- businessEOPSDeadlinesConnector.getBusinessEOPSDeadline(nino, selfEmploymentId)
+    } yield (quarterlyObs, eopsObs) match {
+      case (x: ReportDeadlinesModel, y: ReportDeadlinesModel) =>
+        ReportDeadlinesModel(x.obligations ++ y.obligations)
+      case (x, _) => x
+    }
   }
 
   def getPropertyReportDeadlines(nino: String)
                                 (implicit hc: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
     Logger.debug (
       s"[ReportDeadlinesService][getPropertyReportDeadlineData] - Requesting Property Obligation details from connectors for user with NINO: $nino")
-    propertyReportDeadlineDataConnector.getPropertyReportDeadlineData(nino)
+    for {
+      quarterlyObs <- propertyReportDeadlineDataConnector.getPropertyReportDeadlineData(nino)
+      eopsObs <- propertyEOPSDeadlinesConnector.getPropertyEOPSDeadline(nino)
+    } yield (quarterlyObs, eopsObs) match {
+      case (x: ReportDeadlinesModel, y: ReportDeadlinesModel) =>
+        ReportDeadlinesModel(x.obligations ++ y.obligations)
+      case (x, _) => x
+    }
   }
 
-  def getBusinessEOPSDeadline(nino: String, selfEmploymentId: String)(implicit hc: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
-    Logger.debug (s"[ReportDeadlinesService][getBusinessEOPSDeadline] - Requesting Business EOPS details from connectors for user with NINO: $nino")
-    businessEOPSDeadlinesConnector.getBusinessEOPSDeadline(nino, selfEmploymentId)
-  }
 
-  def getPropertyEOPSDeadline(nino: String)(implicit hc: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
-    Logger.debug (s"[ReportDeadlinesService][getPropertyEOPSDeadline] - Requesting Property EOPS details from connectors for user with NINO: $nino")
-    propertyEOPSDeadlinesConnector.getPropertyEOPSDeadline(nino)
-  }
 }
+
+
+
+
+
+
+
+
+
+
+//ReportDeadlinesModel(List(ReportDeadlineModel(2017-04-01,2017-06-30,2017-07-31,true), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-30,false), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-31,false), ReportDeadlineModel(2017-04-01,2017-06-30,2017-07-31,true), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-30,false), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-31,false)))
+
+//ReportDeadlinesModel(List(ReportDeadlineModel(2017-04-01,2017-06-30,2017-07-31,true), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-30,false), ReportDeadlineModel(2017-07-01,2017-09-30,2017-10-31,false)))
+
+
+
+

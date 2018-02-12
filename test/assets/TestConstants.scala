@@ -135,6 +135,56 @@ object TestConstants extends ImplicitDateFormatter {
       """.stripMargin
     val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
 
+
+    val receivedEOPSObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-04-01",
+      end = "2017-6-01",
+      due = "2017-7-01",
+      met = true
+    ))
+
+    val overdueEOPSObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-7-01",
+      end = "2017-9-01",
+      due = "2017-10-01",
+      met = false
+    ))
+
+    val openEOPSObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-7-01",
+      end = "2017-9-01",
+      due = "2017-10-01",
+      met = false
+    ))
+
+    val obligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
+    val obligationsEOPSDataSuccessString: String =
+      """
+        |{
+        |  "obligations": [
+        |    {
+        |      "start": "2017-04-01",
+        |      "end": "2017-06-01",
+        |      "due": "2017-07-01",
+        |      "met": true
+        |    },
+        |    {
+        |      "start": "2017-07-01",
+        |      "end": "2017-09-01",
+        |      "due": "2017-10-01",
+        |      "met": false
+        |    },
+        |    {
+        |      "start": "2017-07-01",
+        |      "end": "2017-09-01",
+        |      "due": "2017-10-01",
+        |      "met": false
+        |    }
+        |  ]
+        |}
+      """.stripMargin
+    val obligationsEOPSDataSuccessJson = Json.parse(obligationsEOPSDataSuccessString)
+
     val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
     val obligationsDataErrorString =
       s"""
