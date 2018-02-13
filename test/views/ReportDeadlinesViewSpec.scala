@@ -95,9 +95,13 @@ class ReportDeadlinesViewSpec extends TestSupport {
         document.getElementById("bi-1-ob-1-status").text() shouldBe "Received"
       }
 
-      "not contain a second row" in {
+      s"contain a second row and have ${messages.eops} and a status 'Due by 31 October 2017'" in {
         document.getElementById("bi-1-ob-2-eops").text() shouldBe messages.eops
         document.getElementById("bi-1-ob-2-status").text() shouldBe "Due by 31 October 2017"
+      }
+
+      "not contain a third row" in {
+        document.getElementById("bi-1-ob-3-status") shouldBe null
       }
     }
 
