@@ -963,27 +963,27 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
     )
 
     val singleFinancialTransactionsModel = FinancialTransactionsModel(
-      idType = "",
-      idNumber = "",
-      regimeType = "",
+      idType = None,
+      idNumber = None,
+      regimeType = None,
       processingDate = "2017-03-07T09:30:00.000Z".toZonedDateTime,
-      financialTransactions = Seq(singleChargeTransactionModel)
+      financialTransactions = Some(Seq(singleChargeTransactionModel))
     )
 
     val singleFTModel1charge2payments = FinancialTransactionsModel(
-      idType = "",
-      idNumber = "",
-      regimeType = "",
+      idType = None,
+      idNumber = None,
+      regimeType = None,
       processingDate = "2017-03-07T09:30:00.000Z".toZonedDateTime,
-      financialTransactions = Seq(singleChargeTransactionModel, singleCharge2PaymentsTransactionModel)
+      financialTransactions = Some(Seq(singleChargeTransactionModel, singleCharge2PaymentsTransactionModel))
     )
 
     val emptyFTModel = FinancialTransactionsModel(
-      idType = "",
-      idNumber = "",
-      regimeType = "",
+      idType = None,
+      idNumber = None,
+      regimeType = None,
       processingDate = "2017-03-07T09:30:00.000Z".toZonedDateTime,
-      financialTransactions = Seq()
+      financialTransactions = None
     )
   }
 
