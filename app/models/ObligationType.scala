@@ -16,9 +16,8 @@
 
 package models
 
-import java.time.LocalDate
 
-sealed trait ReportDeadlineStatus
-case object Received extends ReportDeadlineStatus
-case object Overdue extends ReportDeadlineStatus
-case class Open(dueDate: LocalDate) extends ReportDeadlineStatus
+sealed trait ObligationType
+case object EopsObligation extends ObligationType
+case object QuarterlyObligation extends ObligationType
+
