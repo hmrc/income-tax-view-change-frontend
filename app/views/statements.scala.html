@@ -34,13 +34,13 @@
 
 @taxYear(tmwy: TransactionModelWithYear) = {
     <div id="@tmwy.taxYear-tax-year-section">
-        <h2 id="@tmwy.taxYear-tax-year" class="heading-medium">
+        <h2 id="@tmwy.taxYear-tax-year" class="heading-large">
             @messages("statements.taxYearStatement", s"${tmwy.taxYear - 1}", s"${tmwy.taxYear}")
         </h2>
     </div>
 
     <div >
-        <h2 id="@tmwy.taxYear-transactions" class="heading-small">@messages("statements.transactions")</h2>
+        <h2 id="@tmwy.taxYear-transactions" class="heading-medium">@messages("statements.transactions")</h2>
         <p id="@tmwy.taxYear-charge-text">@Html(messages("statements.charge", s"${tmwy.taxYear}", tmwy.model.charges.head.amount.get.toCurrency))</p>
         @if(tmwy.model.payments.nonEmpty){
         <ul class="list list-bullet">
@@ -52,7 +52,8 @@
 
         @if(tmwy.model.outstandingAmount.get > 0){
             <h2 id="@tmwy.taxYear-still-to-pay" class="heading-small">@messages("statements.stillToPay", tmwy.model.outstandingAmount.get.toCurrencyString)</h2>
-            <p id="@tmwy.taxYear-due-by">@messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}")</p>
+            <p id="@tmwy.taxYear-due-by">@messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}")
+                <a href="" id="pay-this-now">@messages("statements.dueBy.link")</a>.</p>
         } else {
             <h2 id="@tmwy.taxYear-nothing-to-pay" class="heading-small">@messages("statements.nothingToPay")</h2>
             <p id="@tmwy.taxYear-paid-bill">@messages("statements.paidBill")</p>
