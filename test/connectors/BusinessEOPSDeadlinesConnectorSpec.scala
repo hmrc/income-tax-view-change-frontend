@@ -19,7 +19,7 @@ package connectors
 import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
+import models.{ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse
@@ -36,33 +36,45 @@ class BusinessEOPSDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
   object TestBusinessEOPSDeadlinesConnector extends BusinessEOPSDeadlinesConnector(mockHttpGet, frontendAppConfig)
 
-  "BusinessEOPSDeadlinesConnector.getBusinessEOPSDeadlineUrl" should {
+  "BusinessEOPSDeadlinesConnector.getBusinessEOPSDeadlineUrl" when {
 
     lazy val testUrl = TestBusinessEOPSDeadlinesConnector.getBusinessEOPSDeadlineUrl(testNino, testSelfEmploymentId)
     def result: Future[ReportDeadlinesResponseModel] = TestBusinessEOPSDeadlinesConnector.getBusinessEOPSDeadlines(testNino, testSelfEmploymentId)
 
-    "have the correct URL to Self-Assessment-API" in {
-      testUrl shouldBe s"${frontendAppConfig.saApiService}/ni/$testNino/self-employments/$testSelfEmploymentId/end-of-period-statements/obligations"
+    "the 'businessEopsFeature' is disabled" should {
+
+      "return a ReportDeadlinesModel with an empty list of Obligations" in {
+        frontendAppConfig.features.businessEopsEnabled(false)
+        await(result) shouldBe ReportDeadlinesModel(obligations = List.empty)
+      }
     }
 
-    "return a SuccessResponse with JSON in case of sucess" in {
-      setupMockHttpGet(testUrl)(successResponse)
-      await(result) shouldBe obligationsDataSuccessModel
-    }
+    "the 'businessEopsFeature' is enabled" should {
 
-    "return ErrorResponse model in case of failure" in {
-      setupMockHttpGet(testUrl)(badResponse)
-      await(result) shouldBe ReportDeadlinesErrorModel(Status.BAD_REQUEST, "Error Message")
-    }
+      "have the correct URL to Self-Assessment-API" in {
+        frontendAppConfig.features.businessEopsEnabled(true)
+        testUrl shouldBe s"${frontendAppConfig.saApiService}/ni/$testNino/self-employments/$testSelfEmploymentId/end-of-period-statements/obligations"
+      }
 
-    "return ReportDeadlinesErrorModel when bad JSON is received" in {
-      setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing SE Business EOPS Deadlines Response")
-    }
+      "return a SuccessResponse with JSON in case of sucess" in {
+        setupMockHttpGet(testUrl)(successResponse)
+        await(result) shouldBe obligationsDataSuccessModel
+      }
 
-    "return ReportDeadlinesErrorModel model in case of future failed scenario" in {
-      setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      "return ErrorResponse model in case of failure" in {
+        setupMockHttpGet(testUrl)(badResponse)
+        await(result) shouldBe ReportDeadlinesErrorModel(Status.BAD_REQUEST, "Error Message")
+      }
+
+      "return ReportDeadlinesErrorModel when bad JSON is received" in {
+        setupMockHttpGet(testUrl)(successResponseBadJson)
+        await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing SE Business EOPS Deadlines Response")
+      }
+
+      "return ReportDeadlinesErrorModel model in case of future failed scenario" in {
+        setupMockFailedHttpGet(testUrl)(badResponse)
+        await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      }
     }
   }
 }
