@@ -35,32 +35,32 @@ class BusinessEOPSDeadlinesConnector @Inject()(val http: HttpClient, val config:
   private[connectors] def getBusinessEOPSDeadlineUrl(nino: String, selfEmploymentId: String): String =
     s"${config.saApiService}/ni/$nino/self-employments/$selfEmploymentId/end-of-period-statements/obligations"
 
-  def getBusinessEOPSDeadline(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
+  def getBusinessEOPSDeadlines(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
 
     val url = getBusinessEOPSDeadlineUrl(nino, selfEmploymentId)
-    Logger.debug(s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadline] - GET $url")
+    Logger.debug(s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadlines] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
       response =>
         response.status match {
           case OK =>
-            Logger.debug(s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadline] - RESPONSE status: ${response.status}, json: ${response.json}")
+            Logger.debug(s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadlines] - RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[ReportDeadlinesModel].fold(
               invalid => {
-                Logger.warn(s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadline] - Json Validation Error. Parsing SE Business EOPS Deadlines Response")
+                Logger.warn(s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadlines] - Json Validation Error. Parsing SE Business EOPS Deadlines Response")
                 ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing SE Business EOPS Deadlines Response")
               },
               valid => valid
             )
           case _ =>
-            Logger.debug(s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadline] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.debug(s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
             Logger.warn(
-              s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadline] - Response status: [${response.status}] returned from SE Business EOPS Deadlines call")
+              s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadlines] - Response status: [${response.status}] returned from SE Business EOPS Deadlines call")
             ReportDeadlinesErrorModel(response.status, response.body)
         }
     } recover {
       case _ =>
-        Logger.warn(s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadline] - Unexpected future failed error")
+        Logger.warn(s"[BusinessEOPSDeadlinesConnector][getBusinessEOPSDeadlines] - Unexpected future failed error")
         ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }

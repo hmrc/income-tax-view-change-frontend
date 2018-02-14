@@ -39,7 +39,7 @@ class BusinessEOPSDeadlinesConnectorSpec extends TestSupport with MockHttp {
   "BusinessEOPSDeadlinesConnector.getBusinessEOPSDeadlineUrl" should {
 
     lazy val testUrl = TestBusinessEOPSDeadlinesConnector.getBusinessEOPSDeadlineUrl(testNino, testSelfEmploymentId)
-    def result: Future[ReportDeadlinesResponseModel] = TestBusinessEOPSDeadlinesConnector.getBusinessEOPSDeadline(testNino, testSelfEmploymentId)
+    def result: Future[ReportDeadlinesResponseModel] = TestBusinessEOPSDeadlinesConnector.getBusinessEOPSDeadlines(testNino, testSelfEmploymentId)
 
     "have the correct URL to Self-Assessment-API" in {
       testUrl shouldBe s"${frontendAppConfig.saApiService}/ni/$testNino/self-employments/$testSelfEmploymentId/end-of-period-statements/obligations"

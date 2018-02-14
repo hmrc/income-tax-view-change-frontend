@@ -18,9 +18,10 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{BusinessEOPSDeadlinesConnector, BusinessReportDeadlinesConnector, PropertyEOPSDeadlinesConnector, PropertyReportDeadlineDataConnector}
+import connectors.{BusinessEOPSDeadlinesConnector, BusinessReportDeadlinesConnector, PropertyEOPSDeadlinesConnector, PropertyReportDeadlinesConnector}
 import models._
 import play.api.Logger
+import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,7 +29,7 @@ import scala.concurrent.Future
 
 @Singleton
 class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: BusinessReportDeadlinesConnector,
-                                       val propertyReportDeadlineDataConnector: PropertyReportDeadlineDataConnector,
+                                       val propertyReportDeadlineDataConnector: PropertyReportDeadlinesConnector,
                                        val businessEOPSDeadlinesConnector: BusinessEOPSDeadlinesConnector,
                                        val propertyEOPSDeadlinesConnector: PropertyEOPSDeadlinesConnector
                                       ) {
@@ -38,15 +39,15 @@ class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: Bus
       s"[ReportDeadlinesService][getBusinessReportDeadlineData] - Requesting Business Obligation details for NINO: $nino, selfEmploymentId: $selfEmploymentId")
     for {
       quarterlyObs <- businessReportDeadlinesConnector.getBusinessReportDeadlineData(nino, selfEmploymentId)
-      eopsObs <- businessEOPSDeadlinesConnector.getBusinessEOPSDeadline(nino, selfEmploymentId)
+      eopsObs <- businessEOPSDeadlinesConnector.getBusinessEOPSDeadlines(nino, selfEmploymentId)
     } yield handleReportDeadlines(quarterlyObs, eopsObs)
   }
 
   def getPropertyReportDeadlines(nino: String)(implicit hc: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
-    Logger.debug(s"[ReportDeadlinesService][getPropertyReportDeadlineData] - Requesting Property Obligation details for NINO: $nino")
+    Logger.debug(s"[ReportDeadlinesService][getPropertyReportDeadlines] - Requesting Property Obligation details for NINO: $nino")
     for {
-      quarterlyObs <- propertyReportDeadlineDataConnector.getPropertyReportDeadlineData(nino)
-      eopsObs <- propertyEOPSDeadlinesConnector.getPropertyEOPSDeadline(nino)
+      quarterlyObs <- propertyReportDeadlineDataConnector.getPropertyReportDeadlines(nino)
+      eopsObs <- propertyEOPSDeadlinesConnector.getPropertyEOPSDeadlines(nino)
     } yield handleReportDeadlines(quarterlyObs, eopsObs)
   }
 
@@ -58,7 +59,7 @@ class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: Bus
       case (qObs: ReportDeadlinesModel, _) =>
         Logger.debug(s"[ReportDeadlinesService][handleReportDeadlines] - ReportDeadlinesErrorModel received for EOPS; returning only Quarterly Obligations")
         qObs
-      case (qObsError: ReportDeadlinesErrorModel, _) =>
+      case (qObsError, _) =>
         Logger.debug(s"[ReportDeadlinesService][handleReportDeadlines] - ReportDeadlinesErrorModel received for Quarterly obligations")
         qObsError
     }

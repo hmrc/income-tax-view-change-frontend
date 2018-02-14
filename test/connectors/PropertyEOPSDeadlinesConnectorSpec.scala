@@ -36,10 +36,10 @@ class PropertyEOPSDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
   object TestPropertyEOPSDeadlinesConnector extends PropertyEOPSDeadlinesConnector(mockHttpGet, frontendAppConfig)
 
-  "PropertyEOPSDeadlinesConnector.getPropertyEOPSDeadlineUrl" should {
+  "PropertyEOPSDeadlinesConnector.getPropertyEOPSDeadlines" should {
 
     lazy val testUrl = TestPropertyEOPSDeadlinesConnector.getPropertyEOPSDeadlineUrl(testNino)
-    def result: Future[ReportDeadlinesResponseModel] = TestPropertyEOPSDeadlinesConnector.getPropertyEOPSDeadline(testNino)
+    def result: Future[ReportDeadlinesResponseModel] = TestPropertyEOPSDeadlinesConnector.getPropertyEOPSDeadlines(testNino)
 
     "have the correct url to Property" in {
       //TODO: This URL has been assumed; this may need to be updated when the SA API makes the endpoint available

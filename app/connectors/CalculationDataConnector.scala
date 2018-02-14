@@ -33,7 +33,8 @@ import scala.concurrent.Future
 class CalculationDataConnector @Inject()(val http: HttpClient,
                                          val config: FrontendAppConfig) extends RawResponseReads {
 
-  lazy val getCalculationDataUrl: (String, String) => String = (nino, taxCalculationId) => s"${config.saApiService}/ni/$nino/calculations/$taxCalculationId"
+  private[connectors] lazy val getCalculationDataUrl: (String, String) => String =
+    (nino, taxCalculationId) => s"${config.saApiService}/ni/$nino/calculations/$taxCalculationId"
 
   def getCalculationData(nino: String, taxCalculationId: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
 
@@ -63,5 +64,4 @@ class CalculationDataConnector @Inject()(val http: HttpClient,
         CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
-
 }
