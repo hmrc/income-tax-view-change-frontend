@@ -18,7 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{BusinessReportDeadlinesConnector, PropertyReportDeadlineDataConnector}
+import connectors.{BusinessEOPSDeadlinesConnector, BusinessReportDeadlinesConnector, PropertyEOPSDeadlinesConnector, PropertyReportDeadlineDataConnector}
 import models._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,7 +27,9 @@ import scala.concurrent.Future
 
 @Singleton
 class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: BusinessReportDeadlinesConnector,
-                                       val propertyReportDeadlineDataConnector: PropertyReportDeadlineDataConnector
+                                       val propertyReportDeadlineDataConnector: PropertyReportDeadlineDataConnector,
+                                       val businessEOPSDeadlinesConnector: BusinessEOPSDeadlinesConnector,
+                                       val propertyEOPSDeadlinesConnector: PropertyEOPSDeadlinesConnector
                                       ) {
 
   def getBusinessReportDeadlines(nino: String, selfEmploymentId: String)
@@ -42,5 +44,15 @@ class ReportDeadlinesService @Inject()(val businessReportDeadlinesConnector: Bus
     Logger.debug (
       s"[ReportDeadlinesService][getPropertyReportDeadlineData] - Requesting Property Obligation details from connectors for user with NINO: $nino")
     propertyReportDeadlineDataConnector.getPropertyReportDeadlineData(nino)
+  }
+
+  def getBusinessEOPSDeadline(nino: String, selfEmploymentId: String)(implicit hc: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
+    Logger.debug (s"[ReportDeadlinesService][getBusinessEOPSDeadline] - Requesting Business EOPS details from connectors for user with NINO: $nino")
+    businessEOPSDeadlinesConnector.getBusinessEOPSDeadline(nino, selfEmploymentId)
+  }
+
+  def getPropertyEOPSDeadline(nino: String)(implicit hc: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
+    Logger.debug (s"[ReportDeadlinesService][getPropertyEOPSDeadline] - Requesting Property EOPS details from connectors for user with NINO: $nino")
+    propertyEOPSDeadlinesConnector.getPropertyEOPSDeadline(nino)
   }
 }
