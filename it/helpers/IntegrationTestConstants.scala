@@ -822,6 +822,11 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         due = LocalDate.now().minusDays(36),
         met = false
       ), ReportDeadlineModel(
+        start = "2016-06-01",
+        end = "2017-06-30",
+        due = LocalDate.now().minusDays(36),
+        met = false
+      ), ReportDeadlineModel(
         start = "2017-07-01",
         end = "2017-09-30",
         due = LocalDate.now().plusDays(30),
