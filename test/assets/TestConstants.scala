@@ -160,9 +160,9 @@ object TestConstants extends ImplicitDateFormatter {
 
   object FinancialTransactions {
 
-    val testIdType = "MTDBSA"
-    val testIdNumber = "XQIT00000000001"
-    val testRegimeType = "ITSA"
+    val testIdType = Some("MTDBSA")
+    val testIdNumber = Some("XQIT00000000001")
+    val testRegimeType = Some("ITSA")
     val testProcessingDate = "2017-03-07T22:55:56.987Z".toZonedDateTime
 
     val financialTransactionsErrorJson : JsValue =
@@ -283,7 +283,7 @@ object TestConstants extends ImplicitDateFormatter {
       idNumber = testIdNumber,
       regimeType = testRegimeType,
       processingDate = testProcessingDate,
-      financialTransactions = Seq(transactionModel(taxYear))
+      financialTransactions = Some(Seq(transactionModel(taxYear)))
     )
 
   }

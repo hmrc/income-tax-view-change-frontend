@@ -22,21 +22,17 @@ import play.api.libs.json._
 
 sealed trait FinancialTransactionsResponseModel
 
-case class FinancialTransactionsModel(idType: String,
-                                      idNumber: String,
-                                      regimeType: String,
+case class FinancialTransactionsModel(idType: Option[String],
+                                      idNumber: Option[String],
+                                      regimeType: Option[String],
                                       processingDate: ZonedDateTime,
-                                      financialTransactions: Seq[TransactionModel]) extends FinancialTransactionsResponseModel {
+                                      financialTransactions: Option[Seq[TransactionModel]]) extends FinancialTransactionsResponseModel {
 
   def withYears(): Seq[TransactionModelWithYear] =
-    financialTransactions.flatMap { ft =>
-      ft.taxPeriodTo.map {
-        toDate => TransactionModelWithYear(ft, toDate.getYear)
-      }
-    }
+    financialTransactions.getOrElse(Seq()).flatMap(ft => ft.taxPeriodTo.map(toDate => TransactionModelWithYear(ft, toDate.getYear)))
 
   def findChargeForTaxYear(taxYear: Int): Option[TransactionModel] =
-    financialTransactions.find(_.taxPeriodTo.fold(false)(_ == LocalDate.parse(s"$taxYear-04-05")))
+    financialTransactions.getOrElse(Seq()).find(_.taxPeriodTo.fold(false)(_ == LocalDate.parse(s"$taxYear-04-05")))
 }
 
 

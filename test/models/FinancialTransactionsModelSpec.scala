@@ -36,7 +36,7 @@ class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
 
     "for its transactions contain the return data for each field" in {
 
-      val transaction = financialTransactionsModel().financialTransactions.head
+      val transaction = financialTransactionsModel().financialTransactions.get.head
       transaction.chargeType shouldBe Some("PAYE")
       transaction.mainType shouldBe Some("2100")
       transaction.periodKey shouldBe Some("13RL")
@@ -61,7 +61,7 @@ class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
 
     "for its items return the correct data for each field" in {
 
-      val item = financialTransactionsModel().financialTransactions.head.items.get.head
+      val item = financialTransactionsModel().financialTransactions.get.head.items.get.head
       item.subItem shouldBe Some("000")
       item.dueDate shouldBe Some("2018-02-14".toLocalDate)
       item.amount shouldBe Some(3400.00)
@@ -109,7 +109,17 @@ class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
           testIdNumber,
           testRegimeType,
           testProcessingDate,
-          Seq(TransactionModel())
+          Some(Seq(TransactionModel()))
+        ).findChargeForTaxYear(2018) shouldBe None
+      }
+
+      "there is no transaction" in {
+        FinancialTransactionsModel(
+          testIdType,
+          testIdNumber,
+          testRegimeType,
+          testProcessingDate,
+          None
         ).findChargeForTaxYear(2018) shouldBe None
       }
     }

@@ -182,8 +182,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             elementTextByID("nic2-amount")(calcBreakdownResponse.nic.class2.toCurrencyString),
             elementTextByID("nic4-amount")(calcBreakdownResponse.nic.class4.toCurrencyString),
             elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString),
-            elementTextByID("payment")("-" + financialTransactions.financialTransactions.head.clearedAmount.get.toCurrencyString),
-            elementTextByID("owed")(financialTransactions.financialTransactions.head.outstandingAmount.get.toCurrencyString)
+            elementTextByID("payment")("-" + financialTransactions.financialTransactions.get.head.clearedAmount.get.toCurrencyString),
+            elementTextByID("owed")(financialTransactions.financialTransactions.get.head.outstandingAmount.get.toCurrencyString)
           )
         }
       }
@@ -259,8 +259,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             elementTextByID("nic2-amount")(calcBreakdownResponse.nic.class2.toCurrencyString),
             elementTextByID("nic4-amount")(calcBreakdownResponse.nic.class4.toCurrencyString),
             elementTextByID("total-estimate")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString),
-            elementTextByID("payment")("-" + financialTransactions.financialTransactions.head.clearedAmount.get.toCurrencyString),
-            elementTextByID("owed")(financialTransactions.financialTransactions.head.outstandingAmount.get.toCurrencyString)
+            elementTextByID("payment")("-" + financialTransactions.financialTransactions.get.head.clearedAmount.get.toCurrencyString),
+            elementTextByID("owed")(financialTransactions.financialTransactions.get.head.outstandingAmount.get.toCurrencyString)
           )
         }
       }
