@@ -121,9 +121,9 @@ class CrystallisedViewSpec extends TestSupport {
             document.getElementById("personal-allowance").text shouldBe "-"+model.personalAllowance.toCurrencyString
           }
 
-          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
+          s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
             document.getElementById("taxable-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableIncome
-            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
+            document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
           }
 
           s"have an income tax section" which {
@@ -205,8 +205,8 @@ class CrystallisedViewSpec extends TestSupport {
           val setup = pageSetup(noTaxOrNICalcDataModel, testIncomeSources)
           import ImplicitCurrencyFormatter._
           import setup._
-          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
-            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
+          s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
+            document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
           }
           s"not have a National Insurance amount" in {
             document.getElementById("ni-amount") shouldBe null
@@ -220,8 +220,8 @@ class CrystallisedViewSpec extends TestSupport {
           val setup = pageSetup(noTaxJustNICalcDataModel, testIncomeSources)
           import ImplicitCurrencyFormatter._
           import setup._
-          s"have a taxable income amount of ${model.totalTaxableIncome}" in {
-            document.getElementById("taxable-income").text shouldBe model.totalTaxableIncome.toCurrencyString
+          s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
+            document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
           }
           s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
             document.getElementById("nic2-amount").text shouldBe model.nic.class2.toCurrencyString

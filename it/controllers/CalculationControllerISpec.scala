@@ -34,6 +34,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
   def totalAllowance(calc: CalculationDataModel): String =
     (calc.personalAllowance + calc.savingsAndGains.startBand.taxableIncome + calc.savingsAndGains.zeroBand.taxableIncome).toCurrencyString
 
+  def taxableIncome(calc: CalculationDataModel): String =
+    (calc.totalTaxableIncome - calc.taxableDividendIncome).toCurrencyString
+
   "Calling the CalculationController.getEstimatedTaxLiability(year)" when {
 
     "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response and an EoY Estimate" should {
@@ -81,7 +84,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("business-profit")(totalProfit(calcBreakdownResponse)),
           elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
           elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
-          elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
+          elementTextByID("taxable-income")(taxableIncome(calcBreakdownResponse)),
           elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
           elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
           elementTextByID("brt-amount")((calcBreakdownResponse.payPensionsProfit.basicBand.taxAmount + calcBreakdownResponse.savingsAndGains.basicBand.taxAmount).toCurrencyString),
@@ -157,7 +160,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
             elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
-            elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
+            elementTextByID("taxable-income")(taxableIncome(calcBreakdownResponse)),
             elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
             elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
             elementTextByID("brt-amount")((calcBreakdownResponse.payPensionsProfit.basicBand.taxAmount + calcBreakdownResponse.savingsAndGains.basicBand.taxAmount).toCurrencyString),
@@ -219,10 +222,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           Then("I verify the Estimated Tax Liability response has been wiremocked")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-          //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
-
-
-          println(res.body)
 
           res should have(
             httpStatus(OK),
@@ -234,7 +233,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
             elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
-            elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
+            elementTextByID("taxable-income")(taxableIncome(calcBreakdownResponse)),
             elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
             elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
             elementTextByID("brt-amount")((calcBreakdownResponse.payPensionsProfit.basicBand.taxAmount + calcBreakdownResponse.savingsAndGains.basicBand.taxAmount).toCurrencyString),
@@ -348,7 +347,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("business-profit")(totalProfit(calcBreakdownResponse)),
           elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
           elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
-          elementTextByID("taxable-income")(calcBreakdownResponse.totalTaxableIncome.toCurrencyString),
+          elementTextByID("taxable-income")(taxableIncome(calcBreakdownResponse)),
           elementTextByID("brt-it-calc")((calcBreakdownResponse.payPensionsProfit.basicBand.taxableIncome + calcBreakdownResponse.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
           elementTextByID("brt-rate")(calcBreakdownResponse.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
           elementTextByID("brt-amount")((calcBreakdownResponse.payPensionsProfit.basicBand.taxAmount + calcBreakdownResponse.savingsAndGains.basicBand.taxAmount).toCurrencyString),
