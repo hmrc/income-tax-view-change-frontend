@@ -30,46 +30,75 @@ import uk.gov.hmrc.http.HttpResponse
 class PropertyDetailsConnectorSpec extends TestSupport with MockHttp {
 
   val propertySuccessModel = PropertyDetailsModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
-  val successResponse = HttpResponse(Status.OK, responseJson = Some(Json.obj(
+  val featureDisabledSuccessResponse = HttpResponse(Status.OK, responseJson = Some(Json.obj()))
+  val featureEnabledSuccessResponse = HttpResponse(Status.OK, responseJson = Some(Json.obj(
     "accountingPeriod" -> Json.obj(
       "start" -> "2017-04-06",
       "end" -> "2018-04-05"
     )
   )))
-  val badJsonResponse = HttpResponse(Status.OK, responseJson = Some(Json.obj()))
+  val badJsonResponse = HttpResponse(Status.OK, responseJson = Some(Json.obj("foo" -> "bar")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
   val notFound = HttpResponse(Status.NOT_FOUND)
 
   object TestPropertyDetailsConnector extends PropertyDetailsConnector(mockHttpGet, frontendAppConfig)
 
-  "The PropertyDetailsConnector.getPropertyDetails method" should {
+  "The PropertyDetailsConnector.getPropertyDetails method" when {
 
     lazy val testUrl = TestPropertyDetailsConnector.getPropertyDetailsUrl(testNino)
     def result: Future[PropertyDetailsResponseModel] = TestPropertyDetailsConnector.getPropertyDetails(testNino)
 
-    "return a PropertyIncomeModel with JSON in case of success" in {
-      setupMockHttpGet(testUrl)(successResponse)
-      await(result) shouldBe propertySuccessModel
+    "the feature.propertyDetailsEnabled is disabled" should {
+
+      "return a dummy PropertyIncomeModel with JSON in case of success" in {
+        frontendAppConfig.features.propertyDetailsEnabled(false)
+        setupMockHttpGet(testUrl)(featureDisabledSuccessResponse)
+        await(result) shouldBe propertySuccessModel
+      }
+
+      "return a NoPropertyIncomeDetails response when a NOT_FOUND is returned" in {
+        setupMockHttpGet(testUrl)(notFound)
+        await(result) shouldBe NoPropertyIncomeDetails
+      }
+
+      "return PropertyDetailsErrorModel model in case of failure" in {
+        setupMockHttpGet(testUrl)(badResponse)
+        await(result) shouldBe PropertyDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
+      }
+
+      "return PropertyDetailsErrorModel model in case of future failed scenario" in {
+        setupMockFailedHttpGet(testUrl)(badResponse)
+        await(result) shouldBe PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      }
     }
 
-    "return a NoPropertyIncomeDetails response when a NOT_FOUND is returned" in {
-      setupMockHttpGet(testUrl)(notFound)
-      await(result) shouldBe NoPropertyIncomeDetails
-    }
+    "the feature.propertyDetailsEnabled is enabled" should {
 
-    "return PropertyDetailsErrorModel model in case of bad Json" in {
-      setupMockHttpGet(testUrl)(badJsonResponse)
-      await(result) shouldBe PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Failed to parse JSON body of response to PropertyDetailsModel.")
-    }
+      "return a PropertyIncomeModel with JSON in case of success" in {
+        frontendAppConfig.features.propertyDetailsEnabled(true)
+        setupMockHttpGet(testUrl)(featureEnabledSuccessResponse)
+        await(result) shouldBe propertySuccessModel
+      }
 
-    "return PropertyDetailsErrorModel model in case of failure" in {
-      setupMockHttpGet(testUrl)(badResponse)
-      await(result) shouldBe PropertyDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
-    }
+      "return a NoPropertyIncomeDetails response when a NOT_FOUND is returned" in {
+        setupMockHttpGet(testUrl)(notFound)
+        await(result) shouldBe NoPropertyIncomeDetails
+      }
 
-    "return PropertyDetailsErrorModel model in case of future failed scenario" in {
-      setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      "return PropertyDetailsErrorModel model in case of bad Json" in {
+        setupMockHttpGet(testUrl)(badJsonResponse)
+        await(result) shouldBe PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Failed to parse JSON body of response to PropertyDetailsModel.")
+      }
+
+      "return PropertyDetailsErrorModel model in case of failure" in {
+        setupMockHttpGet(testUrl)(badResponse)
+        await(result) shouldBe PropertyDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
+      }
+
+      "return PropertyDetailsErrorModel model in case of future failed scenario" in {
+        setupMockFailedHttpGet(testUrl)(badResponse)
+        await(result) shouldBe PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      }
     }
   }
 }

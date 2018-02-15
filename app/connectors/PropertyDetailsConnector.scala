@@ -23,6 +23,7 @@ import models._
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
@@ -46,14 +47,7 @@ class PropertyDetailsConnector @Inject()(val http: HttpClient,
         response.status match {
           case OK =>
             Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[PropertyDetailsModel].fold(
-              invalid => {
-                Logger.warn(s"[PropertyDetailsConnector][getPropertyDetails] - Failed to parse JSON body of response to PropertyDetailsModel.")
-                Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - Json validation error: $invalid")
-                PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Failed to parse JSON body of response to PropertyDetailsModel.")
-              },
-              valid => valid
-            )
+            featureSwitchResponse(response.json)
           case NOT_FOUND =>
             Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
             NoPropertyIncomeDetails
@@ -68,4 +62,19 @@ class PropertyDetailsConnector @Inject()(val http: HttpClient,
         PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
+
+  def featureSwitchResponse(json: JsValue): PropertyDetailsResponseModel =
+    if(config.features.propertyDetailsEnabled()) {
+      json.validate[PropertyDetailsModel].fold(
+        invalid => {
+          Logger.warn(s"[PropertyDetailsConnector][getPropertyDetails] - Failed to parse JSON body of response to PropertyDetailsModel.")
+          Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - Json validation error: $invalid")
+          PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Failed to parse JSON body of response to PropertyDetailsModel.")
+        },
+        valid => valid
+      )
+    } else {
+      Logger.debug(s"[PropertyDetailsConnector][getPropertyDetails] - Property Details Feature disabled, returning dummy Accounting Period")
+      PropertyDetailsModel(accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"))
+    }
 }
