@@ -32,37 +32,44 @@ import scala.concurrent.Future
 @Singleton
 class PropertyEOPSDeadlinesConnector @Inject()(val http: HttpClient, val config: FrontendAppConfig) extends RawResponseReads {
 
-  def getPropertyEOPSDeadlineUrl(nino: String): String =
+  private[connectors] def getPropertyEOPSDeadlineUrl(nino: String): String =
     //TODO: This URL has been assumed; this may need to be updated when the SA API makes the endpoint available
     s"${config.saApiService}/ni/$nino/uk-properties/end-of-period-statements/obligations"
 
-  def getPropertyEOPSDeadline(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
+  def getPropertyEOPSDeadlines(nino: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
 
-    val url = getPropertyEOPSDeadlineUrl(nino)
-    Logger.debug(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - GET $url")
+    if(config.features.propertyEopsEnabled()) {
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
-      response =>
-        response.status match {
-          case OK =>
-            Logger.debug(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[ReportDeadlinesModel].fold(
-              invalid => {
-                Logger.warn(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - Json Validation Error. Parsing Property EOPS Deadlines Response")
-                ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property EOPS Deadlines Response")
-              },
-              valid => valid
-            )
-          case _ =>
-            Logger.debug(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(
-              s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - Response status: [${response.status}] returned from Property EOPS Deadlines call")
-            ReportDeadlinesErrorModel(response.status, response.body)
-        }
-    } recover {
-      case _ =>
-        Logger.warn(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadline] - Unexpected future failed error")
-        ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      val url = getPropertyEOPSDeadlineUrl(nino)
+      Logger.debug(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadlines] - GET $url")
+
+      http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
+        response =>
+          response.status match {
+            case OK =>
+              Logger.debug(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadlines] - RESPONSE status: ${response.status}, json: ${response.json}")
+              response.json.validate[ReportDeadlinesModel].fold(
+                invalid => {
+                  Logger.warn(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadlines] - Json Validation Error. Parsing Property EOPS Deadlines Response")
+                  ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property EOPS Deadlines Response")
+                },
+                valid => valid
+              )
+            case _ =>
+              Logger.debug(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
+              Logger.warn(
+                s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadlines] - Response status: [${response.status}] returned from Property EOPS Deadlines call")
+              ReportDeadlinesErrorModel(response.status, response.body)
+          }
+      } recover {
+        case _ =>
+          Logger.warn(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadlines] - Unexpected future failed error")
+          ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      }
+    }
+    else {
+      Logger.debug(s"[PropertyEOPSDeadlinesConnector][getPropertyEOPSDeadlines] - Property EOPS Connector disabled, returning empty ReportDeadlinesModel")
+      Future.successful(ReportDeadlinesModel(obligations = List.empty))
     }
   }
 }

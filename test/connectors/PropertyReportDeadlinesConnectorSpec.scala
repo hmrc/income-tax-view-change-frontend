@@ -34,12 +34,12 @@ class PropertyReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestPropertyObligationDataConnector extends PropertyReportDeadlineDataConnector(mockHttpGet, frontendAppConfig)
+  object TestPropertyObligationDataConnector extends PropertyReportDeadlinesConnector(mockHttpGet, frontendAppConfig)
 
   "PropertyObligationDataConnector.getPropertyData" should {
 
     lazy val testUrl = TestPropertyObligationDataConnector.getPropertyReportDeadlineDataUrl(testNino)
-    def result: Future[ReportDeadlinesResponseModel] = TestPropertyObligationDataConnector.getPropertyReportDeadlineData(testNino)
+    def result: Future[ReportDeadlinesResponseModel] = TestPropertyObligationDataConnector.getPropertyReportDeadlines(testNino)
 
     "return a SuccessResponse with JSON in case of sucess" in {
       setupMockHttpGet(testUrl)(successResponse)

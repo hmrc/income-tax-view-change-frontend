@@ -19,7 +19,7 @@ package connectors
 import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import mocks.MockHttp
-import models.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
+import models.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse
@@ -36,34 +36,46 @@ class PropertyEOPSDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
   object TestPropertyEOPSDeadlinesConnector extends PropertyEOPSDeadlinesConnector(mockHttpGet, frontendAppConfig)
 
-  "PropertyEOPSDeadlinesConnector.getPropertyEOPSDeadlineUrl" should {
+  "PropertyEOPSDeadlinesConnector.getPropertyEOPSDeadlines" when {
 
     lazy val testUrl = TestPropertyEOPSDeadlinesConnector.getPropertyEOPSDeadlineUrl(testNino)
-    def result: Future[ReportDeadlinesResponseModel] = TestPropertyEOPSDeadlinesConnector.getPropertyEOPSDeadline(testNino)
+    def result: Future[ReportDeadlinesResponseModel] = TestPropertyEOPSDeadlinesConnector.getPropertyEOPSDeadlines(testNino)
 
-    "have the correct url to Property" in {
-      //TODO: This URL has been assumed; this may need to be updated when the SA API makes the endpoint available
-      testUrl shouldBe s"${frontendAppConfig.saApiService}/ni/$testNino/uk-properties/end-of-period-statements/obligations"
+    "the PropertyEOPSFeature is disabled" should {
+
+      "return a ReportDeadlinesModel with an empty list of Obligations" in {
+        frontendAppConfig.features.propertyEopsEnabled(false)
+        await(result) shouldBe ReportDeadlinesModel(obligations = List.empty[ReportDeadlineModel])
+      }
     }
 
-    "return a SuccessResponse with JSON in case of success" in {
-      setupMockHttpGet(testUrl)(successResponse)
-      await(result) shouldBe obligationsDataSuccessModel
-    }
+    "the PropertyEOPSFeature is enabled" should {
 
-    "return ErrorResponse model in case of failure" in {
-      setupMockHttpGet(testUrl)(badResponse)
-      await(result) shouldBe ReportDeadlinesErrorModel(Status.BAD_REQUEST, "Error Message")
-    }
+      "have the correct url to Property" in {
+        frontendAppConfig.features.propertyEopsEnabled(true)
+        //TODO: This URL has been assumed; this may need to be updated when the SA API makes the endpoint available
+        testUrl shouldBe s"${frontendAppConfig.saApiService}/ni/$testNino/uk-properties/end-of-period-statements/obligations"
+      }
 
-    "return ReportDeadlinesErrorModel when bad JSON is received" in {
-      setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property EOPS Deadlines Response")
-    }
+      "return a SuccessResponse with JSON in case of success" in {
+        setupMockHttpGet(testUrl)(successResponse)
+        await(result) shouldBe obligationsDataSuccessModel
+      }
 
-    "return ReportDeadlinesErrorModel model in case of future failed scenario" in {
-      setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      "return ErrorResponse model in case of failure" in {
+        setupMockHttpGet(testUrl)(badResponse)
+        await(result) shouldBe ReportDeadlinesErrorModel(Status.BAD_REQUEST, "Error Message")
+      }
+
+      "return ReportDeadlinesErrorModel when bad JSON is received" in {
+        setupMockHttpGet(testUrl)(successResponseBadJson)
+        await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Property EOPS Deadlines Response")
+      }
+
+      "return ReportDeadlinesErrorModel model in case of future failed scenario" in {
+        setupMockFailedHttpGet(testUrl)(badResponse)
+        await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      }
     }
   }
 }

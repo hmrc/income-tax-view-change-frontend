@@ -34,10 +34,10 @@ import scala.concurrent.Future
 class PropertyDetailsConnector @Inject()(val http: HttpClient,
                                          val config: FrontendAppConfig) extends RawResponseReads with ImplicitDateFormatter {
 
-  lazy val getPropertyDetailsUrl: String => String = nino => s"${config.saApiService}/ni/$nino/uk-properties"
+  private[connectors] lazy val getPropertyDetailsUrl: String => String = nino => s"${config.saApiService}/ni/$nino/uk-properties"
 
   // TODO: For MVP the only accounting period for Property is 2017/18. This needs to be enhanced post-MVP
-  val defaultSuccessResponse = PropertyDetailsModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
+  private[connectors] val defaultSuccessResponse = PropertyDetailsModel(AccountingPeriodModel("2017-04-06", "2018-04-05"))
 
   def getPropertyDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[PropertyDetailsResponseModel] = {
 
@@ -64,5 +64,4 @@ class PropertyDetailsConnector @Inject()(val http: HttpClient,
         PropertyDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
-
 }

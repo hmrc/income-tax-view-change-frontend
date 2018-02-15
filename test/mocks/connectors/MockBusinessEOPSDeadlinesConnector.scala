@@ -36,7 +36,7 @@ trait MockBusinessEOPSDeadlinesConnector extends UnitSpec with MockitoSugar with
   }
 
   def setupMockBusinessEOPSDeadline(nino: String, selfEmploymentId: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockBusinessEOPSDeadlinesConnector.getBusinessEOPSDeadline(
+    when(mockBusinessEOPSDeadlinesConnector.getBusinessEOPSDeadlines(
       ArgumentMatchers.eq(nino),
       ArgumentMatchers.eq(selfEmploymentId))
      (ArgumentMatchers.any())).thenReturn(Future.successful(response))

@@ -36,7 +36,7 @@ trait MockPropertyEOPSDeadlinesConnector extends UnitSpec with MockitoSugar with
   }
 
   def setupMockPropertyEOPSDeadline(nino: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockPropertyEOPSDeadlinesConnector.getPropertyEOPSDeadline(
+    when(mockPropertyEOPSDeadlinesConnector.getPropertyEOPSDeadlines(
       ArgumentMatchers.eq(nino))(ArgumentMatchers.any())).thenReturn(Future.successful(response))
   }
 
