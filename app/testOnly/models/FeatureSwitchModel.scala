@@ -16,4 +16,5 @@
 
 package testOnly.models
 
-case class FeatureSwitchModel(homePageEnabled: Boolean)
+case class FeatureSwitchModel(homePageEnabled: Boolean,
+                              propertyDetailsEnabled: Boolean)
