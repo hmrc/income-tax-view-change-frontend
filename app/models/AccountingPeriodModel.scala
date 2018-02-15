@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 
 
 case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
-  val determineTaxYear = if(end isBefore s"${end.getYear}-4-6".toLocalDate)
+  val determineTaxYear = if(end isBefore s"${end.getYear}-4-6")
     end.getYear
   else
     end.getYear + 1

@@ -149,4 +149,19 @@ trait   CustomMatchers extends UnitSpec with GivenWhenThen {
       )
     }
   }
+
+  def isElementVisibleBySomething(id: String)(expectedValue: Boolean): HavePropertyMatcher[WSResponse, Boolean] = new HavePropertyMatcher[WSResponse, Boolean] {
+
+    def apply(response: WSResponse) = {
+      val body = Jsoup.parse(response.body)
+      Then(s"it is $expectedValue that elementId '$id' should be on the page")
+
+      HavePropertyMatchResult(
+        body.toString.contains(id) == expectedValue,
+        s"elementByID($id)",
+        expectedValue,
+        body.toString.contains(id)
+      )
+    }
+  }
 }

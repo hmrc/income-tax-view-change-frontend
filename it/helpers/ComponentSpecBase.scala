@@ -38,7 +38,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.self-assessment-api.host" -> mockHost,
     "microservice.services.self-assessment-api.port" -> mockPort,
     "microservice.services.business-account.host" -> mockHost,
-    "microservice.services.business-account.port" -> mockPort
+    "microservice.services.business-account.port" -> mockPort,
+    "microservice.services.financial-transactions.host" -> mockHost,
+    "microservice.services.financial-transactions.port" -> mockPort
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -64,6 +66,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String): WSResponse = await(buildClient(uri).get())
 
     def getEstimates: WSResponse = get("/estimates")
+    def getStatements: WSResponse = get("/statements")
     def getBills: WSResponse = get("/bills")
     def getFinancialData(year: String): WSResponse = get(s"/calculation/$year")
     def getReportDeadlines: WSResponse = get(s"/obligations")

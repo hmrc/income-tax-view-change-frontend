@@ -1,0 +1,94 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.main_template
+@import models._
+@import play.twirl.api.Html
+@import views.html.helpers.breadcrumbHelper
+@import utils.ImplicitCurrencyFormatter._
+@import utils.ImplicitDateFormatter._
+@import views.html.helpers.backToHomeHelper
+
+
+@(model: Seq[TransactionModelWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUserOptionNino[_])
+
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-statement", None)
+    )))
+}
+
+@taxYear(tmwy: TransactionModelWithYear) = {
+    <div id="@tmwy.taxYear-tax-year-section">
+        <h2 id="@tmwy.taxYear-tax-year" class="heading-large">
+            @messages("statements.taxYearStatement", s"${tmwy.taxYear - 1}", s"${tmwy.taxYear}")
+        </h2>
+    </div>
+
+    <h2 id="@tmwy.taxYear-transactions" class="heading-medium">@messages("statements.transactions")</h2>
+
+    <p id="@tmwy.taxYear-charge-text">@Html(messages("statements.charge", s"${tmwy.taxYear}", tmwy.model.charges.head.amount.get.toCurrency))</p>
+
+    @if(tmwy.model.payments.nonEmpty){
+        <ul class="list list-bullet">
+            @tmwy.model.payments.zipWithIndex.map { case (payment, index) =>
+                <li id="@tmwy.taxYear-paid-@index">@messages("statements.youPaid", payment.paymentAmount.get.toCurrencyString, payment.clearingDate.get.toShortDate)</li>
+            }
+        </ul>
+    }
+
+    @if(tmwy.model.outstandingAmount.get > 0){
+        <h2 id="@tmwy.taxYear-still-to-pay" class="heading-small">@messages("statements.stillToPay", tmwy.model.outstandingAmount.get.toCurrencyString)</h2>
+        <p id="@tmwy.taxYear-due-by">@messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}")</p>
+    } else {
+        <h2 id="@tmwy.taxYear-nothing-to-pay" class="heading-small">@messages("statements.nothingToPay")</h2>
+        <p id="@tmwy.taxYear-paid-bill">@messages("statements.paidBill")</p>
+    }
+}
+
+@main_template(
+    title = messages("statements.title"),
+    bodyClasses = None,
+    serviceInfo = breadcrumb
+) {
+
+
+<section id="statements">
+
+    <h1 id="page-heading" class="heading-xlarge">@messages("statements.heading")</h1>
+
+    @if(model.isEmpty){
+        <p id="statements-no-transactions">@messages("statements.noTransactions")</p>
+    } else {
+        <p id="statements-p1">@messages("statements.p1")</p>
+    }
+
+    @model.map { tmwy =>
+        <div class="divider--bottom form-group">
+            @taxYear(tmwy)
+        </div>
+    }
+
+    <p id="earlier-statements">
+        @messages("statements.earlierTransactions") <a href="@appConfig.selfAssessmentUrl" id="view-sa-calcs">@messages("statements.earlierTransactionsLink")</a>.
+    </p>
+
+    @backToHomeHelper()
+
+</section>
+
+}

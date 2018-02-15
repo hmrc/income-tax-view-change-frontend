@@ -230,7 +230,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
           cessationDate = None,
           accountingPeriod = testBusinessAccountingPeriod,
           reportDeadlines = ReportDeadlinesModel(
-            obligations = List(returnedObligation, otherObligation)
+            obligations = List(otherObligation, returnedObligation)
           )
         )),
         None
@@ -240,25 +240,25 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       }
     }
 
-    "only property obligations are returned" should {
-      val otherObligation = ReportDeadlineModel(
+    "only property obligations are returned, and both are met" should {
+      val returnedObligation = ReportDeadlineModel(
         start = "2017-07-01",
         end = "2017-09-30",
         due = "2017-10-31",
-        met = false
+        met = true
       )
-      val returnedObligation = ReportDeadlineModel(
+      val otherObligation = ReportDeadlineModel(
         start = "2017-04-01",
         end = "2017-06-30",
         due = "2017-07-31",
-        met = false
+        met = true
       )
       val propertyIncomeSourceReportDueNext = IncomeSourcesModel(
         List(),
         Some(PropertyIncomeModel(
           accountingPeriod = testBusinessAccountingPeriod,
           reportDeadlines = ReportDeadlinesModel(
-            obligations = List(returnedObligation, otherObligation)
+            obligations = List(otherObligation, returnedObligation)
           )
         ))
       )
