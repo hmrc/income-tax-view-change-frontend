@@ -81,7 +81,7 @@ object CalculationDataModel {
       (__ \ "incomeTaxYTD").read[BigDecimal] and
       defaultZero(__ \ "proportionAllowance") and
       defaultZero(__ \ "totalAllowancesAndReliefs") and
-      defaultZero(__ \ "totalAllowancesAndDeductions") and
+      defaultZero(__ \ "totalIncomeAllowancesUsed") and
       __.read[IncomeReceivedModel] and
       __.read[PayPensionsProfitModel] and
       __.read[SavingsAndGainsModel] and
