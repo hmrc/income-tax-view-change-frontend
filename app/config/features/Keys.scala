@@ -18,4 +18,5 @@ package config.features
 
 object Keys {
   val homePageEnabled = "features.homePageEnabled"
+  val propertyDetailsEnabled = "features.propertyDetailsEnabled"
 }
