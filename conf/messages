@@ -152,7 +152,8 @@ statements.paidBill                                             = You''ve paid t
 statements.transactions                                         = Your transactions
 statements.charge                                               = You had a charge of <span id="{0}-charge">{1}</span>.
 statements.youPaid                                              = You paid {0} on {1}
-statements.earlierTransactions                                  = For earlier transactions, <a href="#">view your self assessment</a>.
+statements.earlierTransactions                                  = For earlier transactions,
+statements.earlierTransactionsLink                              = view your self assessment
 statements.noTransactions                                       = You''ve had no transactions since you started reporting through accounting software.
 
 statements.error.heading                                        = We can''t show your statement right now

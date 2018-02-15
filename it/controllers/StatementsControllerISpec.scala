@@ -52,11 +52,10 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           res should have(
             httpStatus(OK),
             pageTitle("Income Tax Statement"),
-            elementTextByID(s"statement-$testYear")(s"Tax year: ${testYearInt - 1}-$testYear"),
             elementTextByID(s"$testYear-tax-year")(s"Tax year: ${testYearInt - 1}-$testYear"),
-            elementTextByID(s"$testYear-total")(model.originalAmount.get.toCurrencyString),
             elementTextByID(s"$testYear-still-to-pay")(s"Still to pay: ${model.outstandingAmount.get.toCurrencyString}"),
             elementTextByID(s"$testYear-charge")(GetStatementsData.charge2018.amount.get.toCurrencyString),
+            isElementVisibleById("earlier-statements")(true),
             isElementVisibleById(s"$testYear-paid-0")(false)
           )
 
@@ -88,19 +87,16 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           res should have(
             httpStatus(OK),
             pageTitle("Income Tax Statement"),
-            elementTextByID(s"statement-$testYear")(s"Tax year: ${testYearInt - 1}-$testYear"),
-            elementTextByID(s"statement-$testYearPlusOne")(s"Tax year: ${testYearPlusOneInt - 1}-$testYearPlusOne"),
             elementTextByID(s"$testYear-tax-year")(s"Tax year: ${testYearInt - 1}-$testYear"),
-            elementTextByID(s"$testYear-total")(statement1Model.originalAmount.get.toCurrencyString),
             elementTextByID(s"$testYear-still-to-pay")(s"Still to pay: ${statement1Model.outstandingAmount.get.toCurrencyString}"),
             elementTextByID(s"$testYear-charge")(GetStatementsData.charge2018.amount.get.toCurrencyString),
             isElementVisibleById(s"$testYear-paid-0")(false),
             elementTextByID(s"$testYearPlusOne-tax-year")(s"Tax year: ${testYearPlusOneInt - 1}-$testYearPlusOne"),
-            elementTextByID(s"$testYearPlusOne-total")(statement2Model.originalAmount.get.toCurrencyString),
             elementTextByID(s"$testYearPlusOne-still-to-pay")(s"Still to pay: ${statement2Model.outstandingAmount.get.toCurrencyString}"),
             elementTextByID(s"$testYearPlusOne-charge")(GetStatementsData.charge2019.amount.get.toCurrencyString),
             elementTextByID(s"$testYearPlusOne-paid-0")(s"You paid " + payment.paymentAmount.get.toCurrencyString + " on " + payment.clearingDate.get.toShortDate),
-            elementTextByID(s"$testYearPlusOne-paid-1")(s"You paid " + payment2.paymentAmount.get.toCurrencyString + " on " + payment2.clearingDate.get.toShortDate)
+            elementTextByID(s"$testYearPlusOne-paid-1")(s"You paid " + payment2.paymentAmount.get.toCurrencyString + " on " + payment2.clearingDate.get.toShortDate),
+            isElementVisibleById("earlier-statements")(true)
           )
 
         }

@@ -162,19 +162,9 @@ class StatementsViewSpec extends TestSupport {
         document.getElementById("statements-p1").text() shouldBe messages.p1
       }
 
-      "have a link to jump to the specified tax year section" in {
-        document.getElementById(s"statement-$testYear1").text() shouldBe messages.taxYear(testYear1)
-        document.getElementById(s"statement-$testYear2").text() shouldBe messages.taxYear(testYear2)
-      }
-
       "have a heading for each taxYear" in {
         document.getElementById(s"$testYear1-tax-year").text() shouldBe messages.taxYear(testYear1)
         document.getElementById(s"$testYear2-tax-year").text() shouldBe messages.taxYear(testYear2)
-      }
-
-      "display the original charge for each taxYear" in {
-        document.getElementById(s"$testYear1-total").text() shouldBe transactionModel2018.model.originalAmount.get.toCurrencyString
-        document.getElementById(s"$testYear2-total").text() shouldBe transactionModel2019.model.originalAmount.get.toCurrencyString
       }
 
       "state the amount left to pay for each tax year" in {
@@ -196,6 +186,11 @@ class StatementsViewSpec extends TestSupport {
 
         document.getElementById(s"$testYear1-paid-0").text() shouldBe messages.youPaid(payment2018.paymentAmount.get.toCurrencyString, payment2018.clearingDate.get.toShortDate)
         document.getElementById(s"$testYear2-paid-0").text() shouldBe messages.youPaid(payment2019.paymentAmount.get.toCurrencyString, payment2019.clearingDate.get.toShortDate)
+      }
+
+      "say where to find earlier transactions, with the correct link" in {
+        document.getElementById("earlier-statements").text() shouldBe messages.earlierTransactions
+        document.getElementById("view-sa-calcs").attr("href") shouldBe mockAppConfig.selfAssessmentUrl
       }
 
       "show a back link to the Income Tax home page" in {
