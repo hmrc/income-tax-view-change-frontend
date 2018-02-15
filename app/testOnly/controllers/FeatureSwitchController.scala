@@ -31,7 +31,9 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
   def featureSwitch: Action[AnyContent] = Action { implicit request =>
     Ok(testOnly.views.html.featureSwitch(FeatureSwitchForm.form.fill(
       FeatureSwitchModel(
-        homePageEnabled = appConfig.features.homePageEnabled()
+        homePageEnabled = appConfig.features.homePageEnabled(),
+        propertyEopsEnabled = appConfig.features.propertyEopsEnabled(),
+        businessEopsEnabled = appConfig.features.businessEopsEnabled()
       )
     )))
   }
@@ -45,6 +47,8 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
 
   def handleSuccess(model: FeatureSwitchModel): Result = {
     appConfig.features.homePageEnabled(model.homePageEnabled)
+    appConfig.features.propertyEopsEnabled(model.propertyEopsEnabled)
+    appConfig.features.businessEopsEnabled(model.businessEopsEnabled)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 
