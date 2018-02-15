@@ -36,6 +36,7 @@ case class CalculationDataModel(
                                  eoyEstimate: Option[EoyEstimate] = None) extends CalculationDataResponseModel {
 
   val taxableDividendIncome: BigDecimal = dividends.basicBand.taxableIncome + dividends.higherBand.taxableIncome + dividends.additionalBand.taxableIncome
+  val taxableIncomeTaxIncome: BigDecimal = totalTaxableIncome - taxableDividendIncome
 
   val hasDividendsAtBRT: Boolean = dividends.basicBand.taxAmount > 0
   val hasDividendsAtHRT: Boolean = dividends.higherBand.taxAmount > 0
