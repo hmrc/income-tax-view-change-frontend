@@ -22,6 +22,7 @@
 @import utils.ImplicitDateFormatter._
 @import views.html.helpers.backToHomeHelper
 
+
 @(model: Seq[TransactionModelWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUserOptionNino[_])
 
 @breadcrumb = {
@@ -31,11 +32,40 @@
     )))
 }
 
+@taxYear(tmwy: TransactionModelWithYear) = {
+    <div id="@tmwy.taxYear-tax-year-section">
+        <h2 id="@tmwy.taxYear-tax-year" class="heading-large">
+            @messages("statements.taxYearStatement", s"${tmwy.taxYear - 1}", s"${tmwy.taxYear}")
+        </h2>
+    </div>
+
+    <h2 id="@tmwy.taxYear-transactions" class="heading-medium">@messages("statements.transactions")</h2>
+
+    <p id="@tmwy.taxYear-charge-text">@Html(messages("statements.charge", s"${tmwy.taxYear}", tmwy.model.charges.head.amount.get.toCurrency))</p>
+
+    @if(tmwy.model.payments.nonEmpty){
+        <ul class="list list-bullet">
+            @tmwy.model.payments.zipWithIndex.map { case (payment, index) =>
+                <li id="@tmwy.taxYear-paid-@index">@messages("statements.youPaid", payment.paymentAmount.get.toCurrencyString, payment.clearingDate.get.toShortDate)</li>
+            }
+        </ul>
+    }
+
+    @if(tmwy.model.outstandingAmount.get > 0){
+        <h2 id="@tmwy.taxYear-still-to-pay" class="heading-small">@messages("statements.stillToPay", tmwy.model.outstandingAmount.get.toCurrencyString)</h2>
+        <p id="@tmwy.taxYear-due-by">@messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}")</p>
+    } else {
+        <h2 id="@tmwy.taxYear-nothing-to-pay" class="heading-small">@messages("statements.nothingToPay")</h2>
+        <p id="@tmwy.taxYear-paid-bill">@messages("statements.paidBill")</p>
+    }
+}
+
 @main_template(
     title = messages("statements.title"),
     bodyClasses = None,
     serviceInfo = breadcrumb
 ) {
+
 
 <section id="statements">
 
@@ -47,46 +77,15 @@
         <p id="statements-p1">@messages("statements.p1")</p>
     }
 
-    <ul class="list list-bullet">
-        @model.map { tmwy =>
-            <li>
-                <a id="statement-@tmwy.taxYear" href="#@tmwy.taxYear-tax-year-section">@messages("statements.taxYearStatement", s"${tmwy.taxYear-1}", s"${tmwy.taxYear}")</a>
-            </li>
-        }
-    </ul>
-
     @model.map { tmwy =>
-        <section id="@tmwy.taxYear-tax-year-section" @if(model.reverse.head.taxYear != tmwy.taxYear) {class="divider--bottom"}>
-
-            <h2 id="@tmwy.taxYear-tax-year" class="heading-large">@messages("statements.taxYearStatement", s"${tmwy.taxYear - 1}", s"${tmwy.taxYear}")</h2>
-
-            <div class="data">
-                <span id="@tmwy.taxYear-total" class="data-item bold-xlarge">@tmwy.model.originalAmount.get.toCurrency</span>
-                <span id="@tmwy.taxYear-total-subheading" class="data-item bold-small">@messages("statements.totalCharges")</span>
-            </div>
-
-            @if(tmwy.model.outstandingAmount.get > 0){
-                <h2 id="@tmwy.taxYear-still-to-pay" class="heading-small">@messages("statements.stillToPay", tmwy.model.outstandingAmount.get.toCurrencyString)</h2>
-                <p id="@tmwy.taxYear-due-by">@messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}")</p>
-            } else {
-                <h2 id="@tmwy.taxYear-nothing-to-pay" class="heading-small">@messages("statements.nothingToPay")</h2>
-                <p id="@tmwy.taxYear-paid-bill">@messages("statements.paidBill")</p>
-            }
-
-            <h2 id="@tmwy.taxYear-transactions" class="heading-small">@messages("statements.transactions")</h2>
-
-            <p id="@tmwy.taxYear-charge-text">@Html(messages("statements.charge", s"${tmwy.taxYear}", tmwy.model.charges.head.amount.get.toCurrency))</p>
-
-            @if(tmwy.model.payments.nonEmpty){
-                <ul class="list list-bullet">
-                    @tmwy.model.payments.zipWithIndex.map { case (payment, index) =>
-                        <li id="@tmwy.taxYear-paid-@index">@messages("statements.youPaid", payment.paymentAmount.get.toCurrencyString, payment.clearingDate.get.toShortDate)</li>
-                    }
-                </ul>
-            }
-
-        </section>
+        <div class="divider--bottom form-group">
+            @taxYear(tmwy)
+        </div>
     }
+
+    <p id="earlier-statements">
+        @messages("statements.earlierTransactions") <a href="@appConfig.selfAssessmentUrl" id="view-sa-calcs">@messages("statements.earlierTransactionsLink")</a>.
+    </p>
 
     @backToHomeHelper()
 
