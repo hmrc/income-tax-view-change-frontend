@@ -27,7 +27,7 @@ case class CalculationDataModel(
                                  totalIncomeTaxNicYtd: BigDecimal,
                                  personalAllowance: BigDecimal,
                                  taxReliefs: BigDecimal,
-                                 additionalAllowances: BigDecimal,
+                                 totalIncomeAllowancesUsed: BigDecimal,
                                  incomeReceived: IncomeReceivedModel,
                                  payPensionsProfit: PayPensionsProfitModel,
                                  savingsAndGains: SavingsAndGainsModel,
@@ -37,6 +37,7 @@ case class CalculationDataModel(
 
   val taxableDividendIncome: BigDecimal = dividends.basicBand.taxableIncome + dividends.higherBand.taxableIncome + dividends.additionalBand.taxableIncome
   val taxableIncomeTaxIncome: BigDecimal = totalTaxableIncome - taxableDividendIncome
+  val additionalAllowances: BigDecimal = totalIncomeAllowancesUsed - personalAllowance
 
   val hasDividendsAtBRT: Boolean = dividends.basicBand.taxAmount > 0
   val hasDividendsAtHRT: Boolean = dividends.higherBand.taxAmount > 0

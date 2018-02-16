@@ -526,7 +526,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
       taxReliefs = 0,
-      additionalAllowances = 505.00,
+      totalIncomeAllowancesUsed = 12005.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
@@ -607,7 +607,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 0.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 500.00,
         ukProperty = 500.00,
@@ -687,7 +687,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 0.00,
       personalAllowance = 2868.00,
       taxReliefs = 10.05,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 1506.25,
         ukProperty = 0.00,
@@ -768,7 +768,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 132.00,
       personalAllowance = 2868.00,
       taxReliefs=24.90,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 1500.00,
         ukProperty = 1500.00,
@@ -849,7 +849,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 35007.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 30000.00,
         ukProperty = 7875.00,
@@ -929,7 +929,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 38007.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 875.00,
         ukProperty = 40000.00,
@@ -1009,7 +1009,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 11500.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
@@ -1090,7 +1090,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 11500.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
@@ -1171,7 +1171,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 11500.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
@@ -1252,7 +1252,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 132.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 3000.00,
         ukProperty = 0.00,
@@ -1332,7 +1332,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 132.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 0.00,
         ukProperty = 3000.00,
@@ -1412,7 +1412,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 132.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 0.00,
         ukProperty = 3000.00,
@@ -1492,7 +1492,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 0.00,
       personalAllowance = 0.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 0.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 0.00,
         ukProperty = 0.00,
@@ -1577,7 +1577,7 @@ object TestConstants extends ImplicitDateFormatter {
         | "totalIncomeTaxNicYtd": 90500,
         | "personalAllowance": 11500,
         | "taxReliefs": 0,
-        | "additionalAllowances" : 505,
+        | "totalIncomeAllowancesUsed" : 12005,
         | "incomeReceived": {
         |    "selfEmployment": 200000,
         |    "ukProperty": 10000,
@@ -1663,7 +1663,7 @@ object TestConstants extends ImplicitDateFormatter {
         | "incomeTaxYTD": 90500,
         | "incomeTaxThisPeriod": 2000,
         | "payFromAllEmployments": 0,
-        | "totalIncomeAllowancesUsed": 505,
+        | "totalIncomeAllowancesUsed": 12005,
         | "benefitsAndExpensesReceived": 0,
         | "allowableExpenses": 0,
         | "payFromAllEmploymentsAfterExpenses": 0,
