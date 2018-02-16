@@ -23,4 +23,5 @@ import play.api.Configuration
 @Singleton
 class Features @Inject()(config: Configuration) {
   val homePageEnabled: Feature = new Feature(Keys.homePageEnabled, config)
+  val paymentEnabled: Feature = new Feature(Keys.paymentEnabled, config)
 }
