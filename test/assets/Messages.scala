@@ -42,7 +42,7 @@ object Messages {
     val title = "Your Income Tax"
     val topHeading = "Reporting through software"
     val topSubHeading = "Income Tax"
-    val topText = "You send HMRC your Income Tax reports using accounting software"
+    val topText = "You send your Income Tax reports using accounting software."
     val dropDown = "How to do this"
     val dropDownText1 = "You'll send four reports during the year."
     val dropDownText2 = "After that, you'll need to confirm and finalise your figures in your accounting software."
