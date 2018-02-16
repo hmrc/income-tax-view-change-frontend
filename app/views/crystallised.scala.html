@@ -97,6 +97,12 @@
 
         </section>
 
+
+        @if(appConfig.features.paymentEnabled()){
+            <div class="form-group">
+                <a id="payment-button" href="@appConfig.paymentsUrl" class="button">@messages("crystalisation.payNow")</a>
+            </div>
+        }
         @if(appConfig.features.homePageEnabled()){
             @backToHomeHelper()
         }
