@@ -177,6 +177,7 @@ object Messages {
     val totalCharges = "Total charges"
     val stillToPay: String => String = amount => s"Still to pay: $amount"
     val dueBy: String => String = date => s"This is due by $date."
+    val dueByWithLink: String => String = date => s"This is due by $date. You can pay this now."
     val nothingToPay = "Nothing left to pay"
     val paidBill = "You've paid this bill."
     val transactions = "Your transactions"

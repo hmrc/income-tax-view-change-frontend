@@ -53,7 +53,11 @@
 
     @if(tmwy.model.outstandingAmount.get > 0){
         <h2 id="@tmwy.taxYear-still-to-pay" class="heading-small">@messages("statements.stillToPay", tmwy.model.outstandingAmount.get.toCurrencyString)</h2>
-        <p id="@tmwy.taxYear-due-by">@messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}")</p>
+        <p id="@tmwy.taxYear-due-by">@messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}")
+            @if(appConfig.features.paymentEnabled()){
+                @messages("statements.dueBy.youCan") <a id="@tmwy.taxYear-payment-link" href="@appConfig.paymentsUrl">@messages("statements.dueBy.link")</a>.
+            }
+        </p>
     } else {
         <h2 id="@tmwy.taxYear-nothing-to-pay" class="heading-small">@messages("statements.nothingToPay")</h2>
         <p id="@tmwy.taxYear-paid-bill">@messages("statements.paidBill")</p>
