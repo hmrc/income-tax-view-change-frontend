@@ -85,6 +85,8 @@ class FrontendAppConfig @Inject()(val environment: Environment,
 
   lazy val ftUrl: String = baseUrl("financial-transactions")
 
+  lazy val paymentsUrl: String = loadConfig("payments-frontend.url")
+
   //Exit Survey
   lazy val exitSurveyUrl: String = s"$itvcFrontendEnvironment/$baseUrl/exit-survey"
 
