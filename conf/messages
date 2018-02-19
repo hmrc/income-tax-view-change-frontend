@@ -159,6 +159,15 @@ statements.noTransactions                                       = You''ve had no
 statements.error.heading                                        = We can''t show your statement right now
 statements.error.p1                                             = Try reloading the page or coming back later.
 
+## Business Details Page ##
+business.reportingPeriod                                        = Reporting period: {0} - {1}
+business.ceasedTrading                                          = This business ceased trading on {0}.
+business.addressAndContact                                      = Address and contact details
+business.tradingName                                            = Trading name
+business.businessAddress                                        = Business address
+business.additionalInfo                                         = Additional information
+business.accountingMethod                                       = This business uses the {0} accounting method.
+
 ## Statuses ##
 status.received                                                 = Received
 status.overdue                                                  = Overdue
