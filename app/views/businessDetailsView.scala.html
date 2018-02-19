@@ -51,9 +51,23 @@ serviceInfo = breadcrumb
                 @messages("business.tradingName")
             </dt>
             <dd>
-
+                @business.tradingName
             </dd>
         </div>
+        <div>
+            <dt>
+                @messages("business.businessAddress")
+            </dt>
+            @{
+                for{
+                    line <- List(business.businessAddressLineOne,business.businessAddressLineTwo,business.businessAddressLineThree,business.businessAddressLineFour)
+                } yield {<dd>line</dd>}
+            }
+        </div>
+
+        <h3 id="additional-information" class="heading-medium">@messages("business.additionalInfo")</h3>
+
+        <p>@messages("business.accountingMethod", "CASH OR ACCRUAL")</p>
 
     </section>
 
