@@ -128,7 +128,7 @@ crystalisation.paymentsOnAccount.para1                          = These are obli
 crystalisation.paymentsOnAccount.para2                          = Each payment is half of the tax you owed this year.
 crystalisation.paymentsOnAccount.para3                          = You''ll be prompted to pay this through your Income Tax account.
 crystalisation.paymentsOnAccount.para4                          = If you think you will earn less next tax year, you can reduce your payment on account online.
-crystalisation.payNow                                           = Pay this now
+crystalisation.payNow                                           = Continue to payment
 
 ## Bills Page ##
 bills.title                                                     = Previous statements
@@ -147,6 +147,8 @@ statements.taxYearStatement                                     = Tax year: {0}-
 statements.totalCharges                                         = Total charges
 statements.stillToPay                                           = Still to pay: {0}
 statements.dueBy                                                = This is due by {0}.
+statements.dueBy.youCan                                         = You can
+statements.dueBy.link                                           = pay this now
 statements.nothingToPay                                         = Nothing left to pay
 statements.paidBill                                             = You''ve paid this bill.
 statements.transactions                                         = Your transactions

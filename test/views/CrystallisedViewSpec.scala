@@ -307,6 +307,20 @@ class CrystallisedViewSpec extends TestSupport {
       document.getElementById("changes").text shouldBe crysMessages.changes
     }
 
+    "NOT show a button to go to payments, when the payment feature is disabled" in {
+      mockAppConfig.features.paymentEnabled(false)
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
+      import setup._
+      document.getElementById("payment-button") should be(null)
+    }
+
+    "show a button to go to payments, when the payment feature is enabled" in {
+      mockAppConfig.features.paymentEnabled(true)
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
+      import setup._
+      document.getElementById("payment-button") shouldNot be(null)
+    }
+
     "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
       mockAppConfig.features.homePageEnabled(false)
       val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
@@ -320,7 +334,7 @@ class CrystallisedViewSpec extends TestSupport {
       import setup._
       document.getElementById("it-home-back") shouldNot be(null)
     }
-    
+
   }
 
 }
