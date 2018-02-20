@@ -24,6 +24,8 @@ import models.IncomeSourcesModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 
+import scala.concurrent.Future
+
 @Singleton
 class AccountDetailsController @Inject()(implicit val config: FrontendAppConfig,
                                          implicit val messagesApi: MessagesApi,
@@ -36,7 +38,7 @@ class AccountDetailsController @Inject()(implicit val config: FrontendAppConfig,
   val getAccountDetails: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       val ids: Seq[String] = user.incomeSources.businessIncomeSources.map { business => business.selfEmploymentId}
-      
+      Future.successful(Ok())
   }
 
 }
