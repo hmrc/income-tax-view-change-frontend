@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package config.features
+package models
 
-object Keys {
-  private val prefix = "features"
-  val homePageEnabled = s"$prefix.homePageEnabled"
-  val propertyDetailsEnabled = s"$prefix.propertyDetailsEnabled"
-  val propertyEopsEnabled = s"$prefix.propertyEopsEnabled"
-  val businessEopsEnabled = s"$prefix.businessEopsEnabled"
-}
+
+sealed trait ObligationType
+case object EopsObligation extends ObligationType
+case object QuarterlyObligation extends ObligationType
+

@@ -17,4 +17,6 @@
 package testOnly.models
 
 case class FeatureSwitchModel(homePageEnabled: Boolean,
-                              propertyDetailsEnabled: Boolean)
+                              propertyDetailsEnabled: Boolean,
+                              propertyEopsEnabled: Boolean,
+                              businessEopsEnabled: Boolean)

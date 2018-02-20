@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class PropertyDetailsConnector @Inject()(val http: HttpClient,
                                          val config: FrontendAppConfig) extends RawResponseReads with ImplicitDateFormatter {
 
-  lazy val getPropertyDetailsUrl: String => String = nino => s"${config.saApiService}/ni/$nino/uk-properties"
+  private[connectors] lazy val getPropertyDetailsUrl: String => String = nino => s"${config.saApiService}/ni/$nino/uk-properties"
 
   def getPropertyDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[PropertyDetailsResponseModel] = {
 

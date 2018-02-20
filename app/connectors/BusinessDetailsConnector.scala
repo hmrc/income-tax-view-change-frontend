@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class BusinessDetailsConnector @Inject()(val http: HttpClient,
                                          val config: FrontendAppConfig) extends RawResponseReads {
 
-  lazy val getBusinessListUrl: String => String = nino => s"${config.saApiService}/ni/$nino/self-employments"
+  private[connectors] lazy val getBusinessListUrl: String => String = nino => s"${config.saApiService}/ni/$nino/self-employments"
 
   def getBusinessList(nino: String)(implicit headerCarrier: HeaderCarrier): Future[BusinessListResponseModel] = {
 
@@ -64,5 +64,4 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
         BusinessDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
-
 }

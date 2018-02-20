@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class NinoLookupConnector @Inject()(val http: HttpClient,
                                     val config: FrontendAppConfig) extends RawResponseReads {
 
-  lazy val getNinoLookupUrl: (String) => String = (mtdRef) =>
+  private[connectors] lazy val getNinoLookupUrl: (String) => String = (mtdRef) =>
     s"${config.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
 
   def getNino(mtdRef: String)(implicit headerCarrier: HeaderCarrier): Future[NinoResponse] = {

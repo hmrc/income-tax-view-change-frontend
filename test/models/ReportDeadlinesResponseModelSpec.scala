@@ -49,6 +49,10 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
       "return 'Received' with getObligationStatus" in {
         obligation.getReportDeadlineStatus shouldBe Received
       }
+
+      "have the obligation type 'QuarterlyObligation'" in {
+        obligation.obligationType shouldBe QuarterlyObligation
+      }
     }
 
     "for the 2nd Obligation" should {
@@ -74,6 +78,10 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
       "return 'Overdue' with getObligationStatus" in {
         obligation.getReportDeadlineStatus shouldBe Overdue
       }
+
+      "have the obligation type 'QuarterlyObligation'" in {
+        obligation.obligationType shouldBe QuarterlyObligation
+      }
     }
 
     "for the 3rd Obligation" should {
@@ -98,6 +106,39 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
 
       "return 'Open' with getObligationStatus" in {
         obligation.getReportDeadlineStatus shouldBe Open("2017-10-31".toLocalDate)
+      }
+
+      "have the obligation type 'QuarterlyObligation'" in {
+        obligation.obligationType shouldBe QuarterlyObligation
+      }
+    }
+
+    "for an EOPS Obligation" should {
+
+      val obligation = obligationsEOPSDataSuccessModel.obligations.head
+
+      "have the start date as 6th April 2017" in {
+        obligation.start shouldBe "2017-4-6".toLocalDate
+      }
+
+      "have the end date as 5th April 2018" in {
+        obligation.end shouldBe "2018-4-5".toLocalDate
+      }
+
+      "have the due date as 1st May 2018" in {
+        obligation.due shouldBe "2018-5-1".toLocalDate
+      }
+
+      "have the obligation met status as 'true'" in {
+        obligation.met shouldBe true
+      }
+
+      "return 'Open' with getObligationStatus" in {
+        obligation.getReportDeadlineStatus shouldBe Received
+      }
+
+      "have the obligation type 'EopsObligation'" in {
+        obligation.obligationType shouldBe EopsObligation
       }
     }
 

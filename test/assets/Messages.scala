@@ -42,7 +42,7 @@ object Messages {
     val title = "Your Income Tax"
     val topHeading = "Reporting through software"
     val topSubHeading = "Income Tax"
-    val topText = "You send HMRC your Income Tax reports using accounting software"
+    val topText = "You send your Income Tax reports using accounting software."
     val dropDown = "How to do this"
     val dropDownText1 = "You'll send four reports during the year."
     val dropDownText2 = "After that, you'll need to confirm and finalise your figures in your accounting software."
@@ -162,6 +162,7 @@ object Messages {
     val statusHeading = "Report due date"
     val ceased: String => String = date => s"This business ceased trading on $date."
     val portfolio = "This covers all properties that you earn income from."
+    val eops = "Whole tax year (final check)"
     object Errors {
       val p1 = "We can't display your next report due date at the moment."
       val p2 = "Try refreshing the page in a few minutes."

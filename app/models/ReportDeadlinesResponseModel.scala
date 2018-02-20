@@ -17,6 +17,7 @@
 package models
 
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 import play.api.libs.json.{JsValue, Json, OFormat}
 
@@ -36,6 +37,8 @@ case class ReportDeadlineModel(start: LocalDate,
       case (false, date) if !currentTime().isAfter(date)      => Open(date)
       case (false, _)                                         => Overdue
     }
+
+  def obligationType: ObligationType = if(ChronoUnit.MONTHS.between(start, end).abs > 3) EopsObligation else QuarterlyObligation
 }
 
 case class ReportDeadlinesErrorModel(code: Int, message: String) extends ReportDeadlinesResponseModel
