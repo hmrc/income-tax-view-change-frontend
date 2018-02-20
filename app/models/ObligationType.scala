@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-package testOnly.forms
+package models
 
-import config.features.Keys
-import play.api.data.Form
-import play.api.data.Forms._
-import testOnly.models.FeatureSwitchModel
 
-object FeatureSwitchForm {
+sealed trait ObligationType
+case object EopsObligation extends ObligationType
+case object QuarterlyObligation extends ObligationType
 
-  val form: Form[FeatureSwitchModel] = Form(
-    mapping(
-      Keys.homePageEnabled -> boolean,
-      Keys.propertyEopsEnabled -> boolean,
-      Keys.businessEopsEnabled -> boolean
-    )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
-  )
-
-}

@@ -34,7 +34,7 @@ import play.api.http.Status
 class FinancialTransactionsConnector @Inject()(val http: HttpClient,
                                                val config: FrontendAppConfig) extends RawResponseReads {
 
-  lazy val getFinancialTransactionsUrl: String => String = mtditid => s"${config.ftUrl}/financial-transactions/it/$mtditid"
+  private[connectors] lazy val getFinancialTransactionsUrl: String => String = mtditid => s"${config.ftUrl}/financial-transactions/it/$mtditid"
 
   def getFinancialTransactions(mtditid: String)(implicit headerCarrier: HeaderCarrier):Future[FinancialTransactionsResponseModel] = {
 
@@ -65,10 +65,5 @@ class FinancialTransactionsConnector @Inject()(val http: HttpClient,
         Logger.warn(s"[FinancialTransactionsConnector][getFinancialTransactions] - Unexpected future failed error")
         FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
-
   }
-
-
-
 }
-

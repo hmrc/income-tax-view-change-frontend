@@ -17,6 +17,7 @@
 @import models.ReportDeadlinesModel
 @import utils.ImplicitDateFormatter._
 @import views.helpers.ReportDeadlineStatusHelper
+@import models.{EopsObligation, QuarterlyObligation}
 
 @(model: ReportDeadlinesModel, id: String)(implicit messages: Messages)
     <table class="form-group">
@@ -30,7 +31,11 @@
             @model.obligations.zipWithIndex.map { case (report: ReportDeadlineModel, index: Int) =>
                 <tr class="obligation no-border-bottom">
                     <td>
-                        <span id="@{id}-ob-@{index + 1}-start">@report.start.toLongDate</span> to <span id="@{id}-ob-@{index+1}-end">@report.end.toLongDate</span>
+                        @if(report.obligationType == QuarterlyObligation){
+                            <span id="@{id}-ob-@{index + 1}-start">@report.start.toLongDate</span> @messages("obligations.quarterly.to") <span id="@{id}-ob-@{index+1}-end">@report.end.toLongDate</span>
+                        } else {
+                            <span id="@{id}-ob-@{index + 1}-eops">@messages("obligations.eops")</span>
+                        }
                     </td>
                     <td id="@{id}-ob-@{index+1}-status">
                         @ReportDeadlineStatusHelper.statusHtml(report.getReportDeadlineStatus)
