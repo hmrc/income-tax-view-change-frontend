@@ -76,4 +76,13 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
       IncomeSourcesModel(businessList, property)
     }
   }
+
+  def getBusinessDetails(nino: String, selfEmploymentId: String)(implicit hc: HeaderCarrier): Future[BusinessListResponseModel] = {
+    for {
+      businesses <- businessDetailsConnector.getBusinessList(nino)
+    } yield businesses match {
+      case bizDeets: BusinessDetailsModel => bizDeets
+      case error: BusinessDetailsErrorModel => error
+    }
+  }
 }
