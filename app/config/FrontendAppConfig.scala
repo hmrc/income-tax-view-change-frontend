@@ -92,6 +92,9 @@ class FrontendAppConfig @Inject()(val environment: Environment,
 
   lazy val enterSurveyUrl: String = loadConfig("enter-survey.url")
 
+  //Payment Redirect route
+  lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl"
+
   val features = new Features(runModeConfiguration)
 
 }

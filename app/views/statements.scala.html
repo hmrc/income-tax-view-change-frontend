@@ -21,6 +21,7 @@
 @import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
 @import views.html.helpers.backToHomeHelper
+@import controllers.PaymentController
 
 
 @(model: Seq[TransactionModelWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUserOptionNino[_])
@@ -55,7 +56,7 @@
         <h2 id="@tmwy.taxYear-still-to-pay" class="heading-small">@messages("statements.stillToPay", tmwy.model.outstandingAmount.get.toCurrencyString)</h2>
         <p id="@tmwy.taxYear-due-by">@messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}")
             @if(appConfig.features.paymentEnabled()){
-                @messages("statements.dueBy.youCan") <a id="@tmwy.taxYear-payment-link" href="@appConfig.paymentsUrl">@messages("statements.dueBy.link")</a>.
+                @messages("statements.dueBy.youCan") <a id="@tmwy.taxYear-payment-link" href="@controllers.routes.PaymentController.paymentHandoff(tmwy.model.outstandingAmount.get.toPence).url">@messages("statements.dueBy.link")</a>.
             }
         </p>
     } else {

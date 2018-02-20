@@ -196,7 +196,7 @@ class StatementsViewSpec extends TestSupport {
         import setup._
         document.getElementById(s"$testYear2-paid-bill") should be(null)
         document.getElementById(s"$testYear2-due-by").text() shouldBe messages.dueByWithLink("31 January " + (testYear2 + 1))
-        document.getElementById(s"$testYear2-payment-link").attr("href") shouldBe mockAppConfig.paymentsUrl
+        document.getElementById(s"$testYear2-payment-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(transactionModel2019.model.outstandingAmount.get.toPence).url
       }
 
       "Have a heading of 'Your transactions' which contains details of charges and bullet points of payments made" in {

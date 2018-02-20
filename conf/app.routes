@@ -16,6 +16,9 @@ GET         /calculation/:taxYear                   controllers.CalculationContr
 #Estimates
 GET         /estimates                              controllers.EstimatesController.viewEstimateCalculations
 
+#Payment
+GET         /payment                                controllers.PaymentController.paymentHandoff(amountInPence: Int)
+
 #Bills
 GET         /bills                                  controllers.BillsController.viewCrystallisedCalculations
 

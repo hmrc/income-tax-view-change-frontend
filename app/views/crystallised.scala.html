@@ -26,6 +26,7 @@
 @import views.html.helpers.breadcrumbHelper
 @import models.{Breadcrumb, BreadcrumbItem}
 @import views.html.helpers.backToHomeHelper
+@import controllers.PaymentController
 
 @(calcModel: CalcDisplayModel, transactionModel: TransactionModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
 
@@ -100,7 +101,7 @@
 
         @if(appConfig.features.paymentEnabled()){
             <div class="form-group">
-                <a id="payment-button" href="@appConfig.paymentsUrl" class="button">@messages("crystalisation.payNow")</a>
+                <a id="payment-button" href="@controllers.routes.PaymentController.paymentHandoff(calcModel.calcAmount.toPence).url" class="button">@messages("crystalisation.payNow")</a>
             </div>
         }
         @if(appConfig.features.homePageEnabled()){

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-import java.text.DecimalFormat
+import play.api.libs.json.{Json, OFormat}
 
-import play.twirl.api.Html
+sealed trait PaymentData
 
-trait ImplicitCurrencyFormatter {
-  implicit class CurrencyFormatter(x: BigDecimal) {
-    val f = new DecimalFormat("#,##0.00")
-    def toCurrency: Html = Html("&pound;" + f.format(x).replace(".00",""))
-    def toCurrencyString: String = "£" + f.format(x).replace(".00","")
-    def toStringNoDecimal: String = x.toString.replace(".0","")
-    def toPence: Int = x.toInt * 100
-  }
+case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Int, returnUrl: String)
+case class PaymentErrorModel(code: Int, message: String) extends PaymentData
+
+object PaymentDataModel {
+  implicit val format: OFormat[PaymentDataModel] = Json.format[PaymentDataModel]
 }
 
-object ImplicitCurrencyFormatter extends ImplicitCurrencyFormatter
+object PaymentErrorModel {
+  implicit val format: OFormat[PaymentErrorModel] =Json.format[PaymentErrorModel]
+}
