@@ -39,25 +39,26 @@ class FinancialTransactionsConnectorSpec extends TestSupport with MockHttp{
   "FinancialTransactionsConnector.getFinancialTransactions" should {
 
     lazy val testUrl = TestFinancialTransactionsConnector.getFinancialTransactionsUrl(testNino)
+    lazy val testParams = Seq("onlyOpenItems" -> "true")
     def result: Future[FinancialTransactionsResponseModel] = TestFinancialTransactionsConnector.getFinancialTransactions(testNino)
 
     "return a FinancialTransactionsModel with JSON in case of success" in {
-      setupMockHttpGet(testUrl)(successResponse)
+      setupMockHttpGetWithParams(testUrl,testParams)(successResponse)
       await(result) shouldBe financialTransactionsModel()
     }
 
     "return FinancialTransactionsErrorModel when bad Json is recieved" in {
-      setupMockHttpGet(testUrl)(successResponseBadJson)
+      setupMockHttpGetWithParams(testUrl,testParams)(successResponseBadJson)
       await(result) shouldBe FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Financial Transactions response")
     }
 
     "return FinancialTransactionErrorModel when bad request recieved" in {
-      setupMockHttpGet(testUrl)(badResponse)
+      setupMockHttpGetWithParams(testUrl,testParams)(badResponse)
       await(result) shouldBe FinancialTransactionsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return FinancialTransactionErrorModel when GET fails" in {
-      setupMockFailedHttpGet(testUrl)(badResponse)
+      setupMockFailedHttpGetWithParams(testUrl,testParams)(badResponse)
       await(result) shouldBe FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
     }
 
