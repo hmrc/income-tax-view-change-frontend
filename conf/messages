@@ -47,7 +47,8 @@ estimates.title                                                 = Current estima
 estimates.heading                                               = View your estimates
 estimates.viewEstimates                                         = View your current estimates.
 estimates.estimatesLink                                         = Tax year: {0} to {1}
-estimates.noEstimates                                           = You''ve not got any current estimates.
+estimates.noEstimates                                           = You don''t have an estimate right now. We''ll show your next Income Tax estimate when you submit a report using software.
+estimates.noEstimatesHeading                                    = Your Income Tax estimate
 
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = Tax year: {0} to {1}
@@ -77,7 +78,7 @@ estimated_tax_liability.calc-breakdown.reliefs                  = Your tax relie
 
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
 estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
-estimated_tax_liability.no-data                                 = You don''t have an estimate right now. We''ll show your next Income Tax estimate when you submit a report using software.
+estimated_tax_liability.no-data                                 = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
 estimated_tax_liability.error.p1                                = We can''t display your estimated tax amount at the moment.
 estimated_tax_liability.error.p2                                = Try refreshing the page in a few minutes.
 estimated_tax_liability.eoyEstimate.heading                     = Annual estimate: {0}
