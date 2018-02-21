@@ -16,17 +16,17 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Json}
 
 sealed trait PaymentData
 
-case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Int, returnUrl: String)
+case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Long, returnUrl: String)
 case class PaymentErrorModel(code: Int, message: String) extends PaymentData
 
 object PaymentDataModel {
-  implicit val format: OFormat[PaymentDataModel] = Json.format[PaymentDataModel]
+  implicit val format: Format[PaymentDataModel] = Json.format[PaymentDataModel]
 }
 
 object PaymentErrorModel {
-  implicit val format: OFormat[PaymentErrorModel] =Json.format[PaymentErrorModel]
+  implicit val format: Format[PaymentErrorModel] =Json.format[PaymentErrorModel]
 }

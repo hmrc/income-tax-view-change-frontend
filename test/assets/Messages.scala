@@ -86,6 +86,7 @@ object Messages {
       val incorrect = "Incorrect figures"
       val errors = "If there are any errors, you can make adjustments through your software."
       val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
+      val payNow = "Continue to payment"
     }
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"

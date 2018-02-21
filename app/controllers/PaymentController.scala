@@ -34,14 +34,14 @@ class PaymentController @Inject()(implicit val config: FrontendAppConfig,
 
   val action = checkSessionTimeout andThen authenticate
 
-  val paymentHandoff:Int => Action[AnyContent] = paymentAmount => action.async {
+  val paymentHandoff:Long => Action[AnyContent] = paymentAmountInPence => action.async {
     implicit user =>
       Future.successful(Redirect(config.paymentsUrl).addingToSession(
-        "payment-data" -> payment(user.mtditid, paymentAmount).toString())
+        "payment-data" -> payment(user.mtditid, paymentAmountInPence).toString())
       )
   }
 
-  private def payment(mtditid: String, paymentAmount: Int) = Json.toJson[PaymentDataModel](
-    PaymentDataModel("mtdfb-itsa",mtditid,paymentAmount,config.paymentRedirectUrl))
+  private def payment(mtditid: String, paymentAmountInPence: Long) = Json.toJson[PaymentDataModel](
+    PaymentDataModel("mtdfb-itsa",mtditid,paymentAmountInPence,config.paymentRedirectUrl))
 
 }

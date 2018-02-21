@@ -318,7 +318,9 @@ class CrystallisedViewSpec extends TestSupport {
       mockAppConfig.features.paymentEnabled(true)
       val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
       import setup._
-      document.getElementById("payment-button") shouldNot be(null)
+      document.getElementById("payment-button").text() shouldBe messages.Crystallised.payNow
+      document.getElementById("payment-button").attr("href") shouldBe
+        controllers.routes.PaymentController.paymentHandoff(calculationDisplaySuccessModel(busPropBRTCalcDataModel).calcAmount.toPence).url
     }
 
     "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
