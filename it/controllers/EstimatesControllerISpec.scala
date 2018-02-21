@@ -188,7 +188,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         res should have(
           httpStatus(OK),
           pageTitle("Current estimates"),
-          elementTextByID("no-estimates")("You've not got any current estimates."),
+          elementTextByID("no-estimates")("You don't have an estimate right now. We'll show your next Income Tax estimate when you submit a report using software."),
           nElementsWithClass("estimates-link")(0)
         )
       }

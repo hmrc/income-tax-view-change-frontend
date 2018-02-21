@@ -32,7 +32,8 @@ object Messages {
   class Estimates {
     val title = "Current estimates"
     val heading = "View your estimates"
-    val noEstimates = "You've not got any current estimates."
+    val noEstimates = "You don't have an estimate right now. We'll show your next Income Tax estimate when you submit a report using software."
+    val noEstimatesHeading = "Your Income Tax estimate"
     val p1 = "View your current estimates."
     val taxYearLink: (String, String) => String = (year, yearPlusOne) => s"Tax year: $year to $yearPlusOne"
   }
