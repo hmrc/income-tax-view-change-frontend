@@ -100,7 +100,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
       "return the corresponding BusinessModel" in {
         setupMockBusinesslistResult(testNino)(businessesSuccessModel)
 
-        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino, testSelfEmploymentId)) shouldBe Left(Some(businessesSuccessModel.businesses.head))
+        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino, testSelfEmploymentId)) shouldBe Right(Some(businessesSuccessModel.businesses.head))
       }
     }
 
@@ -108,7 +108,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
       "return a BusinessDetailsErrorModel" in {
         setupMockBusinesslistResult(testNino)(businessErrorModel)
 
-        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino, testSelfEmploymentId)) shouldBe Right(businessErrorModel)
+        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino, testSelfEmploymentId)) shouldBe Left(businessErrorModel)
       }
     }
   }
