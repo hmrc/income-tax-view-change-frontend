@@ -30,21 +30,21 @@ object BusinessAddressHelper {
       model.businessAddressLineFour).flatten
 
     HtmlFormat.fill(
-      bizList.map(line => {
+      bizList.zipWithIndex.map { case (line: String, index: Int) => {
         Html(
         s"""
            |<tr ${if(line != bizList.reverse.head){Html("""class="no-border-bottom"""")} else {Html("")}}>
            |  ${if(line == bizList.head){
-                  Html(s"""<th class="table-heading" rowspan="${bizList.length}">${messages("business.businessAddress")}</th>""")
+                  Html(s"""<th id="business-address" class="table-heading" rowspan="${bizList.length}">${messages("business.businessAddress")}</th>""")
                 } else {
                   Html("")
                 }
               }
-           |  <td>$line</td>
+           |  <td id="address-line-${index + 1}">$line</td>
            |</tr>
            |""".stripMargin
         )
-      }).to[collection.immutable.Seq]
+      }}.to[collection.immutable.Seq]
     )
   }
 

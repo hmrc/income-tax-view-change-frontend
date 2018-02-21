@@ -45,9 +45,9 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
       for {
         business <- incomeSourceDetailsService.getBusinessDetails(user.nino, id)
       } yield business match {
-        case Left(Some(thing)) => Ok(views.html.businessDetailsView(thing))
-//        case Left(None) => Ok(views.html.businessDetailsView(business))
-//        case Right(error) => Ok(error)
+        case Right(Some(model)) => Ok(views.html.businessDetailsView(model))
+        case Right(_) => InternalServerError
+        case Left(_) => InternalServerError
       }
   }
 
