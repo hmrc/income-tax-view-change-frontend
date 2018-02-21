@@ -167,6 +167,7 @@ business.tradingName                                            = Trading name
 business.businessAddress                                        = Business address
 business.additionalInfo                                         = Additional information
 business.accountingMethod                                       = This business uses the {0} accounting method.
+business.backToAccount                                          = Back to account details
 
 ## Statuses ##
 status.received                                                 = Received

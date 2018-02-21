@@ -23,22 +23,32 @@ import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredi
 import models.IncomeSourcesModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.IncomeSourceDetailsService
 
 import scala.concurrent.Future
 
 @Singleton
-class AccountDetailsController @Inject()(implicit val config: FrontendAppConfig,
+class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig,
                                          implicit val messagesApi: MessagesApi,
                                          val checkSessionTimeout: SessionTimeoutPredicate,
                                          val authenticate: AuthenticationPredicate,
                                          val retrieveNino: NinoPredicate,
-                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate
+                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          val incomeSourceDetailsService: IncomeSourceDetailsService
                                         ) extends BaseController {
 
-//  val getAccountDetails: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-//    implicit user =>
-//      val ids: Seq[String] = user.incomeSources.businessIncomeSources.map { business => business.selfEmploymentId}
-//      Future.successful(Ok())
-//  }
+  val getBusinessDetails: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+    implicit user =>
+      val ids: Seq[String] = user.incomeSources.businessIncomeSources.map { business => business.selfEmploymentId}
+      val id = ids.head
+
+      for {
+        business <- incomeSourceDetailsService.getBusinessDetails(user.nino, id)
+      } yield business match {
+        case Left(Some(thing)) => Ok(views.html.businessDetailsView(thing))
+//        case Left(None) => Ok(views.html.businessDetailsView(business))
+//        case Right(error) => Ok(error)
+      }
+  }
 
 }
