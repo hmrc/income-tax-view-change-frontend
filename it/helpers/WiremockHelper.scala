@@ -43,7 +43,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
   }
 
   def stubGet(url: String, status: Integer, body: String): StubMapping =
-    stubFor(get(urlPathEqualTo(url))
+    stubFor(get(urlEqualTo(url))
       .willReturn(
         aResponse().
           withStatus(status).
@@ -52,7 +52,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
     )
 
   def stubPost(url: String, status: Integer, responseBody: String): StubMapping =
-    stubFor(post(urlMatching(url))
+    stubFor(post(urlEqualTo(url))
       .willReturn(
         aResponse().
           withStatus(status).
@@ -61,7 +61,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
     )
 
   def stubPut(url: String, status: Integer, responseBody: String): StubMapping =
-    stubFor(put(urlMatching(url))
+    stubFor(put(urlEqualTo(url))
       .willReturn(
         aResponse().
           withStatus(status).
@@ -70,7 +70,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
     )
 
   def stubPatch(url: String, status: Integer, responseBody: String): StubMapping =
-    stubFor(patch(urlMatching(url))
+    stubFor(patch(urlEqualTo(url))
       .willReturn(
         aResponse().
           withStatus(status).
@@ -79,7 +79,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
     )
 
   def stubDelete(url: String, status: Integer, responseBody: String): StubMapping =
-    stubFor(delete(urlMatching(url))
+    stubFor(delete(urlEqualTo(url))
       .willReturn(
         aResponse().
           withStatus(status).
