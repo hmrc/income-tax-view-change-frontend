@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package testOnly.forms
+package models
 
-import config.features.Keys
-import play.api.data.Form
-import play.api.data.Forms._
-import testOnly.models.FeatureSwitchModel
+import play.api.libs.json.{Format, Json}
 
-object FeatureSwitchForm {
+sealed trait PaymentData
 
-  val form: Form[FeatureSwitchModel] = Form(
-    mapping(
-      Keys.homePageEnabled -> boolean,
-      Keys.paymentEnabled -> boolean
-    )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
-  )
+case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Long, returnUrl: String)
+case class PaymentErrorModel(code: Int, message: String) extends PaymentData
 
+object PaymentDataModel {
+  implicit val format: Format[PaymentDataModel] = Json.format[PaymentDataModel]
+}
+
+object PaymentErrorModel {
+  implicit val format: Format[PaymentErrorModel] =Json.format[PaymentErrorModel]
 }

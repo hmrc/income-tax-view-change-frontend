@@ -58,6 +58,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
       "returns an estimate and a noCalcData response for two years" should {
 
         lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+
         lazy val document = result.toHtmlDocument
 
         "return status OK (200)" in {
