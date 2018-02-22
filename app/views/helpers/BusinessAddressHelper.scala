@@ -27,7 +27,8 @@ object BusinessAddressHelper {
       model.businessAddressLineOne,
       model.businessAddressLineTwo,
       model.businessAddressLineThree,
-      model.businessAddressLineFour).flatten
+      model.businessAddressLineFour,
+      model.businessPostcode).flatten
 
     HtmlFormat.fill(
       bizList.zipWithIndex.map { case (line: String, index: Int) => {

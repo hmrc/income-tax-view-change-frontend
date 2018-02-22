@@ -44,7 +44,7 @@ serviceInfo = breadcrumb
 
     <h2 id="reporting-period" class="heading-large">@messages("business.reportingPeriod", business.accountingPeriod.start.toLongDateNoYear, business.accountingPeriod.end.toLongDateNoYear)</h2>
 
-    @if(business.cessationDate.isDefined){<div class="panel panel-border-wide"><p id="cessation-date">This business ceased trading on @{business.cessationDate.get.toLongDate}.</p></div>}
+    @if(business.cessationDate.isDefined){<div class="panel panel-border-wide"><p id="cessation-date">@messages("business.ceasedTrading", business.cessationDate.get.toLongDate)</p></div>}
 
     <h3 id="address-details" class="heading-medium">@messages("business.addressAndContact")</h3>
 

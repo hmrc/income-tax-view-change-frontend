@@ -70,6 +70,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getBills: WSResponse = get("/bills")
     def getFinancialData(year: String): WSResponse = get(s"/calculation/$year")
     def getReportDeadlines: WSResponse = get(s"/obligations")
+    def getBusinessDetails: WSResponse = get(s"/business-details")
     def getBtaPartial: WSResponse = get(s"/partial")
     def getHome: WSResponse = get("/")
   }

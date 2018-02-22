@@ -345,6 +345,20 @@ object TestConstants extends ImplicitDateFormatter {
       businessAddressLineFour = Some("England"),
       businessPostcode = Some("ZL1 064")
     )
+    val ceasedBusiness = BusinessModel(
+      id = testSelfEmploymentId,
+      accountingPeriod = testBusinessAccountingPeriod,
+      accountingType = "CASH",
+      commencementDate = Some("2017-1-1"),
+      cessationDate = Some("2018-5-30"),
+      tradingName = testTradeName,
+      businessDescription = Some("a business"),
+      businessAddressLineOne = Some("64 Zoo Lane"),
+      businessAddressLineTwo = Some("Happy Place"),
+      businessAddressLineThree = Some("Magical Land"),
+      businessAddressLineFour = Some("England"),
+      businessPostcode = Some("ZL1 064")
+    )
 
     val businessesSuccessResponse = List(business1)
     val multipleBusinessSuccessResponse = List(business1, business2)

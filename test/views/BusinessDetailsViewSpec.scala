@@ -43,67 +43,83 @@ class BusinessDetailsViewSpec extends TestSupport {
 
   private def pageSetup(businessModel: BusinessModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.businessDetailsView(
-      BusinessDetails.business1)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser)
+      businessModel)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
-  "The Business Details view" should {
+  "The Business Details view" when {
 
-    val setup = pageSetup(BusinessDetails.business1)
-    import setup._
-    val messages = Messages.BusinessDetails
-    val business = BusinessDetails.business1
+    "passed a business without a cessation date" should {
 
-    s"have the title '${messages.title}'" in {
-      document.title() shouldBe business.tradingName
-    }
+      val setup = pageSetup(BusinessDetails.business1)
+      import setup._
+      val messages = Messages.BusinessDetails
+      val business = BusinessDetails.business1
 
-    "have a breadcrumb trail" in {
-      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-      document.getElementById("breadcrumb-details").text shouldBe breadcrumbMessages.details
-      document.getElementById(s"${business.tradingName}").text shouldBe BusinessDetails.business1.tradingName
-    }
-
-    s"have the page heading '${business.tradingName}'" in {
-      document.getElementById("page-heading").text() shouldBe business.tradingName
-    }
-
-    s"have a reporting period of ${business.accountingPeriod.start} to ${business.accountingPeriod.end}" in {
-      document.getElementById("reporting-period").text() shouldBe
-        messages.reportingPeriod(s"${business.accountingPeriod.start.toLongDateNoYear}", s"${business.accountingPeriod.end.toLongDateNoYear}")
-    }
-
-    "not have a 'ceased trading' message" in {
-      document.getElementById("cessation-date") shouldBe null
-    }
-
-    "have an Address and contact section" which {
-      s"has the sub-heading ${messages.addressAndContact}" in {
-        document.getElementById("address-details").text() shouldBe messages.addressAndContact
+      s"have the title '${business.tradingName}'" in {
+        document.title() shouldBe business.tradingName
       }
-      s"has the correct values for the heading and value of 'trading name'" in {
-        document.getElementById("trading-name").text() shouldBe messages.tradingName
-        document.getElementById("trading-name-business").text() shouldBe business.tradingName
+
+      "have a breadcrumb trail" in {
+        document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+        document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+        document.getElementById("breadcrumb-details").text shouldBe breadcrumbMessages.details
+        document.getElementById(s"${business.tradingName}").text shouldBe BusinessDetails.business1.tradingName
       }
-      s"has the correct values for the heading and address lines of 'business address'" in {
-        document.getElementById("business-address").text() shouldBe messages.businessAddress
-        document.getElementById("address-line-1").text() shouldBe business.businessAddressLineOne.get
-        document.getElementById("address-line-2").text() shouldBe business.businessAddressLineTwo.get
-        document.getElementById("address-line-3").text() shouldBe business.businessAddressLineThree.get
-        document.getElementById("address-line-4").text() shouldBe business.businessAddressLineFour.get
+
+      s"have the page heading '${business.tradingName}'" in {
+        document.getElementById("page-heading").text() shouldBe business.tradingName
+      }
+
+      s"have a reporting period of ${business.accountingPeriod.start} to ${business.accountingPeriod.end}" in {
+        document.getElementById("reporting-period").text() shouldBe
+          messages.reportingPeriod(s"${business.accountingPeriod.start.toLongDateNoYear}", s"${business.accountingPeriod.end.toLongDateNoYear}")
+      }
+
+      "not have a 'ceased trading' message" in {
+        document.getElementById("cessation-date") shouldBe null
+      }
+
+      "have an Address and contact section" which {
+        s"has the sub-heading ${messages.addressAndContact}" in {
+          document.getElementById("address-details").text() shouldBe messages.addressAndContact
+        }
+        s"has the correct values for the heading and value of 'trading name'" in {
+          document.getElementById("trading-name").text() shouldBe messages.tradingName
+          document.getElementById("trading-name-business").text() shouldBe business.tradingName
+        }
+        s"has the correct values for the heading and address lines of 'business address'" in {
+          document.getElementById("business-address").text() shouldBe messages.businessAddress
+          document.getElementById("address-line-1").text() shouldBe business.businessAddressLineOne.get
+          document.getElementById("address-line-2").text() shouldBe business.businessAddressLineTwo.get
+          document.getElementById("address-line-3").text() shouldBe business.businessAddressLineThree.get
+          document.getElementById("address-line-4").text() shouldBe business.businessAddressLineFour.get
+          document.getElementById("address-line-5").text() shouldBe business.businessPostcode.get
+        }
+      }
+
+      "have an additional information section stating the accounting method" in {
+        document.getElementById("additional-information").text() shouldBe messages.additionalInfo
+        document.getElementById("accounting-method").text() shouldBe messages.accountingMethod(business.accountingType.toLowerCase)
+      }
+
+      "show a back link to the account details page" in {
+        document.getElementById("it-account-back") shouldNot be(null)
       }
     }
 
-    "have an additional information section stating the accounting method" in {
-      document.getElementById("additional-information").text() shouldBe messages.additionalInfo
-      document.getElementById("accounting-method").text() shouldBe messages.accountingMethod(business.accountingType.toLowerCase)
-    }
+    "passed a business with a cessation date" should {
 
-    "show a back link to the account details page" in {
-      document.getElementById("it-account-back") shouldNot be(null)
-    }
+      val setup = pageSetup(BusinessDetails.ceasedBusiness)
+      import setup._
+      val messages = Messages.BusinessDetails
+      val business = BusinessDetails.ceasedBusiness
 
+      "have a 'ceased trading' message" in {
+        document.getElementById("cessation-date").text() shouldBe messages.ceasedTrading(s"${business.cessationDate.get.toLongDate}")
+      }
+
+    }
   }
 
 }

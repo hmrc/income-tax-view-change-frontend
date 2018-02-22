@@ -192,7 +192,6 @@ object Messages {
 
   //Business Details Messages
   object BusinessDetails {
-    val title = "Business Details"
     val reportingPeriod: (String, String) => String = (start, end) => "Reporting period: " + start + " - " + end
     val ceasedTrading: String => String = date => "This business ceased trading on " + date + "."
     val addressAndContact = "Address and contact details"

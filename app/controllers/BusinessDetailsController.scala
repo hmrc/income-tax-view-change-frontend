@@ -18,7 +18,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import config.FrontendAppConfig
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.IncomeSourcesModel
 import play.api.i18n.MessagesApi
@@ -29,12 +29,13 @@ import scala.concurrent.Future
 
 @Singleton
 class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig,
-                                         implicit val messagesApi: MessagesApi,
-                                         val checkSessionTimeout: SessionTimeoutPredicate,
-                                         val authenticate: AuthenticationPredicate,
-                                         val retrieveNino: NinoPredicate,
-                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                          val incomeSourceDetailsService: IncomeSourceDetailsService
+                                          implicit val messagesApi: MessagesApi,
+                                          val checkSessionTimeout: SessionTimeoutPredicate,
+                                          val authenticate: AuthenticationPredicate,
+                                          val retrieveNino: NinoPredicate,
+                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                          val itvcErrorHandler: ItvcErrorHandler
                                         ) extends BaseController {
 
   val getBusinessDetails: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
@@ -46,8 +47,8 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
         business <- incomeSourceDetailsService.getBusinessDetails(user.nino, id)
       } yield business match {
         case Right(Some(model)) => Ok(views.html.businessDetailsView(model))
-        case Right(_) => InternalServerError
-        case Left(_) => InternalServerError
+        case Right(_) => itvcErrorHandler.showInternalServerError
+        case Left(_) => itvcErrorHandler.showInternalServerError
       }
   }
 
