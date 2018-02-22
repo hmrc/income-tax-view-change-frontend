@@ -35,6 +35,7 @@ object TestConstants extends ImplicitDateFormatter {
   val testUserDetails = UserDetailsModel(testUserName, None, "n/a", "n/a")
   val testUserDetailsError = UserDetailsError
   val testUserDetailsUrl = "/user/oid/potato"
+  val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
   lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None)(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
@@ -80,6 +81,7 @@ object TestConstants extends ImplicitDateFormatter {
     </ul>
   """.stripMargin.trim)
   }
+
 
   object ReportDeadlines {
 
@@ -1997,6 +1999,32 @@ object TestConstants extends ImplicitDateFormatter {
          |}
        """.stripMargin
     )
+  }
+
+
+  object PaymentData {
+
+    val testTaxType = "mtdfb-itsa"
+    val testAmountInPence = 10000000
+
+    val testPaymentDataModel: PaymentDataModel = PaymentDataModel(testTaxType, testMtditid, testAmountInPence, testPaymentRedirectUrl)
+
+    val testPaymentDataJson: JsValue =
+      Json.obj(
+        "taxType" -> testTaxType,
+        "taxReference" -> testMtditid,
+        "amountInPence" -> testAmountInPence,
+        "returnUrl" -> testPaymentRedirectUrl
+      )
+
+    val testPaymentErrorModel: PaymentErrorModel = PaymentErrorModel(testErrorStatus,testErrorMessage)
+
+    val testPaymentErrorJson: JsValue =
+      Json.obj(
+        "code" -> testErrorStatus,
+        "message" -> testErrorMessage
+      )
+
   }
 
 

@@ -28,7 +28,8 @@ object FeatureSwitchForm {
       Keys.homePageEnabled -> boolean,
       Keys.propertyDetailsEnabled -> boolean,
       Keys.propertyEopsEnabled -> boolean,
-      Keys.businessEopsEnabled -> boolean
+      Keys.businessEopsEnabled -> boolean,
+      Keys.paymentEnabled -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 
