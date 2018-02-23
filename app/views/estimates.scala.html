@@ -38,13 +38,17 @@
 ) {
 
     <section>
-        <h1 id="page-heading" class="heading-xlarge">@messages("estimates.heading")</h1>
-        <div>
-            @if(estimates.isEmpty){
+
+        @if(estimates.isEmpty){
+            <h1 id="page-heading" class="heading-xlarge">@messages("estimates.noEstimatesHeading")</h1>
+            <div>
                 <p id="no-estimates">@messages("estimates.noEstimates")</p>
-            } else {
-            <p id="view-estimates">@messages("estimates.viewEstimates")</p>
-            <ul class="list list-bullet">
+            </div>
+        } else {
+            <h1 id="page-heading" class="heading-xlarge">@messages("estimates.heading")</h1>
+            <div>
+                <p id="view-estimates">@messages("estimates.viewEstimates")</p>
+                <ul class="list list-bullet">
                 @for(calc <- estimates.reverse){
                     <li>
                         <a class="estimates-link" id="estimates-link-@{calc.taxYear}" href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}">
@@ -52,9 +56,9 @@
                         </a>
                     </li>
                 }
-            </ul>
-            }
-        </div>
+                </ul>
+            </div>
+        }
     </section>
 
 }

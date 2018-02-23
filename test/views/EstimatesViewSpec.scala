@@ -67,6 +67,10 @@ class EstimatesViewSpec extends TestSupport {
         document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
       }
 
+      "have a header" in {
+        document.getElementById("page-heading").text shouldBe messages.heading
+      }
+
       "have no sidebar section " in {
         document.getElementById("sidebar") should be(null)
       }
@@ -88,6 +92,10 @@ class EstimatesViewSpec extends TestSupport {
 
       s"have the title '${messages.title}'" in {
         document.title() shouldBe messages.title
+      }
+
+      "have a header" in {
+        document.getElementById("page-heading").text shouldBe messages.noEstimatesHeading
       }
 
       "have sidebar section " in {
