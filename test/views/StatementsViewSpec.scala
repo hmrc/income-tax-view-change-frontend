@@ -54,7 +54,7 @@ class StatementsViewSpec extends TestSupport {
     dunningLock = Some(""),
     returnFlag = Some(false),
     paymentReference = Some("XX005000002273"),
-    paymentAmount = Some(600.00),
+    paymentAmount = Some(1000.00),
     paymentMethod = Some(""),
     paymentLot = Some(""),
     paymentLotItem = Some(""),
@@ -109,8 +109,8 @@ class StatementsViewSpec extends TestSupport {
     mainTransaction = Some(""),
     subTransaction = Some(""),
     originalAmount = Some(1000.00),
-    outstandingAmount = Some(400.00),
-    clearedAmount = Some(600.00),
+    outstandingAmount = Some(0),
+    clearedAmount = Some(1000.00),
     accruedInterest = Some(0.00),
     items = Some(Seq(charge2018, payment2018))
   ), testYear1)
@@ -167,14 +167,37 @@ class StatementsViewSpec extends TestSupport {
         document.getElementById(s"$testYear2-tax-year").text() shouldBe messages.taxYear(testYear2)
       }
 
-      "state the amount left to pay for each tax year" in {
-        document.getElementById(s"$testYear1-still-to-pay").text() shouldBe messages.stillToPay(transactionModel2018.model.outstandingAmount.get.toCurrencyString)
+      "state that there is nothing left to pay for the tax year that has been fully paid" in {
+        document.getElementById(s"$testYear1-nothing-to-pay").text() shouldBe messages.nothingToPay
+        document.getElementById(s"$testYear1-still-to-pay") should be(null)
+      }
+
+      "state the amount left to pay for the tax year that has not been fully paid" in {
+        document.getElementById(s"$testYear2-nothing-to-pay") should be(null)
         document.getElementById(s"$testYear2-still-to-pay").text() shouldBe messages.stillToPay(transactionModel2019.model.outstandingAmount.get.toCurrencyString)
       }
 
-      "state the due date for each tax year" in {
-        document.getElementById(s"$testYear1-due-by").text() shouldBe messages.dueBy("31 January " + (testYear1 + 1))
+      "state that the bill has been paid for the tax year that has been fully paid" in {
+        document.getElementById(s"$testYear1-paid-bill").text() shouldBe messages.paidBill
+        document.getElementById(s"$testYear1-due-by") should be(null)
+      }
+
+      "state the due date for each tax year that has not been fully paid" in {
+        mockAppConfig.features.paymentEnabled(false)
+        val setup = pageSetup(statementsModel)
+        import setup._
+        document.getElementById(s"$testYear2-paid-bill") should be(null)
         document.getElementById(s"$testYear2-due-by").text() shouldBe messages.dueBy("31 January " + (testYear2 + 1))
+      }
+
+      "feature enabled state the due date for each tax year that has not been fully paid" in {
+        mockAppConfig.features.paymentEnabled(true)
+        val setup = pageSetup(statementsModel)
+        import setup._
+        document.getElementById(s"$testYear2-paid-bill") should be(null)
+        document.getElementById(s"$testYear2-due-by").text() shouldBe messages.dueByWithLink("31 January " + (testYear2 + 1))
+        document.getElementById(s"$testYear2-payment-link").attr("href") shouldBe
+          controllers.routes.PaymentController.paymentHandoff(transactionModel2019.model.outstandingAmount.get.toPence).url
       }
 
       "Have a heading of 'Your transactions' which contains details of charges and bullet points of payments made" in {

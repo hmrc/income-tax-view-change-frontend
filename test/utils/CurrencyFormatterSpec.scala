@@ -20,45 +20,85 @@ import play.twirl.api.Html
 
 class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
 
-  "The implicit currency formatter" should {
+  "The implicit currency formatter" when {
 
-    s"format with leading pound sign (£)" in {
+    "given the value is 12.55" should {
+
       val amount: BigDecimal = 12.55
-      amount.toCurrency shouldBe Html("&pound;12.55")
-      amount.toCurrencyString shouldBe "£12.55"
+
+      s"format with leading pound sign (£)" in {
+        amount.toCurrency shouldBe Html("&pound;12.55")
+        amount.toCurrencyString shouldBe "£12.55"
+      }
+      "return the same value in pence" in {
+        amount.toPence shouldBe 1255
+      }
     }
 
-    s"format with leading pound sign (£) and commas in correct place" in {
+
+    "given the value is 12123.55" should {
+
       val amount: BigDecimal = 12123.55
-      amount.toCurrency shouldBe Html("&pound;12,123.55")
-      amount.toCurrencyString shouldBe "£12,123.55"
 
+      s"format with leading pound sign (£) and commas in correct place" in {
+        amount.toCurrency shouldBe Html("&pound;12,123.55")
+        amount.toCurrencyString shouldBe "£12,123.55"
+      }
+      "return the same value in pence" in {
+        amount.toPence shouldBe 1212355
+      }
     }
 
-    s"format with leading pound sign (£) and commas in correct place with trailing zeros" in {
+    "given the value is 134432" should {
+
       val amount: BigDecimal = 134432
-      amount.toCurrency shouldBe Html("&pound;134,432")
-      amount.toCurrencyString shouldBe "£134,432"
+
+      s"format with leading pound sign (£) and commas in correct place with trailing zeros" in {
+        amount.toCurrency shouldBe Html("&pound;134,432")
+        amount.toCurrencyString shouldBe "£134,432"
+      }
+      "return the same value in pence" in {
+        amount.toPence shouldBe 13443200
+      }
     }
 
-    s"format large numbers with leading pound sign (£) and commas in correct place" in {
+    "given the value is 555134432" should {
+
       val amount: BigDecimal = 555134432
-      amount.toCurrency shouldBe Html("&pound;555,134,432")
-      amount.toCurrencyString shouldBe "£555,134,432"
+
+      s"format large numbers with leading pound sign (£) and commas in correct place" in {
+        amount.toCurrency shouldBe Html("&pound;555,134,432")
+        amount.toCurrencyString shouldBe "£555,134,432"      }
+      "return the same value in pence" in {
+        amount.toPence shouldBe 55513443200L
+      }
     }
 
-    s"format numbers with trailing zeros without the zeros" in {
+    "given the value is 12.00" should {
+
       val amount: BigDecimal = 12.00
-      amount.toCurrency shouldBe Html("&pound;12")
-      amount.toCurrencyString shouldBe "£12"
+
+      s"format numbers with trailing zeros without the zeros" in {
+        amount.toCurrency shouldBe Html("&pound;12")
+        amount.toCurrencyString shouldBe "£12"
+      }
+      "return the same value in pence" in {
+        amount.toPence shouldBe 1200
+      }
     }
 
-    s"format numbers with whole pence to include the trailing 0" in {
+    "given the value is 12.4" should {
+
       val amount: BigDecimal = 12.4
-      amount.toCurrency shouldBe Html("&pound;12.40")
-      amount.toCurrencyString shouldBe "£12.40"
-    }
 
+      s"format numbers with whole pence to include the trailing 0" in {
+        amount.toCurrency shouldBe Html("&pound;12.40")
+        amount.toCurrencyString shouldBe "£12.40"
+      }
+      "return the same value in pence" in {
+        amount.toPence shouldBe 1240
+      }
+    }
 
 
 

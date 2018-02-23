@@ -34,7 +34,8 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
         homePageEnabled = appConfig.features.homePageEnabled(),
         propertyDetailsEnabled = appConfig.features.propertyDetailsEnabled(),
         propertyEopsEnabled = appConfig.features.propertyEopsEnabled(),
-        businessEopsEnabled = appConfig.features.businessEopsEnabled()
+        businessEopsEnabled = appConfig.features.businessEopsEnabled(),
+        paymentEnabled = appConfig.features.paymentEnabled()
       )
     )))
   }
@@ -51,6 +52,7 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
     appConfig.features.propertyDetailsEnabled(model.propertyDetailsEnabled)
     appConfig.features.propertyEopsEnabled(model.propertyEopsEnabled)
     appConfig.features.businessEopsEnabled(model.businessEopsEnabled)
+    appConfig.features.paymentEnabled(model.paymentEnabled)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 
