@@ -16,7 +16,7 @@
 
 package controllers
 
-import helpers.IntegrationTestConstants.{GetBusinessDetails, GetPropertyDetails, testSelfEmploymentId}
+import helpers.IntegrationTestConstants.{GetBusinessDetails, GetPropertyDetails, testSelfEmploymentId, testTradeName}
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{OK, SEE_OTHER, INTERNAL_SERVER_ERROR}
 
@@ -33,7 +33,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         getPropDeets(GetPropertyDetails.successResponse())
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
-        val res = IncomeTaxViewChangeFrontend.getBusinessDetails
+        val res = IncomeTaxViewChangeFrontend.getBusinessDetails(testSelfEmploymentId)
 
         verifyBizDeetsCall()
         verifyPropDeetsCall()
@@ -69,7 +69,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         getPropDeets(GetPropertyDetails.successResponse())
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
-        val res = IncomeTaxViewChangeFrontend.getBusinessDetails
+        val res = IncomeTaxViewChangeFrontend.getBusinessDetails(testSelfEmploymentId)
 
         verifyBizDeetsCall()
         verifyPropDeetsCall()
@@ -91,7 +91,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         getPropDeets(GetPropertyDetails.successResponse())
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
-        val res = IncomeTaxViewChangeFrontend.getBusinessDetails
+        val res = IncomeTaxViewChangeFrontend.getBusinessDetails("")
 
         verifyBizDeetsCall()
         verifyPropDeetsCall()
@@ -111,7 +111,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         isAuthorisedUser(false)
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
-        val res = IncomeTaxViewChangeFrontend.getBusinessDetails
+        val res = IncomeTaxViewChangeFrontend.getBusinessDetails("")
 
         Then("the http response for an unauthorised user is returned")
         res should have(

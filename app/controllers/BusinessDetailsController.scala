@@ -38,17 +38,14 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
                                           val itvcErrorHandler: ItvcErrorHandler
                                         ) extends BaseController {
 
-  val getBusinessDetails: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+  val getBusinessDetails: String => Action[AnyContent]= selfEmpId => (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      val ids: Seq[String] = user.incomeSources.businessIncomeSources.map { business => business.selfEmploymentId}
-      val id = ids.head
 
       for {
-        business <- incomeSourceDetailsService.getBusinessDetails(user.nino, id)
+        business <- incomeSourceDetailsService.getBusinessDetails(user.nino, selfEmpId)
       } yield business match {
         case Right(Some(model)) => Ok(views.html.businessDetailsView(model))
-        case Right(_) => itvcErrorHandler.showInternalServerError
-        case Left(_) => itvcErrorHandler.showInternalServerError
+        case _ => itvcErrorHandler.showInternalServerError
       }
   }
 

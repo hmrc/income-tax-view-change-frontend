@@ -48,6 +48,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testSelfEmploymentId = "ABC123456789"
   val otherTestSelfEmploymentId = "ABC123456780"
 
+  val testTradeName = "business"
+
   object GetCalculationData {
 
     val calculationDataSuccessWithEoYModel = CalculationDataModel(

@@ -77,11 +77,11 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     }
   }
 
-  def getBusinessDetails(nino: String, selfEmploymentId: String)(implicit hc:HeaderCarrier): Future[Either[BusinessDetailsErrorModel,Option[BusinessModel]]] = {
+  def getBusinessDetails(nino: String, businessName: String)(implicit hc:HeaderCarrier): Future[Either[BusinessDetailsErrorModel,Option[BusinessModel]]] = {
     for {
       businesses <- businessDetailsConnector.getBusinessList(nino)
     } yield businesses match {
-      case bizDeets: BusinessDetailsModel => Right(bizDeets.businesses.find(_.id == selfEmploymentId))
+      case bizDeets: BusinessDetailsModel => Right(bizDeets.businesses.find(_.id == businessName))
       case error: BusinessDetailsErrorModel => Left(error)
     }
   }

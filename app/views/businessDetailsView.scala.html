@@ -25,7 +25,7 @@
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-details", Some(controllers.routes.BillsController.viewCrystallisedCalculations.url)),
+        BreadcrumbItem("breadcrumb-details", Some(controllers.routes.AccountDetailsController.getAccountDetails.url)),
         BreadcrumbItem(business.tradingName, None)
     )))
 }
@@ -64,7 +64,7 @@ serviceInfo = breadcrumb
 
     </section>
 
-    <a id="it-account-back" class="link-back" href="@{controllers.routes.HomeController.home().url}">@messages("business.backToAccount")</a>
+    <a id="it-account-back" class="link-back" href="@{controllers.routes.AccountDetailsController.getAccountDetails().url}">@messages("business.backToAccount")</a>
 
 </section>
 

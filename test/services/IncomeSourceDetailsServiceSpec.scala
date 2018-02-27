@@ -108,7 +108,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
       "return a BusinessDetailsErrorModel" in {
         setupMockBusinesslistResult(testNino)(businessErrorModel)
 
-        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino, testSelfEmploymentId)) shouldBe Left(businessErrorModel)
+        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino, testTradeName)) shouldBe Left(businessErrorModel)
       }
     }
   }

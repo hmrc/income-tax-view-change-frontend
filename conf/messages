@@ -159,6 +159,13 @@ statements.noTransactions                                       = You''ve had no
 statements.error.heading                                        = We can''t show your statement right now
 statements.error.p1                                             = Try reloading the page or coming back later.
 
+## Account Details Page ##
+account.title                                                   = Account details
+account.heading                                                 = Account details
+account.businesses                                              = Your businesses
+account.properties                                              = Your properties
+account.reportingPeriod                                         = Reporting period: {0} - {1}
+
 ## Business Details Page ##
 business.reportingPeriod                                        = Reporting period: {0} - {1}
 business.ceasedTrading                                          = This business ceased trading on {0}.

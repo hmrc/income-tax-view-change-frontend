@@ -22,8 +22,11 @@ GET         /bills                                  controllers.BillsController.
 #Statements
 GET         /statements                             controllers.StatementsController.getStatements
 
+#Account Details
+GET         /account-details                        controllers.AccountDetailsController.getAccountDetails
+
 #Business Details
-GET         /business-details                       controllers.BusinessDetailsController.getBusinessDetails
+GET         /account-details/:selfEmpId             controllers.BusinessDetailsController.getBusinessDetails(selfEmpId: String)
 
 #Feedback Routes
 GET         /feedback                               controllers.feedback.FeedbackController.show

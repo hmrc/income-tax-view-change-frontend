@@ -190,6 +190,15 @@ object Messages {
     }
   }
 
+  //Account Details Messages
+  object AccountDetails {
+    val title = "Account details"
+    val heading = "Account details"
+    val yourBusinesses = "Your businesses"
+    val yourProperties = "Your properties"
+    val reportingPeriod: (String, String) => String = (start, end) => "Reporting period: " + start + " - " + end
+  }
+
   //Business Details Messages
   object BusinessDetails {
     val reportingPeriod: (String, String) => String = (start, end) => "Reporting period: " + start + " - " + end

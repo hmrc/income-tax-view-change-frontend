@@ -35,10 +35,13 @@ class AccountDetailsController @Inject()(implicit val config: FrontendAppConfig,
                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate
                                         ) extends BaseController {
 
-//  val getAccountDetails: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-//    implicit user =>
-//      val ids: Seq[String] = user.incomeSources.businessIncomeSources.map { business => business.selfEmploymentId}
-//      Future.successful(Ok())
-//  }
+  val getAccountDetails: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+    implicit user =>
+      implicit val sources: IncomeSourcesModel = user.incomeSources
+      val businesses = sources.sortedBusinesses
+      val properties = sources.propertyIncomeSource
+
+      Future.successful(Ok(views.html.accountDetailsView(businesses, properties)))
+  }
 
 }

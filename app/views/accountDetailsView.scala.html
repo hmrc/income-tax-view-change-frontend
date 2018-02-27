@@ -1,0 +1,64 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.main_template
+@import views.html.helpers.breadcrumbHelper
+@import models._
+@import views.html.helpers.backToHomeHelper
+@import utils.ImplicitDateFormatter._
+
+@(businesses: List[(BusinessIncomeModel,Int)], properties: Option[PropertyIncomeModel])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-details", None)
+    )))
+}
+
+@main_template(
+title = messages("account.title"),
+bodyClasses = None,
+scriptElem = None,
+sidebarLinks = None,
+serviceInfo = breadcrumb
+) {
+
+<section id="business-details">
+
+    <h1 id="page-heading" class="heading-xlarge">@messages("account.heading")</h1>
+
+    @if(!businesses.isEmpty){
+    <h2 id="your-businesses" class="heading-large">@messages("account.businesses")</h2>
+    <ul class="list">
+        @businesses.map { case (business, index) =>
+            <li><a id="business-link-@{index+1}" href="@{controllers.routes.BusinessDetailsController.getBusinessDetails(business.selfEmploymentId).url}">@business.tradingName</a></li>
+        }
+    </ul>
+    }
+
+    @if(properties.isDefined){
+        <h2 id="your-properties" class="heading-large">@messages("account.properties")</h2>
+        <p id="reporting-period">@messages("account.reportingPeriod", properties.get.accountingPeriod.start.toLongDateNoYear, properties.get.accountingPeriod.end.toLongDateNoYear)</p>
+    }
+
+    @if(appConfig.features.homePageEnabled()){
+        @backToHomeHelper()
+    }
+
+</section>
+
+}
