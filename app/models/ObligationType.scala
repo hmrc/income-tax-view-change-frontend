@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package config.features
+package models
 
-import javax.inject.{Inject, Singleton}
 
-import play.api.Configuration
+sealed trait ObligationType
+case object EopsObligation extends ObligationType
+case object QuarterlyObligation extends ObligationType
 
-@Singleton
-class Features @Inject()(config: Configuration) {
-  val homePageEnabled: Feature = new Feature(Keys.homePageEnabled, config)
-  val propertyDetailsEnabled: Feature = new Feature(Keys.propertyDetailsEnabled, config)
-  val propertyEopsEnabled: Feature = new Feature(Keys.propertyEopsEnabled, config)
-  val businessEopsEnabled: Feature = new Feature(Keys.businessEopsEnabled, config)
-  val paymentEnabled: Feature = new Feature(Keys.paymentEnabled, config)
-}

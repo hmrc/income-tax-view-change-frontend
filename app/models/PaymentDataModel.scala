@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package config.features
+package models
 
-import javax.inject.{Inject, Singleton}
+import play.api.libs.json.{Format, Json}
 
-import play.api.Configuration
+sealed trait PaymentData
 
-@Singleton
-class Features @Inject()(config: Configuration) {
-  val homePageEnabled: Feature = new Feature(Keys.homePageEnabled, config)
-  val propertyDetailsEnabled: Feature = new Feature(Keys.propertyDetailsEnabled, config)
-  val propertyEopsEnabled: Feature = new Feature(Keys.propertyEopsEnabled, config)
-  val businessEopsEnabled: Feature = new Feature(Keys.businessEopsEnabled, config)
-  val paymentEnabled: Feature = new Feature(Keys.paymentEnabled, config)
+case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Long, returnUrl: String)
+case class PaymentErrorModel(code: Int, message: String) extends PaymentData
+
+object PaymentDataModel {
+  implicit val format: Format[PaymentDataModel] = Json.format[PaymentDataModel]
+}
+
+object PaymentErrorModel {
+  implicit val format: Format[PaymentErrorModel] =Json.format[PaymentErrorModel]
 }

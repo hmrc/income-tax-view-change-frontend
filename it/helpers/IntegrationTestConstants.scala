@@ -57,7 +57,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
       taxReliefs = 1000,
-      additionalAllowances = 505.00,
+      totalIncomeAllowancesUsed = 12005.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
@@ -138,7 +138,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
       taxReliefs = 1000,
-      additionalAllowances = 505.00,
+      totalIncomeAllowancesUsed = 12005.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
@@ -222,7 +222,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "incomeTaxThisPeriod": 2000,
         | "payFromAllEmployments": 0,
         | "benefitsAndExpensesReceived": 0,
-        | "totalAllowancesAndDeductions": 505,
+        | "totalIncomeAllowancesUsed": 12005,
         | "allowableExpenses": 0,
         | "payFromAllEmploymentsAfterExpenses": 0,
         | "shareSchemes": 0,
@@ -249,7 +249,6 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "blindPersonAllowance": 0,
         | "blindPersonSurplusAllowanceFromSpouse": 0,
         | "incomeExcluded": 0,
-        | "totalIncomeAllowancesUsed": 0,
         | "totalIncomeOnWhichTaxIsDue": 198500,
         | "payPensionsExtender": 0,
         | "giftExtender": 0,
@@ -458,7 +457,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "incomeTaxYTD": 90500,
         | "incomeTaxThisPeriod": 2000,
         | "payFromAllEmployments": 0,
-        | "totalAllowancesAndDeductions": 505,
+        | "totalIncomeAllowancesUsed": 12005,
         | "benefitsAndExpensesReceived": 0,
         | "allowableExpenses": 0,
         | "payFromAllEmploymentsAfterExpenses": 0,
@@ -486,7 +485,6 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         | "blindPersonAllowance": 0,
         | "blindPersonSurplusAllowanceFromSpouse": 0,
         | "incomeExcluded": 0,
-        | "totalIncomeAllowancesUsed": 0,
         | "totalIncomeOnWhichTaxIsDue": 198500,
         | "payPensionsExtender": 0,
         | "giftExtender": 0,
@@ -752,10 +750,12 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   }
 
   object GetPropertyDetails {
-    def successResponse(): JsValue =
-      Json.parse(
-        s"""{}"""
+    def successResponse(): JsValue = Json.obj(
+      "accountingPeriod" -> Json.obj(
+        "start" -> "2017-04-06",
+        "end" -> "2018-04-05"
       )
+    )
   }
 
   object GetReportDeadlinesData {
@@ -820,6 +820,11 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
         met = false
       ), ReportDeadlineModel(
         start = "2017-04-01",
+        end = "2017-06-30",
+        due = LocalDate.now().minusDays(36),
+        met = false
+      ), ReportDeadlineModel(
+        start = "2016-06-01",
         end = "2017-06-30",
         due = LocalDate.now().minusDays(36),
         met = false

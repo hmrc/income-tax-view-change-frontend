@@ -16,30 +16,30 @@
 
 package mocks.connectors
 
-import connectors.PropertyReportDeadlinesConnector
+import connectors.BusinessEOPSDeadlinesConnector
 import models.ReportDeadlinesResponseModel
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
+import org.mockito.Mockito._
 
 import scala.concurrent.Future
 
+trait MockBusinessEOPSDeadlinesConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-trait MockPropertyReportDeadlinesConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
-
-  val mockPropertyObligationDataConnector: PropertyReportDeadlinesConnector = mock[PropertyReportDeadlinesConnector]
+  val mockBusinessEOPSDeadlinesConnector: BusinessEOPSDeadlinesConnector = mock[BusinessEOPSDeadlinesConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockPropertyObligationDataConnector)
+    reset(mockBusinessEOPSDeadlinesConnector)
   }
 
-  def setupMockPropertyObligation(nino: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockPropertyObligationDataConnector.getPropertyReportDeadlines(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
+  def setupMockBusinessEOPSDeadline(nino: String, selfEmploymentId: String)(response: ReportDeadlinesResponseModel): Unit = {
+    when(mockBusinessEOPSDeadlinesConnector.getBusinessEOPSDeadlines(
+      ArgumentMatchers.eq(nino),
+      ArgumentMatchers.eq(selfEmploymentId))
+     (ArgumentMatchers.any())).thenReturn(Future.successful(response))
   }
 
 }
-

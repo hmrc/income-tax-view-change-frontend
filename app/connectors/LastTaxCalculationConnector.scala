@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class LastTaxCalculationConnector @Inject()(val http: HttpClient,
                                             val config: FrontendAppConfig) extends RawResponseReads {
 
-  lazy val getEstimatedTaxLiabilityUrl: (String, String) => String = (nino, year) =>
+  private[connectors] lazy val getEstimatedTaxLiabilityUrl: (String, String) => String = (nino, year) =>
     s"${config.itvcProtectedService}/income-tax-view-change/estimated-tax-liability/$nino/$year/it"
 
   def getLastEstimatedTax(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {

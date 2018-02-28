@@ -17,5 +17,10 @@
 package config.features
 
 object Keys {
-  val homePageEnabled = "features.homePageEnabled"
+  private val prefix = "features"
+  val homePageEnabled = s"$prefix.homePageEnabled"
+  val propertyDetailsEnabled = s"$prefix.propertyDetailsEnabled"
+  val propertyEopsEnabled = s"$prefix.propertyEopsEnabled"
+  val businessEopsEnabled = s"$prefix.businessEopsEnabled"
+  val paymentEnabled = s"$prefix.paymentEnabled"
 }

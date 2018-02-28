@@ -50,7 +50,8 @@ estimates.title                                                 = Current estima
 estimates.heading                                               = View your estimates
 estimates.viewEstimates                                         = View your current estimates.
 estimates.estimatesLink                                         = Tax year: {0} to {1}
-estimates.noEstimates                                           = You''ve not got any current estimates.
+estimates.noEstimates                                           = You don''t have an estimate right now. We''ll show your next Income Tax estimate when you submit a report using software.
+estimates.noEstimatesHeading                                    = Your Income Tax estimate
 
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = Tax year: {0} to {1}
@@ -107,6 +108,8 @@ obligations.pi.portfolio                                        = This covers al
 obligations.error.p1                                            = We can''t display your next report due date at the moment.
 obligations.error.p2                                            = Try refreshing the page in a few minutes.
 obligations.ceased                                              = This business ceased trading on {0}.
+obligations.quarterly.to                                        = to
+obligations.eops                                                = Whole tax year (final check)
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission
@@ -131,7 +134,7 @@ crystalisation.paymentsOnAccount.para1                          = These are obli
 crystalisation.paymentsOnAccount.para2                          = Each payment is half of the tax you owed this year.
 crystalisation.paymentsOnAccount.para3                          = You''ll be prompted to pay this through your Income Tax account.
 crystalisation.paymentsOnAccount.para4                          = If you think you will earn less next tax year, you can reduce your payment on account online.
-crystalisation.payNow                                           = Pay this now
+crystalisation.payNow                                           = Continue to payment
 
 ## Bills Page ##
 bills.title                                                     = Previous statements
@@ -150,6 +153,8 @@ statements.taxYearStatement                                     = Tax year: {0}-
 statements.totalCharges                                         = Total charges
 statements.stillToPay                                           = Still to pay: {0}
 statements.dueBy                                                = This is due by {0}.
+statements.dueBy.youCan                                         = You can
+statements.dueBy.link                                           = pay this now
 statements.nothingToPay                                         = Nothing left to pay
 statements.paidBill                                             = You''ve paid this bill.
 statements.transactions                                         = Your transactions
