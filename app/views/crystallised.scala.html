@@ -99,7 +99,7 @@
         </section>
 
 
-        @if(appConfig.features.paymentEnabled()){
+        @if(appConfig.features.paymentEnabled() && !transactionModel.isPaid){
             <div class="form-group">
                 <a id="payment-button" href="@controllers.routes.PaymentController.paymentHandoff(calcModel.calcAmount.toPence).url" class="button">@messages("crystalisation.payNow")</a>
             </div>
