@@ -41,7 +41,11 @@ class AccountDetailsController @Inject()(implicit val config: FrontendAppConfig,
       val businesses = sources.sortedBusinesses
       val properties = sources.propertyIncomeSource
 
-      Future.successful(Ok(views.html.accountDetailsView(businesses, properties)))
+      if (config.features.accountDetailsEnabled()){
+        Future.successful(Ok(views.html.accountDetailsView(businesses, properties)))
+      } else {
+        Future.successful(Redirect(controllers.routes.HomeController.home()))
+      }
   }
 
 }

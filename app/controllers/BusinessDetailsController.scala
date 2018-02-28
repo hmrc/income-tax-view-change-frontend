@@ -41,11 +41,15 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
   val getBusinessDetails: String => Action[AnyContent]= selfEmpId => (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
 
-      for {
-        business <- incomeSourceDetailsService.getBusinessDetails(user.nino, selfEmpId)
-      } yield business match {
-        case Right(Some(model)) => Ok(views.html.businessDetailsView(model))
-        case _ => itvcErrorHandler.showInternalServerError
+      if (config.features.accountDetailsEnabled()){
+        for {
+          business <- incomeSourceDetailsService.getBusinessDetails(user.nino, selfEmpId)
+        } yield business match {
+          case Right(Some(model)) => Ok(views.html.businessDetailsView(model))
+          case _ => itvcErrorHandler.showInternalServerError
+        }
+      } else {
+        Future.successful(Redirect(controllers.routes.HomeController.home()))
       }
   }
 
