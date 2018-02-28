@@ -36,6 +36,9 @@ home.deadlines.link                                             = View your dead
 home.statements.heading                                         = Statements
 home.statements.text                                            = View your income tax transactions, including charges and payments.
 home.statements.link                                            = View your statement
+home.accounts.heading                                           = Account details
+home.accounts.text                                              = See contact information and other details we have for your businesses.
+home.accounts.link                                              = Check your account details
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service

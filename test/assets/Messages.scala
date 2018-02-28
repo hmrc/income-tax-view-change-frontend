@@ -68,6 +68,11 @@ object Messages {
       val paragraph = "View your income tax transactions, including charges and payments."
       val link = "View your statement"
     }
+    object AccountDetailsSection {
+      val heading = "Account details"
+      val paragraph = "See contact information and other details we have for your businesses."
+      val link = "Check your account details"
+    }
   }
 
   // Estimated Tax Liability Page Messages
