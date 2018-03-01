@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import play.twirl.api.Html
+package testOnly.controllers
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+import javax.inject.{Inject, Singleton}
 
-<section id="section-it-qr">
+import config.FrontendAppConfig
+import controllers.BaseController
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, Result}
+import testOnly.forms.FeatureSwitchForm
+import testOnly.models.FeatureSwitchModel
 
-    <h2 id="it-quarterly-reporting-heading">@messages("bta_partial.heading")</h2>
+@Singleton
+class TestBTAPartialController @Inject()(val messagesApi: MessagesApi, implicit val appConfig: FrontendAppConfig) extends BaseController {
 
-    <p id="it-quarterly-reporting-p1">@messages("bta_partial.p1")</p>
-
-    <p id="it-quarterly-reporting-p2">@messages("bta_partial.p2")</p>
-
-    <a id="it-quarterly-reporting-home-button" class="button" href="@{appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.home.url}" role="button">@messages("bta_partial.home_button")</a>
-
-</section>
+  def viewBTAPartial: Action[AnyContent] = Action { implicit request =>
+    Ok(testOnly.views.html.testBTAPartial())
+  }
+}

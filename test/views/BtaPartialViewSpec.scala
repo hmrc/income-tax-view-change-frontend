@@ -30,20 +30,6 @@ class BtaPartialViewSpec extends TestSupport {
 
   "The BtaPartial view" should {
 
-    "have a new flag" which {
-
-      lazy val newFlag = document.getElementById("it-quarterly-reporting-heading").getElementsByTag("span")
-
-      "has the class 'new-flag'" in {
-        newFlag.hasClass("new-flag") shouldBe true
-      }
-
-      "has the text 'New'" in {
-        newFlag.text shouldBe messages.newFlag
-      }
-
-    }
-
     s"have the heading '${messages.heading}'" in {
       document.getElementById("it-quarterly-reporting-heading").text shouldBe messages.heading
     }
