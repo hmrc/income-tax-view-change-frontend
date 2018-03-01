@@ -17,72 +17,63 @@
 package views
 
 import assets.Messages.{BtaPartial => messages}
-import assets.TestConstants.Estimates._
-import assets.TestConstants.ReportDeadlines._
-import assets.TestConstants._
-import auth.MtdItUser
-import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import utils.ImplicitCurrencyFormatter._
+import play.twirl.api.HtmlFormat
 import utils.TestSupport
 
 class BtaPartialViewSpec extends TestSupport {
 
-  lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  lazy val page: HtmlFormat.Appendable = views.html.btaPartial()(FakeRequest(), applicationMessages, frontendAppConfig)
+  lazy val document = Jsoup.parse(page.body)
 
-  val model = openObligation
-  val calcAmount = BigDecimal(1000)
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
+  "The BtaPartial view" should {
 
-  lazy val page = views.html.btaPartial(model, List(lastTaxCalcSuccessWithYear))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
-  lazy val noEstimatePage = views.html.btaPartial(model, List())(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+    "have a new flag" which {
 
-  "The BtaPartial view" when {
+      lazy val newFlag = document.getElementById("it-quarterly-reporting-heading").getElementsByTag("span")
 
-    "An estimate has been received" should {
-
-      lazy val document = Jsoup.parse(contentAsString(page))
-
-      s"have an initial sentence stating that the user has signed up for quarterly reporting" in {
-        document.getElementsByClass("panel-indent alert--info").text() shouldBe messages.initial
+      "has the class 'new-flag'" in {
+        newFlag.hasClass("new-flag") shouldBe true
       }
 
-      s"have the title '${messages.heading}'" in {
-        document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages.heading
+      "has the text 'New'" in {
+        newFlag.text shouldBe messages.newFlag
       }
 
-      s"have a report due sentence" in {
-        document.getElementById("report-due").text() shouldBe messages.reportDue(model.due.toLongDate)
-      }
-
-      s"have an estimated tax sentence" in {
-        document.getElementById("current-estimate-2018").text() shouldBe messages.currentEstimate(lastTaxCalcSuccess.calcAmount.toCurrencyString)
-      }
     }
 
-    "No estimate has been received" should {
-
-      lazy val document = Jsoup.parse(contentAsString(noEstimatePage))
-
-      s"have an initial sentence stating that the user has signed up for quarterly reporting" in {
-        document.getElementsByClass("panel-indent alert--info").text() shouldBe messages.initial
-      }
-
-      s"have the title '${messages.heading}'" in {
-        document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages.heading
-      }
-
-      s"have a report due sentence" in {
-        document.getElementById("report-due").text() shouldBe messages.reportDue(model.due.toLongDate)
-      }
-
-      s"not have an estimated tax sentence" in {
-        document.body.toString.contains(messages.currentEstimate("")) shouldBe false
-      }
+    s"have the heading '${messages.heading}'" in {
+      document.getElementById("it-quarterly-reporting-heading").text shouldBe messages.heading
     }
+
+    s"have the correct p1 message '${messages.p1}'" in {
+      document.getElementById("it-quarterly-reporting-p1").text shouldBe messages.p1
+    }
+
+    s"have the correct p2 message '${messages.p2}'" in {
+      document.getElementById("it-quarterly-reporting-p2").text shouldBe messages.p2
+    }
+
+    s"have have a button to the ITVC home page" which {
+
+      lazy val homeButton = document.getElementById("it-quarterly-reporting-home-button")
+
+      s"has the correct link to '${controllers.routes.HomeController.home().url}'" in {
+        homeButton.attr("href") shouldBe controllers.routes.HomeController.home().url
+      }
+
+      s"has the correct button text of '${messages.button}'" in {
+        homeButton.text shouldBe messages.button
+      }
+
+      "has the correct button class of 'button'" in {
+        homeButton.hasClass("button") shouldBe true
+      }
+
+    }
+
   }
 
 }
