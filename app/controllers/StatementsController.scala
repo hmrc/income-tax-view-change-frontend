@@ -38,11 +38,15 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
     implicit user =>
       for {
         financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
-      } yield financialTransactionsResponse match {
-        case model: FinancialTransactionsModel =>
+        statementsEnabled = config.features.statementsEnabled()
+      } yield (financialTransactionsResponse, statementsEnabled) match {
+        case (_,false) =>
+          Logger.debug("[StatementsController][getStatements] Statements Feature is disabled")
+          Redirect(controllers.routes.HomeController.home())
+        case (model: FinancialTransactionsModel,true) =>
           Logger.debug("[StatementsController][getStatements] Success Response received from financialTransactionsService")
           Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
-        case _: FinancialTransactionsErrorModel =>
+        case (_: FinancialTransactionsErrorModel,true) =>
           Logger.debug("[StatementsController][getStatements] Error Response received from financialTransactionsService")
           Ok(views.html.errorPages.statementsError())
       }

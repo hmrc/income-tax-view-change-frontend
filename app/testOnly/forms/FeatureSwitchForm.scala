@@ -29,7 +29,8 @@ object FeatureSwitchForm {
       Keys.propertyDetailsEnabled -> boolean,
       Keys.propertyEopsEnabled -> boolean,
       Keys.businessEopsEnabled -> boolean,
-      Keys.paymentEnabled -> boolean
+      Keys.paymentEnabled -> boolean,
+      Keys.statementsEnabled -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
 
