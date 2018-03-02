@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
 import helpers.{ComponentSpecBase, GenericStubMethods}
@@ -27,6 +28,9 @@ import utils.ImplicitDateFormatter
 
 class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
 
+
+  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
   "Calling the StatementsController" when {
 
     "isAuthorisedUser with an active enrolment" which {
@@ -35,6 +39,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "display the tax year for the statement and the associated charge" in {
 
+          appConfig.features.statementsEnabled(true)
           isAuthorisedUser(true)
 
           And("I wiremock stub a successful Get Financial Transactions response")
@@ -67,6 +72,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "display the tax year for the statements and the associated charge & payments" in {
 
+          appConfig.features.statementsEnabled(true)
           isAuthorisedUser(true)
 
           And("I wiremock stub a successful Get Financial Transactions response")
@@ -107,6 +113,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "state that the user has no transactions since tey started reporting via software" in {
 
+          appConfig.features.statementsEnabled(true)
           isAuthorisedUser(true)
 
           And("I wiremock stub a successful Get Financial Transactions response")
@@ -136,6 +143,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "return an error page" in {
 
+          appConfig.features.statementsEnabled(true)
           isAuthorisedUser(true)
 
           And("I wiremock stub a successful Get Financial Transactions response")
@@ -154,6 +162,28 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
             elementTextByID("page-heading")("We can't show your statement right now")
           )
 
+        }
+      }
+
+      "the statements page feature is disabled" should {
+
+        "redirect to the home page" in {
+
+          appConfig.features.statementsEnabled(false)
+          isAuthorisedUser(true)
+
+          And("I wiremock stub a successful Get Financial Transactions response")
+          val statementResponse = Json.toJson(GetStatementsData.singleFinancialTransactionsModel)
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
+          val res = IncomeTaxViewChangeFrontend.getStatements
+
+          Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+          res should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.HomeController.home().url)
+          )
         }
       }
     }
