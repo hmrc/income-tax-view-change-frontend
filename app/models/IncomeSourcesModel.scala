@@ -61,6 +61,8 @@ case class IncomeSourcesModel(
 
   def earliestAccountingPeriodStart(year: Int): LocalDate =
     incomeSources.filter(_.accountingPeriod.determineTaxYear == year).map(_.accountingPeriod.start).min
+
+  val sortedBusinesses: List[(BusinessIncomeModel, Int)] = businessIncomeSources.sortBy(_.selfEmploymentId.substring(4)).zipWithIndex
 }
 
 case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel

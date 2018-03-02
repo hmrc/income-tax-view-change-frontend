@@ -22,8 +22,10 @@ import play.api.libs.json.Json
 
 
 sealed trait BusinessListResponseModel
-case class BusinessDetailsModel(businesses: List[BusinessModel]) extends BusinessListResponseModel
 case class BusinessDetailsErrorModel(code: Int, message: String) extends BusinessListResponseModel
+case class BusinessDetailsModel(businesses: List[BusinessModel]) extends BusinessListResponseModel {
+  val sortedBusinesses: List[(BusinessModel, Int)] = businesses.sortBy(_.id.substring(4)).zipWithIndex
+}
 
 case class BusinessModel(
                           id: String,

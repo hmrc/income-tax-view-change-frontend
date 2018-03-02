@@ -1,0 +1,32 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.BusinessListResponseModel
+
+@(model: BusinessModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+
+@defining(List(model.businessAddressLineOne, model.businessAddressLineTwo, model.businessAddressLineThree, model.businessAddressLineFour, model.businessPostcode).flatten) { bizList =>
+
+    @bizList.zipWithIndex.map {
+        case (line: String, index: Int) => {
+            <tr @if(line != bizList.reverse.head){class="no-border-bottom"}>
+                @if(line == bizList.head){<th id="business-address" class="table-heading" rowspan=@bizList.length>@messages("business.businessAddress")</th>}
+                <td id="address-line-@{index+1}">@line</td>
+            </tr>
+        }
+    }
+
+}

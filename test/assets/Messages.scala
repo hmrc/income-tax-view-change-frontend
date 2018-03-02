@@ -190,6 +190,27 @@ object Messages {
     }
   }
 
+  //Account Details Messages
+  object AccountDetails {
+    val title = "Account details"
+    val heading = "Account details"
+    val yourBusinesses = "Your businesses"
+    val yourProperties = "Your properties"
+    val reportingPeriod: (String, String) => String = (start, end) => "Reporting period: " + start + " - " + end
+  }
+
+  //Business Details Messages
+  object BusinessDetails {
+    val reportingPeriod: (String, String) => String = (start, end) => "Reporting period: " + start + " - " + end
+    val ceasedTrading: String => String = date => "This business ceased trading on " + date + "."
+    val addressAndContact = "Address and contact details"
+    val tradingName = "Trading name"
+    val businessAddress = "Business address"
+    val additionalInfo = "Additional information"
+    val accountingMethod: String => String = method => "This business uses the " + method + " accounting method."
+    val backToAccount = "Back to account details"
+  }
+
   // Timeout Messages
   object Timeout {
     val title = "Your session has timed out"
