@@ -29,7 +29,7 @@ GET         /statements                             controllers.StatementsContro
 GET         /account-details                        controllers.AccountDetailsController.getAccountDetails
 
 #Business Details
-GET         /account-details/:selfEmpId             controllers.BusinessDetailsController.getBusinessDetails(selfEmpId: String)
+GET         /account-details/:id                    controllers.BusinessDetailsController.getBusinessDetails(id: Int)
 
 #Feedback Routes
 GET         /feedback                               controllers.feedback.FeedbackController.show

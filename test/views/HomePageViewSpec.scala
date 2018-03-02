@@ -175,26 +175,26 @@ class HomePageViewSpec extends TestSupport {
       }
     }
 
-    s"has an Account Details" which {
+    s"have an Account Details section" which {
 
       lazy val accountDetailsSection = document.getElementById("accounts-section")
 
       s"has the heading '${AccountDetailsSection.heading}'" in {
-        accountDetailsSection.getElementById("statements-heading").text shouldBe AccountDetailsSection.heading
+        accountDetailsSection.getElementById("account-heading").text shouldBe AccountDetailsSection.heading
       }
 
       s"has the paragraph '${AccountDetailsSection.paragraph}'" in {
-        accountDetailsSection.getElementById("statements-text").text shouldBe AccountDetailsSection.paragraph
+        accountDetailsSection.getElementById("account-text").text shouldBe AccountDetailsSection.paragraph
       }
 
       "has a link to statements" which {
 
         s"has the text '${AccountDetailsSection.link}'" in {
-          accountDetailsSection.getElementById("statements-link").text shouldBe AccountDetailsSection.link
+          accountDetailsSection.getElementById("account-link").text shouldBe AccountDetailsSection.link
         }
 
         "links to the statements page" in {
-          accountDetailsSection.getElementById("statements-link").attr("href") shouldBe controllers.routes.AccountDetailsController.getAccountDetails().url
+          accountDetailsSection.getElementById("account-link").attr("href") shouldBe controllers.routes.AccountDetailsController.getAccountDetails().url
         }
       }
 

@@ -37,12 +37,9 @@ class AccountDetailsController @Inject()(implicit val config: FrontendAppConfig,
 
   val getAccountDetails: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      implicit val sources: IncomeSourcesModel = user.incomeSources
-      val businesses = sources.sortedBusinesses
-      val properties = sources.propertyIncomeSource
 
       if (config.features.accountDetailsEnabled()){
-        Future.successful(Ok(views.html.accountDetailsView(businesses, properties)))
+        Future.successful(Ok(views.html.accountDetailsView(user.incomeSources.sortedBusinesses, user.incomeSources.propertyIncomeSource)))
       } else {
         Future.successful(Redirect(controllers.routes.HomeController.home()))
       }

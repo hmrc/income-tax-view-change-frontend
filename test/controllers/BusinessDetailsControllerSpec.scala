@@ -48,12 +48,12 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
 
       "successfully retrieves a single BusinessModel from the incomeSourceDetailsService" should {
 
-        lazy val result = TestBusinessDetailsController.getBusinessDetails(testSelfEmploymentId)(fakeRequestWithActiveSession)
+        lazy val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
           mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testNino, testSelfEmploymentId)(Right(Some(BusinessDetails.business1)))
+          setupMockGetBusinessDetails(testNino, 0)(Right(Some(BusinessDetails.business1, 0)))
           status(result) shouldBe Status.OK
         }
 
@@ -70,11 +70,11 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
 
       "retrieves 'None' from the incomeSourceDetailsService" should {
 
-        lazy val result = TestBusinessDetailsController.getBusinessDetails(testSelfEmploymentId)(fakeRequestWithActiveSession)
+        lazy val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
 
         "return Status (500)" in {
           mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testNino, testSelfEmploymentId)(Right(None))
+          setupMockGetBusinessDetails(testNino, 0)(Right(None))
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -82,11 +82,11 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
 
       "receives a BusinessDetailsErrorModel from the incomeSourceDetailsService" should {
 
-        lazy val result = TestBusinessDetailsController.getBusinessDetails(testSelfEmploymentId)(fakeRequestWithActiveSession)
+        lazy val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
 
         "return Status (500)" in {
           mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testNino, testSelfEmploymentId)(Left(BusinessDetailsErrorModel(INTERNAL_SERVER_ERROR, "error")))
+          setupMockGetBusinessDetails(testNino, 0)(Left(BusinessDetailsErrorModel(INTERNAL_SERVER_ERROR, "error")))
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -98,7 +98,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
 
       "return redirect SEE_OTHER (303)" in {
         setupMockAuthorisationException()
-        val result = TestBusinessDetailsController.getBusinessDetails(testTradeName)(fakeRequestWithActiveSession)
+        val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
