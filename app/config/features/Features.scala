@@ -27,4 +27,5 @@ class Features @Inject()(config: Configuration) {
   val propertyEopsEnabled: Feature = new Feature(Keys.propertyEopsEnabled, config)
   val businessEopsEnabled: Feature = new Feature(Keys.businessEopsEnabled, config)
   val paymentEnabled: Feature = new Feature(Keys.paymentEnabled, config)
+  val reportDeadlinesEnabled: Feature = new Feature(Keys.reportDeadlinesEnabled, config)
 }
