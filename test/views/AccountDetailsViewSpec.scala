@@ -63,7 +63,7 @@ class AccountDetailsViewSpec extends TestSupport {
       "have a breadcrumb trail" in {
         document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        document.getElementById("breadcrumb-details").text shouldBe breadcrumbMessages.details
+        document.getElementById("breadcrumb-account").text shouldBe breadcrumbMessages.details
       }
 
       s"have the page heading '${messages.heading}'" in {
@@ -100,7 +100,7 @@ class AccountDetailsViewSpec extends TestSupport {
       "have a breadcrumb trail" in {
         document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        document.getElementById("breadcrumb-details").text shouldBe breadcrumbMessages.details
+        document.getElementById("breadcrumb-account").text shouldBe breadcrumbMessages.details
       }
 
       s"have the page heading '${messages.heading}'" in {
@@ -137,7 +137,7 @@ class AccountDetailsViewSpec extends TestSupport {
       "have a breadcrumb trail" in {
         document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        document.getElementById("breadcrumb-details").text shouldBe breadcrumbMessages.details
+        document.getElementById("breadcrumb-account").text shouldBe breadcrumbMessages.details
       }
 
       s"have the page heading '${messages.heading}'" in {

@@ -24,6 +24,7 @@ import models.IncomeSourcesModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.IncomeSourceDetailsService
+import play.api.Logger
 
 import scala.concurrent.Future
 
@@ -38,15 +39,22 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
                                           val itvcErrorHandler: ItvcErrorHandler
                                         ) extends BaseController {
 
-  val getBusinessDetails: String => Action[AnyContent]= selfEmpId => (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-    implicit user =>
+  val getBusinessDetails: Int => Action[AnyContent]= id =>
+    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
 
-      for {
-        business <- incomeSourceDetailsService.getBusinessDetails(user.nino, selfEmpId)
-      } yield business match {
-        case Right(Some(model)) => Ok(views.html.businessDetailsView(model))
-        case _ => itvcErrorHandler.showInternalServerError
-      }
-  }
+      implicit user =>
+        incomeSourceDetailsService.getBusinessDetails(user.nino, id).map {
+          case Right(Some((bizDeets, _))) => Ok(views.html.businessDetailsView(bizDeets))
+          case Right(None) => {
+            Logger.warn("[BusinessDetailsController][getBusinessDetails] NONE!!!")
+            itvcErrorHandler.showInternalServerError
+          }
+          case _ => {
+            Logger.warn("[BusinessDetailsController][getBusinessDetails] OTHER ERROR!!!")
+            itvcErrorHandler.showInternalServerError
+          }
+        }
+
+    }
 
 }

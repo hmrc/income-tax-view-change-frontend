@@ -18,14 +18,14 @@
 @import views.html.helpers.breadcrumbHelper
 @import models.{Breadcrumb, BreadcrumbItem}
 @import utils.ImplicitDateFormatter._
-@import views.helpers.BusinessAddressHelper._
+@import views.html.helpers.businessAddressHelper
 
 @(business: BusinessModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-details", Some(controllers.routes.AccountDetailsController.getAccountDetails.url)),
+        BreadcrumbItem("breadcrumb-account", Some(controllers.routes.AccountDetailsController.getAccountDetails.url)),
         BreadcrumbItem(business.tradingName, None)
     )))
 }
@@ -55,7 +55,7 @@ serviceInfo = breadcrumb
                 <th id="trading-name" class="table-heading">@messages("business.tradingName")</th>
                 <td id="trading-name-business">@business.tradingName</td>
             </tr>
-            @address(business)
+            @businessAddressHelper(business)
         </table>
 
         <h3 id="additional-information" class="heading-medium">@messages("business.additionalInfo")</h3>

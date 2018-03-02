@@ -25,7 +25,7 @@
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-details", None)
+        BreadcrumbItem("breadcrumb-account", None)
     )))
 }
 
@@ -45,7 +45,7 @@ serviceInfo = breadcrumb
     <h2 id="your-businesses" class="heading-large">@messages("account.businesses")</h2>
     <ul class="list">
         @businesses.map { case (business, index) =>
-            <li><a id="business-link-@{index+1}" href="@{controllers.routes.BusinessDetailsController.getBusinessDetails(business.selfEmploymentId).url}">@business.tradingName</a></li>
+            <li><a id="business-link-@{index+1}" href="@{controllers.routes.BusinessDetailsController.getBusinessDetails(index).url}">@business.tradingName</a></li>
         }
     </ul>
     }

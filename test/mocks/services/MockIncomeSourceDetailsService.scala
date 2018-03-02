@@ -41,8 +41,8 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
     when(mockIncomeSourceDetailsService.getIncomeSourceDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any())).thenReturn(Future.successful(sources))
   }
 
-  def setupMockGetBusinessDetails(nino: String, businessName: String)(sources: Either[BusinessDetailsErrorModel, Option[BusinessModel]]): Unit = {
-    when(mockIncomeSourceDetailsService.getBusinessDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(businessName))(ArgumentMatchers.any()))
+  def setupMockGetBusinessDetails(nino: String, id: Int)(sources: Either[BusinessDetailsErrorModel, Option[(BusinessModel, Int)]]): Unit = {
+    when(mockIncomeSourceDetailsService.getBusinessDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(id))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(sources))
   }
 
