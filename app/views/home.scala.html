@@ -73,11 +73,13 @@
                 <p><a id="bills-link" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
             </div>
 
-            <div id="deadlines-section" class="column-one-half">
-                <h3 id="deadlines-heading" class="heading-small">@messages("home.deadlines.heading")</h3>
-                <p id="deadlines-text">@messages("home.deadlines.text")</p>
-                <p><a id="deadlines-link" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">@messages("home.deadlines.link")</a></p>
-            </div>
+            @if(appConfig.features.reportDeadlinesEnabled()){
+                <div id="deadlines-section" class="column-one-half">
+                    <h3 id="deadlines-heading" class="heading-small">@messages("home.deadlines.heading")</h3>
+                    <p id="deadlines-text">@messages("home.deadlines.text")</p>
+                    <p><a id="deadlines-link" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">@messages("home.deadlines.link")</a></p>
+                </div>
+            }
 
             <div id="estimates-section" class="column-one-half">
                 <h3 id="estimates-heading" class="heading-small">@messages("home.estimates.heading")</h3>
