@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package controllers
+package testOnly.controllers
 
 import javax.inject.{Inject, Singleton}
 
 import config.FrontendAppConfig
-import controllers.predicates._
+import controllers.BaseController
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
+import testOnly.forms.FeatureSwitchForm
+import testOnly.models.FeatureSwitchModel
 
 @Singleton
-class BTAPartialController @Inject()(implicit val config: FrontendAppConfig,
-                                     implicit val messagesApi: MessagesApi,
-                                     val checkSessionTimeout: SessionTimeoutPredicate,
-                                     val authenticate: AuthenticationPredicate
-                                    ) extends BaseController {
+class TestBTAPartialController @Inject()(val messagesApi: MessagesApi, implicit val appConfig: FrontendAppConfig) extends BaseController {
 
-  val setupPartial: Action[AnyContent] = (checkSessionTimeout andThen authenticate) {
-    implicit request => Ok(views.html.btaPartial())
+  def viewBTAPartial: Action[AnyContent] = Action { implicit request =>
+    Ok(testOnly.views.html.testBTAPartial())
   }
-
 }

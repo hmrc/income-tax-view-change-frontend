@@ -14,18 +14,15 @@
  * limitations under the License.
  *@
 
-@import play.twirl.api.Html
+@import views.html.templates.main_template
+@import views.html.btaPartial
 
 @()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-<section id="section-it-qr" class="section divider--bottom">
+@main_template(title = "Test the BTA Partial") {
 
-    <h2 id="it-quarterly-reporting-heading">@messages("bta_partial.heading")</h2>
+    <h1>BTA Partial</h1>
 
-    <p id="it-quarterly-reporting-p1">@messages("bta_partial.p1")</p>
+    @btaPartial()
 
-    <p id="it-quarterly-reporting-p2">@messages("bta_partial.p2")</p>
-
-    <a id="it-quarterly-reporting-home-button" class="button" href="@{appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.home.url}" role="button">@messages("bta_partial.home_button")</a>
-
-</section>
+}
