@@ -179,7 +179,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
           val res = IncomeTaxViewChangeFrontend.getStatements
 
-          Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+          Then("redirect to the home page")
           res should have(
             httpStatus(SEE_OTHER),
             redirectURI(controllers.routes.HomeController.home().url)
