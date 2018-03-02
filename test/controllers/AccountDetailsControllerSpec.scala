@@ -41,7 +41,7 @@ class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPr
 
   "The AccountDetailsController.getAccountDetails action" when {
 
-    "Called with an Authenticated HMRC-MTD-IT User" that {
+    "Called with an Authenticated HMRC-MTD-IT User and AccountDetails feature is enabled" that {
 
       "successfully retrieves income sources from the incomeSourceDetailsPredicate" should {
 
@@ -49,6 +49,7 @@ class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPr
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          TestAccountDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
           setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
           status(result) shouldBe Status.OK
@@ -64,6 +65,22 @@ class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPr
         }
 
       }
+    }
+
+    "the AccountDetails feature is disabled" should {
+
+      lazy val result = TestAccountDetailsController.getAccountDetails()(fakeRequestWithActiveSession)
+
+      "return Redirect (303)" in {
+        TestAccountDetailsController.config.features.accountDetailsEnabled(false)
+        mockSingleBusinessIncomeSource()
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the ITVC home page" in {
+        redirectLocation(result) shouldBe Some(TestAccountDetailsController.config.itvcHomeUrl)
+      }
+
     }
   }
 

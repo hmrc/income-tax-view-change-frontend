@@ -16,6 +16,7 @@
 
 package controllers
 
+import assets.Messages
 import assets.TestConstants.BusinessDetails.testTradeName
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -25,6 +26,7 @@ import play.api.i18n.MessagesApi
 import utils.TestSupport
 import assets.TestConstants._
 import models.BusinessDetailsErrorModel
+import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
 
@@ -52,6 +54,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
+          TestBusinessDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
           setupMockGetBusinessDetails(testNino, 0)(Right(Some(BusinessDetails.business1, 0)))
           status(result) shouldBe Status.OK
@@ -73,6 +76,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         lazy val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
 
         "return Status (500)" in {
+          TestBusinessDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
           setupMockGetBusinessDetails(testNino, 0)(Right(None))
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -101,6 +105,22 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
+    }
+
+    "the AccountDetails feature is disabled" should {
+
+      lazy val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
+
+      "return Redirect (303)" in {
+        TestBusinessDetailsController.config.features.accountDetailsEnabled(false)
+        mockSingleBusinessIncomeSource()
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the ITVC home page" in {
+        redirectLocation(result) shouldBe Some(TestBusinessDetailsController.config.itvcHomeUrl)
+      }
+
     }
 
   }

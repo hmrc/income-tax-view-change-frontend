@@ -175,28 +175,39 @@ class HomePageViewSpec extends TestSupport {
       }
     }
 
-    s"have an Account Details section" which {
+    s"have an Account Details section when AccountDetailsEnabled feature is 'true'" which {
 
+      mockAppConfig.features.accountDetailsEnabled(true)
       lazy val accountDetailsSection = document.getElementById("accounts-section")
 
       s"has the heading '${AccountDetailsSection.heading}'" in {
-        accountDetailsSection.getElementById("account-heading").text shouldBe AccountDetailsSection.heading
+        accountDetailsSection.getElementById("accounts-heading").text shouldBe AccountDetailsSection.heading
       }
 
       s"has the paragraph '${AccountDetailsSection.paragraph}'" in {
-        accountDetailsSection.getElementById("account-text").text shouldBe AccountDetailsSection.paragraph
+        accountDetailsSection.getElementById("accounts-text").text shouldBe AccountDetailsSection.paragraph
       }
 
       "has a link to statements" which {
 
         s"has the text '${AccountDetailsSection.link}'" in {
-          accountDetailsSection.getElementById("account-link").text shouldBe AccountDetailsSection.link
+          accountDetailsSection.getElementById("accounts-link").text shouldBe AccountDetailsSection.link
         }
 
         "links to the statements page" in {
-          accountDetailsSection.getElementById("account-link").attr("href") shouldBe controllers.routes.AccountDetailsController.getAccountDetails().url
+          accountDetailsSection.getElementById("accounts-link").attr("href") shouldBe controllers.routes.AccountDetailsController.getAccountDetails().url
         }
       }
+
+    }
+
+    s"not show an account details section when AccountDetailsEnabled feature is 'false'" in {
+
+      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val document = Jsoup.parse(contentAsString(page))
+      mockAppConfig.features.accountDetailsEnabled(false)
+
+      document.getElementById("accounts-section") shouldBe null
 
     }
 
