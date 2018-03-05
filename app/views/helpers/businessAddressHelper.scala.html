@@ -18,15 +18,16 @@
 
 @(model: BusinessModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
-@defining(List(model.businessAddressLineOne, model.businessAddressLineTwo, model.businessAddressLineThree, model.businessAddressLineFour, model.businessPostcode).flatten) { bizList =>
+@defining(List(model.businessAddressLineOne, model.businessAddressLineTwo, model.businessAddressLineThree, model.businessAddressLineFour, model.businessPostcode).flatten) { addressLines =>
 
-    @bizList.zipWithIndex.map {
-        case (line: String, index: Int) => {
-            <tr @if(line != bizList.reverse.head){class="no-border-bottom"}>
-                @if(line == bizList.head){<th id="business-address" class="table-heading" rowspan=@bizList.length>@messages("business.businessAddress")</th>}
-                <td id="address-line-@{index+1}">@line</td>
-            </tr>
+    <dt id="business-address" class="cya-question">
+        @messages("business.businessAddress")
+    </dt>
+    <dd class="cya-answer">
+        @addressLines.zipWithIndex.map {
+            case (line: String, index: Int) => {
+                <span id="address-line-@{index+1}">@line</span><br>
+            }
         }
-    }
-
+    </dd>
 }

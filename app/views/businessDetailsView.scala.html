@@ -50,13 +50,15 @@ serviceInfo = breadcrumb
 
     <section id="business-contact">
 
-        <table class="address-box">
-            <tr>
-                <th id="trading-name" class="table-heading">@messages("business.tradingName")</th>
-                <td id="trading-name-business">@business.tradingName</td>
-            </tr>
-            @businessAddressHelper(business)
-        </table>
+        <dl class="govuk-check-your-answers cya-questions-short">
+            <div>
+                <dt id="trading-name" class="cya-question">@messages("business.tradingName")</dt>
+                <dd id="trading-name-business" class="cya-answer">@business.tradingName</dd>
+            </div>
+            <div>
+                @businessAddressHelper(business)
+            </div>
+        </dl>
 
         <h3 id="additional-information" class="heading-medium">@messages("business.additionalInfo")</h3>
 
