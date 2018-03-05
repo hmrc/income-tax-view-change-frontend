@@ -127,6 +127,14 @@ class HomePageViewSpec extends TestSupport {
       }
     }
 
+    "not have a statements section" in {
+      mockAppConfig.features.estimatesEnabled(false)
+      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val document = Jsoup.parse(contentAsString(page))
+
+      Option(document.getElementById("estimates-section")) shouldBe None
+    }
+
     s"have a Report Deadlines section" which {
 
       lazy val reportDeadlinesSection = document.getElementById("deadlines-section")

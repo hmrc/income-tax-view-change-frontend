@@ -15,6 +15,7 @@
  */
 package controllers
 
+import config.FrontendAppConfig
 import enums.{Crystallised, Estimate}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
@@ -24,10 +25,13 @@ import play.api.http.Status._
 
 class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
+  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
   "Calling the EstimatesController.viewEstimatedCalculations" when {
     "isAuthorisedUser with an active enrolment, and a single, valid tax estimate" should {
       "return the correct page with tax links" in {
 
+        appConfig.features.estimatesEnabled(true)
         isAuthorisedUser(true)
         stubUserDetails()
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -62,6 +66,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
     "isAuthorisedUser with an active enrolment, and multiple valid tax estimates" should {
       "return the correct page with tax links" in {
 
+        appConfig.features.estimatesEnabled(true)
         isAuthorisedUser(true)
         stubUserDetails()
         getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
@@ -105,6 +110,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
     "isAuthorisedUser with an active enrolment, with a crystallised calculation and a tax estimate" should {
       "return the correct estimate page" in {
 
+        appConfig.features.estimatesEnabled(true)
         isAuthorisedUser(true)
         stubUserDetails()
         getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
@@ -155,6 +161,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
     "isAuthorisedUser with an active enrolment, and no tax estimates" should {
       "return the correct page with no estimates found message" in {
 
+        appConfig.features.estimatesEnabled(true)
         isAuthorisedUser(true)
         stubUserDetails()
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
@@ -192,12 +199,29 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
           nElementsWithClass("estimates-link")(0)
         )
       }
+
+      "estimates feature is disabled" should {
+        "redirect to home page" in {
+
+          appConfig.features.estimatesEnabled(false)
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
+          val res = IncomeTaxViewChangeFrontend.getEstimates
+
+          Then("The view should have the correct headings and a single tax estimate link")
+          res should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.HomeController.home().url)
+          )
+        }
+      }
     }
 
     "unauthorised" should {
 
       "redirect to sign in" in {
 
+        appConfig.features.estimatesEnabled(true)
         isAuthorisedUser(false)
 
         When("I call GET /report-quarterly/income-and-expenses/view/calculation")
