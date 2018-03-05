@@ -19,14 +19,17 @@ package controllers
 import javax.inject.Inject
 
 import audit.AuditingService
+import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.Crystallised
 import models.{IncomeSourcesModel, LastTaxCalculationWithYear}
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.CalculationService
+
+import scala.concurrent.Future
 
 class BillsController @Inject()(implicit val config: FrontendAppConfig,
                                 implicit val messagesApi: MessagesApi,
@@ -41,15 +44,22 @@ class BillsController @Inject()(implicit val config: FrontendAppConfig,
                                ) extends BaseController {
 
   val viewCrystallisedCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-    implicit user =>
-      implicit val sources: IncomeSourcesModel = user.incomeSources
+    implicit user => if(config.features.billsEnabled()) renderView else redirectToHome
+  }
 
-      for {
-        lastTaxCalcs <- calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears)
-      } yield {
-          Logger.debug(s"[BillsController][viewCrystallisedCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
-          if (lastTaxCalcs.exists(_.isErrored)) itvcErrorHandler.showInternalServerError
-          else Ok(views.html.bills(lastTaxCalcs.filter(_.matchesStatus(Crystallised))))
-      }
+  private[BillsController] def redirectToHome: Future[Result] = {
+    Future.successful(Redirect(controllers.routes.HomeController.home().url))
+  }
+
+  private[BillsController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
+    implicit val sources: IncomeSourcesModel = user.incomeSources
+
+    for {
+      lastTaxCalcs <- calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears)
+    } yield {
+      Logger.debug(s"[BillsController][viewCrystallisedCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
+      if (lastTaxCalcs.exists(_.isErrored)) itvcErrorHandler.showInternalServerError
+      else Ok(views.html.bills(lastTaxCalcs.filter(_.matchesStatus(Crystallised))))
+    }
   }
 }

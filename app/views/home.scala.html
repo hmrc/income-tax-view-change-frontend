@@ -67,11 +67,13 @@
 
         <div class="grid-row">
 
-            <div id="bills-section" class="column-one-half">
-                <h3 id="bills-heading" class="heading-small">@messages("home.bills.heading")</h3>
-                <p id="bills-text">@messages("home.bills.text")</p>
-                <p><a id="bills-link" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
-            </div>
+            @if(appConfig.features.billsEnabled()){
+                <div id="bills-section" class="column-one-half">
+                    <h3 id="bills-heading" class="heading-small">@messages("home.bills.heading")</h3>
+                    <p id="bills-text">@messages("home.bills.text")</p>
+                    <p><a id="bills-link" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
+                </div>
+            }
 
             <div id="deadlines-section" class="column-one-half">
                 <h3 id="deadlines-heading" class="heading-small">@messages("home.deadlines.heading")</h3>
