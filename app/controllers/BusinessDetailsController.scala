@@ -21,6 +21,7 @@ import javax.inject.{Inject, Singleton}
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.IncomeSourceDetailsService
@@ -47,7 +48,12 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
   private def renderView[A](id: Int)(implicit user: MtdItUser[A]): Future[Result] = {
     incomeSourceDetailsService.getBusinessDetails(user.nino, id).map {
       case Right(Some((bizDeets, _))) => Ok(views.html.businessDetailsView(bizDeets))
-      case _ => itvcErrorHandler.showInternalServerError
+      case Right(None) =>
+        Logger.debug(s"[BusinessDetailsController][getBusinessDetails] No Business Details found with ID: $id")
+        itvcErrorHandler.showInternalServerError
+      case Left(err) =>
+        Logger.debug(s"[BusinessDetailsController][getBusinessDetails] Error Returned from getBusinessDetails. Message: ${err.message}")
+        itvcErrorHandler.showInternalServerError
     }
   }
 }
