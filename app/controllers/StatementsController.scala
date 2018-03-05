@@ -18,13 +18,16 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import auth.MtdItUserOptionNino
 import config.FrontendAppConfig
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import models.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.FinancialTransactionsService
+
+import scala.concurrent.Future
 
 @Singleton
 class StatementsController @Inject()(implicit val config: FrontendAppConfig,
@@ -35,20 +38,44 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
                                     ) extends BaseController {
 
   val getStatements: Action[AnyContent] = (checkSessionTimeout andThen authenticate).async {
-    implicit user =>
-      for {
-        financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
-        statementsEnabled = config.features.statementsEnabled()
-      } yield (financialTransactionsResponse, statementsEnabled) match {
-        case (_,false) =>
-          Logger.debug("[StatementsController][getStatements] Statements Feature is disabled")
-          Redirect(controllers.routes.HomeController.home())
-        case (model: FinancialTransactionsModel,true) =>
-          Logger.debug("[StatementsController][getStatements] Success Response received from financialTransactionsService")
-          Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
-        case (_: FinancialTransactionsErrorModel,true) =>
-          Logger.debug("[StatementsController][getStatements] Error Response received from financialTransactionsService")
-          Ok(views.html.errorPages.statementsError())
-      }
+    implicit user => if(config.features.statementsEnabled()) renderView else redirectToHome
   }
+
+  private[StatementsController] def redirectToHome: Future[Result] = {
+    Logger.debug("[StatementsController][getStatements] Statements Feature is disabled")
+    Future.successful(Redirect(controllers.routes.HomeController.home()))
+  }
+
+  private[StatementsController] def renderView[A](implicit user: MtdItUserOptionNino[A]): Future[Result] = {
+    for {
+      financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
+    } yield financialTransactionsResponse match {
+      case model: FinancialTransactionsModel =>
+        Logger.debug("[StatementsController][getStatements] Success Response received from financialTransactionsService")
+        Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
+      case _: FinancialTransactionsErrorModel =>
+        Logger.debug("[StatementsController][getStatements] Error Response received from financialTransactionsService")
+        Ok(views.html.errorPages.statementsError())
+    }
+  }
+
+
+//  val getStatements: Action[AnyContent] = (checkSessionTimeout andThen authenticate).async {
+//    implicit user =>
+//      for {
+//        financialTransactionsResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
+//        statementsEnabled = config.features.statementsEnabled()
+//      } yield (financialTransactionsResponse, statementsEnabled) match {
+//        case (_,false) =>
+//          Logger.debug("[StatementsController][getStatements] Statements Feature is disabled")
+//          Redirect(controllers.routes.HomeController.home())
+//        case (model: FinancialTransactionsModel,true) =>
+//          Logger.debug("[StatementsController][getStatements] Success Response received from financialTransactionsService")
+//          Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
+//        case (_: FinancialTransactionsErrorModel,true) =>
+//          Logger.debug("[StatementsController][getStatements] Error Response received from financialTransactionsService")
+//          Ok(views.html.errorPages.statementsError())
+//      }
+//  }
+
 }

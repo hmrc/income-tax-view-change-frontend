@@ -95,7 +95,6 @@ class StatementsControllerSpec extends TestSupport with MockAuthenticationPredic
 
         "return redirect SEE_OTHER (303)" in {
           TestStatementsController.config.features.statementsEnabled(false)
-          mockFinancialTransactionSuccess()
           status(result) shouldBe Status.SEE_OTHER
         }
 
