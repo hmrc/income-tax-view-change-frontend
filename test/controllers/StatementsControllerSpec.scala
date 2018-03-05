@@ -40,15 +40,30 @@ class StatementsControllerSpec extends TestSupport with MockAuthenticationPredic
 
   "StatementsController.getStatements" when {
 
+    "statements feature is disabled" should {
+
+      lazy val result = TestStatementsController.getStatements(fakeRequestWithActiveSession)
+
+      "return redirect SEE_OTHER (303)" in {
+        TestStatementsController.config.features.statementsEnabled(false)
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to home page" in {
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
+      }
+    }
+
+
     "called with an Authenticated HMRC-MTD-IT user" which {
 
       "successfully retrieves a Financial Transactions when statements feature is enabled" should {
 
         lazy val result = TestStatementsController.getStatements(fakeRequestWithActiveSession)
-        TestStatementsController.config.features.statementsEnabled(true)
         lazy val document = Jsoup.parse(contentAsString(result))
 
         "return OK (200)" in {
+          TestStatementsController.config.features.statementsEnabled(true)
           mockFinancialTransactionSuccess()
           status(result) shouldBe Status.OK
         }
@@ -70,6 +85,7 @@ class StatementsControllerSpec extends TestSupport with MockAuthenticationPredic
         lazy val document = Jsoup.parse(contentAsString(result))
 
         "return OK (200)" in {
+          TestStatementsController.config.features.statementsEnabled(true)
           mockFinancialTransactionFailed()
           status(result) shouldBe Status.OK
         }
@@ -88,28 +104,12 @@ class StatementsControllerSpec extends TestSupport with MockAuthenticationPredic
         }
       }
 
-
-      "redirect to home page when statements feature is disabled" should {
-
-        lazy val result = TestStatementsController.getStatements(fakeRequestWithActiveSession)
-
-        "return redirect SEE_OTHER (303)" in {
-          TestStatementsController.config.features.statementsEnabled(false)
-          status(result) shouldBe Status.SEE_OTHER
-        }
-
-        "redirect to home page" in {
-          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
-        }
-      }
-
-
-
     }
 
     "called with an Unauthenticated user" should {
 
       "return redirect SEE_OTHER (303)" in {
+        TestStatementsController.config.features.statementsEnabled(true)
         setupMockAuthorisationException()
         val result = TestStatementsController.getStatements(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
