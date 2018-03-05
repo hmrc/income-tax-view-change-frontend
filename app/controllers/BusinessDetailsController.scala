@@ -18,11 +18,13 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.IncomeSourceDetailsService
+
 import scala.concurrent.Future
 
 @Singleton
@@ -36,19 +38,16 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
                                           val itvcErrorHandler: ItvcErrorHandler
                                         ) extends BaseController {
 
-  val getBusinessDetails: Int => Action[AnyContent]= id =>
+  val getBusinessDetails: Int => Action[AnyContent] = id =>
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-
       implicit user =>
-        if (config.features.accountDetailsEnabled()) {
-          incomeSourceDetailsService.getBusinessDetails(user.nino, id).map {
-            case Right(Some((bizDeets, _))) => Ok(views.html.businessDetailsView(bizDeets))
-            case _ => itvcErrorHandler.showInternalServerError
-          }
-        } else {
-          Future.successful(Redirect(controllers.routes.HomeController.home()))
-        }
-
+        if (config.features.accountDetailsEnabled()) renderView(id) else fRedirectToHome
     }
 
+  private def renderView[A](id: Int)(implicit user: MtdItUser[A]): Future[Result] = {
+    incomeSourceDetailsService.getBusinessDetails(user.nino, id).map {
+      case Right(Some((bizDeets, _))) => Ok(views.html.businessDetailsView(bizDeets))
+      case _ => itvcErrorHandler.showInternalServerError
+    }
+  }
 }
