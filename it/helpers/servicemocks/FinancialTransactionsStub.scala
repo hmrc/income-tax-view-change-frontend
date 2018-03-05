@@ -21,7 +21,7 @@ import play.api.libs.json.JsValue
 
 object FinancialTransactionsStub {
 
-  val financialTransactionsUrl: String => String = mtditid => s"/financial-transactions/it/$mtditid"
+  val financialTransactionsUrl: String => String = mtditid => s"/financial-transactions/it/${mtditid}?onlyOpenItems=true"
 
   //Financial Transactions
   def stubGetFinancialTransactions(mtditid: String)(status: Int, response: JsValue): Unit =

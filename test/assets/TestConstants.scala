@@ -23,7 +23,7 @@ import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import utils.ImplicitDateFormatter
 import uk.gov.hmrc.auth.core.retrieve._
 
@@ -35,6 +35,7 @@ object TestConstants extends ImplicitDateFormatter {
   val testUserDetails = UserDetailsModel(testUserName, None, "n/a", "n/a")
   val testUserDetailsError = UserDetailsError
   val testUserDetailsUrl = "/user/oid/potato"
+  val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
   lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None)(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
@@ -80,6 +81,7 @@ object TestConstants extends ImplicitDateFormatter {
     </ul>
   """.stripMargin.trim)
   }
+
 
   object ReportDeadlines {
 
@@ -135,6 +137,53 @@ object TestConstants extends ImplicitDateFormatter {
         |}
       """.stripMargin
     val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
+
+
+    val receivedEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-04-06",
+      end = "2018-04-05",
+      due = "2018-05-01",
+      met = true
+    ))
+
+    val overdueEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-04-06",
+      end = "2018-04-05",
+      due = "2017-10-01",
+      met = false
+    ))
+
+    val openEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
+      start = "2017-04-06",
+      end = "2018-04-05",
+      due = "2017-10-31",
+      met = false
+    ))
+
+    val obligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedEOPSObligation, overdueEOPSObligation, openEOPSObligation))
+    val obligationsEOPSDataSuccessJson: JsValue = Json.obj(
+      "obligations" -> Json.arr(
+        Json.obj(
+          "start" -> "2017-04-06",
+          "end"  -> "2018-04-05",
+          "due" -> "2018-05-01",
+          "met" -> true
+        ),
+        Json.obj(
+          "start" -> "2017-04-06",
+          "end"  -> "2018-04-05",
+          "due" -> "2017-07-01",
+          "met" -> false
+        ),
+        Json.obj(
+          "start" -> "2017-04-06",
+          "end"  -> "2018-04-05",
+          "due" -> "2017-07-31",
+          "met" -> false
+        )
+      )
+    )
+    val obligationsEOPSDataSuccessString = obligationsEOPSDataSuccessJson.toString
 
     val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
     val obligationsDataErrorString =
@@ -276,6 +325,44 @@ object TestConstants extends ImplicitDateFormatter {
         returnReason = Some("J"),
         promiseToPay = Some("K")
       )))
+    )
+    def paidTransactionModel(taxYear: String = "2018-04-05") = TransactionModel(
+      chargeType = Some("PAYE"),
+      mainType = Some("2100"),
+      periodKey = Some("13RL"),
+      periodKeyDescription = Some("abcde"),
+      taxPeriodFrom = Some("2017-4-6"),
+      taxPeriodTo = Some(taxYear),
+      businessPartner = Some("6622334455"),
+      contractAccountCategory = Some("02"),
+      contractAccount = Some("X"),
+      contractObjectType = Some("ABCD"),
+      contractObject = Some("00000003000000002757"),
+      sapDocumentNumber = Some("1040000872"),
+      sapDocumentNumberItem = Some("XM00"),
+      chargeReference = Some("XM002610011594"),
+      mainTransaction = Some("1234"),
+      subTransaction = Some("5678"),
+      originalAmount = Some(3400.0),
+      outstandingAmount = Some(0.0),
+      clearedAmount = Some(3400.0),
+      accruedInterest = Some(0.0),
+      items = Some(Seq(
+        SubItemModel(
+          subItem = Some("000"),
+          dueDate = Some("2018-2-14"),
+          amount = Some(3400.00)
+        ),
+        SubItemModel(
+          clearingDate = Some("2018-2-17"),
+          clearingReason = Some("A"),
+          paymentReference = Some("XAIT1234"),
+          paymentAmount = Some(3400.00),
+          paymentMethod = Some("G"),
+          paymentLot = Some("H"),
+          paymentLotItem = Some("112")
+        )
+      ))
     )
 
     def financialTransactionsModel(taxYear: String = "2018-04-05") = FinancialTransactionsModel(
@@ -526,7 +613,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
       taxReliefs = 0,
-      additionalAllowances = 505.00,
+      totalIncomeAllowancesUsed = 12005.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
@@ -607,7 +694,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 0.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 500.00,
         ukProperty = 500.00,
@@ -687,7 +774,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 0.00,
       personalAllowance = 2868.00,
       taxReliefs = 10.05,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 1506.25,
         ukProperty = 0.00,
@@ -768,7 +855,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 132.00,
       personalAllowance = 2868.00,
       taxReliefs=24.90,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 1500.00,
         ukProperty = 1500.00,
@@ -849,7 +936,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 35007.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 30000.00,
         ukProperty = 7875.00,
@@ -929,7 +1016,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 38007.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 875.00,
         ukProperty = 40000.00,
@@ -1009,7 +1096,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 11500.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
@@ -1090,7 +1177,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 11500.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
@@ -1171,7 +1258,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 198500.00,
       personalAllowance = 11500.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 11500.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 200000.00,
         ukProperty = 10000.00,
@@ -1252,7 +1339,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 132.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 3000.00,
         ukProperty = 0.00,
@@ -1332,7 +1419,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 132.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 0.00,
         ukProperty = 3000.00,
@@ -1412,7 +1499,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 132.00,
       personalAllowance = 2868.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 2868.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 0.00,
         ukProperty = 3000.00,
@@ -1492,7 +1579,7 @@ object TestConstants extends ImplicitDateFormatter {
       totalTaxableIncome = 0.00,
       personalAllowance = 0.00,
       taxReliefs = 0,
-      additionalAllowances = 0.00,
+      totalIncomeAllowancesUsed = 0.00,
       incomeReceived = IncomeReceivedModel(
         selfEmployment = 0.00,
         ukProperty = 0.00,
@@ -1577,7 +1664,7 @@ object TestConstants extends ImplicitDateFormatter {
         | "totalIncomeTaxNicYtd": 90500,
         | "personalAllowance": 11500,
         | "taxReliefs": 0,
-        | "additionalAllowances" : 505,
+        | "totalIncomeAllowancesUsed" : 12005,
         | "incomeReceived": {
         |    "selfEmployment": 200000,
         |    "ukProperty": 10000,
@@ -1663,7 +1750,7 @@ object TestConstants extends ImplicitDateFormatter {
         | "incomeTaxYTD": 90500,
         | "incomeTaxThisPeriod": 2000,
         | "payFromAllEmployments": 0,
-        | "totalAllowancesAndDeductions": 505,
+        | "totalIncomeAllowancesUsed": 12005,
         | "benefitsAndExpensesReceived": 0,
         | "allowableExpenses": 0,
         | "payFromAllEmploymentsAfterExpenses": 0,
@@ -1691,7 +1778,6 @@ object TestConstants extends ImplicitDateFormatter {
         | "blindPersonAllowance": 0,
         | "blindPersonSurplusAllowanceFromSpouse": 0,
         | "incomeExcluded": 0,
-        | "totalIncomeAllowancesUsed": 0,
         | "totalIncomeOnWhichTaxIsDue": 198500,
         | "payPensionsExtender": 0,
         | "giftExtender": 0,
@@ -1950,6 +2036,32 @@ object TestConstants extends ImplicitDateFormatter {
          |}
        """.stripMargin
     )
+  }
+
+
+  object PaymentData {
+
+    val testTaxType = "mtdfb-itsa"
+    val testAmountInPence = 10000000
+
+    val testPaymentDataModel: PaymentDataModel = PaymentDataModel(testTaxType, testMtditid, testAmountInPence, testPaymentRedirectUrl)
+
+    val testPaymentDataJson: JsValue =
+      Json.obj(
+        "taxType" -> testTaxType,
+        "taxReference" -> testMtditid,
+        "amountInPence" -> testAmountInPence,
+        "returnUrl" -> testPaymentRedirectUrl
+      )
+
+    val testPaymentErrorModel: PaymentErrorModel = PaymentErrorModel(testErrorStatus,testErrorMessage)
+
+    val testPaymentErrorJson: JsValue =
+      Json.obj(
+        "code" -> testErrorStatus,
+        "message" -> testErrorMessage
+      )
+
   }
 
 

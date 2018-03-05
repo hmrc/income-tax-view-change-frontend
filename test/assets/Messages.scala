@@ -32,7 +32,8 @@ object Messages {
   class Estimates {
     val title = "Current estimates"
     val heading = "View your estimates"
-    val noEstimates = "You've not got any current estimates."
+    val noEstimates = "You don't have an estimate right now. We'll show your next Income Tax estimate when you submit a report using software."
+    val noEstimatesHeading = "Your Income Tax estimate"
     val p1 = "View your current estimates."
     val taxYearLink: (String, String) => String = (year, yearPlusOne) => s"Tax year: $year to $yearPlusOne"
   }
@@ -86,6 +87,7 @@ object Messages {
       val incorrect = "Incorrect figures"
       val errors = "If there are any errors, you can make adjustments through your software."
       val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
+      val payNow = "Continue to payment"
     }
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
@@ -162,6 +164,7 @@ object Messages {
     val statusHeading = "Report due date"
     val ceased: String => String = date => s"This business ceased trading on $date."
     val portfolio = "This covers all properties that you earn income from."
+    val eops = "Whole tax year (final check)"
     object Errors {
       val p1 = "We can't display your next report due date at the moment."
       val p2 = "Try refreshing the page in a few minutes."
@@ -177,6 +180,7 @@ object Messages {
     val totalCharges = "Total charges"
     val stillToPay: String => String = amount => s"Still to pay: $amount"
     val dueBy: String => String = date => s"This is due by $date."
+    val dueByWithLink: String => String = date => s"This is due by $date. You can pay this now."
     val nothingToPay = "Nothing left to pay"
     val paidBill = "You've paid this bill."
     val transactions = "Your transactions"

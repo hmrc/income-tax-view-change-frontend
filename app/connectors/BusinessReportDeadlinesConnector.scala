@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class BusinessReportDeadlinesConnector @Inject()(val http: HttpClient,
                                                  val config: FrontendAppConfig) extends RawResponseReads {
 
-  lazy val getReportDeadlineDataUrl: (String, String) => String = (nino, selfEmploymentId) =>
+  private[connectors] lazy val getReportDeadlineDataUrl: (String, String) => String = (nino, selfEmploymentId) =>
     s"${config.saApiService}/ni/$nino/self-employments/$selfEmploymentId/obligations"
 
   def getBusinessReportDeadlineData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
@@ -65,5 +65,4 @@ class BusinessReportDeadlinesConnector @Inject()(val http: HttpClient,
         ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
-
 }
