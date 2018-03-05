@@ -51,7 +51,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         Then("the result should have a HTTP status of SEE_OTHER (303) and redirect to the Income Tax home page")
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI("/report-quarterly/income-and-expenses/view")
+          redirectURI(controllers.routes.HomeController.home().url)
         )
       }
 
