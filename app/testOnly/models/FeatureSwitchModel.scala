@@ -21,4 +21,5 @@ case class FeatureSwitchModel(homePageEnabled: Boolean,
                               propertyEopsEnabled: Boolean,
                               businessEopsEnabled: Boolean,
                               paymentEnabled: Boolean,
-                              billsEnabled: Boolean)
+                              billsEnabled: Boolean,
+                              reportDeadlinesEnabled: Boolean)

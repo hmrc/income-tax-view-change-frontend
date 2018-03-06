@@ -55,13 +55,37 @@ class HomePageViewSpec extends TestSupport {
 
     }
 
+
+    "the Report Deadlines Feature is Disabled" should {
+
+      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val document = Jsoup.parse(contentAsString(page))
+
+      "Disable the Report Deadlines feature" in {
+        mockAppConfig.features.reportDeadlinesEnabled(false)
+        mockAppConfig.features.reportDeadlinesEnabled() shouldBe false
+      }
+
+      "Not show the Report Deadlines section" in {
+        Option(document.getElementById("deadlines-section")) shouldBe None
+      }
+
+    }
+
     "all features are enabled" should {
+
       lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
       import messages._
 
-      s"have the title '$title'" in {
+      "Enable all features" in {
+        mockAppConfig.features.reportDeadlinesEnabled(true)
+        mockAppConfig.features.reportDeadlinesEnabled() shouldBe true
         mockAppConfig.features.billsEnabled(true)
+        mockAppConfig.features.billsEnabled() shouldBe true
+      }
+
+      s"have the title '$title'" in {
         document.title() shouldBe title
       }
 

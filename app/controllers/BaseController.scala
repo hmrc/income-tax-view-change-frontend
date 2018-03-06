@@ -17,6 +17,12 @@
 package controllers
 
 import play.api.i18n.I18nSupport
+import play.api.mvc.Result
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-trait BaseController extends FrontendController with I18nSupport
+import scala.concurrent.Future
+
+trait BaseController extends FrontendController with I18nSupport {
+  def redirectToHome: Result = Redirect(controllers.routes.HomeController.home())
+  def fRedirectToHome: Future[Result] = Future.successful(redirectToHome)
+}

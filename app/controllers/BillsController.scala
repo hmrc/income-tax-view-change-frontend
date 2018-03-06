@@ -44,22 +44,20 @@ class BillsController @Inject()(implicit val config: FrontendAppConfig,
                                ) extends BaseController {
 
   val viewCrystallisedCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-    implicit user => if(config.features.billsEnabled()) renderView else redirectToHome
+    implicit user => if(config.features.billsEnabled()) renderView else fRedirectToHome
   }
-
-  private[BillsController] def redirectToHome: Future[Result] = {
-    Future.successful(Redirect(controllers.routes.HomeController.home().url))
-  }
+//
+//  private[BillsController] def redirectToHome: Future[Result] = {
+//    Future.successful(Redirect(controllers.routes.HomeController.home().url))
+//  }
 
   private[BillsController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
     implicit val sources: IncomeSourcesModel = user.incomeSources
-
-    for {
-      lastTaxCalcs <- calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears)
-    } yield {
-      Logger.debug(s"[BillsController][viewCrystallisedCalculations] Retrieved Last Tax Calcs With Year response: $lastTaxCalcs")
-      if (lastTaxCalcs.exists(_.isErrored)) itvcErrorHandler.showInternalServerError
-      else Ok(views.html.bills(lastTaxCalcs.filter(_.matchesStatus(Crystallised))))
-    }
+    calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map(lastTaxCalcs => {
+        if (lastTaxCalcs.exists(_.isErrored)) {
+          Logger.debug(s"[BillsController][viewCrystallisedCalculations] Retrieved at least one Errored Last Tax Calc. Response: $lastTaxCalcs")
+          itvcErrorHandler.showInternalServerError
+        } else Ok(views.html.bills(lastTaxCalcs.filter(_.matchesStatus(Crystallised))))
+    })
   }
 }
