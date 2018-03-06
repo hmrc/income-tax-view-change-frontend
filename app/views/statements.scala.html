@@ -42,7 +42,7 @@
 
     <h2 id="@tmwy.taxYear-transactions" class="heading-medium">@messages("statements.transactions")</h2>
 
-    <p id="@tmwy.taxYear-charge-text">@Html(messages("statements.charge", s"${tmwy.taxYear}", tmwy.model.charges.head.amount.get.toCurrency))</p>
+    <p id="@tmwy.taxYear-charge-text">@Html(messages("statements.charge", s"${tmwy.taxYear}", tmwy.model.originalAmount.get.toCurrencyString))</p>
 
     @if(tmwy.model.payments.nonEmpty){
         <ul class="list list-bullet">
