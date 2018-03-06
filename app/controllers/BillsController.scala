@@ -46,10 +46,6 @@ class BillsController @Inject()(implicit val config: FrontendAppConfig,
   val viewCrystallisedCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user => if(config.features.billsEnabled()) renderView else fRedirectToHome
   }
-//
-//  private[BillsController] def redirectToHome: Future[Result] = {
-//    Future.successful(Redirect(controllers.routes.HomeController.home().url))
-//  }
 
   private[BillsController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
     implicit val sources: IncomeSourcesModel = user.incomeSources
