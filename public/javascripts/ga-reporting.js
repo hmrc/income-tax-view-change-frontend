@@ -10,10 +10,4 @@ $(document).ready($(function () {
         }
     });
 
-    $('[click-metrics]').on('click', function() {
-        var metrics = $(this).attr('click-metrics');
-        var parts = metrics.split(':');
-        ga('send', 'event', parts[0], parts[1], 'click');
-    });
-
 }));

@@ -56,7 +56,7 @@
         <h2 id="@tmwy.taxYear-still-to-pay" class="heading-small">@messages("statements.stillToPay", tmwy.model.outstandingAmount.get.toCurrencyString)</h2>
         <p id="@tmwy.taxYear-due-by">@messages("statements.dueBy", tmwy.model.charges.head.dueDate.get.toLongDate, s"${tmwy.taxYear}")
             @if(appConfig.features.paymentEnabled()){
-                @messages("statements.dueBy.youCan") <a id="@tmwy.taxYear-payment-link" click-metrics="clickFromStatementsPage:payNowLink" href="@controllers.routes.PaymentController.paymentHandoff(tmwy.model.outstandingAmount.get.toPence).url">@messages("statements.dueBy.link")</a>.
+                @messages("statements.dueBy.youCan") <a id="@tmwy.taxYear-payment-link" data-journey-click="clickFromStatementsPage:payNowLink:itvc" href="@controllers.routes.PaymentController.paymentHandoff(tmwy.model.outstandingAmount.get.toPence).url">@messages("statements.dueBy.link")</a>.
             }
         </p>
     } else {
@@ -89,7 +89,7 @@
     }
 
     <p id="earlier-statements">
-        @messages("statements.earlierTransactions") <a href="@appConfig.selfAssessmentUrl" click-metrics="clickFromStatementsPage:viewSALink" id="view-sa-calcs">@messages("statements.earlierTransactionsLink")</a>.
+        @messages("statements.earlierTransactions") <a href="@appConfig.selfAssessmentUrl" data-journey-click="clickFromStatementsPage:viewSALink:itvc" id="view-sa-calcs">@messages("statements.earlierTransactionsLink")</a>.
     </p>
 
     @backToHomeHelper()
