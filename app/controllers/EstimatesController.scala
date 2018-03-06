@@ -50,14 +50,14 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
   private[EstimatesController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
     implicit val sources: IncomeSourcesModel = user.incomeSources
 
-    calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map(estimatesResponse => {
-      if (estimatesResponse.exists(_.isErrored)) {
+    calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map{
+      case estimatesResponse if estimatesResponse.exists(_.isErrored) =>
         Logger.debug(s"[EstimatesController][viewEstimateCalculations] Retrieved at least one Errored Last Tax Calc. Response: $estimatesResponse")
         itvcErrorHandler.showInternalServerError
-      } else if (estimatesResponse.count(!_.matchesStatus(Crystallised)) == 1) {
+      case estimatesResponse if estimatesResponse.count(!_.matchesStatus(Crystallised)) == 1 =>
         Redirect(controllers.routes.CalculationController.showCalculationForYear(estimatesResponse.filter(!_.matchesStatus(Crystallised)).head.taxYear))
-      } else Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
-    })
+      case estimatesResponse => Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
+    }
   }
 
 }
