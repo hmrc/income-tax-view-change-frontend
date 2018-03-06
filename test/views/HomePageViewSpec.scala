@@ -39,6 +39,40 @@ class HomePageViewSpec extends TestSupport {
 
   "The HomePage view" when {
 
+    "the bills Feature is Disabled" should {
+
+      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val document = Jsoup.parse(contentAsString(page))
+
+      "Disable the Bills feature" in {
+        mockAppConfig.features.billsEnabled(false)
+        mockAppConfig.features.billsEnabled() shouldBe false
+      }
+
+      "Not show the Bills section" in {
+        Option(document.getElementById("bills-section")) shouldBe None
+      }
+
+    }
+
+
+    "the Report Deadlines Feature is Disabled" should {
+
+      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val document = Jsoup.parse(contentAsString(page))
+
+      "Disable the Report Deadlines feature" in {
+        mockAppConfig.features.reportDeadlinesEnabled(false)
+        mockAppConfig.features.reportDeadlinesEnabled() shouldBe false
+      }
+
+      "Not show the Report Deadlines section" in {
+        Option(document.getElementById("deadlines-section")) shouldBe None
+      }
+
+    }
+
+
     "the Estimates feature is disabled" should {
 
       lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -54,14 +88,22 @@ class HomePageViewSpec extends TestSupport {
       }
     }
 
-    "the Estimates Feature is enabled" should {
+    "all features are enabled" should {
 
       lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
       import messages._
 
-      s"have the title '$title'" in {
+      "Enable all features" in {
+        mockAppConfig.features.reportDeadlinesEnabled(true)
+        mockAppConfig.features.reportDeadlinesEnabled() shouldBe true
+        mockAppConfig.features.billsEnabled(true)
+        mockAppConfig.features.billsEnabled() shouldBe true
         mockAppConfig.features.estimatesEnabled(true)
+        mockAppConfig.features.estimatesEnabled() shouldBe true
+      }
+
+      s"have the title '$title'" in {
         document.title() shouldBe title
       }
 
