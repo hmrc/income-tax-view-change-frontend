@@ -39,6 +39,23 @@ class HomePageViewSpec extends TestSupport {
 
   "The HomePage view" when {
 
+    "the bills Feature is Disabled" should {
+
+      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val document = Jsoup.parse(contentAsString(page))
+
+      "Disable the Bills feature" in {
+        mockAppConfig.features.billsEnabled(false)
+        mockAppConfig.features.billsEnabled() shouldBe false
+      }
+
+      "Not show the Bills section" in {
+        Option(document.getElementById("bills-section")) shouldBe None
+      }
+
+    }
+
+
     "the Report Deadlines Feature is Disabled" should {
 
       lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -64,6 +81,8 @@ class HomePageViewSpec extends TestSupport {
       "Enable all features" in {
         mockAppConfig.features.reportDeadlinesEnabled(true)
         mockAppConfig.features.reportDeadlinesEnabled() shouldBe true
+        mockAppConfig.features.billsEnabled(true)
+        mockAppConfig.features.billsEnabled() shouldBe true
       }
 
       s"have the title '$title'" in {
@@ -201,6 +220,7 @@ class HomePageViewSpec extends TestSupport {
       "have no sidebar section " in {
         document.getElementById("sidebar") shouldBe null
       }
+
     }
   }
 }

@@ -42,10 +42,8 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
 
   val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      if (config.features.reportDeadlinesEnabled()) renderView else redirectToHome
+      if (config.features.reportDeadlinesEnabled()) renderView else fRedirectToHome
   }
-
-  private def redirectToHome: Future[Result] = Future.successful(Redirect(controllers.routes.HomeController.home().url))
 
   private def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
     auditReportDeadlines(user)
