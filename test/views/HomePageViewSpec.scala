@@ -72,6 +72,22 @@ class HomePageViewSpec extends TestSupport {
 
     }
 
+
+    "the Estimates feature is disabled" should {
+
+      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val document = Jsoup.parse(contentAsString(page))
+
+      "Disable the Estimates feature" in {
+        mockAppConfig.features.estimatesEnabled(false)
+        mockAppConfig.features.estimatesEnabled() shouldBe false
+      }
+
+      "not show the Estimates section" in {
+        Option(document.getElementById("estimates-section")) shouldBe None
+      }
+    }
+
     "all features are enabled" should {
 
       lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -83,6 +99,8 @@ class HomePageViewSpec extends TestSupport {
         mockAppConfig.features.reportDeadlinesEnabled() shouldBe true
         mockAppConfig.features.billsEnabled(true)
         mockAppConfig.features.billsEnabled() shouldBe true
+        mockAppConfig.features.estimatesEnabled(true)
+        mockAppConfig.features.estimatesEnabled() shouldBe true
       }
 
       s"have the title '$title'" in {
@@ -220,7 +238,6 @@ class HomePageViewSpec extends TestSupport {
       "have no sidebar section " in {
         document.getElementById("sidebar") shouldBe null
       }
-
     }
   }
 }
