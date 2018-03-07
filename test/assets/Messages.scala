@@ -69,6 +69,11 @@ object Messages {
       val paragraph = "View your income tax transactions, including charges and payments."
       val link = "View your statement"
     }
+    object AccountDetailsSection {
+      val heading = "Account details"
+      val paragraph = "See contact information and other details we have for your businesses."
+      val link = "Check your account details"
+    }
   }
 
   // Estimated Tax Liability Page Messages
@@ -192,6 +197,27 @@ object Messages {
       val pageHeading = "We can't show your statement right now"
       val p1 = "Try reloading the page or coming back later."
     }
+  }
+
+  //Account Details Messages
+  object AccountDetails {
+    val title = "Account details"
+    val heading = "Account details"
+    val yourBusinesses = "Your businesses"
+    val yourProperties = "Your properties"
+    val reportingPeriod: (String, String) => String = (start, end) => "Reporting period: " + start + " - " + end
+  }
+
+  //Business Details Messages
+  object BusinessDetails {
+    val reportingPeriod: (String, String) => String = (start, end) => "Reporting period: " + start + " - " + end
+    val ceasedTrading: String => String = date => "This business ceased trading on " + date + "."
+    val addressAndContact = "Address and contact details"
+    val tradingName = "Trading name"
+    val businessAddress = "Business address"
+    val additionalInfo = "Additional information"
+    val accountingMethod: String => String = method => "This business uses the " + method + " accounting method."
+    val backToAccount = "Back to account details"
   }
 
   // Timeout Messages
