@@ -79,16 +79,24 @@
                 <p><a id="deadlines-link" data-journey-click="clickFromHomePage:deadlinesLink:itvc" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">@messages("home.deadlines.link")</a></p>
             </div>
 
-            <div id="estimates-section" class="column-one-half">
-                <h3 id="estimates-heading" class="heading-small">@messages("home.estimates.heading")</h3>
-                <p id="estimates-text">@messages("home.estimates.text")</p>
-                <p><a id="estimates-link" data-journey-click="clickFromHomePage:estimatesLink:itvc" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
+            @if(appConfig.features.accountDetailsEnabled()){
+            <div id="accounts-section" class="column-one-half">
+                <h3 id="accounts-heading" class="heading-small">@messages("home.accounts.heading")</h3>
+                <p id="accounts-text">@messages("home.accounts.text")</p>
+                <p><a id="accounts-link" data-journey-click="clickFromHomePage:accountDetailsLink:itvc" href="@{controllers.routes.AccountDetailsController.getAccountDetails().url}">@messages("home.accounts.link")</a></p>
             </div>
+            }
 
             <div id="statements-section" class="column-one-half">
                 <h3 id="statements-heading" class="heading-small">@messages("home.statements.heading")</h3>
                 <p id="statements-text">@messages("home.statements.text")</p>
                 <p><a id="statements-link" data-journey-click="clickFromHomePage:statementsLink:itvc" href="@{controllers.routes.StatementsController.getStatements().url}">@messages("home.statements.link")</a></p>
+            </div>
+
+            <div id="estimates-section" class="column-one-half">
+                <h3 id="estimates-heading" class="heading-small">@messages("home.estimates.heading")</h3>
+                <p id="estimates-text">@messages("home.estimates.text")</p>
+                <p><a id="estimates-link" data-journey-click="clickFromHomePage:estimatesLink:itvc" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
             </div>
 
         </div>
