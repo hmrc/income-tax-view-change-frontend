@@ -16,6 +16,14 @@
     font-weight: 700;
 }
 
+.table-heading {
+    font-weight: 700;
+}
+
+.address-box td {
+    line-height: 0.85;
+}
+
 .icon-min-height {
     min-height: 35px;
 }

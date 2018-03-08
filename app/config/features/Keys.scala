@@ -27,4 +27,5 @@ object Keys {
   val estimatesEnabled = s"$prefix.estimatesEnabled"
   val billsEnabled = s"$prefix.billsEnabled"
   val reportDeadlinesEnabled = s"$prefix.reportDeadlinesEnabled"
+  val accountDetailsEnabled = s"$prefix.accountDetailsEnabled"
 }

@@ -104,6 +104,22 @@ class HomePageViewSpec extends TestSupport {
 
     }
 
+    "the account details feature is disabled" should {
+
+      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val document = Jsoup.parse(contentAsString(page))
+
+      "Disable the account details feature" in {
+        mockAppConfig.features.accountDetailsEnabled(false)
+        mockAppConfig.features.accountDetailsEnabled() shouldBe false
+      }
+
+      "not show the account details section" in {
+        Option(document.getElementById("accounts-section")) shouldBe None
+      }
+
+    }
+
     "all features are enabled" should {
 
       lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -119,6 +135,8 @@ class HomePageViewSpec extends TestSupport {
         mockAppConfig.features.estimatesEnabled() shouldBe true
         mockAppConfig.features.statementsEnabled(true)
         mockAppConfig.features.statementsEnabled() shouldBe true
+        mockAppConfig.features.accountDetailsEnabled(true)
+        mockAppConfig.features.accountDetailsEnabled() shouldBe true
       }
 
       s"have the title '$title'" in {
@@ -251,6 +269,32 @@ class HomePageViewSpec extends TestSupport {
             statementsSection.getElementById("statements-link").attr("href") shouldBe controllers.routes.StatementsController.getStatements().url
           }
         }
+      }
+
+      s"have an Account Details section" which {
+
+        mockAppConfig.features.accountDetailsEnabled(true)
+        lazy val accountDetailsSection = document.getElementById("accounts-section")
+
+        s"has the heading '${AccountDetailsSection.heading}'" in {
+          accountDetailsSection.getElementById("accounts-heading").text shouldBe AccountDetailsSection.heading
+        }
+
+        s"has the paragraph '${AccountDetailsSection.paragraph}'" in {
+          accountDetailsSection.getElementById("accounts-text").text shouldBe AccountDetailsSection.paragraph
+        }
+
+        "has a link to statements" which {
+
+          s"has the text '${AccountDetailsSection.link}'" in {
+            accountDetailsSection.getElementById("accounts-link").text shouldBe AccountDetailsSection.link
+          }
+
+          "links to the statements page" in {
+            accountDetailsSection.getElementById("accounts-link").attr("href") shouldBe controllers.routes.AccountDetailsController.getAccountDetails().url
+          }
+        }
+
       }
 
       "have no sidebar section " in {

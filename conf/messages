@@ -12,6 +12,9 @@ bta.home                                                        = Business tax h
 bta.messages                                                    = Messages
 bta.manage-account                                              = Manage account
 
+#Feedback
+feedback.title                                                  = Give feedback
+
 ## Home Page ##
 home.title                                                      = Your Income Tax
 home.subheading                                                 = Income Tax
@@ -36,6 +39,9 @@ home.deadlines.link                                             = View your dead
 home.statements.heading                                         = Statements
 home.statements.text                                            = View your income tax transactions, including charges and payments.
 home.statements.link                                            = View your statement
+home.accounts.heading                                           = Account details
+home.accounts.text                                              = See contact information and other details we have for your businesses.
+home.accounts.link                                              = Check your account details
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service
@@ -164,6 +170,23 @@ statements.noTransactions                                       = You''ve had no
 statements.error.heading                                        = We can''t show your statement right now
 statements.error.p1                                             = Try reloading the page or coming back later.
 
+## Account Details Page ##
+account.title                                                   = Account details
+account.heading                                                 = Account details
+account.businesses                                              = Your businesses
+account.properties                                              = Your properties
+account.reportingPeriod                                         = Reporting period: {0} - {1}
+
+## Business Details Page ##
+business.reportingPeriod                                        = Reporting period: {0} - {1}
+business.ceasedTrading                                          = This business ceased trading on {0}.
+business.addressAndContact                                      = Address and contact details
+business.tradingName                                            = Trading name
+business.businessAddress                                        = Business address
+business.additionalInfo                                         = Additional information
+business.accountingMethod                                       = This business uses the {0} accounting method.
+business.backToAccount                                          = Back to account details
+
 ## Statuses ##
 status.received                                                 = Received
 status.overdue                                                  = Overdue
@@ -239,4 +262,4 @@ breadcrumb-bills                                                = Income Tax bil
 breadcrumb-finalised-bill                                       = Your finalised Income Tax bill
 breadcrumb-obligations                                          = Your Income Tax report deadlines
 breadcrumb-statement                                            = Income Tax statement
-breadcrumb-details                                              = Account details
+breadcrumb-account                                              = Account details

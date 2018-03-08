@@ -31,4 +31,5 @@ class Features @Inject()(config: Configuration) {
   val estimatesEnabled: Feature = new Feature(Keys.estimatesEnabled, config)
   val billsEnabled: Feature = new Feature(Keys.billsEnabled, config)
   val reportDeadlinesEnabled: Feature = new Feature(Keys.reportDeadlinesEnabled, config)
+  val accountDetailsEnabled: Feature = new Feature(Keys.accountDetailsEnabled, config)
 }

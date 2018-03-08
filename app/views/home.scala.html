@@ -83,6 +83,14 @@
                 </div>
             }
 
+            @if(appConfig.features.accountDetailsEnabled()){
+                <div id="accounts-section" class="column-one-half">
+                    <h3 id="accounts-heading" class="heading-small">@messages("home.accounts.heading")</h3>
+                    <p id="accounts-text">@messages("home.accounts.text")</p>
+                    <p><a id="accounts-link" href="@{controllers.routes.AccountDetailsController.getAccountDetails().url}">@messages("home.accounts.link")</a></p>
+                </div>
+            }
+
             @if(appConfig.features.estimatesEnabled()){
                 <div id="estimates-section" class="column-one-half">
                     <h3 id="estimates-heading" class="heading-small">@messages("home.estimates.heading")</h3>
@@ -90,7 +98,6 @@
                     <p><a id="estimates-link" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
                 </div>
             }
-
 
             @if(appConfig.features.statementsEnabled()){
                 <div id="statements-section" class="column-one-half">
