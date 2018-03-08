@@ -94,4 +94,22 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
       }
     }
   }
+
+  "The IncomeSourceDetailsService .getBusinessDetails method" when {
+    "a self-employment-ID is passed through" should {
+      "return the corresponding BusinessModel" in {
+        setupMockBusinesslistResult(testNino)(businessesSuccessModel)
+
+        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino, 0)) shouldBe Right(Some((businessesSuccessModel.businesses.head, 0)))
+      }
+    }
+
+    "an error is returned from the businessDetailsConnector" should {
+      "return a BusinessDetailsErrorModel" in {
+        setupMockBusinesslistResult(testNino)(businessErrorModel)
+
+        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino, 0)) shouldBe Left(businessErrorModel)
+      }
+    }
+  }
 }
