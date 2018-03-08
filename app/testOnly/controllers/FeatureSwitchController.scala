@@ -36,6 +36,7 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
         propertyEopsEnabled = appConfig.features.propertyEopsEnabled(),
         businessEopsEnabled = appConfig.features.businessEopsEnabled(),
         paymentEnabled = appConfig.features.paymentEnabled(),
+        statementsEnabled = appConfig.features.statementsEnabled(),
         estimatesEnabled = appConfig.features.estimatesEnabled(),
         billsEnabled = appConfig.features.billsEnabled(),
         reportDeadlinesEnabled = appConfig.features.reportDeadlinesEnabled()
@@ -56,6 +57,7 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
     appConfig.features.propertyEopsEnabled(model.propertyEopsEnabled)
     appConfig.features.businessEopsEnabled(model.businessEopsEnabled)
     appConfig.features.paymentEnabled(model.paymentEnabled)
+    appConfig.features.statementsEnabled(model.statementsEnabled)
     appConfig.features.estimatesEnabled(model.estimatesEnabled)
     appConfig.features.billsEnabled(model.billsEnabled)
     appConfig.features.reportDeadlinesEnabled(model.reportDeadlinesEnabled)

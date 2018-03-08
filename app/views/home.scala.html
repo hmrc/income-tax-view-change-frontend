@@ -91,11 +91,14 @@
                 </div>
             }
 
-            <div id="statements-section" class="column-one-half">
-                <h3 id="statements-heading" class="heading-small">@messages("home.statements.heading")</h3>
-                <p id="statements-text">@messages("home.statements.text")</p>
-                <p><a id="statements-link" href="@{controllers.routes.StatementsController.getStatements().url}">@messages("home.statements.link")</a></p>
-            </div>
+
+            @if(appConfig.features.statementsEnabled()){
+                <div id="statements-section" class="column-one-half">
+                    <h3 id="statements-heading" class="heading-small">@messages("home.statements.heading")</h3>
+                    <p id="statements-text">@messages("home.statements.text")</p>
+                    <p><a id="statements-link" href="@{controllers.routes.StatementsController.getStatements().url}">@messages("home.statements.link")</a></p>
+                </div>
+            }
 
         </div>
 

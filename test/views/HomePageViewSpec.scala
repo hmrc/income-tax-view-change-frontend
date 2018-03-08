@@ -88,6 +88,22 @@ class HomePageViewSpec extends TestSupport {
       }
     }
 
+    "the statements feature is disabled" should {
+
+      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val document = Jsoup.parse(contentAsString(page))
+
+      "Disable the statements feature" in {
+        mockAppConfig.features.statementsEnabled(false)
+        mockAppConfig.features.statementsEnabled() shouldBe false
+      }
+
+      "not show the statements section" in {
+        Option(document.getElementById("statements-section")) shouldBe None
+      }
+
+    }
+
     "all features are enabled" should {
 
       lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -101,6 +117,8 @@ class HomePageViewSpec extends TestSupport {
         mockAppConfig.features.billsEnabled() shouldBe true
         mockAppConfig.features.estimatesEnabled(true)
         mockAppConfig.features.estimatesEnabled() shouldBe true
+        mockAppConfig.features.statementsEnabled(true)
+        mockAppConfig.features.statementsEnabled() shouldBe true
       }
 
       s"have the title '$title'" in {
