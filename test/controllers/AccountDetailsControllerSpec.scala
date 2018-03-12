@@ -78,7 +78,7 @@ class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPr
       }
 
       "redirect to the ITVC home page" in {
-        redirectLocation(result) shouldBe Some(TestAccountDetailsController.config.itvcHomeUrl)
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
       }
 
     }

@@ -12,6 +12,9 @@ bta.home                                                        = Business tax h
 bta.messages                                                    = Messages
 bta.manage-account                                              = Manage account
 
+#Feedback
+feedback.title                                                  = Give feedback
+
 ## Home Page ##
 home.title                                                      = Your Income Tax
 home.subheading                                                 = Income Tax
