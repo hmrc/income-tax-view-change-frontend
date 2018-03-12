@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HttpResponse
 import utils.TestSupport
 import assets.TestConstants.IncomeSourceDetails._
 import assets.TestConstants.testNino
-import models.{IncomeSourcesError, IncomeSourcesResponseModel}
+import models.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 
 import scala.concurrent.Future
 
@@ -38,26 +38,26 @@ class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp {
   "IncomeSourceDetailsConnector.getIncomeSources" should {
 
     lazy val testUrl = TestIncomeSourceDetailsConnector.getIncomeSourcesUrl(testNino)
-    def result: Future[IncomeSourcesResponseModel] = TestIncomeSourceDetailsConnector.getIncomeSources(testNino)
+    def result: Future[IncomeSourceDetailsResponse] = TestIncomeSourceDetailsConnector.getIncomeSources(testNino)
 
-    "return a IncomeSourcesModel when successful JSON is received" in {
+    "return an IncomeSourceDetailsModel when successful JSON is received" in {
       setupMockHttpGet(testUrl)(successResponse)
       await(result) shouldBe bothIncomeSourcesSuccessBusinessAligned
     }
 
-    "return IncomeSourcesError in case of bad/malformed JSON response" in {
+    "return IncomeSourceDetailsError in case of bad/malformed JSON response" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe IncomeSourcesError
+      await(result) shouldBe IncomeSourceDetailsError
     }
 
-    "return IncomeSourcesError model in case of failure" in {
+    "return IncomeSourceDetailsError model in case of failure" in {
       setupMockHttpGet(testUrl)(badResponse)
-      await(result) shouldBe IncomeSourcesError
+      await(result) shouldBe IncomeSourceDetailsError
     }
 
-    "return IncomeSourcesError model in case of future failed scenario" in {
+    "return IncomeSourceDetailsError model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe IncomeSourcesError
+      await(result) shouldBe IncomeSourceDetailsError
     }
   }
 

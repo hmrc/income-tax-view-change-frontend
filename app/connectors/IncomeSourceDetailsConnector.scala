@@ -19,7 +19,7 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import config.FrontendAppConfig
-import models.{IncomeSourcesError, IncomeSourcesModel, IncomeSourcesResponseModel}
+import models.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -35,7 +35,7 @@ class IncomeSourceDetailsConnector @Inject()(val http: HttpClient,
   private[connectors] lazy val getIncomeSourcesUrl: String => String = nino =>
     s"${config.itvcProtectedService}/income-tax-view-change/income-sources/$nino"
 
-  def getIncomeSources(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
+  def getIncomeSources(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
 
     val url = getIncomeSourcesUrl(nino)
     Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - GET $url")
@@ -45,22 +45,22 @@ class IncomeSourceDetailsConnector @Inject()(val http: HttpClient,
         response.status match {
           case OK =>
             Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[IncomeSourcesModel].fold(
+            response.json.validate[IncomeSourceDetailsModel].fold(
               invalid => {
                 Logger.warn(s"[IncomeSourceDetailsConnector][getIncomeSources] - Json Validation Error. Parsing Latest Calc Response")
-                IncomeSourcesError
+                IncomeSourceDetailsError
               },
               valid => valid
             )
           case _ =>
             Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
             Logger.warn(s"[IncomeSourceDetailsConnector][getIncomeSources] - Response status: [${response.status}] from Latest Calc call")
-            IncomeSourcesError
+            IncomeSourceDetailsError
         }
     } recover {
       case _ =>
         Logger.warn(s"[IncomeSourceDetailsConnector][getIncomeSources] - Unexpected future failed error")
-        IncomeSourcesError
+        IncomeSourceDetailsError
     }
 
   }
