@@ -606,6 +606,37 @@ object TestConstants extends ImplicitDateFormatter {
       IncomeSourcesModel(List(BusinessDetails.businessIncomeModelAlignedTaxYear), Some(PropertyIncome.propertyIncomeModel))
   }
 
+  object NewIncomeSourceDetails {
+    val incomeSourceDetails = IncomeSourceDetailsModel(List(NewBizDeets.businessIncomeSourceSuccess), None)
+  }
+
+  object NewBizDeets {
+    val testBusinessAccountingPeriod = AccountingPeriodModel(start = "2017-6-1", end = "2018-5-30")
+    val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = "2017-3-5", end = "2018-3-6")
+    val testTradeName = "business"
+    val testTradeName2 = "business"
+    val testBizAddress = AddressModel("Some Road", None, None, None, None, "Somewhere")
+    val testContactDetails = ContactDetailsModel(Some("123456789"),Some("0123456789"),Some("8008135"),Some("google@chuckNorris.com"))
+    val testCessation = CessationModel(Some("2018-1-1".toLocalDate), Some("It was a stupid idea anyway"))
+
+    val businessIncomeSourceSuccess = BizDeetsModel(
+      incomeSourceId = testSelfEmploymentId,
+      accountingPeriod = testBusinessAccountingPeriod,
+      tradingName = Some(testTradeName),
+      address = Some(testBizAddress),
+      contactDetails = Some(testContactDetails),
+      tradingStartDate = Some(""),
+      cashOrAccruals = Some(""),
+      seasonal = Some(true),
+      cessation = Some(testCessation),
+      paperless = Some(true)
+    )
+  }
+
+  object NewPropDeets {
+
+  }
+
   object CalcBreakdown {
 
     val calculationDataSuccessModel = CalculationDataModel(

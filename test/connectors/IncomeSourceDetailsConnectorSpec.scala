@@ -21,7 +21,7 @@ import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse
 import utils.TestSupport
-import assets.TestConstants.IncomeSourceDetails._
+import assets.TestConstants.NewIncomeSourceDetails._
 import assets.TestConstants.testNino
 import models.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 
@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp {
 
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(bothIncomeSourcesSuccessBusinessAligned)))
+  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(incomeSourceDetails)))
   val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
@@ -42,7 +42,7 @@ class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp {
 
     "return an IncomeSourceDetailsModel when successful JSON is received" in {
       setupMockHttpGet(testUrl)(successResponse)
-      await(result) shouldBe bothIncomeSourcesSuccessBusinessAligned
+      await(result) shouldBe incomeSourceDetails
     }
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in {
