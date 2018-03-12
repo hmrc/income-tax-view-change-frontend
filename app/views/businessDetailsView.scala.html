@@ -1,0 +1,73 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.main_template
+@import views.html.helpers.breadcrumbHelper
+@import models.{Breadcrumb, BreadcrumbItem}
+@import utils.ImplicitDateFormatter._
+@import views.html.helpers.businessAddressHelper
+
+@(business: BusinessModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-account", Some(controllers.routes.AccountDetailsController.getAccountDetails.url)),
+        BreadcrumbItem(business.tradingName, None)
+    )))
+}
+
+@main_template(
+title = business.tradingName,
+bodyClasses = None,
+scriptElem = None,
+sidebarLinks = None,
+serviceInfo = breadcrumb
+) {
+
+<section id="business-details">
+
+    <h1 id="page-heading" class="heading-xlarge">@business.tradingName</h1>
+
+    <h2 id="reporting-period" class="heading-large">@messages("business.reportingPeriod", business.accountingPeriod.start.toLongDateNoYear, business.accountingPeriod.end.toLongDateNoYear)</h2>
+
+    @if(business.cessationDate.isDefined){<div class="panel panel-border-wide"><p id="cessation-date">@messages("business.ceasedTrading", business.cessationDate.get.toLongDate)</p></div>}
+
+    <h3 id="address-details" class="heading-medium">@messages("business.addressAndContact")</h3>
+
+    <section id="business-contact">
+
+        <dl class="govuk-check-your-answers cya-questions-short">
+            <div>
+                <dt id="trading-name" class="cya-question">@messages("business.tradingName")</dt>
+                <dd id="trading-name-business" class="cya-answer">@business.tradingName</dd>
+            </div>
+            <div>
+                @businessAddressHelper(business)
+            </div>
+        </dl>
+
+        <h3 id="additional-information" class="heading-medium">@messages("business.additionalInfo")</h3>
+
+        <p id="accounting-method">@messages("business.accountingMethod", business.accountingType.toLowerCase)</p>
+
+    </section>
+
+    <a id="it-account-back" class="link-back" href="@{controllers.routes.AccountDetailsController.getAccountDetails().url}">@messages("business.backToAccount")</a>
+
+</section>
+
+}
