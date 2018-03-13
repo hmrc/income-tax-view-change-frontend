@@ -65,7 +65,7 @@ object IncomeTaxViewChangeStub {
   val incomeSourceDetailsUrl: String => String = mtditid => s"/income-tax-view-change/income-sources/$mtditid"
 
   def stubGetIncomeSourceDetailsResponse(mtditid: String)(status: Int, response: IncomeSourceDetailsResponse): Unit =
-    WiremockHelper.stubGet(incomeSourceDetailsUrl(mtditid), status, Json.toJson(response).toString)
+    WiremockHelper.stubGet(incomeSourceDetailsUrl(mtditid), status, response.toJson.toString)
 
   def verifyGetIncomeSourceDetails(mtditid: String): Unit =
     WiremockHelper.verifyGet(incomeSourceDetailsUrl(mtditid))

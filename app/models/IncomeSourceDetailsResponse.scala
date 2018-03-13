@@ -16,17 +16,23 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{JsValue, Json, OFormat}
 
-sealed trait IncomeSourceDetailsResponse
+sealed trait IncomeSourceDetailsResponse {
+  def toJson: JsValue
+}
 
 case class IncomeSourceDetailsModel(businesses: List[BizDeetsModel],
                                     property: Option[PropDeetsModel]) extends IncomeSourceDetailsResponse {
 
+  override def toJson: JsValue = Json.toJson(this)
+
   val sortedBusinesses: List[(BizDeetsModel, Int)] = businesses.sortBy(_.incomeSourceId.substring(4)).zipWithIndex
 }
 
-case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse
+case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {
+  override def toJson: JsValue = Json.toJson(this)
+}
 
 object IncomeSourceDetailsModel {
   implicit val format: OFormat[IncomeSourceDetailsModel] = Json.format[IncomeSourceDetailsModel]

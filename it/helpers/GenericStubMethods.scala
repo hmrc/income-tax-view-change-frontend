@@ -48,10 +48,10 @@ trait GenericStubMethods extends CustomMatchers {
 
   def getBizDeets(response: JsValue = JsNull): Unit = {
     if(response == JsNull) {
-      And("I wiremock stub a success businesses details response, with no Business Income Source")
+      And("I wiremock stub a success business details response, with no Business Income Source")
       SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
     } else {
-      And("I wiremock stub a success businesses details response")
+      And("I wiremock stub a success business details response")
       SelfAssessmentStub.stubGetBusinessDetails(testNino, response)
     }
   }
@@ -62,7 +62,7 @@ trait GenericStubMethods extends CustomMatchers {
   }
 
   def verifyBizDeetsCall(): Unit = {
-    Then("Verify businesses details has been called")
+    Then("Verify business details has been called")
     SelfAssessmentStub.verifyGetBusinessDetails(testNino)
   }
 
@@ -72,7 +72,7 @@ trait GenericStubMethods extends CustomMatchers {
   }
 
   def verifyBizObsCall(employmentIds: String*): Unit = {
-    Then("Verify that businesses obligations has been called")
+    Then("Verify that business obligations has been called")
     for(employmentId <- employmentIds){
       SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, employmentId)
     }

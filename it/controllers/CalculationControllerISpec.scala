@@ -58,16 +58,16 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
         SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
 
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
-        getPropDeets(GetPropertyDetails.successResponse())
+        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+        )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-        verifyBizDeetsCall()
-
-        verifyPropDeetsCall()
+        Then("I verify the Income Source Details has been successfully wiremocked")
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
@@ -81,7 +81,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
           elementTextByID("page-heading")("Your Income Tax estimate"),
-          elementTextByID("businesses-profit")(totalProfit(calcBreakdownResponse)),
+          elementTextByID("business-profit")(totalProfit(calcBreakdownResponse)),
           elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
           elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
           elementTextByID("taxable-income")(taxableIncome(calcBreakdownResponse)),
@@ -122,8 +122,11 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           isAuthorisedUser(true)
           stubUserDetails()
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
@@ -141,8 +144,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
           val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
+          Then("I verify the Income Source Details has been successfully wiremocked")
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
           verifyFinancialTransactionsCall()
 
           Then("I verify the Estimated Tax Liability response has been wiremocked")
@@ -156,7 +160,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             elementTextByID("whatYouOweHeading")(s"What you owe: ${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
             isElementVisibleById("calcBreakdown")(expectedValue = true),
             elementTextByID("calcBreakdown")("How this figure was calculated"),
-            elementTextByID("businesses-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
+            elementTextByID("business-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
             elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
             elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
@@ -197,8 +201,11 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           isAuthorisedUser(true)
           stubUserDetails()
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
@@ -216,8 +223,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
           val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
+          Then("I verify the Income Source Details has been successfully wiremocked")
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
           verifyFinancialTransactionsCall()
 
           Then("I verify the Estimated Tax Liability response has been wiremocked")
@@ -229,7 +237,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
             elementTextByID("page-heading")("Your finalised Income Tax bill"),
             elementTextByID("tax-year")("Tax year: 2017 to 2018"),
             isElementVisibleById("calcBreakdown")(expectedValue = false),
-            elementTextByID("businesses-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
+            elementTextByID("business-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
             elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
             elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
@@ -270,8 +278,11 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           isAuthorisedUser(true)
           stubUserDetails()
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
@@ -288,8 +299,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
           val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
+          Then("I verify the Income Source Details has been successfully wiremocked")
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
           verifyFinancialTransactionsCall()
 
           Then("I verify the Estimated Tax Liability response has been wiremocked")
@@ -320,16 +332,16 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessModel
         SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessString)
 
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
-        getPropDeets(GetPropertyDetails.successResponse())
+        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+        )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-        verifyBizDeetsCall()
-
-        verifyPropDeetsCall()
+        Then("I verify the Income Source Details has been successfully wiremocked")
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
@@ -344,7 +356,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           elementTextByID("obligations-link")("View report deadlines"),
           elementTextByID("sa-link")("View annual returns"),
           elementTextByID("page-heading")("Your Income Tax estimate"),
-          elementTextByID("businesses-profit")(totalProfit(calcBreakdownResponse)),
+          elementTextByID("business-profit")(totalProfit(calcBreakdownResponse)),
           elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
           elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
           elementTextByID("taxable-income")(taxableIncome(calcBreakdownResponse)),
@@ -398,16 +410,16 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         SelfAssessmentStub.stubGetCalcError(testNino, testCalcId, calculationResponse)
 
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
-        getPropDeets(GetPropertyDetails.successResponse())
+        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+        )
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-        verifyBizDeetsCall()
-
-        verifyPropDeetsCall()
+        Then("I verify the Income Source Details has been successfully wiremocked")
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         Then("verification that the Estimated Tax Liability response has been wiremocked ")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
@@ -436,16 +448,16 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         And("a No Data Found response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcNoData(testNino, testYear)
 
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
-        getPropDeets(GetPropertyDetails.successResponse())
+        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+        )
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-        verifyBizDeetsCall()
-
-        verifyPropDeetsCall()
+        Then("I verify the Income Source Details has been successfully wiremocked")
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         Then("verification that the Estimated Tax Liability response has been wiremocked ")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
@@ -471,16 +483,16 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         And("an Error Response response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
 
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-
-        getPropDeets(GetPropertyDetails.successResponse())
+        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+        )
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
 
-        verifyBizDeetsCall()
-
-        verifyPropDeetsCall()
+        Then("I verify the Income Source Details has been successfully wiremocked")
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         Then("verification that the Estimated Tax Liability response has been wiremocked ")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)

@@ -107,10 +107,8 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         IncomeTaxViewChangeStub.stubGetNinoResponse(testMtditid, Nino(testNino))
 
         stubUserDetails()
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
 
-        And("I wiremock stub a single businesses obligation response")
+        And("I wiremock stub a single business obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")
@@ -125,7 +123,7 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         )
       }
 
-      "be displayed a technical error page" in {
+      "be displayed a technical error page if there is no NINO" in {
 
         Given("I wiremock stub an authorised with no Nino user response")
         AuthStub.stubAuthorisedNoNino()
@@ -133,10 +131,8 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         IncomeTaxViewChangeStub.stubGetNinoError(testMtditid, NinoResponseError(INTERNAL_SERVER_ERROR, "Error Message"))
 
         stubUserDetails()
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
 
-        And("I wiremock stub a single businesses obligation response")
+        And("I wiremock stub a single business obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")

@@ -48,7 +48,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testSelfEmploymentId = "ABC123456789"
   val otherTestSelfEmploymentId = "ABC123456780"
 
-  val testTradeName = "businesses"
+  val testTradeName = "business"
 
   object GetCalculationData {
 
@@ -671,8 +671,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "accountingType":"CASH",
               "commencementDate":"2017-01-01",
               "cessationDate":"2017-12-31",
-              "tradingName":"businesses",
-              "businessDescription":"a businesses",
+              "tradingName":"business",
+              "businessDescription":"a business",
               "businessAddressLineOne":"64 Zoo Lane",
               "businessAddressLineTwo":"Happy Place",
               "businessAddressLineThree":"Magical Land",
@@ -692,8 +692,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "accountingType":"CASH",
               "commencementDate":"2018-01-01",
               "cessationDate":"2018-12-31",
-              "tradingName":"businesses",
-              "businessDescription":"a businesses",
+              "tradingName":"business",
+              "businessDescription":"a business",
               "businessAddressLineOne":"64 Zoo Lane",
               "businessAddressLineTwo":"Happy Place",
               "businessAddressLineThree":"Magical Land",
@@ -714,7 +714,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "commencementDate":"2017-01-06",
               "cessationDate":"2017-12-31",
               "tradingName":"firstBusiness",
-              "businessDescription":"a first businesses",
+              "businessDescription":"a first business",
               "businessAddressLineOne":"64 Zoo Lane",
               "businessAddressLineTwo":"Happy Place",
               "businessAddressLineThree":"Magical Land",
@@ -728,7 +728,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "commencementDate":"2017-01-01",
               "cessationDate":"2017-12-31",
               "tradingName":"secondBusiness",
-              "businessDescription":"a second businesses",
+              "businessDescription":"a second business",
               "businessAddressLineOne":"742 Evergreen Terrace",
               "businessAddressLineTwo":"Springfield",
               "businessAddressLineThree":"Oregon",
@@ -747,6 +747,140 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
                     |   "reason":"$reason"
                     |}
       """.stripMargin)
+  }
+
+  object GetIncomeSourceDetails {
+
+    val business1: String => BizDeetsModel = id => BizDeetsModel(
+      incomeSourceId = id,
+      accountingPeriod = AccountingPeriodModel(
+        start = "2017-01-01",
+        end = "2017-12-31"
+      ),
+      cashOrAccruals = Some("CASH"),
+      tradingStartDate = Some("2017-01-01"),
+      cessation = Some(CessationModel(
+        date = Some("2017-12-31"),
+        reason = Some("It really, really was a bad idea")
+      )),
+      tradingName = Some("business"),
+      address = Some(AddressModel(
+        addressLine1 = "64 Zoo Lane",
+        addressLine2 = Some("Happy Place"),
+        addressLine3 = Some("Magical Land"),
+        addressLine4 = Some("England"),
+        postCode = Some("ZL1 064"),
+        countryCode = "UK"
+      )),
+      contactDetails = None,
+      seasonal = None,
+      paperless = None
+    )
+    val business2: String => BizDeetsModel = id => BizDeetsModel(
+      incomeSourceId = id,
+      accountingPeriod = AccountingPeriodModel(
+        start = "2018-01-01",
+        end = "2018-12-31"
+      ),
+      cashOrAccruals = Some("CASH"),
+      tradingStartDate = Some("2017-01-01"),
+      cessation = Some(CessationModel(
+        date = Some("2017-12-31"),
+        reason = Some("It really, really was a bad idea")
+      )),
+      tradingName = Some("secondBusiness"),
+      address = Some(AddressModel(
+        addressLine1 = "742 Evergreen Terrace",
+        addressLine2 = Some("Springfield"),
+        addressLine3 = Some("Oregon"),
+        addressLine4 = Some("USA"),
+        postCode = Some("51MP 50N5"),
+        countryCode = "USA"
+      )),
+      contactDetails = None,
+      seasonal = None,
+      paperless = None
+    )
+    val property: PropDeetsModel = PropDeetsModel(
+      incomeSourceId = "XAIT00009991",
+      accountingPeriod = AccountingPeriodModel(
+        start = "2017-04-06",
+        end = "2018-04-05"
+      ),
+      contactDetails = None,
+      propertiesRented = None,
+      cessation = None,
+      paperless = None
+    )
+
+    val singleBusinessResponse: String => IncomeSourceDetailsResponse = id => IncomeSourceDetailsModel(
+      businesses = List(
+        BizDeetsModel(
+          incomeSourceId = id,
+          accountingPeriod = AccountingPeriodModel(
+            start = "2017-01-01",
+            end = "2017-12-31"
+          ),
+          cashOrAccruals = Some("CASH"),
+          tradingStartDate = Some("2017-01-01"),
+          cessation = Some(CessationModel(
+            date = Some("2017-12-31"),
+            reason = Some("It really, really was a bad idea")
+          )),
+          tradingName = Some("business"),
+          address = Some(AddressModel(
+            addressLine1 = "64 Zoo Lane",
+            addressLine2 = Some("Happy Place"),
+            addressLine3 = Some("Magical Land"),
+            addressLine4 = Some("England"),
+            postCode = Some("ZL1 064"),
+            countryCode = "UK"
+          )),
+          contactDetails = None,
+          seasonal = None,
+          paperless = None
+        )
+      ),
+      property = None
+    )
+
+    val misalignedBusinessWithPropertyResponse: String => IncomeSourceDetailsResponse = id => IncomeSourceDetailsModel(
+      businesses = List(
+        business2(id)
+      ),
+      property = Some(property)
+    )
+
+    val multipleBusinessesResponse: (String, String) => IncomeSourceDetailsResponse = (id1, id2) => IncomeSourceDetailsModel(
+      businesses = List(
+        business1(id1),
+        business2(id2)
+      ),
+      property = None
+    )
+
+    val businessAndPropertyResponse: String => IncomeSourceDetailsResponse = id => IncomeSourceDetailsModel(
+      businesses = List(
+        business1(id)
+      ),
+      property = Some(property)
+    )
+
+    val multipleBusinessesAndPropertyResponse: (String, String) => IncomeSourceDetailsResponse = (id1, id2) => IncomeSourceDetailsModel(
+      businesses = List(
+        business1(id1),
+        business2(id2)
+      ),
+      property = Some(property)
+    )
+
+    val propertyOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+      businesses = List(),
+      property = Some(property)
+    )
+
+    val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500,"ISE")
+
   }
 
   object GetPropertyDetails {

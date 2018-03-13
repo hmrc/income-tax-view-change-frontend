@@ -16,7 +16,8 @@
 
 package controllers
 
-import helpers.IntegrationTestConstants.{GetBusinessDetails, GetPropertyDetails, testSelfEmploymentId}
+import helpers.IntegrationTestConstants.{GetIncomeSourceDetails, testSelfEmploymentId, testMtditid}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{OK, SEE_OTHER}
 
@@ -24,19 +25,21 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
 
   "Calling the AccountDetailsController.getAccountDetails" when {
 
-    "isAuthorisedUser with an active enrolment and has at least 1 businesses and property" should {
+    "isAuthorisedUser with an active enrolment and has at least 1 business and property" should {
 
       "return the correct page with a valid total" in {
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
+
+        And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId))
 
         When("I call GET /report-quarterly/income-and-expenses/view/account-details")
         val res = IncomeTaxViewChangeFrontend.getAccountDetails
 
-        verifyBizDeetsCall()
-        verifyPropDeetsCall()
+        Then("I verify the Income Source Details has been successfully wiremocked")
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
         verifyBizObsCall(testSelfEmploymentId)
 
         Then("the view displays the correct title, username and links")
@@ -45,7 +48,7 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
           pageTitle("Account details"),
           elementTextByID(id = "page-heading")("Account details"),
           elementTextByID(id = "your-businesses")("Your businesses"),
-          elementTextByID(id = "businesses-link-1")("businesses"),
+          elementTextByID(id = "business-link-1")("business"),
           elementTextByID(id = "your-properties")("Your properties"),
           elementTextByID(id = "reporting-period")("Reporting period: 6 April - 5 April")
         )
