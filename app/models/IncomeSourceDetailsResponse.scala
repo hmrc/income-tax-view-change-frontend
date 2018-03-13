@@ -20,14 +20,18 @@ import play.api.libs.json.{Json, OFormat}
 
 sealed trait IncomeSourceDetailsResponse
 
-case object IncomeSourceDetailsError extends IncomeSourceDetailsResponse
-
 case class IncomeSourceDetailsModel(businesses: List[BizDeetsModel],
                                     property: Option[PropDeetsModel]) extends IncomeSourceDetailsResponse {
 
   val sortedBusinesses: List[(BizDeetsModel, Int)] = businesses.sortBy(_.incomeSourceId.substring(4)).zipWithIndex
 }
 
+case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse
+
 object IncomeSourceDetailsModel {
   implicit val format: OFormat[IncomeSourceDetailsModel] = Json.format[IncomeSourceDetailsModel]
+}
+
+object IncomeSourceDetailsError {
+  implicit val format: OFormat[IncomeSourceDetailsError] = Json.format[IncomeSourceDetailsError]
 }

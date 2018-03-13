@@ -34,9 +34,7 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
   def getBusinessDetails(mtditid: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[BusinessDetailsErrorModel,Option[(BizDeetsModel, Int)]]] = {
     incomeSourceDetailsConnector.getIncomeSources(mtditid).map {
       case sources: IncomeSourceDetailsModel => Right(sources.sortedBusinesses.find(_._2 == id))
-      case IncomeSourceDetailsError =>
-        //TODO: Update this once a model is returned instead of a Case Object
-        Left(BusinessDetailsErrorModel(Status.NOT_FOUND, s"Could not find business in sorted list with ID: $id"))
+      case error: IncomeSourceDetailsError => Left(BusinessDetailsErrorModel(error.status, error.reason))
     }
   }
 
@@ -77,7 +75,7 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
         } yield {
           IncomeSourcesModel(businessList, property)
         }
-      case IncomeSourceDetailsError => Future.successful(IncomeSourcesError)
+      case _: IncomeSourceDetailsError => Future.successful(IncomeSourcesError)
     }
   }
 }
