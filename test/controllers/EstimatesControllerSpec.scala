@@ -53,55 +53,80 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
 
   "The CalculationController.viewEstimateCalculations action" when {
 
-    "called with an authenticated HMRC-MTD-IT user" which {
 
-      "successfully retrieves Business only income from the Income Sources predicate" should {
+    "Estimates Feature is disabled" should {
 
-        lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
-        lazy val messages = new Messages.Estimates
+      lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
 
-        "return status OK (200)" in {
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
-          mockGetAllLatestCalcSuccess()
-          status(result) shouldBe Status.OK
-        }
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-        "render the Estimates sub-page" in {
-          document.title shouldBe messages.title
-        }
+      "return redirect SEE_OTHER (303)" in {
+        TestCalculationController.config.features.estimatesEnabled(false)
+        setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
+        status(result) shouldBe Status.SEE_OTHER
       }
-
-      "successfully retrieves income sources, but the list returned from the service has a calcNotFound" should {
-        lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
-
-        "return an SEE_OTHER (303)" in {
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
-          mockGetAllLatestCrystallisedCalcWithCalcNotFound()
-          status(result) shouldBe Status.SEE_OTHER
-        }
-      }
-
-      "successfully retrieves income sources, but the list returned from the service has an error model" should {
-        lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
-
-        "return an ISE (500)" in {
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
-          mockGetAllLatestCrystallisedCalcWithError()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
+      "redirect to home page" in {
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
       }
     }
 
-    "Called with an Unauthenticated User" should {
+    "Estimates Feature is enabled" which {
 
-      "return redirect SEE_OTHER (303)" in {
-        setupMockAuthorisationException()
-        val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
+      "called with an authenticated HMRC-MTD-IT user" which {
+
+        "successfully retrieves Business only income from the Income Sources predicate" should {
+
+          lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
+          lazy val document = result.toHtmlDocument
+          lazy val messages = new Messages.Estimates
+
+          "return status OK (200)" in {
+            TestCalculationController.config.features.estimatesEnabled(true)
+            setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
+            mockGetAllLatestCalcSuccess()
+            status(result) shouldBe Status.OK
+          }
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+          "render the Estimates sub-page" in {
+            document.title shouldBe messages.title
+          }
+        }
+
+        "successfully retrieves income sources, but the list returned from the service has a calcNotFound" should {
+
+          lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
+
+          "return an SEE_OTHER (303)" in {
+            TestCalculationController.config.features.estimatesEnabled(true)
+            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+            mockGetAllLatestCrystallisedCalcWithCalcNotFound()
+            status(result) shouldBe Status.SEE_OTHER
+          }
+        }
+
+        "successfully retrieves income sources, but the list returned from the service has an error model" should {
+
+          lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
+
+          "return an ISE (500)" in {
+            TestCalculationController.config.features.estimatesEnabled(true)
+            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+            mockGetAllLatestCrystallisedCalcWithError()
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+
+      }
+
+      "Called with an Unauthenticated User" should {
+
+        "return redirect SEE_OTHER (303)" in {
+          setupMockAuthorisationException()
+          val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
+          TestCalculationController.config.features.estimatesEnabled(true)
+          status(result) shouldBe Status.SEE_OTHER
+        }
       }
     }
   }

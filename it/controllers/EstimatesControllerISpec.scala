@@ -15,6 +15,7 @@
  */
 package controllers
 
+import config.FrontendAppConfig
 import enums.{Crystallised, Estimate}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
@@ -24,190 +25,223 @@ import play.api.http.Status._
 
 class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
+  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
   "Calling the EstimatesController.viewEstimatedCalculations" when {
-    "isAuthorisedUser with an active enrolment, and a single, valid tax estimate" should {
-      "return the correct page with tax links" in {
+
+    "Estimates Feature is disabled" should {
+
+      "redirect to home page" in {
+
+        appConfig.features.estimatesEnabled(false)
 
         isAuthorisedUser(true)
         stubUserDetails()
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
         getPropDeets(GetPropertyDetails.successResponse())
 
-        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse =
-          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-
-        And("I wiremock stub a successful Get CalculationData response")
-        val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
-
         When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
         val res = IncomeTaxViewChangeFrontend.getEstimates
-
-        verifyBizDeetsCall()
-        verifyPropDeetsCall()
-
-        Then("I verify the Estimated Tax Liability response has been wiremocked")
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
         Then("The view should have the correct headings and a single tax estimate link")
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.CalculationController.showCalculationForYear(2018).url)
+          redirectURI(controllers.routes.HomeController.home().url)
         )
       }
     }
 
-    "isAuthorisedUser with an active enrolment, and multiple valid tax estimates" should {
-      "return the correct page with tax links" in {
 
-        isAuthorisedUser(true)
-        stubUserDetails()
-        getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
+    "Estimates Feature switch is enabled" when {
+      "isAuthorisedUser with an active enrolment, and a single, valid tax estimate" should {
+        "return the correct page with tax links" in {
 
-        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse =
-          LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
-        val lastTaxCalcResponse2 =
-          LastTaxCalculation(testCalcId2, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.totalIncomeTaxNicYtd, Estimate)
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, lastTaxCalcResponse2)
+          appConfig.features.estimatesEnabled(true)
+          isAuthorisedUser(true)
+          stubUserDetails()
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getPropDeets(GetPropertyDetails.successResponse())
 
-        And("I wiremock stub a successful Get CalculationData response")
-        val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          val lastTaxCalcResponse =
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
-        When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
-        val res = IncomeTaxViewChangeFrontend.getEstimates
+          And("I wiremock stub a successful Get CalculationData response")
+          val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
 
-        verifyBizDeetsCall()
-        verifyPropDeetsCall()
+          When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
+          val res = IncomeTaxViewChangeFrontend.getEstimates
 
-        Then("I verify the Estimated Tax Liability response has been wiremocked")
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYearPlusOne)
+          verifyBizDeetsCall()
+          verifyPropDeetsCall()
 
-        Then("The view should have the correct headings and two tax estimate links")
-        res should have(
-          httpStatus(OK),
-          pageTitle("Current estimates"),
-          elementTextByID("view-estimates")("View your current estimates."),
-          elementTextByID(s"estimates-link-$testYearPlusOne")(s"Tax year: $testYear to $testYearPlusOne"),
-          elementTextByID(s"estimates-link-$testYear")(s"Tax year: 2017 to $testYear"),
-          nElementsWithClass("estimates-link")(2)
-        )
-      }
-    }
+          Then("I verify the Estimated Tax Liability response has been wiremocked")
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
-    "isAuthorisedUser with an active enrolment, with a crystallised calculation and a tax estimate" should {
-      "return the correct estimate page" in {
-
-        isAuthorisedUser(true)
-        stubUserDetails()
-        getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
-
-        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val crystallisedLastTaxCalcResponse =
-          LastTaxCalculation(
-            testCalcId,
-            "2017-07-06T12:34:56.789Z",
-            GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-            Crystallised
+          Then("The view should have the correct headings and a single tax estimate link")
+          res should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.CalculationController.showCalculationForYear(2018).url)
           )
-        val lastTaxCalcResponse =
-          LastTaxCalculation(
-            testCalcId2,
-            "2017-07-06T12:34:56.789Z",
-            GetCalculationData.calculationDataSuccessModel.totalIncomeTaxNicYtd,
-            Estimate
-          )
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, lastTaxCalcResponse)
-
-        And("I wiremock stub a successful Get CalculationData response")
-        val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
-
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
-        val res = IncomeTaxViewChangeFrontend.getEstimates
-
-        verifyBizDeetsCall()
-        verifyPropDeetsCall()
-
-        Then("I verify the Estimated Tax Liability response has been wiremocked")
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYearPlusOne)
-
-        Then("The view should have the correct headings and a single tax estimate link")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.CalculationController.showCalculationForYear(2019).url)
-        )
+        }
       }
-    }
 
-    "isAuthorisedUser with an active enrolment, and no tax estimates" should {
-      "return the correct page with no estimates found message" in {
+      "isAuthorisedUser with an active enrolment, and multiple valid tax estimates" should {
+        "return the correct page with tax links" in {
 
-        isAuthorisedUser(true)
-        stubUserDetails()
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
+          appConfig.features.estimatesEnabled(true)
+          isAuthorisedUser(true)
+          stubUserDetails()
+          getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+          getPropDeets(GetPropertyDetails.successResponse())
 
-        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        val lastTaxCalcResponse =
-          LastTaxCalculation(
-            testCalcId,
-            "2017-07-06T12:34:56.789Z",
-            GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-            Crystallised
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          val lastTaxCalcResponse =
+            LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
+          val lastTaxCalcResponse2 =
+            LastTaxCalculation(testCalcId2, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessModel.totalIncomeTaxNicYtd, Estimate)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, lastTaxCalcResponse2)
+
+          And("I wiremock stub a successful Get CalculationData response")
+          val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
+          val res = IncomeTaxViewChangeFrontend.getEstimates
+
+          verifyBizDeetsCall()
+          verifyPropDeetsCall()
+
+          Then("I verify the Estimated Tax Liability response has been wiremocked")
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYearPlusOne)
+
+          Then("The view should have the correct headings and two tax estimate links")
+          res should have(
+            httpStatus(OK),
+            pageTitle("Current estimates"),
+            elementTextByID("view-estimates")("View your current estimates."),
+            elementTextByID(s"estimates-link-$testYearPlusOne")(s"Tax year: $testYear to $testYearPlusOne"),
+            elementTextByID(s"estimates-link-$testYear")(s"Tax year: 2017 to $testYear"),
+            nElementsWithClass("estimates-link")(2)
           )
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-
-        And("I wiremock stub a successful Get CalculationData response")
-        val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
-
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
-        val res = IncomeTaxViewChangeFrontend.getEstimates
-
-        verifyBizDeetsCall()
-        verifyPropDeetsCall()
-
-        Then("I verify the Estimated Tax Liability response has been wiremocked")
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-
-        Then("The view should have the correct headings and a single tax estimate link")
-        res should have(
-          httpStatus(OK),
-          pageTitle("Current estimates"),
-          elementTextByID("no-estimates")("You don't have an estimate right now. We'll show your next Income Tax estimate when you submit a report using software."),
-          nElementsWithClass("estimates-link")(0)
-        )
+        }
       }
-    }
 
-    "unauthorised" should {
+      "isAuthorisedUser with an active enrolment, with a crystallised calculation and a tax estimate" should {
+        "return the correct estimate page" in {
 
-      "redirect to sign in" in {
+          appConfig.features.estimatesEnabled(true)
+          isAuthorisedUser(true)
+          stubUserDetails()
+          getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+          getPropDeets(GetPropertyDetails.successResponse())
 
-        isAuthorisedUser(false)
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          val crystallisedLastTaxCalcResponse =
+            LastTaxCalculation(
+              testCalcId,
+              "2017-07-06T12:34:56.789Z",
+              GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
+              Crystallised
+            )
+          val lastTaxCalcResponse =
+            LastTaxCalculation(
+              testCalcId2,
+              "2017-07-06T12:34:56.789Z",
+              GetCalculationData.calculationDataSuccessModel.totalIncomeTaxNicYtd,
+              Estimate
+            )
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, lastTaxCalcResponse)
 
-        When("I call GET /report-quarterly/income-and-expenses/view/calculation")
-        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+          And("I wiremock stub a successful Get CalculationData response")
+          val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
 
-        Then("the http response for an unauthorised user is returned")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
+          val res = IncomeTaxViewChangeFrontend.getEstimates
+
+          verifyBizDeetsCall()
+          verifyPropDeetsCall()
+
+          Then("I verify the Estimated Tax Liability response has been wiremocked")
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYearPlusOne)
+
+          Then("The view should have the correct headings and a single tax estimate link")
+          res should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.CalculationController.showCalculationForYear(2019).url)
+          )
+        }
+      }
+
+      "isAuthorisedUser with an active enrolment, and no tax estimates" should {
+        "return the correct page with no estimates found message" in {
+
+          appConfig.features.estimatesEnabled(true)
+          isAuthorisedUser(true)
+          stubUserDetails()
+          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          val lastTaxCalcResponse =
+            LastTaxCalculation(
+              testCalcId,
+              "2017-07-06T12:34:56.789Z",
+              GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
+              Crystallised
+            )
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+
+          And("I wiremock stub a successful Get CalculationData response")
+          val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
+          val res = IncomeTaxViewChangeFrontend.getEstimates
+
+          verifyBizDeetsCall()
+          verifyPropDeetsCall()
+
+          Then("I verify the Estimated Tax Liability response has been wiremocked")
+          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+
+          Then("The view should have the correct headings and a single tax estimate link")
+          res should have(
+            httpStatus(OK),
+            pageTitle("Current estimates"),
+            elementTextByID("no-estimates")("You don't have an estimate right now. We'll show your next Income Tax estimate when you submit a report using software."),
+            nElementsWithClass("estimates-link")(0)
+          )
+        }
+      }
+
+      "unauthorised" should {
+
+        "redirect to sign in" in {
+
+          appConfig.features.estimatesEnabled(true)
+          isAuthorisedUser(false)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/calculation")
+          val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+
+          Then("the http response for an unauthorised user is returned")
+          res should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.SignInController.signIn().url)
+          )
+        }
       }
     }
   }

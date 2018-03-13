@@ -37,8 +37,6 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val itvcFrontendEnvironment: String = loadConfig("base.url")
   lazy val appName: String = loadConfig("appName")
 
-  lazy val itvcHomeUrl: String = "/" + baseUrl
-
   //Feedback Config
   private lazy val contactHost: String = loadConfig(s"contact-frontend.host")
   private lazy val contactFrontendService: String = baseUrl("contact-frontend")
