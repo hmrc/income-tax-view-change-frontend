@@ -25,6 +25,7 @@ import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import play.api.http.Status
 
 import scala.concurrent.Future
 
@@ -32,12 +33,12 @@ import scala.concurrent.Future
 class IncomeSourceDetailsConnector @Inject()(val http: HttpClient,
                                              val config: FrontendAppConfig) extends RawResponseReads {
 
-  private[connectors] lazy val getIncomeSourcesUrl: String => String = nino =>
-    s"${config.itvcProtectedService}/income-tax-view-change/income-sources/$nino"
+  private[connectors] lazy val getIncomeSourcesUrl: String => String = mtditid =>
+    s"${config.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"
 
-  def getIncomeSources(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
+  def getIncomeSources(mtditid: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
 
-    val url = getIncomeSourcesUrl(nino)
+    val url = getIncomeSourcesUrl(mtditid)
     Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - GET $url")
 
     http.GET[HttpResponse](url) map {
@@ -48,19 +49,19 @@ class IncomeSourceDetailsConnector @Inject()(val http: HttpClient,
             response.json.validate[IncomeSourceDetailsModel].fold(
               invalid => {
                 Logger.warn(s"[IncomeSourceDetailsConnector][getIncomeSources] - Json Validation Error. Parsing Latest Calc Response")
-                IncomeSourceDetailsError
+                IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
               },
               valid => valid
             )
           case _ =>
             Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
             Logger.warn(s"[IncomeSourceDetailsConnector][getIncomeSources] - Response status: [${response.status}] from Latest Calc call")
-            IncomeSourceDetailsError
+            IncomeSourceDetailsError(response.status, response.body)
         }
     } recover {
       case _ =>
         Logger.warn(s"[IncomeSourceDetailsConnector][getIncomeSources] - Unexpected future failed error")
-        IncomeSourceDetailsError
+        IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
 
   }

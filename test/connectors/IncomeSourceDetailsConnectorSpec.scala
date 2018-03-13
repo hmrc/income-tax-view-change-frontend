@@ -22,7 +22,7 @@ import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse
 import utils.TestSupport
 import assets.TestConstants.NewIncomeSourceDetails._
-import assets.TestConstants.testNino
+import assets.TestConstants.testMtditid
 import models.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 
 import scala.concurrent.Future
@@ -37,8 +37,8 @@ class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp {
 
   "IncomeSourceDetailsConnector.getIncomeSources" should {
 
-    lazy val testUrl = TestIncomeSourceDetailsConnector.getIncomeSourcesUrl(testNino)
-    def result: Future[IncomeSourceDetailsResponse] = TestIncomeSourceDetailsConnector.getIncomeSources(testNino)
+    lazy val testUrl = TestIncomeSourceDetailsConnector.getIncomeSourcesUrl(testMtditid)
+    def result: Future[IncomeSourceDetailsResponse] = TestIncomeSourceDetailsConnector.getIncomeSources(testMtditid)
 
     "return an IncomeSourceDetailsModel when successful JSON is received" in {
       setupMockHttpGet(testUrl)(successResponse)
@@ -47,17 +47,17 @@ class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp {
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
-      await(result) shouldBe IncomeSourceDetailsError
+      await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
     }
 
     "return IncomeSourceDetailsError model in case of failure" in {
       setupMockHttpGet(testUrl)(badResponse)
-      await(result) shouldBe IncomeSourceDetailsError
+      await(result) shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
     }
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe IncomeSourceDetailsError
+      await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
     }
   }
 
