@@ -48,7 +48,7 @@ class BusinessDetailsViewSpec extends TestSupport {
 
   "The Business Details view" when {
 
-    "passed a businesses without a cessation date" should {
+    "passed a business without a cessation date" should {
 
       val setup = pageSetup(NewBizDeets.business1)
       import setup._

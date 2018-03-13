@@ -76,7 +76,7 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val ninoIdentifierKey: String = loadConfig("enrolments.nino.identifier")
 
   //Business Tax Account
-  lazy val btaService: String = baseUrl("businesses-account")
+  lazy val btaService: String = baseUrl("business-account")
   lazy val businessTaxAccount: String = loadConfig("business-tax-account.url")
   lazy val btaManageAccountUrl: String = s"$businessTaxAccount/manage-account"
   lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"

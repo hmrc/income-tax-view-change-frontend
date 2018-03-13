@@ -36,9 +36,9 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
 
   "The IncomeSourceDetailsService.getIncomeSourceDetails method" when {
 
-    "a result with both businesses and property details is returned" should {
+    "a result with both business and property details is returned" should {
 
-      "return an IncomeSourceDetailsModel with businesses and property options" in {
+      "return an IncomeSourceDetailsModel with business and property options" in {
         setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.businessesAndPropertyIncome)
         setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
         setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId2)(obligationsDataSuccessModel)
@@ -48,8 +48,8 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
       }
     }
 
-    "a result with just businesses details is returned" should {
-      "return an IncomeSourceDetailsModel with just a businesses option" in {
+    "a result with just business details is returned" should {
+      "return an IncomeSourceDetailsModel with just a business option" in {
         setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.singleBusinessIncome)
         setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
 
