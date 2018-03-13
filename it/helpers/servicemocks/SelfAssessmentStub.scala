@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import helpers.{IntegrationTestConstants, WiremockHelper}
-import models.{BusinessDetailsModel, BusinessModel, ReportDeadlinesModel}
+import models.{BusinessDetailsModel, BusinessModel, CalculationDataErrorModel, ReportDeadlinesModel}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 
@@ -29,6 +29,7 @@ object SelfAssessmentStub {
   val propertyReportDeadlinesUrl: String => String = nino => s"/ni/$nino/uk-properties/obligations"
 
   //Income Source Details
+  //=====================
   def stubGetBusinessDetails(nino: String, businessDetails: JsValue) : Unit =
     WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetails.toString())
 
@@ -41,7 +42,15 @@ object SelfAssessmentStub {
   def stubGetNoPropertyDetails(nino: String) : Unit =
     WiremockHelper.stubGet(propertyDetailsUrl(nino), Status.NOT_FOUND, "{}")
 
+  def verifyGetBusinessDetails(nino: String): Unit =
+    WiremockHelper.verifyGetWithHeader(businessDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
+
+  def verifyGetPropertyDetails(nino: String): Unit =
+    WiremockHelper.verifyGetWithHeader(propertyDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
+
+
   //ReportDeadlines
+  //===============
   def stubGetBusinessReportDeadlines(nino: String, selfEmploymentId: String, business: ReportDeadlinesModel): Unit =
     WiremockHelper.stubGet(businessReportDeadlinesUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
 
@@ -54,18 +63,26 @@ object SelfAssessmentStub {
   def stubBusinessReportDeadlinesError(nino: String, selfEmploymentId: String): Unit =
     WiremockHelper.stubGet(businessReportDeadlinesUrl(nino, selfEmploymentId), Status.INTERNAL_SERVER_ERROR, "ISE")
 
-
-  // Verifications
   def verifyGetBusinessReportDeadlines(nino: String, selfEmploymentId: String): Unit =
     WiremockHelper.verifyGetWithHeader(businessReportDeadlinesUrl(nino, selfEmploymentId), "Accept", "application/vnd.hmrc.1.0+json")
 
   def verifyGetPropertyReportDeadlines(nino: String): Unit =
     WiremockHelper.verifyGetWithHeader(propertyReportDeadlinesUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
 
-  def verifyGetBusinessDetails(nino: String): Unit =
-    WiremockHelper.verifyGetWithHeader(businessDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
+  
+  // Calculation Breakdown Stubs
+  // ===========================
+  val calcUrl: (String,String) => String = (nino, taxCalculationId) => s"/ni/$nino/calculations/$taxCalculationId"
 
-  def verifyGetPropertyDetails(nino: String): Unit =
-    WiremockHelper.verifyGetWithHeader(propertyDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
+  def stubGetCalcData(nino: String, year: String, calc: String): Unit = {
+    WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, calc)
+  }
+
+  def stubGetCalcError(nino: String, year: String, error: CalculationDataErrorModel): Unit = {
+    WiremockHelper.stubGet(calcUrl(nino, year), Status.INTERNAL_SERVER_ERROR, Json.toJson(error).toString())
+  }
+
+  def verifyGetCalcData(nino: String, taxCalculationId: String): Unit =
+    WiremockHelper.verifyGet(calcUrl(nino, taxCalculationId))
 }
 

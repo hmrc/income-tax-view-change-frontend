@@ -46,7 +46,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+        SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
 
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
@@ -98,8 +98,8 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
+        SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+        SelfAssessmentStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
 
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
@@ -153,8 +153,8 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
+        SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+        SelfAssessmentStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
 
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
@@ -199,7 +199,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+        SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
 
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
