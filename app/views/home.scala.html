@@ -57,7 +57,7 @@
 
         <section class="divider--bottom">
             <p id="top-text" class="lede">@messages("home.text")</p>
-            <p>@accordionHelper("howToDoThis", messages("home.dropdown.text"), howToDoThis)</p>
+            <p>@accordionHelper("howToDoThis", "HomePage", messages("home.dropdown.text"), howToDoThis)</p>
         </section>
 
         <h1>
@@ -71,7 +71,7 @@
                 <div id="bills-section" class="column-one-half">
                     <h3 id="bills-heading" class="heading-small">@messages("home.bills.heading")</h3>
                     <p id="bills-text">@messages("home.bills.text")</p>
-                    <p><a id="bills-link" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
+                    <p><a id="bills-link" data-journey-click="HomePage:ClickLink:ViewYourBills" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
                 </div>
             }
 
@@ -79,7 +79,7 @@
                 <div id="deadlines-section" class="column-one-half">
                     <h3 id="deadlines-heading" class="heading-small">@messages("home.deadlines.heading")</h3>
                     <p id="deadlines-text">@messages("home.deadlines.text")</p>
-                    <p><a id="deadlines-link" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">@messages("home.deadlines.link")</a></p>
+                    <p><a id="deadlines-link" data-journey-click="HomePage:ClickLink:ViewYourDeadlines" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">@messages("home.deadlines.link")</a></p>
                 </div>
             }
 
@@ -87,7 +87,7 @@
                 <div id="accounts-section" class="column-one-half">
                     <h3 id="accounts-heading" class="heading-small">@messages("home.accounts.heading")</h3>
                     <p id="accounts-text">@messages("home.accounts.text")</p>
-                    <p><a id="accounts-link" href="@{controllers.routes.AccountDetailsController.getAccountDetails().url}">@messages("home.accounts.link")</a></p>
+                    <p><a id="accounts-link" data-journey-click="HomePage:ClickLink:CheckYourAccountDetails" href="@{controllers.routes.AccountDetailsController.getAccountDetails().url}">@messages("home.accounts.link")</a></p>
                 </div>
             }
 
@@ -95,7 +95,7 @@
                 <div id="statements-section" class="column-one-half">
                     <h3 id="statements-heading" class="heading-small">@messages("home.statements.heading")</h3>
                     <p id="statements-text">@messages("home.statements.text")</p>
-                    <p><a id="statements-link" href="@{controllers.routes.StatementsController.getStatements().url}">@messages("home.statements.link")</a></p>
+                    <p><a id="statements-link" data-journey-click="HomePage:ClickLink:ViewYourStatement" href="@{controllers.routes.StatementsController.getStatements().url}">@messages("home.statements.link")</a></p>
                 </div>
             }
 
@@ -103,7 +103,7 @@
                 <div id="estimates-section" class="column-one-half">
                     <h3 id="estimates-heading" class="heading-small">@messages("home.estimates.heading")</h3>
                     <p id="estimates-text">@messages("home.estimates.text")</p>
-                    <p><a id="estimates-link" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
+                    <p><a id="estimates-link" data-journey-click="clickFromHomePage:ClickLink:ViewYourEstimates" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
                 </div>
             }
 

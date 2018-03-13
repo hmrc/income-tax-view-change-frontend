@@ -1,8 +1,8 @@
 var open = false;
 
-function markAccordionOpen(label) {
+function markAccordionOpen(category, label) {
     if (!open) {
         open = true;
-        ga('send', 'event', 'itvc', 'openedAccordion', label);
+        ga('send', 'event', category, 'ExpandProgressiveDisclosure', label);
     }
 }

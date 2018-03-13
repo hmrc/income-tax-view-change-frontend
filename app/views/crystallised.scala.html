@@ -91,7 +91,7 @@
                         <h3 id="howCalculatedHeading" class="heading-medium">@messages("crystalisation.calc-breakdown.heading")</h3>
                         @calcBreakdown
                     } else {
-                        @accordionHelper("calcBreakdown", messages("crystalisation.calc-breakdown.heading"),calcBreakdown)
+                        @accordionHelper("calcBreakdown", s"BillFor${taxYear}Page", messages("crystalisation.calc-breakdown.heading"),calcBreakdown)
                     }
                 }
             </div>
@@ -101,7 +101,7 @@
 
         @if(appConfig.features.paymentEnabled() && !transactionModel.isPaid){
             <div class="form-group">
-                <a id="payment-button" href="@controllers.routes.PaymentController.paymentHandoff(calcModel.calcAmount.toPence).url" class="button">@messages("crystalisation.payNow")</a>
+                <a id="payment-button" data-journey-click="BillFor@{taxYear}Page:ClickLink:Pay" href="@controllers.routes.PaymentController.paymentHandoff(calcModel.calcAmount.toPence).url" class="button">@messages("crystalisation.payNow")</a>
             </div>
         }
         @if(appConfig.features.homePageEnabled()){
