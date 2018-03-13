@@ -92,8 +92,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
       }
     }
 
-    //TODO: Need to update this once the connector returns a model instead of a Case Object
-    "an error is returned from the Income Source Details connector" ignore {
+    "an error is returned from the Income Source Details connector" should {
       "return a BusinessDetailsErrorModel" in {
         setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.errorResponse)
 

@@ -628,7 +628,7 @@ object TestConstants extends ImplicitDateFormatter {
     val singleBusinessIncome = IncomeSourceDetailsModel(List(NewBizDeets.business1), None)
     val propertyIncomeOnly = IncomeSourceDetailsModel(List(), Some(NewPropDeets.propertyDetails))
     val noIncomeDetails = IncomeSourceDetailsModel(List(), None)
-    val errorResponse = IncomeSourceDetailsError
+    val errorResponse = IncomeSourceDetailsError(testErrorStatus, testErrorMessage)
   }
 
   object NewBizDeets {
