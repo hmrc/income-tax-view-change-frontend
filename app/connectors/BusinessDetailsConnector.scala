@@ -55,7 +55,7 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
             )
           case _ =>
             Logger.debug(s"[BusinessDetailsConnector][getBusinessList] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Status: [${response.status}] Returned from business details call")
+            Logger.warn(s"[BusinessDetailsConnector][getBusinessList] - Status: [${response.status}] Returned from businesses details call")
             BusinessDetailsErrorModel(response.status, response.body)
         }
     } recover {

@@ -18,7 +18,7 @@ package controllers
 
 import assets.Messages.{BtaPartial => messages}
 import assets.TestConstants.Estimates._
-import assets.TestConstants.IncomeSourceDetails._
+import assets.TestConstants.IncomeSources._
 import assets.TestConstants.ReportDeadlines._
 import assets.TestConstants._
 import config.FrontendAppConfig

@@ -47,7 +47,7 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp {
       await(result) shouldBe businessesSuccessModel
     }
 
-    "return a NoBusinessIncomeDetails case object when no business are returned" in {
+    "return a NoBusinessIncomeDetails case object when no businesses are returned" in {
       setupMockHttpGet(testUrl)(successNoBusiness)
       await(result) shouldBe noBusinessDetails
     }

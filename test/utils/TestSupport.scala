@@ -17,7 +17,7 @@
 package utils
 
 import assets.TestConstants
-import assets.TestConstants.IncomeSourceDetails
+import assets.TestConstants.IncomeSources
 import auth.MtdItUser
 import com.typesafe.config.Config
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
@@ -67,7 +67,7 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
           credentialRole = ""
         )
       ),
-    incomeSources = IncomeSourceDetails.bothIncomeSourcesSuccessBusinessAligned
+    incomeSources = IncomeSources.bothIncomeSourcesSuccessBusinessAligned
   )(FakeRequest())
 
   implicit val serviceInfo: Html = Html("")

@@ -20,17 +20,17 @@ import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.TestConstants.BusinessDetails.businessIncomeModelAlignedTaxYear
 import assets.TestConstants.PropertyIncome.propertyIncomeModel
+import assets.TestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import utils.TestSupport
-import assets.TestConstants._
-import models.{BusinessModel, IncomeSourcesModel}
+import models.{BizDeetsModel, IncomeSourcesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import utils.TestSupport
 
 class BusinessDetailsViewSpec extends TestSupport {
 
@@ -41,17 +41,16 @@ class BusinessDetailsViewSpec extends TestSupport {
   val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), None)
   val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List.empty, Some(propertyIncomeModel))
 
-  private def pageSetup(businessModel: BusinessModel) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.businessDetailsView(
-      businessModel)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser)
+  private def pageSetup(businessModel: BizDeetsModel) = new {
+    lazy val page: HtmlFormat.Appendable = views.html.businessDetailsView(businessModel)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
   "The Business Details view" when {
 
-    "passed a business without a cessation date" should {
+    "passed a businesses without a cessation date" should {
 
-      val setup = pageSetup(BusinessDetails.business1)
+      val setup = pageSetup(NewBizDeets.business1)
       import setup._
       val messages = Messages.BusinessDetails
       val business = BusinessDetails.business1
@@ -110,7 +109,7 @@ class BusinessDetailsViewSpec extends TestSupport {
 
     "passed a business with a cessation date" should {
 
-      val setup = pageSetup(BusinessDetails.ceasedBusiness)
+      val setup = pageSetup(NewBizDeets.ceasedBusiness)
       import setup._
       val messages = Messages.BusinessDetails
       val business = BusinessDetails.ceasedBusiness

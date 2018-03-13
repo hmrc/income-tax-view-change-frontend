@@ -37,14 +37,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.income-tax-view-change.port" -> mockPort,
     "microservice.services.self-assessment-api.host" -> mockHost,
     "microservice.services.self-assessment-api.port" -> mockPort,
-    "microservice.services.business-account.host" -> mockHost,
-    "microservice.services.business-account.port" -> mockPort,
+    "microservice.services.businesses-account.host" -> mockHost,
+    "microservice.services.businesses-account.port" -> mockPort,
     "microservice.services.financial-transactions.host" -> mockHost,
     "microservice.services.financial-transactions.port" -> mockPort
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
-  val btaPartialUrl = "/business-account/partial/service-info"
+  val btaPartialUrl = "/businesses-account/partial/service-info"
   val testUserDetailsWiremockUrl = mockUrl + userDetailsUrl
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()

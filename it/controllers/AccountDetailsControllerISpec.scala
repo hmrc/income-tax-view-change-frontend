@@ -24,7 +24,7 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
 
   "Calling the AccountDetailsController.getAccountDetails" when {
 
-    "isAuthorisedUser with an active enrolment and has at least 1 business and property" should {
+    "isAuthorisedUser with an active enrolment and has at least 1 businesses and property" should {
 
       "return the correct page with a valid total" in {
         isAuthorisedUser(true)
@@ -45,7 +45,7 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
           pageTitle("Account details"),
           elementTextByID(id = "page-heading")("Account details"),
           elementTextByID(id = "your-businesses")("Your businesses"),
-          elementTextByID(id = "business-link-1")("business"),
+          elementTextByID(id = "businesses-link-1")("businesses"),
           elementTextByID(id = "your-properties")("Your properties"),
           elementTextByID(id = "reporting-period")("Reporting period: 6 April - 5 April")
         )

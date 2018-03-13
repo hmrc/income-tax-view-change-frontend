@@ -22,10 +22,11 @@ sealed trait IncomeSourceDetailsResponse
 
 case object IncomeSourceDetailsError extends IncomeSourceDetailsResponse
 
-case class IncomeSourceDetailsModel(
-                                   business: List[BizDeetsModel],
-                                   property: Option[PropDeetsModel]
-                                   ) extends IncomeSourceDetailsResponse
+case class IncomeSourceDetailsModel(businesses: List[BizDeetsModel],
+                                    property: Option[PropDeetsModel]) extends IncomeSourceDetailsResponse {
+
+  val sortedBusinesses: List[(BizDeetsModel, Int)] = businesses.sortBy(_.incomeSourceId.substring(4)).zipWithIndex
+}
 
 object IncomeSourceDetailsModel {
   implicit val format: OFormat[IncomeSourceDetailsModel] = Json.format[IncomeSourceDetailsModel]

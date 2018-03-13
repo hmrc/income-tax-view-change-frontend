@@ -56,7 +56,7 @@ class BusinessReportDeadlinesConnector @Inject()(val http: HttpClient,
           case _ =>
             Logger.debug(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - RESPONSE status: ${response.status}, body: ${response.body}")
             Logger.warn(
-              s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - Status: [${response.status}] Returned from business report deadlines call")
+              s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - Status: [${response.status}] Returned from businesses report deadlines call")
             ReportDeadlinesErrorModel(response.status, response.body)
         }
     } recover {

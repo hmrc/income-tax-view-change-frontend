@@ -16,6 +16,7 @@
 
 package assets
 
+import assets.TestConstants.BusinessDetails.{testBusinessAccountingPeriod, testTradeName}
 import auth.{MtdItUser, MtdItUserOptionNino}
 import enums.{Crystallised, Estimate}
 import models._
@@ -37,10 +38,11 @@ object TestConstants extends ImplicitDateFormatter {
   val testUserDetailsUrl = "/user/oid/potato"
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
   lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None)(FakeRequest())
-  lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
-  lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
+  lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
+  lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   val testSelfEmploymentId  = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
+  val testPropertyIncomeId = "XA00009901"
   val testTaxCalculationId = "CALCID"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
@@ -607,7 +609,7 @@ object TestConstants extends ImplicitDateFormatter {
     val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, testYear)
   }
 
-  object IncomeSourceDetails {
+  object IncomeSources {
 
     //Outputs
     val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesModel(List(BusinessDetails.businessIncomeModel, BusinessDetails.businessIncomeModel2), Some(PropertyIncome.propertyIncomeModel))
@@ -622,6 +624,11 @@ object TestConstants extends ImplicitDateFormatter {
 
   object NewIncomeSourceDetails {
     val incomeSourceDetails = IncomeSourceDetailsModel(List(NewBizDeets.businessIncomeSourceSuccess), None)
+    val businessesAndPropertyIncome = IncomeSourceDetailsModel(List(NewBizDeets.business1, NewBizDeets.business2), Some(NewPropDeets.propertyDetails))
+    val singleBusinessIncome = IncomeSourceDetailsModel(List(NewBizDeets.business1), None)
+    val propertyIncomeOnly = IncomeSourceDetailsModel(List(), Some(NewPropDeets.propertyDetails))
+    val noIncomeDetails = IncomeSourceDetailsModel(List(), None)
+    val errorResponse = IncomeSourceDetailsError
   }
 
   object NewBizDeets {
@@ -629,7 +636,14 @@ object TestConstants extends ImplicitDateFormatter {
     val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = "2017-3-5", end = "2018-3-6")
     val testTradeName = "business"
     val testTradeName2 = "business"
-    val testBizAddress = AddressModel("Some Road", None, None, None, None, "Somewhere")
+    val testBizAddress = AddressModel(
+      addressLine1 = "64 Zoo Lane",
+      addressLine2 = Some("Happy Place"),
+      addressLine3 = Some("Magical Land"),
+      addressLine4 = Some("England"),
+      postCode = Some("ZL1 064"),
+      countryCode = "UK"
+    )
     val testContactDetails = ContactDetailsModel(Some("123456789"),Some("0123456789"),Some("8008135"),Some("google@chuckNorris.com"))
     val testCessation = CessationModel(Some("2018-1-1".toLocalDate), Some("It was a stupid idea anyway"))
 
@@ -645,10 +659,68 @@ object TestConstants extends ImplicitDateFormatter {
       cessation = Some(testCessation),
       paperless = Some(true)
     )
+
+    val business1 = BizDeetsModel(
+      incomeSourceId = testSelfEmploymentId,
+      accountingPeriod = testBusinessAccountingPeriod,
+      cashOrAccruals = Some("CASH"),
+      tradingStartDate = Some("2017-1-1"),
+      cessation = None,
+      tradingName = Some(testTradeName),
+      address = Some(testBizAddress),
+      contactDetails = None,
+      seasonal = None,
+      paperless = None
+    )
+
+
+    val business2 = BizDeetsModel(
+      incomeSourceId = testSelfEmploymentId2,
+      accountingPeriod = testBusinessAccountingPeriod,
+      cashOrAccruals = Some("CASH"),
+      tradingStartDate = Some("2017-1-1"),
+      cessation = None,
+      tradingName = Some(testTradeName2),
+      address = Some(testBizAddress),
+      contactDetails = None,
+      seasonal = None,
+      paperless = None
+    )
+
+    val ceasedBusiness = BizDeetsModel(
+      incomeSourceId = testSelfEmploymentId,
+      accountingPeriod = testBusinessAccountingPeriod,
+      cashOrAccruals = Some("CASH"),
+      tradingStartDate = Some("2017-1-1"),
+      cessation = Some(CessationModel(
+        date = Some("2018-5-30"),
+        reason = Some("It was a really, really bad idea")
+      )),
+      tradingName = Some(testTradeName),
+      address = Some(testBizAddress),
+      contactDetails = None,
+      seasonal = None,
+      paperless = None
+    )
   }
 
   object NewPropDeets {
 
+    val testPropertyAccountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05")
+
+    val propertyDetails = PropDeetsModel(
+      incomeSourceId = testPropertyIncomeId,
+      accountingPeriod = testPropertyAccountingPeriod,
+      propertiesRented = Some(PropertiesRentedModel(
+        uk = Some(2),
+        eea = None,
+        nonEea = None,
+        total = Some(2)
+      )),
+      cessation = None,
+      contactDetails = None,
+      paperless = None
+    )
   }
 
   object CalcBreakdown {

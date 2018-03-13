@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import assets.TestConstants.{IncomeSourceDetails, testNino}
+import assets.TestConstants.{IncomeSources, testNino, testMtditid}
 import models._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
@@ -37,20 +37,23 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
     reset(mockIncomeSourceDetailsService)
   }
 
-  def setupMockGetIncomeSourceDetails(nino: String)(sources: IncomeSourcesResponseModel): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any())).thenReturn(Future.successful(sources))
-  }
-
-  def setupMockGetBusinessDetails(nino: String, id: Int)(sources: Either[BusinessDetailsErrorModel, Option[(BusinessModel, Int)]]): Unit = {
-    when(mockIncomeSourceDetailsService.getBusinessDetails(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(id))(ArgumentMatchers.any()))
+  def setupMockGetIncomeSourceDetails(mtditid: String, nino: String)(sources: IncomeSourcesResponseModel): Unit = {
+    when(
+      mockIncomeSourceDetailsService.getIncomeSourceDetails(ArgumentMatchers.eq(mtditid), ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(sources))
   }
 
-  def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
-  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.propertyIncomeSourceSuccess)
-  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
-  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.noIncomeSourceSuccess)
-  def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourcesSuccessBusinessAligned)
-  def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesError)
+  def setupMockGetBusinessDetails(mtditid: String, id: Int)(sources: Either[BusinessDetailsErrorModel, Option[(BizDeetsModel, Int)]]): Unit = {
+    when(mockIncomeSourceDetailsService.getBusinessDetails(ArgumentMatchers.eq(mtditid), ArgumentMatchers.eq(id))(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(sources))
+  }
+
+  def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.businessIncomeSourceSuccess)
+  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.propertyIncomeSourceSuccess)
+  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)
+  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.noIncomeSourceSuccess)
+  def mockBothIncomeSourcesBusinessAligned(): Unit =
+    setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.bothIncomeSourcesSuccessBusinessAligned)
+  def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesError)
 
 }

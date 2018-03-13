@@ -31,7 +31,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
     "isAuthorisedUser with na active enrolment" which {
 
-      "has a combination of Received business and property obligations with met = true" should {
+      "has a combination of Received businesses and property obligations with met = true" should {
 
         "display the bta partial with the correct information" in {
 
@@ -44,7 +44,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
-          And("I wiremock stub a single business obligation response")
+          And("I wiremock stub a single businesses obligation response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a single property obligation response")
@@ -86,7 +86,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
         }
       }
 
-      "has a combination of Received business and property obligations with met = false" should {
+      "has a combination of Received businesses and property obligations with met = false" should {
 
         "display the bta partial with the correct information" in {
 
@@ -191,7 +191,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
         }
       }
 
-      "has multiple businesses where the second business has an overdue obligation" should {
+      "has multiple businesses where the second businesses has an overdue obligation" should {
 
         "display the bta partial with the correct information" in {
 
@@ -205,7 +205,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
-          And("I wiremock stub a single business obligation response for each business")
+          And("I wiremock stub a single businesses obligation response for each businesses")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId, singleObligationOverdueModel)
 
@@ -263,7 +263,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           And("I wiremock stub a successful Property Details response")
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
 
-          And("I wiremock stub a successful business obligations response")
+          And("I wiremock stub a successful businesses obligations response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
@@ -314,7 +314,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           And("I wiremock stub no Property Details response")
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
 
-          And("I wiremock stub an error for business obligations response")
+          And("I wiremock stub an error for businesses obligations response")
           SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
 
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
@@ -363,7 +363,7 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           And("I wiremock stub no Property Details response")
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
 
-          And("I wiremock stub an error for business obligations response")
+          And("I wiremock stub an error for businesses obligations response")
           SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
 
           When("I call GET /report-quarterly/income-and-expenses/view/partial")

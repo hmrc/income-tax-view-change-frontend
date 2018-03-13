@@ -48,7 +48,7 @@ class SidebarHelperSpec extends TestSupport {
 
           "render a Future Tax Years section" which {
 
-            lazy val page = html(EstimatesPage, testMtdItUser, Some(2018), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
+            lazy val page = html(EstimatesPage, testMtdItUser, Some(2018), IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)
             lazy val document = Jsoup.parse(page.body)
 
             s"has a h3 heading '${messages.estimatesHeading}'" in {
@@ -69,7 +69,7 @@ class SidebarHelperSpec extends TestSupport {
 
           "render a Previous Tax Years section" which {
 
-            lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
+            lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)
             lazy val document = Jsoup.parse(page.body)
 
             s"has a h3 heading '${messages.previousTaxYearsHeading}'" in {
@@ -94,7 +94,7 @@ class SidebarHelperSpec extends TestSupport {
 
           "render a Previous Tax Years section" which {
 
-            lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
+            lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)
             lazy val document = Jsoup.parse(page.body)
 
             s"has a h3 heading '${messages.previousTaxYearsHeading}'" in {
@@ -131,7 +131,7 @@ class SidebarHelperSpec extends TestSupport {
 
         "render a Previous Tax Years section" which {
 
-          lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
+          lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)
           lazy val document = Jsoup.parse(page.body)
 
           s"has a h3 heading '${messages.previousTaxYearsHeading}'" in {
@@ -154,7 +154,7 @@ class SidebarHelperSpec extends TestSupport {
 
       "being viewed for any tax year has a link to view ReportDeadlines" should {
 
-        lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
+        lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)
         lazy val document = Jsoup.parse(page.body)
 
         s"has a h3 heading '${messages.reportsHeading}'" in {
@@ -181,7 +181,7 @@ class SidebarHelperSpec extends TestSupport {
 
           "render an Estimates section" which {
 
-            lazy val page = html(ReportDeadlinesPage, testMtdItUser, None, IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
+            lazy val page = html(ReportDeadlinesPage, testMtdItUser, None, IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)
             lazy val document = Jsoup.parse(page.body)
 
             s"has a h3 heading '${messages.estimatesHeading}'" in {
@@ -213,7 +213,7 @@ class SidebarHelperSpec extends TestSupport {
 
           "render a Previous Tax Years section" which {
 
-            lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
+            lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)
             lazy val document = Jsoup.parse(page.body)
 
             s"has a h3 heading '${messages.previousTaxYearsHeading}'" in {
@@ -238,7 +238,7 @@ class SidebarHelperSpec extends TestSupport {
 
         "render an Estimates section" which {
 
-          lazy val page = html(ReportDeadlinesPage, testMtdItUser, None, IncomeSourceDetails.propertyIncomeSourceSuccess)
+          lazy val page = html(ReportDeadlinesPage, testMtdItUser, None, IncomeSources.propertyIncomeSourceSuccess)
           lazy val document = Jsoup.parse(page.body)
 
           s"has a h3 heading '${messages.estimatesHeading}'" in {
@@ -259,7 +259,7 @@ class SidebarHelperSpec extends TestSupport {
 
         "render a Previous Tax Years section" which {
 
-          lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
+          lazy val page = html(EstimatesPage, testMtdItUser, Some(2019), IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)
           lazy val document = Jsoup.parse(page.body)
 
           s"has a h3 heading '${messages.previousTaxYearsHeading}'" in {
@@ -284,7 +284,7 @@ class SidebarHelperSpec extends TestSupport {
 
       "have a Income Tax Reference section on obligations page" which {
 
-        lazy val page = html(ReportDeadlinesPage, testMtdItUser, None, IncomeSourceDetails.propertyIncomeSourceSuccess)
+        lazy val page = html(ReportDeadlinesPage, testMtdItUser, None, IncomeSources.propertyIncomeSourceSuccess)
         lazy val document = Jsoup.parse(page.body)
 
         s"has the h3 heading '${messages.mtditidHeading}'" in {
@@ -299,7 +299,7 @@ class SidebarHelperSpec extends TestSupport {
 
       "have a Income Tax Reference section on Estimates page" which {
 
-        lazy val page = html(EstimatesPage, testMtdItUser, None, IncomeSourceDetails.propertyIncomeSourceSuccess)
+        lazy val page = html(EstimatesPage, testMtdItUser, None, IncomeSources.propertyIncomeSourceSuccess)
         lazy val document = Jsoup.parse(page.body)
 
         s"has the h3 heading '${messages.mtditidHeading}'" in {

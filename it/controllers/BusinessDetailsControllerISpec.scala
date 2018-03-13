@@ -24,7 +24,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
 
   "Calling the BusinessDetailsController.getBusinessDetails" when {
 
-    "isAuthorisedUser with an active enrolment and has at least 1 business" should {
+    "isAuthorisedUser with an active enrolment and has at least 1 businesses" should {
 
       "return the correct page with a valid total" in {
         isAuthorisedUser(true)
@@ -32,7 +32,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When("I call GET /report-quarterly/income-and-expenses/view/business-details")
+        When("I call GET /report-quarterly/income-and-expenses/view/businesses-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
         verifyBizDeetsCall()
@@ -42,20 +42,20 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         Then("the view displays the correct title, username and links")
         res should have(
           httpStatus(OK),
-          pageTitle("business"),
+          pageTitle("businesses"),
           elementTextByID(id = "reporting-period")("Reporting period: 1 January - 31 December"),
-          elementTextByID(id = "cessation-date")("This business ceased trading on 31 December 2017."),
+          elementTextByID(id = "cessation-date")("This businesses ceased trading on 31 December 2017."),
           elementTextByID(id = "address-details")("Address and contact details"),
           elementTextByID(id = "trading-name")("Trading name"),
-          elementTextByID(id = "trading-name-business")("business"),
-          elementTextByID(id = "business-address")("Business address"),
+          elementTextByID(id = "trading-name-businesses")("businesses"),
+          elementTextByID(id = "businesses-address")("Business address"),
           elementTextByID(id = "address-line-1")("64 Zoo Lane"),
           elementTextByID(id = "address-line-2")("Happy Place"),
           elementTextByID(id = "address-line-3")("Magical Land"),
           elementTextByID(id = "address-line-4")("England"),
           elementTextByID(id = "address-line-5")("ZL1 064"),
           elementTextByID(id = "additional-information")("Additional information"),
-          elementTextByID(id = "accounting-method")("This business uses the cash accounting method.")
+          elementTextByID(id = "accounting-method")("This businesses uses the cash accounting method.")
         )
       }
     }
@@ -68,7 +68,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         getBizDeets(GetBusinessDetails.emptyBusinessDetailsResponse())
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When("I call GET /report-quarterly/income-and-expenses/view/business-details")
+        When("I call GET /report-quarterly/income-and-expenses/view/businesses-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
         verifyBizDeetsCall()
@@ -90,7 +90,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         getBizDeets(GetBusinessDetails.failureResponse("500","ISE"))
         getPropDeets(GetPropertyDetails.successResponse())
 
-        When("I call GET /report-quarterly/income-and-expenses/view/business-details")
+        When("I call GET /report-quarterly/income-and-expenses/view/businesses-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
         verifyBizDeetsCall()
@@ -110,7 +110,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
 
         isAuthorisedUser(false)
 
-        When("I call GET /report-quarterly/income-and-expenses/view/business-details")
+        When("I call GET /report-quarterly/income-and-expenses/view/businesses-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
         Then("the http response for an unauthorised user is returned")

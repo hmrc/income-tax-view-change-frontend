@@ -51,7 +51,7 @@ class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPr
         "return Status OK (200)" in {
           TestAccountDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.businessIncomeSourceSuccess)
           status(result) shouldBe Status.OK
         }
 

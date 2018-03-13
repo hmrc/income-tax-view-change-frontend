@@ -33,7 +33,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
     "isAuthorisedUser with an active enrolment" which {
 
-      "has a single business obligation" should {
+      "has a single businesses obligation" should {
 
         "display a single obligation with the correct dates and status" in {
 
@@ -42,7 +42,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
           getPropDeets(GetPropertyDetails.successResponse())
 
-          And("I wiremock stub a single business obligation response")
+          And("I wiremock stub a single businesses obligation response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
@@ -65,7 +65,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             nElementsWithClass("obligation")(1)
           )
 
-          Then("the single business obligation data is")
+          Then("the single businesses obligation data is")
           res should have(
             //Check the 1st obligation data
             elementTextByID(id = "bi-1-ob-1-start")("6 April 2017"),
@@ -80,9 +80,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
       }
 
-      "has multiple business obligations" should {
+      "has multiple businesses obligations" should {
 
-        "has business and property with multiple obligations for both" should {
+        "has businesses and property with multiple obligations for both" should {
 
           "display a single obligation with the correct dates and status" in {
 
@@ -91,7 +91,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
             getPropDeets(GetPropertyDetails.successResponse())
 
-            And("I wiremock stub a single property and business obligation response")
+            And("I wiremock stub a single property and businesses obligation response")
             // SelfAssessmentStub.stubGetReportDeadlines(testNino,testSelfEmploymentId,multipleReceivedOpenReportDeadlinesModel,multipleReceivedOpenReportDeadlinesModel)
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
             SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReceivedOpenReportDeadlinesModel)
@@ -107,39 +107,39 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               elementTextByID(id = "sa-link")("View annual returns")
             )
 
-            Then("the page displays four business obligations and four property obligations")
+            Then("the page displays four businesses obligations and four property obligations")
             res should have(
               nElementsWithClass("obligation")(10)
             )
 
-            Then("the first business obligation displayed is")
+            Then("the first businesses obligation displayed is")
             res should have(
               elementTextByID(id = "bi-1-ob-1-start")("1 October 2016"),
               elementTextByID(id = "bi-1-ob-1-end")("31 December 2016"),
               elementTextByID(id = "bi-1-ob-1-status")("Received")
             )
 
-            Then("the second business obligation displayed is")
+            Then("the second businesses obligation displayed is")
             res should have(
               elementTextByID(id = "bi-1-ob-2-start")("1 January 2017"),
               elementTextByID(id = "bi-1-ob-2-end")("31 March 2017"),
               elementTextByID(id = "bi-1-ob-2-status")("Overdue")
             )
 
-            Then("the third business obligation displayed is")
+            Then("the third businesses obligation displayed is")
             res should have(
               elementTextByID(id = "bi-1-ob-3-start")("1 April 2017"),
               elementTextByID(id = "bi-1-ob-3-end")("30 June 2017"),
               elementTextByID(id = "bi-1-ob-3-status")("Overdue")
             )
 
-            Then("the fourth business obligation displayed is")
+            Then("the fourth businesses obligation displayed is")
             res should have(
               elementTextByID(id = "bi-1-ob-4-eops")("Whole tax year (final check)"),
               elementTextByID(id = "bi-1-ob-4-status")("Overdue")
             )
 
-            Then("the fifth business obligation displayed is")
+            Then("the fifth businesses obligation displayed is")
             res should have(
               elementTextByID(id = "bi-1-ob-5-start")("1 July 2017"),
               elementTextByID(id = "bi-1-ob-5-end")("30 September 2017"),
@@ -167,7 +167,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               elementTextByID(id = "pi-ob-3-status")("Overdue")
             )
 
-            Then("the fourth business obligation displayed is")
+            Then("the fourth businesses obligation displayed is")
             res should have(
               elementTextByID(id = "pi-ob-4-eops")("Whole tax year (final check)"),
               elementTextByID(id = "pi-ob-4-status")("Overdue")
@@ -180,7 +180,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               elementTextByID(id = "pi-ob-5-status")("Due by " + LocalDate.now().plusDays(30).toLongDate)
             )
 
-            Then("the sixth property and business obligation data are not displayed")
+            Then("the sixth property and businesses obligation data are not displayed")
             res should have(
               isElementVisibleById("pi-ob-6-status")(false),
               isElementVisibleById("bi-1-ob-6-status")(false)
@@ -199,7 +199,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
           getPropDeets(GetPropertyDetails.successResponse())
 
-          And("I wiremock stub multiple business obligations response")
+          And("I wiremock stub multiple businesses obligations response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
           SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReportDeadlinesDataSuccessModel)
 
@@ -221,20 +221,20 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             nElementsWithClass("obligation")(6)
           )
 
-          Then("the first business obligation displayed is")
+          Then("the first businesses obligation displayed is")
           res should have(
             elementTextByID(id = "bi-1-ob-1-start")("6 April 2017"),
             elementTextByID(id = "bi-1-ob-1-end")("5 July 2017"),
             elementTextByID(id = "bi-1-ob-1-status")("Received")
           )
-          Then("the second business obligation displayed is")
+          Then("the second businesses obligation displayed is")
           res should have(
             elementTextByID(id = "bi-1-ob-2-start")("6 October 2017"),
             elementTextByID(id = "bi-1-ob-2-end")("5 January 2018"),
             elementTextByID(id = "bi-1-ob-2-status")("Overdue")
           )
 
-          Then("the third business obligation displayed is")
+          Then("the third businesses obligation displayed is")
           res should have(
             elementTextByID(id = "bi-1-ob-3-start")("6 July 2017"),
             elementTextByID(id = "bi-1-ob-3-end")("5 October 2017"),
@@ -265,7 +265,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
       }
 
-      "has multiple received and open business obligations" should {
+      "has multiple received and open businesses obligations" should {
 
         "display only one of each received and open obligations and all overdue obligations" in {
 
@@ -274,7 +274,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
           getPropDeets(GetPropertyDetails.successResponse())
 
-          And("I wiremock stub multiple business obligations response")
+          And("I wiremock stub multiple businesses obligations response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
           SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReceivedOpenReportDeadlinesModel)
 
@@ -296,21 +296,21 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             nElementsWithClass("obligation")(10)
           )
 
-          Then("first business obligation displayed is")
+          Then("first businesses obligation displayed is")
           res should have(
             elementTextByID(id = "bi-1-ob-1-start")("1 October 2016"),
             elementTextByID(id = "bi-1-ob-1-end")("31 December 2016"),
             elementTextByID(id = "bi-1-ob-1-status")("Received")
           )
 
-          Then("second business obligation displayed is")
+          Then("second businesses obligation displayed is")
           res should have(
             elementTextByID(id = "bi-1-ob-2-start")("1 January 2017"),
             elementTextByID(id = "bi-1-ob-2-end")("31 March 2017"),
             elementTextByID(id = "bi-1-ob-2-status")("Overdue")
           )
 
-          Then("third business obligation displayed is")
+          Then("third businesses obligation displayed is")
           res should have(
             elementTextByID(id = "bi-1-ob-3-start")("1 April 2017"),
             elementTextByID(id = "bi-1-ob-3-end")("30 June 2017"),
@@ -318,14 +318,14 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           )
 
 
-          Then("the fourth business obligation displayed is")
+          Then("the fourth businesses obligation displayed is")
           res should have(
             elementTextByID(id = "bi-1-ob-4-eops")("Whole tax year (final check)"),
             elementTextByID(id = "bi-1-ob-4-status")("Overdue")
           )
 
 
-          Then("Fifth business obligation displayed is")
+          Then("Fifth businesses obligation displayed is")
           res should have(
             elementTextByID(id = "bi-1-ob-5-start")("1 July 2017"),
             elementTextByID(id = "bi-1-ob-5-end")("30 September 2017"),
@@ -353,7 +353,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             elementTextByID(id = "pi-ob-3-status")("Overdue")
           )
 
-          Then("the fourth business obligation displayed is")
+          Then("the fourth businesses obligation displayed is")
           res should have(
             elementTextByID(id = "pi-ob-4-eops")("Whole tax year (final check)"),
             elementTextByID(id = "pi-ob-4-status")("Overdue")
@@ -378,7 +378,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           getBizDeets()
           getPropDeets(GetPropertyDetails.successResponse())
 
-          And("I wiremock stub a single business obligation response")
+          And("I wiremock stub a single businesses obligation response")
           SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, singleReportDeadlinesDataSuccessModel)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
@@ -515,7 +515,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             elementTextByID(id = "pi-ob-3-status")("Overdue")
           )
 
-          Then("the fourth business obligation displayed is")
+          Then("the fourth businesses obligation displayed is")
           res should have(
             elementTextByID(id = "pi-ob-4-eops")("Whole tax year (final check)"),
             elementTextByID(id = "pi-ob-4-status")("Overdue")
@@ -530,16 +530,16 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
       }
 
-      "has business and property obligations" should {
+      "has businesses and property obligations" should {
 
-        "display one obligation each for business and property with the correct dates and statuses" in {
+        "display one obligation each for businesses and property with the correct dates and statuses" in {
 
           isAuthorisedUser(true)
           stubUserDetailsError()
           getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
           getPropDeets(GetPropertyDetails.successResponse())
 
-          And("I wiremock stub a single business and property obligation response")
+          And("I wiremock stub a single businesses and property obligation response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
           SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, singleReportDeadlinesDataSuccessModel)
 
@@ -561,7 +561,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             nElementsWithClass("obligation")(2)
           )
 
-          Then("the single business obligation")
+          Then("the single businesses obligation")
           res should have(
             elementTextByID(id = "bi-1-ob-1-start")("6 April 2017"),
             elementTextByID(id = "bi-1-ob-1-end")("5 July 2017"),
@@ -588,7 +588,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           And("I wiremock stub a successful Property Details response")
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
 
-          And("I wiremock stub a single business obligation response for each business")
+          And("I wiremock stub a single businesses obligation response for each businesses")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
@@ -612,7 +612,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             nElementsWithClass("obligation")(2)
           )
 
-          Then("the first business obligation data is")
+          Then("the first businesses obligation data is")
           res should have(
             //Check the 1st obligation data
             elementTextByID(id = "bi-1-ob-1-start")("6 April 2017"),
@@ -620,7 +620,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             elementTextByID(id = "bi-1-ob-1-status")("Received")
           )
 
-          Then("the second business obligation data is")
+          Then("the second businesses obligation data is")
           res should have(
             //Check the 1st obligation data
             elementTextByID(id = "bi-2-ob-1-start")("6 April 2017"),
@@ -646,7 +646,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
           getPropDeets(GetPropertyDetails.successResponse())
 
-          And("I wiremock stub multiple business obligations and a single property obligation response")
+          And("I wiremock stub multiple businesses obligations and a single property obligation response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, otherTestSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
           SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, singleReportDeadlinesDataSuccessModel)
@@ -671,7 +671,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             nElementsWithClass("obligation")(7)
           )
 
-          Then("the first business obligation data is")
+          Then("the first businesses obligation data is")
           res should have(
             elementTextByID(id = "bi-1-ob-1-start")("6 April 2017"),
             elementTextByID(id = "bi-1-ob-1-end")("5 July 2017"),
@@ -684,7 +684,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             elementTextByID(id = "bi-1-ob-2-status")("Overdue")
           )
 
-          Then("the second business obligation data is")
+          Then("the second businesses obligation data is")
           res should have(
             elementTextByID(id = "bi-2-ob-1-start")("6 April 2017"),
             elementTextByID(id = "bi-2-ob-1-end")("5 July 2017"),
@@ -708,7 +708,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
       }
 
-      "has business income but returns an error response from business obligations" should {
+      "has businesses income but returns an error response from businesses obligations" should {
 
         "Display an error message to the user" in {
 
@@ -719,7 +719,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           And("I wiremock stub a successful Property Details response, with no Property Income Source")
           SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
 
-          And("I wiremock stub an error for the business obligations response")
+          And("I wiremock stub an error for the businesses obligations response")
           SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")
@@ -729,11 +729,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           verifyPropDeetsCall()
           verifyBizObsCall(testSelfEmploymentId)
 
-          Then("the view is displayed with an error message under the business income section")
+          Then("the view is displayed with an error message under the businesses income section")
           res should have(
             httpStatus(OK),
             pageTitle("Your Income Tax report deadlines"),
-            elementTextByID(id = "bi-1-section")("business"),
+            elementTextByID(id = "bi-1-section")("businesses"),
             elementTextByID(id = "bi-1-p1")("We can't display your next report due date at the moment."),
             elementTextByID(id = "bi-1-p2")("Try refreshing the page in a few minutes.")
           )
@@ -770,7 +770,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
       }
 
-      "has both property income and business income but both return error responses when retrieving obligations" should {
+      "has both property income and businesses income but both return error responses when retrieving obligations" should {
 
         "Display an error message to the user" in {
 
@@ -782,7 +782,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           And("I wiremock stub an error for the property obligations response")
           SelfAssessmentStub.stubPropertyReportDeadlinesError(testNino)
 
-          And("I wiremock stub an error for the business obligations response")
+          And("I wiremock stub an error for the businesses obligations response")
           SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")

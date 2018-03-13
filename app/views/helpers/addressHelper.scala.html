@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import models.BusinessListResponseModel
+@import models.AddressModel
 
-@(model: BusinessModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(address: AddressModel)(implicit request: Request[_], messages: Messages)
 
-@defining(List(model.businessAddressLineOne, model.businessAddressLineTwo, model.businessAddressLineThree, model.businessAddressLineFour, model.businessPostcode).flatten) { addressLines =>
+@defining(List(Option(address.addressLine1), address.addressLine2, address.addressLine3, address.addressLine4, address.postCode).flatten) { addressLines =>
 
     <dt id="business-address" class="cya-question">
         @messages("business.businessAddress")

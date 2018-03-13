@@ -110,7 +110,7 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
         getPropDeets(GetPropertyDetails.successResponse())
 
-        And("I wiremock stub a single business obligation response")
+        And("I wiremock stub a single businesses obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")
@@ -136,7 +136,7 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
         getPropDeets(GetPropertyDetails.successResponse())
 
-        And("I wiremock stub a single business obligation response")
+        And("I wiremock stub a single businesses obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")

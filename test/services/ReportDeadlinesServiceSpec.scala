@@ -33,7 +33,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockBusinessReportDead
 
   "The ReportDeadlinesService.getNextObligation method" when {
 
-    "a successful single business" which {
+    "a successful single businesses" which {
 
       "has a valid list of obligations and EOPS returned from the connector" should {
 

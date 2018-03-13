@@ -48,7 +48,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
   val testSelfEmploymentId = "ABC123456789"
   val otherTestSelfEmploymentId = "ABC123456780"
 
-  val testTradeName = "business"
+  val testTradeName = "businesses"
 
   object GetCalculationData {
 
@@ -671,8 +671,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "accountingType":"CASH",
               "commencementDate":"2017-01-01",
               "cessationDate":"2017-12-31",
-              "tradingName":"business",
-              "businessDescription":"a business",
+              "tradingName":"businesses",
+              "businessDescription":"a businesses",
               "businessAddressLineOne":"64 Zoo Lane",
               "businessAddressLineTwo":"Happy Place",
               "businessAddressLineThree":"Magical Land",
@@ -692,8 +692,8 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "accountingType":"CASH",
               "commencementDate":"2018-01-01",
               "cessationDate":"2018-12-31",
-              "tradingName":"business",
-              "businessDescription":"a business",
+              "tradingName":"businesses",
+              "businessDescription":"a businesses",
               "businessAddressLineOne":"64 Zoo Lane",
               "businessAddressLineTwo":"Happy Place",
               "businessAddressLineThree":"Magical Land",
@@ -714,7 +714,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "commencementDate":"2017-01-06",
               "cessationDate":"2017-12-31",
               "tradingName":"firstBusiness",
-              "businessDescription":"a first business",
+              "businessDescription":"a first businesses",
               "businessAddressLineOne":"64 Zoo Lane",
               "businessAddressLineTwo":"Happy Place",
               "businessAddressLineThree":"Magical Land",
@@ -728,7 +728,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
               "commencementDate":"2017-01-01",
               "cessationDate":"2017-12-31",
               "tradingName":"secondBusiness",
-              "businessDescription":"a second business",
+              "businessDescription":"a second businesses",
               "businessAddressLineOne":"742 Evergreen Terrace",
               "businessAddressLineTwo":"Springfield",
               "businessAddressLineThree":"Oregon",

@@ -56,7 +56,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         "return Status OK (200)" in {
           TestBusinessDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testNino, 0)(Right(Some(BusinessDetails.business1, 0)))
+          setupMockGetBusinessDetails(testNino, 0)(Right(Some(NewBizDeets.business1 -> 0)))
           status(result) shouldBe Status.OK
         }
 

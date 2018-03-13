@@ -18,70 +18,66 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{BusinessDetailsConnector, PropertyDetailsConnector}
+import connectors.IncomeSourceDetailsConnector
 import models._
-import play.api.Logger
+import play.api.http.Status
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
-                                           val propertyDetailsConnector: PropertyDetailsConnector,
+class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: IncomeSourceDetailsConnector,
                                            val reportDeadlinesService: ReportDeadlinesService) {
 
-  def getIncomeSourceDetails(nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
-    for {
-      businessDetails <- businessDetailsConnector.getBusinessList(nino)
-      propertyDetails <- propertyDetailsConnector.getPropertyDetails(nino)
-    } yield (businessDetails, propertyDetails) match {
-      case (x: BusinessDetailsErrorModel, _) =>
-        Logger.debug(s"[IncomeSourceDetailsService][getIncomeSourceDetails] Error Model from BusinessDetailsConnector: $x")
-        Future.successful(IncomeSourcesError)
-      case (_, x:PropertyDetailsErrorModel) =>
-        Logger.debug(s"[IncomeSourceDetailsService][getIncomeSourceDetails] Error Model from PropertyDetailsConnector: $x")
-        Future.successful(IncomeSourcesError)
-      case (x: BusinessDetailsModel, y) =>
-        createIncomeSourcesModel(nino, x, y)
-    }
-  }.flatMap(z => z)
 
-  def createIncomeSourcesModel(nino: String,
-                               businessDetails: BusinessDetailsModel,
-                               property: PropertyDetailsResponseModel
-                              )(implicit hc: HeaderCarrier): Future[IncomeSourcesModel] = {
-
-    val businessIncomeModelListF: Future[List[BusinessIncomeModel]] =
-      Future.sequence(businessDetails.businesses.map { seTrade =>
-        reportDeadlinesService.getBusinessReportDeadlines(nino, seTrade.id).map { obs =>
-          BusinessIncomeModel(seTrade.id, seTrade.tradingName, seTrade.cessationDate, seTrade.accountingPeriod, obs)
-        }
-      })
-
-    val propertyIncomeModelF: Future[Option[PropertyIncomeModel]] = property match {
-      case x: PropertyDetailsModel =>
-        for {
-          obs <- reportDeadlinesService.getPropertyReportDeadlines(nino)
-        } yield {
-          Some(PropertyIncomeModel(x.accountingPeriod, obs))
-        }
-      case _ => Future.successful(None)
-    }
-
-    for {
-      businessList <- businessIncomeModelListF
-      property <- propertyIncomeModelF
-    } yield {
-      IncomeSourcesModel(businessList, property)
+  def getBusinessDetails(mtditid: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[BusinessDetailsErrorModel,Option[(BizDeetsModel, Int)]]] = {
+    incomeSourceDetailsConnector.getIncomeSources(mtditid).map {
+      case sources: IncomeSourceDetailsModel => Right(sources.sortedBusinesses.find(_._2 == id))
+      case IncomeSourceDetailsError =>
+        //TODO: Update this once a model is returned instead of a Case Object
+        Left(BusinessDetailsErrorModel(Status.NOT_FOUND, s"Could not find business in sorted list with ID: $id"))
     }
   }
 
-  def getBusinessDetails(nino: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[BusinessDetailsErrorModel,Option[(BusinessModel, Int)]]] = {
+  def getIncomeSourceDetails(mtditid: String, nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
+    for {
+      sources <- incomeSourceDetailsConnector.getIncomeSources(mtditid)
+      incomeSources <- createIncomeSourcesModel(nino, sources)
+    } yield incomeSources
+  }
 
-    businessDetailsConnector.getBusinessList(nino).map {
-      case bizDeets: BusinessDetailsModel => Right(bizDeets.sortedBusinesses.find(_._2 == id))
-      case error: BusinessDetailsErrorModel => Left(error)
+  def createIncomeSourcesModel(nino: String, incomeSourceResponse: IncomeSourceDetailsResponse)
+                              (implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
+    incomeSourceResponse match {
+      case sources: IncomeSourceDetailsModel =>
+        val businessIncomeModelListF: Future[List[BusinessIncomeModel]] =
+          Future.sequence(sources.businesses.map { seTrade =>
+            reportDeadlinesService.getBusinessReportDeadlines(nino, seTrade.incomeSourceId).map { obs =>
+              BusinessIncomeModel(
+                seTrade.incomeSourceId,
+                seTrade.tradingName.getOrElse("No Trading Name Found"), //TODO: What should this do if no Trading Name is supplied...?
+                seTrade.cessation.flatMap(_.date),
+                seTrade.accountingPeriod,
+                obs
+              )
+            }
+          })
+
+        val propertyIncomeModelFOpt: Future[Option[PropertyIncomeModel]] =
+          Future.sequence(Option.option2Iterable(sources.property.map { propertyIncome =>
+            reportDeadlinesService.getPropertyReportDeadlines(nino).map { obs =>
+              PropertyIncomeModel(propertyIncome.accountingPeriod, obs)
+            }
+          })).map(_.headOption)
+
+        for {
+          businessList <- businessIncomeModelListF
+          property <- propertyIncomeModelFOpt
+        } yield {
+          IncomeSourcesModel(businessList, property)
+        }
+      case IncomeSourceDetailsError => Future.successful(IncomeSourcesError)
     }
   }
 }

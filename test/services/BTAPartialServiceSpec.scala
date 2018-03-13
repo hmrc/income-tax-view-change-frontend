@@ -17,7 +17,7 @@
 package services
 
 import assets.TestConstants.Estimates._
-import assets.TestConstants.IncomeSourceDetails._
+import assets.TestConstants.IncomeSources._
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
 import assets.TestConstants.ReportDeadlines._
@@ -31,7 +31,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
 
   "The BTAPartialService getNextObligation method" when {
 
-    "both property and business obligations are returned - business due before property" should {
+    "both property and businesses obligations are returned - businesses due before property" should {
       val returnedObligation = ReportDeadlineModel(
         start = "2017-04-01",
         end = "2017-06-30",
@@ -68,7 +68,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       }
     }
 
-    "both property and business obligations are returned - property due before business" should {
+    "both property and businesses obligations are returned - property due before businesses" should {
 
       val returnedObligation = ReportDeadlineModel(
         start = "2017-04-01",
@@ -105,7 +105,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       }
     }
 
-    "both property and business obligations are returned - business due before property but is received, therefore property obligation returned" should {
+    "both property and businesses obligations are returned - businesses due before property but is received, therefore property obligation returned" should {
       val returnedObligation = ReportDeadlineModel(
         start = "2017-04-01",
         end = "2017-06-30",
@@ -140,7 +140,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       }
     }
 
-    "both property and business obligations are returned - property due before business but is received, therefore business obligation returned" should {
+    "both property and businesses obligations are returned - property due before businesses but is received, therefore businesses obligation returned" should {
       val returnedObligation = ReportDeadlineModel(
         start = "2017-04-01",
         end = "2017-06-30",
@@ -175,7 +175,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       }
     }
 
-    "both property and business obligations are returned - both are received, therefore most recent obligation returned" should {
+    "both property and businesses obligations are returned - both are received, therefore most recent obligation returned" should {
       val returnedObligation = ReportDeadlineModel(
         start = "2017-04-01",
         end = "2017-06-30",
@@ -210,7 +210,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       }
     }
 
-    "only business obligations are returned" should {
+    "only businesses obligations are returned" should {
       val otherObligation = ReportDeadlineModel(
         start = "2017-07-01",
         end = "2017-09-30",
