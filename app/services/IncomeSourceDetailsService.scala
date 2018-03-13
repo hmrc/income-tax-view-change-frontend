@@ -51,7 +51,7 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
                               (implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
     incomeSourceResponse match {
       case sources: IncomeSourceDetailsModel =>
-        val businessIncomeModelListF: Future[List[BusinessIncomeModel]] =
+        val businessIncomeModelFList: Future[List[BusinessIncomeModel]] =
           Future.sequence(sources.businesses.map { seTrade =>
             reportDeadlinesService.getBusinessReportDeadlines(nino, seTrade.incomeSourceId).map { obs =>
               BusinessIncomeModel(
@@ -72,7 +72,7 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
           })).map(_.headOption)
 
         for {
-          businessList <- businessIncomeModelListF
+          businessList <- businessIncomeModelFList
           property <- propertyIncomeModelFOpt
         } yield {
           IncomeSourcesModel(businessList, property)
