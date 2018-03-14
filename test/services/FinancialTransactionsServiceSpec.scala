@@ -16,9 +16,9 @@
 
 package services
 
-import utils.TestSupport
 import assets.TestConstants._
 import mocks.connectors.MockFinancialTransactionsConnector
+import utils.TestSupport
 
 
 class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTransactionsConnector{

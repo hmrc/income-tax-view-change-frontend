@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-package models
+package models.core.breadcrumb
 
-
-sealed trait ObligationType
-case object EopsObligation extends ObligationType
-case object QuarterlyObligation extends ObligationType
-
+case class BreadcrumbItem(id: String, url: Option[String])

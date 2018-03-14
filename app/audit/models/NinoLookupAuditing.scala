@@ -16,7 +16,7 @@
 
 package audit.models
 
-import models.{Nino, NinoResponseError}
+import models.core.{Nino, NinoResponseError}
 
 object NinoLookupAuditing {
 

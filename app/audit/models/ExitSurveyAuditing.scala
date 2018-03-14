@@ -16,7 +16,7 @@
 
 package audit.models
 
-import models.ExitSurveyModel
+import models.core.ExitSurveyModel
 
 object ExitSurveyAuditing {
 

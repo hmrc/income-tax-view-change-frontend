@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package models.core
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, Reads, _}
+import play.api.libs.json.{Format, Json}
 
-case class AddressModel(addressLine1: String,
-                        addressLine2: Option[String],
-                        addressLine3: Option[String],
-                        addressLine4: Option[String],
-                        postCode: Option[String],
-                        countryCode: String)
+sealed trait NinoResponse
 
-object AddressModel {
-  implicit val format: OFormat[AddressModel] = Json.format[AddressModel]
+case class Nino(nino: String) extends NinoResponse
+
+case class NinoResponseError(status: Int, reason: String) extends NinoResponse
+
+object Nino {
+  implicit val format: Format[Nino] = Json.format[Nino]
+}
+object NinoResponseError {
+  implicit val format: Format[NinoResponseError] = Json.format[NinoResponseError]
 }

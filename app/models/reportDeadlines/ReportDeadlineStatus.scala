@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package models.reportDeadlines
 
-import play.api.libs.json.Json
+import java.time.LocalDate
 
-
-sealed trait UserDetailsResponseModel
-case class UserDetailsModel(name: String, email: Option[String], affinityGroup: String, credentialRole: String) extends UserDetailsResponseModel
-case object UserDetailsError extends UserDetailsResponseModel
-
-object UserDetailsModel {
-  implicit val format = Json.format[UserDetailsModel]
-}
+sealed trait ReportDeadlineStatus
+case object Received extends ReportDeadlineStatus
+case object Overdue extends ReportDeadlineStatus
+case class Open(dueDate: LocalDate) extends ReportDeadlineStatus

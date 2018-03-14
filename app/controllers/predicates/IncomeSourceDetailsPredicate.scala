@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
-import models.{IncomeSourcesError, IncomeSourcesModel}
+import models.incomeSourcesWithDeadlines.{IncomeSourcesError, IncomeSourcesModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionRefiner, Result}
 import services.IncomeSourceDetailsService

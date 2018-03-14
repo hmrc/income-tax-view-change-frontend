@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.reportDeadlines
 
-import play.api.libs.json.{Format, Json}
+sealed trait ObligationType
+case object EopsObligation extends ObligationType
+case object QuarterlyObligation extends ObligationType
 
-sealed trait PaymentData
-
-case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Long, returnUrl: String)
-case class PaymentErrorModel(code: Int, message: String) extends PaymentData
-
-object PaymentDataModel {
-  implicit val format: Format[PaymentDataModel] = Json.format[PaymentDataModel]
-}
-
-object PaymentErrorModel {
-  implicit val format: Format[PaymentErrorModel] =Json.format[PaymentErrorModel]
-}

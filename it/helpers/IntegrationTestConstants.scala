@@ -19,6 +19,11 @@ package helpers
 import java.time.{LocalDate, ZonedDateTime}
 
 import models._
+import models.calculation._
+import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
+import models.financialTransactions.{FinancialTransactionsModel, SubItemModel, TransactionModel}
+import models.incomeSourceDetails._
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.http.Status
 import play.api.libs.json.{JsArray, JsValue, Json}
 import utils.ImplicitDateFormatter
@@ -751,7 +756,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
 
   object GetIncomeSourceDetails {
 
-    val business1: String => BizDeetsModel = id => BizDeetsModel(
+    val business1: String => BusinessDetailsModel = id => BusinessDetailsModel(
       incomeSourceId = id,
       accountingPeriod = AccountingPeriodModel(
         start = "2017-01-01",
@@ -776,7 +781,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       seasonal = None,
       paperless = None
     )
-    val business2: String => BizDeetsModel = id => BizDeetsModel(
+    val business2: String => BusinessDetailsModel = id => BusinessDetailsModel(
       incomeSourceId = id,
       accountingPeriod = AccountingPeriodModel(
         start = "2018-01-01",
@@ -801,7 +806,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
       seasonal = None,
       paperless = None
     )
-    val property: PropDeetsModel = PropDeetsModel(
+    val property: PropertyDetailsModel = PropertyDetailsModel(
       incomeSourceId = "XAIT00009991",
       accountingPeriod = AccountingPeriodModel(
         start = "2017-04-06",
@@ -815,7 +820,7 @@ object IntegrationTestConstants extends ImplicitDateFormatter {
 
     val singleBusinessResponse: String => IncomeSourceDetailsResponse = id => IncomeSourceDetailsModel(
       businesses = List(
-        BizDeetsModel(
+        BusinessDetailsModel(
           incomeSourceId = id,
           accountingPeriod = AccountingPeriodModel(
             start = "2017-01-01",

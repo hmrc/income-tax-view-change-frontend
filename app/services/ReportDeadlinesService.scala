@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import connectors.{BusinessEOPSDeadlinesConnector, BusinessReportDeadlinesConnector, PropertyEOPSDeadlinesConnector, PropertyReportDeadlinesConnector}
 import models._
+import models.reportDeadlines.{ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier

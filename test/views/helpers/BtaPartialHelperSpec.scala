@@ -16,12 +16,12 @@
 
 package views.helpers
 
+import assets.Messages.{BtaPartial => messages}
 import assets.TestConstants.Estimates._
 import assets.TestConstants.ReportDeadlines._
-import assets.Messages.{BtaPartial => messages}
 import config.FrontendAppConfig
 import enums.Estimate
-import models._
+import models.calculation.{LastTaxCalculation, LastTaxCalculationWithYear, NoLastTaxCalculation}
 import play.api.i18n.Messages.Implicits._
 import utils.TestSupport
 

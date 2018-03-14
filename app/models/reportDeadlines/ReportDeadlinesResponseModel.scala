@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.reportDeadlines
 
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-import play.api.libs.json.{JsValue, Json, OFormat}
+import play.api.libs.json.{Format, JsValue, Json}
 
 sealed trait ReportDeadlinesResponseModel
 
@@ -44,15 +44,15 @@ case class ReportDeadlineModel(start: LocalDate,
 case class ReportDeadlinesErrorModel(code: Int, message: String) extends ReportDeadlinesResponseModel
 
 object ReportDeadlineModel {
-  implicit val format: OFormat[ReportDeadlineModel] = Json.format[ReportDeadlineModel]
+  implicit val format: Format[ReportDeadlineModel] = Json.format[ReportDeadlineModel]
 }
 
 object ReportDeadlinesModel {
-  implicit val format: OFormat[ReportDeadlinesModel] = Json.format[ReportDeadlinesModel]
+  implicit val format: Format[ReportDeadlinesModel] = Json.format[ReportDeadlinesModel]
 }
 
 object ReportDeadlinesErrorModel {
-  implicit val format: OFormat[ReportDeadlinesErrorModel] = Json.format[ReportDeadlinesErrorModel]
+  implicit val format: Format[ReportDeadlinesErrorModel] = Json.format[ReportDeadlinesErrorModel]
 }
 
 object ReportDeadlinesResponseModel {
@@ -71,5 +71,5 @@ object ReportDeadlinesResponseModel {
       case "ReportDeadlinesErrorModel" => Json.fromJson[ReportDeadlinesErrorModel](data)(ReportDeadlinesErrorModel.format)
     }).get
   }
-  implicit val format: OFormat[ReportDeadlinesResponseModel] = Json.format[ReportDeadlinesResponseModel]
+  implicit val format: Format[ReportDeadlinesResponseModel] = Json.format[ReportDeadlinesResponseModel]
 }

@@ -15,14 +15,14 @@
  *@
 
 @import views.html.templates.main_template
-@import models._
+@import models.financialTransactions.TransactionModelWithYear
 @import play.twirl.api.Html
 @import views.html.helpers.breadcrumbHelper
 @import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
 @import views.html.helpers.backToHomeHelper
 @import controllers.PaymentController
-
+@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 
 @(model: Seq[TransactionModelWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUserOptionNino[_])
 

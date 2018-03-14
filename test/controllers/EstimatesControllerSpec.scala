@@ -17,17 +17,15 @@
 package controllers
 
 import assets.Messages
-import assets.Messages.EstimatedTaxLiabilityError
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyDetails._
 import assets.TestConstants._
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
-import models.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._

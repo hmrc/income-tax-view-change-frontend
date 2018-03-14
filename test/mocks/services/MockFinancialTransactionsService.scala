@@ -16,14 +16,14 @@
 
 package mocks.services
 
+import assets.TestConstants.{FinancialTransactions, testMtditid}
+import models.financialTransactions.FinancialTransactionsResponseModel
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import services.FinancialTransactionsService
 import uk.gov.hmrc.play.test.UnitSpec
-import org.mockito.Mockito._
-import assets.TestConstants.{FinancialTransactions, testMtditid}
-import models.{FinancialTransactionsModel, FinancialTransactionsResponseModel}
-import org.mockito.ArgumentMatchers
 
 import scala.concurrent.Future
 

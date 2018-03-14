@@ -17,14 +17,12 @@
 package services
 
 
-import assets.TestConstants.Estimates._
-import assets.TestConstants.Estimates
 import assets.TestConstants.CalcBreakdown._
-import assets.TestConstants._
-import enums.Estimate
+import assets.TestConstants.Estimates._
+import assets.TestConstants.{Estimates, _}
 import mocks.connectors.{MockCalculationDataConnector, MockLastTaxCalculationConnector}
 import mocks.services.MockCalculationService
-import models.{CalcDisplayError, CalcDisplayNoDataFound, LastTaxCalculation, LastTaxCalculationResponseModel}
+import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound, LastTaxCalculationResponseModel}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestSupport
 

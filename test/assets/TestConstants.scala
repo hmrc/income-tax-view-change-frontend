@@ -20,6 +20,12 @@ import assets.TestConstants.BusinessDetails.{testBusinessAccountingPeriod, testT
 import auth.{MtdItUser, MtdItUserOptionNino}
 import enums.{Crystallised, Estimate}
 import models._
+import models.calculation._
+import models.core._
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
+import models.incomeSourceDetails._
+import models.incomeSourcesWithDeadlines.{BusinessIncomeModel, IncomeSourcesModel, PropertyIncomeModel}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
@@ -544,7 +550,7 @@ object TestConstants extends ImplicitDateFormatter {
     val testContactDetails = ContactDetailsModel(Some("123456789"),Some("0123456789"),Some("8008135"),Some("google@chuckNorris.com"))
     val testCessation = CessationModel(Some("2018-1-1".toLocalDate), Some("It was a stupid idea anyway"))
 
-    val businessIncomeSourceSuccess = BizDeetsModel(
+    val businessIncomeSourceSuccess = BusinessDetailsModel(
       incomeSourceId = testSelfEmploymentId,
       accountingPeriod = testBusinessAccountingPeriod,
       tradingName = Some(testTradeName),
@@ -557,7 +563,7 @@ object TestConstants extends ImplicitDateFormatter {
       paperless = Some(true)
     )
 
-    val business1 = BizDeetsModel(
+    val business1 = BusinessDetailsModel(
       incomeSourceId = testSelfEmploymentId,
       accountingPeriod = testBusinessAccountingPeriod,
       cashOrAccruals = Some("CASH"),
@@ -571,7 +577,7 @@ object TestConstants extends ImplicitDateFormatter {
     )
 
 
-    val business2 = BizDeetsModel(
+    val business2 = BusinessDetailsModel(
       incomeSourceId = testSelfEmploymentId2,
       accountingPeriod = testBusinessAccountingPeriod,
       cashOrAccruals = Some("CASH"),
@@ -584,7 +590,7 @@ object TestConstants extends ImplicitDateFormatter {
       paperless = None
     )
 
-    val ceasedBusiness = BizDeetsModel(
+    val ceasedBusiness = BusinessDetailsModel(
       incomeSourceId = testSelfEmploymentId,
       accountingPeriod = testBusinessAccountingPeriod,
       cashOrAccruals = Some("CASH"),
@@ -607,7 +613,7 @@ object TestConstants extends ImplicitDateFormatter {
 
     val testPropertyAccountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05")
 
-    val propertyDetails = PropDeetsModel(
+    val propertyDetails = PropertyDetailsModel(
       incomeSourceId = testPropertyIncomeId,
       accountingPeriod = testPropertyAccountingPeriod,
       propertiesRented = Some(PropertiesRentedModel(
@@ -2068,14 +2074,6 @@ object TestConstants extends ImplicitDateFormatter {
         "taxReference" -> testMtditid,
         "amountInPence" -> testAmountInPence,
         "returnUrl" -> testPaymentRedirectUrl
-      )
-
-    val testPaymentErrorModel: PaymentErrorModel = PaymentErrorModel(testErrorStatus,testErrorMessage)
-
-    val testPaymentErrorJson: JsValue =
-      Json.obj(
-        "code" -> testErrorStatus,
-        "message" -> testErrorMessage
       )
 
   }

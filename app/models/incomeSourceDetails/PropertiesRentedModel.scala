@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.incomeSourceDetails
 
-import play.api.libs.json.{Json, Format}
+import play.api.libs.json.{Format, Json}
 
-case class ErrorModel(code: Int, message: String)
+case class PropertiesRentedModel(uk:Option[Int], eea:Option[Int], nonEea:Option[Int], total:Option[Int])
 
-object ErrorModel {
-  implicit val format: Format[ErrorModel] = Json.format[ErrorModel]
+object PropertiesRentedModel {
+  implicit val format: Format[PropertiesRentedModel] = Json.format[PropertiesRentedModel]
 }

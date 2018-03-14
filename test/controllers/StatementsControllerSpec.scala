@@ -17,7 +17,6 @@
 package controllers
 
 import assets.Messages
-import assets.TestConstants._
 import config.FrontendAppConfig
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.MockAuthenticationPredicate

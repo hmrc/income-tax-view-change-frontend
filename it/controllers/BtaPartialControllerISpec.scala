@@ -17,11 +17,11 @@
 package controllers
 
 import enums.Estimate
-import helpers.{ComponentSpecBase, GenericStubMethods}
 import helpers.IntegrationTestConstants.GetReportDeadlinesData._
 import helpers.IntegrationTestConstants._
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub, UserDetailsStub}
-import models.LastTaxCalculation
+import helpers.servicemocks.{IncomeTaxViewChangeStub, SelfAssessmentStub}
+import helpers.{ComponentSpecBase, GenericStubMethods}
+import models.calculation.LastTaxCalculation
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 

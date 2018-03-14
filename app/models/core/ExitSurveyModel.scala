@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.core
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Json}
 
-sealed trait PropertyDetailsResponse
+case class ExitSurveyModel(satisfaction: Option[String], improvements: Option[String])
 
-case class PropDeetsModel(incomeSourceId: String,
-                          accountingPeriod: AccountingPeriodModel,
-                          contactDetails: Option[ContactDetailsModel],
-                          propertiesRented: Option[PropertiesRentedModel],
-                          cessation: Option[CessationModel],
-                          paperless: Option[Boolean]) extends PropertyDetailsResponse
-
-object PropDeetsModel {
-  implicit val format: OFormat[PropDeetsModel] = Json.format[PropDeetsModel]
+object ExitSurveyModel {
+  implicit val format: Format[ExitSurveyModel] = Json.format[ExitSurveyModel]
 }

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package models.incomeSourcesWithDeadlines
 
 import java.time.LocalDate
 
-import play.api.libs.json.{Json, OFormat}
+import models._
+import models.core.AccountingPeriodModel
+import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import play.api.libs.json.{Format, Json}
 import utils.ImplicitDateFormatter._
 
 abstract class IncomeModel {
@@ -74,15 +77,15 @@ case class BusinessIncomeModel(
                                 reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel
 
 object BusinessIncomeModel {
-  implicit val format: OFormat[BusinessIncomeModel] = Json.format[BusinessIncomeModel]
+  implicit val format: Format[BusinessIncomeModel] = Json.format[BusinessIncomeModel]
 }
 
 object PropertyIncomeModel {
-  implicit val format: OFormat[PropertyIncomeModel] = Json.format[PropertyIncomeModel]
+  implicit val format: Format[PropertyIncomeModel] = Json.format[PropertyIncomeModel]
 }
 
 object IncomeSourcesModel {
- implicit val format: OFormat[IncomeSourcesModel] = Json.format[IncomeSourcesModel]
+ implicit val format: Format[IncomeSourcesModel] = Json.format[IncomeSourcesModel]
 }
 
 

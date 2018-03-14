@@ -17,12 +17,12 @@
 package mocks.connectors
 
 import connectors.PropertyEOPSDeadlinesConnector
-import models.ReportDeadlinesResponseModel
+import models.reportDeadlines.ReportDeadlinesResponseModel
 import org.mockito.ArgumentMatchers
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
-import org.mockito.Mockito._
 
 import scala.concurrent.Future
 

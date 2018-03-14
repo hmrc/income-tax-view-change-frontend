@@ -15,6 +15,7 @@
  *@
 
 @import views.helpers.{Page, EstimatesPage, ReportDeadlinesPage}
+@import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 
 @(page: Page, incomeSources: IncomeSourcesModel, taxYear: Option[Int] = None)(implicit messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 

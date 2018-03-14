@@ -20,7 +20,7 @@ import assets.Messages.{Sidebar => messages}
 import assets.TestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import play.twirl.api.Html

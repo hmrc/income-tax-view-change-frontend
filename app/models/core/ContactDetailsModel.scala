@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package models.core
 
-import java.time.LocalDate
+import play.api.libs.json.{Format, Json}
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, Reads, _}
+case class ContactDetailsModel(phoneNumber: Option[String],
+                               mobileNumber: Option[String],
+                               faxNumber: Option[String],
+                               emailAddress: Option[String])
 
-case class CessationModel(date: Option[LocalDate], reason: Option[String])
-
-object CessationModel {
-  implicit val format: OFormat[CessationModel] = Json.format[CessationModel]
+object ContactDetailsModel {
+  implicit val format: Format[ContactDetailsModel] = Json.format[ContactDetailsModel]
 }

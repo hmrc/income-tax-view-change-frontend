@@ -16,19 +16,16 @@
 
 package controllers
 
-import assets.Messages
-import assets.TestConstants.BusinessDetails.testTradeName
+import assets.TestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
-import play.api.i18n.MessagesApi
-import utils.TestSupport
-import assets.TestConstants._
-import models.ErrorModel
-import org.jsoup.Jsoup
+import models.core.ErrorModel
 import play.api.http.Status
+import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
+import utils.TestSupport
 
 class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {

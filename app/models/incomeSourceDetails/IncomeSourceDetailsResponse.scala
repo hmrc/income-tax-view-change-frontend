@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.incomeSourceDetails
 
-import play.api.libs.json.{JsValue, Json, OFormat}
+import play.api.libs.json.{Format, JsValue, Json}
 
 sealed trait IncomeSourceDetailsResponse {
   def toJson: JsValue
 }
 
-case class IncomeSourceDetailsModel(businesses: List[BizDeetsModel],
-                                    property: Option[PropDeetsModel]) extends IncomeSourceDetailsResponse {
+case class IncomeSourceDetailsModel(businesses: List[BusinessDetailsModel],
+                                    property: Option[PropertyDetailsModel]) extends IncomeSourceDetailsResponse {
 
   override def toJson: JsValue = Json.toJson(this)
 
-  val sortedBusinesses: List[(BizDeetsModel, Int)] = businesses.sortBy(_.incomeSourceId.substring(4)).zipWithIndex
+  val sortedBusinesses: List[(BusinessDetailsModel, Int)] = businesses.sortBy(_.incomeSourceId.substring(4)).zipWithIndex
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {
@@ -35,9 +35,9 @@ case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeS
 }
 
 object IncomeSourceDetailsModel {
-  implicit val format: OFormat[IncomeSourceDetailsModel] = Json.format[IncomeSourceDetailsModel]
+  implicit val format: Format[IncomeSourceDetailsModel] = Json.format[IncomeSourceDetailsModel]
 }
 
 object IncomeSourceDetailsError {
-  implicit val format: OFormat[IncomeSourceDetailsError] = Json.format[IncomeSourceDetailsError]
+  implicit val format: Format[IncomeSourceDetailsError] = Json.format[IncomeSourceDetailsError]
 }

@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package models.core
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, Reads, _}
+import play.api.libs.json.{Format, Json}
 
-case class PropertiesRentedModel(uk:Option[Int], eea:Option[Int], nonEea:Option[Int], total:Option[Int])
 
-object PropertiesRentedModel {
-  implicit val format = Json.format[PropertiesRentedModel]
+sealed trait UserDetailsResponseModel
+case class UserDetailsModel(name: String, email: Option[String], affinityGroup: String, credentialRole: String) extends UserDetailsResponseModel
+case object UserDetailsError extends UserDetailsResponseModel
+
+object UserDetailsModel {
+  implicit val format: Format[UserDetailsModel] = Json.format[UserDetailsModel]
 }

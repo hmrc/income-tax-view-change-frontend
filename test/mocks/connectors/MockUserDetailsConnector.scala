@@ -16,14 +16,14 @@
 
 package mocks.connectors
 
+import assets.TestConstants.testUserDetails
 import connectors.UserDetailsConnector
-import models.UserDetailsResponseModel
+import models.core.UserDetailsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
-import assets.TestConstants.testUserDetails
 
 import scala.concurrent.Future
 

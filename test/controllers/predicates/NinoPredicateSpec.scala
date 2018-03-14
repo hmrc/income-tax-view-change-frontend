@@ -21,17 +21,11 @@ import audit.AuditingService
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.MockNinoLookupService
-import models.{Nino, NinoResponseError}
-import org.mockito.ArgumentMatchers
+import models.core.{Nino, NinoResponseError}
 import org.scalatest.EitherValues
 import org.scalatest.mockito.MockitoSugar
-import play.api.http.{HttpEntity, Status}
-import play.api.mvc.{AnyContentAsEmpty, ResponseHeader, Result}
-import play.mvc.Http.HeaderNames
-import play.twirl.api.Html
+import play.api.http.Status
 import utils.TestSupport
-
-import scala.concurrent.Future
 
 class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLookupService with EitherValues{
 

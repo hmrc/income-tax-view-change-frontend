@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.NinoResponse
+import models.core.NinoResponse
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-package models
+package models.core.breadcrumb
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, Reads, _}
-
-case class ContactDetailsModel(phoneNumber: Option[String],
-                               mobileNumber: Option[String],
-                               faxNumber: Option[String],
-                               emailAddress: Option[String])
-
-object ContactDetailsModel {
-  implicit val format = Json.format[ContactDetailsModel]
-}
+case class Breadcrumb(items: Vector[BreadcrumbItem])

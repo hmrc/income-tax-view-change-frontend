@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-package models
+package models.financialTransactions
 
-case class BreadcrumbItem(id: String, url: Option[String])
-case class Breadcrumb(items: Vector[BreadcrumbItem])
+case class TransactionModelWithYear(model: TransactionModel, taxYear: Int)

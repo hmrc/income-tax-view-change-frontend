@@ -19,13 +19,14 @@
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
-@import models.{CalculationDataResponseModel, Breadcrumb, BreadcrumbItem}
+@import models.calculation.CalcDisplayModel
+@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import views.html.helpers.{sidebarHelper, breadcrumbHelper}
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
 @import views.html.helpers.backToHomeHelper
 
-@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
+@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.incomeSourcesWithDeadlines.IncomeSourcesModel)
 
 @sidebar = {
     @sidebarHelper(EstimatesPage, sources, Some(taxYear))

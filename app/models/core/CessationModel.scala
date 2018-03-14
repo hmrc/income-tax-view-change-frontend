@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package models.core
 
 import java.time.LocalDate
 
-sealed trait ReportDeadlineStatus
-case object Received extends ReportDeadlineStatus
-case object Overdue extends ReportDeadlineStatus
-case class Open(dueDate: LocalDate) extends ReportDeadlineStatus
+import play.api.libs.json.{Format, Json}
+
+case class CessationModel(date: Option[LocalDate], reason: Option[String])
+
+object CessationModel {
+  implicit val format: Format[CessationModel] = Json.format[CessationModel]
+}

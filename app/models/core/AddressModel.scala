@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package models.core
 
-import java.time.LocalDate
-import utils.ImplicitDateFormatter._
-import play.api.libs.json.Json
+import play.api.libs.json.{Format, Json}
 
+case class AddressModel(addressLine1: String,
+                        addressLine2: Option[String],
+                        addressLine3: Option[String],
+                        addressLine4: Option[String],
+                        postCode: Option[String],
+                        countryCode: String)
 
-case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
-  val determineTaxYear = if(end isBefore s"${end.getYear}-4-6")
-    end.getYear
-  else
-    end.getYear + 1
-}
-
-object AccountingPeriodModel {
-  implicit val format = Json.format[AccountingPeriodModel]
+object AddressModel {
+  implicit val format: Format[AddressModel] = Json.format[AddressModel]
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.financialTransactions
 
 import java.time.LocalDate
 
@@ -49,8 +49,6 @@ case class TransactionModel(chargeType: Option[String] = None,
   def payments(): Seq[SubItemModel] = items.getOrElse(Seq()).filter(_.paymentReference.isDefined)
 
 }
-
-case class TransactionModelWithYear(model: TransactionModel, taxYear: Int)
 
 object TransactionModel {
   implicit val format: Format[TransactionModel] = Json.format[TransactionModel]

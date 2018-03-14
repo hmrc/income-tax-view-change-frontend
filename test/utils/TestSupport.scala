@@ -21,7 +21,7 @@ import assets.TestConstants.IncomeSources
 import auth.MtdItUser
 import com.typesafe.config.Config
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import models.UserDetailsModel
+import models.core.UserDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.mockito.MockitoSugar

@@ -23,7 +23,8 @@ import assets.TestConstants.PropertyIncome.propertyIncomeModel
 import assets.TestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.{BizDeetsModel, IncomeSourcesModel}
+import models.incomeSourceDetails.BusinessDetailsModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -41,7 +42,7 @@ class BusinessDetailsViewSpec extends TestSupport {
   val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), None)
   val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List.empty, Some(propertyIncomeModel))
 
-  private def pageSetup(businessModel: BizDeetsModel) = new {
+  private def pageSetup(businessModel: BusinessDetailsModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.businessDetailsView(businessModel)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }

@@ -19,7 +19,7 @@ package mocks.services
 import assets.TestConstants.CalcBreakdown.{calculationDataSuccessModel, calculationDisplayNoBreakdownModel, calculationDisplaySuccessCrystalisationModel, calculationDisplaySuccessModel}
 import assets.TestConstants.Estimates._
 import assets.TestConstants.testNino
-import models._
+import models.calculation._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

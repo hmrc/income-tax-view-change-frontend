@@ -20,7 +20,9 @@ import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => me
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
 import config.FrontendAppConfig
-import models._
+import models.core.AccountingPeriodModel
+import models.incomeSourcesWithDeadlines.{BusinessIncomeModel, IncomeSourcesModel, PropertyIncomeModel}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status

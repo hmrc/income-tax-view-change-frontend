@@ -22,7 +22,7 @@ import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.{Crystallised, Estimate}
-import models.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}

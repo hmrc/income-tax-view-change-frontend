@@ -16,14 +16,10 @@
 
 package views
 
-import assets.Messages.{HomePage => messages}
-import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.PropertyIncome._
+import assets.Messages.{Breadcrumbs => breadcrumbMessages, HomePage => messages}
 import assets.TestConstants._
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.MtdItUserWithNino
 import config.FrontendAppConfig
-import models.IncomeSourcesModel
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest

@@ -17,6 +17,7 @@
 package controllers
 
 import assets.Messages
+import assets.TestConstants._
 import config.FrontendAppConfig
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -24,7 +25,6 @@ import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import utils.TestSupport
-import assets.TestConstants._
 
 class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 

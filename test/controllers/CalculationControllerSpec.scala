@@ -24,8 +24,7 @@ import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockFinancialTransactionsService
-import mocks.services.MockCalculationService
+import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._

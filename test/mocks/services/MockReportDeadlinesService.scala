@@ -17,7 +17,7 @@
 package mocks.services
 
 import assets.TestConstants.{testNino, testSelfEmploymentId}
-import models._
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

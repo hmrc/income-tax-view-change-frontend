@@ -22,7 +22,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.UserDetailsConnector
 import controllers.BaseController
-import models.{UserDetailsError, UserDetailsModel}
+import models.core.{UserDetailsError, UserDetailsModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}

@@ -17,15 +17,14 @@
 package controllers
 
 
-import play.api.http.Status
-import config.FrontendAppConfig
+import assets.TestConstants.PaymentData._
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.MockAuthenticationPredicate
+import play.api.http.Status
 import play.api.i18n.MessagesApi
-import utils.TestSupport
-import assets.TestConstants.PaymentData._
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.Result
 import play.api.test.Helpers._
+import utils.TestSupport
 
 import scala.concurrent.Future
 

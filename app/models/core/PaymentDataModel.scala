@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.core
 
+import play.api.libs.json.{Format, Json}
 
-import play.api.libs.json.{Json, OFormat}
+case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Long, returnUrl: String)
 
-case class ExitSurveyModel(satisfaction: Option[String], improvements: Option[String])
-
-object ExitSurveyModel {
-  implicit val format: OFormat[ExitSurveyModel] = Json.format[ExitSurveyModel]
+object PaymentDataModel {
+  implicit val format: Format[PaymentDataModel] = Json.format[PaymentDataModel]
 }

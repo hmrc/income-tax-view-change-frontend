@@ -23,7 +23,7 @@ import audit.AuditingService
 import audit.models.NinoLookupAuditing.{NinoLookupAuditModel, NinoLookupErrorAuditModel}
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
-import models.{Nino, NinoResponseError}
+import models.core.{Nino, NinoResponseError}
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}

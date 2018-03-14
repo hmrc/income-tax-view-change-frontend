@@ -16,12 +16,14 @@
 
 package controllers
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
-import models.PaymentDataModel
 import play.api.libs.json.Json
 import javax.inject.{Inject, Singleton}
+
 import config.FrontendAppConfig
+import models.core.PaymentDataModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+
 import scala.concurrent.Future
 
 

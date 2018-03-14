@@ -19,6 +19,9 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import models._
+import models.calculation.{LastTaxCalculation, LastTaxCalculationError, LastTaxCalculationResponseModel, NoLastTaxCalculation}
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier

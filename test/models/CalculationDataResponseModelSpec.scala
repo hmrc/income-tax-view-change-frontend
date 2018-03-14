@@ -16,11 +16,12 @@
 
 package models
 
+import assets.TestConstants.CalcBreakdown._
 import assets.TestConstants._
+import models.calculation.{CalculationDataErrorModel, CalculationDataModel}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
-import assets.TestConstants.CalcBreakdown._
 
 class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
 

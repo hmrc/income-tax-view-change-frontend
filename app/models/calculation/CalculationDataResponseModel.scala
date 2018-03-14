@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.calculation
 
+import models._
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
-import play.api.libs.json.{Json, OFormat, Reads, _}
+import play.api.libs.json.{Json, _}
 
 sealed trait CalculationDataResponseModel
 
@@ -187,11 +188,11 @@ object BandModel {
 }
 
 object EoyEstimate {
-  implicit val format: OFormat[EoyEstimate] = Json.format[EoyEstimate]
+  implicit val format: Format[EoyEstimate] = Json.format[EoyEstimate]
 }
 
 case class CalculationDataErrorModel(code: Int, message: String) extends CalculationDataResponseModel
 
 object CalculationDataErrorModel {
-  implicit val format: OFormat[CalculationDataErrorModel] = Json.format[CalculationDataErrorModel]
+  implicit val format: Format[CalculationDataErrorModel] = Json.format[CalculationDataErrorModel]
 }

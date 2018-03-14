@@ -17,14 +17,11 @@ package controllers
 
 import java.time.LocalDate
 
-import helpers.{ComponentSpecBase, GenericStubMethods}
 import helpers.IntegrationTestConstants.GetReportDeadlinesData._
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
-import org.scalatest.Assertion
+import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status._
-import play.api.libs.json.{JsNull, JsValue}
-import play.api.libs.ws.WSResponse
 import utils.ImplicitDateFormatter
 
 class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {

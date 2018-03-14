@@ -19,9 +19,9 @@ package forms
 import assets.{Messages => messageLookup}
 import forms.validation.ErrorMessageFactory.FieldErrorLoc
 import forms.validation.models.FieldError
-import models.ExitSurveyModel
-import utils.TestSupport
+import models.core.ExitSurveyModel
 import play.api.i18n.Messages.Implicits._
+import utils.TestSupport
 
 class ExitSurveyFormSpec extends TestSupport {
 

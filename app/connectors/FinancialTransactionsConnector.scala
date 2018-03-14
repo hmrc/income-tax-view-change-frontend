@@ -19,15 +19,15 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import config.FrontendAppConfig
-import models.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
+import play.api.Logger
+import play.api.http.Status
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import play.api.Logger
-import play.api.http.Status.OK
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
 import scala.concurrent.Future
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import play.api.http.Status
 
 
 @Singleton

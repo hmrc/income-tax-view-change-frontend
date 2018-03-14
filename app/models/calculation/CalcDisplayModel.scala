@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package models
+package models.calculation
 
 import enums.CalcStatus
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Json}
 
 sealed trait CalcDisplayResponseModel
 case class CalcDisplayModel(calcTimestamp: String,
@@ -44,5 +44,5 @@ case object CalcDisplayError extends CalcDisplayResponseModel
 case object CalcDisplayNoDataFound extends CalcDisplayResponseModel
 
 object CalcDisplayModel {
-  implicit val format: OFormat[CalcDisplayModel] = Json.format[CalcDisplayModel]
+  implicit val format: Format[CalcDisplayModel] = Json.format[CalcDisplayModel]
 }

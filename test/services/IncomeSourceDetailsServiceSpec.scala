@@ -16,13 +16,12 @@
 
 package services
 
-import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.IncomeSources._
 import assets.TestConstants.ReportDeadlines.obligationsDataSuccessModel
 import assets.TestConstants._
 import mocks.connectors.MockIncomeSourceDetailsConnector
 import mocks.services.MockReportDeadlinesService
-import models.IncomeSourcesError
+import models.incomeSourcesWithDeadlines.IncomeSourcesError
 import utils.TestSupport
 
 

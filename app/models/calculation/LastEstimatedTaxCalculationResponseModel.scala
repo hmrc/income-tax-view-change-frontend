@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.calculation
 
 import enums.{CalcStatus, Estimate}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
-import play.api.libs.json.{Json, OFormat, Reads, _}
+import play.api.libs.json.{Format, Json, Reads, _}
 
 sealed trait LastTaxCalculationResponseModel
 
@@ -57,5 +57,5 @@ object LastTaxCalculation {
 }
 
 object LastTaxCalculationError {
-  implicit val format: OFormat[LastTaxCalculationError] = Json.format[LastTaxCalculationError]
+  implicit val format: Format[LastTaxCalculationError] = Json.format[LastTaxCalculationError]
 }

@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.core
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Json}
 
-sealed trait NinoResponse
+case class ErrorModel(code: Int, message: String)
 
-case class Nino(nino: String) extends NinoResponse
-
-case class NinoResponseError(status: Int, reason: String) extends NinoResponse
-
-object Nino {
-  implicit val format: OFormat[Nino] = Json.format[Nino]
-}
-object NinoResponseError {
-  implicit val format: OFormat[NinoResponseError] = Json.format[NinoResponseError]
+object ErrorModel {
+  implicit val format: Format[ErrorModel] = Json.format[ErrorModel]
 }

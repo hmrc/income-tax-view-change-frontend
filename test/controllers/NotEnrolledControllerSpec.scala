@@ -16,13 +16,13 @@
 
 package controllers
 
+import assets.Messages.{NotEnrolled => messages}
 import config.FrontendAppConfig
 import controllers.notEnrolled.NotEnrolledController
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import utils.TestSupport
-import assets.Messages.{NotEnrolled => messages}
 
 class NotEnrolledControllerSpec extends TestSupport {
 

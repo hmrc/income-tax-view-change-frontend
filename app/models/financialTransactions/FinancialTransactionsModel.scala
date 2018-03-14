@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package models.financialTransactions
 
 import java.time.{LocalDate, ZonedDateTime}
 
-import play.api.libs.json._
+import play.api.libs.json.{Format, Json}
 
 sealed trait FinancialTransactionsResponseModel
 

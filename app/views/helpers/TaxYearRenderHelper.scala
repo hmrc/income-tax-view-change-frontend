@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.Messages
 import utils.ImplicitDateFormatter._
 
 object TaxYearRenderHelper {

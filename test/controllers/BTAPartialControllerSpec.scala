@@ -26,7 +26,7 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.Estimate
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockBTAPartialService
-import models.LastTaxCalculation
+import models.calculation.LastTaxCalculation
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._

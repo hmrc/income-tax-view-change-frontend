@@ -16,14 +16,14 @@
 
 package views
 
-import assets.Messages.{NoEstimatedTaxLiability => messages, Sidebar => sidebarMessages, Breadcrumbs => breadcrumbMessages}
+import assets.Messages.{Breadcrumbs => breadcrumbMessages, NoEstimatedTaxLiability => messages, Sidebar => sidebarMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
 import assets.TestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
