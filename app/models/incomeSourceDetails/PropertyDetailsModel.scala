@@ -16,7 +16,6 @@
 
 package models.incomeSourceDetails
 
-import models._
 import models.core.{AccountingPeriodModel, CessationModel, ContactDetailsModel}
 import play.api.libs.json.{Json, OFormat}
 
