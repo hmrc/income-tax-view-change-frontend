@@ -396,6 +396,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "display a single obligation with the correct dates and status" in {
 
           isAuthorisedUser(true)
+          stubUserDetails()
+
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
 
@@ -434,6 +436,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
       "has multiple property obligations" should {
 
         "display the correct amount of obligations with the correct statuses" in {
+
+          isAuthorisedUser(true)
+          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
@@ -487,6 +492,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
       "has multiple received and open property obligations" should {
 
         "display only one of each received and open obligations and all overdue obligations" in {
+
+          isAuthorisedUser(true)
+          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
