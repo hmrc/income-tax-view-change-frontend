@@ -16,16 +16,16 @@
 
 package connectors
 
+import assets.TestConstants.CalcBreakdown._
+import assets.TestConstants._
 import mocks.MockHttp
-import models.{BusinessListResponseModel, CalculationDataErrorModel, CalculationDataResponseModel}
-import utils.TestSupport
+import models.{CalculationDataErrorModel, CalculationDataResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import assets.TestConstants._
-import assets.TestConstants.CalcBreakdown._
+import uk.gov.hmrc.http.HttpResponse
+import utils.TestSupport
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HttpResponse
 
 class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 

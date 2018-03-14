@@ -16,18 +16,10 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Format}
 
+case class ErrorModel(code: Int, message: String)
 
-sealed trait PropertyDetailsResponseModel
-case class PropertyDetailsModel(accountingPeriod: AccountingPeriodModel) extends PropertyDetailsResponseModel
-case class PropertyDetailsErrorModel(code: Int, message: String) extends PropertyDetailsResponseModel
-case object NoPropertyIncomeDetails extends PropertyDetailsResponseModel
-
-object PropertyDetailsModel {
-  implicit val format = Json.format[PropertyDetailsModel]
-}
-
-object PropertyDetailsErrorModel {
-  implicit val format = Json.format[PropertyDetailsErrorModel]
+object ErrorModel {
+  implicit val format: Format[ErrorModel] = Json.format[ErrorModel]
 }

@@ -406,107 +406,6 @@ object TestConstants extends ImplicitDateFormatter {
     val testTradeName = "business"
     val testTradeName2 = "business"
 
-    val business1 = BusinessModel(
-      id = testSelfEmploymentId,
-      accountingPeriod = testBusinessAccountingPeriod,
-      accountingType = "CASH",
-      commencementDate = Some("2017-1-1"),
-      cessationDate = None,
-      tradingName = testTradeName,
-      businessDescription = Some("a business"),
-      businessAddressLineOne = Some("64 Zoo Lane"),
-      businessAddressLineTwo = Some("Happy Place"),
-      businessAddressLineThree = Some("Magical Land"),
-      businessAddressLineFour = Some("England"),
-      businessPostcode = Some("ZL1 064")
-    )
-    val business2 = BusinessModel(
-      id = testSelfEmploymentId2,
-      accountingPeriod = testBusinessAccountingPeriod,
-      accountingType = "CASH",
-      commencementDate = Some("2017-1-1"),
-      cessationDate = None,
-      tradingName = testTradeName2,
-      businessDescription = Some("some business"),
-      businessAddressLineOne = Some("65 Zoo Lane"),
-      businessAddressLineTwo = Some("Happy Place"),
-      businessAddressLineThree = Some("Magical Land"),
-      businessAddressLineFour = Some("England"),
-      businessPostcode = Some("ZL1 064")
-    )
-    val ceasedBusiness = BusinessModel(
-      id = testSelfEmploymentId,
-      accountingPeriod = testBusinessAccountingPeriod,
-      accountingType = "CASH",
-      commencementDate = Some("2017-1-1"),
-      cessationDate = Some("2018-5-30"),
-      tradingName = testTradeName,
-      businessDescription = Some("a business"),
-      businessAddressLineOne = Some("64 Zoo Lane"),
-      businessAddressLineTwo = Some("Happy Place"),
-      businessAddressLineThree = Some("Magical Land"),
-      businessAddressLineFour = Some("England"),
-      businessPostcode = Some("ZL1 064")
-    )
-
-    val businessesSuccessResponse = List(business1)
-    val multipleBusinessSuccessResponse = List(business1, business2)
-    val noBusinessDetails = BusinessDetailsModel(List())
-    val businessSuccessEmptyResponse = "[]"
-    val businessesSuccessModel = BusinessDetailsModel(businessesSuccessResponse)
-    val multipleBusinessesSuccessModel = BusinessDetailsModel(multipleBusinessSuccessResponse)
-    val businessSuccessString: String =
-      s"""
-          {
-             "businesses":[
-                {
-                   "id":"$testSelfEmploymentId",
-                   "accountingPeriod":{
-                     "start":"${testBusinessAccountingPeriod.start}",
-                     "end":"${testBusinessAccountingPeriod.end}"
-                   },
-                   "accountingType":"CASH",
-                   "commencementDate":"2017-01-01",
-                   "tradingName":"$testTradeName",
-                   "businessDescription":"a business",
-                   "businessAddressLineOne":"64 Zoo Lane",
-                   "businessAddressLineTwo":"Happy Place",
-                   "businessAddressLineThree":"Magical Land",
-                   "businessAddressLineFour":"England",
-                   "businessPostcode":"ZL1 064"
-                },
-                {
-                   "id":"$testSelfEmploymentId2",
-                      "accountingPeriod":{
-                        "start":"${testBusinessAccountingPeriod.start}",
-                        "end":"${testBusinessAccountingPeriod.end}"
-                      },
-                   "accountingType":"CASH",
-                   "commencementDate":"2017-01-01",
-                   "tradingName":"$testTradeName2",
-                   "businessDescription":"some business",
-                   "businessAddressLineOne":"65 Zoo Lane",
-                   "businessAddressLineTwo":"Happy Place",
-                   "businessAddressLineThree":"Magical Land",
-                   "businessAddressLineFour":"England",
-                   "businessPostcode":"ZL1 064"
-                }
-             ]
-          }
-      """.stripMargin
-    val businessSuccessJson: JsValue = Json.parse(businessSuccessString)
-
-
-    val businessErrorModel = BusinessDetailsErrorModel(testErrorStatus, testErrorMessage)
-    val businessErrorString: String =
-      s"""
-        |{
-        |  "code":$testErrorStatus,
-        |  "message":"$testErrorMessage"
-        |}
-      """.stripMargin
-    val businessListErrorJson: JsValue = Json.parse(businessErrorString)
-
     val businessIncomeModel =
       BusinessIncomeModel(
         testSelfEmploymentId,
@@ -562,8 +461,6 @@ object TestConstants extends ImplicitDateFormatter {
 
   object PropertyDetails {
     val testPropertyAccountingPeriod = AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5")
-    val propertySuccessModel = PropertyDetailsModel(testPropertyAccountingPeriod)
-    val propertyErrorModel = PropertyDetailsErrorModel(testErrorStatus, testErrorMessage)
   }
 
   object Estimates {
@@ -702,6 +599,8 @@ object TestConstants extends ImplicitDateFormatter {
       seasonal = None,
       paperless = None
     )
+
+    val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
   }
 
   object NewPropDeets {

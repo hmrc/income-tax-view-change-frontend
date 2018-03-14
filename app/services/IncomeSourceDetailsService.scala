@@ -31,10 +31,10 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
                                            val reportDeadlinesService: ReportDeadlinesService) {
 
 
-  def getBusinessDetails(mtditid: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[BusinessDetailsErrorModel,Option[(BizDeetsModel, Int)]]] = {
+  def getBusinessDetails(mtditid: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[ErrorModel, Option[(BizDeetsModel, Int)]]] = {
     incomeSourceDetailsConnector.getIncomeSources(mtditid).map {
       case sources: IncomeSourceDetailsModel => Right(sources.sortedBusinesses.find(_._2 == id))
-      case error: IncomeSourceDetailsError => Left(BusinessDetailsErrorModel(error.status, error.reason))
+      case error: IncomeSourceDetailsError => Left(ErrorModel(error.status, error.reason))
     }
   }
 

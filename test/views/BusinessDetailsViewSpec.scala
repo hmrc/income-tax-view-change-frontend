@@ -53,21 +53,21 @@ class BusinessDetailsViewSpec extends TestSupport {
       val setup = pageSetup(NewBizDeets.business1)
       import setup._
       val messages = Messages.BusinessDetails
-      val business = BusinessDetails.business1
+      val business = NewBizDeets.business1
 
-      s"have the title '${business.tradingName}'" in {
-        document.title() shouldBe business.tradingName
+      s"have the title '${business.tradingName.get}'" in {
+        document.title() shouldBe business.tradingName.get
       }
 
       "have a breadcrumb trail" in {
         document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
         document.getElementById("breadcrumb-account").text shouldBe breadcrumbMessages.details
-        document.getElementById(s"${business.tradingName}").text shouldBe BusinessDetails.business1.tradingName
+        document.getElementById(s"${business.tradingName.get}").text shouldBe NewBizDeets.business1.tradingName.get
       }
 
-      s"have the page heading '${business.tradingName}'" in {
-        document.getElementById("page-heading").text() shouldBe business.tradingName
+      s"have the page heading '${business.tradingName.get}'" in {
+        document.getElementById("page-heading").text() shouldBe business.tradingName.get
       }
 
       s"have a reporting period of ${business.accountingPeriod.start} to ${business.accountingPeriod.end}" in {
@@ -85,21 +85,21 @@ class BusinessDetailsViewSpec extends TestSupport {
         }
         s"has the correct values for the heading and value of 'trading name'" in {
           document.getElementById("trading-name").text() shouldBe messages.tradingName
-          document.getElementById("trading-name-business").text() shouldBe business.tradingName
+          document.getElementById("trading-name-business").text() shouldBe business.tradingName.get
         }
         s"has the correct values for the heading and address lines of 'business address'" in {
           document.getElementById("business-address").text() shouldBe messages.businessAddress
-          document.getElementById("address-line-1").text() shouldBe business.businessAddressLineOne.get
-          document.getElementById("address-line-2").text() shouldBe business.businessAddressLineTwo.get
-          document.getElementById("address-line-3").text() shouldBe business.businessAddressLineThree.get
-          document.getElementById("address-line-4").text() shouldBe business.businessAddressLineFour.get
-          document.getElementById("address-line-5").text() shouldBe business.businessPostcode.get
+          document.getElementById("address-line-1").text() shouldBe business.address.get.addressLine1
+          document.getElementById("address-line-2").text() shouldBe business.address.get.addressLine2.get
+          document.getElementById("address-line-3").text() shouldBe business.address.get.addressLine3.get
+          document.getElementById("address-line-4").text() shouldBe business.address.get.addressLine4.get
+          document.getElementById("address-line-5").text() shouldBe business.address.get.postCode.get
         }
       }
 
       "have an additional information section stating the accounting method" in {
         document.getElementById("additional-information").text() shouldBe messages.additionalInfo
-        document.getElementById("accounting-method").text() shouldBe messages.accountingMethod(business.accountingType.toLowerCase)
+        document.getElementById("accounting-method").text() shouldBe messages.accountingMethod(business.cashOrAccruals.get.toLowerCase)
       }
 
       "show a back link to the account details page" in {
@@ -112,10 +112,10 @@ class BusinessDetailsViewSpec extends TestSupport {
       val setup = pageSetup(NewBizDeets.ceasedBusiness)
       import setup._
       val messages = Messages.BusinessDetails
-      val business = BusinessDetails.ceasedBusiness
+      val cessationDate = NewBizDeets.ceasedBusiness.cessation.get.date.get
 
       "have a 'ceased trading' message" in {
-        document.getElementById("cessation-date").text() shouldBe messages.ceasedTrading(s"${business.cessationDate.get.toLongDate}")
+        document.getElementById("cessation-date").text() shouldBe messages.ceasedTrading(s"${cessationDate.toLongDate}")
       }
 
     }

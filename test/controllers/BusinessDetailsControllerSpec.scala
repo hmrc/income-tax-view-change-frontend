@@ -25,7 +25,7 @@ import mocks.services.MockIncomeSourceDetailsService
 import play.api.i18n.MessagesApi
 import utils.TestSupport
 import assets.TestConstants._
-import models.BusinessDetailsErrorModel
+import models.ErrorModel
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -66,7 +66,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         }
 
         "render the Business Details page" in {
-          document.title() shouldBe BusinessDetails.business1.tradingName
+          document.title() shouldBe NewBizDeets.business1.tradingName.get
         }
 
       }
@@ -84,13 +84,13 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
 
       }
 
-      "receives a BusinessDetailsErrorModel from the incomeSourceDetailsService" should {
+      "receives a ErrorModel from the incomeSourceDetailsService" should {
 
         lazy val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
 
         "return Status (500)" in {
           mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testMtditid, 0)(Left(BusinessDetailsErrorModel(INTERNAL_SERVER_ERROR, "error")))
+          setupMockGetBusinessDetails(testMtditid, 0)(Left(ErrorModel(INTERNAL_SERVER_ERROR, "error")))
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
