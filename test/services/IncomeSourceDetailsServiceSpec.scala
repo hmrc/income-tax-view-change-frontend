@@ -17,80 +17,68 @@
 package services
 
 import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.IncomeSourceDetails._
+import assets.TestConstants.IncomeSources._
 import assets.TestConstants.PropertyDetails._
 import assets.TestConstants.ReportDeadlines.obligationsDataSuccessModel
 import assets.TestConstants._
-import mocks.connectors.{MockBusinessDetailsConnector, MockPropertyDetailsConnector}
+import mocks.connectors.MockIncomeSourceDetailsConnector
 import mocks.services.MockReportDeadlinesService
 import models.{IncomeSourcesError, NoPropertyIncomeDetails}
 import utils.TestSupport
 
 
-class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetailsConnector with MockPropertyDetailsConnector with MockReportDeadlinesService {
+class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDetailsConnector with MockReportDeadlinesService {
 
-  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, mockPropertysDetailsConnector, mockReportDeadlinesService)
+  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(
+    mockIncomeSourceDetailsConnector,
+    mockReportDeadlinesService
+  )
 
-  "The IncomeSourceDetailsService .getIncomeSourceDetails method" when {
+  "The IncomeSourceDetailsService.getIncomeSourceDetails method" when {
+
     "a result with both business and property details is returned" should {
+
       "return an IncomeSourceDetailsModel with business and property options" in {
-        setupMockBusinesslistResult(testNino)(multipleBusinessesSuccessModel)
-        setupMockPropertyDetailsResult(testNino)(propertySuccessModel)
+        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.businessesAndPropertyIncome)
         setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
         setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId2)(obligationsDataSuccessModel)
         setupMockPropertyReportDeadlinesResult(testNino)(obligationsDataSuccessModel)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe bothIncomeSourceSuccessMisalignedTaxYear
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe bothIncomeSourceSuccessMisalignedTaxYear
       }
     }
+
     "a result with just business details is returned" should {
       "return an IncomeSourceDetailsModel with just a business option" in {
-        setupMockBusinesslistResult(testNino)(businessesSuccessModel)
-        setupMockPropertyDetailsResult(testNino)(NoPropertyIncomeDetails)
+        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.singleBusinessIncome)
         setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe businessIncomeSourceSuccess
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe businessIncomeSourceSuccess
       }
     }
+
     "a result with just property details is returned" should {
       "return an IncomeSourceDetailsModel with just a property option" in {
-        setupMockBusinesslistResult(testNino)(noBusinessDetails)
-        setupMockPropertyDetailsResult(testNino)(propertySuccessModel)
+        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.propertyIncomeOnly)
         setupMockPropertyReportDeadlinesResult(testNino)(obligationsDataSuccessModel)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe propertyIncomeSourceSuccess
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe propertyIncomeSourceSuccess
       }
     }
+
     "a result with no income source details is returned" should {
       "return an IncomeSourceDetailsModel with no options" in {
-        setupMockBusinesslistResult(testNino)(noBusinessDetails)
-        setupMockPropertyDetailsResult(testNino)(NoPropertyIncomeDetails)
+        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.noIncomeDetails)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe noIncomeSourceSuccess
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe noIncomeSourceSuccess
       }
     }
-    "a result where the Business Income Source Details are error" should {
-      "return an IncomeSourceError" in {
-        setupMockBusinesslistResult(testNino)(businessErrorModel)
-        setupMockPropertyDetailsResult(testNino)(NoPropertyIncomeDetails)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe IncomeSourcesError
-      }
-    }
-    "a result where the Property Income Source Details are error" should {
+    "a result where the Income Source Details are error" should {
       "return an IncomeSourceError" in {
-        setupMockBusinesslistResult(testNino)(noBusinessDetails)
-        setupMockPropertyDetailsResult(testNino)(propertyErrorModel)
+        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.errorResponse)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe IncomeSourcesError
-      }
-    }
-    "a result where Business and Property Income Source Details are error" should {
-      "return an IncomeSourceError" in {
-        setupMockBusinesslistResult(testNino)(businessErrorModel)
-        setupMockPropertyDetailsResult(testNino)(propertyErrorModel)
-
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testNino)) shouldBe IncomeSourcesError
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe IncomeSourcesError
       }
     }
   }
@@ -98,17 +86,17 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
   "The IncomeSourceDetailsService .getBusinessDetails method" when {
     "a self-employment-ID is passed through" should {
       "return the corresponding BusinessModel" in {
-        setupMockBusinesslistResult(testNino)(businessesSuccessModel)
+        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.singleBusinessIncome)
 
-        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino, 0)) shouldBe Right(Some((businessesSuccessModel.businesses.head, 0)))
+        await(TestIncomeSourceDetailsService.getBusinessDetails(testMtditid, 0)) shouldBe Right(Some((NewBizDeets.business1, 0)))
       }
     }
 
-    "an error is returned from the businessDetailsConnector" should {
+    "an error is returned from the Income Source Details connector" should {
       "return a BusinessDetailsErrorModel" in {
-        setupMockBusinesslistResult(testNino)(businessErrorModel)
+        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.errorResponse)
 
-        await(TestIncomeSourceDetailsService.getBusinessDetails(testNino, 0)) shouldBe Left(businessErrorModel)
+        await(TestIncomeSourceDetailsService.getBusinessDetails(testMtditid, 0)) shouldBe Left(businessErrorModel)
       }
     }
   }

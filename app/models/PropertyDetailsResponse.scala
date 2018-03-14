@@ -24,8 +24,7 @@ case class PropDeetsModel(incomeSourceId: String,
                           accountingPeriod: AccountingPeriodModel,
                           contactDetails: Option[ContactDetailsModel],
                           propertiesRented: Option[PropertiesRentedModel],
-                          cessationDate: Option[String],
-                          cessationReason: Option[String],
+                          cessation: Option[CessationModel],
                           paperless: Option[Boolean]) extends PropertyDetailsResponse
 
 object PropDeetsModel {

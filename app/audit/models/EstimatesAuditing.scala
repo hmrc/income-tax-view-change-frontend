@@ -26,7 +26,7 @@ object EstimatesAuditing {
 
   case class EstimatesAuditModel[A](user: MtdItUser[A], estimate: String) extends AuditModel {
     override val transactionName: String = estimatesTransactionName
-    //TODO: Auditing needs to be revisited for multiple business scenario - speak to Kris McLackland
+    //TODO: Auditing needs to be revisited for multiple businesses scenario - speak to Kris McLackland
     val business = user.incomeSources.businessIncomeSources.headOption
     override val detail: Map[String, String] = Map(
       "mtdid" -> user.mtditid,

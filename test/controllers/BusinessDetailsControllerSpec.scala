@@ -56,7 +56,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         "return Status OK (200)" in {
           TestBusinessDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testNino, 0)(Right(Some(BusinessDetails.business1, 0)))
+          setupMockGetBusinessDetails(testMtditid, 0)(Right(Some(NewBizDeets.business1 -> 0)))
           status(result) shouldBe Status.OK
         }
 
@@ -78,7 +78,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         "return Status (500)" in {
           TestBusinessDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testNino, 0)(Right(None))
+          setupMockGetBusinessDetails(testMtditid, 0)(Right(None))
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -90,7 +90,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
 
         "return Status (500)" in {
           mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testNino, 0)(Left(BusinessDetailsErrorModel(INTERNAL_SERVER_ERROR, "error")))
+          setupMockGetBusinessDetails(testMtditid, 0)(Left(BusinessDetailsErrorModel(INTERNAL_SERVER_ERROR, "error")))
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 

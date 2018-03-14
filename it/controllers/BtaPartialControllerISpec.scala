@@ -37,8 +37,11 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           isAuthorisedUser(true)
           stubUserDetails()
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse = LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
@@ -53,8 +56,9 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
           val res = IncomeTaxViewChangeFrontend.getBtaPartial
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
+          Then("I verify the Income Source Details has been successfully wiremocked")
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
           verifyBizObsCall(testSelfEmploymentId)
           verifyPropObsCall()
 
@@ -92,8 +96,11 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           isAuthorisedUser(true)
           stubUserDetails()
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
@@ -107,8 +114,9 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
           val res = IncomeTaxViewChangeFrontend.getBtaPartial
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
+          Then("I verify the Income Source Details has been successfully wiremocked")
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
           verifyBizObsCall(testSelfEmploymentId)
           verifyPropObsCall()
 
@@ -140,8 +148,11 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           isAuthorisedUser(true)
           stubUserDetails()
-          getBizDeets(GetBusinessDetails.otherSuccessResponse(testSelfEmploymentId))
-          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Income Source Details response with misaligned Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, GetIncomeSourceDetails.misalignedBusinessWithPropertyResponse(testSelfEmploymentId)
+          )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
@@ -164,8 +175,9 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then("Verify that the last calc has been called for 2019")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, "2019")
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
+          Then("I verify the Income Source Details has been successfully wiremocked")
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
           verifyBizObsCall(testSelfEmploymentId)
           verifyPropObsCall()
 
@@ -191,14 +203,17 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
         }
       }
 
-      "has multiple businesses where the second business has an overdue obligation" should {
+      "has multiple business where the second business has an overdue obligation" should {
 
         "display the bta partial with the correct information" in {
 
           isAuthorisedUser(true)
           stubUserDetails()
-          getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
-          getPropDeets(GetPropertyDetails.successResponse())
+
+          And("I wiremock stub a successful Income Source Details response with multiple Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, GetIncomeSourceDetails.multipleBusinessesAndPropertyResponse(testSelfEmploymentId, otherTestSelfEmploymentId)
+          )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
@@ -215,8 +230,9 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           When("I call GET /report-quarterly/income-and-expenses/view/partial")
           val res = IncomeTaxViewChangeFrontend.getBtaPartial
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
+          Then("I verify the Income Source Details has been successfully wiremocked")
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
           verifyBizObsCall(testSelfEmploymentId, otherTestSelfEmploymentId)
           verifyPropObsCall()
 
@@ -255,7 +271,11 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           isAuthorisedUser(true)
           stubUserDetails()
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          And("I wiremock stub a successful Income Source Details response with single Business income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, GetIncomeSourceDetails.singleBusinessResponse(testSelfEmploymentId)
+          )
 
           And("I wiremock stub an error response from Get Last Estimated Tax Liability")
           IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
@@ -272,8 +292,9 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then(s"Verify that the last calc has been called for $testYear")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
+          Then("I verify the Income Source Details has been successfully wiremocked")
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
           verifyBizObsCall(testSelfEmploymentId)
 
           res should have(
@@ -304,7 +325,11 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           isAuthorisedUser(true)
           stubUserDetails()
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          And("I wiremock stub a successful Income Source Details response with single Business income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, GetIncomeSourceDetails.singleBusinessResponse(testSelfEmploymentId)
+          )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
@@ -323,8 +348,9 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then(s"Verify that the last calc has been called for $testYear")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
+          Then("I verify the Income Source Details has been successfully wiremocked")
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
           verifyBizObsCall(testSelfEmploymentId)
 
           res should have(
@@ -355,7 +381,11 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           isAuthorisedUser(true)
           stubUserDetails()
-          getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+
+          And("I wiremock stub a successful Income Source Details response with single Business income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            OK, GetIncomeSourceDetails.singleBusinessResponse(testSelfEmploymentId)
+          )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
@@ -372,8 +402,9 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           Then(s"Verify that the last calc has been called for $testYear")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
 
-          verifyBizDeetsCall()
-          verifyPropDeetsCall()
+          Then("I verify the Income Source Details has been successfully wiremocked")
+          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
           verifyBizObsCall(testSelfEmploymentId)
 
           Then("the result should have a HTTP status of OK")
@@ -393,9 +424,6 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           )
         }
       }
-
     }
-
   }
-
 }
