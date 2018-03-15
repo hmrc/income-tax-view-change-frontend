@@ -186,7 +186,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
           }
 
-          s"have an income tax section" which {
+          s"have an Income Tax section" which {
             "has the correct amount of income taxed at BRT" in {
               document.getElementById("brt-it-calc").text shouldBe
                 (model.payPensionsProfit.basicBand.taxableIncome + model.savingsAndGains.basicBand.taxableIncome).toCurrencyString
@@ -223,7 +223,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           import ImplicitCurrencyFormatter._
           import setup._
 
-          s"have an income tax section" which {
+          s"have an Income Tax section" which {
             "has a BRT section" in {
               document.getElementById("brt-section") should not be null
             }
@@ -251,7 +251,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
           val setup = pageSetup(busPropARTCalcDataModel, testIncomeSources)
           import ImplicitCurrencyFormatter._
           import setup._
-          s"have an income tax section" which {
+          s"have an Income Tax section" which {
             "has a BRT section" in {
               document.getElementById("brt-section") should not be null
             }

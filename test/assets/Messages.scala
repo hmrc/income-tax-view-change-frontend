@@ -66,7 +66,7 @@ object Messages {
     }
     object StatementSection {
       val heading = "Statements"
-      val paragraph = "View your income tax transactions, including charges and payments."
+      val paragraph = "View your Income Tax transactions, including charges and payments."
       val link = "View your statement"
     }
     object AccountDetailsSection {
@@ -97,7 +97,7 @@ object Messages {
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
       val p1 = s"This is an estimate of what you'll pay for the whole of this tax year, beginning 6 April ${taxYear-1} and ending 5 April $taxYear."
-      val p2 = "It's based on your current estimate and is a total of all income tax, from any source that you report through accounting software."
+      val p2 = "It's based on your current estimate and is a total of all Income Tax, from any source that you report through accounting software."
     }
     object InYearEstimate {
       val heading: String => String = inYearEstimate => s"Current estimate: $inYearEstimate"
@@ -139,7 +139,7 @@ object Messages {
       val viewBills = "View finalised bills."
       val billLink = s"Tax year: ${taxYear-1} to $taxYear"
       val noBills = "You've had no bills since you started reporting through software."
-      val earlierBills = "For earlier bills, view your self assessment calculations."
+      val earlierBills = "For earlier bills, view your Self Assessment calculations."
     }
   }
 
@@ -191,7 +191,7 @@ object Messages {
     val transactions = "Your transactions"
     val charge: String => String = amount => s"You had a charge of $amount."
     val youPaid: (String, String) => String = (amount, date) => s"You paid $amount on $date"
-    val earlierTransactions = "For earlier transactions, view your self assessment."
+    val earlierTransactions = "For earlier transactions, view your Self Assessment."
     val noTransactions = "You've had no transactions since you started reporting through accounting software."
     object Error {
       val pageHeading = "We can't show your statement right now"
