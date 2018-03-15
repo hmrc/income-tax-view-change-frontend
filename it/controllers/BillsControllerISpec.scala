@@ -95,7 +95,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
             elementTextByID("finalised-bills")("View finalised bills."),
             elementTextByID(s"bills-link-$testYear")(s"Tax year: 2017 to $testYear"),
             nElementsWithClass("bills-link")(1),
-            elementTextByID("earlier-bills")("For earlier bills, view your self assessment calculations.")
+            elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations.")
           )
         }
       }
@@ -150,7 +150,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
             elementTextByID(s"bills-link-$testYearPlusOne")(s"Tax year: $testYear to $testYearPlusOne"),
             elementTextByID(s"bills-link-$testYear")(s"Tax year: 2017 to $testYear"),
             nElementsWithClass("bills-link")(2),
-            elementTextByID("earlier-bills")("For earlier bills, view your self assessment calculations.")
+            elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations.")
           )
         }
       }
@@ -205,7 +205,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
             elementTextByID("finalised-bills")("View finalised bills."),
             elementTextByID(s"bills-link-$testYear")(s"Tax year: 2017 to $testYear"),
             nElementsWithClass("bills-link")(1),
-            elementTextByID("earlier-bills")("For earlier bills, view your self assessment calculations.")
+            elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations.")
           )
         }
       }
