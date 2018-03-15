@@ -85,9 +85,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view displays the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines"),
-              elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-              elementTextByID(id = "sa-link")("View annual returns")
+              pageTitle("Your Income Tax report deadlines")
             )
 
             Then("the page displays one obligation")
@@ -134,9 +132,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               Then("the correct title, username and links are displayed")
               res should have(
                 httpStatus(OK),
-                pageTitle("Your Income Tax report deadlines"),
-                elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-                elementTextByID(id = "sa-link")("View annual returns")
+                pageTitle("Your Income Tax report deadlines")
               )
 
               Then("the page displays four business obligations and four property obligations")
@@ -648,9 +644,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines"),
-              elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-              elementTextByID(id = "sa-link")("View annual returns")
+              pageTitle("Your Income Tax report deadlines")
             )
 
             Then("the page displays two obligations")
@@ -709,9 +703,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines"),
-              elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-              elementTextByID(id = "sa-link")("View annual returns")
+              pageTitle("Your Income Tax report deadlines")
             )
 
             Then("the page displays seven obligations")

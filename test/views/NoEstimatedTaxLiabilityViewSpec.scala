@@ -16,7 +16,7 @@
 
 package views
 
-import assets.Messages.{NoEstimatedTaxLiability => messages, Sidebar => sidebarMessages, Breadcrumbs => breadcrumbMessages}
+import assets.Messages.{NoEstimatedTaxLiability => messages, Breadcrumbs => breadcrumbMessages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
@@ -70,10 +70,6 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
       s"has a paragraph with '${messages.p1}'" in {
         estimateSection.getElementById("p1").text() shouldBe messages.p1
       }
-    }
-
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
     }
 
     "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {

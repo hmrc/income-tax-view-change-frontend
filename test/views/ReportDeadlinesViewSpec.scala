@@ -105,10 +105,6 @@ class ReportDeadlinesViewSpec extends TestSupport {
       }
     }
 
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
-    }
-
     "when only business obligations are returned" should {
 
       val setup = pageSetup(businessIncomeSource)

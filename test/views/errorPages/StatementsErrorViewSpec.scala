@@ -16,7 +16,7 @@
 
 package views.errorPages
 
-import assets.Messages.{Sidebar => sidebarMessages, Statements => messages}
+import assets.Messages.{Statements => messages}
 import assets.TestConstants.Estimates._
 import assets.TestConstants._
 import config.FrontendAppConfig

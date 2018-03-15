@@ -299,10 +299,6 @@ class CrystallisedViewSpec extends TestSupport {
 
     }
 
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
-    }
-
     "have a couple of sentences about adjustments" in {
       document.getElementById("incorrect").text shouldBe messages.Crystallised.incorrect
       document.getElementById("adjustments").text shouldBe crysMessages.errors

@@ -233,17 +233,6 @@ object Messages {
     val due: String => String = duedate => s"Due by $duedate"
   }
 
-  object Sidebar {
-    val mtditidHeading = "Income Tax reference:"
-    val reportsHeading = "Deadlines"
-    val reportsLink = "View report deadlines"
-    val estimatesHeading = "Estimates"
-    val estimatesLink = "View your tax estimate"
-    val previousTaxYearsHeading = "Previous tax years"
-    val selfAssessmentLink = "View annual returns"
-    val estimatesLinkYear: Int => String = year => s"View ${year - 1} to $year details"
-  }
-
   object ISE {
     val title = "Sorry, we are experiencing technical difficulties - 500"
   }
