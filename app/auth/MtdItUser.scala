@@ -16,7 +16,8 @@
 
 package auth
 
-import models.{IncomeSourcesModel, UserDetailsModel}
+import models.core.UserDetailsModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import play.api.mvc.{Request, WrappedRequest}
 
 case class MtdItUserOptionNino[A](mtditid: String,

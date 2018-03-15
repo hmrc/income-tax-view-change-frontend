@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models._
+import models.reportDeadlines._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import utils.ImplicitDateFormatter.localDateOrdering

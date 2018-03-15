@@ -19,7 +19,7 @@ import enums.{Crystallised, Estimate}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
 import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.LastTaxCalculation
+import models.calculation.LastTaxCalculation
 import play.api.http.Status._
 
 class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {

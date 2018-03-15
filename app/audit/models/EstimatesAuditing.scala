@@ -17,7 +17,6 @@
 package audit.models
 
 import auth.MtdItUser
-import models.IncomeSourcesModel
 
 object EstimatesAuditing {
 

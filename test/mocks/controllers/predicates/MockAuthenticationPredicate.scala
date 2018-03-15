@@ -16,13 +16,13 @@
 
 package mocks.controllers.predicates
 
-import mocks.auth._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.AuthenticationPredicate
+import mocks.auth._
+import mocks.connectors.MockUserDetailsConnector
 import play.api.i18n.MessagesApi
 import play.api.{Configuration, Environment}
 import utils.TestSupport
-import mocks.connectors.MockUserDetailsConnector
 
 trait MockAuthenticationPredicate extends TestSupport with MockUserDetailsConnector with MockFrontendAuthorisedFunctions {
 

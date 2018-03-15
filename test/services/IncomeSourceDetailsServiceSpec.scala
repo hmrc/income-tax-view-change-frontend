@@ -16,14 +16,12 @@
 
 package services
 
-import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.IncomeSources._
-import assets.TestConstants.PropertyDetails._
 import assets.TestConstants.ReportDeadlines.obligationsDataSuccessModel
 import assets.TestConstants._
 import mocks.connectors.MockIncomeSourceDetailsConnector
 import mocks.services.MockReportDeadlinesService
-import models.{IncomeSourcesError, NoPropertyIncomeDetails}
+import models.incomeSourcesWithDeadlines.IncomeSourcesError
 import utils.TestSupport
 
 
@@ -93,10 +91,10 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
     }
 
     "an error is returned from the Income Source Details connector" should {
-      "return a BusinessDetailsErrorModel" in {
+      "return a ErrorModel" in {
         setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.errorResponse)
 
-        await(TestIncomeSourceDetailsService.getBusinessDetails(testMtditid, 0)) shouldBe Left(businessErrorModel)
+        await(TestIncomeSourceDetailsService.getBusinessDetails(testMtditid, 0)) shouldBe Left(NewBizDeets.businessErrorModel)
       }
     }
   }

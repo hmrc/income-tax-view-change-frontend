@@ -18,13 +18,13 @@ package connectors
 
 import assets.TestConstants._
 import mocks.MockHttp
-import models._
+import models.core.{UserDetailsError, UserDetailsResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
+import uk.gov.hmrc.http.HttpResponse
 import utils.TestSupport
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HttpResponse
 
 
 class UserDetailsConnectorSpec extends TestSupport with MockHttp {

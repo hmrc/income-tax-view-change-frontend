@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.CalculationDataConnector
-import models.CalculationDataResponseModel
+import models.calculation.CalculationDataResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

@@ -20,7 +20,7 @@ import helpers.IntegrationTestConstants.GetReportDeadlinesData.singleReportDeadl
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub}
 import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.{Nino, NinoResponseError}
+import models.core.{Nino, NinoResponseError}
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 

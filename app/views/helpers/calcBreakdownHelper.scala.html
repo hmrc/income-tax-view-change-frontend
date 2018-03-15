@@ -16,8 +16,10 @@
 
 @import utils.ImplicitCurrencyFormatter._
 @import enums._
+@import models.financialTransactions.TransactionModel
+@import models.calculation.CalcDisplayModel
 
-@(calcModel: CalcDisplayModel, transactionModel: Option[TransactionModel], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
+@(calcModel: CalcDisplayModel, transactionModel: Option[TransactionModel], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.incomeSourcesWithDeadlines.IncomeSourcesModel)
 
 @defining(calcModel.calcDataModel.get) { breakdown =>
     <table class="itvc-table">

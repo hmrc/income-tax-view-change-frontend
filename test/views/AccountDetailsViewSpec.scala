@@ -18,13 +18,12 @@ package views
 
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.TestConstants.BusinessDetails.businessIncomeModelAlignedTaxYear
+import assets.TestConstants.BusinessDetails.{businessIncomeModelAlignedTaxYear, _}
 import assets.TestConstants.PropertyIncome.propertyIncomeModel
 import assets.TestConstants.{testMtditid, testNino, testUserDetails}
-import assets.TestConstants.BusinessDetails._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.{BusinessIncomeModel, IncomeSourcesModel, PropertyIncomeModel}
+import models.incomeSourcesWithDeadlines.{BusinessIncomeModel, IncomeSourcesModel, PropertyIncomeModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages

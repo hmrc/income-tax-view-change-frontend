@@ -17,6 +17,7 @@
 package models
 
 import assets.TestConstants._
+import models.core.AccountingPeriodModel
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 

@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.LastTaxCalculationConnector
-import models.LastTaxCalculationResponseModel
+import models.calculation.LastTaxCalculationResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

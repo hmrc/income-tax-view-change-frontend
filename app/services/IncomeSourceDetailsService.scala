@@ -20,6 +20,9 @@ import javax.inject.{Inject, Singleton}
 
 import connectors.IncomeSourceDetailsConnector
 import models._
+import models.core.ErrorModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.incomeSourcesWithDeadlines._
 import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -31,10 +34,10 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
                                            val reportDeadlinesService: ReportDeadlinesService) {
 
 
-  def getBusinessDetails(mtditid: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[BusinessDetailsErrorModel,Option[(BizDeetsModel, Int)]]] = {
+  def getBusinessDetails(mtditid: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[ErrorModel, Option[(BusinessDetailsModel, Int)]]] = {
     incomeSourceDetailsConnector.getIncomeSources(mtditid).map {
       case sources: IncomeSourceDetailsModel => Right(sources.sortedBusinesses.find(_._2 == id))
-      case error: IncomeSourceDetailsError => Left(BusinessDetailsErrorModel(error.status, error.reason))
+      case error: IncomeSourceDetailsError => Left(ErrorModel(error.status, error.reason))
     }
   }
 

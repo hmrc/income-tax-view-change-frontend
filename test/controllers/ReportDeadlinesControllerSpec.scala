@@ -17,7 +17,6 @@
 package controllers
 
 import assets.Messages.{ISE => errorMessages, ReportDeadlines => messages}
-import assets.TestConstants.testUserName
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}

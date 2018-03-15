@@ -16,14 +16,14 @@
 
 package connectors
 
+import assets.TestConstants.NewIncomeSourceDetails._
+import assets.TestConstants.testMtditid
 import mocks.MockHttp
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse
 import utils.TestSupport
-import assets.TestConstants.NewIncomeSourceDetails._
-import assets.TestConstants.testMtditid
-import models.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 
 import scala.concurrent.Future
 

@@ -17,8 +17,7 @@
 package views.helpers
 
 import assets.Messages.{BtaServiceInfoHeader => messages}
-import assets.TestConstants.{testMtdItUser, testMtdItUserNoUserDetails, testUserName}
-import auth.MtdItUser
+import assets.TestConstants.testUserName
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._

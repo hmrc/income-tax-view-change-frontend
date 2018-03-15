@@ -20,8 +20,9 @@
 @import views.helpers.ReportDeadlinesPage
 @import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
 @import views.html.helpers.backToHomeHelper
+@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 
-@(incomeSources: models.IncomeSourcesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(incomeSources: models.incomeSourcesWithDeadlines.IncomeSourcesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @sidebar = {
     @sidebarHelper(ReportDeadlinesPage, incomeSources)

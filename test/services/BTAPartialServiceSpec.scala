@@ -16,13 +16,14 @@
 
 package services
 
+import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.IncomeSources._
-import assets.TestConstants.BusinessDetails._
 import assets.TestConstants._
-import assets.TestConstants.ReportDeadlines._
 import mocks.services.{MockCalculationService, MockReportDeadlinesService}
-import models._
+import models.core.AccountingPeriodModel
+import models.incomeSourcesWithDeadlines.{BusinessIncomeModel, IncomeSourcesModel, PropertyIncomeModel}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import utils.TestSupport
 
 class BTAPartialServiceSpec extends TestSupport with MockCalculationService with MockReportDeadlinesService {

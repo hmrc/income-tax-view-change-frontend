@@ -18,6 +18,9 @@ package helpers.servicemocks
 
 import helpers.WiremockHelper
 import models._
+import models.calculation.LastTaxCalculation
+import models.core.{Nino, NinoResponseError}
+import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import play.api.http.Status
 import play.api.libs.json.Json
 

@@ -21,6 +21,7 @@ import javax.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import controllers.predicates._
 import models._
+import models.calculation.LastTaxCalculationWithYear
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.BTAPartialService

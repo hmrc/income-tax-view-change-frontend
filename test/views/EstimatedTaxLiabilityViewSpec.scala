@@ -25,7 +25,8 @@ import assets.TestConstants.PropertyIncome._
 import assets.TestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.{CalculationDataModel, IncomeSourcesModel}
+import models.calculation.CalculationDataModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._

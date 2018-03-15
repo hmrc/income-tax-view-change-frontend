@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models._
+import models.reportDeadlines.{Open, Overdue, Received, ReportDeadlineStatus}
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._

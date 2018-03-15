@@ -20,6 +20,12 @@ import assets.TestConstants.BusinessDetails.{testBusinessAccountingPeriod, testT
 import auth.{MtdItUser, MtdItUserOptionNino}
 import enums.{Crystallised, Estimate}
 import models._
+import models.calculation._
+import models.core._
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
+import models.incomeSourceDetails._
+import models.incomeSourcesWithDeadlines.{BusinessIncomeModel, IncomeSourcesModel, PropertyIncomeModel}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
@@ -406,107 +412,6 @@ object TestConstants extends ImplicitDateFormatter {
     val testTradeName = "business"
     val testTradeName2 = "business"
 
-    val business1 = BusinessModel(
-      id = testSelfEmploymentId,
-      accountingPeriod = testBusinessAccountingPeriod,
-      accountingType = "CASH",
-      commencementDate = Some("2017-1-1"),
-      cessationDate = None,
-      tradingName = testTradeName,
-      businessDescription = Some("a business"),
-      businessAddressLineOne = Some("64 Zoo Lane"),
-      businessAddressLineTwo = Some("Happy Place"),
-      businessAddressLineThree = Some("Magical Land"),
-      businessAddressLineFour = Some("England"),
-      businessPostcode = Some("ZL1 064")
-    )
-    val business2 = BusinessModel(
-      id = testSelfEmploymentId2,
-      accountingPeriod = testBusinessAccountingPeriod,
-      accountingType = "CASH",
-      commencementDate = Some("2017-1-1"),
-      cessationDate = None,
-      tradingName = testTradeName2,
-      businessDescription = Some("some business"),
-      businessAddressLineOne = Some("65 Zoo Lane"),
-      businessAddressLineTwo = Some("Happy Place"),
-      businessAddressLineThree = Some("Magical Land"),
-      businessAddressLineFour = Some("England"),
-      businessPostcode = Some("ZL1 064")
-    )
-    val ceasedBusiness = BusinessModel(
-      id = testSelfEmploymentId,
-      accountingPeriod = testBusinessAccountingPeriod,
-      accountingType = "CASH",
-      commencementDate = Some("2017-1-1"),
-      cessationDate = Some("2018-5-30"),
-      tradingName = testTradeName,
-      businessDescription = Some("a business"),
-      businessAddressLineOne = Some("64 Zoo Lane"),
-      businessAddressLineTwo = Some("Happy Place"),
-      businessAddressLineThree = Some("Magical Land"),
-      businessAddressLineFour = Some("England"),
-      businessPostcode = Some("ZL1 064")
-    )
-
-    val businessesSuccessResponse = List(business1)
-    val multipleBusinessSuccessResponse = List(business1, business2)
-    val noBusinessDetails = BusinessDetailsModel(List())
-    val businessSuccessEmptyResponse = "[]"
-    val businessesSuccessModel = BusinessDetailsModel(businessesSuccessResponse)
-    val multipleBusinessesSuccessModel = BusinessDetailsModel(multipleBusinessSuccessResponse)
-    val businessSuccessString: String =
-      s"""
-          {
-             "businesses":[
-                {
-                   "id":"$testSelfEmploymentId",
-                   "accountingPeriod":{
-                     "start":"${testBusinessAccountingPeriod.start}",
-                     "end":"${testBusinessAccountingPeriod.end}"
-                   },
-                   "accountingType":"CASH",
-                   "commencementDate":"2017-01-01",
-                   "tradingName":"$testTradeName",
-                   "businessDescription":"a business",
-                   "businessAddressLineOne":"64 Zoo Lane",
-                   "businessAddressLineTwo":"Happy Place",
-                   "businessAddressLineThree":"Magical Land",
-                   "businessAddressLineFour":"England",
-                   "businessPostcode":"ZL1 064"
-                },
-                {
-                   "id":"$testSelfEmploymentId2",
-                      "accountingPeriod":{
-                        "start":"${testBusinessAccountingPeriod.start}",
-                        "end":"${testBusinessAccountingPeriod.end}"
-                      },
-                   "accountingType":"CASH",
-                   "commencementDate":"2017-01-01",
-                   "tradingName":"$testTradeName2",
-                   "businessDescription":"some business",
-                   "businessAddressLineOne":"65 Zoo Lane",
-                   "businessAddressLineTwo":"Happy Place",
-                   "businessAddressLineThree":"Magical Land",
-                   "businessAddressLineFour":"England",
-                   "businessPostcode":"ZL1 064"
-                }
-             ]
-          }
-      """.stripMargin
-    val businessSuccessJson: JsValue = Json.parse(businessSuccessString)
-
-
-    val businessErrorModel = BusinessDetailsErrorModel(testErrorStatus, testErrorMessage)
-    val businessErrorString: String =
-      s"""
-        |{
-        |  "code":$testErrorStatus,
-        |  "message":"$testErrorMessage"
-        |}
-      """.stripMargin
-    val businessListErrorJson: JsValue = Json.parse(businessErrorString)
-
     val businessIncomeModel =
       BusinessIncomeModel(
         testSelfEmploymentId,
@@ -562,8 +467,6 @@ object TestConstants extends ImplicitDateFormatter {
 
   object PropertyDetails {
     val testPropertyAccountingPeriod = AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5")
-    val propertySuccessModel = PropertyDetailsModel(testPropertyAccountingPeriod)
-    val propertyErrorModel = PropertyDetailsErrorModel(testErrorStatus, testErrorMessage)
   }
 
   object Estimates {
@@ -647,7 +550,7 @@ object TestConstants extends ImplicitDateFormatter {
     val testContactDetails = ContactDetailsModel(Some("123456789"),Some("0123456789"),Some("8008135"),Some("google@chuckNorris.com"))
     val testCessation = CessationModel(Some("2018-1-1".toLocalDate), Some("It was a stupid idea anyway"))
 
-    val businessIncomeSourceSuccess = BizDeetsModel(
+    val businessIncomeSourceSuccess = BusinessDetailsModel(
       incomeSourceId = testSelfEmploymentId,
       accountingPeriod = testBusinessAccountingPeriod,
       tradingName = Some(testTradeName),
@@ -660,7 +563,7 @@ object TestConstants extends ImplicitDateFormatter {
       paperless = Some(true)
     )
 
-    val business1 = BizDeetsModel(
+    val business1 = BusinessDetailsModel(
       incomeSourceId = testSelfEmploymentId,
       accountingPeriod = testBusinessAccountingPeriod,
       cashOrAccruals = Some("CASH"),
@@ -674,7 +577,7 @@ object TestConstants extends ImplicitDateFormatter {
     )
 
 
-    val business2 = BizDeetsModel(
+    val business2 = BusinessDetailsModel(
       incomeSourceId = testSelfEmploymentId2,
       accountingPeriod = testBusinessAccountingPeriod,
       cashOrAccruals = Some("CASH"),
@@ -687,7 +590,7 @@ object TestConstants extends ImplicitDateFormatter {
       paperless = None
     )
 
-    val ceasedBusiness = BizDeetsModel(
+    val ceasedBusiness = BusinessDetailsModel(
       incomeSourceId = testSelfEmploymentId,
       accountingPeriod = testBusinessAccountingPeriod,
       cashOrAccruals = Some("CASH"),
@@ -702,13 +605,15 @@ object TestConstants extends ImplicitDateFormatter {
       seasonal = None,
       paperless = None
     )
+
+    val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
   }
 
   object NewPropDeets {
 
     val testPropertyAccountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05")
 
-    val propertyDetails = PropDeetsModel(
+    val propertyDetails = PropertyDetailsModel(
       incomeSourceId = testPropertyIncomeId,
       accountingPeriod = testPropertyAccountingPeriod,
       propertiesRented = Some(PropertiesRentedModel(
@@ -2169,14 +2074,6 @@ object TestConstants extends ImplicitDateFormatter {
         "taxReference" -> testMtditid,
         "amountInPence" -> testAmountInPence,
         "returnUrl" -> testPaymentRedirectUrl
-      )
-
-    val testPaymentErrorModel: PaymentErrorModel = PaymentErrorModel(testErrorStatus,testErrorMessage)
-
-    val testPaymentErrorJson: JsValue =
-      Json.obj(
-        "code" -> testErrorStatus,
-        "message" -> testErrorMessage
       )
 
   }

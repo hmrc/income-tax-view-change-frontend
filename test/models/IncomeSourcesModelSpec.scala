@@ -16,12 +16,12 @@
 
 package models
 
+import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.IncomeSources._
+import assets.TestConstants.PropertyDetails._
+import assets.TestConstants._
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
-import assets.TestConstants._
-import assets.TestConstants.IncomeSources._
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.PropertyDetails._
 
 class IncomeSourcesModelSpec extends UnitSpec with Matchers {
 

@@ -18,11 +18,10 @@ package controllers.predicates
 
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
 import play.api.mvc.Results.Ok
-import play.api.test.Helpers.redirectLocation
+import play.api.mvc.{Action, AnyContent, Result}
+import play.api.test.Helpers.{redirectLocation, _}
 import utils.TestSupport
-import play.api.test.Helpers._
 
 import scala.concurrent.Future
 

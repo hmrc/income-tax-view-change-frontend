@@ -19,13 +19,12 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import connectors.{CalculationDataConnector, LastTaxCalculationConnector}
-import models.{NoLastTaxCalculation, _}
+import models.calculation._
 import play.api.Logger
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
-import enums.{CalcStatus, Crystallised, Estimate}
 
 @Singleton
 class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector,

@@ -18,7 +18,7 @@ package forms
 
 import forms.preprocess.XssFilter
 import forms.validation.{Constraints, ErrorMessageFactory}
-import models.ExitSurveyModel
+import models.core.ExitSurveyModel
 import play.api.data.Form
 import play.api.data.Forms._
 

@@ -19,7 +19,8 @@ import enums.{Crystallised, Estimate}
 import helpers.IntegrationTestConstants._
 import helpers.servicemocks._
 import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation, FinancialTransactionsModel}
+import models.calculation.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
+import models.financialTransactions.FinancialTransactionsModel
 import play.api.http.Status
 import play.api.http.Status._
 import utils.ImplicitCurrencyFormatter._
