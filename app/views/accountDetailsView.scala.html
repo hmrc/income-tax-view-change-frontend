@@ -54,9 +54,7 @@ serviceInfo = breadcrumb
         <p id="reporting-period">@messages("account.reportingPeriod", properties.get.accountingPeriod.start.toLongDateNoYear, properties.get.accountingPeriod.end.toLongDateNoYear)</p>
     }
 
-    @if(appConfig.features.homePageEnabled()){
-        @backToHomeHelper()
-    }
+    @backToHomeHelper()
 
 </section>
 

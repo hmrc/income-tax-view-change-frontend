@@ -25,7 +25,6 @@ object FeatureSwitchForm {
 
   val form: Form[FeatureSwitchModel] = Form(
     mapping(
-      Keys.homePageEnabled -> boolean,
       Keys.propertyDetailsEnabled -> boolean,
       Keys.propertyEopsEnabled -> boolean,
       Keys.businessEopsEnabled -> boolean,

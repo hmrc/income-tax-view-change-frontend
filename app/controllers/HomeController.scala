@@ -35,9 +35,7 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                implicit val config: FrontendAppConfig,
                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
-  val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino).async { implicit user =>
-    if (config.features.homePageEnabled()) renderView else redirectToBTA
-  }
+  val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino).async { implicit user => renderView}
 
   private[HomeController] def redirectToBTA: Future[Result] = Future.successful(Redirect(config.businessTaxAccount))
 
