@@ -16,7 +16,7 @@
 
 package views.errorPages
 
-import assets.Messages.{EstimatedTaxLiabilityError => messages, Sidebar => sidebarMessages}
+import assets.Messages.{EstimatedTaxLiabilityError => messages}
 import assets.TestConstants.BusinessDetails._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.PropertyIncome._
@@ -68,10 +68,6 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
       s"has a paragraph with '${messages.p2}'" in {
         estimateSection.getElementById("p2").text() shouldBe messages.p2
       }
-    }
-
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
     }
 
     "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {

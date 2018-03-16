@@ -17,7 +17,7 @@
 @import views.html.templates.main_template
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
-@import views.html.helpers.{sidebarHelper, breadcrumbHelper}
+@import views.html.helpers.breadcrumbHelper
 @import views.helpers.EstimatesPage
 @import models.{Breadcrumb, BreadcrumbItem}
 
@@ -33,7 +33,6 @@
 @main_template(
     title = messages("estimates.title"),
     bodyClasses = None,
-    sidebarLinks = None,
     serviceInfo = breadcrumb
 ) {
 

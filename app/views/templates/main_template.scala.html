@@ -18,7 +18,6 @@
 @import templates.govuk_wrapper
 
 @(title: String,
-  sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
@@ -36,16 +35,9 @@
     @scriptElem.fold(HtmlFormat.empty)(x => x)
 }
 
-@sidebar = {
-    @if(sidebarLinks.isDefined) {
-        @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
-    }
-}
-
 @govuk_wrapper(title = title,
                mainClass = mainClass,
                bodyClasses = bodyClasses,
-               sidebar = sidebar,
                contentHeader = contentHeader,
                mainContent = layouts.article(mainContent),
                serviceInfoContent = serviceInfo,

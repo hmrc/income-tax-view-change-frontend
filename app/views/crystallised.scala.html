@@ -20,7 +20,6 @@
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
 @import models.CalculationDataResponseModel
-@import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
 @import views.html.helpers.breadcrumbHelper
@@ -29,10 +28,6 @@
 @import controllers.PaymentController
 
 @(calcModel: CalcDisplayModel, transactionModel: TransactionModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
-
-@sidebar = {
-    @sidebarHelper(EstimatesPage, sources, Some(taxYear))
-}
 
 @calcBreakdown = {
 <section id="inYearCalcBreakdown" @if(!transactionModel.isPaid) {class="panel-indent"}>
@@ -56,7 +51,6 @@
     title = renderTitle(taxYear, true),
     bodyClasses = None,
     scriptElem = None,
-    sidebarLinks = Some(sidebar),
     serviceInfo = breadcrumb
 ) {
     <section id="owed-tax">
