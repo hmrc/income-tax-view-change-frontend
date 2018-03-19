@@ -172,6 +172,9 @@ class HomePageViewSpec extends TestSupport {
         document.getElementById("howToDoThis").text() shouldBe dropDown
         document.getElementById("why-may-change-1").text() shouldBe dropDownText1
         document.getElementById("why-may-change-2").text() shouldBe dropDownText2
+        document.getElementById("why-may-change-3").text() shouldBe dropDownText3 + accountingSoftwareLink
+        document.getElementById("accounting-software-link").text() shouldBe accountingSoftwareLink
+        document.getElementById("accounting-software-link").attr("href") shouldBe mockAppConfig.accountingSoftwareLinkUrl
       }
 
 

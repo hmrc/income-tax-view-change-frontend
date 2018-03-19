@@ -36,7 +36,14 @@
     <div id="whyMayChange" class="panel-indent">
         <p id="why-may-change-1">@messages("home.dropdown.p1")</p>
         <p id="why-may-change-2">@messages("home.dropdown.p2")</p>
-        <!--<p>@messages("home.dropdown.p3") <a id="dropdown-link" href="">@messages("home.dropdown.link")</a></p>-->
+        <p id="why-may-change-3">@messages("home.dropdown.p3")
+            <a id="accounting-software-link"
+               data-journey-click="HomePage:ClickLink:ViewAccountingSoftware"
+               href=@appConfig.accountingSoftwareLinkUrl
+               target="_blank">
+                @messages("home.dropdown.link")
+            </a>
+        </p>
     </div>
 }
 
