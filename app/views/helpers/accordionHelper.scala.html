@@ -16,9 +16,9 @@
 
 @import org.apache.commons.lang3.StringEscapeUtils.escapeEcmaScript
 
-@(id: String, label: String, content : Html)(implicit messages: Messages)
+@(id: String, category: String, label: String, content : Html)(implicit messages: Messages)
 
-<details onclick="markAccordionOpen('@escapeEcmaScript(label)')">
+<details onclick="markAccordionOpen('@escapeEcmaScript(category)', '@escapeEcmaScript(label)')">
     <summary>
         <span id="@id" class="summary">@label</span>
     </summary>

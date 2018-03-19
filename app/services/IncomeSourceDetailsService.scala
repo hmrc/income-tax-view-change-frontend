@@ -76,4 +76,12 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
       IncomeSourcesModel(businessList, property)
     }
   }
+
+  def getBusinessDetails(nino: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[BusinessDetailsErrorModel,Option[(BusinessModel, Int)]]] = {
+
+    businessDetailsConnector.getBusinessList(nino).map {
+      case bizDeets: BusinessDetailsModel => Right(bizDeets.sortedBusinesses.find(_._2 == id))
+      case error: BusinessDetailsErrorModel => Left(error)
+    }
+  }
 }

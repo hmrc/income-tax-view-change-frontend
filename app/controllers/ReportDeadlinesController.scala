@@ -24,27 +24,30 @@ import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
-import services.IncomeSourceDetailsService
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
 @Singleton
-class ReportDeadlinesController @Inject()(implicit val config: FrontendAppConfig,
-                                          implicit val messagesApi: MessagesApi,
-                                          val checkSessionTimeout: SessionTimeoutPredicate,
+class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                           val authenticate: AuthenticationPredicate,
                                           val retrieveNino: NinoPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                          val auditingService: AuditingService
+                                          val auditingService: AuditingService,
+                                          implicit val config: FrontendAppConfig,
+                                          implicit val messagesApi: MessagesApi
                                      ) extends BaseController {
 
   val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      auditReportDeadlines(user)
-      Future.successful(Ok(views.html.report_deadlines(user.incomeSources)))
+      if (config.features.reportDeadlinesEnabled()) renderView else fRedirectToHome
+  }
+
+  private def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
+    auditReportDeadlines(user)
+    Future.successful(Ok(views.html.report_deadlines(user.incomeSources)))
   }
 
   private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier): Unit =

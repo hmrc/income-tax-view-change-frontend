@@ -95,6 +95,9 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   //Payment Redirect route
   lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl"
 
+  //Accounting software guidance
+  lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
+
   val features = new Features(runModeConfiguration)
 
 }
