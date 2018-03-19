@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import models._
 import models.calculation.{LastTaxCalculation, LastTaxCalculationError, LastTaxCalculationResponseModel, NoLastTaxCalculation}
-import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 @Singleton
 class BTAPartialService @Inject()(val financialDataService: CalculationService) extends ImplicitListMethods {
 
-  def getNextObligation(sources: IncomeSourcesModel)(implicit hc: HeaderCarrier): ReportDeadlinesResponseModel = {
+  def getNextObligation(sources: IncomeSourcesWithDeadlinesModel)(implicit hc: HeaderCarrier): ReportDeadlinesResponseModel = {
     if (sources.allReportDeadlinesErrored) {
       Logger.warn("[BTAPartialService][getNextObligation] - No ReportDeadlines obtained")
       ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Could not retrieve obligations")

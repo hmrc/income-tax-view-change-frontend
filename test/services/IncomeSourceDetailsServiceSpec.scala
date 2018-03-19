@@ -21,7 +21,7 @@ import assets.TestConstants.ReportDeadlines.obligationsDataSuccessModel
 import assets.TestConstants._
 import mocks.connectors.MockIncomeSourceDetailsConnector
 import mocks.services.MockReportDeadlinesService
-import models.incomeSourcesWithDeadlines.IncomeSourcesError
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesError
 import utils.TestSupport
 
 
@@ -76,7 +76,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
       "return an IncomeSourceError" in {
         setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.errorResponse)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe IncomeSourcesError
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe IncomeSourcesWithDeadlinesError
       }
     }
   }

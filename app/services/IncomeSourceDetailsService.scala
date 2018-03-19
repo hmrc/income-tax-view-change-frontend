@@ -41,7 +41,7 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
     }
   }
 
-  def getIncomeSourceDetails(mtditid: String, nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
+  def getIncomeSourceDetails(mtditid: String, nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesWithDeadlinesResponse] = {
     for {
       sources <- incomeSourceDetailsConnector.getIncomeSources(mtditid)
       incomeSources <- createIncomeSourcesModel(nino, sources)
@@ -49,13 +49,13 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
   }
 
   def createIncomeSourcesModel(nino: String, incomeSourceResponse: IncomeSourceDetailsResponse)
-                              (implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
+                              (implicit hc: HeaderCarrier): Future[IncomeSourcesWithDeadlinesResponse] = {
     incomeSourceResponse match {
       case sources: IncomeSourceDetailsModel =>
-        val businessIncomeModelFList: Future[List[BusinessIncomeModel]] =
+        val businessIncomeModelFList: Future[List[BusinessIncomeWithDeadlinesModel]] =
           Future.sequence(sources.businesses.map { seTrade =>
             reportDeadlinesService.getBusinessReportDeadlines(nino, seTrade.incomeSourceId).map { obs =>
-              BusinessIncomeModel(
+              BusinessIncomeWithDeadlinesModel(
                 seTrade.incomeSourceId,
                 seTrade.tradingName.getOrElse("No Trading Name Found"), //TODO: What should this do if no Trading Name is supplied...?
                 seTrade.cessation.flatMap(_.date),
@@ -65,10 +65,10 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
             }
           })
 
-        val propertyIncomeModelFOpt: Future[Option[PropertyIncomeModel]] =
+        val propertyIncomeModelFOpt: Future[Option[PropertyIncomeWithDeadlinesModel]] =
           Future.sequence(Option.option2Iterable(sources.property.map { propertyIncome =>
             reportDeadlinesService.getPropertyReportDeadlines(nino).map { obs =>
-              PropertyIncomeModel(propertyIncome.accountingPeriod, obs)
+              PropertyIncomeWithDeadlinesModel(propertyIncome.accountingPeriod, obs)
             }
           })).map(_.headOption)
 
@@ -76,9 +76,9 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
           businessList <- businessIncomeModelFList
           property <- propertyIncomeModelFOpt
         } yield {
-          IncomeSourcesModel(businessList, property)
+          IncomeSourcesWithDeadlinesModel(businessList, property)
         }
-      case _: IncomeSourceDetailsError => Future.successful(IncomeSourcesError)
+      case _: IncomeSourceDetailsError => Future.successful(IncomeSourcesWithDeadlinesError)
     }
   }
 }

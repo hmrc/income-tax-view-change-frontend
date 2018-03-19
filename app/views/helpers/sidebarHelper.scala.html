@@ -15,9 +15,9 @@
  *@
 
 @import views.helpers.{Page, EstimatesPage, ReportDeadlinesPage}
-@import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+@import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 
-@(page: Page, incomeSources: IncomeSourcesModel, taxYear: Option[Int] = None)(implicit messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(page: Page, incomeSources: IncomeSourcesWithDeadlinesModel, taxYear: Option[Int] = None)(implicit messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 <section id="sidebar" class="section section--blue-top">
 

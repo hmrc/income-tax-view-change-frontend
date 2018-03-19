@@ -22,7 +22,7 @@ import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.{Crystallised, Estimate}
-import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
@@ -42,7 +42,7 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
 
   val viewEstimateCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      implicit val sources: IncomeSourcesModel = user.incomeSources
+      implicit val sources: IncomeSourcesWithDeadlinesModel = user.incomeSources
 
       for{
         estimatesResponse <- calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears)

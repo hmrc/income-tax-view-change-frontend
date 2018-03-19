@@ -20,7 +20,7 @@ import assets.Messages.{Sidebar => messages}
 import assets.TestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import play.twirl.api.Html
@@ -31,7 +31,7 @@ class SidebarHelperSpec extends TestSupport {
 
   lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  def html(page: Page, user: MtdItUser[_], taxYear: Option[Int], incomeSourcesModel: IncomeSourcesModel): Html =
+  def html(page: Page, user: MtdItUser[_], taxYear: Option[Int], incomeSourcesModel: IncomeSourcesWithDeadlinesModel): Html =
     sidebarHelper(page, incomeSourcesModel, taxYear)(
       applicationMessages,
       appConfig,

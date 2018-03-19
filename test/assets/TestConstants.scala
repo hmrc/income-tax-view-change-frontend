@@ -24,7 +24,7 @@ import models.calculation._
 import models.core._
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
 import models.incomeSourceDetails._
-import models.incomeSourcesWithDeadlines.{BusinessIncomeModel, IncomeSourcesModel, PropertyIncomeModel}
+import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
@@ -413,7 +413,7 @@ object TestConstants extends ImplicitDateFormatter {
     val testTradeName2 = "business"
 
     val businessIncomeModel =
-      BusinessIncomeModel(
+      BusinessIncomeWithDeadlinesModel(
         testSelfEmploymentId,
         testTradeName,
         None,
@@ -422,7 +422,7 @@ object TestConstants extends ImplicitDateFormatter {
       )
 
     val businessIncomeModel2 =
-      BusinessIncomeModel(
+      BusinessIncomeWithDeadlinesModel(
         testSelfEmploymentId2,
         testTradeName2,
         None,
@@ -431,7 +431,7 @@ object TestConstants extends ImplicitDateFormatter {
       )
 
     val business2018IncomeModel =
-      BusinessIncomeModel(
+      BusinessIncomeWithDeadlinesModel(
         testSelfEmploymentId,
         testTradeName,
         None,
@@ -440,7 +440,7 @@ object TestConstants extends ImplicitDateFormatter {
       )
 
     val businessIncomeModelAlignedTaxYear =
-      BusinessIncomeModel(
+      BusinessIncomeWithDeadlinesModel(
         testSelfEmploymentId,
         testTradeName,
         None,
@@ -449,7 +449,7 @@ object TestConstants extends ImplicitDateFormatter {
       )
 
     val business2019IncomeModel =
-      BusinessIncomeModel(
+      BusinessIncomeWithDeadlinesModel(
         testSelfEmploymentId,
         testTradeName,
         None,
@@ -459,7 +459,7 @@ object TestConstants extends ImplicitDateFormatter {
   }
 
   object PropertyIncome {
-    val propertyIncomeModel = PropertyIncomeModel(
+    val propertyIncomeModel = PropertyIncomeWithDeadlinesModel(
       accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"),
       ReportDeadlines.obligationsDataSuccessModel
     )
@@ -515,14 +515,14 @@ object TestConstants extends ImplicitDateFormatter {
   object IncomeSources {
 
     //Outputs
-    val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesModel(List(BusinessDetails.businessIncomeModel, BusinessDetails.businessIncomeModel2), Some(PropertyIncome.propertyIncomeModel))
-    val businessIncomeSourceSuccess = IncomeSourcesModel(List(BusinessDetails.businessIncomeModel), None)
-    val business2018IncomeSourceSuccess = IncomeSourcesModel(List(BusinessDetails.business2018IncomeModel), None)
-    val business2018And19IncomeSourceSuccess = IncomeSourcesModel(List(BusinessDetails.business2018IncomeModel, BusinessDetails.business2019IncomeModel), None)
-    val propertyIncomeSourceSuccess = IncomeSourcesModel(List.empty, Some(PropertyIncome.propertyIncomeModel))
-    val noIncomeSourceSuccess = IncomeSourcesModel(List.empty, None)
+    val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesWithDeadlinesModel(List(BusinessDetails.businessIncomeModel, BusinessDetails.businessIncomeModel2), Some(PropertyIncome.propertyIncomeModel))
+    val businessIncomeSourceSuccess = IncomeSourcesWithDeadlinesModel(List(BusinessDetails.businessIncomeModel), None)
+    val business2018IncomeSourceSuccess = IncomeSourcesWithDeadlinesModel(List(BusinessDetails.business2018IncomeModel), None)
+    val business2018And19IncomeSourceSuccess = IncomeSourcesWithDeadlinesModel(List(BusinessDetails.business2018IncomeModel, BusinessDetails.business2019IncomeModel), None)
+    val propertyIncomeSourceSuccess = IncomeSourcesWithDeadlinesModel(List.empty, Some(PropertyIncome.propertyIncomeModel))
+    val noIncomeSourceSuccess = IncomeSourcesWithDeadlinesModel(List.empty, None)
     val bothIncomeSourcesSuccessBusinessAligned =
-      IncomeSourcesModel(List(BusinessDetails.businessIncomeModelAlignedTaxYear), Some(PropertyIncome.propertyIncomeModel))
+      IncomeSourcesWithDeadlinesModel(List(BusinessDetails.businessIncomeModelAlignedTaxYear), Some(PropertyIncome.propertyIncomeModel))
   }
 
   object NewIncomeSourceDetails {

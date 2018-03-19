@@ -24,18 +24,18 @@ import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, 
 import play.api.libs.json.{Format, Json}
 import utils.ImplicitDateFormatter._
 
-abstract class IncomeModel {
+abstract class IncomeModelWithDeadlines {
   def accountingPeriod: AccountingPeriodModel
   def reportDeadlines: ReportDeadlinesResponseModel
 }
 
-sealed trait IncomeSourcesResponseModel
-case object IncomeSourcesError extends IncomeSourcesResponseModel
-case class IncomeSourcesModel(
-                               businessIncomeSources: List[BusinessIncomeModel],
-                               propertyIncomeSource: Option[PropertyIncomeModel]) extends IncomeSourcesResponseModel {
+sealed trait IncomeSourcesWithDeadlinesResponse
+case object IncomeSourcesWithDeadlinesError extends IncomeSourcesWithDeadlinesResponse
+case class IncomeSourcesWithDeadlinesModel(
+                                            businessIncomeSources: List[BusinessIncomeWithDeadlinesModel],
+                                            propertyIncomeSource: Option[PropertyIncomeWithDeadlinesModel]) extends IncomeSourcesWithDeadlinesResponse {
 
-  val incomeSources: List[IncomeModel] = businessIncomeSources ++ propertyIncomeSource
+  val incomeSources: List[IncomeModelWithDeadlines] = businessIncomeSources ++ propertyIncomeSource
 
   val hasPropertyIncome: Boolean = propertyIncomeSource.nonEmpty
   val hasBusinessIncome: Boolean = businessIncomeSources.nonEmpty
@@ -65,27 +65,29 @@ case class IncomeSourcesModel(
   def earliestAccountingPeriodStart(year: Int): LocalDate =
     incomeSources.filter(_.accountingPeriod.determineTaxYear == year).map(_.accountingPeriod.start).min
 
-  val sortedBusinesses: List[(BusinessIncomeModel, Int)] = businessIncomeSources.sortBy(_.selfEmploymentId.substring(4)).zipWithIndex
+  val sortedBusinesses: List[(BusinessIncomeWithDeadlinesModel, Int)] = businessIncomeSources.sortBy(_.selfEmploymentId.substring(4)).zipWithIndex
 }
 
-case class PropertyIncomeModel(accountingPeriod: AccountingPeriodModel, reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel
-case class BusinessIncomeModel(
-                                selfEmploymentId: String,
-                                tradingName: String,
-                                cessationDate: Option[LocalDate],
-                                accountingPeriod: AccountingPeriodModel,
-                                reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModel
+case class PropertyIncomeWithDeadlinesModel(
+                                             accountingPeriod: AccountingPeriodModel,
+                                             reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModelWithDeadlines
+case class BusinessIncomeWithDeadlinesModel(
+                                             selfEmploymentId: String,
+                                             tradingName: String,
+                                             cessationDate: Option[LocalDate],
+                                             accountingPeriod: AccountingPeriodModel,
+                                             reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModelWithDeadlines
 
-object BusinessIncomeModel {
-  implicit val format: Format[BusinessIncomeModel] = Json.format[BusinessIncomeModel]
+object BusinessIncomeWithDeadlinesModel {
+  implicit val format: Format[BusinessIncomeWithDeadlinesModel] = Json.format[BusinessIncomeWithDeadlinesModel]
 }
 
-object PropertyIncomeModel {
-  implicit val format: Format[PropertyIncomeModel] = Json.format[PropertyIncomeModel]
+object PropertyIncomeWithDeadlinesModel {
+  implicit val format: Format[PropertyIncomeWithDeadlinesModel] = Json.format[PropertyIncomeWithDeadlinesModel]
 }
 
-object IncomeSourcesModel {
- implicit val format: Format[IncomeSourcesModel] = Json.format[IncomeSourcesModel]
+object IncomeSourcesWithDeadlinesModel {
+ implicit val format: Format[IncomeSourcesWithDeadlinesModel] = Json.format[IncomeSourcesWithDeadlinesModel]
 }
 
 

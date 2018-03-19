@@ -22,7 +22,7 @@
 @import views.html.helpers.backToHomeHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 
-@(incomeSources: models.incomeSourcesWithDeadlines.IncomeSourcesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(incomeSources: models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @sidebar = {
     @sidebarHelper(ReportDeadlinesPage, incomeSources)

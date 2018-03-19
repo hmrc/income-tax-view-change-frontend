@@ -23,7 +23,7 @@ import assets.TestConstants._
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 
-class IncomeSourcesModelSpec extends UnitSpec with Matchers {
+class IncomeSourcesWithDeadlinesModelSpec extends UnitSpec with Matchers {
 
   "The IncomeSourceDetailsModel" when {
     "the user has both businesses and property income sources" should {
