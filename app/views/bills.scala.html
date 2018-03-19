@@ -17,7 +17,6 @@
 @import views.html.templates.main_template
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
-@import views.html.helpers.accordionHelper
 @import models.calculation.{CalculationDataResponseModel,LastTaxCalculationWithYear}
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import views.html.helpers.sidebarHelper
@@ -56,7 +55,7 @@
                 <ul class="list list-bullet">
                     @for(calc <- calcModels){
                         <li>
-                            <a href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}" class="bills-link" id="bills-link-@{calc.taxYear}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
+                            <a href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}" class="bills-link" data-journey-click="BillsPage:ClickLink:@{calc.taxYear}" id="bills-link-@{calc.taxYear}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
                         </li>
                     }
                 </ul>
@@ -64,7 +63,7 @@
         </div>
         <div>
             <p id="earlier-bills">
-                @messages("bills.earlierBills") <a href="@appConfig.selfAssessmentUrl" id="view-sa-calcs">@messages("bills.earlierBillsLink")</a>.
+                @messages("bills.earlierBills") <a href="@appConfig.selfAssessmentUrl" data-journey-click="BillsPage:ClickLink:ViewPreviousSACharges" id="view-sa-calcs">@messages("bills.earlierBillsLink")</a>.
             </p>
         </div>
     </section>

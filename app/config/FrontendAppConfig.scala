@@ -37,8 +37,6 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val itvcFrontendEnvironment: String = loadConfig("base.url")
   lazy val appName: String = loadConfig("appName")
 
-  lazy val itvcHomeUrl: String = "/" + baseUrl
-
   //Feedback Config
   private lazy val contactHost: String = loadConfig(s"contact-frontend.host")
   private lazy val contactFrontendService: String = baseUrl("contact-frontend")
@@ -96,6 +94,9 @@ class FrontendAppConfig @Inject()(val environment: Environment,
 
   //Payment Redirect route
   lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl"
+
+  //Accounting software guidance
+  lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
 
   val features = new Features(runModeConfiguration)
 

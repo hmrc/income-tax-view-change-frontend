@@ -46,7 +46,7 @@ serviceInfo = breadcrumb
     <h2 id="your-businesses" class="heading-large">@messages("account.businesses")</h2>
     <ul class="list">
         @businesses.map { case (business, index) =>
-            <li><a id="business-link-@{index+1}" href="@{controllers.routes.BusinessDetailsController.getBusinessDetails(index).url}">@business.tradingName</a></li>
+            <li><a id="business-link-@{index+1}" data-journey-click="AccountDetailsPage:ClickLink:BusinessIncomeDetails" href="@{controllers.routes.BusinessDetailsController.getBusinessDetails(index).url}">@business.tradingName</a></li>
         }
     </ul>
     }

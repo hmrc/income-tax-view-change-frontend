@@ -280,9 +280,6 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
           And("I wiremock stub an error response from Get Last Estimated Tax Liability")
           IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
 
-          And("I wiremock stub a successful Property Details response")
-          SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
-
           And("I wiremock stub a successful business obligations response")
           SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
@@ -336,9 +333,6 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
             LastTaxCalculation(testCalcId, "2017-07-06T12:34:56.789Z", GetCalculationData.calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd, Estimate)
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
 
-          And("I wiremock stub no Property Details response")
-          SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
-
           And("I wiremock stub an error for business obligations response")
           SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
 
@@ -389,9 +383,6 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
-
-          And("I wiremock stub no Property Details response")
-          SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
 
           And("I wiremock stub an error for business obligations response")
           SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
