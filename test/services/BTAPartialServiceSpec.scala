@@ -17,6 +17,8 @@
 package services
 
 import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.NewBizDeets._
+import assets.TestConstants.NewPropDeets._
 import assets.TestConstants.Estimates._
 import assets.TestConstants.IncomeSources._
 import assets.TestConstants._
@@ -41,16 +43,13 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       )
       val bothIncomeSourcesBusinessReportDueNext = IncomeSourcesWithDeadlinesModel(
         List(BusinessIncomeWithDeadlinesModel(
-          selfEmploymentId = testSelfEmploymentId,
-          tradingName = testTradeName,
-          cessationDate = None,
-          accountingPeriod = testBusinessAccountingPeriod,
+          business1,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(returnedObligation)
           )
         )),
         Some(PropertyIncomeWithDeadlinesModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06","2018-04-05"),
+          propertyDetails,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(
               ReportDeadlineModel(
@@ -79,10 +78,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       )
       val bothIncomeSourcesPropertyReportDueNext = IncomeSourcesWithDeadlinesModel(
         List(BusinessIncomeWithDeadlinesModel(
-          selfEmploymentId = testSelfEmploymentId,
-          tradingName = testTradeName,
-          cessationDate = None,
-          accountingPeriod = testBusinessAccountingPeriod,
+          business1,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(
               ReportDeadlineModel(
@@ -95,7 +91,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
           )
         )),
         Some(PropertyIncomeWithDeadlinesModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06","2018-04-05"),
+          propertyDetails,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(returnedObligation)
           )
@@ -115,10 +111,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       )
       val bothIncomeSourcesPropertyReportDueNext = IncomeSourcesWithDeadlinesModel(
         List(BusinessIncomeWithDeadlinesModel(
-          selfEmploymentId = testSelfEmploymentId,
-          tradingName = testTradeName,
-          cessationDate = None,
-          accountingPeriod = testBusinessAccountingPeriod,
+          business1,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(ReportDeadlineModel(
               start = "2017-04-01",
@@ -129,7 +122,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
           )
         )),
         Some(PropertyIncomeWithDeadlinesModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06","2018-04-05"),
+          propertyDetails,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(returnedObligation)
           )
@@ -150,16 +143,13 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       )
       val bothIncomeSourcesBusinessReportDueNext = IncomeSourcesWithDeadlinesModel(
         List(BusinessIncomeWithDeadlinesModel(
-          selfEmploymentId = testSelfEmploymentId,
-          tradingName = testTradeName,
-          cessationDate = None,
-          accountingPeriod = testBusinessAccountingPeriod,
+          business1,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(returnedObligation)
           )
         )),
         Some(PropertyIncomeWithDeadlinesModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06","2018-04-05"),
+          propertyDetails,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(ReportDeadlineModel(
               start = "2017-04-01",
@@ -185,16 +175,13 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       )
       val bothIncomeSourcesBusinessReportDueNext = IncomeSourcesWithDeadlinesModel(
         List(BusinessIncomeWithDeadlinesModel(
-          selfEmploymentId = testSelfEmploymentId,
-          tradingName = testTradeName,
-          cessationDate = None,
-          accountingPeriod = testBusinessAccountingPeriod,
+          business1,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(returnedObligation)
           )
         )),
         Some(PropertyIncomeWithDeadlinesModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06","2018-04-05"),
+          propertyDetails,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(ReportDeadlineModel(
               start = "2017-04-01",
@@ -226,10 +213,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       )
       val businessIncomeSourceReportDueNext = IncomeSourcesWithDeadlinesModel(
         List(BusinessIncomeWithDeadlinesModel(
-          selfEmploymentId = testSelfEmploymentId,
-          tradingName = testTradeName,
-          cessationDate = None,
-          accountingPeriod = testBusinessAccountingPeriod,
+          business1,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(otherObligation, returnedObligation)
           )
@@ -257,7 +241,7 @@ class BTAPartialServiceSpec extends TestSupport with MockCalculationService with
       val propertyIncomeSourceReportDueNext = IncomeSourcesWithDeadlinesModel(
         List(),
         Some(PropertyIncomeWithDeadlinesModel(
-          accountingPeriod = testBusinessAccountingPeriod,
+          propertyDetails,
           reportDeadlines = ReportDeadlinesModel(
             obligations = List(otherObligation, returnedObligation)
           )

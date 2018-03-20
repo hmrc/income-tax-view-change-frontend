@@ -28,9 +28,9 @@
         <tr id="business-profit-section" class="no-border-bottom">
             <td id="business-profit-heading">
                 @{
-                    if((sources.hasBusinessIncome && sources.businessIncomeSources.exists(_.accountingPeriod.determineTaxYear == taxYear)) || breakdown.incomeReceived.selfEmployment > 0) {
+                    if((sources.hasBusinessIncome && sources.businessIncomeSources.exists(_.incomeSource.accountingPeriod.determineTaxYear == taxYear)) || breakdown.incomeReceived.selfEmployment > 0) {
                         messages("estimated_tax_liability.calc-breakdown.business-profit")
-                    } else if((sources.hasPropertyIncome && sources.propertyIncomeSource.get.accountingPeriod.determineTaxYear == taxYear) || breakdown.incomeReceived.ukProperty > 0) {
+                    } else if((sources.hasPropertyIncome && sources.propertyIncomeSource.get.incomeSource.accountingPeriod.determineTaxYear == taxYear) || breakdown.incomeReceived.ukProperty > 0) {
                         messages("estimated_tax_liability.calc-breakdown.property-profit")
                     }
                 }

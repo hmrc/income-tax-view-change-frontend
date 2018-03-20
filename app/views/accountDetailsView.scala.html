@@ -46,14 +46,14 @@ serviceInfo = breadcrumb
     <h2 id="your-businesses" class="heading-large">@messages("account.businesses")</h2>
     <ul class="list">
         @businesses.map { case (business, index) =>
-            <li><a id="business-link-@{index+1}" href="@{controllers.routes.BusinessDetailsController.getBusinessDetails(index).url}">@business.tradingName</a></li>
+            <li><a id="business-link-@{index+1}" href="@{controllers.routes.BusinessDetailsController.getBusinessDetails(index).url}">@business.incomeSource.tradingName</a></li>
         }
     </ul>
     }
 
     @if(properties.isDefined){
         <h2 id="your-properties" class="heading-large">@messages("account.properties")</h2>
-        <p id="reporting-period">@messages("account.reportingPeriod", properties.get.accountingPeriod.start.toLongDateNoYear, properties.get.accountingPeriod.end.toLongDateNoYear)</p>
+        <p id="reporting-period">@messages("account.reportingPeriod", properties.get.incomeSource.accountingPeriod.start.toLongDateNoYear, properties.get.incomeSource.accountingPeriod.end.toLongDateNoYear)</p>
     }
 
     @if(appConfig.features.homePageEnabled()){

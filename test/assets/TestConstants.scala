@@ -414,53 +414,38 @@ object TestConstants extends ImplicitDateFormatter {
 
     val businessIncomeModel =
       BusinessIncomeWithDeadlinesModel(
-        testSelfEmploymentId,
-        testTradeName,
-        None,
-        testBusinessAccountingPeriod,
+        NewBizDeets.business1,
         obligationsDataSuccessModel
       )
 
     val businessIncomeModel2 =
       BusinessIncomeWithDeadlinesModel(
-        testSelfEmploymentId2,
-        testTradeName2,
-        None,
-        testBusinessAccountingPeriod,
+        NewBizDeets.business2,
         obligationsDataSuccessModel
       )
 
     val business2018IncomeModel =
       BusinessIncomeWithDeadlinesModel(
-        testSelfEmploymentId,
-        testTradeName,
-        None,
-        test2018BusinessAccountingPeriod,
+        NewBizDeets.business2018,
         obligationsDataSuccessModel
       )
 
     val businessIncomeModelAlignedTaxYear =
       BusinessIncomeWithDeadlinesModel(
-        testSelfEmploymentId,
-        testTradeName,
-        None,
-        AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5"),
+        NewBizDeets.alignedBusiness,
         obligationsDataSuccessModel
       )
 
     val business2019IncomeModel =
       BusinessIncomeWithDeadlinesModel(
-        testSelfEmploymentId,
-        testTradeName,
-        None,
-        AccountingPeriodModel(start = "2018-3-5", end = "2019-3-6"),
+        NewBizDeets.business2019,
         obligationsDataSuccessModel
       )
   }
 
   object PropertyIncome {
     val propertyIncomeModel = PropertyIncomeWithDeadlinesModel(
-      accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"),
+      NewPropDeets.propertyDetails,
       ReportDeadlines.obligationsDataSuccessModel
     )
   }
@@ -537,6 +522,7 @@ object TestConstants extends ImplicitDateFormatter {
   object NewBizDeets {
     val testBusinessAccountingPeriod = AccountingPeriodModel(start = "2017-6-1", end = "2018-5-30")
     val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = "2017-3-5", end = "2018-3-6")
+    val test2019BusinessAccountingPeriod = AccountingPeriodModel(start = "2018-3-5", end = "2019-3-6")
     val testTradeName = "business"
     val testTradeName2 = "business"
     val testBizAddress = AddressModel(
@@ -584,6 +570,45 @@ object TestConstants extends ImplicitDateFormatter {
       tradingStartDate = Some("2017-1-1"),
       cessation = None,
       tradingName = Some(testTradeName2),
+      address = Some(testBizAddress),
+      contactDetails = None,
+      seasonal = None,
+      paperless = None
+    )
+
+    val business2018 = BusinessDetailsModel(
+      incomeSourceId = testSelfEmploymentId,
+      accountingPeriod = test2018BusinessAccountingPeriod,
+      cashOrAccruals = Some("CASH"),
+      tradingStartDate = Some("2017-1-1"),
+      cessation = None,
+      tradingName = Some(testTradeName),
+      address = Some(testBizAddress),
+      contactDetails = None,
+      seasonal = None,
+      paperless = None
+    )
+
+    val business2019 = BusinessDetailsModel(
+      incomeSourceId = testSelfEmploymentId,
+      accountingPeriod = test2019BusinessAccountingPeriod,
+      cashOrAccruals = Some("CASH"),
+      tradingStartDate = Some("2017-1-1"),
+      cessation = None,
+      tradingName = Some(testTradeName),
+      address = Some(testBizAddress),
+      contactDetails = None,
+      seasonal = None,
+      paperless = None
+    )
+
+    val alignedBusiness = BusinessDetailsModel(
+      incomeSourceId = testSelfEmploymentId,
+      accountingPeriod = AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5"),
+      cashOrAccruals = Some("CASH"),
+      tradingStartDate = Some("2017-1-1"),
+      cessation = None,
+      tradingName = Some(testTradeName),
       address = Some(testBizAddress),
       contactDetails = None,
       seasonal = None,

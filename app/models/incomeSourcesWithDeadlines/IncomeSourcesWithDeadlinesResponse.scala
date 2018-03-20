@@ -20,12 +20,12 @@ import java.time.LocalDate
 
 import models._
 import models.core.AccountingPeriodModel
+import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.{Format, Json}
 import utils.ImplicitDateFormatter._
 
 abstract class IncomeModelWithDeadlines {
-  def accountingPeriod: AccountingPeriodModel
   def reportDeadlines: ReportDeadlinesResponseModel
 }
 
@@ -37,11 +37,14 @@ case class IncomeSourcesWithDeadlinesModel(
 
   val incomeSources: List[IncomeModelWithDeadlines] = businessIncomeSources ++ propertyIncomeSource
 
+  val accountingPeriods: List[AccountingPeriodModel] =
+    businessIncomeSources.map(_.incomeSource.accountingPeriod) ++ propertyIncomeSource.map(_.incomeSource.accountingPeriod)
+
   val hasPropertyIncome: Boolean = propertyIncomeSource.nonEmpty
   val hasBusinessIncome: Boolean = businessIncomeSources.nonEmpty
   val hasBothIncomeSources: Boolean = hasPropertyIncome && hasBusinessIncome
 
-  val orderedTaxYears: List[Int] = incomeSources.map(_.accountingPeriod.determineTaxYear).sortWith(_ < _).distinct
+  val orderedTaxYears: List[Int] = accountingPeriods.map(_.determineTaxYear).sortWith(_ < _).distinct
   val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
   val lastTaxYear: Option[Int] = orderedTaxYears.lastOption
 
@@ -63,19 +66,17 @@ case class IncomeSourcesWithDeadlinesModel(
   }
 
   def earliestAccountingPeriodStart(year: Int): LocalDate =
-    incomeSources.filter(_.accountingPeriod.determineTaxYear == year).map(_.accountingPeriod.start).min
+    accountingPeriods.filter(_.determineTaxYear == year).map(_.start).min
 
-  val sortedBusinesses: List[(BusinessIncomeWithDeadlinesModel, Int)] = businessIncomeSources.sortBy(_.selfEmploymentId.substring(4)).zipWithIndex
+  val sortedBusinesses: List[(BusinessIncomeWithDeadlinesModel, Int)] =
+    businessIncomeSources.sortBy(_.incomeSource.incomeSourceId.substring(4)).zipWithIndex
 }
 
 case class PropertyIncomeWithDeadlinesModel(
-                                             accountingPeriod: AccountingPeriodModel,
+                                             incomeSource: PropertyDetailsModel,
                                              reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModelWithDeadlines
 case class BusinessIncomeWithDeadlinesModel(
-                                             selfEmploymentId: String,
-                                             tradingName: String,
-                                             cessationDate: Option[LocalDate],
-                                             accountingPeriod: AccountingPeriodModel,
+                                             incomeSource: BusinessDetailsModel,
                                              reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModelWithDeadlines
 
 object BusinessIncomeWithDeadlinesModel {

@@ -17,7 +17,8 @@
 package views
 
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages}
-import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.NewPropDeets._
+import assets.TestConstants.NewBizDeets._
 import assets.TestConstants._
 import config.FrontendAppConfig
 import models.core.AccountingPeriodModel
@@ -55,10 +56,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
     lazy val businessIncomeSource = IncomeSourcesWithDeadlinesModel(
       List(
         BusinessIncomeWithDeadlinesModel(
-          selfEmploymentId = testSelfEmploymentId,
-          tradingName = testTradeName,
-          cessationDate = None,
-          accountingPeriod = testBusinessAccountingPeriod,
+          business1,
           reportDeadlines = successModel
         )
       ),
@@ -130,7 +128,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
       lazy val propertyIncomeModel = IncomeSourcesWithDeadlinesModel(
         List.empty,
         Some(PropertyIncomeWithDeadlinesModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"),
+          propertyDetails,
           reportDeadlines  = successModel
         ))
       )
@@ -155,11 +153,8 @@ class ReportDeadlinesViewSpec extends TestSupport {
       lazy val ceasedBusinessIncomeModel = IncomeSourcesWithDeadlinesModel(
         List(
           BusinessIncomeWithDeadlinesModel(
-          selfEmploymentId = testSelfEmploymentId,
-          tradingName = testTradeName,
-          cessationDate = Some("2017-09-15".toLocalDate),
-          accountingPeriod = testBusinessAccountingPeriod,
-          reportDeadlines = successModel
+            ceasedBusiness,
+            reportDeadlines = successModel
           )
         ),
         None
@@ -169,7 +164,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
       import setup._
 
       "contains text under the business name stating the business has ceased trading" in {
-        document.getElementById("bi-1-ceased").text() shouldBe messages.ceased("15 September 2017")
+        document.getElementById("bi-1-ceased").text() shouldBe messages.ceased("30 May 2018")
       }
     }
 
@@ -178,15 +173,12 @@ class ReportDeadlinesViewSpec extends TestSupport {
       lazy val bothIncomeSourcesReportsErrored = IncomeSourcesWithDeadlinesModel(
         List(
           BusinessIncomeWithDeadlinesModel(
-            selfEmploymentId = testSelfEmploymentId,
-            tradingName = testTradeName,
-            cessationDate = None,
-            accountingPeriod = testBusinessAccountingPeriod,
+            business1,
             reportDeadlines = errorModel
           )
         ),
         Some(PropertyIncomeWithDeadlinesModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"),
+          propertyDetails,
           reportDeadlines  = errorModel
         ))
       )
@@ -219,10 +211,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
       lazy val businessIncomeSourcesReportsErrored = IncomeSourcesWithDeadlinesModel(
         List(
           BusinessIncomeWithDeadlinesModel(
-            selfEmploymentId = testSelfEmploymentId,
-            tradingName = testTradeName,
-            cessationDate = None,
-            accountingPeriod = testBusinessAccountingPeriod,
+            business1,
             reportDeadlines = errorModel
           )
         ),
@@ -257,7 +246,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
       lazy val propertyIncomeSourcesReportsErrored = IncomeSourcesWithDeadlinesModel(
         List(),
         Some(PropertyIncomeWithDeadlinesModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"),
+          propertyDetails,
           reportDeadlines  = errorModel
         ))
       )

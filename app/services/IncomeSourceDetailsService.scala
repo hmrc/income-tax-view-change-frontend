@@ -56,10 +56,7 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
           Future.sequence(sources.businesses.map { seTrade =>
             reportDeadlinesService.getBusinessReportDeadlines(nino, seTrade.incomeSourceId).map { obs =>
               BusinessIncomeWithDeadlinesModel(
-                seTrade.incomeSourceId,
-                seTrade.tradingName.getOrElse("No Trading Name Found"), //TODO: What should this do if no Trading Name is supplied...?
-                seTrade.cessation.flatMap(_.date),
-                seTrade.accountingPeriod,
+                seTrade,
                 obs
               )
             }
@@ -68,7 +65,7 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
         val propertyIncomeModelFOpt: Future[Option[PropertyIncomeWithDeadlinesModel]] =
           Future.sequence(Option.option2Iterable(sources.property.map { propertyIncome =>
             reportDeadlinesService.getPropertyReportDeadlines(nino).map { obs =>
-              PropertyIncomeWithDeadlinesModel(propertyIncome.accountingPeriod, obs)
+              PropertyIncomeWithDeadlinesModel(propertyIncome, obs)
             }
           })).map(_.headOption)
 
