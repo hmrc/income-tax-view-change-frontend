@@ -22,7 +22,6 @@ import play.api.Configuration
 
 @Singleton
 class Features @Inject()(config: Configuration) {
-  val homePageEnabled: Feature = new Feature(Keys.homePageEnabled, config)
   val propertyDetailsEnabled: Feature = new Feature(Keys.propertyDetailsEnabled, config)
   val propertyEopsEnabled: Feature = new Feature(Keys.propertyEopsEnabled, config)
   val businessEopsEnabled: Feature = new Feature(Keys.businessEopsEnabled, config)

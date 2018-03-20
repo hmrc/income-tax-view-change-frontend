@@ -299,10 +299,6 @@ class CrystallisedViewSpec extends TestSupport {
 
     }
 
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
-    }
-
     "have a couple of sentences about adjustments" in {
       document.getElementById("incorrect").text shouldBe messages.Crystallised.incorrect
       document.getElementById("adjustments").text shouldBe crysMessages.errors
@@ -332,15 +328,7 @@ class CrystallisedViewSpec extends TestSupport {
         controllers.routes.PaymentController.paymentHandoff(calculationDisplaySuccessModel(busPropBRTCalcDataModel).calcAmount.toPence).url
     }
 
-    "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
-      mockAppConfig.features.homePageEnabled(false)
-      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
-      import setup._
-      Option(document.getElementById("it-home-back")) shouldBe None
-    }
-
-    "show a back link to the Income Tax home page, when the home page feature is enabled" in {
-      mockAppConfig.features.homePageEnabled(true)
+    "show a back link to the Income Tax home page" in {
       val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
       import setup._
       Option(document.getElementById("it-home-back")) shouldNot be(None)

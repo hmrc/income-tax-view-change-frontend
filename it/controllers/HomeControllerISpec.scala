@@ -30,54 +30,26 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
 
-    "Authorised and" when {
+    "Authorised" should {
 
-      "the home page feature is enabled" should {
+      "render the home page" in {
 
-        "render the home page" in {
-          appConfig.features.homePageEnabled(true)
+        isAuthorisedUser(true)
+        stubUserDetails()
 
-          isAuthorisedUser(true)
-          stubUserDetails()
+        When("I call GET /report-quarterly/income-and-expenses/view")
+        val res = IncomeTaxViewChangeFrontend.getHome
 
-          When("I call GET /report-quarterly/income-and-expenses/view")
-          val res = IncomeTaxViewChangeFrontend.getHome
+        Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+        res should have(
 
-          Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
-          res should have(
+          //Check Status OK (200) Result
+          httpStatus(OK),
 
-            //Check Status OK (200) Result
-            httpStatus(OK),
-
-            //Check Redirect Location
-            pageTitle("Your Income Tax")
-          )
-        }
+          //Check Redirect Location
+          pageTitle("Your Income Tax")
+        )
       }
-
-      "the home page feature is disabled" should {
-
-        "redirect to the Business Tax Account" in {
-          appConfig.features.homePageEnabled(false)
-
-          isAuthorisedUser(true)
-          stubUserDetails()
-
-          When("I call GET /report-quarterly/income-and-expenses/view")
-          val res = IncomeTaxViewChangeFrontend.getHome
-
-          Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
-          res should have(
-
-            //Check Status SEE_OTHER (303) Result
-            httpStatus(SEE_OTHER),
-
-            //Check Redirect Location
-            redirectURI(appConfig.businessTaxAccount)
-          )
-        }
-      }
-
     }
 
     "unauthorised" should {
