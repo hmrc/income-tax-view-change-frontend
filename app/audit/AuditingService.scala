@@ -21,19 +21,18 @@ import javax.inject.{Inject, Singleton}
 import audit.models.AuditModel
 import config.{FrontendAppConfig, FrontendAuditConnector}
 import play.api.Logger
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Failure, Success}
 import uk.gov.hmrc.play.audit.model.DataEvent
-import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 
 import scala.concurrent.ExecutionContext
-import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: FrontendAuditConnector) {
 
-  implicit val dataEventWrites = Json.writes[DataEvent]
+  implicit val dataEventWrites: Writes[DataEvent] = Json.writes[DataEvent]
 
   def audit(auditModel: AuditModel, path: String = "N/A")(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path)
@@ -53,13 +52,13 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Fr
   def toDataEvent(appName: String, auditModel: AuditModel, path: String)(implicit hc: HeaderCarrier): DataEvent = {
     val auditType: String = auditModel.auditType
     val transactionName: String = auditModel.transactionName
-    val detail: Map[String, String] = auditModel.detail
+    val detail: Seq[(String, String)] = auditModel.detail
 
     DataEvent(
       auditSource = appName,
       auditType = auditType,
       tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(transactionName, path),
-      detail = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails(detail.toSeq: _*)
+      detail = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails(detail: _*)
     )
   }
 }

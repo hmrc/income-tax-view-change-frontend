@@ -22,7 +22,7 @@ case class IncomeSourceDetailsRequestAuditModel[A](user: MtdItUser[A], path: Str
 
   override val transactionName: String = "income-source-details-request"
   override val auditType: String = "incomeSourceDetailsRequest"
-  override val detail: Map[String, String] = Map(
+  override val detail: Seq[(String, String)] = Seq(
     "mtdid" -> user.mtditid,
     "nino" -> user.nino
   )
