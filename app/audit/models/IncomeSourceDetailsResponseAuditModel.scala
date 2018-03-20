@@ -20,8 +20,7 @@ import auth.MtdItUser
 import play.api.libs.json.Json
 
 case class IncomeSourceDetailsResponseAuditModel[A](selfEmploymentIds: List[String],
-                                                    propertyIncomeId: Option[String],
-                                                    path: String)(implicit user: MtdItUser[A]) extends AuditModel {
+                                                    propertyIncomeId: Option[String])(implicit user: MtdItUser[A]) extends AuditModel {
 
   override val transactionName: String = "income-source-details-response"
   override val auditType: String = "incomeSourceDetailsResponse"
