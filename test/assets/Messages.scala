@@ -47,6 +47,8 @@ object Messages {
     val dropDown = "How to do this"
     val dropDownText1 = "You'll send four reports during the year."
     val dropDownText2 = "After that, you'll need to confirm and finalise your figures in your accounting software."
+    val dropDownText3 = "If you don't have accounting software, you can see "
+    val accountingSoftwareLink = "what accounting software is available (opens in new tab)."
     val pageHeading = "Your account"
     val pageSubHeading: String => String = mtditid => s"Ref: $mtditid"
     object EstimatesSection {
