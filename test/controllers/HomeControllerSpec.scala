@@ -17,7 +17,6 @@
 package controllers
 
 import assets.Messages
-import assets.TestConstants.testUserName
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.MockAuthenticationPredicate

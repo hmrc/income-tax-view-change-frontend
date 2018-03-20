@@ -16,10 +16,11 @@
 
 package views
 
+import assets.BaseTestConstants.{testMtditid,testNino,testUserDetails}
+import assets.EstimatesTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages.{BtaPartial => messages}
-import assets.TestConstants.Estimates._
-import assets.TestConstants.ReportDeadlines._
-import assets.TestConstants._
+import assets.ReportDeadlinesTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
@@ -35,7 +36,7 @@ class BtaPartialViewSpec extends TestSupport {
 
   val model = openObligation
   val calcAmount = BigDecimal(1000)
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
+  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
 
   lazy val page = views.html.btaPartial(model, List(lastTaxCalcSuccessWithYear))(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
   lazy val noEstimatePage = views.html.btaPartial(model, List())(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)

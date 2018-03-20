@@ -16,14 +16,14 @@
 
 package connectors
 
+import assets.BaseTestConstants._
+import assets.FinancialTransactionsTestConstants._
 import mocks.MockHttp
+import models.{FinancialTransactionsErrorModel, FinancialTransactionsResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse
 import utils.TestSupport
-import assets.TestConstants.FinancialTransactions._
-import assets.TestConstants._
-import models.{FinancialTransactionsErrorModel, FinancialTransactionsResponseModel}
 
 import scala.concurrent.Future
 

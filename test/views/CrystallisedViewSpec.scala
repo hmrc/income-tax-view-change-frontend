@@ -16,16 +16,17 @@
 
 package views
 
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.CalcBreakdownTestConstants._
+import assets.EstimatesTestConstants._
+import assets.FinancialTransactionsTestConstants._
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.CalcBreakdown._
-import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyIncome._
-import assets.TestConstants._
+import assets.PropertyDetailsTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.{CalculationDataModel, FinancialTransactionsModel, IncomeSourcesModel, TransactionModel}
+import models.{CalculationDataModel, IncomeSourcesModel, TransactionModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -46,7 +47,7 @@ class CrystallisedViewSpec extends TestSupport {
 
   private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel, transactions: TransactionModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.crystallised(
-      CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
+      calculationDisplaySuccessModel(calcDataModel),
       transactions,
       testYear
     )(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
@@ -57,7 +58,7 @@ class CrystallisedViewSpec extends TestSupport {
 
   "The Crystallised view" should {
 
-    val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
+    val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
     import setup._
     val messages = new Messages.Calculation(testYear)
     val crysMessages = new Messages.Calculation(testYear).Crystallised
@@ -110,7 +111,7 @@ class CrystallisedViewSpec extends TestSupport {
       "for users with both a property and a business" which {
         "have just the basic rate of tax" should {
           val total = (model.incomeReceived.ukProperty + model.incomeReceived.selfEmployment).toCurrencyString
-          val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
+          val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
           import setup._
 
           s"have a business profit section amount of ${model.incomeReceived.selfEmployment}" in {
@@ -154,7 +155,7 @@ class CrystallisedViewSpec extends TestSupport {
         }
 
         "have the higher rate of tax" should {
-          val setup = pageSetup(busBropHRTCalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
+          val setup = pageSetup(busBropHRTCalcDataModel, testIncomeSources, transactionModel())
           import ImplicitCurrencyFormatter._
           import setup._
 
@@ -180,7 +181,7 @@ class CrystallisedViewSpec extends TestSupport {
         }
 
         "have the additional rate of tax" should {
-          val setup = pageSetup(busPropARTCalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
+          val setup = pageSetup(busPropARTCalcDataModel, testIncomeSources, transactionModel())
           import ImplicitCurrencyFormatter._
           import setup._
           s"have an Income Tax section" which {
@@ -204,7 +205,7 @@ class CrystallisedViewSpec extends TestSupport {
         }
 
         "has no taxable income and no NI contributions" should {
-          val setup = pageSetup(noTaxOrNICalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
+          val setup = pageSetup(noTaxOrNICalcDataModel, testIncomeSources, transactionModel())
           import ImplicitCurrencyFormatter._
           import setup._
           s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
@@ -219,7 +220,7 @@ class CrystallisedViewSpec extends TestSupport {
         }
 
         "has no taxable income and some NI contribution" should {
-          val setup = pageSetup(noTaxJustNICalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
+          val setup = pageSetup(noTaxJustNICalcDataModel, testIncomeSources, transactionModel())
           import ImplicitCurrencyFormatter._
           import setup._
           s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
@@ -239,7 +240,7 @@ class CrystallisedViewSpec extends TestSupport {
 
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-          CalcBreakdown.calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+          calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
         lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
 
         "not display a breakdown section" in {
@@ -249,7 +250,7 @@ class CrystallisedViewSpec extends TestSupport {
 
       "when the user only has businesses registered" should {
 
-        val setup = pageSetup(justBusinessCalcDataModel, testBusinessIncomeSource, FinancialTransactions.transactionModel())
+        val setup = pageSetup(justBusinessCalcDataModel, testBusinessIncomeSource, transactionModel())
         import setup._
 
         "display the business profit amount" in {
@@ -262,7 +263,7 @@ class CrystallisedViewSpec extends TestSupport {
       }
 
       "when the user only has a business registered but has a property profit value" should {
-        val setup = pageSetup(busPropBRTCalcDataModel, testBusinessIncomeSource, FinancialTransactions.transactionModel())
+        val setup = pageSetup(busPropBRTCalcDataModel, testBusinessIncomeSource, transactionModel())
         import setup._
         "display the business heading" in {
           document.getElementById("business-profit-heading").text shouldBe "Business profit"
@@ -274,7 +275,7 @@ class CrystallisedViewSpec extends TestSupport {
 
       "when the user only has properties registered" should {
 
-        val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource, FinancialTransactions.transactionModel())
+        val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource, transactionModel())
         import setup._
 
         "display the property heading" in {
@@ -286,7 +287,7 @@ class CrystallisedViewSpec extends TestSupport {
       }
 
       "when the user only has properties registered but has a business profit value" should {
-        val setup = pageSetup(busPropBRTCalcDataModel, testPropertyIncomeSource, FinancialTransactions.transactionModel())
+        val setup = pageSetup(busPropBRTCalcDataModel, testPropertyIncomeSource, transactionModel())
         import setup._
 
         "display the business heading" in {
@@ -311,21 +312,21 @@ class CrystallisedViewSpec extends TestSupport {
 
     "NOT show a button to go to payments, when the payment feature is disabled" in {
       mockAppConfig.features.paymentEnabled(false)
-      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
       import setup._
       Option(document.getElementById("payment-button")) shouldBe None
     }
 
     "NOT show a button to go to payments, when the payment feature is enabled but the bill is paid" in {
       mockAppConfig.features.paymentEnabled(true)
-      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, FinancialTransactions.paidTransactionModel())
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, paidTransactionModel())
       import setup._
       Option(document.getElementById("payment-button")) shouldBe None
     }
 
     "show a button to go to payments, when the payment feature is enabled and the bull is not paid" in {
       mockAppConfig.features.paymentEnabled(true)
-      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
       import setup._
       document.getElementById("payment-button").text() shouldBe messages.Crystallised.payNow
       document.getElementById("payment-button").attr("href") shouldBe
@@ -334,14 +335,14 @@ class CrystallisedViewSpec extends TestSupport {
 
     "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
       mockAppConfig.features.homePageEnabled(false)
-      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
       import setup._
       Option(document.getElementById("it-home-back")) shouldBe None
     }
 
     "show a back link to the Income Tax home page, when the home page feature is enabled" in {
       mockAppConfig.features.homePageEnabled(true)
-      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, FinancialTransactions.transactionModel())
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
       import setup._
       Option(document.getElementById("it-home-back")) shouldNot be(None)
     }

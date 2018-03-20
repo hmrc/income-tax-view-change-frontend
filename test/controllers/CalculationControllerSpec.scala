@@ -16,16 +16,16 @@
 
 package controllers
 
+import assets.BaseTestConstants._
+import assets.EstimatesTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages
 import assets.Messages.EstimatedTaxLiabilityError
-import assets.TestConstants.Estimates._
-import assets.TestConstants._
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockFinancialTransactionsService
-import mocks.services.MockCalculationService
+import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
@@ -63,7 +63,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         "return Status OK (200)" in {
           mockFinancialTransactionFailed()
           mockCalculationSuccess()
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testNino)(business2018IncomeSourceSuccess)
           status(result) shouldBe Status.OK
         }
 
@@ -153,7 +153,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status OK (200)" in {
           mockFinancialTransactionSuccess()
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018IncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testNino)(business2018IncomeSourceSuccess)
           mockCalculationNoBreakdown()
           status(result) shouldBe Status.OK
         }

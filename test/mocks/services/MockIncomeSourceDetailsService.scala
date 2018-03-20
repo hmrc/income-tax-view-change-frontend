@@ -16,7 +16,8 @@
 
 package mocks.services
 
-import assets.TestConstants.{IncomeSourceDetails, testNino}
+import assets.BaseTestConstants.testNino
+import assets.IncomeSourceDetailsTestConstants._
 import models._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
@@ -46,11 +47,11 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
       .thenReturn(Future.successful(sources))
   }
 
-  def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
-  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.propertyIncomeSourceSuccess)
-  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourceSuccessMisalignedTaxYear)
-  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.noIncomeSourceSuccess)
-  def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.bothIncomeSourcesSuccessBusinessAligned)
+  def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(businessIncomeSourceSuccess)
+  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(propertyIncomeSourceSuccess)
+  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(bothIncomeSourceSuccessMisalignedTaxYear)
+  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testNino)(noIncomeSourceSuccess)
+  def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails(testNino)(bothIncomeSourcesSuccessBusinessAligned)
   def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testNino)(IncomeSourcesError)
 
 }

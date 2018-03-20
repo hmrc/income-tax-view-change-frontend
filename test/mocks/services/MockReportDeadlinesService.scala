@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import assets.TestConstants.{testNino, testSelfEmploymentId}
+import assets.BaseTestConstants.{testNino, testSelfEmploymentId}
 import models._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

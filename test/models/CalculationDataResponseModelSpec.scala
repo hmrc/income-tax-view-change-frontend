@@ -16,11 +16,11 @@
 
 package models
 
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.CalcBreakdownTestConstants._
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
-import assets.TestConstants.CalcBreakdown._
 
 class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
 

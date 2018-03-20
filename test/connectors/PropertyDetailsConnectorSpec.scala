@@ -16,13 +16,13 @@
 
 package connectors
 
-import assets.TestConstants._
 import mocks.MockHttp
 import models._
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import utils.TestSupport
-
+import utils.ImplicitDateFormatter._
+import assets.BaseTestConstants.testNino
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HttpResponse
 

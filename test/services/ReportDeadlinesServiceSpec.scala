@@ -16,10 +16,8 @@
 
 package services
 
-
-import assets.TestConstants
-import assets.TestConstants.ReportDeadlines._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.ReportDeadlinesTestConstants._
 import mocks.connectors.{MockBusinessEOPSDeadlinesConnector, MockBusinessReportDeadlinesConnector, MockPropertyEOPSDeadlinesConnector, MockPropertyReportDeadlinesConnector}
 import models._
 import utils.TestSupport

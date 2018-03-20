@@ -18,10 +18,10 @@ package views
 
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.TestConstants.BusinessDetails.businessIncomeModelAlignedTaxYear
-import assets.TestConstants.PropertyIncome.propertyIncomeModel
-import assets.TestConstants.{testMtditid, testNino, testUserDetails}
-import assets.TestConstants.BusinessDetails._
+import assets.BusinessDetailsTestConstants.businessIncomeModelAlignedTaxYear
+import assets.PropertyDetailsTestConstants.propertyIncomeModel
+import assets.BusinessDetailsTestConstants._
+import assets.BaseTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.{BusinessIncomeModel, IncomeSourcesModel, PropertyIncomeModel}

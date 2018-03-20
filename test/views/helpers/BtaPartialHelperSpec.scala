@@ -16,9 +16,9 @@
 
 package views.helpers
 
-import assets.TestConstants.Estimates._
-import assets.TestConstants.ReportDeadlines._
+import assets.EstimatesTestConstants._
 import assets.Messages.{BtaPartial => messages}
+import assets.ReportDeadlinesTestConstants._
 import config.FrontendAppConfig
 import enums.Estimate
 import models._

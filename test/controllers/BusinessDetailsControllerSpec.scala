@@ -16,19 +16,17 @@
 
 package controllers
 
-import assets.Messages
-import assets.TestConstants.BusinessDetails.testTradeName
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants.business1
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
-import play.api.i18n.MessagesApi
-import utils.TestSupport
-import assets.TestConstants._
 import models.BusinessDetailsErrorModel
-import org.jsoup.Jsoup
 import play.api.http.Status
+import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
+import utils.TestSupport
 
 class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
@@ -56,7 +54,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         "return Status OK (200)" in {
           TestBusinessDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testNino, 0)(Right(Some(BusinessDetails.business1, 0)))
+          setupMockGetBusinessDetails(testNino, 0)(Right(Some(business1, 0)))
           status(result) shouldBe Status.OK
         }
 
@@ -66,7 +64,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         }
 
         "render the Business Details page" in {
-          document.title() shouldBe BusinessDetails.business1.tradingName
+          document.title() shouldBe business1.tradingName
         }
 
       }

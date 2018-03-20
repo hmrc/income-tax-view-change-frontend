@@ -16,10 +16,10 @@
 
 package models
 
-import assets.TestConstants.Estimates._
+import assets.EstimatesTestConstants._
+import enums._
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
-import enums._
 
 class LastTaxCalculationResponseModelSpec extends UnitSpec with Matchers {
 
