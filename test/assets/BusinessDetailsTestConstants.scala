@@ -16,35 +16,13 @@
 
 package assets
 
+import assets.BaseTestConstants._
+import assets.ReportDeadlinesTestConstants._
 import models._
 import play.api.libs.json.{JsValue, Json}
-import utils.ImplicitDateFormatter._
-import BaseTestConstants._
 
 object BusinessDetailsTestConstants {
 
-  val receivedObligation = ReportDeadlineModel(
-    start = "2017-04-01",
-    end = "2017-6-30",
-    due = "2017-7-31",
-    met = true
-  )
-
-  val overdueObligation = ReportDeadlineModel(
-    start = "2017-7-1",
-    end = "2017-9-30",
-    due = "2017-10-30",
-    met = false
-  )
-
-  val openObligation = ReportDeadlineModel(
-    start = "2017-7-1",
-    end = "2017-9-30",
-    due = "2017-10-31",
-    met = false
-  )
-
-  val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
   val testBusinessAccountingPeriod = AccountingPeriodModel(start = "2017-6-1", end = "2018-5-30")
   val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = "2017-3-5", end = "2018-3-6")
   val testTradeName = "business"
@@ -99,57 +77,51 @@ object BusinessDetailsTestConstants {
   val businessSuccessEmptyResponse = "[]"
   val businessesSuccessModel = BusinessDetailsModel(businessesSuccessResponse)
   val multipleBusinessesSuccessModel = BusinessDetailsModel(multipleBusinessSuccessResponse)
-  val businessSuccessString: String =
-    s"""
-          {
-             "businesses":[
-                {
-                   "id":"$testSelfEmploymentId",
-                   "accountingPeriod":{
-                     "start":"${testBusinessAccountingPeriod.start}",
-                     "end":"${testBusinessAccountingPeriod.end}"
-                   },
-                   "accountingType":"CASH",
-                   "commencementDate":"2017-01-01",
-                   "tradingName":"$testTradeName",
-                   "businessDescription":"a business",
-                   "businessAddressLineOne":"64 Zoo Lane",
-                   "businessAddressLineTwo":"Happy Place",
-                   "businessAddressLineThree":"Magical Land",
-                   "businessAddressLineFour":"England",
-                   "businessPostcode":"ZL1 064"
-                },
-                {
-                   "id":"$testSelfEmploymentId2",
-                      "accountingPeriod":{
-                        "start":"${testBusinessAccountingPeriod.start}",
-                        "end":"${testBusinessAccountingPeriod.end}"
-                      },
-                   "accountingType":"CASH",
-                   "commencementDate":"2017-01-01",
-                   "tradingName":"$testTradeName2",
-                   "businessDescription":"some business",
-                   "businessAddressLineOne":"65 Zoo Lane",
-                   "businessAddressLineTwo":"Happy Place",
-                   "businessAddressLineThree":"Magical Land",
-                   "businessAddressLineFour":"England",
-                   "businessPostcode":"ZL1 064"
-                }
-             ]
-          }
-      """.stripMargin
-  val businessSuccessJson: JsValue = Json.parse(businessSuccessString)
+
+  val businessSuccessJson: JsValue = Json.obj(
+
+    "businesses" -> Json.arr(
+      Json.obj(
+        "id" -> testSelfEmploymentId,
+        "accountingPeriod" -> Json.obj(
+          "start" -> testBusinessAccountingPeriod.start,
+          "end" -> testBusinessAccountingPeriod.end
+        ),
+        "accountingType" -> "CASH",
+        "commencementDate" -> "2017-01-01",
+        "tradingName" -> testTradeName,
+        "businessDescription" -> "a business",
+        "businessAddressLineOne" -> "64 Zoo Lane",
+        "businessAddressLineTwo" -> "Happy Place",
+        "businessAddressLineThree" -> "Magical Land",
+        "businessAddressLineFour" -> "England",
+        "businessPostcode" -> "ZL1 064"
+      ),
+      Json.obj(
+        "id" -> testSelfEmploymentId2,
+        "accountingPeriod" -> Json.obj(
+          "start" -> testBusinessAccountingPeriod.start,
+          "end" -> testBusinessAccountingPeriod.end
+        ),
+        "accountingType" -> "CASH",
+        "commencementDate" -> "2017-01-01",
+        "tradingName" -> testTradeName2,
+        "businessDescription" -> "some business",
+        "businessAddressLineOne" -> "65 Zoo Lane",
+        "businessAddressLineTwo" -> "Happy Place",
+        "businessAddressLineThree" -> "Magical Land",
+        "businessAddressLineFour" -> "England",
+        "businessPostcode" -> "ZL1 064"
+      )
+    )
+  )
 
 
   val businessErrorModel = BusinessDetailsErrorModel(testErrorStatus, testErrorMessage)
-  val businessErrorString: String =
-    s"""
-       |{
-       |  "code":$testErrorStatus,
-       |  "message":"$testErrorMessage"
-       |}
-      """.stripMargin
-  val businessListErrorJson: JsValue = Json.parse(businessErrorString)
+  val businessErrorJson: JsValue =Json.obj(
+    "code" -> testErrorStatus,
+    "message" -> testErrorMessage
+  )
 
   val businessIncomeModel =
     BusinessIncomeModel(

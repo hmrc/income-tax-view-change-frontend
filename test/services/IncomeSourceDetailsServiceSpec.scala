@@ -20,6 +20,7 @@ import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import assets.PropertyDetailsTestConstants._
+import assets.ReportDeadlinesTestConstants._
 import mocks.connectors.{MockBusinessDetailsConnector, MockPropertyDetailsConnector}
 import mocks.services.MockReportDeadlinesService
 import models.{IncomeSourcesError, NoPropertyIncomeDetails}

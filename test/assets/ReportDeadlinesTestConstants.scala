@@ -49,32 +49,28 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
   ))
 
   val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
-  val obligationsDataSuccessString: String =
-    """
-      |{
-      |  "obligations": [
-      |    {
-      |      "start": "2017-04-01",
-      |      "end": "2017-06-30",
-      |      "due": "2017-07-31",
-      |      "met": true
-      |    },
-      |    {
-      |      "start": "2017-07-01",
-      |      "end": "2017-09-30",
-      |      "due": "2017-10-30",
-      |      "met": false
-      |    },
-      |    {
-      |      "start": "2017-07-01",
-      |      "end": "2017-09-30",
-      |      "due": "2017-10-31",
-      |      "met": false
-      |    }
-      |  ]
-      |}
-    """.stripMargin
-  val obligationsDataSuccessJson = Json.parse(obligationsDataSuccessString)
+  val obligationsDataSuccessJson = Json.obj(
+    "obligations" -> Json.arr(
+      Json.obj(
+        "start" -> "2017-04-01",
+        "end" -> "2017-06-30",
+        "due" -> "2017-07-31",
+        "met" -> true
+      ),
+      Json.obj(
+        "start" -> "2017-07-01",
+        "end" -> "2017-09-30",
+        "due" -> "2017-10-30",
+        "met" -> false
+      ),
+      Json.obj(
+        "start" -> "2017-07-01",
+        "end" -> "2017-09-30",
+        "due" -> "2017-10-31",
+        "met" -> false
+      )
+    )
+  )
 
 
   val receivedEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
@@ -121,26 +117,19 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
       )
     )
   )
-  val obligationsEOPSDataSuccessString = obligationsEOPSDataSuccessJson.toString
 
   val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
-  val obligationsDataErrorString =
-    s"""
-       |{
-       |  "code":$testErrorStatus,
-       |  "message":"$testErrorMessage"
-       |}
-      """.stripMargin
-  val obligationsDataErrorJson = Json.parse(obligationsDataErrorString)
 
-  val reportDeadlineReceived =
-    """{
-      |      "start": "2017-04-01",
-      |      "end": "2017-06-30",
-      |      "due": "2017-07-31",
-      |      "met": true
-      |    }"""
-      .stripMargin
-  val reportDeadlineReceivedJson = Json.parse(reportDeadlineReceived)
+  val obligationsDataErrorJson = Json.obj(
+    "code" -> testErrorStatus,
+    "message" -> testErrorMessage
+  )
+
+  val reportDeadlineReceivedJson = Json.obj(
+    "start" -> "2017-04-01",
+    "end" -> "2017-06-30",
+    "due" -> "2017-07-31",
+    "met" -> true
+  )
 
 }

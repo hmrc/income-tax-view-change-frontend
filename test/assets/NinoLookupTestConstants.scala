@@ -22,19 +22,13 @@ import play.api.libs.json.{JsValue, Json}
 
 object NinoLookupTestConstants {
   val testNinoModel: Nino = Nino(nino = testNino)
-  val testNinoModelJson: JsValue = Json.parse(
-    s"""{
-       |"nino":"$testNino"
-       |}
-       """.stripMargin)
+  val testNinoModelJson: JsValue = Json.obj(
+    "nino" -> testNino
+  )
 
   val testNinoErrorModel: NinoResponseError = NinoResponseError(testErrorStatus, testErrorMessage)
-  val testNinoErrorModelJson: JsValue = Json.parse(
-    s"""
-       |{
-       |  "status":$testErrorStatus,
-       |  "reason":"$testErrorMessage"
-       |}
-       """.stripMargin
+  val testNinoErrorModelJson: JsValue = Json.obj(
+    "status" -> testErrorStatus,
+    "reason" -> testErrorMessage
   )
 }
