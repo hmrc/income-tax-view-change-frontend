@@ -56,7 +56,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
 
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 
@@ -129,7 +129,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           And("I wiremock stub a successful Get CalculationData response")
           val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
 
           And("I wiremock stub a successful Unpaid Financial Transactions response")
           val financialTransactions = GetFinancialTransactions.financialTransactionsJson(1000.0).as[FinancialTransactionsModel]
@@ -204,7 +204,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           And("I wiremock stub a successful Get CalculationData response")
           val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
 
           And("I wiremock stub a successful paid Financial Transactions response")
           val financialTransactions = GetFinancialTransactions.financialTransactionsJson(0.0).as[FinancialTransactionsModel]
@@ -277,7 +277,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           And("I wiremock stub a successful Get CalculationData response")
           val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
 
           And("I wiremock stub an errored Financial Transactions response")
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, GetFinancialTransactions.financialTransactionsSingleErrorJson)
@@ -315,7 +315,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Get CalculationData response")
         val calcBreakdownResponse = GetCalculationData.calculationDataSuccessModel
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessString)
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessJson.toString())
 
         getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
 

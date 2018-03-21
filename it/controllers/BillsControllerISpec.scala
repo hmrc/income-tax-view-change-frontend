@@ -40,7 +40,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
         getPropDeets(GetPropertyDetails.successResponse())
 
         And("I wiremock stub a successful Get CalculationData response")
-        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+        IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
         val res = IncomeTaxViewChangeFrontend.getBills
@@ -75,7 +75,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
           And("I wiremock stub a successful Get CalculationData response")
           val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
 
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
@@ -128,8 +128,8 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
           And("I wiremock stub a successful Get CalculationData response")
           val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
-          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
 
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
@@ -184,8 +184,8 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
           And("I wiremock stub a successful Get CalculationData response")
           val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
-          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyString)
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId2, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
 
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
@@ -231,7 +231,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
           And("I wiremock stub a successful Get CalculationData response")
           val calcBreakdownResponse = GetCalculationData.calculationDataSuccessWithEoYModel
-          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyString)
+          IncomeTaxViewChangeStub.stubGetCalcData(testNino, testCalcId, GetCalculationData.calculationDataSuccessWithEoyJson.toString())
 
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
