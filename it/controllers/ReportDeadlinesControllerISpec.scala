@@ -17,9 +17,11 @@ package controllers
 
 import java.time.LocalDate
 
+import assets.BaseIntegrationTestConstants._
+import assets.BusinessDetailsIntegrationTestConstants._
+import assets.PropertyDetailsIntegrationTestConstants._
+import assets.ReportDeadlinesIntegrationTestConstants._
 import config.FrontendAppConfig
-import helpers.IntegrationTestConstants.GetReportDeadlinesData._
-import helpers.IntegrationTestConstants._
 import helpers.servicemocks.SelfAssessmentStub
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status._
@@ -39,8 +41,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
+        getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+        getPropDeets(propertySuccessResponse())
 
         And("I wiremock stub a single business obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -69,8 +71,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-            getPropDeets(GetPropertyDetails.successResponse())
+            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+            getPropDeets(propertySuccessResponse())
 
             And("I wiremock stub a single business obligation response")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -118,8 +120,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
               isAuthorisedUser(true)
               stubUserDetails()
-              getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-              getPropDeets(GetPropertyDetails.successResponse())
+              getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+              getPropDeets(propertySuccessResponse())
 
               And("I wiremock stub a single property and business obligation response")
               // SelfAssessmentStub.stubGetReportDeadlines(testNino,testSelfEmploymentId,multipleReceivedOpenReportDeadlinesModel,multipleReceivedOpenReportDeadlinesModel)
@@ -226,8 +228,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-            getPropDeets(GetPropertyDetails.successResponse())
+            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+            getPropDeets(propertySuccessResponse())
 
             And("I wiremock stub multiple business obligations response")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -303,8 +305,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-            getPropDeets(GetPropertyDetails.successResponse())
+            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+            getPropDeets(propertySuccessResponse())
 
             And("I wiremock stub multiple business obligations response")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
@@ -410,7 +412,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             isAuthorisedUser(true)
             stubUserDetails()
             getBizDeets()
-            getPropDeets(GetPropertyDetails.successResponse())
+            getPropDeets(propertySuccessResponse())
 
             And("I wiremock stub a single business obligation response")
             SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, singleReportDeadlinesDataSuccessModel)
@@ -452,7 +454,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             isAuthorisedUser(true)
             stubUserDetails()
             getBizDeets()
-            getPropDeets(GetPropertyDetails.successResponse())
+            getPropDeets(propertySuccessResponse())
 
             And("I wiremock stub multiple property obligations response")
             SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReportDeadlinesDataSuccessModel)
@@ -508,7 +510,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             isAuthorisedUser(true)
             stubUserDetails()
             getBizDeets()
-            getPropDeets(GetPropertyDetails.successResponse())
+            getPropDeets(propertySuccessResponse())
 
             And("I wiremock stub multiple property open and received obligations response")
             SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReceivedOpenReportDeadlinesModel)
@@ -576,8 +578,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             isAuthorisedUser(true)
             stubUserDetailsError()
-            getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-            getPropDeets(GetPropertyDetails.successResponse())
+            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+            getPropDeets(propertySuccessResponse())
 
             And("I wiremock stub a single business and property obligation response")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -625,7 +627,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+            getBizDeets(multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
 
             And("I wiremock stub a successful Property Details response")
             SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
@@ -685,8 +687,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(GetBusinessDetails.multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
-            getPropDeets(GetPropertyDetails.successResponse())
+            getBizDeets(multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+            getPropDeets(propertySuccessResponse())
 
             And("I wiremock stub multiple business obligations and a single property obligation response")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -756,7 +758,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
+            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
 
             And("I wiremock stub a successful Property Details response, with no Property Income Source")
             SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
@@ -791,7 +793,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             isAuthorisedUser(true)
             stubUserDetails()
             getBizDeets()
-            getPropDeets(GetPropertyDetails.successResponse())
+            getPropDeets(propertySuccessResponse())
 
             And("I wiremock stub an error for the property obligations response")
             SelfAssessmentStub.stubPropertyReportDeadlinesError(testNino)
@@ -822,8 +824,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-            getPropDeets(GetPropertyDetails.successResponse())
+            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+            getPropDeets(propertySuccessResponse())
 
             And("I wiremock stub an error for the property obligations response")
             SelfAssessmentStub.stubPropertyReportDeadlinesError(testNino)

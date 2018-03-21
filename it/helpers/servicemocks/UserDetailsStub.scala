@@ -17,8 +17,8 @@
 package helpers.servicemocks
 
 import helpers.{ComponentSpecBase, WiremockHelper}
+import assets.BaseIntegrationTestConstants.testUserName
 import play.api.http.Status
-import helpers.IntegrationTestConstants.testUserName
 
 object UserDetailsStub extends ComponentSpecBase {
 
