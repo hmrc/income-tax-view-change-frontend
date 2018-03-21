@@ -43,7 +43,7 @@
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-bills", Some(controllers.routes.BillsController.viewCrystallisedCalculations.url)),
         BreadcrumbItem("breadcrumb-finalised-bill", None)
-    )))
+    )), s"BillFor${taxYear}Page")
 }
 
 @main_template(
