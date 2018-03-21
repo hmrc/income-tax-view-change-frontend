@@ -14,5 +14,5 @@
  * limitations under the License.
  *@
 
-@()(implicit messages: Messages)
-<a id="it-home-back" class="link-back" data-journey-click="backToHomePage:clickITHome:itvc" href="@{controllers.routes.HomeController.home().url}">@messages("base.backToHome")</a>
+@(page: String)(implicit messages: Messages)
+<a id="it-home-back" class="link-back" data-journey-click="@{page}:ClickLink:BackToHome" href="@{controllers.routes.HomeController.home().url}">@messages("base.backToHome")</a>

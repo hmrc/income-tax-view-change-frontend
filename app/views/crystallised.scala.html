@@ -96,7 +96,7 @@
                 <a id="payment-button" data-journey-click="BillFor@{taxYear}Page:ClickLink:Pay" href="@controllers.routes.PaymentController.paymentHandoff(calcModel.calcAmount.toPence).url" class="button">@messages("crystalisation.payNow")</a>
             </div>
         }
-        @backToHomeHelper()
+        @backToHomeHelper(s"BillFor${taxYear}Page")
 
 
     </section>
