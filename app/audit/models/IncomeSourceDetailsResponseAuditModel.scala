@@ -29,7 +29,7 @@ case class IncomeSourceDetailsResponseAuditModel[A](selfEmploymentIds: List[Stri
     if (selfEmploymentIds.isEmpty) None else Some("selfEmploymentIncomeSourceIds" -> Json.toJson(selfEmploymentIds).toString)
 
   override val detail: Seq[(String, String)] = Seq(
-    Some("mtdid" -> user.mtditid),
+    Some("mtditid" -> user.mtditid),
     Some("nino" -> user.nino),
     seIds,
     propertyIncomeId.map("propertyIncomeSourceId" -> _)
