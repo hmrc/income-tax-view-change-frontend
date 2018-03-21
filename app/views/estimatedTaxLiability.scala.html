@@ -20,16 +20,12 @@
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
 @import models.{CalculationDataResponseModel, Breadcrumb, BreadcrumbItem}
-@import views.html.helpers.{sidebarHelper, breadcrumbHelper}
+@import views.html.helpers.breadcrumbHelper
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
 @import views.html.helpers.backToHomeHelper
 
 @(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
-
-@sidebar = {
-    @sidebarHelper(EstimatesPage, sources, Some(taxYear))
-}
 
 @calcBreakdown = {
     <section id="inYearCalcBreakdown">
@@ -38,7 +34,7 @@
 }
 
 @whyThisMayChange = {
-    <div id="whyMayChange" class="panel-indent">
+    <div id="whyMayChange">
         <p id="whyMayChangeP1">@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.p1")</p>
         <ul class="list list-bullet">
             <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1")</li>
@@ -60,7 +56,6 @@
     title = renderTitle(taxYear),
     bodyClasses = None,
     scriptElem = None,
-    sidebarLinks = Some(sidebar),
     serviceInfo = breadcrumb
 ) {
 
@@ -97,9 +92,8 @@
 
         </section>
 
-        @if(appConfig.features.homePageEnabled()){
-            @backToHomeHelper()
-        }
+        @backToHomeHelper()
+
 
     </section>
  }

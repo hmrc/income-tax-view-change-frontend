@@ -20,7 +20,6 @@
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
 @import models.CalculationDataResponseModel
-@import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
 @import views.html.helpers.breadcrumbHelper
@@ -30,13 +29,8 @@
 
 @(calcModel: CalcDisplayModel, transactionModel: TransactionModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
 
-@sidebar = {
-    @sidebarHelper(EstimatesPage, sources, Some(taxYear))
-}
-
 @calcBreakdown = {
-<section id="inYearCalcBreakdown" @if(!transactionModel.isPaid) {class="panel-indent"}>
-
+<section id="inYearCalcBreakdown">
     @calcBreakdownHelper(calcModel, Some(transactionModel), taxYear)
     <h2 id="incorrect" class="heading-medium">@messages("crystalisation.incorrect")</h2>
     <p id="adjustments">@messages("crystalisation.adjustments")</p>
@@ -56,7 +50,6 @@
     title = renderTitle(taxYear, true),
     bodyClasses = None,
     scriptElem = None,
-    sidebarLinks = Some(sidebar),
     serviceInfo = breadcrumb
 ) {
     <section id="owed-tax">
@@ -103,9 +96,8 @@
                 <a id="payment-button" data-journey-click="BillFor@{taxYear}Page:ClickLink:Pay" href="@controllers.routes.PaymentController.paymentHandoff(calcModel.calcAmount.toPence).url" class="button">@messages("crystalisation.payNow")</a>
             </div>
         }
-        @if(appConfig.features.homePageEnabled()){
-            @backToHomeHelper()
-        }
+        @backToHomeHelper()
+
 
     </section>
 }

@@ -79,10 +79,6 @@ class BillsViewSpec extends TestSupport {
         document2Bills.getElementById("view-sa-calcs").attr("href") shouldBe mockAppConfig.selfAssessmentUrl
       }
 
-      "have no sidebar section " in {
-        document2Bills.getElementById("sidebar") should be(null)
-      }
-
       "have a breadcrumb trail" in {
         document2Bills.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         document2Bills.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
@@ -104,10 +100,6 @@ class BillsViewSpec extends TestSupport {
       "show a link to earlier bills, with the correct URL" in {
         documentNoBills.getElementById("earlier-bills").text shouldBe messages.earlierBills
         documentNoBills.getElementById("view-sa-calcs").attr("href") shouldBe mockAppConfig.selfAssessmentUrl
-      }
-
-      "have no sidebar section " in {
-        documentNoBills.getElementById("sidebar") should be(null)
       }
 
     }

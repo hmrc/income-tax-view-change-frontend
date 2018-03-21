@@ -296,9 +296,6 @@ class HomePageViewSpec extends TestSupport {
 
       }
 
-      "have no sidebar section " in {
-        document.getElementById("sidebar") shouldBe null
-      }
     }
   }
 }

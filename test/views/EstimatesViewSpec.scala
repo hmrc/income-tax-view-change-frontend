@@ -69,10 +69,6 @@ class EstimatesViewSpec extends TestSupport {
         document.getElementById("page-heading").text shouldBe messages.heading
       }
 
-      "have no sidebar section " in {
-        document.getElementById("sidebar") should be(null)
-      }
-
       s"have the paragraph '${messages.p1}'" in {
         document.getElementById("view-estimates").text shouldBe messages.p1
       }
@@ -94,10 +90,6 @@ class EstimatesViewSpec extends TestSupport {
 
       "have a header" in {
         document.getElementById("page-heading").text shouldBe messages.noEstimatesHeading
-      }
-
-      "have sidebar section " in {
-        document.getElementById("sidebar") should be(null)
       }
 
       s"have the paragraph '${messages.noEstimates}'" in {

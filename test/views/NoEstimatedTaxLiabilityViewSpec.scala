@@ -72,20 +72,7 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
       }
     }
 
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
-    }
-
-    "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
-      mockAppConfig.features.homePageEnabled(false)
-      lazy val page: HtmlFormat.Appendable =
-        views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
-      lazy val document: Document = Jsoup.parse(contentAsString(page))
-      document.getElementById("it-home-back") should be(null)
-    }
-
-    "show a back link to the Income Tax home page, when the home page feature is enabled" in {
-      mockAppConfig.features.homePageEnabled(true)
+    "show a back link to the Income Tax home page" in {
       lazy val page: HtmlFormat.Appendable =
         views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
       lazy val document: Document = Jsoup.parse(contentAsString(page))
