@@ -12,6 +12,9 @@ bta.home                                                        = Business tax h
 bta.messages                                                    = Messages
 bta.manage-account                                              = Manage account
 
+#Feedback
+feedback.title                                                  = Give feedback
+
 ## Home Page ##
 home.title                                                      = Your Income Tax
 home.subheading                                                 = Income Tax
@@ -34,7 +37,7 @@ home.deadlines.heading                                          = Report deadlin
 home.deadlines.text                                             = Check your report deadlines and if we''ve received them.
 home.deadlines.link                                             = View your deadlines
 home.statements.heading                                         = Statements
-home.statements.text                                            = View your income tax transactions, including charges and payments.
+home.statements.text                                            = View your Income Tax transactions, including charges and payments.
 home.statements.link                                            = View your statement
 home.accounts.heading                                           = Account details
 home.accounts.text                                              = See contact information and other details we have for your businesses.
@@ -86,7 +89,7 @@ estimated_tax_liability.error.p1                                = We can''t disp
 estimated_tax_liability.error.p2                                = Try refreshing the page in a few minutes.
 estimated_tax_liability.eoyEstimate.heading                     = Annual estimate: {0}
 estimated_tax_liability.eoyEstimate.p1                          = This is an estimate of what you''ll pay for the whole of this tax year, beginning 6 April {0} and ending 5 April {1}.
-estimated_tax_liability.eoyEstimate.p2                          = It''s based on your current estimate and is a total of all income tax, from any source that you report through accounting software.
+estimated_tax_liability.eoyEstimate.p2                          = It''s based on your current estimate and is a total of all Income Tax, from any source that you report through accounting software.
 estimated_tax_liability.inYearEstimate.heading                  = Current estimate: {0}
 estimated_tax_liability.inYearEstimate.p1                       = This is an estimate of the tax you owe from 6 April {0} to {1}.
 estimated_tax_liability.inYearEstimate.p2                       = It''s based on the information you report through accounting software.
@@ -143,7 +146,7 @@ bills.viewBills                                                 = View finalised
 bills.billLink                                                  = Tax year: {0} to {1}
 bills.noBills                                                   = You''ve had no bills since you started reporting through software.
 bills.earlierBills                                              = For earlier bills,
-bills.earlierBillsLink                                          = view your self assessment calculations
+bills.earlierBillsLink                                          = view your Self Assessment calculations
 
 ## Statements Page ##
 statements.title                                                = Income Tax Statement
@@ -161,7 +164,7 @@ statements.transactions                                         = Your transacti
 statements.charge                                               = You had a charge of <span id="{0}-charge">{1}</span>.
 statements.youPaid                                              = You paid {0} on {1}
 statements.earlierTransactions                                  = For earlier transactions,
-statements.earlierTransactionsLink                              = view your self assessment
+statements.earlierTransactionsLink                              = view your Self Assessment
 statements.noTransactions                                       = You''ve had no transactions since you started reporting through accounting software.
 
 statements.error.heading                                        = We can''t show your statement right now

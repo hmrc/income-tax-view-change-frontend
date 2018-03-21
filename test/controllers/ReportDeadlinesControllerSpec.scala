@@ -26,121 +26,142 @@ import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
-import utils.TestSupport
 
-class ReportDeadlinesControllerSpec
-  extends TestSupport with MockAuthenticationPredicate
-    with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService {
+class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+  with MockReportDeadlinesService {
 
-  object TestReportDeadlinesController extends ReportDeadlinesController()(
-    app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesApi],
+  object TestReportDeadlinesController extends ReportDeadlinesController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
-    app.injector.instanceOf[AuditingService]
+    app.injector.instanceOf[AuditingService],
+    app.injector.instanceOf[FrontendAppConfig],
+    app.injector.instanceOf[MessagesApi]
   )
 
   "The ReportDeadlinesController.getNextObligation function" when {
 
-    "called with an Authenticated HMRC-MTD-IT user with NINO" which {
+    "the Report Deadlines feature is disabled" should {
 
-      "successfully retrieves a set of Business ReportDeadlines from the ReportDeadlines service" should {
+      lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
 
-        lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
-        lazy val document = Jsoup.parse(bodyOf(result))
-
-        "return Status OK (200)" in {
-          mockSingleBusinessIncomeSource()
-          mockBusinessSuccess()
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the ReportDeadlines page" in {
-          document.title shouldBe messages.title
-        }
+      "return Redirect (303)" in {
+        mockSingleBusinessIncomeSource()
+        mockBusinessSuccess()
+        TestReportDeadlinesController.config.features.reportDeadlinesEnabled(false)
+        status(result) shouldBe Status.SEE_OTHER
       }
 
-      "successfully retrieves a set of Property ReportDeadlines from the ReportDeadlines service" should {
-
-        lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
-        lazy val document = Jsoup.parse(bodyOf(result))
-
-        "return Status OK (200)" in {
-          mockPropertyIncomeSource()
-          mockPropertySuccess()
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the ReportDeadlines page" in {
-          document.title shouldBe messages.title
-        }
+      "redirect to the Income Tax Home Page" in {
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
       }
-
-      "successfully retrieves a set of both Business & Property ReportDeadlines from the ReportDeadlines service" should {
-
-        lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
-        lazy val document = Jsoup.parse(bodyOf(result))
-
-        "return Status OK (200)" in {
-          mockBothIncomeSources()
-          mockBusinessSuccess()
-          mockPropertySuccess()
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the ReportDeadlines page" in {
-          document.title shouldBe messages.title
-        }
-      }
-
-      "doesn't retrieve any ReportDeadlines from the ReportDeadlines service" should {
-
-        lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
-        lazy val document = Jsoup.parse(bodyOf(result))
-
-        "return Status OK (200)" in {
-          mockNoIncomeSources()
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the ReportDeadlines page" in {
-          document.title shouldBe messages.title
-        }
-      }
-
     }
 
-    "Called with an Unauthenticated User" should {
+    "the Report Deadlines feature is enabled" should {
 
-      "return redirect SEE_OTHER (303)" in {
-        setupMockAuthorisationException()
-        val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
+      lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+      lazy val document = Jsoup.parse(bodyOf(result))
+
+      "set Report Deadlines enabled" in {
+        TestReportDeadlinesController.config.features.reportDeadlinesEnabled(true)
+        TestReportDeadlinesController.config.features.reportDeadlinesEnabled() shouldBe true
+      }
+
+      "called with an Authenticated HMRC-MTD-IT user with NINO" which {
+
+        "successfully retrieves a set of Business ReportDeadlines from the ReportDeadlines service" should {
+
+          "return Status OK (200)" in {
+            mockSingleBusinessIncomeSource()
+            mockBusinessSuccess()
+            status(result) shouldBe Status.OK
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+
+          "render the ReportDeadlines page" in {
+            document.title shouldBe messages.title
+          }
+        }
+
+        "successfully retrieves a set of Property ReportDeadlines from the ReportDeadlines service" should {
+
+          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val document = Jsoup.parse(bodyOf(result))
+
+          "return Status OK (200)" in {
+            mockPropertyIncomeSource()
+            mockPropertySuccess()
+            status(result) shouldBe Status.OK
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+
+          "render the ReportDeadlines page" in {
+            document.title shouldBe messages.title
+          }
+        }
+
+        "successfully retrieves a set of both Business & Property ReportDeadlines from the ReportDeadlines service" should {
+
+          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val document = Jsoup.parse(bodyOf(result))
+
+          "return Status OK (200)" in {
+            mockBothIncomeSources()
+            mockBusinessSuccess()
+            mockPropertySuccess()
+            status(result) shouldBe Status.OK
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+
+          "render the ReportDeadlines page" in {
+            document.title shouldBe messages.title
+          }
+        }
+
+        "doesn't retrieve any ReportDeadlines from the ReportDeadlines service" should {
+
+          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val document = Jsoup.parse(bodyOf(result))
+
+          "return Status OK (200)" in {
+            mockNoIncomeSources()
+            status(result) shouldBe Status.OK
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+
+          "render the ReportDeadlines page" in {
+            document.title shouldBe messages.title
+          }
+        }
+
+      }
+
+      "Called with an Unauthenticated User" should {
+
+        "return redirect SEE_OTHER (303)" in {
+          setupMockAuthorisationException()
+          val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.SEE_OTHER
+        }
       }
     }
   }
-
 }

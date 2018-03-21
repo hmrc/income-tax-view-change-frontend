@@ -24,34 +24,11 @@ import play.api.libs.json.{JsValue, Json}
 
 object SelfAssessmentStub {
 
-  val businessDetailsUrl: String => String = nino => s"/ni/$nino/self-employments"
-  val propertyDetailsUrl: String => String = nino => s"/ni/$nino/uk-properties"
+  //ReportDeadlines
+  //===============
   val businessReportDeadlinesUrl: (String, String) => String = (nino, selfEmploymentId) => s"/ni/$nino/self-employments/$selfEmploymentId/obligations"
   val propertyReportDeadlinesUrl: String => String = nino => s"/ni/$nino/uk-properties/obligations"
 
-  //Income Source Details
-  //=====================
-  def stubGetBusinessDetails(nino: String, businessDetails: JsValue) : Unit =
-    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, businessDetails.toString())
-
-  def stubGetNoBusinessDetails(nino: String) : Unit =
-    WiremockHelper.stubGet(businessDetailsUrl(nino), Status.OK, "[]")
-
-  def stubGetPropertyDetails(nino: String, propertyDetails: JsValue) : Unit =
-    WiremockHelper.stubGet(propertyDetailsUrl(nino), Status.OK, propertyDetails.toString())
-
-  def stubGetNoPropertyDetails(nino: String) : Unit =
-    WiremockHelper.stubGet(propertyDetailsUrl(nino), Status.NOT_FOUND, "{}")
-
-  def verifyGetBusinessDetails(nino: String): Unit =
-    WiremockHelper.verifyGetWithHeader(businessDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
-
-  def verifyGetPropertyDetails(nino: String): Unit =
-    WiremockHelper.verifyGetWithHeader(propertyDetailsUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
-
-
-  //ReportDeadlines
-  //===============
   def stubGetBusinessReportDeadlines(nino: String, selfEmploymentId: String, business: ReportDeadlinesModel): Unit =
     WiremockHelper.stubGet(businessReportDeadlinesUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
 

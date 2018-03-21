@@ -19,14 +19,17 @@ package controllers
 import javax.inject.Inject
 
 import audit.AuditingService
+import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.{Crystallised, Estimate}
 import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.CalculationService
+
+import scala.concurrent.Future
 
 class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
                                 implicit val messagesApi: MessagesApi,
@@ -41,20 +44,20 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
                                ) extends BaseController {
 
   val viewEstimateCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-    implicit user =>
-      implicit val sources: IncomeSourcesWithDeadlinesModel = user.incomeSources
-
-      for{
-        estimatesResponse <- calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears)
-      } yield {
-        Logger.debug(s"[EstimatesController][viewEstimateCalculations] Retrieved Last Tax Calcs With Year response: $estimatesResponse")
-        if (estimatesResponse.exists(_.isErrored)) itvcErrorHandler.showInternalServerError
-        else if(estimatesResponse.count(!_.matchesStatus(Crystallised)) == 1) {
-          Redirect(controllers.routes.CalculationController.showCalculationForYear(estimatesResponse.filter(!_.matchesStatus(Crystallised)).head.taxYear))
-        }
-        else {
-          Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
-        }
-      }
+    implicit user => if(config.features.estimatesEnabled()) renderView else fRedirectToHome
   }
+
+  private[EstimatesController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
+    implicit val sources: IncomeSourcesWithDeadlinesModel = user.incomeSources
+
+    calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map{
+      case estimatesResponse if estimatesResponse.exists(_.isErrored) =>
+        Logger.debug(s"[EstimatesController][viewEstimateCalculations] Retrieved at least one Errored Last Tax Calc. Response: $estimatesResponse")
+        itvcErrorHandler.showInternalServerError
+      case estimatesResponse if estimatesResponse.count(!_.matchesStatus(Crystallised)) == 1 =>
+        Redirect(controllers.routes.CalculationController.showCalculationForYear(estimatesResponse.filter(!_.matchesStatus(Crystallised)).head.taxYear))
+      case estimatesResponse => Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), sources.earliestTaxYear.get))
+    }
+  }
+
 }

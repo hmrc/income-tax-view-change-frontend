@@ -115,7 +115,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
       }
 
       "redirect to the ITVC home page" in {
-        redirectLocation(result) shouldBe Some(TestBusinessDetailsController.config.itvcHomeUrl)
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
       }
 
     }
