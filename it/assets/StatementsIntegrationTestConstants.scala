@@ -31,26 +31,26 @@ object StatementsIntegrationTestConstants {
 
   val charge2018: SubItemModel = SubItemModel(
     subItem = Some("000"),
-    dueDate = Some("2019-1-31".toLocalDate),
+    dueDate = Some("2019-1-31"),
     amount = Some(1000.00)
   )
 
   val charge2019: SubItemModel = SubItemModel(
     subItem = Some("000"),
-    dueDate = Some("2020-1-31".toLocalDate),
+    dueDate = Some("2020-1-31"),
     amount = Some(7500.00)
   )
 
   val payment2019: SubItemModel = SubItemModel(
     subItem = Some("001"),
-    clearingDate = Some("2019-8-6".toLocalDate),
+    clearingDate = Some("2019-8-6"),
     paymentReference = Some("aPaymentReference"),
     paymentAmount = Some(500.00)
   )
 
   val otherPayment2019: SubItemModel = SubItemModel(
     subItem = Some("002"),
-    clearingDate = Some("2019-8-7".toLocalDate),
+    clearingDate = Some("2019-8-7"),
     paymentReference = Some("aPaymentReference"),
     paymentAmount = Some(250.00)
   )
@@ -60,8 +60,8 @@ object StatementsIntegrationTestConstants {
     mainType = Some(""),
     periodKey = Some(""),
     periodKeyDescription = Some(""),
-    taxPeriodFrom = Some("2017-4-6".toLocalDate),
-    taxPeriodTo = Some("2018-4-5".toLocalDate),
+    taxPeriodFrom = Some("2017-4-6"),
+    taxPeriodTo = Some("2018-4-5"),
     businessPartner = Some(""),
     contractAccountCategory = Some(""),
     contractAccount = Some(""),
@@ -84,8 +84,8 @@ object StatementsIntegrationTestConstants {
     mainType = Some(""),
     periodKey = Some(""),
     periodKeyDescription = Some(""),
-    taxPeriodFrom = Some("2018-4-6".toLocalDate),
-    taxPeriodTo = Some("2019-4-5".toLocalDate),
+    taxPeriodFrom = Some("2018-4-6"),
+    taxPeriodTo = Some("2019-4-5"),
     businessPartner = Some(""),
     contractAccountCategory = Some(""),
     contractAccount = Some(""),
