@@ -33,14 +33,6 @@ import scala.concurrent.Future
 class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: IncomeSourceDetailsConnector,
                                            val reportDeadlinesService: ReportDeadlinesService) {
 
-
-  def getBusinessDetails(mtditid: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[ErrorModel, Option[(BusinessDetailsModel, Int)]]] = {
-    incomeSourceDetailsConnector.getIncomeSources(mtditid).map {
-      case sources: IncomeSourceDetailsModel => Right(sources.sortedBusinesses.find(_._2 == id))
-      case error: IncomeSourceDetailsError => Left(ErrorModel(error.status, error.reason))
-    }
-  }
-
   def getIncomeSourceDetails(mtditid: String, nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesWithDeadlinesResponse] = {
     for {
       sources <- incomeSourceDetailsConnector.getIncomeSources(mtditid)
