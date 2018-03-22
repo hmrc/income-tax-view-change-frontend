@@ -16,5 +16,14 @@
 
 package models
 
-case class BreadcrumbItem(id: String, url: Option[String])
+case class BreadcrumbItem(id: String, url: Option[String]) {
+
+  def toPage: String = Map(
+    "breadcrumb-it" -> "ToHomePage",
+    "breadcrumb-account" -> "ToAccountDetailsPage",
+    "breadcrumb-bills" -> "ToBillsPage",
+    "breadcrumb-estimates" -> "ToEstimatesPage"
+  ).apply(id)
+
+}
 case class Breadcrumb(items: Vector[BreadcrumbItem])

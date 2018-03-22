@@ -31,7 +31,7 @@
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
         BreadcrumbItem("breadcrumb-it-estimate", None)
-    )))
+    )), "EstimatesErrorPage")
 }
 
 @main_template(
@@ -51,7 +51,7 @@
         <p id="p1">@messages("estimated_tax_liability.error.p1")</p>
         <p id="p2">@messages("estimated_tax_liability.error.p2")</p>
 
-        @backToHomeHelper()
+        @backToHomeHelper("EstimatesErrorPage")
 
     </section>
  }
