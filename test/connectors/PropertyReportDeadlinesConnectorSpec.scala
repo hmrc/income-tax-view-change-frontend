@@ -16,16 +16,16 @@
 
 package connectors
 
-import assets.TestConstants.ReportDeadlines._
-import assets.TestConstants._
+import assets.BaseTestConstants.testNino
+import assets.ReportDeadlinesTestConstants.obligationsDataSuccessModel
 import mocks.MockHttp
-import models.{LastTaxCalculationError, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
+import models.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
+import uk.gov.hmrc.http.HttpResponse
 import utils.TestSupport
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HttpResponse
 
 
 class PropertyReportDeadlinesConnectorSpec extends TestSupport with MockHttp {

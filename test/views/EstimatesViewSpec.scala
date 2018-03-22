@@ -16,14 +16,12 @@
 
 package views
 
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.EstimatesTestConstants._
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.Messages.{Sidebar => sidebarMessages}
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.CalcBreakdown.busPropBRTCalcDataModel
-import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyIncome._
-import assets.TestConstants._
+import assets.PropertyDetailsTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.{IncomeSourcesModel, LastTaxCalculationWithYear}
@@ -71,10 +69,6 @@ class EstimatesViewSpec extends TestSupport {
         document.getElementById("page-heading").text shouldBe messages.heading
       }
 
-      "have no sidebar section " in {
-        document.getElementById("sidebar") should be(null)
-      }
-
       s"have the paragraph '${messages.p1}'" in {
         document.getElementById("view-estimates").text shouldBe messages.p1
       }
@@ -96,10 +90,6 @@ class EstimatesViewSpec extends TestSupport {
 
       "have a header" in {
         document.getElementById("page-heading").text shouldBe messages.noEstimatesHeading
-      }
-
-      "have sidebar section " in {
-        document.getElementById("sidebar") should be(null)
       }
 
       s"have the paragraph '${messages.noEstimates}'" in {

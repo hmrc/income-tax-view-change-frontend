@@ -16,18 +16,17 @@
 
 package mocks.auth
 
+import assets.BaseTestConstants._
 import auth.FrontendAuthorisedFunctions
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core._
-import assets.TestConstants.testAuthSuccessResponse
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve._
-import uk.gov.hmrc.auth.core.retrieve.Retrievals._
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HeaderCarrier
 
 trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>

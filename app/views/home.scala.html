@@ -20,7 +20,6 @@
 @import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
 @import models.{CalculationDataResponseModel, Breadcrumb, BreadcrumbItem}
-@import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
 @import views.html.helpers.{calcBreakdownHelper, breadcrumbHelper}
 
@@ -29,11 +28,11 @@
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", None)
-    )))
+    )), "HomePage")
 }
 
 @howToDoThis = {
-    <div id="whyMayChange" class="panel-indent">
+    <div id="whyMayChange">
         <p id="why-may-change-1">@messages("home.dropdown.p1")</p>
         <p id="why-may-change-2">@messages("home.dropdown.p2")</p>
         <p id="why-may-change-3">@messages("home.dropdown.p3")
@@ -51,7 +50,6 @@
     title = messages("home.title"),
     bodyClasses = None,
     scriptElem = None,
-    sidebarLinks = None,
     serviceInfo = breadcrumb
 ) {
 

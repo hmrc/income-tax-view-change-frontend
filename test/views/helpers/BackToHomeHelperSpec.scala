@@ -25,7 +25,7 @@ class BackToHomeHelperSpec extends TestSupport {
 
   "The backToHomeHelper template" should {
 
-    lazy val view = views.html.helpers.backToHomeHelper()(applicationMessages)
+    lazy val view = views.html.helpers.backToHomeHelper("unitTest")(applicationMessages)
     lazy val document = Jsoup.parse(view.body)
     lazy val backToHomeLink = document.getElementById("it-home-back")
 

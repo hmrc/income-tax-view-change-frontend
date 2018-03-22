@@ -16,9 +16,9 @@
 
 package mocks.services
 
-import assets.TestConstants.CalcBreakdown.{calculationDataSuccessModel, calculationDisplayNoBreakdownModel, calculationDisplaySuccessCrystalisationModel, calculationDisplaySuccessModel}
-import assets.TestConstants.Estimates._
-import assets.TestConstants.testNino
+import assets.BaseTestConstants._
+import assets.CalcBreakdownTestConstants._
+import assets.EstimatesTestConstants._
 import models._
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

@@ -18,7 +18,6 @@
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
 @import models.{CalculationDataResponseModel, Breadcrumb, BreadcrumbItem}
-@import views.html.helpers.sidebarHelper
 @import views.helpers.EstimatesPage
 @import views.html.helpers.{calcBreakdownHelper, breadcrumbHelper}
 @import enums.{Crystallised, Estimate}
@@ -29,14 +28,13 @@
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-bills", None)
-    )))
+    )), "BillsPage")
 }
 
 @main_template(
     title = messages("bills.title"),
     bodyClasses = None,
     scriptElem = None,
-    sidebarLinks = None,
     serviceInfo = breadcrumb
 ) {
     <section>

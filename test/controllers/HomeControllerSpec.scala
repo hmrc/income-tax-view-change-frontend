@@ -17,7 +17,6 @@
 package controllers
 
 import assets.Messages
-import assets.TestConstants.testUserName
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.MockAuthenticationPredicate
@@ -37,34 +36,16 @@ class HomeControllerSpec extends MockAuthenticationPredicate {
     app.injector.instanceOf[MessagesApi]
   )
 
-  "navigating to the home page" when {
+  "navigating to the home page" should {
 
-    "the home page feature is disabled" should {
+    lazy val result = TestHomeController.home(fakeRequestWithActiveSession)
 
-      lazy val result = TestHomeController.home(fakeRequestWithActiveSession)
-
-      "return Redirect (303)" in {
-        TestHomeController.config.features.homePageEnabled(false)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-
-      "redirect to the BTA home page" in {
-        redirectLocation(result) shouldBe Some(TestHomeController.config.businessTaxAccount)
-      }
+    "return OK (200)" in {
+      status(result) shouldBe Status.OK
     }
 
-    "the home page feature is enabled" should {
-
-      lazy val result = TestHomeController.home(fakeRequestWithActiveSession)
-
-      "return OK (200)" in {
-        TestHomeController.config.features.homePageEnabled(true)
-        status(result) shouldBe Status.OK
-      }
-
-      "redirect to the Income Tax Home Page" in {
-        Jsoup.parse(bodyOf(result)).title shouldBe Messages.HomePage.title
-      }
+    "redirect to the Income Tax Home Page" in {
+      Jsoup.parse(bodyOf(result)).title shouldBe Messages.HomePage.title
     }
 
   }

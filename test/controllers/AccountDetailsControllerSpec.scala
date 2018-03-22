@@ -16,6 +16,8 @@
 
 package controllers
 
+import assets.BaseTestConstants.testNino
+import assets.IncomeSourceDetailsTestConstants.businessIncomeSourceSuccess
 import assets.Messages
 import config.FrontendAppConfig
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -24,7 +26,6 @@ import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import utils.TestSupport
-import assets.TestConstants._
 
 class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
@@ -51,7 +52,7 @@ class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPr
         "return Status OK (200)" in {
           TestAccountDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
-          setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.businessIncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testNino)(businessIncomeSourceSuccess)
           status(result) shouldBe Status.OK
         }
 

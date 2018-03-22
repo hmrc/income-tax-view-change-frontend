@@ -16,10 +16,10 @@
 
 package models
 
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
 import org.scalatest.Matchers
-import play.api.libs.json.Json
+import play.api.libs.json.{JsPath, JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class BusinessListResponseModelSpec extends UnitSpec with Matchers {
@@ -52,8 +52,11 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
       Json.toJson[BusinessDetailsModel](multipleBusinessesSuccessModel) shouldBe businessSuccessJson
     }
 
-    "be able to parse a JSON input as a string into the Model" in {
-      Json.parse(businessSuccessString).as[BusinessDetailsModel] shouldBe multipleBusinessesSuccessModel
+    "be able to parse a JSON input into the Model" in {
+      Json.fromJson[BusinessDetailsModel](businessSuccessJson).fold(
+        invalid => invalid,
+        valid => valid
+      ) shouldBe multipleBusinessesSuccessModel
     }
   }
 
@@ -68,11 +71,14 @@ class BusinessListResponseModelSpec extends UnitSpec with Matchers {
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson(businessErrorModel) shouldBe businessListErrorJson
+      Json.toJson(businessErrorModel) shouldBe businessErrorJson
     }
 
     "be able to parse a JSON to string into the Model" in {
-      Json.parse(businessErrorString).as[BusinessDetailsErrorModel] shouldBe businessErrorModel
+      Json.fromJson[BusinessDetailsErrorModel](businessErrorJson).fold(
+        invalid => invalid,
+        valid => valid
+      ) shouldBe businessErrorModel
     }
   }
 }

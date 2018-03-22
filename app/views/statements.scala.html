@@ -30,7 +30,7 @@
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-statement", None)
-    )))
+    )), "StatementsPage")
 }
 
 @taxYear(tmwy: TransactionModelWithYear) = {
@@ -92,7 +92,7 @@
         @messages("statements.earlierTransactions") <a href="@appConfig.selfAssessmentUrl" data-journey-click="StatementsPage:ClickLink:ViewPreviousSATransactions" id="view-sa-calcs">@messages("statements.earlierTransactionsLink")</a>.
     </p>
 
-    @backToHomeHelper()
+    @backToHomeHelper("StatementsPage")
 
 </section>
 
