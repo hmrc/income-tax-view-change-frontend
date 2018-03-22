@@ -24,7 +24,6 @@ import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredi
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
-import services.IncomeSourceDetailsService
 
 import scala.concurrent.Future
 
