@@ -246,18 +246,10 @@ object Messages {
   }
 
   object BtaPartial {
-    val initial = "You've signed up for quarterly reporting. You may also need to make an annual Self Assessment return and pay anything you owe."
-    val heading = "Quarterly reporting"
-    val reportDue: String => String = date => "Your next report is due by " + date
-    val currentEstimate: String => String = amount => "Your estimated tax amount is " + amount
-    val currentEstimateYear: (Int, String) => String = (taxYear, amount) => "Your estimated tax amount for " + (taxYear-1) + " to " + taxYear + " is " + amount
-    val noEstimate: Int => String = (taxYear) => "Once you've submitted a report using your accounting software, you can view your estimate for " +(taxYear-1)+ " to " +taxYear+ " tax year here."
-    object Error {
-      val estimateErrorP1 = "We can't display your estimated tax amount at the moment."
-      val estimateErrorP2 = "Try refreshing the page in a few minutes."
-      val obligationErrorP1 = "We can't display your next report due date at the moment."
-      val obligationErrorP2 = "Try refreshing the page in a few minutes."
-    }
+    val heading = "Income Tax reporting through software"
+    val p1 = "You've signed up to report your Income Tax through software. This will replace your Self Assessment tax return."
+    val p2 = "You can view your report deadlines, bills, statements and an estimate for the next tax year."
+    val button = "View your Income Tax details"
   }
 
   object NotEnrolled {
