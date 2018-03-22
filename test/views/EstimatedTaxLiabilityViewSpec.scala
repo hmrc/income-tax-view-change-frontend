@@ -18,11 +18,12 @@ package views
 
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.CalcBreakdown._
-import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyIncome._
-import assets.TestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.CalcBreakdownTestConstants._
+import assets.EstimatesTestConstants._
+import assets.PropertyDetailsTestConstants._
+import assets.FinancialTransactionsTestConstants._
+import assets.BaseTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.{CalculationDataModel, IncomeSourcesModel}
@@ -47,12 +48,12 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
   private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel) = new {
     val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), incomeSources)(FakeRequest())
     lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
-      CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
+      calculationDisplaySuccessModel(calcDataModel),
       testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     lazy val cPage: HtmlFormat.Appendable = views.html.crystallised(
-      CalcBreakdown.calculationDisplaySuccessCrystalisationModel(calcDataModel), FinancialTransactions.transactionModel(),
+      calculationDisplaySuccessCrystalisationModel(calcDataModel), transactionModel(),
       testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val cDocument: Document = Jsoup.parse(contentAsString(cPage))
 
@@ -123,9 +124,9 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             messages.InYearEstimate.heading(busPropBRTCalcDataModel.totalIncomeTaxNicYtd.toCurrencyString)
         }
 
-        s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(Estimates.lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)}'" in {
+        s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)}'" in {
           inYearSection.getElementById("inYearP1").text shouldBe
-            messages.InYearEstimate.p1(Estimates.lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)
+            messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)
         }
 
         s"has the correct estimate p2 paragraph '${messages.InYearEstimate.p2}'" in {
@@ -681,7 +682,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-          CalcBreakdown.calculationDisplayNoBreakdownModel,
+          calculationDisplayNoBreakdownModel,
           testYear)(
           FakeRequest(),
           applicationMessages,

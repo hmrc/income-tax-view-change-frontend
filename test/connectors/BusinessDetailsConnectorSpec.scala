@@ -16,8 +16,8 @@
 
 package connectors
 
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.BaseTestConstants._
 import mocks.MockHttp
 import models.{BusinessDetailsErrorModel, BusinessListResponseModel}
 import play.api.libs.json.Json

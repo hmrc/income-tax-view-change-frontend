@@ -16,7 +16,9 @@
 
 package controllers
 
-import helpers.IntegrationTestConstants.{GetBusinessDetails, GetPropertyDetails, testSelfEmploymentId}
+import assets.BaseIntegrationTestConstants.testSelfEmploymentId
+import assets.BusinessDetailsIntegrationTestConstants.businessSuccessResponse
+import assets.PropertyDetailsIntegrationTestConstants.propertySuccessResponse
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{OK, SEE_OTHER}
 
@@ -29,8 +31,8 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
       "return the correct page with a valid total" in {
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
+        getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+        getPropDeets(propertySuccessResponse())
 
         When("I call GET /report-quarterly/income-and-expenses/view/account-details")
         val res = IncomeTaxViewChangeFrontend.getAccountDetails

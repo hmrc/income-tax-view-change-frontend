@@ -16,8 +16,8 @@
 
 package helpers.servicemocks
 
-import helpers.{IntegrationTestConstants, WiremockHelper}
-import models.{BusinessDetailsModel, BusinessModel, ReportDeadlinesModel}
+import helpers.WiremockHelper
+import models.ReportDeadlinesModel
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 

@@ -16,7 +16,10 @@
 
 package controllers
 
-import helpers.IntegrationTestConstants.{GetBusinessDetails, GetPropertyDetails, testSelfEmploymentId, testTradeName}
+
+import assets.BaseIntegrationTestConstants.testSelfEmploymentId
+import assets.BusinessDetailsIntegrationTestConstants._
+import assets.PropertyDetailsIntegrationTestConstants._
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{OK, SEE_OTHER, INTERNAL_SERVER_ERROR}
 
@@ -29,8 +32,8 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
       "return the correct page with a valid total" in {
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
+        getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+        getPropDeets(propertySuccessResponse())
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
@@ -65,8 +68,8 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
       "return an internal server error" in {
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(GetBusinessDetails.emptyBusinessDetailsResponse())
-        getPropDeets(GetPropertyDetails.successResponse())
+        getBizDeets(emptyBusinessDetailsResponse())
+        getPropDeets(propertySuccessResponse())
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
@@ -87,8 +90,8 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
       "return an internal server error" in {
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(GetBusinessDetails.failureResponse("500","ISE"))
-        getPropDeets(GetPropertyDetails.successResponse())
+        getBizDeets(businessFailureResponse("500","ISE"))
+        getPropDeets(propertySuccessResponse())
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)

@@ -16,10 +16,9 @@
 
 package models
 
-import assets.TestConstants._
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
-
+import utils.ImplicitDateFormatter._
 
 class TransactionModelSpec extends UnitSpec with Matchers {
 

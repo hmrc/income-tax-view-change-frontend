@@ -15,9 +15,11 @@
  */
 package controllers
 
+import assets.BaseIntegrationTestConstants._
+import assets.BusinessDetailsIntegrationTestConstants._
+import assets.PropertyDetailsIntegrationTestConstants._
+import assets.ReportDeadlinesIntegrationTestConstants._
 import config.FrontendAppConfig
-import helpers.IntegrationTestConstants.GetReportDeadlinesData.singleReportDeadlinesDataSuccessModel
-import helpers.IntegrationTestConstants._
 import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub}
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import models.{Nino, NinoResponseError}
@@ -79,8 +81,8 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         IncomeTaxViewChangeStub.stubGetNinoResponse(testMtditid, Nino(testNino))
 
         stubUserDetails()
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
+        getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+        getPropDeets(propertySuccessResponse())
 
         And("I wiremock stub a single business obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -105,8 +107,8 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         IncomeTaxViewChangeStub.stubGetNinoError(testMtditid, NinoResponseError(INTERNAL_SERVER_ERROR, "Error Message"))
 
         stubUserDetails()
-        getBizDeets(GetBusinessDetails.successResponse(testSelfEmploymentId))
-        getPropDeets(GetPropertyDetails.successResponse())
+        getBizDeets(businessSuccessResponse(testSelfEmploymentId))
+        getPropDeets(propertySuccessResponse())
 
         And("I wiremock stub a single business obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)

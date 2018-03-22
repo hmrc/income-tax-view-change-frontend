@@ -16,12 +16,11 @@
 
 package controllers
 
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.EstimatesTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages
-import assets.Messages.EstimatedTaxLiabilityError
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyDetails._
-import assets.TestConstants._
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -99,7 +98,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
 
           "return an SEE_OTHER (303)" in {
             TestCalculationController.config.features.estimatesEnabled(true)
-            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testNino)(business2018And19IncomeSourceSuccess)
             mockGetAllLatestCrystallisedCalcWithCalcNotFound()
             status(result) shouldBe Status.SEE_OTHER
           }
@@ -111,7 +110,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
 
           "return an ISE (500)" in {
             TestCalculationController.config.features.estimatesEnabled(true)
-            setupMockGetIncomeSourceDetails(testNino)(IncomeSourceDetails.business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testNino)(business2018And19IncomeSourceSuccess)
             mockGetAllLatestCrystallisedCalcWithError()
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }

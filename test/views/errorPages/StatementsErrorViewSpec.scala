@@ -17,8 +17,7 @@
 package views.errorPages
 
 import assets.Messages.{Statements => messages}
-import assets.TestConstants.Estimates._
-import assets.TestConstants._
+import assets.BaseTestConstants._
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

@@ -16,9 +16,10 @@
 
 package services
 
-import utils.TestSupport
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.FinancialTransactionsTestConstants._
 import mocks.connectors.MockFinancialTransactionsConnector
+import utils.TestSupport
 
 
 class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTransactionsConnector{
@@ -30,8 +31,8 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
     "a successful financial transaction repsonse is returned from the connector" should {
 
       "return a valid FinancialTransactions model" in {
-        setupFinancialTransactionsResponse(testNino)(FinancialTransactions.financialTransactionsModel())
-        await(TestFinancialTransactionsService.getFinancialTransactions(testNino)) shouldBe FinancialTransactions.financialTransactionsModel()
+        setupFinancialTransactionsResponse(testNino)(financialTransactionsModel())
+        await(TestFinancialTransactionsService.getFinancialTransactions(testNino)) shouldBe financialTransactionsModel()
       }
 
     }
@@ -39,8 +40,8 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
     "a error model is returned from the connector" should {
 
       "return a FinancialTransactionsError model" in {
-        setupFinancialTransactionsResponse(testNino)(FinancialTransactions.financialTransactionsErrorModel)
-        await(TestFinancialTransactionsService.getFinancialTransactions(testNino)) shouldBe FinancialTransactions.financialTransactionsErrorModel
+        setupFinancialTransactionsResponse(testNino)(financialTransactionsErrorModel)
+        await(TestFinancialTransactionsService.getFinancialTransactions(testNino)) shouldBe financialTransactionsErrorModel
       }
 
     }

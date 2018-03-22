@@ -16,11 +16,10 @@
 
 package services
 
-import assets.TestConstants.Estimates._
-import assets.TestConstants.IncomeSourceDetails._
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants._
-import assets.TestConstants.ReportDeadlines._
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.EstimatesTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
 import mocks.services.{MockCalculationService, MockReportDeadlinesService}
 import models._
 import utils.TestSupport

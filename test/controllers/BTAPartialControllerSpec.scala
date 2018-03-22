@@ -16,11 +16,11 @@
 
 package controllers
 
+import assets.BaseTestConstants._
+import assets.EstimatesTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages.{BtaPartial => messages}
-import assets.TestConstants.Estimates._
-import assets.TestConstants.IncomeSourceDetails._
-import assets.TestConstants.ReportDeadlines._
-import assets.TestConstants._
+import assets.ReportDeadlinesTestConstants._
 import config.FrontendAppConfig
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.Estimate

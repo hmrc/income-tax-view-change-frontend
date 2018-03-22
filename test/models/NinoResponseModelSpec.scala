@@ -16,8 +16,8 @@
 
 package models
 
-import assets.TestConstants.NinoLookup._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.NinoLookupTestConstants._
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec

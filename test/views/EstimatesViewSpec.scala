@@ -16,13 +16,12 @@
 
 package views
 
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.EstimatesTestConstants._
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.CalcBreakdown.busPropBRTCalcDataModel
-import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyIncome._
-import assets.TestConstants._
+import assets.PropertyDetailsTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.{IncomeSourcesModel, LastTaxCalculationWithYear}

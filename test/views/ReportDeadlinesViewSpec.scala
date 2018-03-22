@@ -16,9 +16,10 @@
 
 package views
 
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages}
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants._
+import assets.ReportDeadlinesTestConstants._
 import config.FrontendAppConfig
 import models._
 import org.jsoup.Jsoup
@@ -36,11 +37,11 @@ class ReportDeadlinesViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val successModel = ReportDeadlinesModel(List(ReportDeadlineModel(
-    start = "2017-1-1".toLocalDate,
-    end = "2017-3-31".toLocalDate,
-    due = "2017-4-5".toLocalDate,
+    start = "2017-1-1",
+    end = "2017-3-31",
+    due = "2017-4-5",
     met = true
-  ),ReportDeadlines.openEOPSObligation))
+  ),openEOPSObligation))
   val errorModel = ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
   private def pageSetup(model: IncomeSourcesModel) = new {
