@@ -27,7 +27,7 @@ import enums.{Crystallised, Estimate}
 import models._
 import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
-import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, ActionBuilder, AnyContent, Result}
@@ -54,7 +54,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
 
   val showCalculationForYear: Int => Action[AnyContent] = taxYear => action.async {
     implicit user =>
-      implicit val sources: IncomeSourcesModel = user.incomeSources
+      implicit val sources: IncomeSourcesWithDeadlinesModel = user.incomeSources
       for {
         calcResponse <- calculationService.getCalculationDetail(user.nino, taxYear)
         ftResponse <- financialTransactionsService.getFinancialTransactions(user.mtditid)
@@ -77,7 +77,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
 
   def renderCrystallisedView(calcDisplayModel: CalcDisplayModel, taxYear: Int, ftResponse: FinancialTransactionsResponseModel)
                             (implicit user: MtdItUser[_]): Result = {
-    implicit val sources: IncomeSourcesModel = user.incomeSources
+    implicit val sources: IncomeSourcesWithDeadlinesModel = user.incomeSources
     ftResponse match {
       case transactions: FinancialTransactionsModel => transactions.findChargeForTaxYear(taxYear) match {
         case Some(charge) => Ok(views.html.crystallised(calcDisplayModel, charge, taxYear))

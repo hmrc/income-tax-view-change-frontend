@@ -25,7 +25,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartials
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
-import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
@@ -58,7 +58,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
 
       "return redirect SEE_OTHER (303)" in {
         TestCalculationController.config.features.estimatesEnabled(false)
-        setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
+        setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
         status(result) shouldBe Status.SEE_OTHER
       }
       "redirect to home page" in {
@@ -78,7 +78,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
 
           "return status OK (200)" in {
             TestCalculationController.config.features.estimatesEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesModel(List(businessIncomeModel, business2018IncomeModel), None))
+            setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
             mockGetAllLatestCalcSuccess()
             status(result) shouldBe Status.OK
           }

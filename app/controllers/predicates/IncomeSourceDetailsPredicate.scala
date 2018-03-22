@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
-import models.incomeSourcesWithDeadlines.{IncomeSourcesError, IncomeSourcesModel}
+import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesError, IncomeSourcesWithDeadlinesModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionRefiner, Result}
 import services.IncomeSourceDetailsService
@@ -41,8 +41,8 @@ class IncomeSourceDetailsPredicate @Inject()(implicit val messagesApi: MessagesA
     implicit val req = request
 
     incomeSourceDetailsService.getIncomeSourceDetails(request.mtditid, request.nino) map {
-      case sources: IncomeSourcesModel => Right(MtdItUser(request.mtditid, request.nino, request.userDetails, sources))
-      case IncomeSourcesError => Left(itvcErrorHandler.showInternalServerError)
+      case sources: IncomeSourcesWithDeadlinesModel => Right(MtdItUser(request.mtditid, request.nino, request.userDetails, sources))
+      case IncomeSourcesWithDeadlinesError => Left(itvcErrorHandler.showInternalServerError)
     }
   }
 }

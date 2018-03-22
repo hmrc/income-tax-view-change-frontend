@@ -24,7 +24,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartials
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.Crystallised
 import models.calculation.LastTaxCalculationWithYear
-import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
@@ -49,7 +49,7 @@ class BillsController @Inject()(implicit val config: FrontendAppConfig,
   }
 
   private[BillsController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
-    implicit val sources: IncomeSourcesModel = user.incomeSources
+    implicit val sources: IncomeSourcesWithDeadlinesModel = user.incomeSources
     calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map{
       case lastTaxCalcs if lastTaxCalcs.exists(_.isErrored) =>
         Logger.debug(s"[BillsController][viewCrystallisedCalculations] Retrieved at least one Errored Last Tax Calc. Response: $lastTaxCalcs")

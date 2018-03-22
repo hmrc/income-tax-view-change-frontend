@@ -17,11 +17,12 @@
 package views
 
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages}
-import assets.TestConstants.BusinessDetails._
+import assets.TestConstants.NewPropDeets._
+import assets.TestConstants.NewBizDeets._
 import assets.TestConstants._
 import config.FrontendAppConfig
 import models.core.AccountingPeriodModel
-import models.incomeSourcesWithDeadlines.{BusinessIncomeModel, IncomeSourcesModel, PropertyIncomeModel}
+import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -45,20 +46,17 @@ class ReportDeadlinesViewSpec extends TestSupport {
   ),ReportDeadlines.openEOPSObligation))
   val errorModel = ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
-  private def pageSetup(model: IncomeSourcesModel) = new {
+  private def pageSetup(model: IncomeSourcesWithDeadlinesModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.report_deadlines(model)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
 
   "The ReportDeadlines view" should {
-    lazy val businessIncomeSource = IncomeSourcesModel(
+    lazy val businessIncomeSource = IncomeSourcesWithDeadlinesModel(
       List(
-        BusinessIncomeModel(
-          selfEmploymentId = testSelfEmploymentId,
-          tradingName = testTradeName,
-          cessationDate = None,
-          accountingPeriod = testBusinessAccountingPeriod,
+        BusinessIncomeWithDeadlinesModel(
+          business1,
           reportDeadlines = successModel
         )
       ),
@@ -127,10 +125,10 @@ class ReportDeadlinesViewSpec extends TestSupport {
 
     "when only property obligations are returned" should {
 
-      lazy val propertyIncomeModel = IncomeSourcesModel(
+      lazy val propertyIncomeModel = IncomeSourcesWithDeadlinesModel(
         List.empty,
-        Some(PropertyIncomeModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"),
+        Some(PropertyIncomeWithDeadlinesModel(
+          propertyDetails,
           reportDeadlines  = successModel
         ))
       )
@@ -152,14 +150,11 @@ class ReportDeadlinesViewSpec extends TestSupport {
     }
 
     "when a business has ceased trading" should {
-      lazy val ceasedBusinessIncomeModel = IncomeSourcesModel(
+      lazy val ceasedBusinessIncomeModel = IncomeSourcesWithDeadlinesModel(
         List(
-          BusinessIncomeModel(
-          selfEmploymentId = testSelfEmploymentId,
-          tradingName = testTradeName,
-          cessationDate = Some("2017-09-15".toLocalDate),
-          accountingPeriod = testBusinessAccountingPeriod,
-          reportDeadlines = successModel
+          BusinessIncomeWithDeadlinesModel(
+            ceasedBusiness,
+            reportDeadlines = successModel
           )
         ),
         None
@@ -169,24 +164,21 @@ class ReportDeadlinesViewSpec extends TestSupport {
       import setup._
 
       "contains text under the business name stating the business has ceased trading" in {
-        document.getElementById("bi-1-ceased").text() shouldBe messages.ceased("15 September 2017")
+        document.getElementById("bi-1-ceased").text() shouldBe messages.ceased("30 May 2018")
       }
     }
 
     "when both Business and Property obligations are errored" should {
 
-      lazy val bothIncomeSourcesReportsErrored = IncomeSourcesModel(
+      lazy val bothIncomeSourcesReportsErrored = IncomeSourcesWithDeadlinesModel(
         List(
-          BusinessIncomeModel(
-            selfEmploymentId = testSelfEmploymentId,
-            tradingName = testTradeName,
-            cessationDate = None,
-            accountingPeriod = testBusinessAccountingPeriod,
+          BusinessIncomeWithDeadlinesModel(
+            business1,
             reportDeadlines = errorModel
           )
         ),
-        Some(PropertyIncomeModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"),
+        Some(PropertyIncomeWithDeadlinesModel(
+          propertyDetails,
           reportDeadlines  = errorModel
         ))
       )
@@ -216,13 +208,10 @@ class ReportDeadlinesViewSpec extends TestSupport {
 
     "when Business obligations are errored and there are no Property obligations" should {
 
-      lazy val businessIncomeSourcesReportsErrored = IncomeSourcesModel(
+      lazy val businessIncomeSourcesReportsErrored = IncomeSourcesWithDeadlinesModel(
         List(
-          BusinessIncomeModel(
-            selfEmploymentId = testSelfEmploymentId,
-            tradingName = testTradeName,
-            cessationDate = None,
-            accountingPeriod = testBusinessAccountingPeriod,
+          BusinessIncomeWithDeadlinesModel(
+            business1,
             reportDeadlines = errorModel
           )
         ),
@@ -254,10 +243,10 @@ class ReportDeadlinesViewSpec extends TestSupport {
 
     "when Property obligations are errored and there are no Business obligations" should {
 
-      lazy val propertyIncomeSourcesReportsErrored = IncomeSourcesModel(
+      lazy val propertyIncomeSourcesReportsErrored = IncomeSourcesWithDeadlinesModel(
         List(),
-        Some(PropertyIncomeModel(
-          accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"),
+        Some(PropertyIncomeWithDeadlinesModel(
+          propertyDetails,
           reportDeadlines  = errorModel
         ))
       )
