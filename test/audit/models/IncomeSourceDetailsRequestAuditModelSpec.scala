@@ -16,7 +16,7 @@
 
 package audit.models
 
-import assets.TestConstants.testMtdItUser
+import assets.TestConstants.{testMtditid, testNino}
 import utils.TestSupport
 
 class IncomeSourceDetailsRequestAuditModelSpec extends TestSupport {
@@ -26,7 +26,7 @@ class IncomeSourceDetailsRequestAuditModelSpec extends TestSupport {
 
   "The IncomeSourceDetailsRequestAuditModel" should {
 
-    lazy val testIncomeSourceDetailsRequestAuditModel = IncomeSourceDetailsRequestAuditModel(testMtdItUser)
+    lazy val testIncomeSourceDetailsRequestAuditModel = IncomeSourceDetailsRequestAuditModel(testMtditid, testNino)
 
     s"Have the correct transaction name of '$transactionName'" in {
       testIncomeSourceDetailsRequestAuditModel.transactionName shouldBe transactionName
@@ -38,8 +38,8 @@ class IncomeSourceDetailsRequestAuditModelSpec extends TestSupport {
 
     "Have the correct details for the audit event" in {
       testIncomeSourceDetailsRequestAuditModel.detail shouldBe Seq(
-        "mtditid" -> testMtdItUser.mtditid,
-        "nino" -> testMtdItUser.nino
+        "mtditid" -> testMtditid,
+        "nino" -> testNino
       )
     }
   }

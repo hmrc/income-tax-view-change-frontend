@@ -56,6 +56,7 @@ object TestConstants extends ImplicitDateFormatter {
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
   )),Option(testUserDetailsUrl))
+  val testReferrerUrl: String = "/test/url"
 
   object ServiceInfoPartial {
     val serviceInfoPartialSuccess =

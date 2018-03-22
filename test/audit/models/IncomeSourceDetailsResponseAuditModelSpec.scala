@@ -32,9 +32,11 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Multiple Business IDs and a Property ID" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
+        testMtditid,
+        testNino,
         List(testSelfEmploymentId, testSelfEmploymentId2),
         Some(testPropertyIncomeId)
-      )(testMtdItUser)
+      )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
@@ -57,9 +59,11 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Single Business IDs and a Property ID" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
+        testMtditid,
+        testNino,
         List(testSelfEmploymentId),
         Some(testPropertyIncomeId)
-      )(testMtdItUser)
+      )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
@@ -82,9 +86,11 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with No Business IDs and a Property ID" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
+        testMtditid,
+        testNino,
         List(),
         Some(testPropertyIncomeId)
-      )(testMtdItUser)
+      )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
@@ -106,9 +112,11 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Single Business IDs and No Property ID" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
+        testMtditid,
+        testNino,
         List(testSelfEmploymentId),
         None
-      )(testMtdItUser)
+      )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
@@ -130,9 +138,11 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Multiple Business IDs and No Property ID" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
+        testMtditid,
+        testNino,
         List(testSelfEmploymentId, testSelfEmploymentId2),
         None
-      )(testMtdItUser)
+      )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
@@ -154,9 +164,11 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with No Business IDs and No Property ID" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
+        testMtditid,
+        testNino,
         List(),
         None
-      )(testMtdItUser)
+      )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName

@@ -16,14 +16,12 @@
 
 package audit.models
 
-import auth.MtdItUser
-
-case class IncomeSourceDetailsRequestAuditModel[A](user: MtdItUser[A]) extends AuditModel {
+case class IncomeSourceDetailsRequestAuditModel(mtditid: String, nino: String) extends AuditModel {
 
   override val transactionName: String = "income-source-details-request"
   override val auditType: String = "incomeSourceDetailsRequest"
   override val detail: Seq[(String, String)] = Seq(
-    "mtditid" -> user.mtditid,
-    "nino" -> user.nino
+    "mtditid" -> mtditid,
+    "nino" -> nino
   )
 }

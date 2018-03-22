@@ -18,12 +18,11 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
+import audit.AuditingService
 import connectors.IncomeSourceDetailsConnector
-import models._
 import models.core.ErrorModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.incomeSourcesWithDeadlines._
-import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,11 +30,13 @@ import scala.concurrent.Future
 
 @Singleton
 class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: IncomeSourceDetailsConnector,
-                                           val reportDeadlinesService: ReportDeadlinesService) {
+                                           val reportDeadlinesService: ReportDeadlinesService,
+                                           val auditingService: AuditingService
+                                          ) {
 
 
-  def getBusinessDetails(mtditid: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[ErrorModel, Option[(BusinessDetailsModel, Int)]]] = {
-    incomeSourceDetailsConnector.getIncomeSources(mtditid).map {
+  def getBusinessDetails(mtditid: String, nino: String, id: Int)(implicit hc:HeaderCarrier): Future[Either[ErrorModel, Option[(BusinessDetailsModel, Int)]]] = {
+    incomeSourceDetailsConnector.getIncomeSources(mtditid, nino).map {
       case sources: IncomeSourceDetailsModel => Right(sources.sortedBusinesses.find(_._2 == id))
       case error: IncomeSourceDetailsError => Left(ErrorModel(error.status, error.reason))
     }
@@ -43,7 +44,7 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
 
   def getIncomeSourceDetails(mtditid: String, nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesResponseModel] = {
     for {
-      sources <- incomeSourceDetailsConnector.getIncomeSources(mtditid)
+      sources <- incomeSourceDetailsConnector.getIncomeSources(mtditid, nino)
       incomeSources <- createIncomeSourcesModel(nino, sources)
     } yield incomeSources
   }

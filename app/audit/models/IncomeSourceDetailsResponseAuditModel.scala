@@ -16,16 +16,18 @@
 
 package audit.models
 
-import auth.MtdItUser
 import play.api.libs.json.{JsValue, Json, Writes}
 
-case class IncomeSourceDetailsResponseAuditModel[A](selfEmploymentIds: List[String],
-                                                    propertyIncomeId: Option[String])(implicit user: MtdItUser[A]) extends ExtendedAuditModel {
+case class IncomeSourceDetailsResponseAuditModel(mtditid: String,
+                                                 nino: String,
+                                                 selfEmploymentIds: List[String],
+                                                 propertyIncomeId: Option[String]) extends ExtendedAuditModel {
 
   override val transactionName: String = "income-source-details-response"
   override val auditType: String = "incomeSourceDetailsResponse"
 
-  private case class AuditDetail(mtditid: String, nino: String,
+  private case class AuditDetail(mtditid: String,
+                                 nino: String,
                                  selfEmploymentIncomeSourceIds: Option[List[String]],
                                  propertyIncomeSourceId: Option[String])
   private implicit val auditDetailWrites: Writes[AuditDetail] = Json.writes[AuditDetail]
@@ -34,8 +36,8 @@ case class IncomeSourceDetailsResponseAuditModel[A](selfEmploymentIds: List[Stri
 
   override val detail: JsValue = Json.toJson(
     AuditDetail(
-      user.mtditid,
-      user.nino,
+      mtditid,
+      nino,
       seIds,
       propertyIncomeId
     )
