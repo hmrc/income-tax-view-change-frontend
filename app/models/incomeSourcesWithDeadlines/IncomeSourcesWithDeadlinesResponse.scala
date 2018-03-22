@@ -70,6 +70,8 @@ case class IncomeSourcesWithDeadlinesModel(
 
   val sortedBusinesses: List[(BusinessIncomeWithDeadlinesModel, Int)] =
     businessIncomeSources.sortBy(_.incomeSource.incomeSourceId.substring(4)).zipWithIndex
+
+  def findBusinessById(id: Int): Option[BusinessDetailsModel] = sortedBusinesses.find(_._2 == id).map(_._1.incomeSource)
 }
 
 case class PropertyIncomeWithDeadlinesModel(
