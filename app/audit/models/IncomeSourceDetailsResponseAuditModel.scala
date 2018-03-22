@@ -17,21 +17,27 @@
 package audit.models
 
 import auth.MtdItUser
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json, Writes}
 
 case class IncomeSourceDetailsResponseAuditModel[A](selfEmploymentIds: List[String],
-                                                    propertyIncomeId: Option[String])(implicit user: MtdItUser[A]) extends AuditModel {
+                                                    propertyIncomeId: Option[String])(implicit user: MtdItUser[A]) extends ExtendedAuditModel {
 
   override val transactionName: String = "income-source-details-response"
   override val auditType: String = "incomeSourceDetailsResponse"
 
-  val seIds: Option[(String, String)] =
-    if (selfEmploymentIds.isEmpty) None else Some("selfEmploymentIncomeSourceIds" -> Json.toJson(selfEmploymentIds).toString)
+  private case class AuditDetail(mtditid: String, nino: String,
+                                 selfEmploymentIncomeSourceIds: Option[List[String]],
+                                 propertyIncomeSourceId: Option[String])
+  private implicit val auditDetailWrites: Writes[AuditDetail] = Json.writes[AuditDetail]
 
-  override val detail: Seq[(String, String)] = Seq(
-    Some("mtditid" -> user.mtditid),
-    Some("nino" -> user.nino),
-    seIds,
-    propertyIncomeId.map("propertyIncomeSourceId" -> _)
-  ).flatten
+  private val seIds = if (selfEmploymentIds.nonEmpty) Some(selfEmploymentIds) else None
+
+  override val detail: JsValue = Json.toJson(
+    AuditDetail(
+      user.mtditid,
+      user.nino,
+      seIds,
+      propertyIncomeId
+    )
+  )
 }

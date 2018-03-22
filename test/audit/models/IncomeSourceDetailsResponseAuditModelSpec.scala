@@ -17,6 +17,7 @@
 package audit.models
 
 import assets.TestConstants._
+import play.api.libs.json.Json
 import utils.TestSupport
 
 class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
@@ -44,10 +45,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       }
 
       "Have the correct details for the audit event" in {
-        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Seq(
+        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
           "nino" -> testMtdItUser.nino,
-          seIdsKey -> s"""["$testSelfEmploymentId","$testSelfEmploymentId2"]""",
+          seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
           propertyIdKey -> testPropertyIncomeId
         )
       }
@@ -69,10 +70,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       }
 
       "Have the correct details for the audit event" in {
-        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Seq(
+        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
           "nino" -> testMtdItUser.nino,
-          seIdsKey -> s"""["$testSelfEmploymentId"]""",
+          seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
           propertyIdKey -> testPropertyIncomeId
         )
       }
@@ -94,7 +95,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       }
 
       "Have the correct details for the audit event" in {
-        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Seq(
+        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
           "nino" -> testMtdItUser.nino,
           propertyIdKey -> testPropertyIncomeId
@@ -118,10 +119,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       }
 
       "Have the correct details for the audit event" in {
-        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Seq(
+        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
           "nino" -> testMtdItUser.nino,
-          seIdsKey -> s"""["$testSelfEmploymentId"]"""
+          seIdsKey -> Json.toJson(List(testSelfEmploymentId))
         )
       }
     }
@@ -142,10 +143,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       }
 
       "Have the correct details for the audit event" in {
-        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Seq(
+        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
           "nino" -> testMtdItUser.nino,
-          seIdsKey -> s"""["$testSelfEmploymentId","$testSelfEmploymentId2"]"""
+          seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2))
         )
       }
     }
@@ -166,7 +167,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       }
 
       "Have the correct details for the audit event" in {
-        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Seq(
+        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
           "nino" -> testMtdItUser.nino
         )
