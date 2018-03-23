@@ -27,14 +27,13 @@
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-account", None)
-    )))
+    )), "AccountDetailsPage")
 }
 
 @main_template(
 title = messages("account.title"),
 bodyClasses = None,
 scriptElem = None,
-sidebarLinks = None,
 serviceInfo = breadcrumb
 ) {
 
@@ -56,9 +55,7 @@ serviceInfo = breadcrumb
         <p id="reporting-period">@messages("account.reportingPeriod", properties.get.incomeSource.accountingPeriod.start.toLongDateNoYear, properties.get.incomeSource.accountingPeriod.end.toLongDateNoYear)</p>
     }
 
-    @if(appConfig.features.homePageEnabled()){
-        @backToHomeHelper()
-    }
+    @backToHomeHelper("AccountDetailsPage")
 
 </section>
 

@@ -16,7 +16,8 @@
 
 package mocks.services
 
-import assets.TestConstants.{FinancialTransactions, testMtditid}
+import assets.BaseTestConstants.testMtditid
+import assets.FinancialTransactionsTestConstants.{financialTransactionsErrorModel, financialTransactionsModel}
 import models.financialTransactions.FinancialTransactionsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -41,7 +42,7 @@ trait MockFinancialTransactionsService extends UnitSpec with MockitoSugar with B
       ArgumentMatchers.eq(mtditid)
     )(ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
-  def mockFinancialTransactionSuccess(taxYear: String = "2018-04-05"): Unit = setupMockGetFinancialTransactions(testMtditid)(FinancialTransactions.financialTransactionsModel(taxYear))
-  def mockFinancialTransactionFailed(): Unit = setupMockGetFinancialTransactions(testMtditid)(FinancialTransactions.financialTransactionsErrorModel)
+  def mockFinancialTransactionSuccess(taxYear: String = "2018-04-05"): Unit = setupMockGetFinancialTransactions(testMtditid)(financialTransactionsModel(taxYear))
+  def mockFinancialTransactionFailed(): Unit = setupMockGetFinancialTransactions(testMtditid)(financialTransactionsErrorModel)
 
 }

@@ -16,8 +16,8 @@
 
 package models
 
-import assets.TestConstants.PaymentData._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.PaymentDataTestConstants._
 import models.core.PaymentDataModel
 import org.scalatest.Matchers
 import play.api.libs.json.Json

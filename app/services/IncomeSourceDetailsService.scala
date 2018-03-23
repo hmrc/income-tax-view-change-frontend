@@ -18,12 +18,10 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
+import audit.AuditingService
 import connectors.IncomeSourceDetailsConnector
-import models._
-import models.core.ErrorModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.incomeSourcesWithDeadlines._
-import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,11 +29,13 @@ import scala.concurrent.Future
 
 @Singleton
 class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: IncomeSourceDetailsConnector,
-                                           val reportDeadlinesService: ReportDeadlinesService) {
+                                           val reportDeadlinesService: ReportDeadlinesService,
+                                           val auditingService: AuditingService
+                                          ) {
 
   def getIncomeSourceDetails(mtditid: String, nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesWithDeadlinesResponse] = {
     for {
-      sources <- incomeSourceDetailsConnector.getIncomeSources(mtditid)
+      sources <- incomeSourceDetailsConnector.getIncomeSources(mtditid, nino)
       incomeSources <- createIncomeSourcesModel(nino, sources)
     } yield incomeSources
   }

@@ -16,7 +16,7 @@
 
 package mocks.auth
 
-import assets.TestConstants.testAuthSuccessResponse
+import assets.BaseTestConstants._
 import auth.FrontendAuthorisedFunctions
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar

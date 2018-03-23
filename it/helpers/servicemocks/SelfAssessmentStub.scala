@@ -20,7 +20,7 @@ import helpers.WiremockHelper
 import models.calculation.CalculationDataErrorModel
 import models.reportDeadlines.ReportDeadlinesModel
 import play.api.http.Status
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 
 object SelfAssessmentStub {
 
@@ -47,7 +47,7 @@ object SelfAssessmentStub {
   def verifyGetPropertyReportDeadlines(nino: String): Unit =
     WiremockHelper.verifyGetWithHeader(propertyReportDeadlinesUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
 
-  
+
   // Calculation Breakdown Stubs
   // ===========================
   val calcUrl: (String,String) => String = (nino, taxCalculationId) => s"/ni/$nino/calculations/$taxCalculationId"

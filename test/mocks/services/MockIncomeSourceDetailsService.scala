@@ -16,9 +16,8 @@
 
 package mocks.services
 
-import assets.TestConstants.{IncomeSources, testMtditid, testNino}
-import models.core.ErrorModel
-import models.incomeSourceDetails.BusinessDetailsModel
+import assets.BaseTestConstants.{testMtditid, testNino}
+import assets.IncomeSourcesWithDeadlinesTestConstants._
 import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesError, IncomeSourcesWithDeadlinesResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
@@ -45,12 +44,12 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
       .thenReturn(Future.successful(sources))
   }
 
-  def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.businessIncomeSourceSuccess)
-  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.propertyIncomeSourceSuccess)
-  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.bothIncomeSourceSuccessMisalignedTaxYear)
-  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.noIncomeSourceSuccess)
+  def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(businessIncomeSourceSuccess)
+  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(propertyIncomeSourceSuccess)
+  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(bothIncomeSourceSuccessMisalignedTaxYear)
+  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(noIncomeSourceSuccess)
   def mockBothIncomeSourcesBusinessAligned(): Unit =
-    setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.bothIncomeSourcesSuccessBusinessAligned)
+    setupMockGetIncomeSourceDetails(testMtditid, testNino)(bothIncomeSourcesSuccessBusinessAligned)
   def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesWithDeadlinesError)
 
 }

@@ -18,9 +18,10 @@ package views
 
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.TestConstants.BusinessDetails.businessIncomeModelAlignedTaxYear
-import assets.TestConstants.PropertyIncome.propertyIncomeModel
-import assets.TestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.PropertyDetailsTestConstants.propertyIncomeModel
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.incomeSourceDetails.BusinessDetailsModel
@@ -32,6 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import utils.TestSupport
+import utils.ImplicitDateFormatter._
 
 class BusinessDetailsViewSpec extends TestSupport {
 
@@ -51,10 +53,10 @@ class BusinessDetailsViewSpec extends TestSupport {
 
     "passed a business without a cessation date" should {
 
-      val setup = pageSetup(NewBizDeets.business1)
+      val setup = pageSetup(business1)
       import setup._
       val messages = Messages.BusinessDetails
-      val business = NewBizDeets.business1
+      val business = business1
 
       s"have the title '${business.tradingName.get}'" in {
         document.title() shouldBe business.tradingName.get
@@ -64,7 +66,7 @@ class BusinessDetailsViewSpec extends TestSupport {
         document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
         document.getElementById("breadcrumb-account").text shouldBe breadcrumbMessages.details
-        document.getElementById(s"${business.tradingName.get}").text shouldBe NewBizDeets.business1.tradingName.get
+        document.getElementById(s"${business.tradingName.get}").text shouldBe business1.tradingName.get
       }
 
       s"have the page heading '${business.tradingName.get}'" in {
@@ -110,10 +112,10 @@ class BusinessDetailsViewSpec extends TestSupport {
 
     "passed a business with a cessation date" should {
 
-      val setup = pageSetup(NewBizDeets.ceasedBusiness)
+      val setup = pageSetup(ceasedBusiness)
       import setup._
       val messages = Messages.BusinessDetails
-      val cessationDate = NewBizDeets.ceasedBusiness.cessation.get.date.get
+      val cessationDate = ceasedBusiness.cessation.get.date.get
 
       "have a 'ceased trading' message" in {
         document.getElementById("cessation-date").text() shouldBe messages.ceasedTrading(s"${cessationDate.toLongDate}")

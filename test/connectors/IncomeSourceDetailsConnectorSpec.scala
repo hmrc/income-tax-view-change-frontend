@@ -16,8 +16,10 @@
 
 package connectors
 
-import assets.TestConstants.NewIncomeSourceDetails._
-import assets.TestConstants.testMtditid
+import assets.IncomeSourceDetailsTestConstants._
+import assets.BaseTestConstants.{testMtditid, testNino, testSelfEmploymentId, testReferrerUrl}
+import audit.mocks.MockAuditingService
+import audit.models.{IncomeSourceDetailsRequestAuditModel, IncomeSourceDetailsResponseAuditModel}
 import mocks.MockHttp
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import play.api.libs.json.Json
@@ -27,37 +29,42 @@ import utils.TestSupport
 
 import scala.concurrent.Future
 
-class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp {
+class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(incomeSourceDetails)))
+  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(singleBusinessIncome)))
   val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestIncomeSourceDetailsConnector extends IncomeSourceDetailsConnector(mockHttpGet, frontendAppConfig)
+  object TestIncomeSourceDetailsConnector extends IncomeSourceDetailsConnector(mockHttpGet, frontendAppConfig, mockAuditingService)
 
   "IncomeSourceDetailsConnector.getIncomeSources" should {
 
     lazy val testUrl = TestIncomeSourceDetailsConnector.getIncomeSourcesUrl(testMtditid)
-    def result: Future[IncomeSourceDetailsResponse] = TestIncomeSourceDetailsConnector.getIncomeSources(testMtditid)
+    def result: Future[IncomeSourceDetailsResponse] = TestIncomeSourceDetailsConnector.getIncomeSources(testMtditid, testNino)
 
     "return an IncomeSourceDetailsModel when successful JSON is received" in {
       setupMockHttpGet(testUrl)(successResponse)
-      await(result) shouldBe incomeSourceDetails
+      await(result) shouldBe singleBusinessIncome
+      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), testReferrerUrl)
+      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtditid, testNino, List(testSelfEmploymentId), None), testReferrerUrl)
     }
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
+      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), testReferrerUrl)
     }
 
     "return IncomeSourceDetailsError model in case of failure" in {
       setupMockHttpGet(testUrl)(badResponse)
       await(result) shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
+      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), testReferrerUrl)
     }
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
+      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), testReferrerUrl)
     }
   }
 

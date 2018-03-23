@@ -21,16 +21,12 @@
 @import views.html.helpers.accordionHelper
 @import models.calculation.CalcDisplayModel
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
-@import views.html.helpers.{sidebarHelper, breadcrumbHelper}
+@import views.html.helpers.breadcrumbHelper
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
 @import views.html.helpers.backToHomeHelper
 
 @(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel)
-
-@sidebar = {
-    @sidebarHelper(EstimatesPage, sources, Some(taxYear))
-}
 
 @calcBreakdown = {
     <section id="inYearCalcBreakdown">
@@ -39,7 +35,7 @@
 }
 
 @whyThisMayChange = {
-    <div id="whyMayChange" class="panel-indent">
+    <div id="whyMayChange">
         <p id="whyMayChangeP1">@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.p1")</p>
         <ul class="list list-bullet">
             <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1")</li>
@@ -54,14 +50,13 @@
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
         BreadcrumbItem("breadcrumb-it-estimate", None)
-    )))
+    )), s"EstimateFor${taxYear}Page")
 }
 
 @main_template(
     title = renderTitle(taxYear),
     bodyClasses = None,
     scriptElem = None,
-    sidebarLinks = Some(sidebar),
     serviceInfo = breadcrumb
 ) {
 
@@ -98,9 +93,8 @@
 
         </section>
 
-        @if(appConfig.features.homePageEnabled()){
-            @backToHomeHelper()
-        }
+        @backToHomeHelper(s"EstimateFor${taxYear}Page")
+
 
     </section>
  }

@@ -16,17 +16,13 @@
 
 @import utils.ImplicitDateFormatter._
 @import views.html.templates.main_template
-@import views.html.helpers.{sidebarHelper, breadcrumbHelper}
+@import views.html.helpers.breadcrumbHelper
 @import views.helpers.ReportDeadlinesPage
 @import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
 @import views.html.helpers.backToHomeHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 
 @(incomeSources: models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
-
-@sidebar = {
-    @sidebarHelper(ReportDeadlinesPage, incomeSources)
-}
 
 @allReportDeadlinesErrored = {
     <p id="p1" data-metrics="handledError:obligationsError:noObligations">@messages("obligations.error.p1")</p>
@@ -37,13 +33,12 @@
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-obligations", None)
-    )))
+    )), "ReportDeadlinesPage")
 }
 
 @main_template(
     title = messages("obligations.title"),
     bodyClasses = None,
-    sidebarLinks = Some(sidebar),
     serviceInfo = breadcrumb
 ) {
 
@@ -89,8 +84,7 @@
             }
         }
 
-        @if(appConfig.features.homePageEnabled()){
-            @backToHomeHelper()
-        }
+        @backToHomeHelper("ReportDeadlinesPage")
+
     </section>
 }

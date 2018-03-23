@@ -16,13 +16,11 @@
 
 package models
 
-import assets.TestConstants.FinancialTransactions._
-import assets.TestConstants._
+import assets.FinancialTransactionsTestConstants._
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, TransactionModel}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
-
 
 class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
 

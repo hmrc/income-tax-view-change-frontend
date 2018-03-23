@@ -16,8 +16,8 @@
 
 package connectors
 
-import assets.TestConstants.ReportDeadlines._
-import assets.TestConstants._
+import assets.BaseTestConstants.testNino
+import assets.ReportDeadlinesTestConstants.obligationsDataSuccessModel
 import mocks.MockHttp
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.Json

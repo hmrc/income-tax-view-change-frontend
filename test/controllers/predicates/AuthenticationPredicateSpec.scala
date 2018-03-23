@@ -16,7 +16,7 @@
 
 package controllers.predicates
 
-import assets.TestConstants._
+import assets.BaseTestConstants.{testMtditid, testNino, testUserDetailsError}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.scalatest.mockito.MockitoSugar

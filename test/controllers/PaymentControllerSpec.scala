@@ -17,7 +17,7 @@
 package controllers
 
 
-import assets.TestConstants.PaymentData._
+import assets.PaymentDataTestConstants._
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import play.api.http.Status

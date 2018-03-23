@@ -17,12 +17,11 @@ package controllers
 
 import java.time.LocalDate
 
+import assets.BaseIntegrationTestConstants._
+import assets.ReportDeadlinesIntegrationTestConstants._
 import config.FrontendAppConfig
-import helpers.IntegrationTestConstants.GetReportDeadlinesData._
-import helpers.IntegrationTestConstants._
-import helpers.servicemocks._
-import helpers.{ComponentSpecBase, GenericStubMethods}
-import helpers.servicemocks.SelfAssessmentStub
+import helpers.IntegrationTestConstants.GetIncomeSourceDetails
+import helpers.servicemocks.{IncomeTaxViewChangeStub, SelfAssessmentStub}
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
@@ -84,15 +83,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
             verifyBizObsCall(testSelfEmploymentId)
 
             Then("the view displays the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines"),
-              elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-              elementTextByID(id = "sa-link")("View annual returns")
+              pageTitle("Your Income Tax report deadlines")
+
             )
 
             Then("the page displays one obligation")
@@ -131,6 +128,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               )
 
               And("I wiremock stub a single property and business obligation response")
+
               SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
               SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReceivedOpenReportDeadlinesModel)
 
@@ -146,9 +144,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               Then("the correct title, username and links are displayed")
               res should have(
                 httpStatus(OK),
-                pageTitle("Your Income Tax report deadlines"),
-                elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-                elementTextByID(id = "sa-link")("View annual returns")
+                pageTitle("Your Income Tax report deadlines")
+
               )
 
               Then("the page displays four business obligations and four property obligations")
@@ -444,7 +441,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
             verifyPropObsCall()
 
             Then("the view should display the title and username")
@@ -487,7 +483,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
             verifyPropObsCall()
 
             Then("the view should display the title and username")
@@ -544,7 +539,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
             verifyPropObsCall()
 
             Then("the view should display the title and username")
@@ -617,7 +611,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
             verifyBizObsCall(testSelfEmploymentId)
             verifyPropObsCall()
 
@@ -655,7 +648,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             isAuthorisedUser(true)
             stubUserDetails()
 
-            And("I wiremock stub a successful Income Source Details response with multiple Business income")
+            And("I wiremock stub a successful Income Source Details responsewith multiple Business income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               OK, GetIncomeSourceDetails.multipleBusinessesResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
 
@@ -668,15 +661,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
             verifyBizObsCall(testSelfEmploymentId, otherTestSelfEmploymentId)
 
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines"),
-              elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-              elementTextByID(id = "sa-link")("View annual returns")
+              pageTitle("Your Income Tax report deadlines")
+
             )
 
             Then("the page displays two obligations")
@@ -732,15 +723,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
             verifyBizObsCall(testSelfEmploymentId, otherTestSelfEmploymentId)
 
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines"),
-              elementTextByID(id = "estimate-link-2018")("View 2017 to 2018 details"),
-              elementTextByID(id = "sa-link")("View annual returns")
+              pageTitle("Your Income Tax report deadlines")
+
             )
 
             Then("the page displays seven obligations")
@@ -804,7 +793,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
             verifyBizObsCall(testSelfEmploymentId)
 
             Then("the view is displayed with an error message under the business income section")
@@ -837,7 +825,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
             verifyPropObsCall()
 
             Then("the view is displayed with an error message under the property income section")
@@ -875,7 +862,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
             verifyBizObsCall(testSelfEmploymentId)
             verifyPropObsCall()
 

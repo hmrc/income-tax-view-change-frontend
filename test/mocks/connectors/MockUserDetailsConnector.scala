@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import assets.TestConstants.testUserDetails
+import assets.BaseTestConstants._
 import connectors.UserDetailsConnector
 import models.core.UserDetailsResponseModel
 import org.mockito.ArgumentMatchers

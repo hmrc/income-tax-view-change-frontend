@@ -17,8 +17,8 @@
 package connectors
 
 
-import assets.TestConstants.Estimates._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.EstimatesTestConstants._
 import mocks.MockHttp
 import models.calculation.{LastTaxCalculationError, LastTaxCalculationResponseModel, NoLastTaxCalculation}
 import play.api.libs.json.Json

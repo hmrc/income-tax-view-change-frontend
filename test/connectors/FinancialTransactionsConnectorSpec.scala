@@ -16,8 +16,8 @@
 
 package connectors
 
-import assets.TestConstants.FinancialTransactions._
-import assets.TestConstants._
+import assets.BaseTestConstants.testNino
+import assets.FinancialTransactionsTestConstants._
 import mocks.MockHttp
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsResponseModel}
 import play.api.libs.json.Json
