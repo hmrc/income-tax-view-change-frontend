@@ -36,8 +36,11 @@ trait MockIncomeSourceDetailsConnector extends UnitSpec with MockitoSugar with B
     reset(mockIncomeSourceDetailsConnector)
   }
 
-  def setupMockIncomeSourceDetailsResponse(mtditid: String)(response: IncomeSourceDetailsResponse): Unit ={
-    when(mockIncomeSourceDetailsConnector.getIncomeSources(ArgumentMatchers.eq(mtditid))(ArgumentMatchers.any()))
+  def setupMockIncomeSourceDetailsResponse(mtditid: String, nino: String)(response: IncomeSourceDetailsResponse): Unit ={
+    when(mockIncomeSourceDetailsConnector.getIncomeSources(
+      ArgumentMatchers.eq(mtditid),
+      ArgumentMatchers.eq(nino)
+    )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 

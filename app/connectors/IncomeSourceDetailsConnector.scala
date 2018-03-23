@@ -18,10 +18,12 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
+import audit.AuditingService
+import audit.models.{IncomeSourceDetailsRequestAuditModel, IncomeSourceDetailsResponseAuditModel}
 import config.FrontendAppConfig
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
-import play.api.http.Status
+import play.api.http.{HeaderNames, Status}
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -31,15 +33,20 @@ import scala.concurrent.Future
 
 @Singleton
 class IncomeSourceDetailsConnector @Inject()(val http: HttpClient,
-                                             val config: FrontendAppConfig) extends RawResponseReads {
+                                             val config: FrontendAppConfig,
+                                             val auditingService: AuditingService
+                                            ) extends RawResponseReads {
 
   private[connectors] lazy val getIncomeSourcesUrl: String => String = mtditid =>
     s"${config.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"
 
-  def getIncomeSources(mtditid: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
+  def getIncomeSources(mtditid: String, nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
 
     val url = getIncomeSourcesUrl(mtditid)
     Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - GET $url")
+
+    val path = headerCarrier.headers.find(_._1 == HeaderNames.REFERER).map(_._2).getOrElse("-")
+    auditingService.audit(IncomeSourceDetailsRequestAuditModel(mtditid, nino), path)
 
     http.GET[HttpResponse](url) map {
       response =>
@@ -49,9 +56,18 @@ class IncomeSourceDetailsConnector @Inject()(val http: HttpClient,
             response.json.validate[IncomeSourceDetailsModel].fold(
               invalid => {
                 Logger.warn(s"[IncomeSourceDetailsConnector][getIncomeSources] - Json Validation Error. Parsing Latest Calc Response")
+                Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] $invalid")
                 IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
               },
-              valid => valid
+              valid => {
+                auditingService.extendedAudit(IncomeSourceDetailsResponseAuditModel(
+                  mtditid,
+                  nino,
+                  valid.businesses.map(_.incomeSourceId),
+                  valid.property.map(_.incomeSourceId)
+                ), path)
+                valid
+              }
             )
           case _ =>
             Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")

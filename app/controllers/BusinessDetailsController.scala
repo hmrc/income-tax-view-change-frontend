@@ -46,7 +46,7 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
     }
 
   private def renderView[A](id: Int)(implicit user: MtdItUser[A]): Future[Result] = {
-    incomeSourceDetailsService.getBusinessDetails(user.mtditid, id).map {
+    incomeSourceDetailsService.getBusinessDetails(user.mtditid, user.nino, id).map {
       case Right(Some((bizDeets, _))) => Ok(views.html.businessDetailsView(bizDeets))
       case Right(None) =>
         Logger.debug(s"[BusinessDetailsController][getBusinessDetails] No Business Details found with ID: $id")

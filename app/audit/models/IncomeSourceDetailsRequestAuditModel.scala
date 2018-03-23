@@ -16,8 +16,12 @@
 
 package audit.models
 
-trait AuditModel {
-  val transactionName: String
-  val detail: Seq[(String, String)]
-  val auditType: String
+case class IncomeSourceDetailsRequestAuditModel(mtditid: String, nino: String) extends AuditModel {
+
+  override val transactionName: String = "income-source-details-request"
+  override val auditType: String = "incomeSourceDetailsRequest"
+  override val detail: Seq[(String, String)] = Seq(
+    "mtditid" -> mtditid,
+    "nino" -> nino
+  )
 }

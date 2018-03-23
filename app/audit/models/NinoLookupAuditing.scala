@@ -25,7 +25,7 @@ object NinoLookupAuditing {
 
   case class NinoLookupAuditModel(nino: Nino, mtdRef: String) extends AuditModel {
     override val transactionName: String = ninoLookupTransactionName
-    override val detail: Map[String, String] = Map(
+    override val detail: Seq[(String, String)] = Seq(
       "mtdid" -> mtdRef,
       "nino" -> nino.nino
     )
@@ -34,7 +34,7 @@ object NinoLookupAuditing {
 
   case class NinoLookupErrorAuditModel( ninoError: NinoResponseError, mtdRef: String) extends AuditModel{
     override val transactionName: String = "ITVCNinoLookupError"
-    override val detail: Map[String, String] = Map(
+    override val detail: Seq[(String, String)] = Seq(
       "mtdid" -> mtdRef,
       "status" -> ninoError.status.toString,
       "reason" -> ninoError.reason
