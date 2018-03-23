@@ -27,10 +27,9 @@ import scala.concurrent.Future
 
 trait BaseController extends FrontendController with I18nSupport {
   override implicit def hc(implicit rh: RequestHeader): HeaderCarrier = {
-    val hc = HeaderCarrierConverter.fromHeadersAndSession(rh.headers, Some(rh.session))
     rh.headers.headers.find(_._1 == HeaderNames.REFERER) match {
-      case Some(referrer) => hc.withExtraHeaders(referrer)
-      case _ => hc
+      case Some(referrer) => super.hc.withExtraHeaders(referrer)
+      case _ => super.hc
     }
   }
   def redirectToHome: Result = Redirect(controllers.routes.HomeController.home())

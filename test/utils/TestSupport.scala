@@ -80,7 +80,10 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
   lazy val fakeRequestWithActiveSession = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662",
     SessionKeys.authToken -> "Bearer Token"
+  ).withHeaders(
+    HeaderNames.REFERER -> "/test/url"
   )
+
   lazy val fakeRequestWithTimeoutSession = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
