@@ -18,9 +18,9 @@ package views
 
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages}
 import assets.ReportDeadlinesTestConstants._
-import assets.TestConstants.NewPropDeets._
-import assets.TestConstants.NewBizDeets._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.PropertyDetailsTestConstants._
 import config.FrontendAppConfig
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}

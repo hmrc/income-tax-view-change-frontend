@@ -16,10 +16,8 @@
 
 package assets
 
-import assets.ReportDeadlinesTestConstants._
 import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testSelfEmploymentId, testSelfEmploymentId2}
-import assets.TestConstants.BusinessDetails.obligationsDataSuccessModel
-import assets.TestConstants.NewBizDeets
+import assets.ReportDeadlinesTestConstants._
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourcesWithDeadlines.BusinessIncomeWithDeadlinesModel
