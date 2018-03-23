@@ -16,11 +16,11 @@
 
 package models
 
-import assets.TestConstants.ReportDeadlines._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.ReportDeadlinesTestConstants._
 import models.reportDeadlines._
 import org.scalatest.Matchers
-import play.api.libs.json.Json
+import play.api.libs.json.{JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
@@ -147,9 +147,12 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
       Json.toJson[ReportDeadlinesModel](obligationsDataSuccessModel) shouldBe obligationsDataSuccessJson
     }
 
-    "be able to parse a JSON to string into the Model" in {
-      Json.parse(obligationsDataSuccessString).as[ReportDeadlinesModel] shouldBe obligationsDataSuccessModel
+    "be able to parse a JSON into the Model" in {
+      Json.fromJson[ReportDeadlinesModel](obligationsDataSuccessJson).fold(
+        invalid => invalid,
+        valid => valid) shouldBe obligationsDataSuccessModel
     }
+
   }
 
   "The ReportDeadlinesErrorModel" should {
@@ -166,8 +169,8 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
       Json.toJson[ReportDeadlinesErrorModel](obligationsDataErrorModel) shouldBe obligationsDataErrorJson
     }
 
-    "be able to parse a JSON to string into the Model" in {
-      Json.parse(obligationsDataErrorString).as[ReportDeadlinesErrorModel] shouldBe obligationsDataErrorModel
+    "be able to parse a JSON into the Model" in {
+      Json.fromJson[ReportDeadlinesErrorModel](obligationsDataErrorJson) shouldBe JsSuccess(obligationsDataErrorModel)
     }
   }
 
@@ -186,7 +189,7 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
     }
   }
 
-  "The ReportDeadlinesResponseModel .unappy function" should {
+  "The ReportDeadlinesResponseModel .unapply function" should {
 
     "extract the ReportDeadlinesModel and Json" in {
       ReportDeadlinesResponseModel.unapply(obligationsDataSuccessModel) shouldBe Some(("ReportDeadlinesModel", obligationsDataSuccessJson))

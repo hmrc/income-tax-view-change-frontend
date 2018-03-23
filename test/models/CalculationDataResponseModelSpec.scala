@@ -16,11 +16,11 @@
 
 package models
 
-import assets.TestConstants.CalcBreakdown._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.CalcBreakdownTestConstants._
 import models.calculation.{CalculationDataErrorModel, CalculationDataModel}
 import org.scalatest.Matchers
-import play.api.libs.json.Json
+import play.api.libs.json.{JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
@@ -99,11 +99,11 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
     }
 
     "be able to parse a full JSON string into the Model" in {
-      Json.parse(calculationDataFullString).as[CalculationDataModel] shouldBe calculationDataSuccessModel
+      Json.fromJson[CalculationDataModel](calculationDataFullJson) shouldBe JsSuccess(calculationDataSuccessModel)
     }
 
     "If only mandatory values aren returned from DES then defaulted others to 0" in {
-      Json.parse(mandatoryCalculationDataSuccessString).as[CalculationDataModel] shouldBe mandatoryOnlyDataModel
+      Json.fromJson[CalculationDataModel](mandatoryCalculationDataSuccessJson) shouldBe JsSuccess(mandatoryOnlyDataModel)
     }
   }
 
@@ -122,7 +122,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
     }
 
     "be able to parse a JSON to string into the Model" in {
-      Json.parse(calculationDataErrorString).as[CalculationDataErrorModel] shouldBe calculationDataErrorModel
+      Json.fromJson[CalculationDataErrorModel](calculationDataErrorJson) shouldBe JsSuccess(calculationDataErrorModel)
     }
   }
 

@@ -16,8 +16,8 @@
 
 package connectors
 
-import assets.TestConstants.NewIncomeSourceDetails._
-import assets.TestConstants.testMtditid
+import assets.IncomeSourceDetailsTestConstants._
+import assets.BaseTestConstants.testMtditid
 import mocks.MockHttp
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import play.api.libs.json.Json

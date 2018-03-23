@@ -18,11 +18,12 @@ package views
 
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.CalcBreakdown._
-import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyIncome._
-import assets.TestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.CalcBreakdownTestConstants._
+import assets.EstimatesTestConstants._
+import assets.PropertyDetailsTestConstants._
+import assets.FinancialTransactionsTestConstants._
+import assets.BaseTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.calculation.CalculationDataModel
@@ -35,9 +36,10 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import utils.ImplicitCurrencyFormatter._
 import utils.{ImplicitCurrencyFormatter, TestSupport}
+import utils.ImplicitDateFormatter
 
 
-class EstimatedTaxLiabilityViewSpec extends TestSupport {
+class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -48,12 +50,12 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
   private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel) = new {
     val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), incomeSources)(FakeRequest())
     lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
-      CalcBreakdown.calculationDisplaySuccessModel(calcDataModel),
+      calculationDisplaySuccessModel(calcDataModel),
       testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     lazy val cPage: HtmlFormat.Appendable = views.html.crystallised(
-      CalcBreakdown.calculationDisplaySuccessCrystalisationModel(calcDataModel), FinancialTransactions.transactionModel(),
+      calculationDisplaySuccessCrystalisationModel(calcDataModel), transactionModel(),
       testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
     lazy val cDocument: Document = Jsoup.parse(contentAsString(cPage))
 
@@ -124,9 +126,9 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
             messages.InYearEstimate.heading(busPropBRTCalcDataModel.totalIncomeTaxNicYtd.toCurrencyString)
         }
 
-        s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(Estimates.lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)}'" in {
+        s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)}'" in {
           inYearSection.getElementById("inYearP1").text shouldBe
-            messages.InYearEstimate.p1(Estimates.lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)
+            messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)
         }
 
         s"has the correct estimate p2 paragraph '${messages.InYearEstimate.p2}'" in {
@@ -682,7 +684,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
 
       "when no breakdown data is retrieved" should {
         lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-          CalcBreakdown.calculationDisplayNoBreakdownModel,
+          calculationDisplayNoBreakdownModel,
           testYear)(
           FakeRequest(),
           applicationMessages,
@@ -745,19 +747,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport {
       }
     }
 
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
-    }
-
-    "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
-      mockAppConfig.features.homePageEnabled(false)
-      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
-      import setup._
-      document.getElementById("it-home-back") should be(null)
-    }
-
-    "show a back link to the Income Tax home page, when the home page feature is enabled" in {
-      mockAppConfig.features.homePageEnabled(true)
+    "show a back link to the Income Tax home page" in {
       val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
       import setup._
       document.getElementById("it-home-back") shouldNot be(null)

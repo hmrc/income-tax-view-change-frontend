@@ -16,11 +16,11 @@
 
 package views.errorPages
 
-import assets.Messages.{EstimatedTaxLiabilityError => messages, Sidebar => sidebarMessages}
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.Estimates._
-import assets.TestConstants.PropertyIncome._
-import assets.TestConstants._
+import assets.Messages.{EstimatedTaxLiabilityError => messages}
+import assets.BusinessDetailsTestConstants._
+import assets.EstimatesTestConstants._
+import assets.PropertyDetailsTestConstants._
+import assets.BaseTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.incomeSourcesWithDeadlines.IncomeSourcesModel
@@ -70,20 +70,7 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
       }
     }
 
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
-    }
-
-    "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
-      mockAppConfig.features.homePageEnabled(false)
-      lazy val page: HtmlFormat.Appendable =
-        views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
-      lazy val document: Document = Jsoup.parse(contentAsString(page))
-      document.getElementById("it-home-back") should be(null)
-    }
-
-    "show a back link to the Income Tax home page, when the home page feature is enabled" in {
-      mockAppConfig.features.homePageEnabled(true)
+    "show a back link to the Income Tax home page" in {
       lazy val page: HtmlFormat.Appendable =
         views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
       lazy val document: Document = Jsoup.parse(contentAsString(page))

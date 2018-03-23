@@ -16,24 +16,22 @@
 
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 
-@(breadcrumb: Breadcrumb)(implicit messages: Messages, appConfig: config.FrontendAppConfig)
+@(breadcrumb: Breadcrumb, page: String)(implicit messages: Messages, appConfig: config.FrontendAppConfig)
 
 <nav id="breadcrumbs" class="breadcrumbs breadcrumbs-2-7">
     <ol>
         <li>
-            <a id="breadcrumb-bta" href=@appConfig.businessTaxAccount>@messages("breadcrumb-bta")</a>
+            <a id="breadcrumb-bta" data-journey-click="@{page}:ClickBreadcrumb:btaLink" href=@appConfig.businessTaxAccount>@messages("breadcrumb-bta")</a>
         </li>
 
-        @if(appConfig.features.homePageEnabled()) {
-            @breadcrumb.items.map { item =>
-            <li>
-                @if(item.url.isDefined){
-                    <a id=@item.id href=@item.url>@messages(item.id)</a>
-                } else {
-                    <span id=@item.id>@messages(item.id)</span>
-                }
-            </li>
+        @breadcrumb.items.map { item =>
+        <li>
+            @if(item.url.isDefined){
+                <a id=@item.id data-journey-click="@{page}:ClickBreadcrumb:@{item.toPage}" href=@item.url>@messages(item.id)</a>
+            } else {
+                <span id=@item.id>@messages(item.id)</span>
             }
+        </li>
         }
     </ol>
 </nav>

@@ -16,8 +16,8 @@
 
 package utils
 
-import assets.TestConstants
-import assets.TestConstants.IncomeSources
+import assets.BaseTestConstants._
+import assets.IncomeSourcesTestConstants._
 import auth.MtdItUser
 import com.typesafe.config.Config
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
@@ -67,7 +67,7 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
           credentialRole = ""
         )
       ),
-    incomeSources = IncomeSources.bothIncomeSourcesSuccessBusinessAligned
+    incomeSources = bothIncomeSourcesSuccessBusinessAligned
   )(FakeRequest())
 
   implicit val serviceInfo: Html = Html("")
@@ -83,7 +83,7 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
   lazy val fakeRequestWithTimeoutSession = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
-  lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> TestConstants.testNino)
+  lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> testNino)
   lazy val fakeRequestNoSession = FakeRequest()
 
 }

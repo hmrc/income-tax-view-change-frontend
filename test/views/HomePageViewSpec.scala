@@ -16,8 +16,8 @@
 
 package views
 
+import assets.BaseTestConstants._
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, HomePage => messages}
-import assets.TestConstants._
 import auth.MtdItUserWithNino
 import config.FrontendAppConfig
 import org.jsoup.Jsoup

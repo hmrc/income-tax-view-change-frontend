@@ -16,7 +16,7 @@
 
 package connectors
 
-import assets.TestConstants._
+import assets.BaseTestConstants.{testUserDetails, testUserDetailsUrl}
 import mocks.MockHttp
 import models.core.{UserDetailsError, UserDetailsResponseModel}
 import play.api.libs.json.Json

@@ -16,7 +16,8 @@
 
 package models
 
-import assets.TestConstants.Estimates._
+import assets.EstimatesTestConstants._
+import enums._
 import enums._
 import models.calculation.{LastTaxCalculationError, LastTaxCalculationWithYear}
 import org.scalatest.Matchers

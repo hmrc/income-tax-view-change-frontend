@@ -16,9 +16,10 @@
 
 package views
 
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages}
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants._
+import assets.ReportDeadlinesTestConstants._
 import config.FrontendAppConfig
 import models.core.AccountingPeriodModel
 import models.incomeSourcesWithDeadlines.{BusinessIncomeModel, IncomeSourcesModel, PropertyIncomeModel}
@@ -38,11 +39,11 @@ class ReportDeadlinesViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val successModel = ReportDeadlinesModel(List(ReportDeadlineModel(
-    start = "2017-1-1".toLocalDate,
-    end = "2017-3-31".toLocalDate,
-    due = "2017-4-5".toLocalDate,
+    start = "2017-1-1",
+    end = "2017-3-31",
+    due = "2017-4-5",
     met = true
-  ),ReportDeadlines.openEOPSObligation))
+  ),openEOPSObligation))
   val errorModel = ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
   private def pageSetup(model: IncomeSourcesModel) = new {
@@ -105,10 +106,6 @@ class ReportDeadlinesViewSpec extends TestSupport {
       "not contain a third row" in {
         document.getElementById("bi-1-ob-3-status") shouldBe null
       }
-    }
-
-    "have sidebar section " in {
-      document.getElementById("sidebar") shouldNot be(null)
     }
 
     "when only business obligations are returned" should {
@@ -285,15 +282,7 @@ class ReportDeadlinesViewSpec extends TestSupport {
       }
     }
 
-    "NOT show a back link to the Income Tax home page, when the home page feature is disabled" in {
-      mockAppConfig.features.homePageEnabled(false)
-      val setup = pageSetup(businessIncomeSource)
-      import setup._
-      document.getElementById("it-home-back") should be(null)
-    }
-
     "show a back link to the Income Tax home page, when the home page feature is enabled" in {
-      mockAppConfig.features.homePageEnabled(true)
       val setup = pageSetup(businessIncomeSource)
       import setup._
       document.getElementById("it-home-back") shouldNot be(null)

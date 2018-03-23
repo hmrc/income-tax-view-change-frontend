@@ -16,8 +16,8 @@
 
 package services
 
-import assets.TestConstants.NinoLookup._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.NinoLookupTestConstants._
 import mocks.connectors.MockNinoLookupConnector
 import utils.TestSupport
 

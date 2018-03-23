@@ -15,7 +15,7 @@
  */
 package helpers
 
-import helpers.IntegrationTestConstants.{testMtditid, testNino}
+import assets.BaseIntegrationTestConstants.{testNino,testMtditid}
 import helpers.servicemocks._
 import play.api.libs.json.{JsNull, JsValue}
 

@@ -25,7 +25,7 @@
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-statement", None)
-    )))
+    )), "StatementsErrorPage")
 }
 
 @main_template(
@@ -38,6 +38,6 @@
 
     <p id="statement-error-para">@messages("statements.error.p1")</p>
 
-    @backToHomeHelper()
+    @backToHomeHelper("StatementsErrorPage")
 
 }

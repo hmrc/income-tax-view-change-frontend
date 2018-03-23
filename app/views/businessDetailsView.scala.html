@@ -28,15 +28,15 @@
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-account", Some(controllers.routes.AccountDetailsController.getAccountDetails.url)),
         BreadcrumbItem(business.tradingName.get, None)
-    )))
+    )), "BusinessDetailsPage")
 }
 
 @main_template(
-    title = business.tradingName.get,
-    bodyClasses = None,
-    scriptElem = None,
-    sidebarLinks = None,
-    serviceInfo = breadcrumb
+title = business.tradingName.get,
+bodyClasses = None,
+scriptElem = None,
+
+serviceInfo = breadcrumb
 ) {
 
     <section id="business-details">

@@ -16,8 +16,9 @@
 
 package controllers
 
+import assets.BaseTestConstants.{testMtditid, testNino}
 import assets.Messages
-import assets.TestConstants._
+import assets.IncomeSourcesTestConstants._
 import config.FrontendAppConfig
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -51,7 +52,7 @@ class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPr
         "return Status OK (200)" in {
           TestAccountDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
-          setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSources.businessIncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testMtditid, testNino)(businessIncomeSourceSuccess)
           status(result) shouldBe Status.OK
         }
 
