@@ -16,7 +16,8 @@
 
 package controllers.predicates
 
-import assets.TestConstants._
+import assets.BaseTestConstants.{testMtditid, testNino, testUserDetails}
+import assets.IncomeSourcesWithDeadlinesTestConstants._
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.MockIncomeSourceDetailsService
@@ -34,7 +35,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
   )
 
   lazy val userWithNino = MtdItUserWithNino(testMtditid, testNino, Some(testUserDetails))
-  lazy val successResponse = MtdItUser(testMtditid, testNino, Some(testUserDetails), IncomeSources.businessIncomeSourceSuccess)
+  lazy val successResponse = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessIncomeSourceSuccess)
 
   "The IncomeSourceDetailsPredicate" when {
 

@@ -34,4 +34,6 @@ DELETE      /report-quarterly/income-and-expenses/view/test-only/all-data/proxy 
 GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch       @testOnly.controllers.FeatureSwitchController.featureSwitch
 POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch       @testOnly.controllers.FeatureSwitchController.submitFeatureSwitch
 
+GET         /report-quarterly/income-and-expenses/view/test-only/bta-partial          @testOnly.controllers.TestBTAPartialController.viewBTAPartial
+
 ->          /                                                                          prod.Routes

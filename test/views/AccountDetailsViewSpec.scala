@@ -18,9 +18,10 @@ package views
 
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.TestConstants.BusinessDetails.{businessIncomeModelAlignedTaxYear, _}
-import assets.TestConstants.PropertyIncome.propertyIncomeModel
-import assets.TestConstants.{testMtditid, testNino, testUserDetails}
+import assets.BusinessDetailsTestConstants.businessIncomeModelAlignedTaxYear
+import assets.PropertyDetailsTestConstants.propertyIncomeModel
+import assets.BusinessDetailsTestConstants._
+import assets.BaseTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
@@ -79,8 +80,7 @@ class AccountDetailsViewSpec extends TestSupport {
         document.getElementById("reporting-period").text() shouldBe messages.reportingPeriod("6 April", "5 April")
       }
 
-      "show a back link to the Income Tax home page, when the home page feature is enabled" in {
-        mockAppConfig.features.homePageEnabled(true)
+      "show a back link to the Income Tax home page" in {
         document.getElementById("it-home-back") shouldNot be(null)
       }
 
@@ -116,11 +116,9 @@ class AccountDetailsViewSpec extends TestSupport {
         document.getElementById("reporting-period") shouldBe null
       }
 
-      "show a back link to the Income Tax home page, when the home page feature is enabled" in {
-        mockAppConfig.features.homePageEnabled(true)
+      "show a back link to the Income Tax home page" in {
         document.getElementById("it-home-back") shouldNot be(null)
       }
-
     }
 
     "only passed a property" should {
@@ -153,8 +151,7 @@ class AccountDetailsViewSpec extends TestSupport {
         document.getElementById("reporting-period").text() shouldBe messages.reportingPeriod("6 April", "5 April")
       }
 
-      "show a back link to the Income Tax home page, when the home page feature is enabled" in {
-        mockAppConfig.features.homePageEnabled(true)
+      "show a back link to the Income Tax home page" in {
         document.getElementById("it-home-back") shouldNot be(null)
       }
 

@@ -16,10 +16,9 @@
 
 package services
 
-
-import assets.TestConstants.CalcBreakdown._
-import assets.TestConstants.Estimates._
-import assets.TestConstants.{Estimates, _}
+import assets.BaseTestConstants._
+import assets.CalcBreakdownTestConstants._
+import assets.EstimatesTestConstants._
 import mocks.connectors.{MockCalculationDataConnector, MockLastTaxCalculationConnector}
 import mocks.services.MockCalculationService
 import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound, LastTaxCalculationResponseModel}
@@ -47,7 +46,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
     "an Error Response is returned from the EstimatedTaxLiabilityConnector" should {
 
       "return none" in {
-        setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcError)
+        setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcError)
         await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe CalcDisplayError
       }
     }
@@ -55,7 +54,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
     "a Not Found Response is returned from the EstimatedTaxLiabilityConnector" should {
 
       "return none" in {
-        setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcNotFound)
+        setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcNotFound)
         await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe CalcDisplayNoDataFound
       }
     }
@@ -63,7 +62,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
     "an Error Response is returned from the CalculationDataConnector" should {
 
       "return a correctly formatted CalcDisplayModel model with calcDataModel = None" in {
-        setupLastTaxCalculationResponse(testNino, testYear)(Estimates.lastTaxCalcSuccess)
+        setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataErrorModel)
 
         await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel

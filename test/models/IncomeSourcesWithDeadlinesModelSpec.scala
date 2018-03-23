@@ -16,10 +16,10 @@
 
 package models
 
-import assets.TestConstants.BusinessDetails._
-import assets.TestConstants.IncomeSources._
-import assets.TestConstants.PropertyDetails._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.IncomeSourcesWithDeadlinesTestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.PropertyDetailsTestConstants._
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 

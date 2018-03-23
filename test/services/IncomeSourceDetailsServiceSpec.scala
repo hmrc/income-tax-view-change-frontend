@@ -16,20 +16,23 @@
 
 package services
 
-import assets.TestConstants.IncomeSources._
-import assets.TestConstants.ReportDeadlines.obligationsDataSuccessModel
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
+import assets.IncomeSourcesWithDeadlinesTestConstants._
+import assets.ReportDeadlinesTestConstants.obligationsDataSuccessModel
+import audit.mocks.MockAuditingService
 import mocks.connectors.MockIncomeSourceDetailsConnector
 import mocks.services.MockReportDeadlinesService
 import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesError
 import utils.TestSupport
 
 
-class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDetailsConnector with MockReportDeadlinesService {
+class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDetailsConnector with MockReportDeadlinesService with MockAuditingService {
 
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(
     mockIncomeSourceDetailsConnector,
-    mockReportDeadlinesService
+    mockReportDeadlinesService,
+    mockAuditingService
   )
 
   "The IncomeSourceDetailsService.getIncomeSourceDetails method" when {
@@ -37,7 +40,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
     "a result with both business and property details is returned" should {
 
       "return an IncomeSourceDetailsModel with business and property options" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.businessesAndPropertyIncome)
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(businessesAndPropertyIncome)
         setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
         setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId2)(obligationsDataSuccessModel)
         setupMockPropertyReportDeadlinesResult(testNino)(obligationsDataSuccessModel)
@@ -48,7 +51,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
 
     "a result with just business details is returned" should {
       "return an IncomeSourceDetailsModel with just a business option" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.singleBusinessIncome)
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(singleBusinessIncome)
         setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe businessIncomeSourceSuccess
@@ -57,7 +60,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
 
     "a result with just property details is returned" should {
       "return an IncomeSourceDetailsModel with just a property option" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.propertyIncomeOnly)
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(propertyIncomeOnly)
         setupMockPropertyReportDeadlinesResult(testNino)(obligationsDataSuccessModel)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe propertyIncomeSourceSuccess
@@ -66,7 +69,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
 
     "a result with no income source details is returned" should {
       "return an IncomeSourceDetailsModel with no options" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.noIncomeDetails)
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(noIncomeDetails)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe noIncomeSourceSuccess
       }
@@ -74,7 +77,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
 
     "a result where the Income Source Details are error" should {
       "return an IncomeSourceError" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid)(NewIncomeSourceDetails.errorResponse)
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(errorResponse)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe IncomeSourcesWithDeadlinesError
       }

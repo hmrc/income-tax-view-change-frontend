@@ -16,8 +16,8 @@
 
 package connectors
 
-import assets.TestConstants.NinoLookup._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.NinoLookupTestConstants._
 import mocks.MockHttp
 import models.core.{NinoResponse, NinoResponseError}
 import play.api.libs.json.Json

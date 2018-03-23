@@ -16,7 +16,8 @@
 
 package controllers
 
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -59,7 +60,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockAuthenticationP
         }
 
         "render the Business Details page" in {
-          document.title() shouldBe NewBizDeets.business1.tradingName.get
+          document.title() shouldBe business1.tradingName.get
         }
 
       }

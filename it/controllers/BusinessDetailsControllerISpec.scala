@@ -16,8 +16,9 @@
 
 package controllers
 
-import helpers.IntegrationTestConstants.{GetIncomeSourceDetails, testMtditid, testSelfEmploymentId}
+import helpers.IntegrationTestConstants.GetIncomeSourceDetails
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import assets.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 

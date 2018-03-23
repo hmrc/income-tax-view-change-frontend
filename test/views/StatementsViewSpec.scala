@@ -16,8 +16,8 @@
 
 package views
 
+import assets.BaseTestConstants._
 import assets.Messages.{Statements => messages}
-import assets.TestConstants._
 import config.FrontendAppConfig
 import models.financialTransactions.{FinancialTransactionsErrorModel, SubItemModel, TransactionModel, TransactionModelWithYear}
 import org.jsoup.Jsoup
@@ -28,6 +28,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import utils.ImplicitCurrencyFormatter._
+import utils.ImplicitDateFormatter._
 import utils.TestSupport
 
 class StatementsViewSpec extends TestSupport {
@@ -39,13 +40,13 @@ class StatementsViewSpec extends TestSupport {
 
   val charge2018: SubItemModel = SubItemModel(
     subItem = Some("000"),
-    dueDate = Some("2019-1-31".toLocalDate),
+    dueDate = Some("2019-1-31"),
     amount = Some(1000.00)
   )
 
   val payment2018: SubItemModel = SubItemModel(
     subItem = Some("002"),
-    clearingDate = Some("2018-1-1".toLocalDate),
+    clearingDate = Some("2018-1-1"),
     clearingReason = Some(""),
     outgoingPaymentMethod = Some(""),
     paymentLock = Some(""),
@@ -66,13 +67,13 @@ class StatementsViewSpec extends TestSupport {
 
   val charge2019: SubItemModel = SubItemModel(
     subItem = Some("000"),
-    dueDate = Some("2020-1-31".toLocalDate),
+    dueDate = Some("2020-1-31"),
     amount = Some(1200.00)
   )
 
   val payment2019: SubItemModel = SubItemModel(
     subItem = Some("002"),
-    clearingDate = Some("2019-1-2".toLocalDate),
+    clearingDate = Some("2019-1-2"),
     clearingReason = Some(""),
     outgoingPaymentMethod = Some(""),
     paymentLock = Some(""),
@@ -96,8 +97,8 @@ class StatementsViewSpec extends TestSupport {
     mainType = Some(""),
     periodKey = Some(""),
     periodKeyDescription = Some(""),
-    taxPeriodFrom = Some("2017-4-6".toLocalDate),
-    taxPeriodTo = Some("2018-4-5".toLocalDate),
+    taxPeriodFrom = Some("2017-4-6"),
+    taxPeriodTo = Some("2018-4-5"),
     businessPartner = Some(""),
     contractAccountCategory = Some(""),
     contractAccount = Some(""),
@@ -120,8 +121,8 @@ class StatementsViewSpec extends TestSupport {
     mainType = Some(""),
     periodKey = Some(""),
     periodKeyDescription = Some(""),
-    taxPeriodFrom = Some("2018-4-6".toLocalDate),
-    taxPeriodTo = Some("2019-4-5".toLocalDate),
+    taxPeriodFrom = Some("2018-4-6"),
+    taxPeriodTo = Some("2019-4-5"),
     businessPartner = Some(""),
     contractAccountCategory = Some(""),
     contractAccount = Some(""),

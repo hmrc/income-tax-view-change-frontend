@@ -16,13 +16,22 @@
 
 package controllers
 
+import play.api.http.HeaderNames
 import play.api.i18n.I18nSupport
-import play.api.mvc.Result
+import play.api.mvc.{RequestHeader, Result}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
 trait BaseController extends FrontendController with I18nSupport {
+  override implicit def hc(implicit rh: RequestHeader): HeaderCarrier = {
+    rh.headers.headers.find(_._1 == HeaderNames.REFERER) match {
+      case Some(referrer) => super.hc.withExtraHeaders(referrer)
+      case _ => super.hc
+    }
+  }
   def redirectToHome: Result = Redirect(controllers.routes.HomeController.home())
   def fRedirectToHome: Future[Result] = Future.successful(redirectToHome)
 }

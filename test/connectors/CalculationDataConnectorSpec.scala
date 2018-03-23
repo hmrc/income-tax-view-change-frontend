@@ -16,8 +16,8 @@
 
 package connectors
 
-import assets.TestConstants.CalcBreakdown._
-import assets.TestConstants._
+import assets.BaseTestConstants._
+import assets.CalcBreakdownTestConstants._
 import mocks.MockHttp
 import models.calculation.{CalculationDataErrorModel, CalculationDataResponseModel}
 import play.api.libs.json.Json
@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
-  val successResponse = HttpResponse(Status.OK, Some(Json.parse(mandatoryCalculationDataSuccessString)))
+  val successResponse = HttpResponse(Status.OK, Some(mandatoryCalculationDataSuccessJson))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{\"incomeTaxYTD\":\"somethingBad\"}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
