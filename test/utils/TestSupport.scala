@@ -27,6 +27,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Suite}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.http.HeaderNames
 import play.api.i18n.MessagesApi
 import play.api.mvc.Result
 import play.api.test.FakeRequest
@@ -47,7 +48,7 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
 
   implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock[ItvcHeaderCarrierForPartialsConverter]
 
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
   implicit val hcwc: HeaderCarrierForPartials = HeaderCarrierForPartials(headerCarrier, "")
 
   implicit val conf: Configuration = app.configuration
@@ -79,7 +80,10 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
   lazy val fakeRequestWithActiveSession = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662",
     SessionKeys.authToken -> "Bearer Token"
+  ).withHeaders(
+    HeaderNames.REFERER -> "/test/url"
   )
+
   lazy val fakeRequestWithTimeoutSession = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
