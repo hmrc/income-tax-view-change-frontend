@@ -19,8 +19,8 @@ import java.time.LocalDate
 
 import assets.BaseIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants._
+import assets.IncomeSourceIntegrationTestConstants._
 import config.FrontendAppConfig
-import helpers.IntegrationTestConstants.GetIncomeSourceDetails
 import helpers.servicemocks.{IncomeTaxViewChangeStub, SelfAssessmentStub}
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status._
@@ -41,7 +41,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId))
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub a single business obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -72,7 +72,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-              OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+              OK, businessAndPropertyResponse
             )
 
             And("I wiremock stub a single business obligation response")
@@ -124,7 +124,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
               And("I wiremock stub a successful Income Source Details response with single Business and Property income")
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+                OK, businessAndPropertyResponse
               )
 
               And("I wiremock stub a single property and business obligation response")
@@ -241,7 +241,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-              OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+              OK, businessAndPropertyResponse
             )
 
             And("I wiremock stub multiple business obligations response")
@@ -322,7 +322,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-              OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+              OK, businessAndPropertyResponse
             )
 
             And("I wiremock stub multiple business obligations response")
@@ -431,7 +431,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             And("I wiremock stub a single business obligation response")
             SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, singleReportDeadlinesDataSuccessModel)
@@ -473,7 +473,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             And("I wiremock stub multiple property obligations response")
             SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReportDeadlinesDataSuccessModel)
@@ -529,7 +529,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             And("I wiremock stub multiple property open and received obligations response")
             SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReceivedOpenReportDeadlinesModel)
@@ -599,7 +599,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-              OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+              OK, businessAndPropertyResponse
             )
 
             And("I wiremock stub a single business and property obligation response")
@@ -650,7 +650,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             And("I wiremock stub a successful Income Source Details responsewith multiple Business income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-              OK, GetIncomeSourceDetails.multipleBusinessesResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
+              OK, multipleBusinessesResponse
+            )
 
             And("I wiremock stub a single business obligation response for each business")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -710,7 +711,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             And("I wiremock stub a successful Income Source Details response with multiple Business income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-              OK, GetIncomeSourceDetails.multipleBusinessesAndPropertyResponse(testSelfEmploymentId, otherTestSelfEmploymentId)
+              OK, multipleBusinessesAndPropertyResponse
             )
 
             And("I wiremock stub multiple business obligations and a single property obligation response")
@@ -783,7 +784,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.singleBusinessResponse(testSelfEmploymentId))
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
             And("I wiremock stub an error for the business obligations response")
             SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
@@ -815,7 +816,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             And("I wiremock stub an error for the property obligations response")
             SelfAssessmentStub.stubPropertyReportDeadlinesError(testNino)
@@ -848,7 +849,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-              OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+              OK, businessAndPropertyResponse
             )
 
             And("I wiremock stub an error for the property obligations response")

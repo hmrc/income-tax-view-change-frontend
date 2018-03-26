@@ -16,8 +16,8 @@
 
 package controllers
 
+import assets.IncomeSourceIntegrationTestConstants._
 import assets.BaseIntegrationTestConstants.{testSelfEmploymentId, testMtditid}
-import helpers.IntegrationTestConstants.GetIncomeSourceDetails
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -33,7 +33,7 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
         stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId))
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         When("I call GET /report-quarterly/income-and-expenses/view/account-details")
         val res = IncomeTaxViewChangeFrontend.getAccountDetails
