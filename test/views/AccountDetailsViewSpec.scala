@@ -19,7 +19,7 @@ package views
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.BusinessDetailsTestConstants.businessIncomeModelAlignedTaxYear
-import assets.PropertyDetailsTestConstants.propertyIncomeModel
+import assets.PropertyDetailsTestConstants.{propertyIncomeModel,ceasedPropertyIncomeModel}
 import assets.BusinessDetailsTestConstants._
 import assets.BaseTestConstants._
 import auth.MtdItUser
@@ -81,7 +81,7 @@ class AccountDetailsViewSpec extends TestSupport {
       }
 
       "show a back link to the Income Tax home page" in {
-        document.getElementById("it-home-back") shouldNot be(null)
+        Option(document.getElementById("it-home-back")) shouldNot be(None)
       }
 
     }
@@ -112,12 +112,12 @@ class AccountDetailsViewSpec extends TestSupport {
       }
 
       s"not have a 'your-properties' section" in {
-        document.getElementById("your-properties") shouldBe null
-        document.getElementById("reporting-period") shouldBe null
+        Option(document.getElementById("your-properties")) shouldBe None
+        Option(document.getElementById("reporting-period")) shouldBe None
       }
 
       "show a back link to the Income Tax home page" in {
-        document.getElementById("it-home-back") shouldNot be(null)
+        Option(document.getElementById("it-home-back")) shouldNot be(None)
       }
     }
 
@@ -142,8 +142,8 @@ class AccountDetailsViewSpec extends TestSupport {
       }
 
       s"not have a 'your-businesses' section" in {
-        document.getElementById("your-businesses") shouldBe null
-        document.getElementById("business-link-1") shouldBe null
+        Option(document.getElementById("your-businesses")) shouldBe None
+        Option(document.getElementById("business-link-1")) shouldBe None
       }
 
       s"have a 'your-properties' section" in {
@@ -151,8 +151,52 @@ class AccountDetailsViewSpec extends TestSupport {
         document.getElementById("reporting-period").text() shouldBe messages.reportingPeriod("6 April", "5 April")
       }
 
+      "not have a ceased-properties section" in {
+        Option(document.getElementById("ceased-properties")) shouldBe None
+      }
+
       "show a back link to the Income Tax home page" in {
-        document.getElementById("it-home-back") shouldNot be(null)
+        Option(document.getElementById("it-home-back")) shouldNot be(None)
+      }
+
+    }
+
+    "only passed a ceased property" should {
+
+      val setup = pageSetup(List(), Some(ceasedPropertyIncomeModel))
+      import setup._
+      val messages = Messages.AccountDetails
+
+      s"have the title '${messages.title}'" in {
+        document.title() shouldBe messages.title
+      }
+
+      "have a breadcrumb trail" in {
+        document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+        document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+        document.getElementById("breadcrumb-account").text shouldBe breadcrumbMessages.details
+      }
+
+      s"have the page heading '${messages.heading}'" in {
+        document.getElementById("page-heading").text() shouldBe messages.heading
+      }
+
+      s"not have a 'your-businesses' section" in {
+        Option(document.getElementById("your-businesses")) shouldBe None
+        Option(document.getElementById("business-link-1")) shouldBe None
+      }
+
+      s"have a 'your-properties' section" in {
+        document.getElementById("your-properties").text() shouldBe messages.yourProperties
+        document.getElementById("reporting-period").text() shouldBe messages.reportingPeriod("6 April", "5 April")
+      }
+
+      "have a ceased-properties section" in {
+        document.getElementById("ceased-properties").text() shouldBe messages.ceasedProperties("1 January 2018")
+      }
+
+      "show a back link to the Income Tax home page" in {
+        Option(document.getElementById("it-home-back")) shouldNot be(None)
       }
 
     }
