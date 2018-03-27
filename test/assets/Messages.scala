@@ -250,7 +250,7 @@ object Messages {
   object BtaPartial {
     val heading = "Income Tax reporting through software"
     val p1 = "You've signed up to report your Income Tax through software. This will replace your Self Assessment tax return."
-    val p2 = "You can view your report deadlines, bills, statements and an estimate for the next tax year."
+    val p2 = "You can view your report deadlines, bills and an estimate for the next tax year."
     val button = "View your Income Tax details"
   }
 

@@ -203,7 +203,7 @@ timeout.signIn                                                  = To view your q
 ## BTA Partial ##
 bta_partial.heading                                             = Income Tax reporting through software
 bta_partial.p1                                                  = You''ve signed up to report your Income Tax through software. This will replace your Self Assessment tax return.
-bta_partial.p2                                                  = You can view your report deadlines, bills, statements and an estimate for the next tax year.
+bta_partial.p2                                                  = You can view your report deadlines, bills and an estimate for the next tax year.
 bta_partial.home_button                                         = View your Income Tax details
 
 ## Not Enrolled
