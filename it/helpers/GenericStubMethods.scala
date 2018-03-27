@@ -46,31 +46,6 @@ trait GenericStubMethods extends CustomMatchers {
     BtaPartialStub.stubGetServiceInfoPartial()
   }
 
-  def getBizDeets(response: JsValue = JsNull): Unit = {
-    if(response == JsNull) {
-      And("I wiremock stub a success business details response, with no Business Income Source")
-      SelfAssessmentStub.stubGetNoBusinessDetails(testNino)
-    } else {
-      And("I wiremock stub a success business details response")
-      SelfAssessmentStub.stubGetBusinessDetails(testNino, response)
-    }
-  }
-
-  def getPropDeets(response: JsValue): Unit = {
-    And("I wiremock stub a successful Property Details response")
-    SelfAssessmentStub.stubGetPropertyDetails(testNino, response)
-  }
-
-  def verifyBizDeetsCall(): Unit = {
-    Then("Verify business details has been called")
-    SelfAssessmentStub.verifyGetBusinessDetails(testNino)
-  }
-
-  def verifyPropDeetsCall(): Unit = {
-    Then("Verify property details has been called")
-    SelfAssessmentStub.verifyGetPropertyDetails(testNino)
-  }
-
   def verifyBizObsCall(employmentIds: String*): Unit = {
     Then("Verify that business obligations has been called")
     for(employmentId <- employmentIds){

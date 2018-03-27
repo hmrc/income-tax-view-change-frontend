@@ -18,6 +18,7 @@ package models
 
 import assets.BaseTestConstants._
 import assets.PaymentDataTestConstants._
+import models.core.PaymentDataModel
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec
@@ -45,24 +46,5 @@ class PaymentDataModelSpec extends UnitSpec with Matchers {
     "have the correct returnUrl" in {
       testPaymentDataModel.returnUrl shouldBe testPaymentRedirectUrl
     }
-  }
-
-  "The Payment Error model" should {
-
-    "be formatted to JSON correctly" in {
-      Json.toJson[PaymentErrorModel](testPaymentErrorModel) shouldBe testPaymentErrorJson
-    }
-
-    "be able to parse a JSON input as a String into the model" in {
-      Json.parse(testPaymentErrorJson.toString()).as[PaymentErrorModel] shouldBe testPaymentErrorModel
-    }
-
-    "have the correct error code" in {
-      testPaymentErrorModel.code shouldBe testErrorStatus
-    }
-    "have the correct error message" in {
-      testPaymentErrorModel.message shouldBe testErrorMessage
-    }
-
   }
 }

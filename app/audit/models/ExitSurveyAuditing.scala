@@ -16,7 +16,7 @@
 
 package audit.models
 
-import models.ExitSurveyModel
+import models.core.ExitSurveyModel
 
 object ExitSurveyAuditing {
 
@@ -25,7 +25,7 @@ object ExitSurveyAuditing {
 
   case class ExitSurveyAuditModel(exitSurveyModel: ExitSurveyModel) extends AuditModel {
     override val transactionName: String = exitSurveyTransactionName
-    override val detail: Map[String, String] = Map(
+    override val detail: Seq[(String, String)] = Seq(
       "satisfaction" -> exitSurveyModel.satisfaction.fold("-")(x => x),
       "improvements" -> exitSurveyModel.improvements.fold("-")(x => x)
     )

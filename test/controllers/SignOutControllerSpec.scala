@@ -19,8 +19,8 @@ package controllers
 import config.FrontendAppConfig
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import utils.TestSupport
 import play.api.test.Helpers._
+import utils.TestSupport
 
 class SignOutControllerSpec extends TestSupport {
 

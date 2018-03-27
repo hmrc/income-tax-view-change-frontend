@@ -19,7 +19,7 @@ package connectors
 import assets.BaseTestConstants._
 import assets.NinoLookupTestConstants._
 import mocks.MockHttp
-import models._
+import models.core.{NinoResponse, NinoResponseError}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse

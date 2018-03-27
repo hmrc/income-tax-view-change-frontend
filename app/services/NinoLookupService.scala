@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import connectors.NinoLookupConnector
 import models._
+import models.core.NinoResponse
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 

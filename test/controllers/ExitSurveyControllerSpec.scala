@@ -20,12 +20,12 @@ import assets.Messages.{ExitSurvey => messages}
 import audit.mocks.MockAuditingService
 import audit.models.ExitSurveyAuditing.ExitSurveyAuditModel
 import config.FrontendAppConfig
+import forms.ExitSurveyForm._
+import models.core.ExitSurveyModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.test.Helpers.{contentType, _}
-import forms.ExitSurveyForm._
-import models.ExitSurveyModel
 import play.api.mvc.Result
+import play.api.test.Helpers.{contentType, _}
 import utils.TestSupport
 
 import scala.concurrent.Future

@@ -18,11 +18,10 @@ package controllers
 import java.time.LocalDate
 
 import assets.BaseIntegrationTestConstants._
-import assets.BusinessDetailsIntegrationTestConstants._
-import assets.PropertyDetailsIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants._
 import config.FrontendAppConfig
-import helpers.servicemocks.SelfAssessmentStub
+import helpers.IntegrationTestConstants.GetIncomeSourceDetails
+import helpers.servicemocks.{IncomeTaxViewChangeStub, SelfAssessmentStub}
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
@@ -38,11 +37,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
       "Redirect to the Income Tax View Change Home Page" in {
 
         appConfig.features.reportDeadlinesEnabled(false)
-
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-        getPropDeets(propertySuccessResponse())
+
+        And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId))
 
         And("I wiremock stub a single business obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -68,11 +67,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display a single obligation with the correct dates and status" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-            getPropDeets(propertySuccessResponse())
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+            )
 
             And("I wiremock stub a single business obligation response")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -80,14 +81,15 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyBizObsCall(testSelfEmploymentId)
 
             Then("the view displays the correct title, username and links")
             res should have(
               httpStatus(OK),
               pageTitle("Your Income Tax report deadlines")
+
             )
 
             Then("the page displays one obligation")
@@ -117,24 +119,33 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             "display a single obligation with the correct dates and status" in {
 
               appConfig.features.reportDeadlinesEnabled(true)
-
               isAuthorisedUser(true)
               stubUserDetails()
-              getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-              getPropDeets(propertySuccessResponse())
+
+              And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+              )
 
               And("I wiremock stub a single property and business obligation response")
-              // SelfAssessmentStub.stubGetReportDeadlines(testNino,testSelfEmploymentId,multipleReceivedOpenReportDeadlinesModel,multipleReceivedOpenReportDeadlinesModel)
+
               SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
               SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReceivedOpenReportDeadlinesModel)
 
               When("I call GET /report-quarterly/income-and-expenses/view/obligations")
               val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
+              Then("I verify the Income Source Details has been successfully wiremocked")
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+              verifyBizObsCall(testSelfEmploymentId)
+              verifyPropObsCall()
+
               Then("the correct title, username and links are displayed")
               res should have(
                 httpStatus(OK),
                 pageTitle("Your Income Tax report deadlines")
+
               )
 
               Then("the page displays four business obligations and four property obligations")
@@ -225,11 +236,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display the correct amount of obligations with the correct statuses" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-            getPropDeets(propertySuccessResponse())
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+            )
 
             And("I wiremock stub multiple business obligations response")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -238,9 +251,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
             verifyBizObsCall(testSelfEmploymentId)
+            verifyPropObsCall()
 
             Then("the view should display the title and username")
             res should have(
@@ -302,11 +317,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display only one of each received and open obligations and all overdue obligations" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-            getPropDeets(propertySuccessResponse())
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+            )
 
             And("I wiremock stub multiple business obligations response")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
@@ -315,9 +332,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
             verifyBizObsCall(testSelfEmploymentId)
+            verifyPropObsCall()
 
             Then("the view should display the title and username")
             res should have(
@@ -408,11 +427,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display a single obligation with the correct dates and status" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets()
-            getPropDeets(propertySuccessResponse())
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
 
             And("I wiremock stub a single business obligation response")
             SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, singleReportDeadlinesDataSuccessModel)
@@ -420,8 +439,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyPropObsCall()
 
             Then("the view should display the title and username")
@@ -450,11 +469,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display the correct amount of obligations with the correct statuses" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets()
-            getPropDeets(propertySuccessResponse())
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
 
             And("I wiremock stub multiple property obligations response")
             SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReportDeadlinesDataSuccessModel)
@@ -462,8 +481,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyPropObsCall()
 
             Then("the view should display the title and username")
@@ -506,11 +525,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display only one of each received and open obligations and all overdue obligations" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets()
-            getPropDeets(propertySuccessResponse())
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
 
             And("I wiremock stub multiple property open and received obligations response")
             SelfAssessmentStub.stubGetPropertyReportDeadlines(testNino, multipleReceivedOpenReportDeadlinesModel)
@@ -518,8 +537,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyPropObsCall()
 
             Then("the view should display the title and username")
@@ -575,11 +594,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display one obligation each for business and property with the correct dates and statuses" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetailsError()
-            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-            getPropDeets(propertySuccessResponse())
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+            )
 
             And("I wiremock stub a single business and property obligation response")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -588,8 +609,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyBizObsCall(testSelfEmploymentId)
             verifyPropObsCall()
 
@@ -619,18 +640,17 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           }
         }
 
-        "has 2 businesses with one obligation each" should {
+        "has 2 business with one obligation each" should {
 
-          "display the obligation of each businesses" in {
+          "display the obligation of each business" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
 
-            And("I wiremock stub a successful Property Details response")
-            SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
+            And("I wiremock stub a successful Income Source Details responsewith multiple Business income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              OK, GetIncomeSourceDetails.multipleBusinessesResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
 
             And("I wiremock stub a single business obligation response for each business")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -639,14 +659,15 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyBizObsCall(testSelfEmploymentId, otherTestSelfEmploymentId)
 
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
               pageTitle("Your Income Tax report deadlines")
+
             )
 
             Then("the page displays two obligations")
@@ -679,16 +700,18 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         }
 
-        "has 2 businesses with multiple obligations and property with one obligation" should {
+        "has 2 business with multiple obligations and property with one obligation" should {
 
-          "display the obligation of each businesses" in {
+          "display the obligation of each business" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(multipleSuccessResponse(testSelfEmploymentId, otherTestSelfEmploymentId))
-            getPropDeets(propertySuccessResponse())
+
+            And("I wiremock stub a successful Income Source Details response with multiple Business income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              OK, GetIncomeSourceDetails.multipleBusinessesAndPropertyResponse(testSelfEmploymentId, otherTestSelfEmploymentId)
+            )
 
             And("I wiremock stub multiple business obligations and a single property obligation response")
             SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -698,14 +721,15 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyBizObsCall(testSelfEmploymentId, otherTestSelfEmploymentId)
 
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
               pageTitle("Your Income Tax report deadlines")
+
             )
 
             Then("the page displays seven obligations")
@@ -755,13 +779,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "Display an error message to the user" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
 
-            And("I wiremock stub a successful Property Details response, with no Property Income Source")
-            SelfAssessmentStub.stubGetNoPropertyDetails(testNino)
+            And("I wiremock stub a successful Income Source Details response with single Business income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.singleBusinessResponse(testSelfEmploymentId))
 
             And("I wiremock stub an error for the business obligations response")
             SelfAssessmentStub.stubBusinessReportDeadlinesError(testNino, testSelfEmploymentId)
@@ -769,8 +791,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyBizObsCall(testSelfEmploymentId)
 
             Then("the view is displayed with an error message under the business income section")
@@ -789,11 +811,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "Display an error message to the user" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets()
-            getPropDeets(propertySuccessResponse())
+
+            And("I wiremock stub a successful Income Source Details response with Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
 
             And("I wiremock stub an error for the property obligations response")
             SelfAssessmentStub.stubPropertyReportDeadlinesError(testNino)
@@ -801,8 +823,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyPropObsCall()
 
             Then("the view is displayed with an error message under the property income section")
@@ -821,11 +843,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "Display an error message to the user" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-
             isAuthorisedUser(true)
             stubUserDetails()
-            getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-            getPropDeets(propertySuccessResponse())
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+            )
 
             And("I wiremock stub an error for the property obligations response")
             SelfAssessmentStub.stubPropertyReportDeadlinesError(testNino)
@@ -836,8 +860,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
-            verifyBizDeetsCall()
-            verifyPropDeetsCall()
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
             verifyBizObsCall(testSelfEmploymentId)
             verifyPropObsCall()
 
@@ -858,7 +882,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "redirect to sign in" in {
 
           appConfig.features.reportDeadlinesEnabled(true)
-
           isAuthorisedUser(false)
 
           When("I call GET /report-quarterly/income-and-expenses/view/obligations")

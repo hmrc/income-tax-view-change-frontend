@@ -18,9 +18,9 @@ package controllers
 
 import assets.BaseTestConstants._
 import assets.EstimatesTestConstants._
-import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages
 import assets.Messages.EstimatedTaxLiabilityError
+import assets.IncomeSourcesTestConstants._
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -63,7 +63,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         "return Status OK (200)" in {
           mockFinancialTransactionFailed()
           mockCalculationSuccess()
-          setupMockGetIncomeSourceDetails(testNino)(business2018IncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testMtditid, testNino)(business2018IncomeSourceSuccess)
           status(result) shouldBe Status.OK
         }
 
@@ -153,7 +153,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status OK (200)" in {
           mockFinancialTransactionSuccess()
-          setupMockGetIncomeSourceDetails(testNino)(business2018IncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testMtditid, testNino)(business2018IncomeSourceSuccess)
           mockCalculationNoBreakdown()
           status(result) shouldBe Status.OK
         }

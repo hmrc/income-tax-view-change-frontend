@@ -16,10 +16,10 @@
 
 package connectors
 
-import assets.BaseTestConstants._
+import assets.BaseTestConstants.testNino
 import assets.FinancialTransactionsTestConstants._
 import mocks.MockHttp
-import models.{FinancialTransactionsErrorModel, FinancialTransactionsResponseModel}
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse

@@ -16,6 +16,7 @@
 package assets
 
 import models._
+import models.calculation._
 import play.api.libs.json.{JsValue, Json}
 
 object CalcDataIntegrationTestConstants {

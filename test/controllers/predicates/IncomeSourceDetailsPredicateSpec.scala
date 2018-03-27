@@ -17,7 +17,7 @@
 package controllers.predicates
 
 import assets.BaseTestConstants.{testMtditid, testNino, testUserDetails}
-import assets.IncomeSourceDetailsTestConstants.businessIncomeSourceSuccess
+import assets.IncomeSourcesTestConstants._
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.MockIncomeSourceDetailsService

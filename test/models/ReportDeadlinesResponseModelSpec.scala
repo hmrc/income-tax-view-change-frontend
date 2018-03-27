@@ -18,6 +18,7 @@ package models
 
 import assets.BaseTestConstants._
 import assets.ReportDeadlinesTestConstants._
+import models.reportDeadlines._
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec

@@ -16,18 +16,33 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import assets.ReportDeadlinesTestConstants.obligationsDataSuccessModel
-import models.{AccountingPeriodModel, PropertyDetailsErrorModel, PropertyDetailsModel, PropertyIncomeModel}
-import utils.ImplicitDateFormatter._
+import assets.ReportDeadlinesTestConstants._
+import assets.BaseTestConstants.testPropertyIncomeId
+import models.core.AccountingPeriodModel
+import models.incomeSourceDetails.{PropertiesRentedModel, PropertyDetailsModel}
+import models.incomeSourcesWithDeadlines.PropertyIncomeModel
+import utils.ImplicitDateFormatter
 
-object PropertyDetailsTestConstants {
+object PropertyDetailsTestConstants extends ImplicitDateFormatter {
+
+  val testPropertyAccountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05")
+
   val propertyIncomeModel = PropertyIncomeModel(
     accountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05"),
     obligationsDataSuccessModel
   )
-  val testPropertyAccountingPeriod = AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5")
-  val propertySuccessModel = PropertyDetailsModel(testPropertyAccountingPeriod)
-  val propertyErrorModel = PropertyDetailsErrorModel(testErrorStatus, testErrorMessage)
 
+  val propertyDetails = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = testPropertyAccountingPeriod,
+    propertiesRented = Some(PropertiesRentedModel(
+      uk = Some(2),
+      eea = None,
+      nonEea = None,
+      total = Some(2)
+    )),
+    cessation = None,
+    contactDetails = None,
+    paperless = None
+  )
 }

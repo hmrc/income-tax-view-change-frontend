@@ -18,10 +18,12 @@ package controllers.predicates
 
 import javax.inject.{Inject, Singleton}
 
+import audit.AuditingService
+import audit.models.{IncomeSourceDetailsRequestAuditModel, IncomeSourceDetailsResponseAuditModel}
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
-import models.{IncomeSourcesError, IncomeSourcesModel}
+import models.incomeSourcesWithDeadlines.{IncomeSourcesError, IncomeSourcesModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionRefiner, Result}
 import services.IncomeSourceDetailsService
@@ -40,7 +42,7 @@ class IncomeSourceDetailsPredicate @Inject()(implicit val messagesApi: MessagesA
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     implicit val req = request
 
-    incomeSourceDetailsService.getIncomeSourceDetails(request.nino) map {
+    incomeSourceDetailsService.getIncomeSourceDetails(request.mtditid, request.nino) map {
       case sources: IncomeSourcesModel => Right(MtdItUser(request.mtditid, request.nino, request.userDetails, sources))
       case IncomeSourcesError => Left(itvcErrorHandler.showInternalServerError)
     }

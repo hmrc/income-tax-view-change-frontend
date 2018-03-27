@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@import models.ReportDeadlinesModel
+@import models.reportDeadlines.{ReportDeadlinesModel, ReportDeadlineModel}
 @import utils.ImplicitDateFormatter._
 @import views.helpers.ReportDeadlineStatusHelper
-@import models.{EopsObligation, QuarterlyObligation}
+@import models.reportDeadlines.{EopsObligation, QuarterlyObligation}
 
 @(model: ReportDeadlinesModel, id: String)(implicit messages: Messages)
     <table class="form-group">

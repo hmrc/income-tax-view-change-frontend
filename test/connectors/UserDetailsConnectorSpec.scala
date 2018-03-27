@@ -18,7 +18,7 @@ package connectors
 
 import assets.BaseTestConstants.{testUserDetails, testUserDetailsUrl}
 import mocks.MockHttp
-import models._
+import models.core.{UserDetailsError, UserDetailsResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse

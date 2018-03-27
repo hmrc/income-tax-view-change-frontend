@@ -26,7 +26,8 @@ import assets.FinancialTransactionsTestConstants._
 import assets.BaseTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.{CalculationDataModel, IncomeSourcesModel}
+import models.calculation.CalculationDataModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -35,9 +36,10 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import utils.ImplicitCurrencyFormatter._
 import utils.{ImplicitCurrencyFormatter, TestSupport}
+import utils.ImplicitDateFormatter
 
 
-class EstimatedTaxLiabilityViewSpec extends TestSupport {
+class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 

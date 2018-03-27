@@ -16,20 +16,18 @@
 
 package assets
 
-import models.IncomeSourcesModel
+import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants._
 import assets.PropertyDetailsTestConstants._
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 
 object IncomeSourceDetailsTestConstants {
 
-  //Outputs
-  val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesModel(List(businessIncomeModel, businessIncomeModel2), Some(propertyIncomeModel))
-  val businessIncomeSourceSuccess = IncomeSourcesModel(List(businessIncomeModel), None)
-  val business2018IncomeSourceSuccess = IncomeSourcesModel(List(business2018IncomeModel), None)
-  val business2018And19IncomeSourceSuccess = IncomeSourcesModel(List(business2018IncomeModel, business2019IncomeModel), None)
-  val propertyIncomeSourceSuccess = IncomeSourcesModel(List.empty, Some(propertyIncomeModel))
-  val noIncomeSourceSuccess = IncomeSourcesModel(List.empty, None)
-  val bothIncomeSourcesSuccessBusinessAligned =
-    IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
+  val incomeSourceDetails = IncomeSourceDetailsModel(List(businessDetailsSuccess), None)
+  val businessesAndPropertyIncome = IncomeSourceDetailsModel(List(business1, business2), Some(propertyDetails))
+  val singleBusinessIncome = IncomeSourceDetailsModel(List(business1), None)
+  val propertyIncomeOnly = IncomeSourceDetailsModel(List(), Some(propertyDetails))
+  val noIncomeDetails = IncomeSourceDetailsModel(List(), None)
+  val errorResponse = IncomeSourceDetailsError(testErrorStatus, testErrorMessage)
 
 }

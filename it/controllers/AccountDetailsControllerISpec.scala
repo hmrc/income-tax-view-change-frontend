@@ -16,9 +16,9 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants.testSelfEmploymentId
-import assets.BusinessDetailsIntegrationTestConstants.businessSuccessResponse
-import assets.PropertyDetailsIntegrationTestConstants.propertySuccessResponse
+import assets.BaseIntegrationTestConstants.{testSelfEmploymentId, testMtditid}
+import helpers.IntegrationTestConstants.GetIncomeSourceDetails
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{OK, SEE_OTHER}
 
@@ -31,14 +31,16 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
       "return the correct page with a valid total" in {
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-        getPropDeets(propertySuccessResponse())
+
+        And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId))
 
         When("I call GET /report-quarterly/income-and-expenses/view/account-details")
         val res = IncomeTaxViewChangeFrontend.getAccountDetails
 
-        verifyBizDeetsCall()
-        verifyPropDeetsCall()
+        Then("I verify the Income Source Details has been successfully wiremocked")
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
         verifyBizObsCall(testSelfEmploymentId)
 
         Then("the view displays the correct title, username and links")

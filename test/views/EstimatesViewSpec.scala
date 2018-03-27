@@ -24,7 +24,8 @@ import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import assets.PropertyDetailsTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.{IncomeSourcesModel, LastTaxCalculationWithYear}
+import models.calculation.LastTaxCalculationWithYear
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._

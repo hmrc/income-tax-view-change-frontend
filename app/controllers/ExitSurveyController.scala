@@ -22,7 +22,7 @@ import audit.AuditingService
 import audit.models.ExitSurveyAuditing.ExitSurveyAuditModel
 import config.FrontendAppConfig
 import forms.ExitSurveyForm
-import models.ExitSurveyModel
+import models.core.ExitSurveyModel
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Request}

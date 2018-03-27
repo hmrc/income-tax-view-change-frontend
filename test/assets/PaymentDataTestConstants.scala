@@ -16,8 +16,8 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testPaymentRedirectUrl}
-import models.{PaymentDataModel, PaymentErrorModel}
+import assets.BaseTestConstants.{testMtditid, testPaymentRedirectUrl}
+import models.core.PaymentDataModel
 import play.api.libs.json.{JsValue, Json}
 
 object PaymentDataTestConstants {
@@ -33,14 +33,6 @@ object PaymentDataTestConstants {
       "taxReference" -> testMtditid,
       "amountInPence" -> testAmountInPence,
       "returnUrl" -> testPaymentRedirectUrl
-    )
-
-  val testPaymentErrorModel: PaymentErrorModel = PaymentErrorModel(testErrorStatus,testErrorMessage)
-
-  val testPaymentErrorJson: JsValue =
-    Json.obj(
-      "code" -> testErrorStatus,
-      "message" -> testErrorMessage
     )
 
 }

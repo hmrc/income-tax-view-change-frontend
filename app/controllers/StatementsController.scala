@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import auth.MtdItUserOptionNino
 import config.FrontendAppConfig
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
-import models.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}

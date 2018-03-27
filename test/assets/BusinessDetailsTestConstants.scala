@@ -16,10 +16,12 @@
 
 package assets
 
-import assets.BaseTestConstants._
 import assets.ReportDeadlinesTestConstants._
-import models._
-import play.api.libs.json.{JsValue, Json}
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testSelfEmploymentId, testSelfEmploymentId2}
+import models.core._
+import models.incomeSourceDetails.BusinessDetailsModel
+import models.incomeSourcesWithDeadlines.BusinessIncomeModel
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
 
 object BusinessDetailsTestConstants {
 
@@ -27,101 +29,97 @@ object BusinessDetailsTestConstants {
   val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = "2017-3-5", end = "2018-3-6")
   val testTradeName = "business"
   val testTradeName2 = "business"
+  val testBizAddress = AddressModel(
+    addressLine1 = "64 Zoo Lane",
+    addressLine2 = Some("Happy Place"),
+    addressLine3 = Some("Magical Land"),
+    addressLine4 = Some("England"),
+    postCode = Some("ZL1 064"),
+    countryCode = "UK"
+  )
+  val testContactDetails = ContactDetailsModel(Some("123456789"),Some("0123456789"),Some("8008135"),Some("google@chuckNorris.com"))
+  val testCessation = CessationModel(Some("2018-1-1".toLocalDate), Some("It was a stupid idea anyway"))
 
-  val business1 = BusinessModel(
-    id = testSelfEmploymentId,
+  val businessDetailsSuccess = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
     accountingPeriod = testBusinessAccountingPeriod,
-    accountingType = "CASH",
-    commencementDate = Some("2017-1-1"),
-    cessationDate = None,
-    tradingName = testTradeName,
-    businessDescription = Some("a business"),
-    businessAddressLineOne = Some("64 Zoo Lane"),
-    businessAddressLineTwo = Some("Happy Place"),
-    businessAddressLineThree = Some("Magical Land"),
-    businessAddressLineFour = Some("England"),
-    businessPostcode = Some("ZL1 064")
+    tradingName = Some(testTradeName),
+    address = Some(testBizAddress),
+    contactDetails = Some(testContactDetails),
+    tradingStartDate = Some(""),
+    cashOrAccruals = Some(""),
+    seasonal = Some(true),
+    cessation = Some(testCessation),
+    paperless = Some(true)
   )
-  val business2 = BusinessModel(
-    id = testSelfEmploymentId2,
+
+  val business1 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
     accountingPeriod = testBusinessAccountingPeriod,
-    accountingType = "CASH",
-    commencementDate = Some("2017-1-1"),
-    cessationDate = None,
-    tradingName = testTradeName2,
-    businessDescription = Some("some business"),
-    businessAddressLineOne = Some("65 Zoo Lane"),
-    businessAddressLineTwo = Some("Happy Place"),
-    businessAddressLineThree = Some("Magical Land"),
-    businessAddressLineFour = Some("England"),
-    businessPostcode = Some("ZL1 064")
+    cashOrAccruals = Some("CASH"),
+    tradingStartDate = Some("2017-1-1"),
+    cessation = None,
+    tradingName = Some(testTradeName),
+    address = Some(testBizAddress),
+    contactDetails = None,
+    seasonal = None,
+    paperless = None
   )
-  val ceasedBusiness = BusinessModel(
-    id = testSelfEmploymentId,
+
+
+  val business2 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId2,
     accountingPeriod = testBusinessAccountingPeriod,
-    accountingType = "CASH",
-    commencementDate = Some("2017-1-1"),
-    cessationDate = Some("2018-5-30"),
-    tradingName = testTradeName,
-    businessDescription = Some("a business"),
-    businessAddressLineOne = Some("64 Zoo Lane"),
-    businessAddressLineTwo = Some("Happy Place"),
-    businessAddressLineThree = Some("Magical Land"),
-    businessAddressLineFour = Some("England"),
-    businessPostcode = Some("ZL1 064")
+    cashOrAccruals = Some("CASH"),
+    tradingStartDate = Some("2017-1-1"),
+    cessation = None,
+    tradingName = Some(testTradeName2),
+    address = Some(testBizAddress),
+    contactDetails = None,
+    seasonal = None,
+    paperless = None
   )
 
-  val businessesSuccessResponse = List(business1)
-  val multipleBusinessSuccessResponse = List(business1, business2)
-  val noBusinessDetails = BusinessDetailsModel(List())
-  val businessSuccessEmptyResponse = "[]"
-  val businessesSuccessModel = BusinessDetailsModel(businessesSuccessResponse)
-  val multipleBusinessesSuccessModel = BusinessDetailsModel(multipleBusinessSuccessResponse)
-
-  val businessSuccessJson: JsValue = Json.obj(
-
-    "businesses" -> Json.arr(
-      Json.obj(
-        "id" -> testSelfEmploymentId,
-        "accountingPeriod" -> Json.obj(
-          "start" -> testBusinessAccountingPeriod.start,
-          "end" -> testBusinessAccountingPeriod.end
-        ),
-        "accountingType" -> "CASH",
-        "commencementDate" -> "2017-01-01",
-        "tradingName" -> testTradeName,
-        "businessDescription" -> "a business",
-        "businessAddressLineOne" -> "64 Zoo Lane",
-        "businessAddressLineTwo" -> "Happy Place",
-        "businessAddressLineThree" -> "Magical Land",
-        "businessAddressLineFour" -> "England",
-        "businessPostcode" -> "ZL1 064"
-      ),
-      Json.obj(
-        "id" -> testSelfEmploymentId2,
-        "accountingPeriod" -> Json.obj(
-          "start" -> testBusinessAccountingPeriod.start,
-          "end" -> testBusinessAccountingPeriod.end
-        ),
-        "accountingType" -> "CASH",
-        "commencementDate" -> "2017-01-01",
-        "tradingName" -> testTradeName2,
-        "businessDescription" -> "some business",
-        "businessAddressLineOne" -> "65 Zoo Lane",
-        "businessAddressLineTwo" -> "Happy Place",
-        "businessAddressLineThree" -> "Magical Land",
-        "businessAddressLineFour" -> "England",
-        "businessPostcode" -> "ZL1 064"
-      )
-    )
+  val ceasedBusiness = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = testBusinessAccountingPeriod,
+    cashOrAccruals = Some("CASH"),
+    tradingStartDate = Some("2017-1-1"),
+    cessation = Some(CessationModel(
+      date = Some("2018-5-30"),
+      reason = Some("It was a really, really bad idea")
+    )),
+    tradingName = Some(testTradeName),
+    address = Some(testBizAddress),
+    contactDetails = None,
+    seasonal = None,
+    paperless = None
   )
 
+  val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
 
-  val businessErrorModel = BusinessDetailsErrorModel(testErrorStatus, testErrorMessage)
-  val businessErrorJson: JsValue =Json.obj(
-    "code" -> testErrorStatus,
-    "message" -> testErrorMessage
+  val receivedObligation = ReportDeadlineModel(
+    start = "2017-04-01",
+    end = "2017-6-30",
+    due = "2017-7-31",
+    met = true
   )
+
+  val overdueObligation = ReportDeadlineModel(
+    start = "2017-7-1",
+    end = "2017-9-30",
+    due = "2017-10-30",
+    met = false
+  )
+
+  val openObligation = ReportDeadlineModel(
+    start = "2017-7-1",
+    end = "2017-9-30",
+    due = "2017-10-31",
+    met = false
+  )
+
+  val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
 
   val businessIncomeModel =
     BusinessIncomeModel(

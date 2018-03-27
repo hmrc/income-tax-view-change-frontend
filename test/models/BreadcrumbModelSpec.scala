@@ -16,6 +16,7 @@
 
 package models
 
+import models.core.breadcrumb.BreadcrumbItem
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 

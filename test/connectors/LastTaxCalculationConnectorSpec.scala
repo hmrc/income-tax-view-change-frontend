@@ -20,7 +20,7 @@ package connectors
 import assets.BaseTestConstants._
 import assets.EstimatesTestConstants._
 import mocks.MockHttp
-import models.{LastTaxCalculationError, LastTaxCalculationResponseModel, NoLastTaxCalculation}
+import models.calculation.{LastTaxCalculationError, LastTaxCalculationResponseModel, NoLastTaxCalculation}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse

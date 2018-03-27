@@ -19,7 +19,7 @@ package connectors
 import assets.BaseTestConstants.testNino
 import assets.ReportDeadlinesTestConstants.obligationsDataSuccessModel
 import mocks.MockHttp
-import models.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse

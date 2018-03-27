@@ -19,7 +19,7 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import connectors.FinancialTransactionsConnector
-import models.FinancialTransactionsResponseModel
+import models.financialTransactions.FinancialTransactionsResponseModel
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 

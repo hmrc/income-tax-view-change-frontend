@@ -21,7 +21,7 @@ import audit.AuditingService
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.MockNinoLookupService
-import models.{Nino, NinoResponseError}
+import models.core.{Nino, NinoResponseError}
 import org.scalatest.EitherValues
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status

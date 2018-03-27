@@ -16,9 +16,9 @@
 
 package assets
 
-import assets.IncomeSourceDetailsTestConstants._
+import assets.IncomeSourcesTestConstants._
 import auth.{MtdItUser, MtdItUserOptionNino}
-import models.{UserDetailsError, UserDetailsModel}
+import models.core.{UserDetailsError, UserDetailsModel}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -38,6 +38,7 @@ object BaseTestConstants {
   lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   val testSelfEmploymentId  = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
+  val testPropertyIncomeId = "1234"
   val testTaxCalculationId = "CALCID"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
@@ -45,6 +46,6 @@ object BaseTestConstants {
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
   )),Option(testUserDetailsUrl))
-
+  val testReferrerUrl = "/test/url"
 
 }

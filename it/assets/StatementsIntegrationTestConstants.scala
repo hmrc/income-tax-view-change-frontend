@@ -16,7 +16,7 @@
 
 package assets
 
-import models.{FinancialTransactionsModel, SubItemModel, TransactionModel}
+import models.financialTransactions.{FinancialTransactionsModel, SubItemModel, TransactionModel}
 import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter._
 

@@ -22,7 +22,7 @@ import assets.ReportDeadlinesIntegrationTestConstants._
 import config.FrontendAppConfig
 import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub}
 import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.{Nino, NinoResponseError}
+import models.core.{Nino, NinoResponseError}
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
@@ -81,8 +81,6 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         IncomeTaxViewChangeStub.stubGetNinoResponse(testMtditid, Nino(testNino))
 
         stubUserDetails()
-        getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-        getPropDeets(propertySuccessResponse())
 
         And("I wiremock stub a single business obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
@@ -99,7 +97,7 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         )
       }
 
-      "be displayed a technical error page" in {
+      "be displayed a technical error page if there is no NINO" in {
 
         Given("I wiremock stub an authorised with no Nino user response")
         AuthStub.stubAuthorisedNoNino()
@@ -107,8 +105,6 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         IncomeTaxViewChangeStub.stubGetNinoError(testMtditid, NinoResponseError(INTERNAL_SERVER_ERROR, "Error Message"))
 
         stubUserDetails()
-        getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-        getPropDeets(propertySuccessResponse())
 
         And("I wiremock stub a single business obligation response")
         SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)

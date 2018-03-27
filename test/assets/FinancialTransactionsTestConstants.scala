@@ -17,7 +17,7 @@
 package assets
 
 import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import models.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
 import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter
 

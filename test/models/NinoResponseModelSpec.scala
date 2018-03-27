@@ -18,6 +18,7 @@ package models
 
 import assets.BaseTestConstants._
 import assets.NinoLookupTestConstants._
+import models.core.{Nino, NinoResponseError}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.test.UnitSpec

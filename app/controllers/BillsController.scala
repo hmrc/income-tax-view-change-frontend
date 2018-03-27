@@ -23,7 +23,8 @@ import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.Crystallised
-import models.{IncomeSourcesModel, LastTaxCalculationWithYear}
+import models.calculation.LastTaxCalculationWithYear
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}

@@ -18,7 +18,7 @@ package mocks.services
 
 import assets.BaseTestConstants.testMtditid
 import assets.FinancialTransactionsTestConstants.{financialTransactionsErrorModel, financialTransactionsModel}
-import models.FinancialTransactionsResponseModel
+import models.financialTransactions.FinancialTransactionsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

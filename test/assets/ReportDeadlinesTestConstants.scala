@@ -16,10 +16,10 @@
 
 package assets
 
-import models.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
+import assets.BaseTestConstants._
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter
-import assets.BaseTestConstants._
 
 object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
 

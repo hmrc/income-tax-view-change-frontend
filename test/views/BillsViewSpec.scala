@@ -24,7 +24,7 @@ import assets.PropertyDetailsTestConstants._
 import assets.BaseTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._

@@ -19,7 +19,7 @@ package views
 import assets.BaseTestConstants._
 import assets.Messages.{Statements => messages}
 import config.FrontendAppConfig
-import models._
+import models.financialTransactions.{FinancialTransactionsErrorModel, SubItemModel, TransactionModel, TransactionModelWithYear}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status

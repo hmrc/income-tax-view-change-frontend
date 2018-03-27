@@ -18,6 +18,8 @@ package models
 
 import assets.EstimatesTestConstants._
 import enums._
+import enums._
+import models.calculation.{LastTaxCalculationError, LastTaxCalculationWithYear}
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 

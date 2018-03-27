@@ -18,9 +18,9 @@ package assets
 
 import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import enums.{Crystallised, Estimate}
-import models._
 import play.api.libs.json.{JsValue, Json}
 import assets.EstimatesTestConstants._
+import models.calculation._
 
 object CalcBreakdownTestConstants {
 

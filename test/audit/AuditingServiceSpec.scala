@@ -16,17 +16,17 @@
 
 package audit
 
-import _root_.models.ExitSurveyModel
 import audit.models.ExitSurveyAuditing.ExitSurveyAuditModel
 import config.{FrontendAppConfig, FrontendAuditConnector}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import utils.TestSupport
+import _root_.models.core.ExitSurveyModel
 
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HeaderCarrier
 
 class AuditingServiceSpec extends TestSupport with BeforeAndAfterEach {
 

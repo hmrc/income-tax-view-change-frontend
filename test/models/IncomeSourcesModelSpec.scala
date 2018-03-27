@@ -17,8 +17,8 @@
 package models
 
 import assets.BaseTestConstants._
+import assets.IncomeSourcesTestConstants._
 import assets.BusinessDetailsTestConstants._
-import assets.IncomeSourceDetailsTestConstants._
 import assets.PropertyDetailsTestConstants._
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
@@ -26,15 +26,15 @@ import uk.gov.hmrc.play.test.UnitSpec
 class IncomeSourcesModelSpec extends UnitSpec with Matchers {
 
   "The IncomeSourceDetailsModel" when {
-    "the user has both business and property income sources" should {
+    "the user has both businesses and property income sources" should {
       //Test Business details
       s"have a business ID of $testSelfEmploymentId" in {
         bothIncomeSourceSuccessMisalignedTaxYear.businessIncomeSources.head.selfEmploymentId shouldBe testSelfEmploymentId
       }
-      s"have the business accounting period start date of ${testBusinessAccountingPeriod.start}" in {
+      s"have the businesses accounting period start date of ${testBusinessAccountingPeriod.start}" in {
         bothIncomeSourceSuccessMisalignedTaxYear.businessIncomeSources.head.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
       }
-      s"have the business accounting period end date of ${testBusinessAccountingPeriod.end}" in {
+      s"have the businesses accounting period end date of ${testBusinessAccountingPeriod.end}" in {
         bothIncomeSourceSuccessMisalignedTaxYear.businessIncomeSources.head.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
       }
       s"should have the trading name of 'Test Business'" in {
@@ -59,10 +59,10 @@ class IncomeSourcesModelSpec extends UnitSpec with Matchers {
       s"have a business ID of $testSelfEmploymentId" in {
         businessIncomeSourceSuccess.businessIncomeSources.head.selfEmploymentId shouldBe testSelfEmploymentId
       }
-      s"have the business accounting period start date of ${testBusinessAccountingPeriod.start}" in {
+      s"have the businesses accounting period start date of ${testBusinessAccountingPeriod.start}" in {
         businessIncomeSourceSuccess.businessIncomeSources.head.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
       }
-      s"have the business accounting period end date of ${testBusinessAccountingPeriod.end}" in {
+      s"have the businesses accounting period end date of ${testBusinessAccountingPeriod.end}" in {
         businessIncomeSourceSuccess.businessIncomeSources.head.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
       }
       s"should have the trading name of 'Test Business'" in {

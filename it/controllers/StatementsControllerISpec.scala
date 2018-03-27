@@ -24,10 +24,10 @@ import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
-import utils.ImplicitCurrencyFormatter._
 import utils.ImplicitDateFormatter
+import utils.ImplicitCurrencyFormatter
 
-class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
+class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with ImplicitCurrencyFormatter with GenericStubMethods {
 
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]

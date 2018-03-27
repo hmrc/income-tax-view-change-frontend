@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.FinancialTransactionsConnector
-import models.FinancialTransactionsResponseModel
+import models.financialTransactions.FinancialTransactionsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

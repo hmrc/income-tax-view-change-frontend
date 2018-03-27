@@ -19,7 +19,7 @@ package connectors
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import mocks.MockHttp
-import models.{CalculationDataErrorModel, CalculationDataResponseModel}
+import models.calculation.{CalculationDataErrorModel, CalculationDataResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpResponse

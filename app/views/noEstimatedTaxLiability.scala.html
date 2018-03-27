@@ -18,13 +18,13 @@
 @import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
 @import views.helpers.TaxYearRenderHelper._
-@import models.CalculationDataResponseModel
+@import models.calculation.CalculationDataResponseModel
 @import views.html.helpers.breadcrumbHelper
 @import views.helpers.EstimatesPage
-@import models.{Breadcrumb, BreadcrumbItem}
+@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import views.html.helpers.backToHomeHelper
 
-@(taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.IncomeSourcesModel)
+@(taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.incomeSourcesWithDeadlines.IncomeSourcesModel)
 
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(

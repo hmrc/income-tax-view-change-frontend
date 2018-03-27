@@ -18,7 +18,7 @@ package assets
 
 import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testTaxCalculationId}
 import enums.{Crystallised, Estimate}
-import models._
+import models.calculation._
 
 object EstimatesTestConstants {
 

@@ -16,12 +16,11 @@
 
 package controllers
 
-
-import assets.BaseIntegrationTestConstants.testSelfEmploymentId
-import assets.BusinessDetailsIntegrationTestConstants._
-import assets.PropertyDetailsIntegrationTestConstants._
+import helpers.IntegrationTestConstants.GetIncomeSourceDetails
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import assets.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
 import helpers.{ComponentSpecBase, GenericStubMethods}
-import play.api.http.Status.{OK, SEE_OTHER, INTERNAL_SERVER_ERROR}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 
 class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
@@ -32,14 +31,18 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
       "return the correct page with a valid total" in {
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(businessSuccessResponse(testSelfEmploymentId))
-        getPropDeets(propertySuccessResponse())
+
+        And("I wiremock stub a successful Income Source Details response with single Business income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+        )
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
-        verifyBizDeetsCall()
-        verifyPropDeetsCall()
+        Then("I verify the Income Source Details has been successfully wiremocked")
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
         verifyBizObsCall(testSelfEmploymentId)
 
         Then("the view displays the correct title, username and links")
@@ -63,19 +66,21 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
       }
     }
 
-    "isAuthorisedUser with an active enrolment, but has no businesses" should {
+    "isAuthorisedUser with an active enrolment, but has no business" should {
 
       "return an internal server error" in {
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(emptyBusinessDetailsResponse())
-        getPropDeets(propertySuccessResponse())
+
+        And("I wiremock stub a successful Income Source Details response with single Business income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
-        verifyBizDeetsCall()
-        verifyPropDeetsCall()
+        Then("I verify the Income Source Details has been successfully wiremocked")
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
         verifyBizObsCall(testSelfEmploymentId)
 
         Then("an ISE is displayed")
@@ -90,15 +95,15 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
       "return an internal server error" in {
         isAuthorisedUser(true)
         stubUserDetails()
-        getBizDeets(businessFailureResponse("500","ISE"))
-        getPropDeets(propertySuccessResponse())
+
+        And("I wiremock stub a successful Income Source Details response with single Business income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR, GetIncomeSourceDetails.errorResponse)
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
-        verifyBizDeetsCall()
-        verifyPropDeetsCall()
-        verifyBizObsCall(testSelfEmploymentId)
+        Then("I verify the Income Source Details has been successfully wiremocked")
+        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
         Then("an ISE is displayed")
         res should have(
@@ -123,7 +128,5 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         )
       }
     }
-
   }
-
 }

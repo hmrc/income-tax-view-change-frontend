@@ -17,7 +17,7 @@ package assets
 
 import java.time.LocalDate
 
-import models.{ReportDeadlineModel, ReportDeadlinesModel}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter._
 
