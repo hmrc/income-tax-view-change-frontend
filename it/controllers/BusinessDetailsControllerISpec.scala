@@ -16,8 +16,8 @@
 
 package controllers
 
-import helpers.IntegrationTestConstants.GetIncomeSourceDetails
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import assets.IncomeSourceIntegrationTestConstants._
 import assets.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -34,7 +34,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
 
         And("I wiremock stub a successful Income Source Details response with single Business income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          OK, businessAndPropertyResponse
         )
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
@@ -73,7 +73,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with single Business income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.propertyOnlyResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
@@ -97,7 +97,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with single Business income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR, GetIncomeSourceDetails.errorResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR, errorResponse)
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)

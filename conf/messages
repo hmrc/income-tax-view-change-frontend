@@ -111,6 +111,7 @@ obligations.pi.portfolio                                        = This covers al
 obligations.error.p1                                            = We can''t display your next report due date at the moment.
 obligations.error.p2                                            = Try refreshing the page in a few minutes.
 obligations.ceased                                              = This business ceased trading on {0}.
+obligations.ceasedProperties                                    = Ceased trading on {0}.
 obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
 
@@ -175,6 +176,7 @@ account.title                                                   = Account detail
 account.heading                                                 = Account details
 account.businesses                                              = Your businesses
 account.properties                                              = Your properties
+account.ceasedProperties                                        = Ceased trading on {0}.
 account.reportingPeriod                                         = Reporting period: {0} - {1}
 
 ## Business Details Page ##

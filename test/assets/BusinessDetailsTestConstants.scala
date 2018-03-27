@@ -112,10 +112,7 @@ object BusinessDetailsTestConstants {
     accountingPeriod = testBusinessAccountingPeriod,
     cashOrAccruals = Some("CASH"),
     tradingStartDate = Some("2017-1-1"),
-    cessation = Some(CessationModel(
-      date = Some("2018-5-30"),
-      reason = Some("It was a really, really bad idea")
-    )),
+    cessation = Some(testCessation),
     tradingName = Some(testTradeName),
     address = Some(testBizAddress),
     contactDetails = None,

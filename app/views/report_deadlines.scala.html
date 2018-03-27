@@ -78,7 +78,13 @@
                         <section>
                     }
                     <h2 id="pi-section" class="heading-large">@Messages("obligations.pi.subheading")</h2>
-                    <p id="portfolio">@Messages("obligations.pi.portfolio")</p>
+                    <p id="portfolio">
+                        @p.incomeSource.cessation.fold{
+                            @Messages("obligations.pi.portfolio")
+                        }{ cessation =>
+                            @Messages("obligations.ceasedProperties",cessation.date.get.toLongDate)
+                        }
+                    </p>
                     @renderReportDeadlines(p.reportDeadlines, "pi")
                 </section>
             }

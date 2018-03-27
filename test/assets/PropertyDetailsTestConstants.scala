@@ -18,7 +18,7 @@ package assets
 
 import assets.BaseTestConstants.testPropertyIncomeId
 import assets.ReportDeadlinesTestConstants._
-import models.core.AccountingPeriodModel
+import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{PropertiesRentedModel, PropertyDetailsModel}
 import models.incomeSourcesWithDeadlines.PropertyIncomeWithDeadlinesModel
 import utils.ImplicitDateFormatter
@@ -26,6 +26,8 @@ import utils.ImplicitDateFormatter
 object PropertyDetailsTestConstants extends ImplicitDateFormatter {
 
   val testPropertyAccountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05")
+
+  val testCessation = CessationModel(Some("2018-1-1".toLocalDate), Some("It was a stupid idea anyway"))
 
   val propertyDetails = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
@@ -41,8 +43,27 @@ object PropertyDetailsTestConstants extends ImplicitDateFormatter {
     paperless = None
   )
 
+  val ceasedPropertyDetails = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = testPropertyAccountingPeriod,
+    propertiesRented = Some(PropertiesRentedModel(
+      uk = Some(2),
+      eea = None,
+      nonEea = None,
+      total = Some(2)
+    )),
+    cessation = Some(testCessation),
+    contactDetails = None,
+    paperless = None
+  )
+
   val propertyIncomeModel = PropertyIncomeWithDeadlinesModel(
     propertyDetails,
+    obligationsDataSuccessModel
+  )
+
+  val ceasedPropertyIncomeModel = PropertyIncomeWithDeadlinesModel(
+    ceasedPropertyDetails,
     obligationsDataSuccessModel
   )
 }
