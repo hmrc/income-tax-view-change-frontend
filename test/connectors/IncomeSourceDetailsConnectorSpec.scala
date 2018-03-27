@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(incomeSourceDetails)))
+  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(singleBusinessIncome)))
   val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
@@ -44,7 +44,7 @@ class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp with Mo
 
     "return an IncomeSourceDetailsModel when successful JSON is received" in {
       setupMockHttpGet(testUrl)(successResponse)
-      await(result) shouldBe incomeSourceDetails
+      await(result) shouldBe singleBusinessIncome
       verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), testReferrerUrl)
       verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtditid, testNino, List(testSelfEmploymentId), None), testReferrerUrl)
     }

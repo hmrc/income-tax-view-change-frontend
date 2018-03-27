@@ -24,7 +24,6 @@ import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredi
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
-import services.IncomeSourceDetailsService
 
 import scala.concurrent.Future
 
@@ -35,7 +34,6 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
                                           val authenticate: AuthenticationPredicate,
                                           val retrieveNino: NinoPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val itvcErrorHandler: ItvcErrorHandler
                                         ) extends BaseController {
 
@@ -46,14 +44,12 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
     }
 
   private def renderView[A](id: Int)(implicit user: MtdItUser[A]): Future[Result] = {
-    incomeSourceDetailsService.getBusinessDetails(user.mtditid, user.nino, id).map {
-      case Right(Some((bizDeets, _))) => Ok(views.html.businessDetailsView(bizDeets))
-      case Right(None) =>
+    user.incomeSources.findBusinessById(id) match {
+      case Some(business) =>
+        Future.successful(Ok(views.html.businessDetailsView(business)))
+      case _ =>
         Logger.debug(s"[BusinessDetailsController][getBusinessDetails] No Business Details found with ID: $id")
-        itvcErrorHandler.showInternalServerError
-      case Left(err) =>
-        Logger.debug(s"[BusinessDetailsController][getBusinessDetails] Error Returned from getBusinessDetails. Message: ${err.message}")
-        itvcErrorHandler.showInternalServerError
+        Future.successful(itvcErrorHandler.showInternalServerError)
     }
   }
 }

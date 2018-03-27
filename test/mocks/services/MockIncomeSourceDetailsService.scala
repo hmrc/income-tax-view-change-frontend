@@ -17,10 +17,8 @@
 package mocks.services
 
 import assets.BaseTestConstants.{testMtditid, testNino}
-import assets.IncomeSourcesTestConstants._
-import models.core.ErrorModel
-import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourcesWithDeadlines.{IncomeSourcesError, IncomeSourcesResponseModel}
+import assets.IncomeSourcesWithDeadlinesTestConstants._
+import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesError, IncomeSourcesWithDeadlinesResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.mockito.MockitoSugar
@@ -40,18 +38,9 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
     reset(mockIncomeSourceDetailsService)
   }
 
-  def setupMockGetIncomeSourceDetails(mtditid: String, nino: String)(sources: IncomeSourcesResponseModel): Unit = {
+  def setupMockGetIncomeSourceDetails(mtditid: String, nino: String)(sources: IncomeSourcesWithDeadlinesResponse): Unit = {
     when(
       mockIncomeSourceDetailsService.getIncomeSourceDetails(ArgumentMatchers.eq(mtditid), ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(sources))
-  }
-
-  def setupMockGetBusinessDetails(mtditid: String, nino: String, id: Int)(sources: Either[ErrorModel, Option[(BusinessDetailsModel, Int)]]): Unit = {
-    when(mockIncomeSourceDetailsService.getBusinessDetails(
-      ArgumentMatchers.eq(mtditid),
-      ArgumentMatchers.eq(nino),
-      ArgumentMatchers.eq(id)
-    )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(sources))
   }
 
@@ -61,6 +50,6 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
   def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(noIncomeSourceSuccess)
   def mockBothIncomeSourcesBusinessAligned(): Unit =
     setupMockGetIncomeSourceDetails(testMtditid, testNino)(bothIncomeSourcesSuccessBusinessAligned)
-  def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesError)
+  def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesWithDeadlinesError)
 
 }

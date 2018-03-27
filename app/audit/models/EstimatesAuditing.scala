@@ -32,10 +32,10 @@ object EstimatesAuditing {
       "nino" -> user.nino,
       "hasBusiness" -> user.incomeSources.hasBusinessIncome.toString,
       "hasProperty" -> user.incomeSources.hasPropertyIncome.toString,
-      "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.end}"),
-      "propAccPeriodStart" -> user.incomeSources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "propAccPeriodEnd" -> user.incomeSources.propertyIncomeSource.fold("-")(x => s"${x.accountingPeriod.end}"),
+      "bizAccPeriodStart" -> business.fold("-")(x => s"${x.incomeSource.accountingPeriod.start}"),
+      "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.incomeSource.accountingPeriod.end}"),
+      "propAccPeriodStart" -> user.incomeSources.propertyIncomeSource.fold("-")(x => s"${x.incomeSource.accountingPeriod.start}"),
+      "propAccPeriodEnd" -> user.incomeSources.propertyIncomeSource.fold("-")(x => s"${x.incomeSource.accountingPeriod.end}"),
       "currentEstimate" -> estimate
     )
     override val auditType: String = estimatesAuditType

@@ -16,16 +16,17 @@
 
 package assets
 
-import assets.ReportDeadlinesTestConstants._
 import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testSelfEmploymentId, testSelfEmploymentId2}
+import assets.ReportDeadlinesTestConstants._
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourcesWithDeadlines.BusinessIncomeModel
+import models.incomeSourcesWithDeadlines.BusinessIncomeWithDeadlinesModel
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
 
 object BusinessDetailsTestConstants {
 
   val testBusinessAccountingPeriod = AccountingPeriodModel(start = "2017-6-1", end = "2018-5-30")
+  val test2019BusinessAccountingPeriod = AccountingPeriodModel(start = "2018-3-5", end = "2019-3-6")
   val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = "2017-3-5", end = "2018-3-6")
   val testTradeName = "business"
   val testTradeName2 = "business"
@@ -39,19 +40,6 @@ object BusinessDetailsTestConstants {
   )
   val testContactDetails = ContactDetailsModel(Some("123456789"),Some("0123456789"),Some("8008135"),Some("google@chuckNorris.com"))
   val testCessation = CessationModel(Some("2018-1-1".toLocalDate), Some("It was a stupid idea anyway"))
-
-  val businessDetailsSuccess = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = testBusinessAccountingPeriod,
-    tradingName = Some(testTradeName),
-    address = Some(testBizAddress),
-    contactDetails = Some(testContactDetails),
-    tradingStartDate = Some(""),
-    cashOrAccruals = Some(""),
-    seasonal = Some(true),
-    cessation = Some(testCessation),
-    paperless = Some(true)
-  )
 
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
@@ -74,6 +62,45 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some("2017-1-1"),
     cessation = None,
     tradingName = Some(testTradeName2),
+    address = Some(testBizAddress),
+    contactDetails = None,
+    seasonal = None,
+    paperless = None
+  )
+
+  val business2018 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = test2018BusinessAccountingPeriod,
+    cashOrAccruals = Some("CASH"),
+    tradingStartDate = Some("2017-1-1"),
+    cessation = None,
+    tradingName = Some(testTradeName),
+    address = Some(testBizAddress),
+    contactDetails = None,
+    seasonal = None,
+    paperless = None
+  )
+
+  val business2019 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = test2019BusinessAccountingPeriod,
+    cashOrAccruals = Some("CASH"),
+    tradingStartDate = Some("2017-1-1"),
+    cessation = None,
+    tradingName = Some(testTradeName),
+    address = Some(testBizAddress),
+    contactDetails = None,
+    seasonal = None,
+    paperless = None
+  )
+
+  val alignedBusiness = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5"),
+    cashOrAccruals = Some("CASH"),
+    tradingStartDate = Some("2017-1-1"),
+    cessation = None,
+    tradingName = Some(testTradeName),
     address = Some(testBizAddress),
     contactDetails = None,
     seasonal = None,
@@ -122,47 +149,32 @@ object BusinessDetailsTestConstants {
   val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
 
   val businessIncomeModel =
-    BusinessIncomeModel(
-      testSelfEmploymentId,
-      testTradeName,
-      None,
-      testBusinessAccountingPeriod,
+    BusinessIncomeWithDeadlinesModel(
+      business1,
       obligationsDataSuccessModel
     )
 
   val businessIncomeModel2 =
-    BusinessIncomeModel(
-      testSelfEmploymentId2,
-      testTradeName2,
-      None,
-      testBusinessAccountingPeriod,
+    BusinessIncomeWithDeadlinesModel(
+      business2,
       obligationsDataSuccessModel
     )
 
   val business2018IncomeModel =
-    BusinessIncomeModel(
-      testSelfEmploymentId,
-      testTradeName,
-      None,
-      test2018BusinessAccountingPeriod,
+    BusinessIncomeWithDeadlinesModel(
+      business2018,
       obligationsDataSuccessModel
     )
 
   val businessIncomeModelAlignedTaxYear =
-    BusinessIncomeModel(
-      testSelfEmploymentId,
-      testTradeName,
-      None,
-      AccountingPeriodModel(start = "2017-4-6", end = "2018-4-5"),
+    BusinessIncomeWithDeadlinesModel(
+      alignedBusiness,
       obligationsDataSuccessModel
     )
 
   val business2019IncomeModel =
-    BusinessIncomeModel(
-      testSelfEmploymentId,
-      testTradeName,
-      None,
-      AccountingPeriodModel(start = "2018-3-5", end = "2019-3-6"),
+    BusinessIncomeWithDeadlinesModel(
+      business2019,
       obligationsDataSuccessModel
     )
 }

@@ -24,14 +24,12 @@ import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import enums.{Crystallised, Estimate}
-import models._
 import models.calculation.{CalcDisplayError, CalcDisplayModel, CalcDisplayNoDataFound}
-import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
-import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, ActionBuilder, AnyContent, Result}
-import play.twirl.api.Html
 import services.{CalculationService, FinancialTransactionsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.ImplicitDateFormatter
@@ -56,7 +54,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
 
   val showCalculationForYear: Int => Action[AnyContent] = taxYear => action.async {
     implicit user =>
-      implicit val sources: IncomeSourcesModel = user.incomeSources
+      implicit val sources: IncomeSourcesWithDeadlinesModel = user.incomeSources
       calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
         case calcDisplayModel: CalcDisplayModel =>
           auditEstimate(user, calcDisplayModel.calcAmount.toString)
@@ -75,7 +73,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   }
 
   private def renderCrystallisedView(calcDisplayModel: CalcDisplayModel, taxYear: Int)(implicit user: MtdItUser[_]): Future[Result] = {
-    implicit val sources: IncomeSourcesModel = user.incomeSources
+    implicit val sources: IncomeSourcesWithDeadlinesModel = user.incomeSources
     financialTransactionsService.getFinancialTransactions(user.mtditid).map {
       case transactions: FinancialTransactionsModel => transactions.findChargeForTaxYear(taxYear) match {
         case Some(charge) => Ok(views.html.crystallised(calcDisplayModel, charge, taxYear))

@@ -18,13 +18,12 @@ package services
 
 import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
-import assets.IncomeSourcesTestConstants._
-import assets.BusinessDetailsTestConstants._
+import assets.IncomeSourcesWithDeadlinesTestConstants._
 import assets.ReportDeadlinesTestConstants.obligationsDataSuccessModel
 import audit.mocks.MockAuditingService
 import mocks.connectors.MockIncomeSourceDetailsConnector
 import mocks.services.MockReportDeadlinesService
-import models.incomeSourcesWithDeadlines.IncomeSourcesError
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesError
 import utils.TestSupport
 
 
@@ -80,25 +79,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
       "return an IncomeSourceError" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(errorResponse)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe IncomeSourcesError
-      }
-    }
-  }
-
-  "The IncomeSourceDetailsService .getBusinessDetails method" when {
-    "a self-employment-ID is passed through" should {
-      "return the corresponding BusinessModel" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(singleBusinessIncome)
-
-        await(TestIncomeSourceDetailsService.getBusinessDetails(testMtditid, testNino, 0)) shouldBe Right(Some((business1, 0)))
-      }
-    }
-
-    "an error is returned from the Income Source Details connector" should {
-      "return a ErrorModel" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(errorResponse)
-
-        await(TestIncomeSourceDetailsService.getBusinessDetails(testMtditid, testNino, 0)) shouldBe Left(businessErrorModel)
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe IncomeSourcesWithDeadlinesError
       }
     }
   }

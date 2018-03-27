@@ -23,7 +23,7 @@ import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.{Crystallised, Estimate}
-import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
@@ -48,7 +48,7 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
   }
 
   private[EstimatesController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
-    implicit val sources: IncomeSourcesModel = user.incomeSources
+    implicit val sources: IncomeSourcesWithDeadlinesModel = user.incomeSources
 
     calculationService.getAllLatestCalculations(user.nino, sources.orderedTaxYears).map{
       case estimatesResponse if estimatesResponse.exists(_.isErrored) =>

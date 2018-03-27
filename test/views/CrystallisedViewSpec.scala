@@ -28,7 +28,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import models.calculation.CalculationDataModel
 import models.financialTransactions.TransactionModel
-import models.incomeSourcesWithDeadlines.IncomeSourcesModel
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -42,12 +42,12 @@ class CrystallisedViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
+  val testIncomeSources: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), testIncomeSources)(FakeRequest())
-  val testBusinessIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List(businessIncomeModelAlignedTaxYear), None)
-  val testPropertyIncomeSource: IncomeSourcesModel = IncomeSourcesModel(List.empty, Some(propertyIncomeModel))
+  val testBusinessIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), None)
+  val testPropertyIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List.empty, Some(propertyIncomeModel))
 
-  private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesModel, transactions: TransactionModel) = new {
+  private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesWithDeadlinesModel, transactions: TransactionModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.crystallised(
       calculationDisplaySuccessModel(calcDataModel),
       transactions,

@@ -16,7 +16,7 @@
 
 package assets
 
-import assets.IncomeSourcesTestConstants._
+import assets.IncomeSourcesWithDeadlinesTestConstants._
 import auth.{MtdItUser, MtdItUserOptionNino}
 import models.core.{UserDetailsError, UserDetailsModel}
 import play.api.http.Status

@@ -21,15 +21,13 @@ import assets.BusinessDetailsTestConstants._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
 import models.core.ErrorModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import utils.TestSupport
 
-class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDetailsService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class BusinessDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
   object TestBusinessDetailsController extends BusinessDetailsController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -38,7 +36,6 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
-    mockIncomeSourceDetailsService,
     app.injector.instanceOf[ItvcErrorHandler]
   )
 
@@ -54,7 +51,6 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         "return Status OK (200)" in {
           TestBusinessDetailsController.config.features.accountDetailsEnabled(true)
           mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testMtditid, testNino, 0)(Right(Some(business1 -> 0)))
           status(result) shouldBe Status.OK
         }
 
@@ -75,8 +71,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
 
         "return Status (500)" in {
           TestBusinessDetailsController.config.features.accountDetailsEnabled(true)
-          mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testMtditid, testNino, 0)(Right(None))
+          mockNoIncomeSources()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -87,8 +82,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockIncomeSourceDet
         lazy val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
 
         "return Status (500)" in {
-          mockSingleBusinessIncomeSource()
-          setupMockGetBusinessDetails(testMtditid, testNino, 0)(Left(ErrorModel(INTERNAL_SERVER_ERROR, "error")))
+          mockErrorIncomeSource()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 

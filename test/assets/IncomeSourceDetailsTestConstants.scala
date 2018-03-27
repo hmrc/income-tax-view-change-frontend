@@ -23,7 +23,6 @@ import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetails
 
 object IncomeSourceDetailsTestConstants {
 
-  val incomeSourceDetails = IncomeSourceDetailsModel(List(businessDetailsSuccess), None)
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(List(business1, business2), Some(propertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(List(business1), None)
   val propertyIncomeOnly = IncomeSourceDetailsModel(List(), Some(propertyDetails))

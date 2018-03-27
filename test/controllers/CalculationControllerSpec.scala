@@ -20,7 +20,7 @@ import assets.BaseTestConstants._
 import assets.EstimatesTestConstants._
 import assets.Messages
 import assets.Messages.EstimatedTaxLiabilityError
-import assets.IncomeSourcesTestConstants._
+import assets.IncomeSourcesWithDeadlinesTestConstants._
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}

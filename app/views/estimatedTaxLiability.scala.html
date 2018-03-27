@@ -26,7 +26,7 @@
 @import views.html.helpers.calcBreakdownHelper
 @import views.html.helpers.backToHomeHelper
 
-@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.incomeSourcesWithDeadlines.IncomeSourcesModel)
+@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_], sources: models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel)
 
 @calcBreakdown = {
     <section id="inYearCalcBreakdown">

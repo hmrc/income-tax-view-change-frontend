@@ -17,7 +17,7 @@
 package utils
 
 import assets.BaseTestConstants._
-import assets.IncomeSourcesTestConstants._
+import assets.IncomeSourcesWithDeadlinesTestConstants._
 import auth.MtdItUser
 import com.typesafe.config.Config
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
