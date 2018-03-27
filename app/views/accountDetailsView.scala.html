@@ -50,9 +50,12 @@ serviceInfo = breadcrumb
     </ul>
     }
 
-    @if(properties.isDefined){
+    @properties.map{ properties =>
         <h2 id="your-properties" class="heading-large">@messages("account.properties")</h2>
-        <p id="reporting-period">@messages("account.reportingPeriod", properties.get.incomeSource.accountingPeriod.start.toLongDateNoYear, properties.get.incomeSource.accountingPeriod.end.toLongDateNoYear)</p>
+        @properties.incomeSource.cessation.map{ cessation =>
+            <p id="ceased-properties">@messages("account.ceasedProperties",cessation.date.get.toLongDate)</p>
+        }
+        <p id="reporting-period">@messages("account.reportingPeriod", properties.incomeSource.accountingPeriod.start.toLongDateNoYear, properties.incomeSource.accountingPeriod.end.toLongDateNoYear)</p>
     }
 
     @backToHomeHelper("AccountDetailsPage")

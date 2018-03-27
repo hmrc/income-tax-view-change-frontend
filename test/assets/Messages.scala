@@ -170,6 +170,7 @@ object Messages {
     val periodHeading = "Report period"
     val statusHeading = "Report due date"
     val ceased: String => String = date => s"This business ceased trading on $date."
+    val ceasedProperty: String => String = date => s"Ceased trading on $date."
     val portfolio = "This covers all properties that you earn income from."
     val eops = "Whole tax year (final check)"
     object Errors {
@@ -207,6 +208,7 @@ object Messages {
     val heading = "Account details"
     val yourBusinesses = "Your businesses"
     val yourProperties = "Your properties"
+    val ceasedProperties: String => String = date => s"Ceased trading on $date."
     val reportingPeriod: (String, String) => String = (start, end) => "Reporting period: " + start + " - " + end
   }
 

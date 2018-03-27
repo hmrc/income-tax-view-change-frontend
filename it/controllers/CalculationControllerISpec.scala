@@ -15,16 +15,12 @@
  */
 package controllers
 
-import enums.{Crystallised, Estimate}
 import assets.BaseIntegrationTestConstants._
-import assets.BusinessDetailsIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
-import assets.PropertyDetailsIntegrationTestConstants._
-import assets.ReportDeadlinesIntegrationTestConstants._
-import assets.StatementsIntegrationTestConstants._
+import assets.IncomeSourceIntegrationTestConstants._
+import enums.{Crystallised, Estimate}
 import helpers.servicemocks._
-import helpers.IntegrationTestConstants.GetIncomeSourceDetails
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import models.calculation.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
 import models.financialTransactions.FinancialTransactionsModel
@@ -68,7 +64,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          OK, businessAndPropertyResponse
         )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
@@ -130,7 +126,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+            OK, businessAndPropertyResponse
           )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
@@ -209,7 +205,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+            OK, businessAndPropertyResponse
           )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
@@ -286,7 +282,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+            OK, businessAndPropertyResponse
           )
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
@@ -339,7 +335,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          OK, businessAndPropertyResponse
         )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
@@ -414,7 +410,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          OK, businessAndPropertyResponse
         )
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
@@ -452,7 +448,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          OK, businessAndPropertyResponse
         )
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
@@ -487,7 +483,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+          OK, businessAndPropertyResponse
         )
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")

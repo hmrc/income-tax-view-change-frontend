@@ -17,12 +17,69 @@
 package assets
 
 import play.api.libs.json.{JsArray, JsValue, Json}
+import assets.BaseIntegrationTestConstants.{otherTestSelfEmploymentId, testSelfEmploymentId}
+import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
+import models.incomeSourceDetails.BusinessDetailsModel
+import utils.ImplicitDateFormatter._
 
 object BusinessDetailsIntegrationTestConstants {
-  def businessSuccessResponse(selfEmploymentId: String): JsValue =
+
+  val business1 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = AccountingPeriodModel(
+      start = "2017-01-01",
+      end = "2017-12-31"
+    ),
+    cashOrAccruals = Some("CASH"),
+    tradingStartDate = Some("2017-01-01"),
+    cessation = Some(CessationModel(
+      date = Some("2017-12-31"),
+      reason = Some("It really, really was a bad idea")
+    )),
+    tradingName = Some("business"),
+    address = Some(AddressModel(
+      addressLine1 = "64 Zoo Lane",
+      addressLine2 = Some("Happy Place"),
+      addressLine3 = Some("Magical Land"),
+      addressLine4 = Some("England"),
+      postCode = Some("ZL1 064"),
+      countryCode = "UK"
+    )),
+    contactDetails = None,
+    seasonal = None,
+    paperless = None
+  )
+
+  val business2 = BusinessDetailsModel(
+    incomeSourceId = otherTestSelfEmploymentId,
+    accountingPeriod = AccountingPeriodModel(
+      start = "2018-01-01",
+      end = "2018-12-31"
+    ),
+    cashOrAccruals = Some("CASH"),
+    tradingStartDate = Some("2017-01-01"),
+    cessation = Some(CessationModel(
+      date = Some("2017-12-31"),
+      reason = Some("It really, really was a bad idea")
+    )),
+    tradingName = Some("secondBusiness"),
+    address = Some(AddressModel(
+      addressLine1 = "742 Evergreen Terrace",
+      addressLine2 = Some("Springfield"),
+      addressLine3 = Some("Oregon"),
+      addressLine4 = Some("USA"),
+      postCode = Some("51MP 50N5"),
+      countryCode = "USA"
+    )),
+    contactDetails = None,
+    seasonal = None,
+    paperless = None
+  )
+
+  val businessSuccessResponse: JsValue =
     Json.arr(
       Json.obj(
-        "id" -> selfEmploymentId,
+        "id" -> testSelfEmploymentId,
         "accountingPeriod" -> Json.obj(
           "start" -> "2017-01-01",
           "end" -> "2017-12-31"
@@ -40,10 +97,10 @@ object BusinessDetailsIntegrationTestConstants {
       )
     )
 
-  def otherSuccessResponse(selfEmploymentId: String): JsValue =
+  val otherSuccessResponse: JsValue =
     Json.arr(
       Json.obj(
-        "id"  ->  selfEmploymentId,
+        "id" -> otherTestSelfEmploymentId,
         "accountingPeriod" -> Json.obj(
           "start" -> "2018-01-01",
           "end" -> "2018-12-31"
@@ -62,10 +119,10 @@ object BusinessDetailsIntegrationTestConstants {
     )
 
 
-  def multipleSuccessResponse(id1: String, id2: String): JsValue =
+  val multipleSuccessResponse: JsValue =
     Json.arr(
       Json.obj(
-        "id" -> id1,
+        "id" -> testSelfEmploymentId,
         "accountingPeriod" -> Json.obj(
           "start" -> "2017-01-01",
           "end" -> "2017-12-31"
@@ -82,7 +139,7 @@ object BusinessDetailsIntegrationTestConstants {
         "businessPostcode" -> "ZL1 064"
       ),
       Json.obj(
-        "id" -> id2,
+        "id" -> otherTestSelfEmploymentId,
         "accountingPeriod" -> Json.obj(
           "start" -> "2018-01-01",
           "end" -> "2018-12-31"
@@ -100,7 +157,7 @@ object BusinessDetailsIntegrationTestConstants {
       )
     )
 
-  def emptyBusinessDetailsResponse(): JsValue = JsArray()
+  val emptyBusinessDetailsResponse: JsValue = JsArray()
 
   def businessFailureResponse(code: String, reason: String): JsValue =
     Json.obj(

@@ -101,7 +101,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       }
 
       "not contain a third row" in {
-        document.getElementById("bi-1-ob-3-status") shouldBe null
+        Option(document.getElementById("bi-1-ob-3-status")) shouldBe None
       }
     }
 
@@ -115,7 +115,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       }
 
       "not contain Property ReportDeadlines section" in {
-        document.getElementById("pi-section") shouldBe null
+        Option(document.getElementById("pi-section")) shouldBe None
       }
     }
 
@@ -141,7 +141,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       }
 
       "not contain Business ReportDeadlines section" in {
-        document.getElementById("bi-1-section") shouldBe null
+        Option(document.getElementById("bi-1-section")) shouldBe None
       }
     }
 
@@ -160,8 +160,28 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       import setup._
 
       "contains text under the business name stating the business has ceased trading" in {
-        document.getElementById("bi-1-ceased").text() shouldBe messages.ceased("30 May 2018")
+        document.getElementById("bi-1-ceased").text() shouldBe messages.ceased("1 January 2018")
       }
+    }
+
+    "when properties have ceased trading" should {
+      lazy val ceasedPropertyIncomeModel = IncomeSourcesWithDeadlinesModel(
+        List(),
+        Some(
+          PropertyIncomeWithDeadlinesModel(
+            ceasedPropertyDetails,
+            reportDeadlines = successModel
+          )
+        )
+      )
+
+      val setup = pageSetup(ceasedPropertyIncomeModel)
+      import setup._
+
+      "have text saying that the properties have ceased trading" in {
+        document.getElementById("portfolio").text() shouldBe messages.ceasedProperty("1 January 2018")
+      }
+
     }
 
     "when both Business and Property obligations are errored" should {
@@ -183,11 +203,11 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       import setup._
 
       "contains a no section Property ReportDeadlines" in {
-        document.getElementById("pi-section") shouldBe null
+        Option(document.getElementById("pi-section")) shouldBe None
       }
 
       "contains a no section Business ReportDeadlines" in {
-        document.getElementById("bi-1-section") shouldBe null
+        Option(document.getElementById("bi-1-section")) shouldBe None
       }
 
       "contains error content" which {
@@ -218,7 +238,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       import setup._
 
       "contain no section for Property ReportDeadlines" in {
-        document.getElementById("pi-section") shouldBe null
+        Option(document.getElementById("pi-section")) shouldBe None
       }
 
       "contains a section for Business ReportDeadlines" which {
@@ -251,7 +271,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       import setup._
 
       "contain no section for Business ReportDeadlines" in {
-        document.getElementById("bi-1-section") shouldBe null
+        Option(document.getElementById("bi-1-section")) shouldBe None
       }
 
       "contains a section for Property ReportDeadlines" which {
@@ -273,7 +293,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
     "show a back link to the Income Tax home page, when the home page feature is enabled" in {
       val setup = pageSetup(businessIncomeSource)
       import setup._
-      document.getElementById("it-home-back") shouldNot be(null)
+      Option(document.getElementById("it-home-back")) shouldNot be(None)
     }
   }
 }

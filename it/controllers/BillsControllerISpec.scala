@@ -16,10 +16,10 @@
 package controllers
 
 import assets.BaseIntegrationTestConstants._
+import assets.IncomeSourceIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import config.FrontendAppConfig
 import enums.{Crystallised, Estimate}
-import helpers.IntegrationTestConstants.GetIncomeSourceDetails
 import helpers.servicemocks._
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import models.calculation.LastTaxCalculation
@@ -40,7 +40,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
         stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId))
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
         SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
@@ -67,7 +67,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId))
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse =
@@ -115,7 +115,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, GetIncomeSourceDetails.multipleBusinessesAndPropertyResponse(testSelfEmploymentId, otherTestSelfEmploymentId)
+            OK, multipleBusinessesAndPropertyResponse
           )
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
@@ -172,7 +172,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, GetIncomeSourceDetails.multipleBusinessesAndPropertyResponse(testSelfEmploymentId, otherTestSelfEmploymentId)
+            OK, multipleBusinessesAndPropertyResponse
           )
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
@@ -230,7 +230,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, GetIncomeSourceDetails.businessAndPropertyResponse(testSelfEmploymentId)
+            OK, businessAndPropertyResponse
           )
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
