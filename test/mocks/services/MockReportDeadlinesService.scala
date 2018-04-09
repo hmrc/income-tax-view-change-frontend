@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import assets.BaseTestConstants.{testNino, testSelfEmploymentId}
+import assets.BaseTestConstants.{testNino, testSelfEmploymentId, testPropertyIncomeId}
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -39,17 +39,13 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
     reset(mockReportDeadlinesService)
   }
 
-  def setupMockBusinessReportDeadlinesResult(nino: String, selfEmploymentId: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockReportDeadlinesService.getBusinessReportDeadlines(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(selfEmploymentId))(ArgumentMatchers.any()))
+  def setupMockReportDeadlinesResult(incomeSourceId: String)(response: ReportDeadlinesResponseModel): Unit = {
+    when(mockReportDeadlinesService.getReportDeadlines(ArgumentMatchers.eq(incomeSourceId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockPropertyReportDeadlinesResult(nino: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockReportDeadlinesService.getPropertyReportDeadlines(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
-  }
-
-  def mockBusinessSuccess(): Unit = setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(
+  //Business Report Deadline Mocks
+  def mockBusinessSuccess(): Unit = setupMockReportDeadlinesResult(testSelfEmploymentId)(
     ReportDeadlinesModel(
       List(
         ReportDeadlineModel(
@@ -79,12 +75,12 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
       )
     )
   )
-
-  def mockBusinessError(): Unit = setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(
+  def mockBusinessError(): Unit = setupMockReportDeadlinesResult(testSelfEmploymentId)(
     ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 
-  def mockPropertySuccess(): Unit = setupMockPropertyReportDeadlinesResult(testNino)(
+  //Property Report Deadline Mocks
+  def mockPropertySuccess(): Unit = setupMockReportDeadlinesResult(testPropertyIncomeId)(
     ReportDeadlinesModel(
       List(
         ReportDeadlineModel(
@@ -114,8 +110,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
       )
     )
   )
-
-  def mockPropertyError(): Unit = setupMockPropertyReportDeadlinesResult(testNino)(
+  def mockPropertyError(): Unit = setupMockReportDeadlinesResult(testPropertyIncomeId)(
     ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 }
