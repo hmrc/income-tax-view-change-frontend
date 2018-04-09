@@ -24,30 +24,6 @@ import play.api.libs.json.Json
 
 object SelfAssessmentStub {
 
-  //ReportDeadlines
-  //===============
-  val businessReportDeadlinesUrl: (String, String) => String = (nino, selfEmploymentId) => s"/ni/$nino/self-employments/$selfEmploymentId/obligations"
-  val propertyReportDeadlinesUrl: String => String = nino => s"/ni/$nino/uk-properties/obligations"
-
-  def stubGetBusinessReportDeadlines(nino: String, selfEmploymentId: String, business: ReportDeadlinesModel): Unit =
-    WiremockHelper.stubGet(businessReportDeadlinesUrl(nino, selfEmploymentId), Status.OK, Json.toJson(business).toString())
-
-  def stubGetPropertyReportDeadlines(nino: String, property: ReportDeadlinesModel): Unit =
-    WiremockHelper.stubGet(propertyReportDeadlinesUrl(nino), Status.OK, Json.toJson(property).toString())
-
-  def stubPropertyReportDeadlinesError(nino: String): Unit =
-    WiremockHelper.stubGet(propertyReportDeadlinesUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
-
-  def stubBusinessReportDeadlinesError(nino: String, selfEmploymentId: String): Unit =
-    WiremockHelper.stubGet(businessReportDeadlinesUrl(nino, selfEmploymentId), Status.INTERNAL_SERVER_ERROR, "ISE")
-
-  def verifyGetBusinessReportDeadlines(nino: String, selfEmploymentId: String): Unit =
-    WiremockHelper.verifyGetWithHeader(businessReportDeadlinesUrl(nino, selfEmploymentId), "Accept", "application/vnd.hmrc.1.0+json")
-
-  def verifyGetPropertyReportDeadlines(nino: String): Unit =
-    WiremockHelper.verifyGetWithHeader(propertyReportDeadlinesUrl(nino), "Accept", "application/vnd.hmrc.1.0+json")
-
-
   // Calculation Breakdown Stubs
   // ===========================
   val calcUrl: (String,String) => String = (nino, taxCalculationId) => s"/ni/$nino/calculations/$taxCalculationId"

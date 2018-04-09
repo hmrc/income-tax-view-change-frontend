@@ -21,6 +21,7 @@ import models._
 import models.calculation.LastTaxCalculation
 import models.core.{Nino, NinoResponseError}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
+import models.reportDeadlines.ReportDeadlinesModel
 import play.api.http.Status
 import play.api.libs.json.Json
 
@@ -72,5 +73,20 @@ object IncomeTaxViewChangeStub {
 
   def verifyGetIncomeSourceDetails(mtditid: String): Unit =
     WiremockHelper.verifyGet(incomeSourceDetailsUrl(mtditid))
+
+
+
+  //ReportDeadlines Stubs
+  //=====================
+  val reportDeadlinesUrl: String => String = incomeSourceId => s"/income-tax-view-change/income-source/$incomeSourceId/report-deadlines"
+
+  def stubGetReportDeadlines(incomeSourceId: String, deadlines: ReportDeadlinesModel): Unit =
+    WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId), Status.OK, Json.toJson(deadlines).toString())
+
+  def stubGetReportDeadlinesError(incomeSourceId: String): Unit =
+    WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId), Status.INTERNAL_SERVER_ERROR, "ISE")
+
+  def verifyGetReportDeadlines(incomeSourceId: String): Unit =
+    WiremockHelper.verifyGet(reportDeadlinesUrl(incomeSourceId))
 
 }
