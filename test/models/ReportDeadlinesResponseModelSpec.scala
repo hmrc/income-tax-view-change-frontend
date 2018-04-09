@@ -43,6 +43,10 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
         obligation.due shouldBe "2017-7-31".toLocalDate
       }
 
+      "have the periodKey as '#001'" in {
+        obligation.periodKey shouldBe "#001"
+      }
+
       "have the obligation met status as 'true'" in {
         obligation.met shouldBe true
       }
@@ -70,6 +74,10 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
 
       "have the due date as 30th October 2017" in {
         obligation.due shouldBe "2017-10-30".toLocalDate
+      }
+
+      "have the periodKey as '#002'" in {
+        obligation.periodKey shouldBe "#002"
       }
 
       "have the obligation met status as 'false'" in {
@@ -101,6 +109,10 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
         obligation.due shouldBe "2017-10-31".toLocalDate
       }
 
+      "have the periodKey as '#003'" in {
+        obligation.periodKey shouldBe "#003"
+      }
+
       "have the obligation met status as 'false'" in {
         obligation.met shouldBe false
       }
@@ -128,6 +140,10 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
 
       "have the due date as 1st May 2018" in {
         obligation.due shouldBe "2018-5-1".toLocalDate
+      }
+
+      "have the periodKey as '#001'" in {
+        obligation.periodKey shouldBe "#001"
       }
 
       "have the obligation met status as 'true'" in {

@@ -122,27 +122,6 @@ object BusinessDetailsTestConstants {
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
 
-  val receivedObligation = ReportDeadlineModel(
-    start = "2017-04-01",
-    end = "2017-6-30",
-    due = "2017-7-31",
-    met = true
-  )
-
-  val overdueObligation = ReportDeadlineModel(
-    start = "2017-7-1",
-    end = "2017-9-30",
-    due = "2017-10-30",
-    met = false
-  )
-
-  val openObligation = ReportDeadlineModel(
-    start = "2017-7-1",
-    end = "2017-9-30",
-    due = "2017-10-31",
-    met = false
-  )
-
   val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
 
   val businessIncomeModel =
