@@ -41,7 +41,7 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
         Then("I verify the Income Source Details has been successfully wiremocked")
         IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-        verifyBizObsCall(testSelfEmploymentId)
+        verifyReportDeadlinesCall(testSelfEmploymentId)
 
         Then("the view displays the correct title, username and links")
         res should have(

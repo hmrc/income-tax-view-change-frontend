@@ -46,16 +46,11 @@ trait GenericStubMethods extends CustomMatchers {
     BtaPartialStub.stubGetServiceInfoPartial()
   }
 
-  def verifyBizObsCall(employmentIds: String*): Unit = {
-    Then("Verify that business obligations has been called")
-    for(employmentId <- employmentIds){
-      SelfAssessmentStub.verifyGetBusinessReportDeadlines(testNino, employmentId)
+  def verifyReportDeadlinesCall(incomeSourceIds: String*): Unit = {
+    for(incomeSourceId <- incomeSourceIds) {
+      Then(s"Verify that Report Deadlines has been called for $incomeSourceId")
+      IncomeTaxViewChangeStub.verifyGetReportDeadlines(incomeSourceId)
     }
-  }
-
-  def verifyPropObsCall(): Unit = {
-    Then("Verify that property obligations has been called")
-    SelfAssessmentStub.verifyGetPropertyReportDeadlines(testNino)
   }
 
   def verifyFinancialTransactionsCall(): Unit = {

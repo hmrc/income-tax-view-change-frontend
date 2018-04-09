@@ -41,9 +41,9 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
 
       "return an IncomeSourceDetailsModel with business and property options" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(businessesAndPropertyIncome)
-        setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
-        setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId2)(obligationsDataSuccessModel)
-        setupMockPropertyReportDeadlinesResult(testNino)(obligationsDataSuccessModel)
+        setupMockReportDeadlinesResult(testSelfEmploymentId)(obligationsDataSuccessModel)
+        setupMockReportDeadlinesResult(testSelfEmploymentId2)(obligationsDataSuccessModel)
+        setupMockReportDeadlinesResult(testPropertyIncomeId)(obligationsDataSuccessModel)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe bothIncomeSourceSuccessMisalignedTaxYear
       }
@@ -52,7 +52,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
     "a result with just business details is returned" should {
       "return an IncomeSourceDetailsModel with just a business option" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(singleBusinessIncome)
-        setupMockBusinessReportDeadlinesResult(testNino, testSelfEmploymentId)(obligationsDataSuccessModel)
+        setupMockReportDeadlinesResult(testSelfEmploymentId)(obligationsDataSuccessModel)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe businessIncomeSourceSuccess
       }
@@ -61,7 +61,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
     "a result with just property details is returned" should {
       "return an IncomeSourceDetailsModel with just a property option" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(propertyIncomeOnly)
-        setupMockPropertyReportDeadlinesResult(testNino)(obligationsDataSuccessModel)
+        setupMockReportDeadlinesResult(testPropertyIncomeId)(obligationsDataSuccessModel)
 
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe propertyIncomeSourceSuccess
       }
