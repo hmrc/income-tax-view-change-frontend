@@ -133,7 +133,6 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     )
   )
 
-//  val twoObligationsEOPSSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedEOPSObligation, openEOPSObligation))
   val twoObligationsSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, openEOPSObligation))
 
   val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
