@@ -23,100 +23,117 @@ import utils.ImplicitDateFormatter
 
 object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
 
-  def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start,m.end,m.due,m.met) {
+  def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start,m.end,m.due,m.periodKey,m.dateReceived) {
     override def currentTime() = "2017-10-31"
   }
+
+
 
   val receivedObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-04-01",
     end = "2017-6-30",
     due = "2017-7-31",
-    met = true
+    periodKey = "#001",
+    dateReceived = Some("2017-04-01")
   ))
-
   val overdueObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-7-1",
     end = "2017-9-30",
     due = "2017-10-30",
-    met = false
+    periodKey = "#002",
+    dateReceived = None
   ))
-
   val openObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-7-1",
     end = "2017-9-30",
     due = "2017-10-31",
-    met = false
+    periodKey = "#003",
+    dateReceived = None
   ))
-
   val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
+
+
+  val reportDeadlineReceivedJson = Json.obj(
+    "start" -> "2017-04-01",
+    "end" -> "2017-06-30",
+    "due" -> "2017-07-31",
+    "periodKey" -> "#001",
+    "dateReceived" -> "2017-04-01"
+  )
+  val reportDeadlineOverdueJson = Json.obj(
+    "start" -> "2017-07-01",
+    "end" -> "2017-09-30",
+    "due" -> "2017-10-30",
+    "periodKey" -> "#002"
+  )
+  val reportDeadlineOpenJson = Json.obj(
+    "start" -> "2017-07-01",
+    "end" -> "2017-09-30",
+    "due" -> "2017-10-31",
+    "periodKey" -> "#003"
+  )
   val obligationsDataSuccessJson = Json.obj(
     "obligations" -> Json.arr(
-      Json.obj(
-        "start" -> "2017-04-01",
-        "end" -> "2017-06-30",
-        "due" -> "2017-07-31",
-        "met" -> true
-      ),
-      Json.obj(
-        "start" -> "2017-07-01",
-        "end" -> "2017-09-30",
-        "due" -> "2017-10-30",
-        "met" -> false
-      ),
-      Json.obj(
-        "start" -> "2017-07-01",
-        "end" -> "2017-09-30",
-        "due" -> "2017-10-31",
-        "met" -> false
-      )
+      reportDeadlineReceivedJson,
+      reportDeadlineOverdueJson,
+      reportDeadlineOpenJson
     )
   )
+
 
 
   val receivedEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-04-06",
     end = "2018-04-05",
     due = "2018-05-01",
-    met = true
+    periodKey = "#001",
+    dateReceived = Some("2017-04-01")
   ))
-
   val overdueEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-04-06",
     end = "2018-04-05",
     due = "2017-10-01",
-    met = false
+    periodKey = "#002",
+    dateReceived = None
   ))
-
   val openEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-04-06",
     end = "2018-04-05",
     due = "2017-10-31",
-    met = false
+    periodKey = "#003",
+    dateReceived = None
   ))
-
   val obligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedEOPSObligation, overdueEOPSObligation, openEOPSObligation))
+
+
+  val reportDeadlineEOPSReceivedJson: JsValue = Json.obj(
+    "start" -> "2017-04-06",
+    "end"  -> "2018-04-05",
+    "due" -> "2018-05-01",
+    "periodKey" -> "#001",
+    "dateReceived" -> "2017-04-01"
+  )
+  val reportDeadlineEOPSOverdueJson: JsValue = Json.obj(
+    "start" -> "2017-04-06",
+    "end"  -> "2018-04-05",
+    "due" -> "2017-07-31",
+    "periodKey" -> "#002"
+  )
+  val reportDeadlineEOPSOpenJson: JsValue = Json.obj(
+    "start" -> "2017-04-06",
+    "end"  -> "2018-04-05",
+    "due" -> "2018-05-01",
+    "periodKey" -> "#003"
+  )
   val obligationsEOPSDataSuccessJson: JsValue = Json.obj(
     "obligations" -> Json.arr(
-      Json.obj(
-        "start" -> "2017-04-06",
-        "end"  -> "2018-04-05",
-        "due" -> "2018-05-01",
-        "met" -> true
-      ),
-      Json.obj(
-        "start" -> "2017-04-06",
-        "end"  -> "2018-04-05",
-        "due" -> "2017-07-01",
-        "met" -> false
-      ),
-      Json.obj(
-        "start" -> "2017-04-06",
-        "end"  -> "2018-04-05",
-        "due" -> "2017-07-31",
-        "met" -> false
-      )
+      reportDeadlineEOPSReceivedJson,
+      reportDeadlineEOPSOverdueJson,
+      reportDeadlineEOPSOpenJson
     )
   )
+
+  val twoObligationsSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, openEOPSObligation))
 
   val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
 
@@ -125,11 +142,7 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     "message" -> testErrorMessage
   )
 
-  val reportDeadlineReceivedJson = Json.obj(
-    "start" -> "2017-04-01",
-    "end" -> "2017-06-30",
-    "due" -> "2017-07-31",
-    "met" -> true
-  )
-
 }
+
+
+

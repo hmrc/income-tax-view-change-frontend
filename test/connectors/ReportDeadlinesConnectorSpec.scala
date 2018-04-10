@@ -16,8 +16,8 @@
 
 package connectors
 
-import assets.ReportDeadlinesTestConstants._
 import assets.BaseTestConstants._
+import assets.ReportDeadlinesTestConstants._
 import mocks.MockHttp
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.Json
@@ -28,20 +28,24 @@ import utils.TestSupport
 import scala.concurrent.Future
 
 
-class BusinessReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
+class ReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
 
   val successResponse = HttpResponse(Status.OK, Some(Json.toJson(obligationsDataSuccessModel)))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestBusinessReportDeadlinesDataConnector extends BusinessReportDeadlinesConnector(mockHttpGet, frontendAppConfig)
+  object TestReportDeadlinesDataConnector extends ReportDeadlinesConnector(mockHttpGet, frontendAppConfig)
 
-  "BusinessReportDealinesDataConnector.getObligationData" should {
+  "ReportDeadlinesDataConnector.getReportDeadlines()" should {
 
-    lazy val testUrl = TestBusinessReportDeadlinesDataConnector.getReportDeadlineDataUrl(testNino, testSelfEmploymentId)
-    def result: Future[ReportDeadlinesResponseModel] = TestBusinessReportDeadlinesDataConnector.getBusinessReportDeadlineData(testNino, testSelfEmploymentId)
+    lazy val testUrl = TestReportDeadlinesDataConnector.getReportDeadlinesUrl(testSelfEmploymentId)
+    def result: Future[ReportDeadlinesResponseModel] = TestReportDeadlinesDataConnector.getReportDeadlines(testSelfEmploymentId)
 
-    "return a SuccessResponse with JSON in case of sucess" in {
+    "have the correct URL to ITVC backend" in {
+      testUrl shouldBe s"${frontendAppConfig.itvcProtectedService}/income-tax-view-change/income-source/$testSelfEmploymentId/report-deadlines"
+    }
+
+    "return a SuccessResponse with JSON in case of success" in {
       setupMockHttpGet(testUrl)(successResponse)
       await(result) shouldBe obligationsDataSuccessModel
     }

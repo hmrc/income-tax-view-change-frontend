@@ -18,7 +18,8 @@ package controllers
 
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
+import assets.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import assets.ReportDeadlinesIntegrationTestConstants.multipleReceivedOpenReportDeadlinesModel
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 
@@ -32,10 +33,11 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         isAuthorisedUser(true)
         stubUserDetails()
 
-        And("I wiremock stub a successful Income Source Details response with single Business income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, businessAndPropertyResponse
-        )
+        And("I wiremock stub a successful Income Source Details response with Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+        And("I wiremock stub multiple open and received obligations response")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
@@ -43,7 +45,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         Then("I verify the Income Source Details has been successfully wiremocked")
         IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-        verifyBizObsCall(testSelfEmploymentId)
+        verifyReportDeadlinesCall(testSelfEmploymentId)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -72,8 +74,11 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         isAuthorisedUser(true)
         stubUserDetails()
 
-        And("I wiremock stub a successful Income Source Details response with single Business income")
+        And("I wiremock stub a successful Income Source Details response with Property Only income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        And("I wiremock stub multiple open and received obligations response")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
@@ -81,7 +86,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         Then("I verify the Income Source Details has been successfully wiremocked")
         IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-        verifyBizObsCall(testSelfEmploymentId)
+        verifyReportDeadlinesCall(testSelfEmploymentId)
 
         Then("an ISE is displayed")
         res should have(

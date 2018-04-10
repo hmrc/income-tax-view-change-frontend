@@ -46,7 +46,7 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
       case sources: IncomeSourceDetailsModel =>
         val businessIncomeModelFList: Future[List[BusinessIncomeWithDeadlinesModel]] =
           Future.sequence(sources.businesses.map { seTrade =>
-            reportDeadlinesService.getBusinessReportDeadlines(nino, seTrade.incomeSourceId).map { obs =>
+            reportDeadlinesService.getReportDeadlines(seTrade.incomeSourceId).map { obs =>
               BusinessIncomeWithDeadlinesModel(
                 seTrade,
                 obs
@@ -56,7 +56,7 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
 
         val propertyIncomeModelFOpt: Future[Option[PropertyIncomeWithDeadlinesModel]] =
           Future.sequence(Option.option2Iterable(sources.property.map { propertyIncome =>
-            reportDeadlinesService.getPropertyReportDeadlines(nino).map { obs =>
+            reportDeadlinesService.getReportDeadlines(propertyIncome.incomeSourceId).map { obs =>
               PropertyIncomeWithDeadlinesModel(propertyIncome, obs)
             }
           })).map(_.headOption)

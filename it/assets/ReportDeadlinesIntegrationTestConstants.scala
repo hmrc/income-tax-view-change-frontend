@@ -38,17 +38,20 @@ object ReportDeadlinesIntegrationTestConstants {
       start = "2017-04-06",
       end = "2017-07-05",
       due = LocalDate.now(),
-      met = true
+      periodKey = "periodKey",
+      dateReceived = Some("2017-04-01")
     ), ReportDeadlineModel(
       start = "2017-07-06",
       end = "2017-10-05",
       due = LocalDate.now().plusDays(1),
-      met = false
+      periodKey = "periodKey",
+      dateReceived = None
     ), ReportDeadlineModel(
       start = "2017-10-06",
       end = "2018-01-05",
       due = LocalDate.now().minusDays(1),
-      met = false
+      periodKey = "periodKey",
+      dateReceived = None
     ))
   )
 
@@ -57,47 +60,56 @@ object ReportDeadlinesIntegrationTestConstants {
       start = "2016-04-01",
       end = "2016-06-30",
       due = "2016-07-31",
-      met = true
+      periodKey = "periodKey",
+      dateReceived = Some("2017-04-01")
     ), ReportDeadlineModel(
       start = "2016-07-01",
       end = "2016-09-30",
       due = LocalDate.now().minusDays(309),
-      met = true
+      periodKey = "periodKey",
+      dateReceived = Some("2017-04-01")
     ), ReportDeadlineModel(
       start = "2016-10-01",
       end = "2016-12-31",
       due = LocalDate.now().minusDays(217),
-      met = true
+      periodKey = "periodKey",
+      dateReceived = Some("2017-04-01")
     ), ReportDeadlineModel(
       start = "2017-01-01",
       end = "2017-03-31",
       due = LocalDate.now().minusDays(128),
-      met = false
+      periodKey = "periodKey",
+      dateReceived = None
     ), ReportDeadlineModel(
       start = "2017-04-01",
       end = "2017-06-30",
       due = LocalDate.now().minusDays(36),
-      met = false
+      periodKey = "periodKey",
+      dateReceived = None
     ), ReportDeadlineModel(
       start = "2016-06-01",
       end = "2017-06-30",
       due = LocalDate.now().minusDays(36),
-      met = false
+      periodKey = "periodKey",
+      dateReceived = None
     ), ReportDeadlineModel(
       start = "2017-07-01",
       end = "2017-09-30",
       due = LocalDate.now().plusDays(30),
-      met = false
+      periodKey = "periodKey",
+      dateReceived = None
     ),ReportDeadlineModel(
       start = "2017-10-01",
       end = "2018-01-31",
       due = LocalDate.now().plusDays(146),
-      met = false),
+      periodKey = "periodKey",
+      dateReceived = None),
     ReportDeadlineModel(
       start = "2017-11-01",
       end = "2018-02-01",
       due = LocalDate.now().plusDays(174),
-      met = false)
+      periodKey = "periodKey",
+      dateReceived = None)
   ))
 
   val singleReportDeadlinesDataSuccessModel = ReportDeadlinesModel(List(
@@ -105,7 +117,8 @@ object ReportDeadlinesIntegrationTestConstants {
       start = "2017-04-06",
       end = "2017-07-05",
       due = LocalDate.now(),
-      met = true
+      periodKey = "periodKey",
+      dateReceived = Some("2017-04-01")
     )
   ))
 
@@ -114,7 +127,8 @@ object ReportDeadlinesIntegrationTestConstants {
       start = "2017-04-06",
       end = "2017-07-05",
       due = LocalDate.now().minusDays(1),
-      met = true
+      periodKey = "periodKey",
+      dateReceived = Some("2017-04-01")
     )
   ))
 
@@ -123,7 +137,8 @@ object ReportDeadlinesIntegrationTestConstants {
       start = "2017-04-06",
       end = "2017-07-05",
       due = LocalDate.now().minusDays(1),
-      met = false
+      periodKey = "periodKey",
+      dateReceived = None
     )
   ))
 
@@ -131,7 +146,8 @@ object ReportDeadlinesIntegrationTestConstants {
     start = "2017-04-06",
     end = "2017-07-05",
     due = LocalDate.now().plusYears(1),
-    met = false
+    periodKey = "periodKey",
+      dateReceived = None
   )
   ))
 

@@ -19,7 +19,6 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import config.FrontendAppConfig
-import models._
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
@@ -31,39 +30,39 @@ import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import scala.concurrent.Future
 
 @Singleton
-class BusinessReportDeadlinesConnector @Inject()(val http: HttpClient,
-                                                 val config: FrontendAppConfig) extends RawResponseReads {
+class ReportDeadlinesConnector @Inject()(val http: HttpClient,
+                                         val config: FrontendAppConfig) extends RawResponseReads {
 
-  private[connectors] lazy val getReportDeadlineDataUrl: (String, String) => String = (nino, selfEmploymentId) =>
-    s"${config.saApiService}/ni/$nino/self-employments/$selfEmploymentId/obligations"
+  private[connectors] lazy val getReportDeadlinesUrl: String => String = incomeSourceID =>
+    s"${config.itvcProtectedService}/income-tax-view-change/income-source/$incomeSourceID/report-deadlines"
 
-  def getBusinessReportDeadlineData(nino: String, selfEmploymentId: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
+  def getReportDeadlines(incomeSourceID: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
 
-    val url = getReportDeadlineDataUrl(nino, selfEmploymentId)
-    Logger.debug(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - GET $url")
+    val url = getReportDeadlinesUrl(incomeSourceID)
+    Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
       response =>
         response.status match {
           case OK =>
-            Logger.debug(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - RESPONSE status: ${response.status}, json: ${response.json}")
+            Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[ReportDeadlinesModel].fold(
               invalid => {
-                Logger.warn(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - Json Validation Error. Parsing Report Deadlines Data Response")
+                Logger.warn("[ReportDeadlinesConnector][getReportDeadlines] - Json Validation Error. Parsing Report Deadlines Data Response")
+                Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - Json Validation Error: $invalid")
                 ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
               },
               valid => valid
             )
           case _ =>
-            Logger.debug(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(
-              s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - Status: [${response.status}] Returned from business report deadlines call")
+            Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.warn(s"[ReportDeadlinesConnector][getReportDeadlines] - Status: [${response.status}] Returned from business report deadlines call")
             ReportDeadlinesErrorModel(response.status, response.body)
         }
     } recover {
       case _ =>
-        Logger.warn(s"[BusinessReportDeadlinesConnector][getBusinessReportDeadlineData] - Unexpected future failed error")
-        ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+        Logger.warn("[ReportDeadlinesConnector][getReportDeadlines] - Unexpected future failed error")
+        ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
     }
   }
 }
