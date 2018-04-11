@@ -19,8 +19,9 @@
 @import views.helpers.ReportDeadlineStatusHelper
 @import models.reportDeadlines.{EopsObligation, QuarterlyObligation}
 
-@(model: ReportDeadlinesModel, id: String)(implicit messages: Messages)
+@(model: ReportDeadlinesModel, id: String, caption: String)(implicit messages: Messages)
     <table class="form-group">
+        <caption class="visuallyhidden">@caption</caption>
         <thead>
             <tr>
                 <th id="@{id}-period-heading">@Messages("obligations.accountingPeriod")</th>
