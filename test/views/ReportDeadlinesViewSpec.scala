@@ -38,13 +38,6 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val successModel = ReportDeadlinesModel(List(ReportDeadlineModel(
-    start = "2017-1-1",
-    end = "2017-3-31",
-    due = "2017-4-5",
-    met = true
-  ),openEOPSObligation))
-  val errorModel = ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
   private def pageSetup(model: IncomeSourcesWithDeadlinesModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.report_deadlines(model)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -57,7 +50,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       List(
         BusinessIncomeWithDeadlinesModel(
           business1,
-          reportDeadlines = successModel
+          reportDeadlines = twoObligationsSuccessModel
         )
       ),
       None
@@ -90,8 +83,8 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         document.getElementById("bi-1-status-heading").text() shouldBe "Report due date"
       }
 
-      "contain the first row and have the start date as '1 January 2017' and status 'Received'" in {
-        document.getElementById("bi-1-ob-1-start").text() shouldBe "1 January 2017"
+      "contain the first row and have the start date as '1 April 2017' and status 'Received'" in {
+        document.getElementById("bi-1-ob-1-start").text() shouldBe "1 April 2017"
         document.getElementById("bi-1-ob-1-status").text() shouldBe "Received"
       }
 
@@ -125,7 +118,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         List.empty,
         Some(PropertyIncomeWithDeadlinesModel(
           propertyDetails,
-          reportDeadlines  = successModel
+          reportDeadlines  = obligationsEOPSDataSuccessModel
         ))
       )
 
@@ -150,7 +143,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         List(
           BusinessIncomeWithDeadlinesModel(
             ceasedBusiness,
-            reportDeadlines = successModel
+            reportDeadlines = obligationsEOPSDataSuccessModel
           )
         ),
         None
@@ -170,7 +163,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         Some(
           PropertyIncomeWithDeadlinesModel(
             ceasedPropertyDetails,
-            reportDeadlines = successModel
+            reportDeadlines = obligationsEOPSDataSuccessModel
           )
         )
       )
@@ -190,12 +183,12 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         List(
           BusinessIncomeWithDeadlinesModel(
             business1,
-            reportDeadlines = errorModel
+            reportDeadlines = obligationsDataErrorModel
           )
         ),
         Some(PropertyIncomeWithDeadlinesModel(
           propertyDetails,
-          reportDeadlines  = errorModel
+          reportDeadlines  = obligationsDataErrorModel
         ))
       )
 
@@ -228,7 +221,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         List(
           BusinessIncomeWithDeadlinesModel(
             business1,
-            reportDeadlines = errorModel
+            reportDeadlines = obligationsDataErrorModel
           )
         ),
         None
@@ -263,7 +256,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         List(),
         Some(PropertyIncomeWithDeadlinesModel(
           propertyDetails,
-          reportDeadlines  = errorModel
+          reportDeadlines  = obligationsDataErrorModel
         ))
       )
 

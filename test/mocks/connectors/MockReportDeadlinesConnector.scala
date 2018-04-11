@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.PropertyEOPSDeadlinesConnector
+import connectors.ReportDeadlinesConnector
 import models.reportDeadlines.ReportDeadlinesResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -26,18 +26,19 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockPropertyEOPSDeadlinesConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockPropertyEOPSDeadlinesConnector: PropertyEOPSDeadlinesConnector = mock[PropertyEOPSDeadlinesConnector]
+trait MockReportDeadlinesConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+
+  val mockReportDeadlinesConnector: ReportDeadlinesConnector = mock[ReportDeadlinesConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockPropertyEOPSDeadlinesConnector)
+    reset(mockReportDeadlinesConnector)
   }
 
-  def setupMockPropertyEOPSDeadline(nino: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockPropertyEOPSDeadlinesConnector.getPropertyEOPSDeadlines(
-      ArgumentMatchers.eq(nino))(ArgumentMatchers.any())).thenReturn(Future.successful(response))
+  def setupMockReportDeadlines(incomeSourceId: String)(response: ReportDeadlinesResponseModel): Unit = {
+    when(mockReportDeadlinesConnector.getReportDeadlines(ArgumentMatchers.eq(incomeSourceId))(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
   }
 
 }

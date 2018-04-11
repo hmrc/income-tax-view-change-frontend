@@ -83,7 +83,7 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         stubUserDetails()
 
         And("I wiremock stub a single business obligation response")
-        SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")
         val res = IncomeTaxViewChangeFrontend.getReportDeadlines
@@ -107,7 +107,7 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         stubUserDetails()
 
         And("I wiremock stub a single business obligation response")
-        SelfAssessmentStub.stubGetBusinessReportDeadlines(testNino, testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")
         val res = IncomeTaxViewChangeFrontend.getReportDeadlines

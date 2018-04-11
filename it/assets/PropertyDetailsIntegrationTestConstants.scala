@@ -19,13 +19,13 @@ package assets
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
-import assets.BaseIntegrationTestConstants.testMtditid
+import assets.BaseIntegrationTestConstants.testPropertyIncomeId
 import utils.ImplicitDateFormatter._
 
 object PropertyDetailsIntegrationTestConstants {
 
   val property: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = testMtditid,
+    incomeSourceId = testPropertyIncomeId,
     accountingPeriod = AccountingPeriodModel(
       start = "2017-04-06",
       end = "2018-04-05"
@@ -37,7 +37,7 @@ object PropertyDetailsIntegrationTestConstants {
   )
 
   val propertySuccessResponse: JsValue = Json.obj(
-    "incomeSourceId" -> testMtditid,
+    "incomeSourceId" -> testPropertyIncomeId,
     "accountingPeriod" -> Json.obj(
       "start" -> "2017-04-06",
       "end" -> "2018-04-05"
