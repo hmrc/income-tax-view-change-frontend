@@ -103,9 +103,9 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
             httpStatus(OK),
-            pageTitle("Previous statements"),
-            elementTextByID("finalised-bills")("View finalised bills."),
-            elementTextByID(s"bills-link-$testYear")(s"Tax year: 2017 to $testYear"),
+            pageTitle("Bills"),
+            elementTextByID("finalised-bills")("View your finalised bills:"),
+            elementTextByID(s"bills-link-$testYear")(s"2017 to $testYear tax year"),
             nElementsWithClass("bills-link")(1),
             elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations.")
           )
@@ -165,10 +165,10 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and two tax bill links")
           res should have(
             httpStatus(OK),
-            pageTitle("Previous statements"),
-            elementTextByID("finalised-bills")("View finalised bills."),
-            elementTextByID(s"bills-link-$testYearPlusOne")(s"Tax year: $testYear to $testYearPlusOne"),
-            elementTextByID(s"bills-link-$testYear")(s"Tax year: 2017 to $testYear"),
+            pageTitle("Bills"),
+            elementTextByID("finalised-bills")("View your finalised bills:"),
+            elementTextByID(s"bills-link-$testYearPlusOne")(s"$testYear to $testYearPlusOne tax year"),
+            elementTextByID(s"bills-link-$testYear")(s"2017 to $testYear tax year"),
             nElementsWithClass("bills-link")(2),
             elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations.")
           )
@@ -229,9 +229,9 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
             httpStatus(OK),
-            pageTitle("Previous statements"),
-            elementTextByID("finalised-bills")("View finalised bills."),
-            elementTextByID(s"bills-link-$testYear")(s"Tax year: 2017 to $testYear"),
+            pageTitle("Bills"),
+            elementTextByID("finalised-bills")("View your finalised bills:"),
+            elementTextByID(s"bills-link-$testYear")(s"2017 to $testYear tax year"),
             nElementsWithClass("bills-link")(1),
             elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations.")
           )
@@ -281,7 +281,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
             httpStatus(OK),
-            pageTitle("Previous statements"),
+            pageTitle("Bills"),
             elementTextByID("no-bills")("You've had no bills since you started reporting through software."),
             nElementsWithClass("bills-link")(0)
           )

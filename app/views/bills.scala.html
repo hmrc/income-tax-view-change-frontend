@@ -38,31 +38,37 @@
     scriptElem = None,
     serviceInfo = breadcrumb
 ) {
-    <section>
-        <h1 class="heading-xlarge" id="page-heading">
-            @messages("bills.heading")
-        </h1>
 
-        <div>
-            @if(calcModels.isEmpty){
-                <p id="no-bills">
-                    @messages("bills.noBills")
-                </p>
-            } else {
-                <p id="finalised-bills">@messages("bills.viewBills")</p>
-                <ul class="list list-bullet">
-                    @for(calc <- calcModels){
-                        <li>
-                            <a href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}" class="bills-link" data-journey-click="BillsPage:ClickLink:@{calc.taxYear}" id="bills-link-@{calc.taxYear}">@messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")</a>
-                        </li>
-                    }
-                </ul>
-            }
-        </div>
-        <div>
-            <p id="earlier-bills">
-                @messages("bills.earlierBills") <a href="@appConfig.selfAssessmentUrl" data-journey-click="BillsPage:ClickLink:ViewPreviousSACharges" id="view-sa-calcs">@messages("bills.earlierBillsLink")</a>.
+    <header class="page-heading">
+        <h1 class="heading-xlarge" id="page-heading">@messages("bills.heading")</h1>
+    </header>
+
+    <section id="bills-list" class="divider--bottom form-group">
+        @if(calcModels.isEmpty){
+            <p id="no-bills">
+                @messages("bills.noBills")
             </p>
-        </div>
+        } else {
+            <p id="finalised-bills">@messages("bills.viewBills")</p>
+            <ul class="list list-bullet">
+                @for(calc <- calcModels){
+                    <li>
+                        <a href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}"
+                           class="bills-link"
+                           data-journey-click="BillsPage:ClickLink:@{calc.taxYear}"
+                           aria-label='@messages("bills.billLink.screenReaderPrefix") @messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")'
+                           id="bills-link-@{calc.taxYear}">
+                             @messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+
+    <section id="previous-years-bills">
+        <p id="earlier-bills">
+            @messages("bills.earlierBills") <a href="@appConfig.selfAssessmentUrl" data-journey-click="BillsPage:ClickLink:ViewPreviousSACharges" id="view-sa-calcs">@messages("bills.earlierBillsLink")</a>.
+        </p>
     </section>
 }
