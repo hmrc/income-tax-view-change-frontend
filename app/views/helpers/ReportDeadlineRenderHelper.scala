@@ -38,7 +38,7 @@ object ReportDeadlineRenderHelper extends ImplicitListMethods {
     obligations.filter(_.getReportDeadlineStatus == Received).maxItemBy(_.due)
 
   private def getAllOverdue(obligations: List[ReportDeadlineModel]): List[ReportDeadlineModel] =
-    obligations.filter(_.getReportDeadlineStatus == Overdue)
+    obligations.filter(_.getReportDeadlineStatus.isInstanceOf[Overdue])
 
   private def getNextDue(obligations: List[ReportDeadlineModel]): List[ReportDeadlineModel] =
     obligations.filter(_.getReportDeadlineStatus.isInstanceOf[Open]).minItemBy(_.due)

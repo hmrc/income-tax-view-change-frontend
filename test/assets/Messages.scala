@@ -160,6 +160,15 @@ object Messages {
     val ceasedProperty: String => String = date => s"Ceased trading on $date."
     val portfolio = "This covers all properties that you earn income from."
     val eops = "Whole tax year (final check)"
+
+    object Dropdown {
+      val dropdownText = "How to submit a report"
+      val dropdownLink = "Choose accounting software that supports this service (opens in a new window)"
+      val dropdown1 = "if you have not already."
+      val dropdown2 = "Use your software to record your income and expenses, then send an update to HMRC at least every quarter. We will email you to let you know when to send an update."
+      val dropdown3 = "Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs."
+      val dropdown4 = "After you send your final report, you can see the Income Tax you owe for the tax year."
+    }
     object Errors {
       val p1 = "We can't display your next report due date at the moment."
       val p2 = "Try refreshing the page in a few minutes."
@@ -279,7 +288,7 @@ object Messages {
     val itEstimate = "Your Income Tax estimate"
     val bills = "Income Tax bills"
     val finalisedBill = "Your finalised Income Tax bill"
-    val obligations = "Your Income Tax report deadlines"
+    val obligations = "Report deadlines"
     val statement = "Income Tax statement"
     val details = "Account details"
   }

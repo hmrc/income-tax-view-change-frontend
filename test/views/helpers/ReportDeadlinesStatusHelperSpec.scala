@@ -38,9 +38,9 @@ class ReportDeadlinesStatusHelperSpec extends TestSupport {
 
       val overdueHtml = Html(
         s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #b10e1e;">
-           |  <span class='bold-xsmall'>
-           |    Overdue
+           |<p class="flush--bottom  alert  soft-half--ends soft--right">
+           |  <span>
+           |    25 December 2017 <strong class="task-overdue">Overdue</strong>
            |  </span>
            |</p>
            """.stripMargin)
@@ -59,7 +59,7 @@ class ReportDeadlinesStatusHelperSpec extends TestSupport {
         ReportDeadlineStatusHelper.statusHtml(Open("2017-12-25")) shouldBe openHtml
       }
       "passed 'Overdue' the Overdue Html is returned" in {
-        ReportDeadlineStatusHelper.statusHtml(Overdue) shouldBe overdueHtml
+        ReportDeadlineStatusHelper.statusHtml(Overdue("2017-12-25")) shouldBe overdueHtml
       }
       "passed 'Received' the Received Html is returned" in {
         ReportDeadlineStatusHelper.statusHtml(Received) shouldBe receivedHtml

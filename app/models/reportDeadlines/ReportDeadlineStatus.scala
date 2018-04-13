@@ -20,5 +20,5 @@ import java.time.LocalDate
 
 sealed trait ReportDeadlineStatus
 case object Received extends ReportDeadlineStatus
-case object Overdue extends ReportDeadlineStatus
+case class Overdue(dueDate: LocalDate) extends ReportDeadlineStatus
 case class Open(dueDate: LocalDate) extends ReportDeadlineStatus

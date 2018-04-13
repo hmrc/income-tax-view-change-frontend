@@ -283,10 +283,14 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       }
     }
 
-    "show a back link to the Income Tax home page, when the home page feature is enabled" in {
-      val setup = pageSetup(businessIncomeSource)
-      import setup._
-      Option(document.getElementById("it-home-back")) shouldNot be(None)
+    s"have a dropdown link '${messages.Dropdown.dropdownText}' containing text" in {
+      document.getElementById("howToDoThis").text() shouldBe messages.Dropdown.dropdownText
+      document.getElementById("why-may-change-1").text() shouldBe s"${messages.Dropdown.dropdownLink} ${messages.Dropdown.dropdown1}"
+      document.getElementById("why-may-change-2").text() shouldBe messages.Dropdown.dropdown2
+      document.getElementById("why-may-change-3").text() shouldBe messages.Dropdown.dropdown3
+      document.getElementById("why-may-change-4").text() shouldBe messages.Dropdown.dropdown4
+      document.getElementById("accounting-software-link").attr("href") shouldBe mockAppConfig.accountingSoftwareLinkUrl
     }
+
   }
 }
