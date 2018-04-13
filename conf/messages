@@ -117,11 +117,11 @@ obligations.eops                                                = Whole tax year
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission
-crystalisation.heading                                          = Your finalised Income Tax bill
-crystalisation.whatYouOwe.heading                               = What you owe: {0}
-crystalisation.whatYouOwe.para                                  = This figure is based on the information you provided in your quarterly reports and final report. You told us this information is accurate.
-crystalisation.whatYouOwe.directDebit                           = Check if you already pay by direct debit.
-crystalisation.warning                                          = If you pay this bill after 31 January {0} you''ll get penalties.
+crystalisation.heading                                          = {0} to {1} tax year
+crystalisation.subheading                                       = Bills
+crystalisation.dueBy                                            = due by 31 January {0}
+crystalisation.whatYouOwe.para                                  = This figure is based on the information you provided in your quarterly reports and final report.
+crystalisation.warning                                          = Your payment could take up to 5 days to process. You may be fined if it is late.
 crystalisation.calc-breakdown.heading                           = How this figure was calculated
 
 crystalisation.calc-breakdown.subtotal                          = Sub-total (excluding payments by you)

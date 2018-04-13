@@ -84,14 +84,12 @@ object Messages {
     val taxYearSubHeading = s"Tax year: ${taxYear-1} to $taxYear"
     val title = taxYearSubHeading
     object Crystallised {
-      val tabTitle = "Your final submission"
-      val heading = "Your finalised Income Tax bill"
-      val subHeading = s"Tax year: ${taxYear-1} to $taxYear"
-      val wyoHeading: String => String = whatYouOwe => s"What you owe: $whatYouOwe"
-      val p1 = "This figure is based on the information you provided in your quarterly reports and final report. You told us this information is accurate."
-      val warning = s"If you pay this bill after 31 January ${taxYear + 1} you'll get penalties."
+      val heading = s"${taxYear-1} to $taxYear tax year"
+      val tabTitle = heading
+      val subHeading = s"Bills"
+      val p1 = "This figure is based on the information you provided in your quarterly reports and final report."
+      val warning = s"Your payment could take up to 5 days to process. You may be fined if it is late."
       val breakdownHeading = "How this figure was calculated"
-      val incorrect = "Incorrect figures"
       val errors = "If there are any errors, you can make adjustments through your software."
       val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
       val payNow = "Continue to payment"
@@ -291,7 +289,7 @@ object Messages {
     val estimates = "View your estimates"
     val itEstimate = "Your Income Tax estimate"
     val bills = "Income Tax bills"
-    val finalisedBill = "Your finalised Income Tax bill"
+    val finalisedBill: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
     val obligations = "Your Income Tax report deadlines"
     val statement = "Income Tax statement"
     val details = "Account details"
