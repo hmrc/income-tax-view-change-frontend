@@ -52,7 +52,7 @@ class BillsViewSpec extends TestSupport {
     lazy val document2Bills: Document = Jsoup.parse(contentAsString(page2Bills))
   }
 
-  "The EstimatedTaxLiability view" should {
+  "The Bills view" should {
 
     val setup = pageSetup(testIncomeSources)
     import setup._
@@ -72,6 +72,11 @@ class BillsViewSpec extends TestSupport {
       "display the links for both of the tax years with bills" in {
         document2Bills.getElementById(s"bills-link-$testYear").text shouldBe messages.billLink
         document2Bills.getElementById(s"bills-link-$testYearPlusOne").text shouldBe messages2019.billLink
+      }
+
+      "have accessible aria-labels for the bills links to provide context to screen readers" in {
+        document2Bills.getElementById(s"bills-link-$testYear").attr("aria-label") shouldBe messages.billsLinkAriaLabel
+        document2Bills.getElementById(s"bills-link-$testYearPlusOne").attr("aria-label") shouldBe messages2019.billsLinkAriaLabel
       }
 
       "show a link to earlier bills, with the correct URL" in {

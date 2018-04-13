@@ -134,10 +134,11 @@ object Messages {
       }
     }
     object Bills {
-      val billsTitle = "Previous statements"
-      val billsHeading = "Income Tax bills"
-      val viewBills = "View finalised bills."
-      val billLink = s"Tax year: ${taxYear-1} to $taxYear"
+      val billsTitle = "Bills"
+      val billsHeading = "Bills"
+      val viewBills = "View your finalised bills:"
+      val billLink = s"${taxYear-1} to $taxYear tax year"
+      val billsLinkAriaLabel = s"view bill for $billLink"
       val noBills = "You've had no bills since you started reporting through software."
       val earlierBills = "For earlier bills, view your Self Assessment calculations."
     }
@@ -288,7 +289,7 @@ object Messages {
     val it = "Income Tax"
     val estimates = "View your estimates"
     val itEstimate = "Your Income Tax estimate"
-    val bills = "Income Tax bills"
+    val bills = "Bills"
     val finalisedBill: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
     val obligations = "Your Income Tax report deadlines"
     val statement = "Income Tax statement"
