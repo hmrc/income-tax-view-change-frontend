@@ -41,40 +41,27 @@ object Messages {
   // Home Page Messages
   object HomePage {
     val title = "Your Income Tax"
-    val topHeading = "Reporting through software"
-    val topSubHeading = "Income Tax"
-    val topText = "You send your Income Tax reports using accounting software."
-    val dropDown = "How to do this"
-    val dropDownText1 = "You'll send four reports during the year."
-    val dropDownText2 = "After that, you'll need to confirm and finalise your figures in your accounting software."
-    val dropDownText3 = "If you don't have accounting software, you can see "
-    val accountingSoftwareLink = "what accounting software is available (opens in new tab)."
-    val pageHeading = "Your account"
-    val pageSubHeading: String => String = mtditid => s"Ref: $mtditid"
+    val heading = "Income Tax"
+
     object EstimatesSection {
       val heading = "Estimates"
-      val paragraph = "See what we think you'll owe."
-      val link = "View your estimates"
+      val paragraph = "Check what you might owe, based on figures you have submitted."
     }
     object BillsSection {
       val heading = "Bills"
-      val paragraph = "See your current and previous Income Tax bills."
-      val link = "View your bills"
+      val paragraph = "View your current and previous Income Tax bills."
     }
     object ReportDeadlinesSection {
       val heading = "Report deadlines"
-      val paragraph = "Check your report deadlines and if we've received them."
-      val link = "View your deadlines"
+      val paragraph = "Check when your reports are due."
     }
     object StatementSection {
       val heading = "Statements"
       val paragraph = "View your Income Tax transactions, including charges and payments."
-      val link = "View your statement"
     }
     object AccountDetailsSection {
       val heading = "Account details"
       val paragraph = "See contact information and other details we have for your businesses."
-      val link = "Check your account details"
     }
   }
 
@@ -287,7 +274,7 @@ object Messages {
   }
 
   object Breadcrumbs {
-    val bta = "Business tax home"
+    val bta = "Business tax account"
     val it = "Income Tax"
     val estimates = "View your estimates"
     val itEstimate = "Your Income Tax estimate"

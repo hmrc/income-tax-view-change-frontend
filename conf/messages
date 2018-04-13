@@ -17,31 +17,17 @@ feedback.title                                                  = Give feedback
 
 ## Home Page ##
 home.title                                                      = Your Income Tax
-home.subheading                                                 = Income Tax
-home.heading.1                                                  = Reporting through software
-home.text                                                       = You send your Income Tax reports using accounting software.
-home.dropdown.text                                              = How to do this
-home.dropdown.p1                                                = You''ll send four reports during the year.
-home.dropdown.p2                                                = After that, you''ll need to confirm and finalise your figures in your accounting software.
-home.dropdown.p3                                                = If you don''t have accounting software, you can see
-home.dropdown.link                                              = what accounting software is available (opens in new tab).
-home.heading.2                                                  = Your account
-home.ref                                                        = Ref:
+home.heading                                                    = Income Tax
 home.bills.heading                                              = Bills
-home.bills.text                                                 = See your current and previous Income Tax bills.
-home.bills.link                                                 = View your bills
+home.bills.text                                                 = View your current and previous Income Tax bills.
 home.estimates.heading                                          = Estimates
-home.estimates.text                                             = See what we think you''ll owe.
-home.estimates.link                                             = View your estimates
+home.estimates.text                                             = Check what you might owe, based on figures you have submitted.
 home.deadlines.heading                                          = Report deadlines
-home.deadlines.text                                             = Check your report deadlines and if we''ve received them.
-home.deadlines.link                                             = View your deadlines
+home.deadlines.text                                             = Check when your reports are due.
 home.statements.heading                                         = Statements
 home.statements.text                                            = View your Income Tax transactions, including charges and payments.
-home.statements.link                                            = View your statement
 home.accounts.heading                                           = Account details
 home.accounts.text                                              = See contact information and other details we have for your businesses.
-home.accounts.link                                              = Check your account details
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service
@@ -237,7 +223,7 @@ thank_you.line.1                                                = Your feedback 
 thank_you.signIn                                                = Go back to sign in.
 
 ## Breadcrumbs ##
-breadcrumb-bta                                                  = Business tax home
+breadcrumb-bta                                                  = Business tax account
 breadcrumb-it                                                   = Income Tax
 breadcrumb-estimates                                            = View your estimates
 breadcrumb-it-estimate                                          = Your Income Tax estimate
