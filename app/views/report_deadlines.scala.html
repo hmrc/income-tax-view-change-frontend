@@ -65,7 +65,7 @@
                                 <p id="@{id}-ceased">@messages("obligations.ceased", business.incomeSource.cessation.get.date.get.toLongDate)</p>
                             }
                         }
-                        @renderReportDeadlines(business.reportDeadlines, id)
+                        @renderReportDeadlines(business.reportDeadlines, id, business.incomeSource.tradingName.get)
                     }
                 }
             </section>
@@ -85,7 +85,7 @@
                             @Messages("obligations.ceasedProperties",cessation.date.get.toLongDate)
                         }
                     </p>
-                    @renderReportDeadlines(p.reportDeadlines, "pi")
+                    @renderReportDeadlines(p.reportDeadlines, "pi", Messages("obligations.pi.subheading"))
                 </section>
             }
         }
