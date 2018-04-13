@@ -16,7 +16,7 @@
 
 package connectors
 
-import assets.BaseTestConstants.testNino
+import assets.BaseTestConstants.{testNino,testTaxYear}
 import assets.FinancialTransactionsTestConstants._
 import mocks.MockHttp
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsResponseModel}
@@ -39,8 +39,8 @@ class FinancialTransactionsConnectorSpec extends TestSupport with MockHttp{
   "FinancialTransactionsConnector.getFinancialTransactions" should {
 
     lazy val testUrl = TestFinancialTransactionsConnector.getFinancialTransactionsUrl(testNino)
-    lazy val testParams = Seq("onlyOpenItems" -> "true")
-    def result: Future[FinancialTransactionsResponseModel] = TestFinancialTransactionsConnector.getFinancialTransactions(testNino)
+    lazy val testParams = Seq("onlyOpenItems" -> "true", "dateFrom" -> "2017-4-6", "dateTo" -> "2018-4-5")
+    def result: Future[FinancialTransactionsResponseModel] = TestFinancialTransactionsConnector.getFinancialTransactions(testNino, testTaxYear)
 
     "return a FinancialTransactionsModel with JSON in case of success" in {
       setupMockHttpGetWithParams(testUrl,testParams)(successResponse)
