@@ -32,7 +32,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
 
       "return a valid FinancialTransactions model" in {
         setupFinancialTransactionsResponse(testNino)(financialTransactionsModel())
-        await(TestFinancialTransactionsService.getFinancialTransactions(testNino)) shouldBe financialTransactionsModel()
+        await(TestFinancialTransactionsService.getFinancialTransactions(testNino, testTaxYear)) shouldBe financialTransactionsModel()
       }
 
     }
@@ -41,7 +41,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
 
       "return a FinancialTransactionsError model" in {
         setupFinancialTransactionsResponse(testNino)(financialTransactionsErrorModel)
-        await(TestFinancialTransactionsService.getFinancialTransactions(testNino)) shouldBe financialTransactionsErrorModel
+        await(TestFinancialTransactionsService.getFinancialTransactions(testNino, testTaxYear)) shouldBe financialTransactionsErrorModel
       }
 
     }
