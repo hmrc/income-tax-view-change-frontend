@@ -276,7 +276,7 @@ object Messages {
     val it = "Income Tax"
     val estimates = "View your estimates"
     val itEstimate = "Your Income Tax estimate"
-    val bills = "Bills"
+    val bills = "Income Tax bills"
     val finalisedBill: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
     val obligations = "Your Income Tax report deadlines"
     val statement = "Income Tax statement"
