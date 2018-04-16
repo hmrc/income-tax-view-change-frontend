@@ -29,11 +29,9 @@ class ReportDeadlinesStatusHelperSpec extends TestSupport {
 
       val openHtml = Html(
         s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right">
-           |  <span class='bold-xsmall'>
-           |    Due by 25 December 2017
-           |  </span>
-           |</p>
+           |<span class='bold-xsmall'>
+           |  Due by 25 December 2017
+           |</span>
          """.stripMargin)
 
       val overdueHtml = Html(
@@ -45,11 +43,9 @@ class ReportDeadlinesStatusHelperSpec extends TestSupport {
 
       val receivedHtml = Html(
         s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #005ea5;">
-           |  <span class='bold-xsmall'>
-           |    Received
-           |  </span>
-           |</p>
+           |<span class='bold-xsmall'>
+           |  Received
+           |</span>
            """.stripMargin)
 
 

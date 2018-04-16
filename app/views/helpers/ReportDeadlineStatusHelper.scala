@@ -27,20 +27,16 @@ object ReportDeadlineStatusHelper {
     case open: Open =>
       Html(
         s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right">
-           |  <span class='bold-xsmall'>
-           |    ${messages("status.open", open.dueDate.toLongDate)}
-           |  </span>
-           |</p>
+           |<span class='bold-xsmall'>
+           |  ${messages("status.open", open.dueDate.toLongDate)}
+           |</span>
          """.stripMargin)
     case _: Received.type =>
       Html(
         s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #005ea5;">
-           |  <span class='bold-xsmall'>
-           |    ${messages("status.received")}
-           |  </span>
-           |</p>
+           |<span class='bold-xsmall'>
+           |  ${messages("status.received")}
+           |</span>
            """.stripMargin)
     case overdue: Overdue =>
       Html(
