@@ -32,11 +32,10 @@
 }
 
 @main_template(
-title = business.tradingName.get,
-bodyClasses = None,
-scriptElem = None,
-
-serviceInfo = breadcrumb
+    title = business.tradingName.get,
+    bodyClasses = None,
+    scriptElem = None,
+    contentHeader = Some(breadcrumb)
 ) {
 
     <section id="business-details">
