@@ -45,11 +45,9 @@ object ReportDeadlineStatusHelper {
     case overdue: Overdue =>
       Html(
         s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right">
-           |  <span>
-           |    ${overdue.dueDate.toLongDate} <strong class="task-overdue">${messages("status.overdue")}</strong>
-           |  </span>
-           |</p>
+           |<span>
+           |  ${overdue.dueDate.toLongDate} <strong class="task-overdue">${messages("status.overdue")}</strong>
+           |</span>
            """.stripMargin)
   }
 

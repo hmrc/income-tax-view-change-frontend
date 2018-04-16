@@ -38,11 +38,9 @@ class ReportDeadlinesStatusHelperSpec extends TestSupport {
 
       val overdueHtml = Html(
         s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right">
-           |  <span>
-           |    25 December 2017 <strong class="task-overdue">Overdue</strong>
-           |  </span>
-           |</p>
+           |<span>
+           |  25 December 2017 <strong class="task-overdue">Overdue</strong>
+           |</span>
            """.stripMargin)
 
       val receivedHtml = Html(
