@@ -57,11 +57,12 @@ estimates.noEstimates                                           = You don''t hav
 estimates.noEstimatesHeading                                    = Your Income Tax estimate
 
 ## Estimated Tax Liability Page ##
-estimated_tax_liability.title                                   = Tax year: {0} to {1}
-estimated_tax_liability.heading                                 = Your Income Tax estimate
-estimated_tax_liability.tax-year                                = Tax year: {0} to {1}
+estimated_tax_liability.title                                   = {0} to {1} tax year
+estimated_tax_liability.heading                                 = {0} to {1} tax year
+estimated_tax_liability.subheading                              = Estimates
+estimated_tax_liability.reported-figures                        = These estimates are based on the figures you already submitted for this tax year.
 estimated_tax_liability.estimated-tax.payment                   = You don''t need to pay anything yet, but you must pay what you owe for the whole tax year by
-estimated_tax_liability.calc-breakdown.heading                  = How your current estimate was calculated
+estimated_tax_liability.calc-breakdown.heading                  = How we calculated this estimate
 estimated_tax_liability.calc-breakdown.business-profit          = Business profit
 estimated_tax_liability.calc-breakdown.property-profit          = Property profit
 estimated_tax_liability.calc-breakdown.and-savings              = and income from savings
@@ -81,23 +82,20 @@ estimated_tax_liability.calc-breakdown.at                       = at
 estimated_tax_liability.calc-breakdown.nic2                     = Class 2 National Insurance
 estimated_tax_liability.calc-breakdown.nic4                     = Class 4 National Insurance
 estimated_tax_liability.calc-breakdown.reliefs                  = Your tax reliefs
-
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
 estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
 estimated_tax_liability.no-data                                 = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
 estimated_tax_liability.error.p1                                = We can''t display your estimated tax amount at the moment.
 estimated_tax_liability.error.p2                                = Try refreshing the page in a few minutes.
 estimated_tax_liability.eoyEstimate.heading                     = Annual estimate: {0}
-estimated_tax_liability.eoyEstimate.p1                          = This is an estimate of what you''ll pay for the whole of this tax year, beginning 6 April {0} and ending 5 April {1}.
-estimated_tax_liability.eoyEstimate.p2                          = It''s based on your current estimate and is a total of all Income Tax, from any source that you report through accounting software.
+estimated_tax_liability.eoyEstimate.p1                          = This is for the {0} to {1} tax year.
 estimated_tax_liability.inYearEstimate.heading                  = Current estimate: {0}
-estimated_tax_liability.inYearEstimate.p1                       = This is an estimate of the tax you owe from 6 April {0} to {1}.
-estimated_tax_liability.inYearEstimate.p2                       = It''s based on the information you report through accounting software.
-estimated_tax_liability.inYearEstimate.whyThisMayChange         = Why your current estimate may change
-estimated_tax_liability.inYearEstimate.whyThisMayChange.p1      = Your estimate could change because:
-estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = rates and allowances won''t be applied in full until the end of the tax year
+estimated_tax_liability.inYearEstimate.p1                       = This is for 6 April {0} to {1}.
+estimated_tax_liability.inYearEstimate.whyThisMayChange         = Why your current estimates may change
+estimated_tax_liability.inYearEstimate.whyThisMayChange.p1      = Your estimates could change because:
+estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = rates and allowances will not be applied in full until the end of the tax year
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = you may earn more money
-estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that''s not reported in your accounting software
+estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that is not reported in your accounting software
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Your Income Tax report deadlines
