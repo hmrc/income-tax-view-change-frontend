@@ -43,7 +43,9 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
 
   private[StatementsController] def renderView[A](implicit user: MtdItUserOptionNino[A]): Future[Result] = {
 
-    financialTransactionsService.getFinancialTransactions(user.mtditid).map{
+    val earliestYear = 2018
+
+    financialTransactionsService.getFinancialTransactions(user.mtditid, earliestYear).map{
       case model: FinancialTransactionsModel =>
         Logger.debug("[StatementsController][getStatements] Success Response received from financialTransactionsService")
         Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))

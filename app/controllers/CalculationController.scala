@@ -74,7 +74,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
 
   private def renderCrystallisedView(calcDisplayModel: CalcDisplayModel, taxYear: Int)(implicit user: MtdItUser[_]): Future[Result] = {
     implicit val sources: IncomeSourcesWithDeadlinesModel = user.incomeSources
-    financialTransactionsService.getFinancialTransactions(user.mtditid).map {
+    financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear).map {
       case transactions: FinancialTransactionsModel => transactions.findChargeForTaxYear(taxYear) match {
         case Some(charge) => Ok(views.html.crystallised(calcDisplayModel, charge, taxYear))
         case _ =>
