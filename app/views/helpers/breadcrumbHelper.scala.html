@@ -29,7 +29,7 @@
             @if(item.url.isDefined){
                 <a id=@item.id data-journey-click="@{page}:ClickBreadcrumb:@{item.toPage}" href=@item.url>@messages(item.id)</a>
             } else {
-                <span id=@item.id>@messages(item.id)</span>
+                <span id=@item.id>@item.customText.fold(messages(item.id))(text => text)</span>
             }
         </li>
         }

@@ -16,7 +16,7 @@
 
 package models.core.breadcrumb
 
-case class BreadcrumbItem(id: String, url: Option[String]) {
+case class BreadcrumbItem(id: String, url: Option[String] = None, customText: Option[String] = None) {
 
   def toPage: String = Map(
     "breadcrumb-it" -> "ToHomePage",
