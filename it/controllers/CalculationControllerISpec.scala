@@ -161,10 +161,10 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           res should have(
             httpStatus(OK),
-            pageTitle("Your final submission"),
-            elementTextByID("tax-year")("Tax year: 2017 to 2018"),
-            elementTextByID("page-heading")("Your finalised Income Tax bill"),
-            elementTextByID("whatYouOweHeading")(s"What you owe: ${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
+            pageTitle("2017 to 2018 tax year"),
+            elementTextByID("heading")("2017 to 2018 tax year"),
+            elementTextByID("sub-heading")("Bills"),
+            elementTextByID("whatYouOweHeading")(s"${calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString}"),
             isElementVisibleById("calcBreakdown")(expectedValue = true),
             elementTextByID("calcBreakdown")("How this figure was calculated"),
             elementTextByID("business-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
@@ -244,9 +244,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           res should have(
             httpStatus(OK),
-            pageTitle("Your final submission"),
-            elementTextByID("page-heading")("Your finalised Income Tax bill"),
-            elementTextByID("tax-year")("Tax year: 2017 to 2018"),
+            pageTitle("2017 to 2018 tax year"),
+            elementTextByID("sub-heading")("Bills"),
+            elementTextByID("heading")("2017 to 2018 tax year"),
             isElementVisibleById("calcBreakdown")(expectedValue = false),
             elementTextByID("business-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
             elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
