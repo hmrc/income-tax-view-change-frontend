@@ -36,6 +36,6 @@ POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch 
 
 GET         /report-quarterly/income-and-expenses/view/test-only/bta-partial                          @testOnly.controllers.TestBTAPartialController.viewBTAPartial
 
-GET         /report-quarterly/income-and-expenses/view/test-only/financial-transactions/it/:mtditid   @testOnly.controllers.FinancialTransactionsProxyController.getFinancialData(mtditid: String, onlyOpenItems: Option[String], dateFrom: Option[String], dateTo: Option[String], includeLocks: Option[String], calculateAccruedInterest: Option[String], customerPaymentInfo: Option[String])
+GET         /report-quarterly/income-and-expenses/view/test-only/financial-transactions/:regime/:mtditid   @testOnly.controllers.FinancialTransactionsProxyController.getFinancialData(regime: String, mtditid: String, onlyOpenItems: Option[String], dateFrom: Option[String], dateTo: Option[String], includeLocks: Option[String], calculateAccruedInterest: Option[String], customerPaymentInfo: Option[String])
 
 ->          /                                                                                          prod.Routes
