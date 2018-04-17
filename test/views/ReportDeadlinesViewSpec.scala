@@ -79,14 +79,14 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         document.getElementById("bi-1-status-heading").text() shouldBe "Report due date"
       }
 
-      "contain the first row and have the start date as '1 April 2017' and status 'Received'" in {
-        document.getElementById("bi-1-ob-1-start").text() shouldBe "1 April 2017"
+      "contain the first row and have the start date as '1 Apr 2017' and status 'Received'" in {
+        document.getElementById("bi-1-ob-1-start").text() shouldBe "1 Apr 2017"
         document.getElementById("bi-1-ob-1-status").text() shouldBe "Received"
       }
 
-      s"contain a second row and have ${messages.eops} and a status 'Due by 31 October 2017'" in {
+      s"contain a second row and have ${messages.eops} and a status '31 Oct 2017'" in {
         document.getElementById("bi-1-ob-2-eops").text() shouldBe messages.eops
-        document.getElementById("bi-1-ob-2-status").text() shouldBe "Due by 31 October 2017"
+        document.getElementById("bi-1-ob-2-status").text() shouldBe "31 Oct 2017"
       }
 
       "not contain a third row" in {

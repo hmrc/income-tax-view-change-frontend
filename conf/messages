@@ -183,7 +183,6 @@ business.backToAccount                                          = Back to accoun
 ## Statuses ##
 status.received                                                 = Received
 status.overdue                                                  = Overdue
-status.open                                                     = Due by {0}
 
 ## Timeout page ##
 timeout.title                                                   = Your session has timed out

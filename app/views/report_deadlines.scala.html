@@ -39,19 +39,19 @@
 
 @howToDoThis = {
     <div id="whyMayChange">
-        <p id="why-may-change-1">
-            <a id="accounting-software-link"
-               data-journey-click="HomePage:ClickLink:ViewAccountingSoftware"
-               href=@appConfig.accountingSoftwareLinkUrl
-               target="_blank">@messages("obligations.dropdown.link")
-            </a>
-            @messages("obligations.dropdown.p1")
-        </p>
-        <p id="why-may-change-2">@messages("obligations.dropdown.p2")</p>
-        <p id="why-may-change-3">@messages("obligations.dropdown.p3")</p>
-        <p id="why-may-change-4">@messages("obligations.dropdown.p4")
-
-        </p>
+        <ol class="list list-number">
+            <li id="why-may-change-1">
+                <a id="accounting-software-link"
+                   data-journey-click="HomePage:ClickLink:ViewAccountingSoftware"
+                   href=@appConfig.accountingSoftwareLinkUrl
+                   target="_blank">@messages("obligations.dropdown.link")
+                </a>
+                @messages("obligations.dropdown.p1")
+            </li>
+            <li id="why-may-change-2">@messages("obligations.dropdown.p2")</li>
+            <li id="why-may-change-3">@messages("obligations.dropdown.p3")</li>
+            <li id="why-may-change-4">@messages("obligations.dropdown.p4")</li>
+        </ol>
     </div>
 }
 
