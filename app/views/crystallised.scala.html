@@ -31,9 +31,11 @@
 
 @calcBreakdown = {
 <section id="inYearCalcBreakdown">
-    <div class="form-group">
-        <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
-    </div>
+    @if(!transactionModel.isPaid){
+        <div class="form-group">
+            <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
+        </div>
+    }
     @calcBreakdownHelper(calcModel, Some(transactionModel), taxYear)
     @if(!transactionModel.isPaid){
         <h2 id="incorrect" class="heading-medium">@messages("crystalisation.incorrect")</h2>
