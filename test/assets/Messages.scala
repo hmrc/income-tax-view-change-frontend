@@ -126,7 +126,7 @@ object Messages {
       val billLink = s"${taxYear-1} to $taxYear tax year"
       val billsLinkAriaLabel = s"view bill for $billLink"
       val noBills = "You've had no bills since you started reporting through software."
-      val earlierBills = "For earlier bills, view your Self Assessment calculations."
+      val earlierBills = "For earlier bills, view your Self Assessment calculations (opens in a new tab)."
     }
   }
 
@@ -160,7 +160,7 @@ object Messages {
 
     object Dropdown {
       val dropdownText = "How to submit a report"
-      val dropdownLink = "Choose accounting software that supports this service (opens in a new window)"
+      val dropdownLink = "Choose accounting software that supports this service (opens in a new tab)"
       val dropdown1 = "if you have not already."
       val dropdown2 = "Use your software to record your income and expenses, then send an update to HMRC at least every quarter. We will email you to let you know when to send an update."
       val dropdown3 = "Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs."

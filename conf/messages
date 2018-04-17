@@ -98,7 +98,7 @@ obligations.ceasedProperties                                    = Ceased trading
 obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
 obligations.dropdown.text                                       = How to submit a report
-obligations.dropdown.link                                       = Choose accounting software that supports this service (opens in a new window)
+obligations.dropdown.link                                       = Choose accounting software that supports this service (opens in a new tab)
 obligations.dropdown.p1                                         = if you have not already.
 obligations.dropdown.p2                                         = Use your software to record your income and expenses, then send an update to HMRC at least every quarter. We will email you to let you know when to send an update.
 obligations.dropdown.p3                                         = Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs.
@@ -137,7 +137,7 @@ bills.billLink.screenReaderPrefix                               = view bill for
 bills.billLink                                                  = {0} to {1} tax year
 bills.noBills                                                   = You''ve had no bills since you started reporting through software.
 bills.earlierBills                                              = For earlier bills,
-bills.earlierBillsLink                                          = view your Self Assessment calculations
+bills.earlierBillsLink                                          = view your Self Assessment calculations (opens in a new tab)
 
 ## Statements Page ##
 statements.title                                                = Income Tax Statement
