@@ -41,7 +41,6 @@ class FinancialTransactionsConnector @Inject()(val http: HttpClient,
 
     val url = getFinancialTransactionsUrl(mtditid)
     val queryParams: Seq[(String, String)] = Seq(
-      "onlyOpenItems" -> "true",
       "dateFrom" -> ((taxYear-1).toString + "-4-6"),
       "dateTo" -> (taxYear.toString + "-4-5")
     )
