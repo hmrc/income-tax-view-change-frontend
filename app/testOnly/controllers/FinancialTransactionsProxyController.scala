@@ -29,7 +29,8 @@ class FinancialTransactionsProxyController @Inject()(val financialTransactionsPr
                                                      implicit val appConfig: FrontendAppConfig,
                                                      implicit val messagesApi: MessagesApi) extends BaseController {
 
-  def getFinancialData(mtditid: String,
+  def getFinancialData(regime: String,
+                       mtditid: String,
                        onlyOpenItems: Option[String],
                        dateFrom: Option[String],
                        dateTo: Option[String],
@@ -38,6 +39,7 @@ class FinancialTransactionsProxyController @Inject()(val financialTransactionsPr
                        customerPaymentInfo: Option[String]): Action[AnyContent] = Action.async {
     implicit request =>
       financialTransactionsProxyConnector.getFinancialData(
+        regime,
         mtditid,
         onlyOpenItems,
         dateFrom,

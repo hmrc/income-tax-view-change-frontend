@@ -29,7 +29,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class FinancialTransactionsProxyConnector @Inject()(val appConfig: TestOnlyAppConfig,
                                                     val http: HttpClient) extends RawResponseReads {
 
-  def getFinancialData(mtditid: String,
+  def getFinancialData(regime: String,
+                       mtditid: String,
                        onlyOpenItems: Option[String],
                        dateFrom: Option[String],
                        dateTo: Option[String],
@@ -37,7 +38,7 @@ class FinancialTransactionsProxyConnector @Inject()(val appConfig: TestOnlyAppCo
                        calculateAccruedInterest: Option[String],
                        customerPaymentInfo: Option[String])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
 
-      lazy val url = s"${appConfig.ftUrl}/financial-transactions/it/$mtditid"
+      lazy val url = s"${appConfig.ftUrl}/financial-transactions/$regime/$mtditid"
 
       val queryParams: Seq[(String, String)] = Seq(
         onlyOpenItems.map(("onlyOpenItems", _)),
