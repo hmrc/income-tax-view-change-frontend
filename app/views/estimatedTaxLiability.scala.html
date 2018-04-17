@@ -17,7 +17,6 @@
 @import views.html.templates.main_template
 @import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
-@import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
 @import models.calculation.CalcDisplayModel
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
@@ -49,12 +48,12 @@
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
-        BreadcrumbItem("breadcrumb-it-estimate", None)
+        BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear")))
     )), s"EstimateFor${taxYear}Page")
 }
 
 @main_template(
-    title = renderTitle(taxYear),
+    title = messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear"),
     bodyClasses = None,
     scriptElem = None,
     contentHeader = Some(breadcrumb)
@@ -62,16 +61,17 @@
 
     <section id="estimated-tax">
 
-        <h1>
-            <span id="tax-year" class="pre-heading">@renderTaxYear(taxYear)</span>
-            <span id="page-heading" class="heading-xlarge">@messages("estimated_tax_liability.heading")</span>
-        </h1>
+        <header class="page-heading">
+            <h1 class="heading-xlarge" id="heading">@messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear")</h1>
+            <p class="heading-secondary" id="sub-heading">@messages("estimated_tax_liability.subheading")</p>
+        </header>
+
+        <p id="reported-figures">@messages("estimated_tax_liability.reported-figures")</p>
 
         @if(calcModel.hasEoyEstimate) {
             <section id="eoyEstimate" class="form-group">
                 <h2 id="eoyEstimateHeading" class="heading-large">@Html(messages("estimated_tax_liability.eoyEstimate.heading", s"${calcModel.calcDataModel.get.eoyEstimate.get.incomeTaxNicAmount.toCurrency}"))</h2>
                 <p id="eoyP1">@messages("estimated_tax_liability.eoyEstimate.p1", s"${taxYear - 1}", s"$taxYear")</p>
-                <p id="eoyP2">@messages("estimated_tax_liability.eoyEstimate.p2")</p>
             </section>
         }
 
@@ -80,7 +80,6 @@
                 @Html(messages("estimated_tax_liability.inYearEstimate.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.totalIncomeTaxNicYtd.toCurrency)}"))
             </h2>
             <p id="inYearP1">@messages("estimated_tax_liability.inYearEstimate.p1", s"${taxYear - 1}", s"${calcModel.calcTimestamp.toLocalDateTime.toLongDateTime}")</p>
-            <p id="inYearP2">@messages("estimated_tax_liability.inYearEstimate.p2")</p>
 
             @if(calcModel.breakdownNonEmpty){
                 <h3 id="howCalculatedHeading" class="heading-medium">@messages("estimated_tax_liability.calc-breakdown.heading")</h3>
@@ -92,9 +91,6 @@
             </p>
 
         </section>
-
-        @backToHomeHelper(s"EstimateFor${taxYear}Page")
-
 
     </section>
  }

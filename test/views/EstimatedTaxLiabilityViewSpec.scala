@@ -82,15 +82,19 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
       document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
       document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
       document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
-      document.getElementById("breadcrumb-it-estimate").text shouldBe breadcrumbMessages.itEstimate
+      document.getElementById("breadcrumb-it-estimate").text shouldBe breadcrumbMessages.itEstimate(testYear)
     }
 
-    s"have the tax year '${messages.taxYearSubHeading}'" in {
-      document.getElementById("tax-year").text() shouldBe messages.taxYearSubHeading
+    s"have the tax year '${messages.subheading}'" in {
+      document.getElementById("sub-heading").text() shouldBe messages.subheading
     }
 
-    s"have the page heading '${messages.pageHeading}'" in {
-      document.getElementById("page-heading").text() shouldBe messages.pageHeading
+    s"have the page heading '${messages.heading}'" in {
+      document.getElementById("heading").text() shouldBe messages.heading
+    }
+
+    s"has a paragraph to explain the reported figures '${messages.reportedFigures}'" in {
+      document.getElementById("reported-figures").text() shouldBe messages.reportedFigures
     }
 
     s"have an Estimated Tax Liability section" which {
@@ -111,10 +115,6 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         s"has the correct estimate p1 paragraph '${messages.EoyEstimate.p1}'" in {
           eoySection.getElementById("eoyP1").text shouldBe messages.EoyEstimate.p1
         }
-
-        s"has the correct estimate p2 paragraph '${messages.EoyEstimate.p2}'" in {
-          eoySection.getElementById("eoyP2").text shouldBe messages.EoyEstimate.p2
-        }
       }
 
       "has a section for In Year (Current) Estimate" which {
@@ -129,10 +129,6 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)}'" in {
           inYearSection.getElementById("inYearP1").text shouldBe
             messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)
-        }
-
-        s"has the correct estimate p2 paragraph '${messages.InYearEstimate.p2}'" in {
-          inYearSection.getElementById("inYearP2").text shouldBe messages.InYearEstimate.p2
         }
 
         "has progressive disclosure for why there estimate might change" which {
@@ -745,12 +741,6 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
           document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
-    }
-
-    "show a back link to the Income Tax home page" in {
-      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
-      import setup._
-      document.getElementById("it-home-back") shouldNot be(null)
     }
   }
 }
