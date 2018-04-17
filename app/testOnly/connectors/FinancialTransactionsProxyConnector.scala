@@ -20,12 +20,10 @@ import javax.inject.{Inject, Singleton}
 
 import connectors.RawResponseReads
 import testOnly.TestOnlyAppConfig
-import testOnly.models.{DataModel, SchemaModel}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialTransactionsProxyConnector @Inject()(val appConfig: TestOnlyAppConfig,
@@ -37,16 +35,19 @@ class FinancialTransactionsProxyConnector @Inject()(val appConfig: TestOnlyAppCo
                        dateTo: Option[String],
                        includeLocks: Option[String],
                        calculateAccruedInterest: Option[String],
-                       customerPaymentInfo: Option[String]): Future[HttpResponse] = {
+                       customerPaymentInfo: Option[String])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
 
-      lazy val url = s"${appConfig.ftUrl}/financial-transactions/it/$mtditid?" +
-        onlyOpenItems.fold("")(x => s"&onlyOpenItems=$x") +
-        dateFrom.fold("")(x => s"&dateFrom=$x") +
-        dateTo.fold("")(x => s"&dateTo=$x") +
-        includeLocks.fold("")(x => s"&includeLocks=$x") +
-        calculateAccruedInterest.fold("")(x => s"&calculateAccruedInterest=$x") +
-        customerPaymentInfo.fold("")(x => s"&customerPaymentInformation=$x")
+      lazy val url = s"${appConfig.ftUrl}/financial-transactions/it/$mtditid"
 
-      http.GET(url)
+      val queryParams: Seq[(String, String)] = Seq(
+        onlyOpenItems.map(("onlyOpenItems", _)),
+        dateFrom.map(("dateFrom", _)),
+        dateTo.map(("dateTo", _)),
+        includeLocks.map(("includeLocks", _)),
+        calculateAccruedInterest.map(("calculateAccruedInterest", _)),
+        customerPaymentInfo.map(("customerPaymentInformation", _))
+      ).flatten
+
+      http.GET(url, queryParams)
   }
 }
