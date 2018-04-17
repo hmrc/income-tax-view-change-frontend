@@ -58,7 +58,7 @@
 @main_template(
     title = messages("obligations.title"),
     bodyClasses = None,
-    serviceInfo = breadcrumb
+    contentHeader = Some(breadcrumb)
 ) {
 
     <section id="obligations">
@@ -70,7 +70,6 @@
         @if(incomeSources.allReportDeadlinesErroredForAllIncomeSources) {
             @allReportDeadlinesErrored
         } else {
-            <p id="obligation-intro">@messages("obligations.info")</p>
 
             <!-- business obligations -->
             @if(incomeSources.hasBusinessReportErrors) {

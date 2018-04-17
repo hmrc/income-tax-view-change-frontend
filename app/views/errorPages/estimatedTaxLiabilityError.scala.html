@@ -17,7 +17,7 @@
 @import views.html.templates.main_template
 @import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
-@import views.helpers.TaxYearRenderHelper._
+
 @import models.calculation.CalculationDataResponseModel
 @import views.html.helpers.{breadcrumbHelper}
 @import views.helpers.EstimatesPage
@@ -30,28 +30,26 @@
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
-        BreadcrumbItem("breadcrumb-it-estimate", None)
+        BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear")))
     )), "EstimatesErrorPage")
 }
 
 @main_template(
-    title = renderTitle(taxYear),
+    title = messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear"),
     bodyClasses = None,
     scriptElem = None,
-    serviceInfo = breadcrumb
+    contentHeader = Some(breadcrumb)
 ) {
 
     <section id="estimated-tax" data-metrics="handledError:estimatesError:noEstimates">
 
-        <h1>
-            <span id="tax-year" class="pre-heading">@renderTaxYear(taxYear)</span>
-            <span id="page-heading">@messages("estimated_tax_liability.heading")</span>
-        </h1>
+        <header class="page-heading">
+            <h1 class="heading-xlarge" id="heading">@messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear")</h1>
+            <p class="heading-secondary" id="sub-heading">@messages("estimated_tax_liability.subheading")</p>
+        </header>
 
         <p id="p1">@messages("estimated_tax_liability.error.p1")</p>
         <p id="p2">@messages("estimated_tax_liability.error.p2")</p>
-
-        @backToHomeHelper("EstimatesErrorPage")
 
     </section>
  }

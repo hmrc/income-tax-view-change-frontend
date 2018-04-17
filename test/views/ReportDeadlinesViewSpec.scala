@@ -69,10 +69,6 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       document.getElementById("breadcrumb-obligations").text shouldBe breadcrumbMessages.obligations
     }
 
-    s"have the an intro para '${messages.info}'" in {
-      document.getElementById("obligation-intro").text() shouldBe messages.info
-    }
-
     "have a table containing the obligations" should {
 
       "contain the heading for Report period" in {
