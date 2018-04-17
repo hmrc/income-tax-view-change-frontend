@@ -86,7 +86,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view displays the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines")
+              pageTitle("Report deadlines")
 
             )
 
@@ -140,7 +140,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               Then("the correct title, username and links are displayed")
               res should have(
                 httpStatus(OK),
-                pageTitle("Your Income Tax report deadlines")
+                pageTitle("Report deadlines")
 
               )
 
@@ -160,20 +160,20 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               res should have(
                 elementTextByID(id = "bi-1-ob-2-start")("1 January 2017"),
                 elementTextByID(id = "bi-1-ob-2-end")("31 March 2017"),
-                elementTextByID(id = "bi-1-ob-2-status")("Overdue")
+                elementTextByID(id = "bi-1-ob-2-status")(LocalDate.now().minusDays(128).toLongDate +" Overdue")
               )
 
               Then("the third business obligation displayed is")
               res should have(
                 elementTextByID(id = "bi-1-ob-3-start")("1 April 2017"),
                 elementTextByID(id = "bi-1-ob-3-end")("30 June 2017"),
-                elementTextByID(id = "bi-1-ob-3-status")("Overdue")
+                elementTextByID(id = "bi-1-ob-3-status")(LocalDate.now().minusDays(36).toLongDate +" Overdue")
               )
 
               Then("the fourth business obligation displayed is")
               res should have(
                 elementTextByID(id = "bi-1-ob-4-eops")("Whole tax year (final check)"),
-                elementTextByID(id = "bi-1-ob-4-status")("Overdue")
+                elementTextByID(id = "bi-1-ob-4-status")(LocalDate.now().minusDays(36).toLongDate +" Overdue")
               )
 
               Then("the fifth business obligation displayed is")
@@ -194,20 +194,20 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               res should have(
                 elementTextByID(id = "pi-ob-2-start")("1 January 2017"),
                 elementTextByID(id = "pi-ob-2-end")("31 March 2017"),
-                elementTextByID(id = "pi-ob-2-status")("Overdue")
+                elementTextByID(id = "pi-ob-2-status")(LocalDate.now().minusDays(128).toLongDate + " Overdue")
               )
 
               Then("the third property obligation displayed is")
               res should have(
                 elementTextByID(id = "pi-ob-3-start")("1 April 2017"),
                 elementTextByID(id = "pi-ob-3-end")("30 June 2017"),
-                elementTextByID(id = "pi-ob-3-status")("Overdue")
+                elementTextByID(id = "pi-ob-3-status")(LocalDate.now().minusDays(36).toLongDate +" Overdue")
               )
 
               Then("the fourth business obligation displayed is")
               res should have(
                 elementTextByID(id = "pi-ob-4-eops")("Whole tax year (final check)"),
-                elementTextByID(id = "pi-ob-4-status")("Overdue")
+                elementTextByID(id = "pi-ob-4-status")(LocalDate.now().minusDays(36).toLongDate +" Overdue")
               )
 
               Then("the fifth property obligation displayed is")
@@ -255,7 +255,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view should display the title and username")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines")
+              pageTitle("Report deadlines")
             )
 
             Then("the page should contain seven obligations")
@@ -273,7 +273,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             res should have(
               elementTextByID(id = "bi-1-ob-2-start")("6 October 2017"),
               elementTextByID(id = "bi-1-ob-2-end")("5 January 2018"),
-              elementTextByID(id = "bi-1-ob-2-status")("Overdue")
+              elementTextByID(id = "bi-1-ob-2-status")(LocalDate.now().minusDays(1).toLongDate +" Overdue")
             )
 
             Then("the third business obligation displayed is")
@@ -293,7 +293,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             res should have(
               elementTextByID(id = "pi-ob-2-start")("6 October 2017"),
               elementTextByID(id = "pi-ob-2-end")("5 January 2018"),
-              elementTextByID(id = "pi-ob-2-status")("Overdue")
+              elementTextByID(id = "pi-ob-2-status")(LocalDate.now().minusDays(1).toLongDate +" Overdue")
             )
 
             Then("the third property obligation displayed is")
@@ -335,7 +335,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view should display the title and username")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines")
+              pageTitle("Report deadlines")
             )
 
             Then("ten obligations are displayed")
@@ -354,21 +354,21 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             res should have(
               elementTextByID(id = "bi-1-ob-2-start")("1 January 2017"),
               elementTextByID(id = "bi-1-ob-2-end")("31 March 2017"),
-              elementTextByID(id = "bi-1-ob-2-status")("Overdue")
+              elementTextByID(id = "bi-1-ob-2-status")(LocalDate.now().minusDays(128).toLongDate +" Overdue")
             )
 
             Then("third business obligation displayed is")
             res should have(
               elementTextByID(id = "bi-1-ob-3-start")("1 April 2017"),
               elementTextByID(id = "bi-1-ob-3-end")("30 June 2017"),
-              elementTextByID(id = "bi-1-ob-3-status")("Overdue")
+              elementTextByID(id = "bi-1-ob-3-status")(LocalDate.now().minusDays(36).toLongDate + " Overdue")
             )
 
 
             Then("the fourth business obligation displayed is")
             res should have(
               elementTextByID(id = "bi-1-ob-4-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "bi-1-ob-4-status")("Overdue")
+              elementTextByID(id = "bi-1-ob-4-status")(LocalDate.now().minusDays(36).toLongDate + " Overdue")
             )
 
 
@@ -390,20 +390,20 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             res should have(
               elementTextByID(id = "pi-ob-2-start")("1 January 2017"),
               elementTextByID(id = "pi-ob-2-end")("31 March 2017"),
-              elementTextByID(id = "pi-ob-2-status")("Overdue")
+              elementTextByID(id = "pi-ob-2-status")(LocalDate.now().minusDays(128).toLongDate +" Overdue")
             )
 
             Then("third property obligation displayed is")
             res should have(
               elementTextByID(id = "pi-ob-3-start")("1 April 2017"),
               elementTextByID(id = "pi-ob-3-end")("30 June 2017"),
-              elementTextByID(id = "pi-ob-3-status")("Overdue")
+              elementTextByID(id = "pi-ob-3-status")(LocalDate.now().minusDays(36).toLongDate +" Overdue")
             )
 
             Then("the fourth business obligation displayed is")
             res should have(
               elementTextByID(id = "pi-ob-4-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "pi-ob-4-status")("Overdue")
+              elementTextByID(id = "pi-ob-4-status")(LocalDate.now().minusDays(36).toLongDate +" Overdue")
             )
 
             Then("fifth property obligation displayed is")
@@ -441,7 +441,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view should display the title and username")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines")
+              pageTitle("Report deadlines")
             )
 
             Then("One property obligation is displayed")
@@ -484,7 +484,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view should display the title and username")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines")
+              pageTitle("Report deadlines")
             )
 
 
@@ -504,7 +504,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             res should have(
               elementTextByID(id = "pi-ob-2-start")("6 October 2017"),
               elementTextByID(id = "pi-ob-2-end")("5 January 2018"),
-              elementTextByID(id = "pi-ob-2-status")("Overdue")
+              elementTextByID(id = "pi-ob-2-status")(LocalDate.now().minusDays(1).toLongDate +" Overdue")
             )
 
             Then("the third property obligation is")
@@ -541,7 +541,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view should display the title and username")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines")
+              pageTitle("Report deadlines")
             )
 
             Then("the page displays five obligations")
@@ -561,20 +561,20 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             res should have(
               elementTextByID(id = "pi-ob-2-start")("1 January 2017"),
               elementTextByID(id = "pi-ob-2-end")("31 March 2017"),
-              elementTextByID(id = "pi-ob-2-status")("Overdue")
+              elementTextByID(id = "pi-ob-2-status")(LocalDate.now().minusDays(128).toLongDate +" Overdue")
             )
 
             Then("the third obligation displayed should be")
             res should have(
               elementTextByID(id = "pi-ob-3-start")("1 April 2017"),
               elementTextByID(id = "pi-ob-3-end")("30 June 2017"),
-              elementTextByID(id = "pi-ob-3-status")("Overdue")
+              elementTextByID(id = "pi-ob-3-status")(LocalDate.now().minusDays(36).toLongDate +" Overdue")
             )
 
             Then("the fourth business obligation displayed is")
             res should have(
               elementTextByID(id = "pi-ob-4-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "pi-ob-4-status")("Overdue")
+              elementTextByID(id = "pi-ob-4-status")(LocalDate.now().minusDays(36).toLongDate +" Overdue")
             )
 
             Then("the fifth obligation dispolayed should be")
@@ -613,7 +613,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines")
+              pageTitle("Report deadlines")
             )
 
             Then("the page title")
@@ -665,7 +665,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines")
+              pageTitle("Report deadlines")
 
             )
 
@@ -728,7 +728,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines")
+              pageTitle("Report deadlines")
 
             )
 
@@ -747,7 +747,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               elementTextByID(id = "bi-1-ob-3-status")("Due by " + LocalDate.now().plusDays(1).toLongDate),
               elementTextByID(id = "bi-1-ob-2-start")("6 October 2017"),
               elementTextByID(id = "bi-1-ob-2-end")("5 January 2018"),
-              elementTextByID(id = "bi-1-ob-2-status")("Overdue")
+              elementTextByID(id = "bi-1-ob-2-status")(LocalDate.now().minusDays(1).toLongDate + " Overdue")
             )
 
             Then("the second business obligation data is")
@@ -760,7 +760,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               elementTextByID(id = "bi-2-ob-3-status")("Due by " + LocalDate.now().plusDays(1).toLongDate),
               elementTextByID(id = "bi-2-ob-2-start")("6 October 2017"),
               elementTextByID(id = "bi-2-ob-2-end")("5 January 2018"),
-              elementTextByID(id = "bi-2-ob-2-status")("Overdue")
+              elementTextByID(id = "bi-2-ob-2-status")(LocalDate.now().minusDays(1).toLongDate + " Overdue")
             )
 
             Then("the property obligation data is")
@@ -799,7 +799,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view is displayed with an error message under the business income section")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines"),
+              pageTitle("Report deadlines"),
               elementTextByID(id = "bi-1-section")("business"),
               elementTextByID(id = "bi-1-p1")("We can't display your next report due date at the moment."),
               elementTextByID(id = "bi-1-p2")("Try refreshing the page in a few minutes.")
@@ -832,7 +832,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view is displayed with an error message under the property income section")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines"),
+              pageTitle("Report deadlines"),
               elementTextByID(id = "pi-section")("Property income"),
               elementTextByID(id = "pi-p1")("We can't display your next report due date at the moment."),
               elementTextByID(id = "pi-p2")("Try refreshing the page in a few minutes.")
@@ -870,7 +870,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("an error message for property obligations is returned and the correct view is displayed")
             res should have(
               httpStatus(OK),
-              pageTitle("Your Income Tax report deadlines"),
+              pageTitle("Report deadlines"),
               elementTextByID(id = "p1")("We can't display your next report due date at the moment."),
               elementTextByID(id = "p2")("Try refreshing the page in a few minutes.")
             )

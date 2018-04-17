@@ -41,7 +41,7 @@
 
         <header class="page-heading">
             <h1 id="page-heading" class="heading-xlarge">@messages("home.heading")</h1>
-            <p id="sub-heading" class="heading-secondary">@user.userDetails.map{ details => @details.name}</p>
+            @user.userDetails.map{ details => <p id="sub-heading" class="heading-secondary">@details.name</p>}
         </header>
 
         <div class="flex-container grid-row">

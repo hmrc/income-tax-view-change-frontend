@@ -38,7 +38,7 @@ case class ReportDeadlineModel(start: LocalDate,
   def getReportDeadlineStatus: ReportDeadlineStatus = (met, due) match {
     case (true, _)                                          => Received
     case (false, date) if !currentTime().isAfter(date)      => Open(date)
-    case (false, _)                                         => Overdue
+    case (false, date)                                      => Overdue(date)
   }
 
   def obligationType: ObligationType = if(ChronoUnit.MONTHS.between(start, end).abs > 3) EopsObligation else QuarterlyObligation

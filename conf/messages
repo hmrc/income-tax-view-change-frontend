@@ -84,9 +84,8 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = you may earn m
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that is not reported in your accounting software
 
 ## ReportDeadlines Page ##
-obligations.title                                               = Your Income Tax report deadlines
-obligations.heading                                             = Your Income Tax report deadlines
-obligations.info                                                = You must submit a report once every quarter using accounting software.
+obligations.title                                               = Report deadlines
+obligations.heading                                             = Report deadlines
 obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
 obligations.bi.subheading                                       = Business income
@@ -98,6 +97,12 @@ obligations.ceased                                              = This business 
 obligations.ceasedProperties                                    = Ceased trading on {0}.
 obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
+obligations.dropdown.text                                       = How to submit a report
+obligations.dropdown.link                                       = Choose accounting software that supports this service (opens in a new window)
+obligations.dropdown.p1                                         = if you have not already.
+obligations.dropdown.p2                                         = Use your software to record your income and expenses, then send an update to HMRC at least every quarter. We will email you to let you know when to send an update.
+obligations.dropdown.p3                                         = Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs.
+obligations.dropdown.p4                                         = After you send your final report, you can see the Income Tax you owe for the tax year.
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission
@@ -225,8 +230,8 @@ breadcrumb-bta                                                  = Business tax a
 breadcrumb-it                                                   = Income Tax
 breadcrumb-estimates                                            = View your estimates
 breadcrumb-it-estimate                                          = Your Income Tax estimate
-breadcrumb-bills                                                = Income Tax bills
+breadcrumb-bills                                                = Bills
 breadcrumb-finalised-bill                                       = Your finalised Income Tax bill
-breadcrumb-obligations                                          = Your Income Tax report deadlines
+breadcrumb-obligations                                          = Report deadlines
 breadcrumb-statement                                            = Income Tax statement
 breadcrumb-account                                              = Account details
