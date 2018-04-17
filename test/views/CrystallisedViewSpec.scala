@@ -298,7 +298,16 @@ class CrystallisedViewSpec extends TestSupport {
 
     }
 
-    "have a couple of sentences about adjustments" in {
+    "NOT have a couple of sentences about adjustments when the bill has been paid" in {
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, paidTransactionModel())
+      import setup._
+      Option(document.getElementById("adjustments")) shouldBe None
+      Option(document.getElementById("changes")) shouldBe None
+    }
+
+    "have a couple of sentences about adjustments when the bill has not been paid" in {
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
+      import setup._
       document.getElementById("adjustments").text shouldBe crysMessages.errors
       document.getElementById("changes").text shouldBe crysMessages.changes
     }
@@ -317,7 +326,7 @@ class CrystallisedViewSpec extends TestSupport {
       Option(document.getElementById("payment-button")) shouldBe None
     }
 
-    "show a button to go to payments, when the payment feature is enabled and the bull is not paid" in {
+    "show a button to go to payments, when the payment feature is enabled and the bill is not paid" in {
       mockAppConfig.features.paymentEnabled(true)
       val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
       import setup._

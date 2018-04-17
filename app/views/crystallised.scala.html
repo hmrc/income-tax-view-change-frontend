@@ -35,9 +35,11 @@
         <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
     </div>
     @calcBreakdownHelper(calcModel, Some(transactionModel), taxYear)
-    <h2 id="incorrect" class="heading-medium">@messages("crystalisation.incorrect")</h2>
-    <p id="adjustments">@messages("crystalisation.adjustments")</p>
-    <p id="changes">@messages("crystalisation.changes", s"${taxYear+1}")</p>
+    @if(!transactionModel.isPaid){
+        <h2 id="incorrect" class="heading-medium">@messages("crystalisation.incorrect")</h2>
+        <p id="adjustments">@messages("crystalisation.adjustments")</p>
+        <p id="changes">@messages("crystalisation.changes", s"${taxYear+1}")</p>
+    }
 </section>
 }
 
