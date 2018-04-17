@@ -27,26 +27,11 @@ class ReportDeadlinesStatusHelperSpec extends TestSupport {
   "The ObligationStatusHelper.statusHtml" should {
     "return Html corresponding to the ObligationStatus" when {
 
-      val openHtml = Html(
-        s"""
-           |<span class='bold-xsmall'>
-           |  Due by 25 December 2017
-           |</span>
-         """.stripMargin)
+      val openHtml = Html("<span>Due by 25 December 2017</span>")
 
-      val overdueHtml = Html(
-        s"""
-           |<span>
-           |  25 December 2017 <strong class="task-overdue">Overdue</strong>
-           |</span>
-           """.stripMargin)
+      val overdueHtml = Html("""<span>25 December 2017 <strong class="task-overdue">Overdue</strong></span>""")
 
-      val receivedHtml = Html(
-        s"""
-           |<span class='bold-xsmall'>
-           |  Received
-           |</span>
-           """.stripMargin)
+      val receivedHtml = Html(s"""<span>Received</span>""")
 
 
       "passed 'Open' the Open Html is returned" in {
