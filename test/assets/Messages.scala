@@ -67,9 +67,10 @@ object Messages {
 
   // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {
-    val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeading = s"Tax year: ${taxYear-1} to $taxYear"
-    val title = taxYearSubHeading
+    val heading = s"${taxYear-1} to $taxYear tax year"
+    val subheading = s"Estimates"
+    val title = heading
+    val reportedFigures = "These estimates are based on the figures you already submitted for this tax year."
     object Crystallised {
       val heading = s"${taxYear-1} to $taxYear tax year"
       val tabTitle = heading
@@ -83,15 +84,13 @@ object Messages {
     }
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
-      val p1 = s"This is an estimate of what you'll pay for the whole of this tax year, beginning 6 April ${taxYear-1} and ending 5 April $taxYear."
-      val p2 = "It's based on your current estimate and is a total of all Income Tax, from any source that you report through accounting software."
+      val p1 = s"This is for the ${taxYear-1} to $taxYear tax year."
     }
     object InYearEstimate {
       val heading: String => String = inYearEstimate => s"Current estimate: $inYearEstimate"
-      val p1: String => String = calcDate => s"This is an estimate of the tax you owe from 6 April ${taxYear-1} to $calcDate."
-      val p2 = "It's based on the information you report through accounting software."
+      val p1: String => String = calcDate => s"This is for 6 April ${taxYear-1} to $calcDate."
       object CalculationBreakdown {
-        val heading = "How your current estimate was calculated"
+        val heading = "How we calculated this estimate"
         val businessProfit = "Business profit"
         val propertyProfit = "Property profit"
         val personalAllowance = "Personal Allowance (for period reported)"
@@ -113,11 +112,11 @@ object Messages {
       }
       val accuracy = "Although more accurate than your annual estimate, your current estimate may not be a true reflection of the tax you owe."
       object WhyThisMayChange {
-        val heading = "Why your current estimate may change"
-        val p1 = "Your estimate could change because:"
-        val bullet1 = "rates and allowances won't be applied in full until the end of the tax year"
+        val heading = "Why your current estimates may change"
+        val p1 = "Your estimates could change because:"
+        val bullet1 = "rates and allowances will not be applied in full until the end of the tax year"
         val bullet2 = "you may earn more money"
-        val bullet3 = "you may have income that's not reported in your accounting software"
+        val bullet3 = "you may have income that is not reported in your accounting software"
       }
     }
     object Bills {
@@ -133,17 +132,17 @@ object Messages {
 
   // No Estimated Tax Liability Page Messages
   object NoEstimatedTaxLiability {
-    val pageHeading = "Your Income Tax estimate"
-    val taxYearSubheading = "Tax year: 2017 to 2018"
-    val title = taxYearSubheading
+    val subHeading = "Estimates"
+    val heading = "2017 to 2018 tax year"
+    val title = heading
     val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
   }
 
   // Estimated Tax Liability Error Page Messages
   object EstimatedTaxLiabilityError {
-    val pageHeading = "Your Income Tax estimate"
-    val taxYearSubheading = "Tax year: 2017 to 2018"
-    val title = taxYearSubheading
+    val subHeading = "Estimates"
+    val heading = "2017 to 2018 tax year"
+    val title = heading
     val p1 = "We can't display your estimated tax amount at the moment."
     val p2 = "Try refreshing the page in a few minutes."
   }
@@ -275,8 +274,8 @@ object Messages {
     val bta = "Business tax account"
     val it = "Income Tax"
     val estimates = "View your estimates"
-    val itEstimate = "Your Income Tax estimate"
-    val bills = "Bills"
+    val itEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
+    val bills = "Income Tax bills"
     val finalisedBill: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
     val obligations = "Your Income Tax report deadlines"
     val statement = "Income Tax statement"
