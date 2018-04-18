@@ -178,6 +178,10 @@ class StatementsViewSpec extends TestSupport {
         document.getElementById(s"$testYear2-still-to-pay").text() shouldBe messages.stillToPay(transactionModel2019.model.outstandingAmount.get.toCurrencyString)
       }
 
+      "have accessible aria-label to provide context for screen readers about the payment link" in {
+        document.getElementById(s"$testYear2-payment-link").attr("aria-label") shouldBe messages.paymentAriaLabel(testYear2)
+      }
+
       "state that the bill has been paid for the tax year that has been fully paid" in {
         document.getElementById(s"$testYear1-paid-bill").text() shouldBe messages.paidBill
         document.getElementById(s"$testYear1-due-by") should be(null)

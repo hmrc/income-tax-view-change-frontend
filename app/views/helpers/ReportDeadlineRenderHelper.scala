@@ -25,9 +25,9 @@ import views.html.templates.reportDeadlines.{reportDeadlines_error_template, rep
 
 object ReportDeadlineRenderHelper extends ImplicitListMethods {
 
-  def renderReportDeadlines(deadlines: ReportDeadlinesResponseModel, id: String)(implicit messages: Messages): HtmlFormat.Appendable =
+  def renderReportDeadlines(deadlines: ReportDeadlinesResponseModel, id: String, caption: String)(implicit messages: Messages): HtmlFormat.Appendable =
     deadlines match {
-      case rds: ReportDeadlinesModel => reportDeadlines_template(subsetReportDeadlines(rds), id)
+      case rds: ReportDeadlinesModel => reportDeadlines_template(subsetReportDeadlines(rds), id, caption)
       case _ => reportDeadlines_error_template(id)
     }
 
