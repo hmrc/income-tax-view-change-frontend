@@ -30,5 +30,5 @@ object ReportDeadlineRenderHelper extends ImplicitListMethods {
       case rds: ReportDeadlinesModel => reportDeadlines_template(rds.obligations.sortBy(_.due), id, caption)
       case _ => reportDeadlines_error_template(id)
     }
-  
+
 }

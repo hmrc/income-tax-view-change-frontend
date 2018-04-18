@@ -25,32 +25,11 @@ object ReportDeadlineStatusHelper {
 
   def statusHtml(status: ReportDeadlineStatus)(implicit messages: Messages): Html = status match {
     case open: Open =>
-      Html(
-        s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right">
-           |  <span class='bold-xsmall'>
-           |    ${messages("status.open", open.dueDate.toLongDate)}
-           |  </span>
-           |</p>
-         """.stripMargin)
+      Html(s"""<span>${open.dueDate.toLongDateShort}</span>""")
     case _: Received.type =>
-      Html(
-        s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #005ea5;">
-           |  <span class='bold-xsmall'>
-           |    ${messages("status.received")}
-           |  </span>
-           |</p>
-           """.stripMargin)
-    case _: Overdue.type   =>
-      Html(
-        s"""
-           |<p class="flush--bottom  alert  soft-half--ends soft--right" style="color: #b10e1e;">
-           |  <span class='bold-xsmall'>
-           |    ${messages("status.overdue")}
-           |  </span>
-           |</p>
-           """.stripMargin)
+      Html(s"""<span>${messages("status.received")}</span>""")
+    case overdue: Overdue =>
+      Html(s"""<span>${overdue.dueDate.toLongDateShort} <strong class="task-overdue">${messages("status.overdue")}</strong></span>""")
   }
 
 }

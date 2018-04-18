@@ -144,35 +144,13 @@ class HomePageViewSpec extends TestSupport {
         document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
       }
 
-      s"have the top page heading '$topHeading'" in {
-        document.getElementById("top-heading").text() shouldBe topHeading
+      s"have the page heading '$heading'" in {
+        document.getElementById("page-heading").text() shouldBe heading
       }
 
-      s"have the top page subheading '$topSubHeading'" in {
-        document.getElementById("top-sub-heading").text() shouldBe topSubHeading
+      s"have the subheading with the users name '$testUserName'" in {
+        document.getElementById("sub-heading").text() shouldBe testUserName
       }
-
-      s"have the page heading '$pageHeading'" in {
-        document.getElementById("page-heading").text() shouldBe pageHeading
-      }
-
-      s"have the subheading with mtditid '${pageSubHeading(testMtditid)}'" in {
-        document.getElementById("sub-heading").text() shouldBe pageSubHeading(testMtditid)
-      }
-
-      s"have text at the top of the page '$topText'" in {
-        document.getElementById("top-text").text() shouldBe topText
-      }
-
-      s"have a dropdown link '$dropDown' containing text" in {
-        document.getElementById("howToDoThis").text() shouldBe dropDown
-        document.getElementById("why-may-change-1").text() shouldBe dropDownText1
-        document.getElementById("why-may-change-2").text() shouldBe dropDownText2
-        document.getElementById("why-may-change-3").text() shouldBe dropDownText3 + accountingSoftwareLink
-        document.getElementById("accounting-software-link").text() shouldBe accountingSoftwareLink
-        document.getElementById("accounting-software-link").attr("href") shouldBe mockAppConfig.accountingSoftwareLinkUrl
-      }
-
 
       s"have a Bills section" which {
 
@@ -188,8 +166,8 @@ class HomePageViewSpec extends TestSupport {
 
         "has a link to bills" which {
 
-          s"has the text '${BillsSection.link}'" in {
-            billsSection.getElementById("bills-link").text shouldBe BillsSection.link
+          s"has the text '${BillsSection.heading}'" in {
+            billsSection.getElementById("bills-link").text shouldBe BillsSection.heading
           }
 
           "links to the bills page" in {
@@ -212,8 +190,8 @@ class HomePageViewSpec extends TestSupport {
 
         "has a link to estimates" which {
 
-          s"has the text '${EstimatesSection.link}'" in {
-            estimatesSection.getElementById("estimates-link").text shouldBe EstimatesSection.link
+          s"has the text '${EstimatesSection.heading}'" in {
+            estimatesSection.getElementById("estimates-link").text shouldBe EstimatesSection.heading
           }
 
           "links to the estimates page" in {
@@ -236,8 +214,8 @@ class HomePageViewSpec extends TestSupport {
 
         "has a link to deadlines" which {
 
-          s"has the text '${ReportDeadlinesSection.link}'" in {
-            reportDeadlinesSection.getElementById("deadlines-link").text shouldBe ReportDeadlinesSection.link
+          s"has the text '${ReportDeadlinesSection.heading}'" in {
+            reportDeadlinesSection.getElementById("deadlines-link").text shouldBe ReportDeadlinesSection.heading
           }
 
           "links to the deadlines page" in {
@@ -260,8 +238,8 @@ class HomePageViewSpec extends TestSupport {
 
         "has a link to statements" which {
 
-          s"has the text '${ReportDeadlinesSection.link}'" in {
-            statementsSection.getElementById("statements-link").text shouldBe StatementSection.link
+          s"has the text '${ReportDeadlinesSection.heading}'" in {
+            statementsSection.getElementById("statements-link").text shouldBe StatementSection.heading
           }
 
           "links to the statements page" in {
@@ -285,8 +263,8 @@ class HomePageViewSpec extends TestSupport {
 
         "has a link to statements" which {
 
-          s"has the text '${AccountDetailsSection.link}'" in {
-            accountDetailsSection.getElementById("accounts-link").text shouldBe AccountDetailsSection.link
+          s"has the text '${AccountDetailsSection.heading}'" in {
+            accountDetailsSection.getElementById("accounts-link").text shouldBe AccountDetailsSection.heading
           }
 
           "links to the statements page" in {

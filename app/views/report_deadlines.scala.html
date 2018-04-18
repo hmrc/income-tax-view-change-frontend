@@ -20,6 +20,7 @@
 @import views.helpers.ReportDeadlinesPage
 @import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
 @import views.html.helpers.backToHomeHelper
+@import views.html.helpers.accordionHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 
 @(incomeSources: models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
@@ -36,20 +37,39 @@
     )), "ReportDeadlinesPage")
 }
 
+@howToDoThis = {
+    <div id="whyMayChange">
+        <ol class="list list-number">
+            <li id="why-may-change-1">
+                <a id="accounting-software-link"
+                   data-journey-click="HomePage:ClickLink:ViewAccountingSoftware"
+                   href=@appConfig.accountingSoftwareLinkUrl
+                   target="_blank">@messages("obligations.dropdown.link")
+                </a>
+                @messages("obligations.dropdown.p1")
+            </li>
+            <li id="why-may-change-2">@messages("obligations.dropdown.p2")</li>
+            <li id="why-may-change-3">@messages("obligations.dropdown.p3")</li>
+            <li id="why-may-change-4">@messages("obligations.dropdown.p4")</li>
+        </ol>
+    </div>
+}
+
 @main_template(
     title = messages("obligations.title"),
     bodyClasses = None,
-    serviceInfo = breadcrumb
+    contentHeader = Some(breadcrumb)
 ) {
 
     <section id="obligations">
 
-        <h1 id="page-heading" class="heading-xlarge">@messages("obligations.heading")</h1>
+        <header class="page-heading">
+            <h1 id="page-heading" class="heading-xlarge">@messages("obligations.heading")</h1>
+        </header>
 
         @if(incomeSources.allReportDeadlinesErroredForAllIncomeSources) {
             @allReportDeadlinesErrored
         } else {
-            <p id="obligation-intro">@messages("obligations.info")</p>
 
             <!-- business obligations -->
             @if(incomeSources.hasBusinessReportErrors) {
@@ -90,7 +110,7 @@
             }
         }
 
-        @backToHomeHelper("ReportDeadlinesPage")
+        @accordionHelper("howToDoThis", "ReportDeadlinesPage", messages("obligations.dropdown.text"), howToDoThis)
 
     </section>
 }

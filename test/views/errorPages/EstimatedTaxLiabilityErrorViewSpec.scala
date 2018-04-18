@@ -49,12 +49,12 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
       document.title() shouldBe messages.title
     }
 
-    s"have the tax year '${messages.taxYearSubheading}'" in {
-      document.getElementById("tax-year").text() shouldBe messages.taxYearSubheading
+    s"have the tax year '${messages.heading}'" in {
+      document.getElementById("heading").text() shouldBe messages.heading
     }
 
-    s"have the page heading '${messages.pageHeading}'" in {
-      document.getElementById("page-heading").text() shouldBe messages.pageHeading
+    s"have the page heading '${messages.subHeading}'" in {
+      document.getElementById("sub-heading").text() shouldBe messages.subHeading
     }
 
     s"have an Estimated Tax Liability section" which {
@@ -68,13 +68,6 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
       s"has a paragraph with '${messages.p2}'" in {
         estimateSection.getElementById("p2").text() shouldBe messages.p2
       }
-    }
-
-    "show a back link to the Income Tax home page" in {
-      lazy val page: HtmlFormat.Appendable =
-        views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
-      lazy val document: Document = Jsoup.parse(contentAsString(page))
-      document.getElementById("it-home-back") shouldNot be(null)
     }
   }
 }

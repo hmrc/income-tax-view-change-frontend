@@ -17,31 +17,17 @@ feedback.title                                                  = Give feedback
 
 ## Home Page ##
 home.title                                                      = Your Income Tax
-home.subheading                                                 = Income Tax
-home.heading.1                                                  = Reporting through software
-home.text                                                       = You send your Income Tax reports using accounting software.
-home.dropdown.text                                              = How to do this
-home.dropdown.p1                                                = You''ll send four reports during the year.
-home.dropdown.p2                                                = After that, you''ll need to confirm and finalise your figures in your accounting software.
-home.dropdown.p3                                                = If you don''t have accounting software, you can see
-home.dropdown.link                                              = what accounting software is available (opens in new tab).
-home.heading.2                                                  = Your account
-home.ref                                                        = Ref:
+home.heading                                                    = Income Tax
 home.bills.heading                                              = Bills
-home.bills.text                                                 = See your current and previous Income Tax bills.
-home.bills.link                                                 = View your bills
+home.bills.text                                                 = View your current and previous Income Tax bills.
 home.estimates.heading                                          = Estimates
-home.estimates.text                                             = See what we think you''ll owe.
-home.estimates.link                                             = View your estimates
+home.estimates.text                                             = Check what you might owe, based on figures you have submitted.
 home.deadlines.heading                                          = Report deadlines
-home.deadlines.text                                             = Check your report deadlines and if we''ve received them.
-home.deadlines.link                                             = View your deadlines
+home.deadlines.text                                             = Check when your reports are due.
 home.statements.heading                                         = Statements
 home.statements.text                                            = View your Income Tax transactions, including charges and payments.
-home.statements.link                                            = View your statement
 home.accounts.heading                                           = Account details
 home.accounts.text                                              = See contact information and other details we have for your businesses.
-home.accounts.link                                              = Check your account details
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service
@@ -57,11 +43,12 @@ estimates.noEstimates                                           = You don''t hav
 estimates.noEstimatesHeading                                    = Your Income Tax estimate
 
 ## Estimated Tax Liability Page ##
-estimated_tax_liability.title                                   = Tax year: {0} to {1}
-estimated_tax_liability.heading                                 = Your Income Tax estimate
-estimated_tax_liability.tax-year                                = Tax year: {0} to {1}
+estimated_tax_liability.title                                   = {0} to {1} tax year
+estimated_tax_liability.heading                                 = {0} to {1} tax year
+estimated_tax_liability.subheading                              = Estimates
+estimated_tax_liability.reported-figures                        = These estimates are based on the figures you already submitted for this tax year.
 estimated_tax_liability.estimated-tax.payment                   = You don''t need to pay anything yet, but you must pay what you owe for the whole tax year by
-estimated_tax_liability.calc-breakdown.heading                  = How your current estimate was calculated
+estimated_tax_liability.calc-breakdown.heading                  = How we calculated this estimate
 estimated_tax_liability.calc-breakdown.business-profit          = Business profit
 estimated_tax_liability.calc-breakdown.property-profit          = Property profit
 estimated_tax_liability.calc-breakdown.and-savings              = and income from savings
@@ -81,28 +68,24 @@ estimated_tax_liability.calc-breakdown.at                       = at
 estimated_tax_liability.calc-breakdown.nic2                     = Class 2 National Insurance
 estimated_tax_liability.calc-breakdown.nic4                     = Class 4 National Insurance
 estimated_tax_liability.calc-breakdown.reliefs                  = Your tax reliefs
-
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
 estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
 estimated_tax_liability.no-data                                 = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
 estimated_tax_liability.error.p1                                = We can''t display your estimated tax amount at the moment.
 estimated_tax_liability.error.p2                                = Try refreshing the page in a few minutes.
 estimated_tax_liability.eoyEstimate.heading                     = Annual estimate: {0}
-estimated_tax_liability.eoyEstimate.p1                          = This is an estimate of what you''ll pay for the whole of this tax year, beginning 6 April {0} and ending 5 April {1}.
-estimated_tax_liability.eoyEstimate.p2                          = It''s based on your current estimate and is a total of all Income Tax, from any source that you report through accounting software.
+estimated_tax_liability.eoyEstimate.p1                          = This is for the {0} to {1} tax year.
 estimated_tax_liability.inYearEstimate.heading                  = Current estimate: {0}
-estimated_tax_liability.inYearEstimate.p1                       = This is an estimate of the tax you owe from 6 April {0} to {1}.
-estimated_tax_liability.inYearEstimate.p2                       = It''s based on the information you report through accounting software.
-estimated_tax_liability.inYearEstimate.whyThisMayChange         = Why your current estimate may change
-estimated_tax_liability.inYearEstimate.whyThisMayChange.p1      = Your estimate could change because:
-estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = rates and allowances won''t be applied in full until the end of the tax year
+estimated_tax_liability.inYearEstimate.p1                       = This is for 6 April {0} to {1}.
+estimated_tax_liability.inYearEstimate.whyThisMayChange         = Why your current estimates may change
+estimated_tax_liability.inYearEstimate.whyThisMayChange.p1      = Your estimates could change because:
+estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = rates and allowances will not be applied in full until the end of the tax year
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = you may earn more money
-estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that''s not reported in your accounting software
+estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that is not reported in your accounting software
 
 ## ReportDeadlines Page ##
-obligations.title                                               = Your Income Tax report deadlines
-obligations.heading                                             = Your Income Tax report deadlines
-obligations.info                                                = You must submit a report once every quarter using accounting software.
+obligations.title                                               = Report deadlines
+obligations.heading                                             = Report deadlines
 obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
 obligations.bi.subheading                                       = Business income
@@ -115,14 +98,21 @@ obligations.ceasedProperties                                    = Ceased trading
 obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
 obligations.noReports                                           = You don't have any reports due right now. Your next deadline will show here on the first Monday of next month.
+obligations.dropdown.text                                       = How to submit a report
+obligations.dropdown.link                                       = Choose accounting software that supports this service (opens in a new tab)
+obligations.dropdown.p1                                         = if you have not already.
+obligations.dropdown.p2                                         = Use your software to record your income and expenses, then send an update to HMRC at least every quarter. We will email you to let you know when to send an update.
+obligations.dropdown.p3                                         = Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs.
+obligations.dropdown.p4                                         = After you send your final report, you can see the Income Tax you owe for the tax year.
+
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission
-crystalisation.heading                                          = Your finalised Income Tax bill
-crystalisation.whatYouOwe.heading                               = What you owe: {0}
-crystalisation.whatYouOwe.para                                  = This figure is based on the information you provided in your quarterly reports and final report. You told us this information is accurate.
-crystalisation.whatYouOwe.directDebit                           = Check if you already pay by direct debit.
-crystalisation.warning                                          = If you pay this bill after 31 January {0} you''ll get penalties.
+crystalisation.heading                                          = {0} to {1} tax year
+crystalisation.subheading                                       = Bills
+crystalisation.dueBy                                            = due by 31 January {0}
+crystalisation.whatYouOwe.para                                  = This figure is based on the information you provided in your quarterly reports and final report.
+crystalisation.warning                                          = Your payment could take up to 5 days to process. You may be fined if it is late.
 crystalisation.calc-breakdown.heading                           = How this figure was calculated
 
 crystalisation.calc-breakdown.subtotal                          = Sub-total (excluding payments by you)
@@ -142,13 +132,14 @@ crystalisation.paymentsOnAccount.para4                          = If you think y
 crystalisation.payNow                                           = Continue to payment
 
 ## Bills Page ##
-bills.title                                                     = Previous statements
-bills.heading                                                   = Income Tax bills
-bills.viewBills                                                 = View finalised bills.
-bills.billLink                                                  = Tax year: {0} to {1}
+bills.title                                                     = Bills
+bills.heading                                                   = Bills
+bills.viewBills                                                 = View your finalised bills:
+bills.billLink.screenReaderPrefix                               = view bill for
+bills.billLink                                                  = {0} to {1} tax year
 bills.noBills                                                   = You''ve had no bills since you started reporting through software.
 bills.earlierBills                                              = For earlier bills,
-bills.earlierBillsLink                                          = view your Self Assessment calculations
+bills.earlierBillsLink                                          = view your Self Assessment calculations (opens in a new tab)
 
 ## Statements Page ##
 statements.title                                                = Income Tax Statement
@@ -194,7 +185,6 @@ business.backToAccount                                          = Back to accoun
 ## Statuses ##
 status.received                                                 = Received
 status.overdue                                                  = Overdue
-status.open                                                     = Due by {0}
 
 ## Timeout page ##
 timeout.title                                                   = Your session has timed out
@@ -237,12 +227,12 @@ thank_you.line.1                                                = Your feedback 
 thank_you.signIn                                                = Go back to sign in.
 
 ## Breadcrumbs ##
-breadcrumb-bta                                                  = Business tax home
+breadcrumb-bta                                                  = Business tax account
 breadcrumb-it                                                   = Income Tax
 breadcrumb-estimates                                            = View your estimates
 breadcrumb-it-estimate                                          = Your Income Tax estimate
-breadcrumb-bills                                                = Income Tax bills
+breadcrumb-bills                                                = Bills
 breadcrumb-finalised-bill                                       = Your finalised Income Tax bill
-breadcrumb-obligations                                          = Your Income Tax report deadlines
+breadcrumb-obligations                                          = Report deadlines
 breadcrumb-statement                                            = Income Tax statement
 breadcrumb-account                                              = Account details

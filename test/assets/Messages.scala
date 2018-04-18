@@ -41,72 +41,56 @@ object Messages {
   // Home Page Messages
   object HomePage {
     val title = "Your Income Tax"
-    val topHeading = "Reporting through software"
-    val topSubHeading = "Income Tax"
-    val topText = "You send your Income Tax reports using accounting software."
-    val dropDown = "How to do this"
-    val dropDownText1 = "You'll send four reports during the year."
-    val dropDownText2 = "After that, you'll need to confirm and finalise your figures in your accounting software."
-    val dropDownText3 = "If you don't have accounting software, you can see "
-    val accountingSoftwareLink = "what accounting software is available (opens in new tab)."
-    val pageHeading = "Your account"
-    val pageSubHeading: String => String = mtditid => s"Ref: $mtditid"
+    val heading = "Income Tax"
+
     object EstimatesSection {
       val heading = "Estimates"
-      val paragraph = "See what we think you'll owe."
-      val link = "View your estimates"
+      val paragraph = "Check what you might owe, based on figures you have submitted."
     }
     object BillsSection {
       val heading = "Bills"
-      val paragraph = "See your current and previous Income Tax bills."
-      val link = "View your bills"
+      val paragraph = "View your current and previous Income Tax bills."
     }
     object ReportDeadlinesSection {
       val heading = "Report deadlines"
-      val paragraph = "Check your report deadlines and if we've received them."
-      val link = "View your deadlines"
+      val paragraph = "Check when your reports are due."
     }
     object StatementSection {
       val heading = "Statements"
       val paragraph = "View your Income Tax transactions, including charges and payments."
-      val link = "View your statement"
     }
     object AccountDetailsSection {
       val heading = "Account details"
       val paragraph = "See contact information and other details we have for your businesses."
-      val link = "Check your account details"
     }
   }
 
   // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {
-    val pageHeading = "Your Income Tax estimate"
-    val taxYearSubHeading = s"Tax year: ${taxYear-1} to $taxYear"
-    val title = taxYearSubHeading
+    val heading = s"${taxYear-1} to $taxYear tax year"
+    val subheading = s"Estimates"
+    val title = heading
+    val reportedFigures = "These estimates are based on the figures you already submitted for this tax year."
     object Crystallised {
-      val tabTitle = "Your final submission"
-      val heading = "Your finalised Income Tax bill"
-      val subHeading = s"Tax year: ${taxYear-1} to $taxYear"
-      val wyoHeading: String => String = whatYouOwe => s"What you owe: $whatYouOwe"
-      val p1 = "This figure is based on the information you provided in your quarterly reports and final report. You told us this information is accurate."
-      val warning = s"If you pay this bill after 31 January ${taxYear + 1} you'll get penalties."
+      val heading = s"${taxYear-1} to $taxYear tax year"
+      val tabTitle = heading
+      val subHeading = s"Bills"
+      val p1 = "This figure is based on the information you provided in your quarterly reports and final report."
+      val warning = s"Your payment could take up to 5 days to process. You may be fined if it is late."
       val breakdownHeading = "How this figure was calculated"
-      val incorrect = "Incorrect figures"
       val errors = "If there are any errors, you can make adjustments through your software."
       val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
       val payNow = "Continue to payment"
     }
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
-      val p1 = s"This is an estimate of what you'll pay for the whole of this tax year, beginning 6 April ${taxYear-1} and ending 5 April $taxYear."
-      val p2 = "It's based on your current estimate and is a total of all Income Tax, from any source that you report through accounting software."
+      val p1 = s"This is for the ${taxYear-1} to $taxYear tax year."
     }
     object InYearEstimate {
       val heading: String => String = inYearEstimate => s"Current estimate: $inYearEstimate"
-      val p1: String => String = calcDate => s"This is an estimate of the tax you owe from 6 April ${taxYear-1} to $calcDate."
-      val p2 = "It's based on the information you report through accounting software."
+      val p1: String => String = calcDate => s"This is for 6 April ${taxYear-1} to $calcDate."
       object CalculationBreakdown {
-        val heading = "How your current estimate was calculated"
+        val heading = "How we calculated this estimate"
         val businessProfit = "Business profit"
         val propertyProfit = "Property profit"
         val personalAllowance = "Personal Allowance (for period reported)"
@@ -128,44 +112,44 @@ object Messages {
       }
       val accuracy = "Although more accurate than your annual estimate, your current estimate may not be a true reflection of the tax you owe."
       object WhyThisMayChange {
-        val heading = "Why your current estimate may change"
-        val p1 = "Your estimate could change because:"
-        val bullet1 = "rates and allowances won't be applied in full until the end of the tax year"
+        val heading = "Why your current estimates may change"
+        val p1 = "Your estimates could change because:"
+        val bullet1 = "rates and allowances will not be applied in full until the end of the tax year"
         val bullet2 = "you may earn more money"
-        val bullet3 = "you may have income that's not reported in your accounting software"
+        val bullet3 = "you may have income that is not reported in your accounting software"
       }
     }
     object Bills {
-      val billsTitle = "Previous statements"
-      val billsHeading = "Income Tax bills"
-      val viewBills = "View finalised bills."
-      val billLink = s"Tax year: ${taxYear-1} to $taxYear"
+      val billsTitle = "Bills"
+      val billsHeading = "Bills"
+      val viewBills = "View your finalised bills:"
+      val billLink = s"${taxYear-1} to $taxYear tax year"
+      val billsLinkAriaLabel = s"view bill for $billLink"
       val noBills = "You've had no bills since you started reporting through software."
-      val earlierBills = "For earlier bills, view your Self Assessment calculations."
+      val earlierBills = "For earlier bills, view your Self Assessment calculations (opens in a new tab)."
     }
   }
 
   // No Estimated Tax Liability Page Messages
   object NoEstimatedTaxLiability {
-    val pageHeading = "Your Income Tax estimate"
-    val taxYearSubheading = "Tax year: 2017 to 2018"
-    val title = taxYearSubheading
+    val subHeading = "Estimates"
+    val heading = "2017 to 2018 tax year"
+    val title = heading
     val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
   }
 
   // Estimated Tax Liability Error Page Messages
   object EstimatedTaxLiabilityError {
-    val pageHeading = "Your Income Tax estimate"
-    val taxYearSubheading = "Tax year: 2017 to 2018"
-    val title = taxYearSubheading
+    val subHeading = "Estimates"
+    val heading = "2017 to 2018 tax year"
+    val title = heading
     val p1 = "We can't display your estimated tax amount at the moment."
     val p2 = "Try refreshing the page in a few minutes."
   }
 
   //ReportDeadlines Page Messages
   object ReportDeadlines {
-    val title = "Your Income Tax report deadlines"
-    val info  = "You must submit a report once every quarter using accounting software."
+    val title = "Report deadlines"
     val propertyHeading = "Property income"
     val periodHeading = "Report period"
     val statusHeading = "Report due date"
@@ -173,6 +157,15 @@ object Messages {
     val ceasedProperty: String => String = date => s"Ceased trading on $date."
     val portfolio = "This covers all properties that you earn income from."
     val eops = "Whole tax year (final check)"
+
+    object Dropdown {
+      val dropdownText = "How to submit a report"
+      val dropdownLink = "Choose accounting software that supports this service (opens in a new tab)"
+      val dropdown1 = "if you have not already."
+      val dropdown2 = "Use your software to record your income and expenses, then send an update to HMRC at least every quarter. We will email you to let you know when to send an update."
+      val dropdown3 = "Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs."
+      val dropdown4 = "After you send your final report, you can see the Income Tax you owe for the tax year."
+    }
     object Errors {
       val p1 = "We can't display your next report due date at the moment."
       val p2 = "Try refreshing the page in a few minutes."
@@ -286,13 +279,13 @@ object Messages {
   }
 
   object Breadcrumbs {
-    val bta = "Business tax home"
+    val bta = "Business tax account"
     val it = "Income Tax"
     val estimates = "View your estimates"
-    val itEstimate = "Your Income Tax estimate"
-    val bills = "Income Tax bills"
-    val finalisedBill = "Your finalised Income Tax bill"
-    val obligations = "Your Income Tax report deadlines"
+    val itEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
+    val bills = "Bills"
+    val finalisedBill: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
+    val obligations = "Report deadlines"
     val statement = "Income Tax statement"
     val details = "Account details"
   }

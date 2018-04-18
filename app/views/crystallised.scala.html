@@ -17,7 +17,6 @@
 @import views.html.templates.main_template
 @import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
-@import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
 @import models.calculation.{CalculationDataResponseModel, CalcDisplayModel}
 @import models.financialTransactions.TransactionModel
@@ -32,10 +31,17 @@
 
 @calcBreakdown = {
 <section id="inYearCalcBreakdown">
+    @if(!transactionModel.isPaid){
+        <div class="form-group">
+            <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
+        </div>
+    }
     @calcBreakdownHelper(calcModel, Some(transactionModel), taxYear)
-    <h2 id="incorrect" class="heading-medium">@messages("crystalisation.incorrect")</h2>
-    <p id="adjustments">@messages("crystalisation.adjustments")</p>
-    <p id="changes">@messages("crystalisation.changes", s"${taxYear+1}")</p>
+    @if(!transactionModel.isPaid){
+        <h2 id="incorrect" class="heading-medium">@messages("crystalisation.incorrect")</h2>
+        <p id="adjustments">@messages("crystalisation.adjustments")</p>
+        <p id="changes">@messages("crystalisation.changes", s"${taxYear+1}")</p>
+    }
 </section>
 }
 
@@ -43,39 +49,36 @@
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-bills", Some(controllers.routes.BillsController.viewCrystallisedCalculations.url)),
-        BreadcrumbItem("breadcrumb-finalised-bill", None)
+        BreadcrumbItem("breadcrumb-finalised-bill", None, Some(messages("crystalisation.heading",s"${taxYear-1}", s"$taxYear")))
     )), s"BillFor${taxYear}Page")
 }
 
 @main_template(
-    title = renderTitle(taxYear, true),
+    title = messages("crystalisation.heading",s"${taxYear-1}", s"$taxYear"),
     bodyClasses = None,
     scriptElem = None,
-    serviceInfo = breadcrumb
+    contentHeader = Some(breadcrumb)
 ) {
     <section id="owed-tax">
 
-        <h1 class="form-group">
-            <span id="tax-year" class="pre-heading">@renderTaxYear(taxYear)</span>
-            <span id="page-heading" class="heading-xlarge">@messages("crystalisation.heading")</span>
-        </h1>
+        <header class="page-heading">
+            <h1 class="heading-xlarge" id="heading">@messages("crystalisation.heading",s"${taxYear-1}", s"$taxYear")</h1>
+            <p class="heading-secondary" id="sub-heading">@messages("crystalisation.subheading")</p>
+        </header>
 
         <section id="whatYouOwe">
 
             @if(!transactionModel.isPaid) {
-                <div class="form-group">
-                    <h2 id="whatYouOweHeading" class="heading-large">
-                        @Html(messages("crystalisation.whatYouOwe.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.totalIncomeTaxNicYtd.toCurrency)}"))
-                    </h2>
+                <div class="form-group divider--bottom">
+                    <p id="whatYouOweHeading" class="bold-medium">
+                        @Html(s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.totalIncomeTaxNicYtd.toCurrency)}")
+                    </p>
+                    <p class="form-hint">
+                        @messages("crystalisation.dueBy", s"${taxYear+1}")
+                    </p>
                 </div>
                 <div class="form-group">
-                    <i class="icon exclamation">
-                        <span class="visually-hidden">Warning</span>
-                    </i>
-                    <strong id="warning" class="bold-small">@messages("crystalisation.warning",s"${taxYear+1}")</strong>
-                </div>
-                <div class="form-group">
-                    <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
+                    <p id="warning">@messages("crystalisation.warning")</p>
                 </div>
 
             }
@@ -84,21 +87,18 @@
                     @if(transactionModel.isPaid) {
                         @calcBreakdown
                     } else {
-                        @accordionHelper("calcBreakdown", s"BillFor${taxYear}Page", messages("crystalisation.calc-breakdown.heading"),calcBreakdown)
+                        @accordionHelper("calcBreakdown", s"BillFor${taxYear}Page", messages("crystalisation.calc-breakdown.heading"), calcBreakdown)
                     }
                 }
             </div>
 
         </section>
 
-
         @if(appConfig.features.paymentEnabled() && !transactionModel.isPaid){
             <div class="form-group">
                 <a id="payment-button" data-journey-click="BillFor@{taxYear}Page:ClickLink:Pay" href="@controllers.routes.PaymentController.paymentHandoff(calcModel.calcAmount.toPence).url" class="button">@messages("crystalisation.payNow")</a>
             </div>
         }
-        @backToHomeHelper(s"BillFor${taxYear}Page")
-
 
     </section>
 }

@@ -85,7 +85,7 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
       }
 
       "return 'Overdue' with getObligationStatus" in {
-        obligation.getReportDeadlineStatus shouldBe Overdue
+        obligation.getReportDeadlineStatus shouldBe Overdue("2017-10-30")
       }
 
       "have the obligation type 'QuarterlyObligation'" in {
@@ -118,7 +118,7 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
       }
 
       "return 'Open' with getObligationStatus" in {
-        obligation.getReportDeadlineStatus shouldBe Open("2017-10-31".toLocalDate)
+        obligation.getReportDeadlineStatus shouldBe Open("2017-10-31")
       }
 
       "have the obligation type 'QuarterlyObligation'" in {
