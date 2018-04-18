@@ -19,7 +19,8 @@ package models.reportDeadlines
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-import play.api.libs.json.{Format, JsValue, Json}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 sealed trait ReportDeadlinesResponseModel
 
@@ -48,6 +49,13 @@ case class ReportDeadlinesErrorModel(code: Int, message: String) extends ReportD
 
 object ReportDeadlineModel {
   implicit val format: Format[ReportDeadlineModel] = Json.format[ReportDeadlineModel]
+  val reportDeadlinesAuditWrites: Writes[ReportDeadlineModel] = (
+    (__ \ "start").write[LocalDate] and
+      (__ \ "end").write[LocalDate] and
+      (__ \ "due").write[LocalDate] and
+      (__ \ "periodKey").write[String] and
+      OWrites[Any](_ => Json.obj())
+    )(unlift(ReportDeadlineModel.unapply))
 }
 
 object ReportDeadlinesModel {
