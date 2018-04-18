@@ -20,6 +20,11 @@ import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
+/*
+ TODO - Move unauthorised test to some BaseMethod file
+ TODO - Move 'isAuthorisedUser(true)' and 'stubUserDetails()' to ComponentSpecBase & remove 'with GenericStubMethods'
+ */
+
 class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
 
   "calling the BtaPartialController" when {

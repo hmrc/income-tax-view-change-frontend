@@ -22,6 +22,12 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{OK, SEE_OTHER}
 
+/*
+ TODO - Put messages in messages file
+ TODO - Move unauthorised test to some BaseMethod file
+ TODO - Move 'isAuthorisedUser(true)' and 'stubUserDetails()' to ComponentSpecBase & remove 'with GenericStubMethods'
+ */
+
 class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
   "Calling the AccountDetailsController.getAccountDetails" when {

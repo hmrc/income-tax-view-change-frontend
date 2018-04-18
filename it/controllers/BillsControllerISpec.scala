@@ -26,6 +26,15 @@ import helpers.{ComponentSpecBase, GenericStubMethods}
 import models.calculation.LastTaxCalculation
 import play.api.http.Status._
 
+/*
+ TODO - Remove stubbed CalcData from tests
+ TODO - lastTaxCalcResponse to be moved to TestConstants file
+ TODO - Put messages in messages file
+ TODO - Take out stubbed ReportDeadlines once refactored out if incomeSources
+ TODO - Move unauthorised test to some BaseMethod file
+ TODO - Move 'isAuthorisedUser(true)' and 'stubUserDetails()' to ComponentSpecBase & remove 'with GenericStubMethods'
+ */
+
 class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]

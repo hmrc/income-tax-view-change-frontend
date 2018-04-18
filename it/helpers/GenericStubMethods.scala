@@ -19,6 +19,10 @@ import assets.BaseIntegrationTestConstants.{testNino,testMtditid}
 import helpers.servicemocks._
 import play.api.libs.json.{JsNull, JsValue}
 
+/*
+TODO - generic verification methods
+ */
+
 trait GenericStubMethods extends CustomMatchers {
 
   def isAuthorisedUser(bool: Boolean): Unit = {

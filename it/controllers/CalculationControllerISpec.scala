@@ -29,6 +29,14 @@ import play.api.http.Status
 import play.api.http.Status._
 import utils.ImplicitCurrencyFormatter._
 
+/*
+ TODO - Put messages in messages file
+ TODO - Take out stubbed ReportDeadlines once refactored out if incomeSources
+ TODO - Move unauthorised test to some BaseMethod file
+ TODO - Move 'isAuthorisedUser(true)' and 'stubUserDetails()' to ComponentSpecBase & remove 'with GenericStubMethods'
+ TODO - Add in missing verification steps
+ */
+
 class CalculationControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
   def totalProfit(calc: CalculationDataModel, includeInterest: Boolean = true): String = {
@@ -361,7 +369,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         Then("I verify the Estimated Tax Liability response has been wiremocked")
         IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-        //IncomeTaxViewChangeStub.stubGetCalcData(testNino,testYear,calculationResponse)
 
         res should have (
           httpStatus(OK),
