@@ -46,8 +46,12 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
   }
 
   private def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
-    auditReportDeadlines(user)
-    Future.successful(Ok(views.html.report_deadlines(user.incomeSources)))
+    if(user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
+      auditReportDeadlines(user)
+      Future.successful(Ok(views.html.report_deadlines(user.incomeSources)))
+    } else {
+      Future.successful(Ok(views.html.noReportDeadlines()))
+    }
   }
 
   private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier): Unit =

@@ -114,6 +114,7 @@ obligations.ceased                                              = This business 
 obligations.ceasedProperties                                    = Ceased trading on {0}.
 obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
+obligations.noReports                                           = You don't have any reports due right now. Your next deadline will show here on the first Monday of next month.
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission
