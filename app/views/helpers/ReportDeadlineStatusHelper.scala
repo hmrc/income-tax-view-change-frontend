@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.reportDeadlines.{Open, Overdue, Received, ReportDeadlineStatus}
+import models.reportDeadlines.{Open, Overdue, ReportDeadlineStatus}
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._
@@ -26,8 +26,6 @@ object ReportDeadlineStatusHelper {
   def statusHtml(status: ReportDeadlineStatus)(implicit messages: Messages): Html = status match {
     case open: Open =>
       Html(s"""<span>${open.dueDate.toLongDateShort}</span>""")
-    case _: Received.type =>
-      Html(s"""<span>${messages("status.received")}</span>""")
     case overdue: Overdue =>
       Html(s"""<span>${overdue.dueDate.toLongDateShort} <strong class="task-overdue">${messages("status.overdue")}</strong></span>""")
   }

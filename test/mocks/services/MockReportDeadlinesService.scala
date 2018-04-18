@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import assets.BaseTestConstants.{testNino, testSelfEmploymentId, testPropertyIncomeId}
+import assets.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -52,29 +52,25 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           start = "2017-04-06",
           end = "2017-07-05",
           due = "2017-08-05",
-          periodKey = "periodKey",
-          dateReceived = Some("2017-04-01")
+          periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2017-07-06",
           end = "2017-10-05",
           due = "2017-11-05",
-          periodKey = "periodKey",
-          dateReceived = Some("2017-04-01")
+          periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2017-10-06",
           end = "2018-01-05",
           due = "2018-02-05",
-          periodKey = "periodKey",
-          dateReceived = Some("2017-04-01")
+          periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2018-01-06",
           end = "2018-04-05",
           due = "2018-05-06",
-          periodKey = "periodKey",
-          dateReceived = Some("2017-04-01")
+          periodKey = "periodKey"
         )
       )
     )
@@ -91,29 +87,25 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           start = "2017-04-06",
           end = "2017-07-05",
           due = "2017-08-05",
-          periodKey = "periodKey",
-          dateReceived = Some("2017-04-01")
+          periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2017-07-06",
           end = "2017-10-05",
           due = "2017-11-05",
-          periodKey = "periodKey",
-          dateReceived = Some("2017-04-01")
+          periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2017-10-06",
           end = "2018-01-05",
           due = "2018-02-05",
-          periodKey = "periodKey",
-          dateReceived = Some("2017-04-01")
+          periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2018-01-06",
           end = "2018-04-05",
           due = "2018-05-06",
-          periodKey = "periodKey",
-          dateReceived = Some("2017-04-01")
+          periodKey = "periodKey"
         )
       )
     )

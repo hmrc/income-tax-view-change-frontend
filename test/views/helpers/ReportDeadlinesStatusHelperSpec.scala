@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.reportDeadlines.{Open, Overdue, Received}
+import models.reportDeadlines.{Open, Overdue}
 import play.api.i18n.Messages.Implicits._
 import play.twirl.api.Html
 import utils.ImplicitDateFormatter._
@@ -31,17 +31,11 @@ class ReportDeadlinesStatusHelperSpec extends TestSupport {
 
       val overdueHtml = Html("""<span>25 Dec 2017 <strong class="task-overdue">Overdue</strong></span>""")
 
-      val receivedHtml = Html(s"""<span>Received</span>""")
-
-
       "passed 'Open' the Open Html is returned" in {
         ReportDeadlineStatusHelper.statusHtml(Open("2017-12-25")) shouldBe openHtml
       }
       "passed 'Overdue' the Overdue Html is returned" in {
         ReportDeadlineStatusHelper.statusHtml(Overdue("2017-12-25")) shouldBe overdueHtml
-      }
-      "passed 'Received' the Received Html is returned" in {
-        ReportDeadlineStatusHelper.statusHtml(Received) shouldBe receivedHtml
       }
     }
   }

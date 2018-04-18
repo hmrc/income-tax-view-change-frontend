@@ -20,10 +20,9 @@ import models.reportDeadlines._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import utils.ImplicitDateFormatter.localDateOrdering
-import utils.ImplicitListMethods
 import views.html.templates.reportDeadlines.{reportDeadlines_error_template, reportDeadlines_template}
 
-object ReportDeadlineRenderHelper extends ImplicitListMethods {
+object ReportDeadlineRenderHelper {
 
   def renderReportDeadlines(deadlines: ReportDeadlinesResponseModel, id: String, caption: String)(implicit messages: Messages): HtmlFormat.Appendable =
     deadlines match {

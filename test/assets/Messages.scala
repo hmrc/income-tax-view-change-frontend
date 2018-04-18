@@ -172,6 +172,12 @@ object Messages {
     }
   }
 
+  object NoReportDeadlines {
+    val title = "Report deadlines"
+    val heading = "Report deadlines"
+    val noReports = "You don't have any reports due right now. Your next deadline will show here on the first Monday of next month."
+  }
+
   // Statements Page Messages
   object Statements {
     val title = "Income Tax Statement"
