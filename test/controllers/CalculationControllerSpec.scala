@@ -63,7 +63,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         "return Status OK (200)" in {
           mockFinancialTransactionFailed()
           mockCalculationSuccess()
-          setupMockGetIncomeSourceDetails(testMtditid, testNino)(business2018IncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018IncomeSourceSuccess)
           status(result) shouldBe Status.OK
         }
 
@@ -153,7 +153,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status OK (200)" in {
           mockFinancialTransactionSuccess()
-          setupMockGetIncomeSourceDetails(testMtditid, testNino)(business2018IncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018IncomeSourceSuccess)
           mockCalculationNoBreakdown()
           status(result) shouldBe Status.OK
         }

@@ -16,7 +16,7 @@
 
 package controllers.predicates
 
-import assets.BaseTestConstants._
+import assets.BaseTestConstants.{testMtditid, testNino, testUserDetails, testErrorMessage, testErrorStatus}
 import audit.AuditingService
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler

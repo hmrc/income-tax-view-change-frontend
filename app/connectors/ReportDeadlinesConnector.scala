@@ -18,6 +18,9 @@ package connectors
 
 import javax.inject.{Inject, Singleton}
 
+import audit.AuditingService
+import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
+import auth.MtdItUserWithNino
 import config.FrontendAppConfig
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.Logger
@@ -31,15 +34,20 @@ import scala.concurrent.Future
 
 @Singleton
 class ReportDeadlinesConnector @Inject()(val http: HttpClient,
-                                         val config: FrontendAppConfig) extends RawResponseReads {
+                                         val config: FrontendAppConfig,
+                                         val auditingService: AuditingService
+                                        ) extends RawResponseReads {
 
   private[connectors] lazy val getReportDeadlinesUrl: String => String = incomeSourceID =>
     s"${config.itvcProtectedService}/income-tax-view-change/income-source/$incomeSourceID/report-deadlines"
 
-  def getReportDeadlines(incomeSourceID: String)(implicit headerCarrier: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
+  def getReportDeadlines(incomeSourceID: String)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[ReportDeadlinesResponseModel] = {
 
     val url = getReportDeadlinesUrl(incomeSourceID)
     Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - GET $url")
+
+    //Audit Report Deadlines Request
+    auditingService.audit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, incomeSourceID))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
       response =>
@@ -52,7 +60,11 @@ class ReportDeadlinesConnector @Inject()(val http: HttpClient,
                 Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - Json Validation Error: $invalid")
                 ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
               },
-              valid => valid
+              valid => {
+                //Audit Report Deadlines Response
+                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser.mtditid, mtdUser.nino, incomeSourceID, valid.obligations))
+                valid
+              }
             )
           case _ =>
             Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")

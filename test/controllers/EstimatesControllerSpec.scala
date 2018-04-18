@@ -59,7 +59,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
 
       "return redirect SEE_OTHER (303)" in {
         TestCalculationController.config.features.estimatesEnabled(false)
-        setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
+        setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
         status(result) shouldBe Status.SEE_OTHER
       }
       "redirect to home page" in {
@@ -79,7 +79,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
 
           "return status OK (200)" in {
             TestCalculationController.config.features.estimatesEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
             mockGetAllLatestCalcSuccess()
             status(result) shouldBe Status.OK
           }
@@ -98,7 +98,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
 
           "return an SEE_OTHER (303)" in {
             TestCalculationController.config.features.estimatesEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtditid, testNino)(business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018And19IncomeSourceSuccess)
             mockGetAllLatestCrystallisedCalcWithCalcNotFound()
             status(result) shouldBe Status.SEE_OTHER
           }
@@ -110,7 +110,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
 
           "return an ISE (500)" in {
             TestCalculationController.config.features.estimatesEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtditid, testNino)(business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018And19IncomeSourceSuccess)
             mockGetAllLatestCrystallisedCalcWithError()
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }

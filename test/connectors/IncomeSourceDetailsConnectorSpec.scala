@@ -45,26 +45,26 @@ class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp with Mo
     "return an IncomeSourceDetailsModel when successful JSON is received" in {
       setupMockHttpGet(testUrl)(successResponse)
       await(result) shouldBe singleBusinessIncome
-      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), testReferrerUrl)
-      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtditid, testNino, List(testSelfEmploymentId), None), testReferrerUrl)
+      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), Some(testReferrerUrl))
+      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtditid, testNino, List(testSelfEmploymentId), None))
     }
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
-      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), testReferrerUrl)
+      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino))
     }
 
     "return IncomeSourceDetailsError model in case of failure" in {
       setupMockHttpGet(testUrl)(badResponse)
       await(result) shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
-      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), testReferrerUrl)
+      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino))
     }
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
-      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), testReferrerUrl)
+      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino))
     }
   }
 

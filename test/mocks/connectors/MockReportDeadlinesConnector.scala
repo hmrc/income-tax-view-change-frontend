@@ -37,7 +37,7 @@ trait MockReportDeadlinesConnector extends UnitSpec with MockitoSugar with Befor
   }
 
   def setupMockReportDeadlines(incomeSourceId: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockReportDeadlinesConnector.getReportDeadlines(ArgumentMatchers.eq(incomeSourceId))(ArgumentMatchers.any()))
+    when(mockReportDeadlinesConnector.getReportDeadlines(ArgumentMatchers.eq(incomeSourceId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 

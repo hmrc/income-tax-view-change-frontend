@@ -17,7 +17,7 @@
 package assets
 
 import assets.IncomeSourcesWithDeadlinesTestConstants._
-import auth.{MtdItUser, MtdItUserOptionNino}
+import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import models.core.{UserDetailsError, UserDetailsModel}
 import play.api.http.Status
 import play.api.test.FakeRequest
@@ -34,6 +34,7 @@ object BaseTestConstants {
   val testUserDetailsUrl = "/user/oid/potato"
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
   lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None)(FakeRequest())
+  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None)(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, bothIncomeSourceSuccessMisalignedTaxYear)(FakeRequest())
   val testSelfEmploymentId  = "XA00001234"

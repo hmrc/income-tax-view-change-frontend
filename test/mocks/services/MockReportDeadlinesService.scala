@@ -40,7 +40,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
   }
 
   def setupMockReportDeadlinesResult(incomeSourceId: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockReportDeadlinesService.getReportDeadlines(ArgumentMatchers.eq(incomeSourceId))(ArgumentMatchers.any()))
+    when(mockReportDeadlinesService.getReportDeadlines(ArgumentMatchers.eq(incomeSourceId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
