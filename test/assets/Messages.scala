@@ -126,7 +126,7 @@ object Messages {
       val billLink = s"${taxYear-1} to $taxYear tax year"
       val billsLinkAriaLabel = s"view bill for $billLink"
       val noBills = "You've had no bills since you started reporting through software."
-      val earlierBills = "For earlier bills, view your Self Assessment calculations."
+      val earlierBills = "For earlier bills, view your Self Assessment calculations (opens in a new tab)."
     }
   }
 
@@ -149,8 +149,7 @@ object Messages {
 
   //ReportDeadlines Page Messages
   object ReportDeadlines {
-    val title = "Your Income Tax report deadlines"
-    val info  = "You must submit a report once every quarter using accounting software."
+    val title = "Report deadlines"
     val propertyHeading = "Property income"
     val periodHeading = "Report period"
     val statusHeading = "Report due date"
@@ -158,6 +157,15 @@ object Messages {
     val ceasedProperty: String => String = date => s"Ceased trading on $date."
     val portfolio = "This covers all properties that you earn income from."
     val eops = "Whole tax year (final check)"
+
+    object Dropdown {
+      val dropdownText = "How to submit a report"
+      val dropdownLink = "Choose accounting software that supports this service (opens in a new tab)"
+      val dropdown1 = "if you have not already."
+      val dropdown2 = "Use your software to record your income and expenses, then send an update to HMRC at least every quarter. We will email you to let you know when to send an update."
+      val dropdown3 = "Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs."
+      val dropdown4 = "After you send your final report, you can see the Income Tax you owe for the tax year."
+    }
     object Errors {
       val p1 = "We can't display your next report due date at the moment."
       val p2 = "Try refreshing the page in a few minutes."
@@ -275,9 +283,9 @@ object Messages {
     val it = "Income Tax"
     val estimates = "View your estimates"
     val itEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
-    val bills = "Income Tax bills"
+    val bills = "Bills"
     val finalisedBill: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
-    val obligations = "Your Income Tax report deadlines"
+    val obligations = "Report deadlines"
     val statement = "Income Tax statement"
     val details = "Account details"
   }

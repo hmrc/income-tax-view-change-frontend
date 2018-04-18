@@ -31,6 +31,7 @@ trait ImplicitDateFormatter {
 
   implicit class longDate(d: LocalDate) {
     def toLongDate: String = d.getDayOfMonth + " " + d.getMonth.getDisplayName(FULL, UK) + " " + d.getYear
+    def toLongDateShort: String = d.getDayOfMonth + " " + d.getMonth.getDisplayName(SHORT, UK) + " " + d.getYear
     def toLongDateNoYear: String = d.getDayOfMonth + " " + d.getMonth.getDisplayName(FULL, UK)
   }
 

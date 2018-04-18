@@ -50,7 +50,7 @@
         } else {
             <p id="finalised-bills">@messages("bills.viewBills")</p>
             <ul class="list list-bullet">
-                @for(calc <- calcModels){
+                @for(calc <- calcModels.reverse){
                     <li>
                         <a href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}"
                            class="bills-link"
@@ -67,7 +67,10 @@
 
     <section id="previous-years-bills">
         <p id="earlier-bills">
-            @messages("bills.earlierBills") <a href="@appConfig.selfAssessmentUrl" data-journey-click="BillsPage:ClickLink:ViewPreviousSACharges" id="view-sa-calcs">@messages("bills.earlierBillsLink")</a>.
+            @messages("bills.earlierBills") <a href="@appConfig.selfAssessmentUrl"
+                                               target="_blank"
+                                               data-journey-click="BillsPage:ClickLink:ViewPreviousSACharges"
+                                               id="view-sa-calcs">@messages("bills.earlierBillsLink")</a>.
         </p>
     </section>
 }
