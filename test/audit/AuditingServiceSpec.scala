@@ -55,7 +55,7 @@ class AuditingServiceSpec extends TestSupport with BeforeAndAfterEach {
           ArgumentMatchers.any[ExecutionContext]
         )) thenReturn Future.successful(Success)
 
-        testAuditingService.audit(testModel, controllers.feedback.routes.FeedbackController.show().url)
+        testAuditingService.audit(testModel, Some(controllers.feedback.routes.FeedbackController.show().url))
 
         verify(mockAuditConnector)
           .sendEvent(
@@ -80,7 +80,7 @@ class AuditingServiceSpec extends TestSupport with BeforeAndAfterEach {
           ArgumentMatchers.any[ExecutionContext]
         )) thenReturn Future.successful(Success)
 
-        testAuditingService.audit(testModel, controllers.feedback.routes.FeedbackController.show().url)
+        testAuditingService.audit(testModel, Some(controllers.feedback.routes.FeedbackController.show().url))
 
         verify(mockAuditConnector)
           .sendEvent(
@@ -105,7 +105,7 @@ class AuditingServiceSpec extends TestSupport with BeforeAndAfterEach {
           ArgumentMatchers.any[ExecutionContext]
         )) thenReturn Future.successful(Success)
 
-        testAuditingService.audit(testModel, controllers.feedback.routes.FeedbackController.show().url)
+        testAuditingService.audit(testModel, Some(controllers.feedback.routes.FeedbackController.show().url))
 
         verify(mockAuditConnector)
           .sendEvent(
@@ -130,7 +130,7 @@ class AuditingServiceSpec extends TestSupport with BeforeAndAfterEach {
           ArgumentMatchers.any[ExecutionContext]
         )) thenReturn Future.successful(Success)
 
-        testAuditingService.audit(testModel, controllers.feedback.routes.FeedbackController.show().url)
+        testAuditingService.audit(testModel, Some(controllers.feedback.routes.FeedbackController.show().url))
 
         verify(mockAuditConnector)
           .sendEvent(

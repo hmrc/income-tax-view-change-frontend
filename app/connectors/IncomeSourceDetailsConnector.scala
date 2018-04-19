@@ -23,8 +23,8 @@ import audit.models.{IncomeSourceDetailsRequestAuditModel, IncomeSourceDetailsRe
 import config.FrontendAppConfig
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
-import play.api.http.{HeaderNames, Status}
 import play.api.http.Status.OK
+import play.api.http.{HeaderNames, Status}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
@@ -45,8 +45,7 @@ class IncomeSourceDetailsConnector @Inject()(val http: HttpClient,
     val url = getIncomeSourcesUrl(mtditid)
     Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - GET $url")
 
-    val path = headerCarrier.headers.find(_._1 == HeaderNames.REFERER).map(_._2).getOrElse("-")
-    auditingService.audit(IncomeSourceDetailsRequestAuditModel(mtditid, nino), path)
+    auditingService.audit(IncomeSourceDetailsRequestAuditModel(mtditid, nino))
 
     http.GET[HttpResponse](url) map {
       response =>
@@ -65,7 +64,7 @@ class IncomeSourceDetailsConnector @Inject()(val http: HttpClient,
                   nino,
                   valid.businesses.map(_.incomeSourceId),
                   valid.property.map(_.incomeSourceId)
-                ), path)
+                ))
                 valid
               }
             )

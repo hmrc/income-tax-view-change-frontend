@@ -16,7 +16,7 @@
 
 package services
 
-import assets.BaseTestConstants._
+import assets.BaseTestConstants.{testMtditid}
 import assets.NinoLookupTestConstants._
 import mocks.connectors.MockNinoLookupConnector
 import utils.TestSupport

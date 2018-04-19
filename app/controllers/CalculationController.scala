@@ -90,7 +90,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   private def auditEstimate(user: MtdItUser[_], estimate: String)(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
       EstimatesAuditModel(user, estimate),
-      controllers.routes.CalculationController.showCalculationForYear(user.incomeSources.earliestTaxYear.get).url
+      Some(controllers.routes.CalculationController.showCalculationForYear(user.incomeSources.earliestTaxYear.get).url)
     )
 
 }
