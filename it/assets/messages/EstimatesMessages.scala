@@ -18,9 +18,9 @@ package assets.messages
 
 object EstimatesMessages {
 
-  val estimatesTitle = "Current estimates"
-  val viewEstimates = "View your current estimates."
-  val estimatesLink: Int => String = year => s"Tax year: ${year - 1} to $year"
+  val estimatesTitle = "Estimates"
+  val viewEstimates = "View your current estimates:"
+  val estimatesLink: Int => String = year => s"${year - 1} to $year tax year"
   val noEstimates = "You don't have an estimate right now. We'll show your next Income Tax estimate when you submit a report using software."
 
 }
