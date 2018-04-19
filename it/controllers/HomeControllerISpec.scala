@@ -54,21 +54,7 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
       }
     }
 
-    "unauthorised" should {
-
-      "redirect to sign in" in {
-
-        isAuthorisedUser(false)
-
-        When("I call GET /report-quarterly/income-and-expenses/view")
-        val res = IncomeTaxViewChangeFrontend.getHome
-
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
-      }
-    }
+    unauthorisedTest("")
   }
 
   "Navigating to /report-quarterly/income-and-expenses/view/obligations" when {

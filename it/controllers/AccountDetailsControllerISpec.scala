@@ -56,21 +56,6 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
       }
     }
 
-    "unauthorised" should {
-
-      "redirect to sign in" in {
-
-        isAuthorisedUser(false)
-
-        When("I call GET /report-quarterly/income-and-expenses/view/account-details")
-        val res = IncomeTaxViewChangeFrontend.getAccountDetails
-
-        Then("the http response for an unauthorised user is returned")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
-      }
-    }
+    unauthorisedTest("/account-details")
   }
 }

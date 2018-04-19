@@ -726,22 +726,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
       }
 
-      "unauthorised" should {
-
-        "redirect to sign in" in {
-
-          appConfig.features.reportDeadlinesEnabled(true)
-          isAuthorisedUser(false)
-
-          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
-
-          res should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.SignInController.signIn().url)
-          )
-        }
-      }
+      unauthorisedTest("/obligations")
     }
   }
 }

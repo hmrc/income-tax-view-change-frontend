@@ -46,8 +46,7 @@ object ReportDeadlineModel {
     (__ \ "start").write[LocalDate] and
       (__ \ "end").write[LocalDate] and
       (__ \ "due").write[LocalDate] and
-      (__ \ "periodKey").write[String] and
-      OWrites[Any](_ => Json.obj())
+      (__ \ "periodKey").write[String]
     )(unlift(ReportDeadlineModel.unapply))
 }
 

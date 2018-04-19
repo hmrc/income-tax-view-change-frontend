@@ -117,21 +117,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
       }
     }
 
-    "unauthorised" should {
-
-      "redirect to sign in" in {
-
-        isAuthorisedUser(false)
-
-        When("I call GET /report-quarterly/income-and-expenses/view/business-details")
-        val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
-
-        Then("the http response for an unauthorised user is returned")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
-      }
-    }
+    unauthorisedTest("/account-details/0")
   }
 }
