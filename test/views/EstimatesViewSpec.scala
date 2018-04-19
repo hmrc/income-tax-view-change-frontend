@@ -16,7 +16,7 @@
 
 package views
 
-import assets.BaseTestConstants._
+import assets.BaseTestConstants.{testMtditid, testNino, testUserDetails}
 import assets.BusinessDetailsTestConstants._
 import assets.EstimatesTestConstants._
 import assets.Messages
