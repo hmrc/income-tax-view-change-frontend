@@ -19,12 +19,22 @@ import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
+import assets.messages.BillsMessages._
 import config.FrontendAppConfig
 import enums.{Crystallised, Estimate}
 import helpers.servicemocks._
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import models.calculation.LastTaxCalculation
 import play.api.http.Status._
+
+/*
+ TODO - Remove stubbed CalcData from tests
+ TODO - lastTaxCalcResponse to be moved to TestConstants file
+ TODO - Put messages in messages file
+ TODO - Take out stubbed ReportDeadlines once refactored out if incomeSources
+ TODO - Move unauthorised test to some BaseMethod file
+ TODO - Move 'isAuthorisedUser(true)' and 'stubUserDetails()' to ComponentSpecBase & remove 'with GenericStubMethods'
+ */
 
 class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
@@ -103,11 +113,11 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
             httpStatus(OK),
-            pageTitle("Bills"),
-            elementTextByID("finalised-bills")("View your finalised bills:"),
-            elementTextByID(s"bills-link-$testYear")(s"2017 to $testYear tax year"),
+            pageTitle(billsTitle),
+            elementTextByID("finalised-bills")(finalBills),
+            elementTextByID(s"bills-link-$testYear")(taxYearText(testYearInt)),
             nElementsWithClass("bills-link")(1),
-            elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations (opens in a new tab).")
+            elementTextByID("earlier-bills")(earlierBills)
           )
         }
       }
@@ -165,12 +175,12 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and two tax bill links")
           res should have(
             httpStatus(OK),
-            pageTitle("Bills"),
-            elementTextByID("finalised-bills")("View your finalised bills:"),
-            elementTextByID(s"bills-link-$testYearPlusOne")(s"$testYear to $testYearPlusOne tax year"),
-            elementTextByID(s"bills-link-$testYear")(s"2017 to $testYear tax year"),
+            pageTitle(billsTitle),
+            elementTextByID("finalised-bills")(finalBills),
+            elementTextByID(s"bills-link-$testYearPlusOne")(taxYearText(testYearPlusOneInt)),
+            elementTextByID(s"bills-link-$testYear")(taxYearText(testYearInt)),
             nElementsWithClass("bills-link")(2),
-            elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations (opens in a new tab).")
+            elementTextByID("earlier-bills")(earlierBills)
           )
         }
       }
@@ -229,11 +239,11 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
             httpStatus(OK),
-            pageTitle("Bills"),
-            elementTextByID("finalised-bills")("View your finalised bills:"),
-            elementTextByID(s"bills-link-$testYear")(s"2017 to $testYear tax year"),
+            pageTitle(billsTitle),
+            elementTextByID("finalised-bills")(finalBills),
+            elementTextByID(s"bills-link-$testYear")(taxYearText(testYearInt)),
             nElementsWithClass("bills-link")(1),
-            elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations (opens in a new tab).")
+            elementTextByID("earlier-bills")(earlierBills)
           )
         }
       }
@@ -281,8 +291,8 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
             httpStatus(OK),
-            pageTitle("Bills"),
-            elementTextByID("no-bills")("You've had no bills since you started reporting through software."),
+            pageTitle(billsTitle),
+            elementTextByID("no-bills")(noBills),
             nElementsWithClass("bills-link")(0)
           )
         }

@@ -24,7 +24,7 @@ import play.api.{Application, Environment, Mode}
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
-  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually {
+  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
@@ -55,6 +55,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def beforeAll(): Unit = {
     super.beforeAll()
     startWiremock()
+    isAuthorisedUser(true)
+    stubUserDetails()
   }
 
   override def afterAll(): Unit = {

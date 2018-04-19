@@ -16,11 +16,22 @@
 
 package controllers
 
+import assets.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
+import assets.BusinessDetailsIntegrationTestConstants.b1TradingName
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.BaseIntegrationTestConstants.{testSelfEmploymentId, testMtditid}
+import assets.PropertyDetailsIntegrationTestConstants._
+import assets.messages.AccountDetailsMessages._
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{OK, SEE_OTHER}
+import utils.ImplicitDateFormatter._
+
+
+/*
+ TODO - Put messages in messages file
+ TODO - Move unauthorised test to some BaseMethod file
+ TODO - Move 'isAuthorisedUser(true)' and 'stubUserDetails()' to ComponentSpecBase & remove 'with GenericStubMethods'
+ */
 
 class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
@@ -46,12 +57,12 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
         Then("the view displays the correct title, username and links")
         res should have(
           httpStatus(OK),
-          pageTitle("Account details"),
-          elementTextByID(id = "page-heading")("Account details"),
-          elementTextByID(id = "your-businesses")("Your businesses"),
-          elementTextByID(id = "business-link-1")("business"),
-          elementTextByID(id = "your-properties")("Your properties"),
-          elementTextByID(id = "reporting-period")("Reporting period: 6 April - 5 April")
+          pageTitle(accountTitle),
+          elementTextByID(id = "page-heading")(accountHeading),
+          elementTextByID(id = "your-businesses")(businessHeading),
+          elementTextByID(id = "business-link-1")(b1TradingName),
+          elementTextByID(id = "your-properties")(propertyHeading),
+          elementTextByID(id = "reporting-period")(reportingPeriod(propertyAccountingStart,propertyAccountingEnd))
         )
       }
     }

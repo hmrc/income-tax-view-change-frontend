@@ -16,14 +16,25 @@
 
 package controllers
 
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import assets.IncomeSourceIntegrationTestConstants._
 import assets.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import assets.BusinessDetailsIntegrationTestConstants._
+import assets.IncomeSourceIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
+import assets.messages.BusinessDetailsMessages._
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import utils.ImplicitDateFormatter._
 
-class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubMethods {
+
+/*
+ TODO - Put messages in messages file
+ TODO - Take out stubbed ReportDeadlines once refactored out if incomeSources
+ TODO - Move unauthorised test to some BaseMethod file
+ TODO - Move 'isAuthorisedUser(true)' and 'stubUserDetails()' to ComponentSpecBase & remove 'with GenericStubMethods'
+ */
+
+class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubMethods{
 
   "Calling the BusinessDetailsController.getBusinessDetails" when {
 
@@ -51,19 +62,19 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         res should have(
           httpStatus(OK),
           pageTitle("business"),
-          elementTextByID(id = "reporting-period")("Reporting period: 1 January - 31 December"),
-          elementTextByID(id = "cessation-date")("This business ceased trading on 31 December 2017."),
-          elementTextByID(id = "address-details")("Address and contact details"),
-          elementTextByID(id = "trading-name")("Trading name"),
-          elementTextByID(id = "trading-name-business")("business"),
-          elementTextByID(id = "business-address")("Business address"),
-          elementTextByID(id = "address-line-1")("64 Zoo Lane"),
-          elementTextByID(id = "address-line-2")("Happy Place"),
-          elementTextByID(id = "address-line-3")("Magical Land"),
-          elementTextByID(id = "address-line-4")("England"),
-          elementTextByID(id = "address-line-5")("ZL1 064"),
-          elementTextByID(id = "additional-information")("Additional information"),
-          elementTextByID(id = "accounting-method")("This business uses the cash accounting method.")
+          elementTextByID(id = "reporting-period")(reportingPeriod(b1AccountingStart,b1AccountingEnd)),
+          elementTextByID(id = "cessation-date")(cessationDate(b1CessationDate)),
+          elementTextByID(id = "address-details")(addressDetails),
+          elementTextByID(id = "trading-name")(tradingName),
+          elementTextByID(id = "trading-name-business")(b1TradingName),
+          elementTextByID(id = "business-address")(businessAddress),
+          elementTextByID(id = "address-line-1")(b1AddressLine1),
+          elementTextByID(id = "address-line-2")(b1AddressLine2),
+          elementTextByID(id = "address-line-3")(b1AddressLine3),
+          elementTextByID(id = "address-line-4")(b1AddressLine4),
+          elementTextByID(id = "address-line-5")(b1AddressLine5),
+          elementTextByID(id = "additional-information")(additionalInformation),
+          elementTextByID(id = "accounting-method")(accountingMethod)
         )
       }
     }
