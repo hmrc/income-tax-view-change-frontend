@@ -19,6 +19,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReceivedOpenReportDeadlinesModel
+import assets.messages.BillsMessages._
 import config.FrontendAppConfig
 import enums.{Crystallised, Estimate}
 import helpers.servicemocks._
@@ -112,11 +113,11 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
             httpStatus(OK),
-            pageTitle("Previous statements"),
-            elementTextByID("finalised-bills")("View finalised bills."),
-            elementTextByID(s"bills-link-$testYear")(s"Tax year: 2017 to $testYear"),
+            pageTitle(billsTitle),
+            elementTextByID("finalised-bills")(finalBills),
+            elementTextByID(s"bills-link-$testYear")(taxYearText(testYearInt)),
             nElementsWithClass("bills-link")(1),
-            elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations.")
+            elementTextByID("earlier-bills")(earlierBills)
           )
         }
       }
@@ -174,12 +175,12 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and two tax bill links")
           res should have(
             httpStatus(OK),
-            pageTitle("Previous statements"),
-            elementTextByID("finalised-bills")("View finalised bills."),
-            elementTextByID(s"bills-link-$testYearPlusOne")(s"Tax year: $testYear to $testYearPlusOne"),
-            elementTextByID(s"bills-link-$testYear")(s"Tax year: 2017 to $testYear"),
+            pageTitle(billsTitle),
+            elementTextByID("finalised-bills")(finalBills),
+            elementTextByID(s"bills-link-$testYearPlusOne")(taxYearText(testYearPlusOneInt)),
+            elementTextByID(s"bills-link-$testYear")(taxYearText(testYearInt)),
             nElementsWithClass("bills-link")(2),
-            elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations.")
+            elementTextByID("earlier-bills")(earlierBills)
           )
         }
       }
@@ -238,11 +239,11 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
             httpStatus(OK),
-            pageTitle("Previous statements"),
-            elementTextByID("finalised-bills")("View finalised bills."),
-            elementTextByID(s"bills-link-$testYear")(s"Tax year: 2017 to $testYear"),
+            pageTitle(billsTitle),
+            elementTextByID("finalised-bills")(finalBills),
+            elementTextByID(s"bills-link-$testYear")(taxYearText(testYearInt)),
             nElementsWithClass("bills-link")(1),
-            elementTextByID("earlier-bills")("For earlier bills, view your Self Assessment calculations.")
+            elementTextByID("earlier-bills")(earlierBills)
           )
         }
       }
@@ -290,8 +291,8 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
             httpStatus(OK),
-            pageTitle("Previous statements"),
-            elementTextByID("no-bills")("You've had no bills since you started reporting through software."),
+            pageTitle(billsTitle),
+            elementTextByID("no-bills")(noBills),
             nElementsWithClass("bills-link")(0)
           )
         }

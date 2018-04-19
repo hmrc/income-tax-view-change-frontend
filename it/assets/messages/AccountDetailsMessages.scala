@@ -16,13 +16,15 @@
 
 package assets.messages
 
-object BillsMessages {
+import java.time.LocalDate
+import utils.ImplicitDateFormatter._
 
-  val billsTitle = "Previous statements"
-  val billsHeading = "Income Tax bills"
-  val finalBills = "View finalised bills."
-  val taxYearText: Int => String = testYear => s"Tax year: ${testYear-1} to $testYear"
-  val earlierBills = "For earlier bills, view your Self Assessment calculations."
-  val noBills = "You've had no bills since you started reporting through software."
+object AccountDetailsMessages {
+
+  val accountHeading = "Account details"
+  val accountTitle = "Account details"
+  val businessHeading = "Your businesses"
+  val propertyHeading = "Your properties"
+  val reportingPeriod: (LocalDate, LocalDate) => String = (start,end) => s"Reporting period: ${start.toLongDateNoYear} - ${end.toLongDateNoYear}"
 
 }

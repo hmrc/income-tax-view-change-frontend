@@ -24,11 +24,14 @@ import utils.ImplicitDateFormatter._
 
 object PropertyDetailsIntegrationTestConstants {
 
+  val propertyAccountingStart = "2017-01-01"
+  val propertyAccountingEnd = "2017-12-31"
+
   val property: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
     accountingPeriod = AccountingPeriodModel(
-      start = "2017-04-06",
-      end = "2018-04-05"
+      start = propertyAccountingStart,
+      end = propertyAccountingEnd
     ),
     contactDetails = None,
     propertiesRented = None,
@@ -39,8 +42,8 @@ object PropertyDetailsIntegrationTestConstants {
   val propertySuccessResponse: JsValue = Json.obj(
     "incomeSourceId" -> testPropertyIncomeId,
     "accountingPeriod" -> Json.obj(
-      "start" -> "2017-04-06",
-      "end" -> "2018-04-05"
+      "start" -> propertyAccountingStart,
+      "end" -> propertyAccountingEnd
     )
   )
 
