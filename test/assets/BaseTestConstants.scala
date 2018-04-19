@@ -28,6 +28,7 @@ object BaseTestConstants {
 
   val testMtditid = "XAIT0000123456"
   val testNino = "AB123456C"
+  val testTaxYear = 2018
   val testUserName = "Albert Einstein"
   val testUserDetails = UserDetailsModel(testUserName, None, "n/a", "n/a")
   val testUserDetailsError = UserDetailsError

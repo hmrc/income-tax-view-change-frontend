@@ -16,8 +16,9 @@
 
 package connectors
 
-import javax.inject.{Inject, Singleton}
+import java.io
 
+import javax.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
 import play.api.Logger
@@ -36,10 +37,13 @@ class FinancialTransactionsConnector @Inject()(val http: HttpClient,
 
   private[connectors] lazy val getFinancialTransactionsUrl: String => String = mtditid => s"${config.ftUrl}/financial-transactions/it/${mtditid}"
 
-  def getFinancialTransactions(mtditid: String)(implicit headerCarrier: HeaderCarrier):Future[FinancialTransactionsResponseModel] = {
+  def getFinancialTransactions(mtditid: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier):Future[FinancialTransactionsResponseModel] = {
 
     val url = getFinancialTransactionsUrl(mtditid)
-    val queryParams = Seq("onlyOpenItems" -> "true")
+    val queryParams: Seq[(String, String)] = Seq(
+      "dateFrom" -> ((taxYear-1).toString + "-4-6"),
+      "dateTo" -> (taxYear.toString + "-4-5")
+    )
 
     Logger.debug(s"[FinancialTransactionsConnector][getFincancialTransactions] - GET $url")
 
