@@ -17,7 +17,6 @@
 @import views.html.templates.main_template
 @import utils.ImplicitCurrencyFormatter._
 @import utils.ImplicitDateFormatter._
-@import views.helpers.TaxYearRenderHelper._
 @import views.html.helpers.accordionHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import views.helpers.EstimatesPage
@@ -31,84 +30,84 @@
     )), "HomePage")
 }
 
-@howToDoThis = {
-    <div id="whyMayChange">
-        <p id="why-may-change-1">@messages("home.dropdown.p1")</p>
-        <p id="why-may-change-2">@messages("home.dropdown.p2")</p>
-        <p id="why-may-change-3">@messages("home.dropdown.p3")
-            <a id="accounting-software-link"
-               data-journey-click="HomePage:ClickLink:ViewAccountingSoftware"
-               href=@appConfig.accountingSoftwareLinkUrl
-               target="_blank">
-                @messages("home.dropdown.link")
-            </a>
-        </p>
-    </div>
-}
-
 @main_template(
     title = messages("home.title"),
     bodyClasses = None,
     scriptElem = None,
-    serviceInfo = breadcrumb
+    contentHeader = Some(breadcrumb)
 ) {
 
     <section id="home-page">
 
-        <h1 class="heading-xlarge">
-            <span id="top-sub-heading" class="heading-secondary">@messages("home.subheading")</span>
-            <span id="top-heading">Reporting through software</span>
-        </h1>
-
-        <section class="divider--bottom">
-            <p id="top-text" class="lede">@messages("home.text")</p>
-            <p>@accordionHelper("howToDoThis", "HomePage", messages("home.dropdown.text"), howToDoThis)</p>
-        </section>
-
-        <h2 class="heading-large">
-            <span id="page-heading" class="heading-large form-group">@messages("home.heading.2")</span>
-            <span id="sub-heading" class="heading-secondary"><span id="ref">@messages("home.ref")</span><span id="it-reference"> @user.mtditid</span></span>
-        </h2>
+        <header class="page-heading">
+            <h1 id="page-heading" class="heading-xlarge">@messages("home.heading")</h1>
+            @user.userDetails.map{ details => <p id="sub-heading" class="heading-secondary">@details.name</p>}
+        </header>
 
         <div class="flex-container grid-row">
 
             @if(appConfig.features.billsEnabled()){
                 <div id="bills-section" class="column-one-half">
-                    <h3 id="bills-heading" class="heading-small">@messages("home.bills.heading")</h3>
+                    <h3 id="bills-heading" class="heading-small">
+                        <a id="bills-link"
+                           data-journey-click="HomePage:ClickLink:ViewYourBills"
+                           href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">
+                            @messages("home.bills.heading")
+                        </a>
+                    </h3>
                     <p id="bills-text">@messages("home.bills.text")</p>
-                    <p><a id="bills-link" data-journey-click="HomePage:ClickLink:ViewYourBills" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">@messages("home.bills.link")</a></p>
                 </div>
+            }
+
+            @if(appConfig.features.estimatesEnabled()){
+            <div id="estimates-section" class="column-one-half">
+                <h3 id="estimates-heading" class="heading-small">
+                    <a id="estimates-link"
+                       data-journey-click="HomePage:ClickLink:ViewYourEstimates"
+                       href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">
+                        @messages("home.estimates.heading")
+                    </a>
+                </h3>
+                <p id="estimates-text">@messages("home.estimates.text")</p>
+            </div>
             }
 
             @if(appConfig.features.reportDeadlinesEnabled()){
                 <div id="deadlines-section" class="column-one-half">
-                    <h3 id="deadlines-heading" class="heading-small">@messages("home.deadlines.heading")</h3>
+                    <h3 id="deadlines-heading" class="heading-small">
+                        <a id="deadlines-link"
+                           data-journey-click="HomePage:ClickLink:ViewYourDeadlines"
+                           href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">
+                            @messages("home.deadlines.heading")
+                        </a>
+                    </h3>
                     <p id="deadlines-text">@messages("home.deadlines.text")</p>
-                    <p><a id="deadlines-link" data-journey-click="HomePage:ClickLink:ViewYourDeadlines" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">@messages("home.deadlines.link")</a></p>
                 </div>
             }
 
             @if(appConfig.features.accountDetailsEnabled()){
                 <div id="accounts-section" class="column-one-half">
-                    <h3 id="accounts-heading" class="heading-small">@messages("home.accounts.heading")</h3>
+                    <h3 id="accounts-heading" class="heading-small">
+                        <a id="accounts-link"
+                           data-journey-click="HomePage:ClickLink:CheckYourAccountDetails"
+                           href="@{controllers.routes.AccountDetailsController.getAccountDetails().url}">
+                            @messages("home.accounts.heading")
+                        </a>
+                    </h3>
                     <p id="accounts-text">@messages("home.accounts.text")</p>
-                    <p><a id="accounts-link" data-journey-click="HomePage:ClickLink:CheckYourAccountDetails" href="@{controllers.routes.AccountDetailsController.getAccountDetails().url}">@messages("home.accounts.link")</a></p>
                 </div>
             }
 
             @if(appConfig.features.statementsEnabled()){
                 <div id="statements-section" class="column-one-half">
-                    <h3 id="statements-heading" class="heading-small">@messages("home.statements.heading")</h3>
+                    <h3 id="statements-heading" class="heading-small">
+                        <a id="statements-link"
+                           data-journey-click="HomePage:ClickLink:ViewYourStatement"
+                           href="@{controllers.routes.StatementsController.getStatements().url}">
+                            @messages("home.statements.heading")
+                        </a>
+                    </h3>
                     <p id="statements-text">@messages("home.statements.text")</p>
-                    <p><a id="statements-link" data-journey-click="HomePage:ClickLink:ViewYourStatement" href="@{controllers.routes.StatementsController.getStatements().url}">@messages("home.statements.link")</a></p>
-                </div>
-            }
-
-            @if(appConfig.features.estimatesEnabled()){
-                <div id="estimates-section" class="column-one-half">
-                    <h3 id="estimates-heading" class="heading-small">@messages("home.estimates.heading")</h3>
-                    <p id="estimates-text">@messages("home.estimates.text")</p>
-                    <p><a id="estimates-link" data-journey-click="HomePage:ClickLink:ViewYourEstimates" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">@messages("home.estimates.link")</a></p>
                 </div>
             }
 

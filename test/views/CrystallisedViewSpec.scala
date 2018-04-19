@@ -73,15 +73,15 @@ class CrystallisedViewSpec extends TestSupport {
       document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
       document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
       document.getElementById("breadcrumb-bills").text shouldBe breadcrumbMessages.bills
-      document.getElementById("breadcrumb-finalised-bill").text shouldBe breadcrumbMessages.finalisedBill
+      document.getElementById("breadcrumb-finalised-bill").text shouldBe breadcrumbMessages.finalisedBill(testYear)
     }
 
-    s"have the tax year '${crysMessages.subHeading}'" in {
-      document.getElementById("tax-year").text() shouldBe crysMessages.subHeading
+    s"have the sub-heading '${crysMessages.subHeading}'" in {
+      document.getElementById("sub-heading").text() shouldBe crysMessages.subHeading
     }
 
     s"have the page heading '${crysMessages.heading}'" in {
-      document.getElementById("page-heading").text() shouldBe crysMessages.heading
+      document.getElementById("heading").text() shouldBe crysMessages.heading
     }
 
     s"have an Owed Tax section" which {
@@ -91,10 +91,6 @@ class CrystallisedViewSpec extends TestSupport {
       "has a section for What you owe" which {
 
         lazy val wyoSection = owedTaxSection.getElementById("whatYouOwe")
-
-        s"has the correct 'What you owe' heading" in {
-          wyoSection.getElementById("whatYouOweHeading").text shouldBe crysMessages.wyoHeading(busPropBRTCalcDataModel.totalIncomeTaxNicYtd.toCurrencyString)
-        }
 
         s"has the correct 'whatYouOwe' p1 paragraph '${crysMessages.p1}'" in {
           wyoSection.getElementById("inYearP1").text shouldBe crysMessages.p1
@@ -302,8 +298,16 @@ class CrystallisedViewSpec extends TestSupport {
 
     }
 
-    "have a couple of sentences about adjustments" in {
-      document.getElementById("incorrect").text shouldBe messages.Crystallised.incorrect
+    "NOT have a couple of sentences about adjustments when the bill has been paid" in {
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, paidTransactionModel())
+      import setup._
+      Option(document.getElementById("adjustments")) shouldBe None
+      Option(document.getElementById("changes")) shouldBe None
+    }
+
+    "have a couple of sentences about adjustments when the bill has not been paid" in {
+      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
+      import setup._
       document.getElementById("adjustments").text shouldBe crysMessages.errors
       document.getElementById("changes").text shouldBe crysMessages.changes
     }
@@ -322,19 +326,13 @@ class CrystallisedViewSpec extends TestSupport {
       Option(document.getElementById("payment-button")) shouldBe None
     }
 
-    "show a button to go to payments, when the payment feature is enabled and the bull is not paid" in {
+    "show a button to go to payments, when the payment feature is enabled and the bill is not paid" in {
       mockAppConfig.features.paymentEnabled(true)
       val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
       import setup._
       document.getElementById("payment-button").text() shouldBe messages.Crystallised.payNow
       document.getElementById("payment-button").attr("href") shouldBe
         controllers.routes.PaymentController.paymentHandoff(calculationDisplaySuccessModel(busPropBRTCalcDataModel).calcAmount.toPence).url
-    }
-
-    "show a back link to the Income Tax home page" in {
-      val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources, transactionModel())
-      import setup._
-      Option(document.getElementById("it-home-back")) shouldNot be(None)
     }
 
   }
