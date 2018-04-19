@@ -30,8 +30,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
     "isAuthorisedUser with an active enrolment and has at least 1 business" should {
 
       "return the correct page with a valid total" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -71,8 +69,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
     "isAuthorisedUser with an active enrolment, but has no business" should {
 
       "return an internal server error" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with Property Only income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -98,8 +94,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
     "isAuthorisedUser with an active enrolment, but the api returns an error response" should {
 
       "return an internal server error" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with single Business income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR, errorResponse)

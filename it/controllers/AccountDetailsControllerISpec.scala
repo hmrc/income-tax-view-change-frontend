@@ -29,8 +29,6 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
     "isAuthorisedUser with an active enrolment and has at least 1 business and property" should {
 
       "return the correct page with a valid total" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)

@@ -48,9 +48,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
       "return the correct page with a valid total" in {
 
-        isAuthorisedUser(true)
-        stubUserDetails()
-
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           OK, businessAndPropertyResponse
@@ -122,9 +119,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
       "a successful response is retrieved for the financial transactions and there is an outstanding amount (unpaid)" should {
 
         "return the correct page with a valid total" in {
-
-          isAuthorisedUser(true)
-          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -206,9 +200,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         "return the correct page with a valid total" in {
 
-          isAuthorisedUser(true)
-          stubUserDetails()
-
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
             OK, businessAndPropertyResponse
@@ -287,9 +278,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         "return an Internal Server Error page" in {
 
-          isAuthorisedUser(true)
-          stubUserDetails()
-
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
             OK, businessAndPropertyResponse
@@ -331,9 +319,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
     "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response but NO EoY Estimate" should {
 
       "return the correct page with a valid total" in {
-
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -406,7 +391,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
       "Return the estimated tax liability without the calculation breakdown" in {
 
-        isAuthorisedUser(true)
         stubUserDetailsError()
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
@@ -453,9 +437,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
       "Return no data found response and render view explaining that this will be available once they've submitted income" in {
 
-        isAuthorisedUser(true)
-        stubUserDetails()
-
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           OK, businessAndPropertyResponse
@@ -488,9 +469,6 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
     "isAuthorisedUser with an active enrolment but error response from Get Last Calculation" should {
 
       "Render the Estimated Tax Liability Error Page" in {
-
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
