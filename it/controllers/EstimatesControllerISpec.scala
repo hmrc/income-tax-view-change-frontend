@@ -142,10 +142,10 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
           Then("The view should have the correct headings and two tax estimate links")
           res should have(
             httpStatus(OK),
-            pageTitle("Current estimates"),
-            elementTextByID("view-estimates")("View your current estimates."),
-            elementTextByID(s"estimates-link-$testYearPlusOne")(s"Tax year: $testYear to $testYearPlusOne"),
-            elementTextByID(s"estimates-link-$testYear")(s"Tax year: 2017 to $testYear"),
+            pageTitle("Estimates"),
+            elementTextByID("view-estimates")("View your current estimates:"),
+            elementTextByID(s"estimates-link-$testYearPlusOne")(s"${testYearPlusOneInt - 1} to $testYearPlusOne tax year"),
+            elementTextByID(s"estimates-link-$testYear")(s"${testYearInt - 1} to $testYear tax year"),
             nElementsWithClass("estimates-link")(2)
           )
         }
@@ -253,7 +253,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
             httpStatus(OK),
-            pageTitle("Current estimates"),
+            pageTitle("Estimates"),
             elementTextByID("no-estimates")("You don't have an estimate right now. We'll show your next Income Tax estimate when you submit a report using software."),
             nElementsWithClass("estimates-link")(0)
           )
