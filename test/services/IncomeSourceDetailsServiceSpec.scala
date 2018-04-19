@@ -45,7 +45,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
         setupMockReportDeadlinesResult(testSelfEmploymentId2)(obligationsDataSuccessModel)
         setupMockReportDeadlinesResult(testPropertyIncomeId)(obligationsDataSuccessModel)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe bothIncomeSourceSuccessMisalignedTaxYear
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe bothIncomeSourceSuccessMisalignedTaxYear
       }
     }
 
@@ -54,7 +54,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(singleBusinessIncome)
         setupMockReportDeadlinesResult(testSelfEmploymentId)(obligationsDataSuccessModel)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe businessIncomeSourceSuccess
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe businessIncomeSourceSuccess
       }
     }
 
@@ -63,7 +63,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(propertyIncomeOnly)
         setupMockReportDeadlinesResult(testPropertyIncomeId)(obligationsDataSuccessModel)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe propertyIncomeSourceSuccess
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe propertyIncomeSourceSuccess
       }
     }
 
@@ -71,7 +71,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
       "return an IncomeSourceDetailsModel with no options" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(noIncomeDetails)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe noIncomeSourceSuccess
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe noIncomeSourceSuccess
       }
     }
 
@@ -79,7 +79,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDe
       "return an IncomeSourceError" in {
         setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(errorResponse)
 
-        await(TestIncomeSourceDetailsService.getIncomeSourceDetails(testMtditid, testNino)) shouldBe IncomeSourcesWithDeadlinesError
+        await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe IncomeSourcesWithDeadlinesError
       }
     }
   }

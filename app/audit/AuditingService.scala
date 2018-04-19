@@ -21,6 +21,7 @@ import javax.inject.{Inject, Singleton}
 import audit.models.{AuditModel, ExtendedAuditModel}
 import config.{FrontendAppConfig, FrontendAuditConnector}
 import play.api.Logger
+import play.api.http.HeaderNames
 import play.api.libs.json.{JsObject, JsValue, Json, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
@@ -36,8 +37,10 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Fr
   implicit val dataEventWrites: Writes[DataEvent] = Json.writes[DataEvent]
   implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
 
-  def audit(auditModel: AuditModel, path: String = "-")(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit = {
-    val dataEvent = toDataEvent(appConfig.appName, auditModel, path)
+  val referrer: HeaderCarrier => String = _.headers.find(_._1 == HeaderNames.REFERER).map(_._2).getOrElse("-")
+
+  def audit(auditModel: AuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit = {
+    val dataEvent = toDataEvent(appConfig.appName, auditModel, path.fold(referrer(hc))(x => x))
     Logger.debug(s"Splunk Audit Event:\n\n${Json.toJson(dataEvent)}")
     handleAuditResult(auditConnector.sendEvent(dataEvent))
   }
@@ -51,8 +54,8 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Fr
     )
 
 
-  def extendedAudit(auditModel: ExtendedAuditModel, path: String = "-")(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit = {
-    val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path)
+  def extendedAudit(auditModel: ExtendedAuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit = {
+    val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path.fold(referrer(hc))(x => x))
     Logger.debug(s"Splunk Audit Event:\n\n${Json.toJson(extendedDataEvent)}")
     handleAuditResult(auditConnector.sendExtendedEvent(extendedDataEvent))
   }

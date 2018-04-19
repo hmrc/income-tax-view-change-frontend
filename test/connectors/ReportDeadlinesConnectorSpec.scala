@@ -18,6 +18,8 @@ package connectors
 
 import assets.BaseTestConstants._
 import assets.ReportDeadlinesTestConstants._
+import audit.mocks.MockAuditingService
+import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
 import mocks.MockHttp
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.Json
@@ -28,13 +30,13 @@ import utils.TestSupport
 import scala.concurrent.Future
 
 
-class ReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
+class ReportDeadlinesConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
   val successResponse = HttpResponse(Status.OK, Some(Json.toJson(obligationsDataSuccessModel)))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestReportDeadlinesDataConnector extends ReportDeadlinesConnector(mockHttpGet, frontendAppConfig)
+  object TestReportDeadlinesDataConnector extends ReportDeadlinesConnector(mockHttpGet, frontendAppConfig, mockAuditingService)
 
   "ReportDeadlinesDataConnector.getReportDeadlines()" should {
 
@@ -48,21 +50,26 @@ class ReportDeadlinesConnectorSpec extends TestSupport with MockHttp {
     "return a SuccessResponse with JSON in case of success" in {
       setupMockHttpGet(testUrl)(successResponse)
       await(result) shouldBe obligationsDataSuccessModel
+      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId), Some(testReferrerUrl))
+      verifyExtendedAudit(ReportDeadlinesResponseAuditModel(testMtditid, testNino, testSelfEmploymentId, obligationsDataSuccessModel.obligations))
     }
 
     "return ErrorResponse model in case of failure" in {
       setupMockHttpGet(testUrl)(badResponse)
       await(result) shouldBe ReportDeadlinesErrorModel(Status.BAD_REQUEST, "Error Message")
+      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId))
     }
 
     "return BusinessListError model when bad JSON is received" in {
       setupMockHttpGet(testUrl)(successResponseBadJson)
       await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
+      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId))
     }
 
     "return ReportDeadlinesErrorModel model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
       await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId))
     }
   }
 }

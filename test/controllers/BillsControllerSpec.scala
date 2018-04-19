@@ -58,7 +58,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
       "return redirect SEE_OTHER (303)" in {
         TestCalculationController.config.features.billsEnabled(false)
-        setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
+        setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
         status(result) shouldBe Status.SEE_OTHER
       }
 
@@ -80,7 +80,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
           "return status OK (200)" in {
             TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtditid, testNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
             mockGetAllLatestCalcSuccess()
             status(result) shouldBe Status.OK
           }
@@ -103,7 +103,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
           "return Status OK (200)" in {
             TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtditid, testNino)(business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018And19IncomeSourceSuccess)
             mockGetAllLatestCrystallisedCalcSuccess()
             status(result) shouldBe Status.OK
           }
@@ -125,7 +125,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
           "return Status OK (200)" in {
             TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtditid, testNino)(business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018And19IncomeSourceSuccess)
             mockGetAllLatestCalcSuccessEmpty()
             status(result) shouldBe Status.OK
           }
@@ -146,7 +146,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
           "return an OK (200)" in {
             TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtditid, testNino)(business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018And19IncomeSourceSuccess)
             mockGetAllLatestCrystallisedCalcWithCalcNotFound()
             status(result) shouldBe Status.OK
           }
@@ -166,7 +166,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
           "return an ISE (500)" in {
             TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtditid, testNino)(business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018And19IncomeSourceSuccess)
             mockGetAllLatestCrystallisedCalcWithError()
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
