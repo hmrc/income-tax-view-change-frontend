@@ -90,10 +90,10 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         res should have (
           httpStatus(OK),
-          pageTitle(estimateTitle(testYearInt)),
-          elementTextByID("inYearEstimateHeading")(calcHeading(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)),
-          elementTextByID("tax-year")(taxYear(testYearInt)),
-          elementTextByID("page-heading")(estimateHeading),
+          pageTitle(title(testYearInt)),
+          elementTextByID("inYearEstimateHeading")(EstimatedTaxAmount.currentEstimate(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)),
+          elementTextByID("heading")(heading(testYearInt)),
+          elementTextByID("sub-heading")(EstimatedTaxAmount.subHeading),
           elementTextByID("business-profit")(totalProfit(calcBreakdownResponse)),
           elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
           elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
@@ -171,12 +171,12 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           res should have(
             httpStatus(OK),
-            pageTitle(finalTitle),
-            elementTextByID("tax-year")(taxYear(testYearInt)),
-            elementTextByID("page-heading")(finalHeading),
-            elementTextByID("whatYouOweHeading")(whatYouOwe(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)),
+            pageTitle(title(testYearInt)),
+            elementTextByID("heading")(heading(testYearInt)),
+            elementTextByID("sub-heading")(CrystalisedTaxAmount.subHeading),
+            elementTextByID("whatYouOweHeading")(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString),
             isElementVisibleById("calcBreakdown")(expectedValue = true),
-            elementTextByID("calcBreakdown")(calcBreakdown),
+            elementTextByID("calcBreakdown")(CrystalisedTaxAmount.calcBreakdown),
             elementTextByID("business-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
             elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
@@ -254,9 +254,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           res should have(
             httpStatus(OK),
-            pageTitle(finalTitle),
-            elementTextByID("page-heading")(finalHeading),
-            elementTextByID("tax-year")(taxYear(testYearInt)),
+            pageTitle(heading(testYearInt)),
+            elementTextByID("heading")(heading(testYearInt)),
+            elementTextByID("sub-heading")(CrystalisedTaxAmount.subHeading),
             isElementVisibleById("calcBreakdown")(expectedValue = false),
             elementTextByID("business-profit")(totalProfit(calcBreakdownResponse, includeInterest = false)),
             elementTextByID("savings-income")(calcBreakdownResponse.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
@@ -374,10 +374,10 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         res should have (
           httpStatus(OK),
-          pageTitle(estimateTitle(testYearInt)),
-          elementTextByID("inYearEstimateHeading")(calcHeading(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)),
-          elementTextByID("tax-year")(taxYear(testYearInt)),
-          elementTextByID("page-heading")(estimateHeading),
+          pageTitle(title(testYearInt)),
+          elementTextByID("inYearEstimateHeading")(EstimatedTaxAmount.currentEstimate(calcBreakdownResponse.totalIncomeTaxNicYtd.toCurrencyString)),
+          elementTextByID("heading")(heading(testYearInt)),
+          elementTextByID("sub-heading")(EstimatedTaxAmount.subHeading),
           elementTextByID("business-profit")(totalProfit(calcBreakdownResponse)),
           elementTextByID("personal-allowance")(s"-${totalAllowance(calcBreakdownResponse)}"),
           elementTextByID("additional-allowances")("-" + calcBreakdownResponse.additionalAllowances.toCurrencyString),
@@ -450,9 +450,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         Then("a successful response is returned with the correct estimate")
         res should have(
           httpStatus(OK),
-          pageTitle(estimateTitle(testYearInt)),
-          elementTextByID("inYearEstimateHeading")(calcHeading(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString)),
-          elementTextByID("inYearP1")(inYearp1),
+          pageTitle(title(testYearInt)),
+          elementTextByID("inYearEstimateHeading")(EstimatedTaxAmount.currentEstimate(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString)),
+          elementTextByID("inYearP1")(EstimatedTaxAmount.inYearp1("6 July 2017", testYearInt)),
           isElementVisibleById("inYearCalcBreakdown")(expectedValue = false)
         )
       }
@@ -489,7 +489,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         Then("a Not Found response is returned and correct view rendered")
         res should have(
           httpStatus(NOT_FOUND),
-          pageTitle(estimateTitle(testYearInt))
+          pageTitle(title(testYearInt))
         )
       }
     }
@@ -525,7 +525,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         Then("an Internal Server Error response is returned and correct view rendered")
         res should have(
           httpStatus(OK),
-          pageTitle(estimateTitle(testYearInt)),
+          pageTitle(title(testYearInt)),
           elementTextByID("p1")(internalServerErrorp1),
           elementTextByID("p2")(internalServerErrorp2)
         )

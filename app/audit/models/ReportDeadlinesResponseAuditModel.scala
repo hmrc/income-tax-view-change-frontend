@@ -37,7 +37,7 @@ case class ReportDeadlinesResponseAuditModel(mtditid: String,
     (__ \ "mtditid").write[String] and
       (__ \ "nino").write[String] and
       (__ \ "incomeSourceId").write[String] and
-      (__ \ "reportDeadlines").write[List[ReportDeadlineModel]](Writes.list(ReportDeadlineModel.reportDeadlinesAuditWrites))
+      (__ \ "reportDeadlines").write[List[ReportDeadlineModel]]
     )(unlift(AuditDetail.unapply))
 
   override val detail: JsValue = Json.toJson(
