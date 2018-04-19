@@ -42,12 +42,6 @@ case class ReportDeadlinesErrorModel(code: Int, message: String) extends ReportD
 
 object ReportDeadlineModel {
   implicit val format: Format[ReportDeadlineModel] = Json.format[ReportDeadlineModel]
-  val reportDeadlinesAuditWrites: Writes[ReportDeadlineModel] = (
-    (__ \ "start").write[LocalDate] and
-      (__ \ "end").write[LocalDate] and
-      (__ \ "due").write[LocalDate] and
-      (__ \ "periodKey").write[String]
-    )(unlift(ReportDeadlineModel.unapply))
 }
 
 object ReportDeadlinesModel {
