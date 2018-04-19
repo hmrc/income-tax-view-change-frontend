@@ -20,27 +20,14 @@ import models.reportDeadlines._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import utils.ImplicitDateFormatter.localDateOrdering
-import utils.ImplicitListMethods
 import views.html.templates.reportDeadlines.{reportDeadlines_error_template, reportDeadlines_template}
 
-object ReportDeadlineRenderHelper extends ImplicitListMethods {
+object ReportDeadlineRenderHelper {
 
   def renderReportDeadlines(deadlines: ReportDeadlinesResponseModel, id: String, caption: String)(implicit messages: Messages): HtmlFormat.Appendable =
     deadlines match {
-      case rds: ReportDeadlinesModel => reportDeadlines_template(subsetReportDeadlines(rds), id, caption)
+      case rds: ReportDeadlinesModel => reportDeadlines_template(rds.obligations.sortBy(_.due), id, caption)
       case _ => reportDeadlines_error_template(id)
     }
-
-  def subsetReportDeadlines(rds: ReportDeadlinesModel): ReportDeadlinesModel =
-    ReportDeadlinesModel(getLatestReceived(rds.obligations) ++ getAllOverdue(rds.obligations) ++ getNextDue(rds.obligations))
-
-  private def getLatestReceived(obligations: List[ReportDeadlineModel]): List[ReportDeadlineModel] =
-    obligations.filter(_.getReportDeadlineStatus == Received).maxItemBy(_.due)
-
-  private def getAllOverdue(obligations: List[ReportDeadlineModel]): List[ReportDeadlineModel] =
-    obligations.filter(_.getReportDeadlineStatus.isInstanceOf[Overdue])
-
-  private def getNextDue(obligations: List[ReportDeadlineModel]): List[ReportDeadlineModel] =
-    obligations.filter(_.getReportDeadlineStatus.isInstanceOf[Open]).minItemBy(_.due)
 
 }

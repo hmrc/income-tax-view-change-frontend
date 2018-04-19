@@ -16,23 +16,20 @@
 
 package views
 
-import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages}
-import assets.ReportDeadlinesTestConstants._
 import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants._
+import assets.Messages.{Breadcrumbs => breadcrumbMessages, ReportDeadlines => messages}
 import assets.PropertyDetailsTestConstants._
+import assets.ReportDeadlinesTestConstants._
 import config.FrontendAppConfig
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.http.Status
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.TestSupport
-import utils.ImplicitDateFormatter
+import utils.{ImplicitDateFormatter, TestSupport}
 
 class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
 
@@ -80,8 +77,8 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
       }
 
       "contain the first row and have the start date as '1 Apr 2017' and status 'Received'" in {
-        document.getElementById("bi-1-ob-1-start").text() shouldBe "1 Apr 2017"
-        document.getElementById("bi-1-ob-1-status").text() shouldBe "Received"
+        document.getElementById("bi-1-ob-1-start").text() shouldBe "1 Jul 2017"
+        document.getElementById("bi-1-ob-1-status").text() shouldBe "30 Oct 2017 Overdue"
       }
 
       s"contain a second row and have ${messages.eops} and a status '31 Oct 2017'" in {

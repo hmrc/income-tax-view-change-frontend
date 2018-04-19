@@ -44,7 +44,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub a single business obligation response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleObligationOverdueModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")
         val res = IncomeTaxViewChangeFrontend.getReportDeadlines
@@ -74,7 +74,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
             And("I wiremock stub a single business obligation response")
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleObligationOverdueModel)
 
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
@@ -87,7 +87,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             res should have(
               httpStatus(OK),
               pageTitle("Report deadlines")
-
             )
 
             Then("the page displays one obligation")
@@ -97,139 +96,21 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the single business obligation data is")
             res should have(
-              //Check the 1st obligation data
               elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
               elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")("Received")
+              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
             )
 
-            Then("the page should not contain any property obligation")
+            Then("the page should not contain any property obligations")
             res should have(
-              isElementVisibleById("pi-ob")(false)
+              isElementVisibleById("pi-section")(false)
             )
           }
         }
 
-        "has multiple business obligations" should {
+        "has business with multiple obligations and no property obligations" should {
 
-          "has business and property with multiple obligations for both" should {
-
-            "display a single obligation with the correct dates and status" in {
-
-              appConfig.features.reportDeadlinesEnabled(true)
-              isAuthorisedUser(true)
-              stubUserDetails()
-
-              And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                OK, businessAndPropertyResponse
-              )
-
-              And("I wiremock stub a single property and business obligation response")
-              IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
-              IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
-
-              When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-              val res = IncomeTaxViewChangeFrontend.getReportDeadlines
-
-              Then("I verify the Income Source Details has been successfully wiremocked")
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
-
-              Then("the correct title, username and links are displayed")
-              res should have(
-                httpStatus(OK),
-                pageTitle("Report deadlines")
-
-              )
-
-              Then("the page displays four business obligations and four property obligations")
-              res should have(
-                nElementsWithClass("obligation")(10)
-              )
-
-              Then("the first business obligation displayed is")
-              res should have(
-                elementTextByID(id = "bi-1-ob-1-start")("1 Oct 2016"),
-                elementTextByID(id = "bi-1-ob-1-end")("31 Dec 2016"),
-                elementTextByID(id = "bi-1-ob-1-status")("Received")
-              )
-
-              Then("the second business obligation displayed is")
-              res should have(
-                elementTextByID(id = "bi-1-ob-2-start")("1 Jan 2017"),
-                elementTextByID(id = "bi-1-ob-2-end")("31 Mar 2017"),
-                elementTextByID(id = "bi-1-ob-2-status")(LocalDate.now().minusDays(128).toLongDateShort +" Overdue")
-              )
-
-              Then("the third business obligation displayed is")
-              res should have(
-                elementTextByID(id = "bi-1-ob-3-start")("1 Apr 2017"),
-                elementTextByID(id = "bi-1-ob-3-end")("30 Jun 2017"),
-                elementTextByID(id = "bi-1-ob-3-status")(LocalDate.now().minusDays(36).toLongDateShort +" Overdue")
-              )
-
-              Then("the fourth business obligation displayed is")
-              res should have(
-                elementTextByID(id = "bi-1-ob-4-eops")("Whole tax year (final check)"),
-                elementTextByID(id = "bi-1-ob-4-status")(LocalDate.now().minusDays(36).toLongDateShort +" Overdue")
-              )
-
-              Then("the fifth business obligation displayed is")
-              res should have(
-                elementTextByID(id = "bi-1-ob-5-start")("1 Jul 2017"),
-                elementTextByID(id = "bi-1-ob-5-end")("30 Sep 2017"),
-                elementTextByID(id = "bi-1-ob-5-status")(LocalDate.now().plusDays(30).toLongDateShort)
-              )
-
-              Then("the first property obligation displayed is")
-              res should have(
-                elementTextByID(id = "pi-ob-1-start")("1 Oct 2016"),
-                elementTextByID(id = "pi-ob-1-end")("31 Dec 2016"),
-                elementTextByID(id = "pi-ob-1-status")("Received")
-              )
-
-              Then("the second property obligation displayed is")
-              res should have(
-                elementTextByID(id = "pi-ob-2-start")("1 Jan 2017"),
-                elementTextByID(id = "pi-ob-2-end")("31 Mar 2017"),
-                elementTextByID(id = "pi-ob-2-status")(LocalDate.now().minusDays(128).toLongDateShort + " Overdue")
-              )
-
-              Then("the third property obligation displayed is")
-              res should have(
-                elementTextByID(id = "pi-ob-3-start")("1 Apr 2017"),
-                elementTextByID(id = "pi-ob-3-end")("30 Jun 2017"),
-                elementTextByID(id = "pi-ob-3-status")(LocalDate.now().minusDays(36).toLongDateShort +" Overdue")
-              )
-
-              Then("the fourth business obligation displayed is")
-              res should have(
-                elementTextByID(id = "pi-ob-4-eops")("Whole tax year (final check)"),
-                elementTextByID(id = "pi-ob-4-status")(LocalDate.now().minusDays(36).toLongDateShort +" Overdue")
-              )
-
-              Then("the fifth property obligation displayed is")
-              res should have(
-                elementTextByID(id = "pi-ob-5-start")("1 Jul 2017"),
-                elementTextByID(id = "pi-ob-5-end")("30 Sep 2017"),
-                elementTextByID(id = "pi-ob-5-status")(LocalDate.now().plusDays(30).toLongDateShort)
-              )
-
-              Then("the sixth property and business obligation data are not displayed")
-              res should have(
-                isElementVisibleById("pi-ob-6-status")(false),
-                isElementVisibleById("bi-1-ob-6-status")(false)
-              )
-
-            }
-          }
-        }
-
-        "has multiple obligations" should {
-
-          "display the correct amount of obligations with the correct statuses" in {
+          "display all obligations with the correct dates and status" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
             isAuthorisedUser(true)
@@ -237,12 +118,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-              OK, businessAndPropertyResponse
+              OK, singleBusinessResponse
             )
 
-            And("I wiremock stub multiple business obligations response")
+            And("I wiremock stub a single property and business obligation response")
             IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
@@ -252,169 +132,47 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
 
-            Then("the view should display the title and username")
+            Then("the correct title, username and links are displayed")
             res should have(
               httpStatus(OK),
               pageTitle("Report deadlines")
+
             )
 
-            Then("the page should contain seven obligations")
+            Then("the page displays six obligations")
             res should have(
               nElementsWithClass("obligation")(6)
             )
 
-            Then("the first business obligation displayed is")
+            Then("the business obligation data is")
             res should have(
-              elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")("Received")
-            )
-            Then("the second business obligation displayed is")
-            res should have(
-              elementTextByID(id = "bi-1-ob-2-start")("6 Oct 2017"),
-              elementTextByID(id = "bi-1-ob-2-end")("5 Jan 2018"),
-              elementTextByID(id = "bi-1-ob-2-status")(LocalDate.now().minusDays(1).toLongDateShort +" Overdue")
-            )
-
-            Then("the third business obligation displayed is")
-            res should have(
-              elementTextByID(id = "bi-1-ob-3-start")("6 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-3-end")("5 Oct 2017"),
-              elementTextByID(id = "bi-1-ob-3-status")(LocalDate.now().plusDays(1).toLongDateShort)
-            )
-
-            Then("the first property obligation displayed is")
-            res should have(
-              elementTextByID(id = "pi-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "pi-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "pi-ob-1-status")("Received")
-            )
-            Then("the second property obligation displayed is")
-            res should have(
-              elementTextByID(id = "pi-ob-2-start")("6 Oct 2017"),
-              elementTextByID(id = "pi-ob-2-end")("5 Jan 2018"),
-              elementTextByID(id = "pi-ob-2-status")(LocalDate.now().minusDays(1).toLongDateShort +" Overdue")
+              elementTextByID(id = "bi-1-ob-1-start")("1 Jan 2017"),
+              elementTextByID(id = "bi-1-ob-1-end")("31 Mar 2017"),
+              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(128).toLongDateShort} Overdue"),
+              elementTextByID(id = "bi-1-ob-2-start")("1 Apr 2017"),
+              elementTextByID(id = "bi-1-ob-2-end")("30 Jun 2017"),
+              elementTextByID(id = "bi-1-ob-2-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
+              elementTextByID(id = "bi-1-ob-3-eops")("Whole tax year (final check)"),
+              elementTextByID(id = "bi-1-ob-3-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
+              elementTextByID(id = "bi-1-ob-4-start")("1 Jul 2017"),
+              elementTextByID(id = "bi-1-ob-4-end")("30 Sep 2017"),
+              elementTextByID(id = "bi-1-ob-4-status")(LocalDate.now().plusDays(30).toLongDateShort),
+              elementTextByID(id = "bi-1-ob-5-start")("1 Oct 2017"),
+              elementTextByID(id = "bi-1-ob-5-end")("31 Jan 2018"),
+              elementTextByID(id = "bi-1-ob-5-status")(LocalDate.now().plusDays(146).toLongDateShort),
+              elementTextByID(id = "bi-1-ob-6-start")("1 Nov 2017"),
+              elementTextByID(id = "bi-1-ob-6-end")("1 Feb 2018"),
+              elementTextByID(id = "bi-1-ob-6-status")(LocalDate.now().plusDays(174).toLongDateShort)
             )
 
-            Then("the third property obligation displayed is")
+            Then("the page should not contain any property obligation")
             res should have(
-              elementTextByID(id = "pi-ob-3-start")("6 Jul 2017"),
-              elementTextByID(id = "pi-ob-3-end")("5 Oct 2017"),
-              elementTextByID(id = "pi-ob-3-status")(LocalDate.now().plusDays(1).toLongDateShort)
+              isElementVisibleById("pi-section")(false)
             )
-
 
           }
         }
 
-        "has multiple received and open business obligations" should {
-
-          "display only one of each received and open obligations and all overdue obligations" in {
-
-            appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
-
-            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-              OK, businessAndPropertyResponse
-            )
-
-            And("I wiremock stub multiple business obligations response")
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
-
-            When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-            val res = IncomeTaxViewChangeFrontend.getReportDeadlines
-
-            Then("I verify the Income Source Details has been successfully wiremocked")
-            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-            verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
-
-            Then("the view should display the title and username")
-            res should have(
-              httpStatus(OK),
-              pageTitle("Report deadlines")
-            )
-
-            Then("ten obligations are displayed")
-            res should have(
-              nElementsWithClass("obligation")(10)
-            )
-
-            Then("first business obligation displayed is")
-            res should have(
-              elementTextByID(id = "bi-1-ob-1-start")("1 Oct 2016"),
-              elementTextByID(id = "bi-1-ob-1-end")("31 Dec 2016"),
-              elementTextByID(id = "bi-1-ob-1-status")("Received")
-            )
-
-            Then("second business obligation displayed is")
-            res should have(
-              elementTextByID(id = "bi-1-ob-2-start")("1 Jan 2017"),
-              elementTextByID(id = "bi-1-ob-2-end")("31 Mar 2017"),
-              elementTextByID(id = "bi-1-ob-2-status")(LocalDate.now().minusDays(128).toLongDateShort +" Overdue")
-            )
-
-            Then("third business obligation displayed is")
-            res should have(
-              elementTextByID(id = "bi-1-ob-3-start")("1 Apr 2017"),
-              elementTextByID(id = "bi-1-ob-3-end")("30 Jun 2017"),
-              elementTextByID(id = "bi-1-ob-3-status")(LocalDate.now().minusDays(36).toLongDateShort + " Overdue")
-            )
-
-
-            Then("the fourth business obligation displayed is")
-            res should have(
-              elementTextByID(id = "bi-1-ob-4-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "bi-1-ob-4-status")(LocalDate.now().minusDays(36).toLongDateShort + " Overdue")
-            )
-
-
-            Then("Fifth business obligation displayed is")
-            res should have(
-              elementTextByID(id = "bi-1-ob-5-start")("1 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-5-end")("30 Sep 2017"),
-              elementTextByID(id = "bi-1-ob-5-status")(LocalDate.now().plusDays(30).toLongDateShort)
-            )
-
-            Then("first property obligation displayed is")
-            res should have(
-              elementTextByID(id = "pi-ob-1-start")("1 Oct 2016"),
-              elementTextByID(id = "pi-ob-1-end")("31 Dec 2016"),
-              elementTextByID(id = "pi-ob-1-status")("Received")
-            )
-
-            Then("second property obligation displayed is")
-            res should have(
-              elementTextByID(id = "pi-ob-2-start")("1 Jan 2017"),
-              elementTextByID(id = "pi-ob-2-end")("31 Mar 2017"),
-              elementTextByID(id = "pi-ob-2-status")(LocalDate.now().minusDays(128).toLongDateShort +" Overdue")
-            )
-
-            Then("third property obligation displayed is")
-            res should have(
-              elementTextByID(id = "pi-ob-3-start")("1 Apr 2017"),
-              elementTextByID(id = "pi-ob-3-end")("30 Jun 2017"),
-              elementTextByID(id = "pi-ob-3-status")(LocalDate.now().minusDays(36).toLongDateShort +" Overdue")
-            )
-
-            Then("the fourth business obligation displayed is")
-            res should have(
-              elementTextByID(id = "pi-ob-4-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "pi-ob-4-status")(LocalDate.now().minusDays(36).toLongDateShort +" Overdue")
-            )
-
-            Then("fifth property obligation displayed is")
-            res should have(
-              elementTextByID(id = "pi-ob-5-start")("1 Jul 2017"),
-              elementTextByID(id = "pi-ob-5-end")("30 Sep 2017"),
-              elementTextByID(id = "pi-ob-5-status")(LocalDate.now().plusDays(30).toLongDateShort),
-              isElementVisibleById("pi-ob-6-status")(false)
-            )
-          }
-        }
 
         "has a single property obligation" should {
 
@@ -424,53 +182,59 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             isAuthorisedUser(true)
             stubUserDetails()
 
-            And("I wiremock stub a successful Income Source Details response with Property only income")
+            And("I wiremock stub a successful Income Source Details response with single Business")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             And("I wiremock stub a single business obligation response")
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, singleReportDeadlinesDataSuccessModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, singleObligationPlusYearOpenModel)
 
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+            verifyReportDeadlinesCall(testSelfEmploymentId)
 
-            verifyReportDeadlinesCall(testPropertyIncomeId)
-
-            Then("the view should display the title and username")
+            Then("the view displays the correct title, username and links")
             res should have(
               httpStatus(OK),
               pageTitle("Report deadlines")
             )
 
-            Then("One property obligation is displayed")
+            Then("the page displays one obligation")
             res should have(
               nElementsWithClass("obligation")(1)
             )
 
-            Then("the single property obligation displayed is")
+            Then("the single property obligation data is")
             res should have(
               elementTextByID(id = "pi-ob-1-start")("6 Apr 2017"),
               elementTextByID(id = "pi-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "pi-ob-1-status")("Received"),
-              isElementVisibleById("bi-1-ob")(false)
+              elementTextByID(id = "pi-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
+            )
+
+            Then("the page should not contain any business obligations")
+            res should have(
+              isElementVisibleById("bi-1-section")(false)
             )
           }
         }
 
-        "has multiple property obligations" should {
 
-          "display the correct amount of obligations with the correct statuses" in {
+        "has property with multiple obligations and no business obligations" should {
+
+          "display a multiple obligations with the correct dates and status" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
             isAuthorisedUser(true)
             stubUserDetails()
 
-            And("I wiremock stub a successful Income Source Details response with Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              OK, propertyOnlyResponse
+            )
 
-            And("I wiremock stub multiple property obligations response")
+            And("I wiremock stub a single property and business obligation response")
             IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
@@ -479,114 +243,49 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("I verify the Income Source Details has been successfully wiremocked")
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            verifyReportDeadlinesCall(testPropertyIncomeId)
+            verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
 
-            Then("the view should display the title and username")
+            Then("the correct title, username and links are displayed")
             res should have(
               httpStatus(OK),
               pageTitle("Report deadlines")
             )
 
-
-            Then("three obligations are displayed")
+            Then("the page displays six obligations")
             res should have(
-              nElementsWithClass("obligation")(3)
+              nElementsWithClass("obligation")(6)
             )
 
-            Then("the first property obligation is")
+            Then("the property obligation data is")
             res should have(
-              elementTextByID(id = "pi-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "pi-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "pi-ob-1-status")("Received")
+              elementTextByID(id = "pi-ob-1-start")("1 Jan 2017"),
+              elementTextByID(id = "pi-ob-1-end")("31 Mar 2017"),
+              elementTextByID(id = "pi-ob-1-status")(s"${LocalDate.now().minusDays(128).toLongDateShort} Overdue"),
+              elementTextByID(id = "pi-ob-2-start")("1 Apr 2017"),
+              elementTextByID(id = "pi-ob-2-end")("30 Jun 2017"),
+              elementTextByID(id = "pi-ob-2-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
+              elementTextByID(id = "pi-ob-3-eops")("Whole tax year (final check)"),
+              elementTextByID(id = "pi-ob-3-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
+              elementTextByID(id = "pi-ob-4-start")("1 Jul 2017"),
+              elementTextByID(id = "pi-ob-4-end")("30 Sep 2017"),
+              elementTextByID(id = "pi-ob-4-status")(LocalDate.now().plusDays(30).toLongDateShort),
+              elementTextByID(id = "pi-ob-5-start")("1 Oct 2017"),
+              elementTextByID(id = "pi-ob-5-end")("31 Jan 2018"),
+              elementTextByID(id = "pi-ob-5-status")(LocalDate.now().plusDays(146).toLongDateShort),
+              elementTextByID(id = "pi-ob-6-start")("1 Nov 2017"),
+              elementTextByID(id = "pi-ob-6-end")("1 Feb 2018"),
+              elementTextByID(id = "pi-ob-6-status")(LocalDate.now().plusDays(174).toLongDateShort)
             )
 
-            Then("the second property obligation is")
+            Then("the page should not contain any business obligations")
             res should have(
-              elementTextByID(id = "pi-ob-2-start")("6 Oct 2017"),
-              elementTextByID(id = "pi-ob-2-end")("5 Jan 2018"),
-              elementTextByID(id = "pi-ob-2-status")(LocalDate.now().minusDays(1).toLongDateShort +" Overdue")
+              isElementVisibleById("bi-1-section")(false)
             )
 
-            Then("the third property obligation is")
-            res should have(
-              elementTextByID(id = "pi-ob-3-start")("6 Jul 2017"),
-              elementTextByID(id = "pi-ob-3-end")("5 Oct 2017"),
-              elementTextByID(id = "pi-ob-3-status")(LocalDate.now().plusDays(1).toLongDateShort)
-            )
           }
         }
 
-        "has multiple received and open property obligations" should {
-
-          "display only one of each received and open obligations and all overdue obligations" in {
-
-            appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
-
-            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-            And("I wiremock stub multiple property open and received obligations response")
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
-
-            When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-            val res = IncomeTaxViewChangeFrontend.getReportDeadlines
-
-            Then("I verify the Income Source Details has been successfully wiremocked")
-            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-            verifyReportDeadlinesCall(testPropertyIncomeId)
-
-            Then("the view should display the title and username")
-            res should have(
-              httpStatus(OK),
-              pageTitle("Report deadlines")
-            )
-
-            Then("the page displays five obligations")
-            res should have(
-
-              nElementsWithClass("obligation")(5)
-            )
-
-            Then("the first obligation displayed should be")
-            res should have(
-              elementTextByID(id = "pi-ob-1-start")("1 Oct 2016"),
-              elementTextByID(id = "pi-ob-1-end")("31 Dec 2016"),
-              elementTextByID(id = "pi-ob-1-status")("Received")
-            )
-
-            Then("the second obligation displayed should be")
-            res should have(
-              elementTextByID(id = "pi-ob-2-start")("1 Jan 2017"),
-              elementTextByID(id = "pi-ob-2-end")("31 Mar 2017"),
-              elementTextByID(id = "pi-ob-2-status")(LocalDate.now().minusDays(128).toLongDateShort +" Overdue")
-            )
-
-            Then("the third obligation displayed should be")
-            res should have(
-              elementTextByID(id = "pi-ob-3-start")("1 Apr 2017"),
-              elementTextByID(id = "pi-ob-3-end")("30 Jun 2017"),
-              elementTextByID(id = "pi-ob-3-status")(LocalDate.now().minusDays(36).toLongDateShort +" Overdue")
-            )
-
-            Then("the fourth business obligation displayed is")
-            res should have(
-              elementTextByID(id = "pi-ob-4-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "pi-ob-4-status")(LocalDate.now().minusDays(36).toLongDateShort +" Overdue")
-            )
-
-            Then("the fifth obligation dispolayed should be")
-            res should have(
-              elementTextByID(id = "pi-ob-5-start")("1 Jul 2017"),
-              elementTextByID(id = "pi-ob-5-end")("30 Sep 2017"),
-              elementTextByID(id = "pi-ob-5-status")(LocalDate.now().plusDays(30).toLongDateShort)
-            )
-          }
-        }
-
-        "has business and property obligations" should {
+        "has a business and a property obligation" should {
 
           "display one obligation each for business and property with the correct dates and statuses" in {
 
@@ -600,8 +299,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             )
 
             And("I wiremock stub a single business and property obligation response")
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, singleReportDeadlinesDataSuccessModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleObligationPlusYearOpenModel )
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, singleObligationOverdueModel)
 
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
@@ -616,26 +315,110 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               pageTitle("Report deadlines")
             )
 
-            Then("the page title")
+            Then("the page should display two obligations")
             res should have(
               nElementsWithClass("obligation")(2)
             )
 
-            Then("the single business obligation")
+            Then("the single business obligation data is")
             res should have(
               elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
               elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")("Received")
+              elementTextByID(id = "bi-1-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
             )
 
-            Then("the single property obligation")
+            Then("the property obligation data is")
             res should have(
               elementTextByID(id = "pi-ob-1-start")("6 Apr 2017"),
               elementTextByID(id = "pi-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "pi-ob-1-status")("Received")
+              elementTextByID(id = "pi-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
             )
+
           }
         }
+
+        "has business and property with multiple obligations for both" should {
+
+          "display all obligations with the correct dates and status" in {
+
+            appConfig.features.reportDeadlinesEnabled(true)
+            isAuthorisedUser(true)
+            stubUserDetails()
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              OK, businessAndPropertyResponse
+            )
+
+            And("I wiremock stub a single property and business obligation response")
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
+
+            When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+            val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+            verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+
+            Then("the correct title, username and links are displayed")
+            res should have(
+              httpStatus(OK),
+              pageTitle("Report deadlines")
+
+            )
+
+            Then("the page displays twelve obligations")
+            res should have(
+              nElementsWithClass("obligation")(12)
+            )
+
+            Then("the business obligation data is")
+            res should have(
+              elementTextByID(id = "bi-1-ob-1-start")("1 Jan 2017"),
+              elementTextByID(id = "bi-1-ob-1-end")("31 Mar 2017"),
+              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(128).toLongDateShort} Overdue"),
+              elementTextByID(id = "bi-1-ob-2-start")("1 Apr 2017"),
+              elementTextByID(id = "bi-1-ob-2-end")("30 Jun 2017"),
+              elementTextByID(id = "bi-1-ob-2-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
+              elementTextByID(id = "bi-1-ob-3-eops")("Whole tax year (final check)"),
+              elementTextByID(id = "bi-1-ob-3-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
+              elementTextByID(id = "bi-1-ob-4-start")("1 Jul 2017"),
+              elementTextByID(id = "bi-1-ob-4-end")("30 Sep 2017"),
+              elementTextByID(id = "bi-1-ob-4-status")(LocalDate.now().plusDays(30).toLongDateShort),
+              elementTextByID(id = "bi-1-ob-5-start")("1 Oct 2017"),
+              elementTextByID(id = "bi-1-ob-5-end")("31 Jan 2018"),
+              elementTextByID(id = "bi-1-ob-5-status")(LocalDate.now().plusDays(146).toLongDateShort),
+              elementTextByID(id = "bi-1-ob-6-start")("1 Nov 2017"),
+              elementTextByID(id = "bi-1-ob-6-end")("1 Feb 2018"),
+              elementTextByID(id = "bi-1-ob-6-status")(LocalDate.now().plusDays(174).toLongDateShort)
+            )
+
+            Then("the property obligation data is")
+            res should have(
+              elementTextByID(id = "pi-ob-1-start")("1 Jan 2017"),
+              elementTextByID(id = "pi-ob-1-end")("31 Mar 2017"),
+              elementTextByID(id = "pi-ob-1-status")(s"${LocalDate.now().minusDays(128).toLongDateShort} Overdue"),
+              elementTextByID(id = "pi-ob-2-start")("1 Apr 2017"),
+              elementTextByID(id = "pi-ob-2-end")("30 Jun 2017"),
+              elementTextByID(id = "pi-ob-2-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
+              elementTextByID(id = "pi-ob-3-eops")("Whole tax year (final check)"),
+              elementTextByID(id = "pi-ob-3-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
+              elementTextByID(id = "pi-ob-4-start")("1 Jul 2017"),
+              elementTextByID(id = "pi-ob-4-end")("30 Sep 2017"),
+              elementTextByID(id = "pi-ob-4-status")(LocalDate.now().plusDays(30).toLongDateShort),
+              elementTextByID(id = "pi-ob-5-start")("1 Oct 2017"),
+              elementTextByID(id = "pi-ob-5-end")("31 Jan 2018"),
+              elementTextByID(id = "pi-ob-5-status")(LocalDate.now().plusDays(146).toLongDateShort),
+              elementTextByID(id = "pi-ob-6-start")("1 Nov 2017"),
+              elementTextByID(id = "pi-ob-6-end")("1 Feb 2018"),
+              elementTextByID(id = "pi-ob-6-status")(LocalDate.now().plusDays(174).toLongDateShort)
+            )
+
+          }
+        }
+
 
         "has 2 business with one obligation each" should {
 
@@ -651,8 +434,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             )
 
             And("I wiremock stub a single business obligation response for each business")
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, singleReportDeadlinesDataSuccessModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleObligationOverdueModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, singleObligationPlusYearOpenModel)
 
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
@@ -676,32 +459,30 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the first business obligation data is")
             res should have(
-              //Check the 1st obligation data
               elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
               elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")("Received")
+              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
             )
 
             Then("the second business obligation data is")
             res should have(
-              //Check the 1st obligation data
               elementTextByID(id = "bi-2-ob-1-start")("6 Apr 2017"),
               elementTextByID(id = "bi-2-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-2-ob-1-status")("Received")
+              elementTextByID(id = "bi-2-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
             )
 
             Then("the page should not contain any property obligation")
             res should have(
-              isElementVisibleById("pi-ob")(false)
+              isElementVisibleById("pi-section")(false)
             )
 
           }
 
         }
 
-        "has 2 business with multiple obligations and property with one obligation" should {
+        "has 2 business and property with one obligation" should {
 
-          "display the obligation of each business" in {
+          "display the obligation of each business and property" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
             isAuthorisedUser(true)
@@ -713,9 +494,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             )
 
             And("I wiremock stub multiple business obligations and a single property obligation response")
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, singleReportDeadlinesDataSuccessModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleObligationOverdueModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, singleObligationPlusYearOpenModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, singleObligationOverdueModel)
 
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
@@ -732,42 +513,108 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             )
 
-            Then("the page displays seven obligations")
+            Then("the page displays three obligations")
             res should have(
-              nElementsWithClass("obligation")(7)
+              nElementsWithClass("obligation")(3)
             )
 
             Then("the first business obligation data is")
             res should have(
               elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
               elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")("Received"),
-              elementTextByID(id = "bi-1-ob-3-start")("6 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-3-end")("5 Oct 2017"),
-              elementTextByID(id = "bi-1-ob-3-status")(LocalDate.now().plusDays(1).toLongDateShort),
-              elementTextByID(id = "bi-1-ob-2-start")("6 Oct 2017"),
-              elementTextByID(id = "bi-1-ob-2-end")("5 Jan 2018"),
-              elementTextByID(id = "bi-1-ob-2-status")(LocalDate.now().minusDays(1).toLongDateShort + " Overdue")
+              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
             )
 
             Then("the second business obligation data is")
             res should have(
               elementTextByID(id = "bi-2-ob-1-start")("6 Apr 2017"),
               elementTextByID(id = "bi-2-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-2-ob-1-status")("Received"),
-              elementTextByID(id = "bi-2-ob-3-start")("6 Jul 2017"),
-              elementTextByID(id = "bi-2-ob-3-end")("5 Oct 2017"),
-              elementTextByID(id = "bi-2-ob-3-status")(LocalDate.now().plusDays(1).toLongDateShort),
-              elementTextByID(id = "bi-2-ob-2-start")("6 Oct 2017"),
-              elementTextByID(id = "bi-2-ob-2-end")("5 Jan 2018"),
-              elementTextByID(id = "bi-2-ob-2-status")(LocalDate.now().minusDays(1).toLongDateShort + " Overdue")
+              elementTextByID(id = "bi-2-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
             )
 
             Then("the property obligation data is")
             res should have(
               elementTextByID(id = "pi-ob-1-start")("6 Apr 2017"),
               elementTextByID(id = "pi-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "pi-ob-1-status")("Received")
+              elementTextByID(id = "pi-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
+            )
+
+          }
+
+        }
+
+
+        "has 2 business and property with multiple obligations" should {
+
+          "display the obligation of each business and property" in {
+
+            appConfig.features.reportDeadlinesEnabled(true)
+            isAuthorisedUser(true)
+            stubUserDetails()
+
+            And("I wiremock stub a successful Income Source Details response with multiple Business income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              OK, multipleBusinessesAndPropertyResponse
+            )
+
+            And("I wiremock stub multiple business obligations and a single property obligation response")
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleObligationOverdueModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+            IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, singleObligationPlusYearOpenModel)
+
+            When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+            val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+            Then("I verify the Income Source Details has been successfully wiremocked")
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+            verifyReportDeadlinesCall(testSelfEmploymentId, otherTestSelfEmploymentId, testPropertyIncomeId)
+
+            Then("the page should display the correct title, username and links")
+            res should have(
+              httpStatus(OK),
+              pageTitle("Report deadlines")
+
+            )
+
+            Then("the page displays eight obligations")
+            res should have(
+              nElementsWithClass("obligation")(8)
+            )
+
+            Then("the first business obligation data is")
+            res should have(
+              elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
+              elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
+              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
+            )
+
+            Then("the second business obligation data is")
+            res should have(
+              elementTextByID(id = "bi-2-ob-1-start")("1 Jan 2017"),
+              elementTextByID(id = "bi-2-ob-1-end")("31 Mar 2017"),
+              elementTextByID(id = "bi-2-ob-1-status")(s"${LocalDate.now().minusDays(128).toLongDateShort} Overdue"),
+              elementTextByID(id = "bi-2-ob-2-start")("1 Apr 2017"),
+              elementTextByID(id = "bi-2-ob-2-end")("30 Jun 2017"),
+              elementTextByID(id = "bi-2-ob-2-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
+              elementTextByID(id = "bi-2-ob-3-eops")("Whole tax year (final check)"),
+              elementTextByID(id = "bi-2-ob-3-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
+              elementTextByID(id = "bi-2-ob-4-start")("1 Jul 2017"),
+              elementTextByID(id = "bi-2-ob-4-end")("30 Sep 2017"),
+              elementTextByID(id = "bi-2-ob-4-status")(LocalDate.now().plusDays(30).toLongDateShort),
+              elementTextByID(id = "bi-2-ob-5-start")("1 Oct 2017"),
+              elementTextByID(id = "bi-2-ob-5-end")("31 Jan 2018"),
+              elementTextByID(id = "bi-2-ob-5-status")(LocalDate.now().plusDays(146).toLongDateShort),
+              elementTextByID(id = "bi-2-ob-6-start")("1 Nov 2017"),
+              elementTextByID(id = "bi-2-ob-6-end")("1 Feb 2018"),
+              elementTextByID(id = "bi-2-ob-6-status")(LocalDate.now().plusDays(174).toLongDateShort)
+            )
+
+            Then("the property obligation data is")
+            res should have(
+              elementTextByID(id = "pi-ob-1-start")("6 Apr 2017"),
+              elementTextByID(id = "pi-ob-1-end")("5 Jul 2017"),
+              elementTextByID(id = "pi-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
             )
 
           }

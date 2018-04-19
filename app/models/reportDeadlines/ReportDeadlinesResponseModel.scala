@@ -29,18 +29,11 @@ case class ReportDeadlinesModel(obligations: List[ReportDeadlineModel]) extends 
 case class ReportDeadlineModel(start: LocalDate,
                                end: LocalDate,
                                due: LocalDate,
-                               periodKey: String,
-                               dateReceived: Option[LocalDate]) extends ReportDeadlinesResponseModel {
-
-  val met: Boolean = dateReceived.isDefined
+                               periodKey: String) extends ReportDeadlinesResponseModel {
 
   def currentTime(): LocalDate = LocalDate.now()
 
-  def getReportDeadlineStatus: ReportDeadlineStatus = (met, due) match {
-    case (true, _)                                          => Received
-    case (false, date) if !currentTime().isAfter(date)      => Open(date)
-    case (false, date)                                      => Overdue(date)
-  }
+  def getReportDeadlineStatus: ReportDeadlineStatus = if (!currentTime().isAfter(due)) Open(due) else Overdue(due)
 
   def obligationType: ObligationType = if(ChronoUnit.MONTHS.between(start, end).abs > 3) EopsObligation else QuarterlyObligation
 }
@@ -49,13 +42,6 @@ case class ReportDeadlinesErrorModel(code: Int, message: String) extends ReportD
 
 object ReportDeadlineModel {
   implicit val format: Format[ReportDeadlineModel] = Json.format[ReportDeadlineModel]
-  val reportDeadlinesAuditWrites: Writes[ReportDeadlineModel] = (
-    (__ \ "start").write[LocalDate] and
-      (__ \ "end").write[LocalDate] and
-      (__ \ "due").write[LocalDate] and
-      (__ \ "periodKey").write[String] and
-      OWrites[Any](_ => Json.obj())
-    )(unlift(ReportDeadlineModel.unapply))
 }
 
 object ReportDeadlinesModel {

@@ -19,7 +19,7 @@
 @import views.helpers.ReportDeadlineStatusHelper
 @import models.reportDeadlines.{EopsObligation, QuarterlyObligation}
 
-@(model: ReportDeadlinesModel, id: String, caption: String)(implicit messages: Messages)
+@(reportDeadlines: List[ReportDeadlineModel], id: String, caption: String)(implicit messages: Messages)
     <table class="form-group">
         <caption class="visuallyhidden">@caption</caption>
         <thead>
@@ -29,7 +29,7 @@
             </tr>
         </thead>
         <tbody>
-            @model.obligations.zipWithIndex.map { case (report: ReportDeadlineModel, index: Int) =>
+            @reportDeadlines.zipWithIndex.map { case (report: ReportDeadlineModel, index: Int) =>
                 <tr class="obligation no-border-bottom">
                     <td>
                         @if(report.obligationType == QuarterlyObligation){

@@ -19,7 +19,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.ReportDeadlinesIntegrationTestConstants.multipleReceivedOpenReportDeadlinesModel
+import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import enums.{Crystallised, Estimate}
 import helpers.servicemocks._
 import helpers.{ComponentSpecBase, GenericStubMethods}
@@ -57,8 +57,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         )
 
         And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse =
@@ -132,8 +132,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           )
 
           And("I wiremock stub multiple open and received obligations response")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
@@ -215,8 +215,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           )
 
           And("I wiremock stub multiple open and received obligations response")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
@@ -296,8 +296,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           )
 
           And("I wiremock stub multiple open and received obligations response")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           val lastTaxCalcResponse =
@@ -341,8 +341,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         )
 
         And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         val lastTaxCalcResponse =
@@ -415,8 +415,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         )
 
         And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
         And("a successful Get Last Estimated Tax Liability response via wiremock stub")
         val lastTaxCalcResponse =
@@ -462,8 +462,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         )
 
         And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
         And("a No Data Found response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcNoData(testNino, testYear)
@@ -498,8 +498,8 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         )
 
         And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
         And("an Error Response response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)

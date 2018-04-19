@@ -21,7 +21,7 @@ import assets.ReportDeadlinesTestConstants._
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourcesWithDeadlines.BusinessIncomeWithDeadlinesModel
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
+import models.reportDeadlines.ReportDeadlinesModel
 
 object BusinessDetailsTestConstants {
 
@@ -122,7 +122,7 @@ object BusinessDetailsTestConstants {
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
 
-  val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(receivedObligation, overdueObligation, openObligation))
+  val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueObligation, openObligation))
 
   val businessIncomeModel =
     BusinessIncomeWithDeadlinesModel(

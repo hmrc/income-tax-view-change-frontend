@@ -31,28 +31,24 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
 
       val obligation = obligationsDataSuccessModel.obligations.head
 
-      "have the start date as 1st April 2017" in {
-        obligation.start shouldBe "2017-4-1".toLocalDate
+      "have the start date as 1st July 2017" in {
+        obligation.start shouldBe "2017-7-1".toLocalDate
       }
 
-      "have the end date as 30th June 2017" in {
-        obligation.end shouldBe "2017-6-30".toLocalDate
+      "have the end date as 30th September 2017" in {
+        obligation.end shouldBe "2017-9-30".toLocalDate
       }
 
-      "have the due date as 31st July 2017" in {
-        obligation.due shouldBe "2017-7-31".toLocalDate
+      "have the due date as 30th October 2017" in {
+        obligation.due shouldBe "2017-10-30".toLocalDate
       }
 
-      "have the periodKey as '#001'" in {
-        obligation.periodKey shouldBe "#001"
+      "have the periodKey as '#002'" in {
+        obligation.periodKey shouldBe "#002"
       }
 
-      "have the obligation met status as 'true'" in {
-        obligation.met shouldBe true
-      }
-
-      "return 'Received' with getObligationStatus" in {
-        obligation.getReportDeadlineStatus shouldBe Received
+      "return 'Overdue' with getObligationStatus" in {
+        obligation.getReportDeadlineStatus shouldBe Overdue("2017-10-30")
       }
 
       "have the obligation type 'QuarterlyObligation'" in {
@@ -72,49 +68,12 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
         obligation.end shouldBe "2017-9-30".toLocalDate
       }
 
-      "have the due date as 30th October 2017" in {
-        obligation.due shouldBe "2017-10-30".toLocalDate
-      }
-
-      "have the periodKey as '#002'" in {
-        obligation.periodKey shouldBe "#002"
-      }
-
-      "have the obligation met status as 'false'" in {
-        obligation.met shouldBe false
-      }
-
-      "return 'Overdue' with getObligationStatus" in {
-        obligation.getReportDeadlineStatus shouldBe Overdue("2017-10-30")
-      }
-
-      "have the obligation type 'QuarterlyObligation'" in {
-        obligation.obligationType shouldBe QuarterlyObligation
-      }
-    }
-
-    "for the 3rd Obligation" should {
-
-      val obligation = obligationsDataSuccessModel.obligations(2)
-
-      "have the start date as 1st July 2017" in {
-        obligation.start shouldBe "2017-7-1".toLocalDate
-      }
-
-      "have the end date as 30th September 2017" in {
-        obligation.end shouldBe "2017-9-30".toLocalDate
-      }
-
       "have the due date as 31st October 2017" in {
         obligation.due shouldBe "2017-10-31".toLocalDate
       }
 
       "have the periodKey as '#003'" in {
         obligation.periodKey shouldBe "#003"
-      }
-
-      "have the obligation met status as 'false'" in {
-        obligation.met shouldBe false
       }
 
       "return 'Open' with getObligationStatus" in {
@@ -126,7 +85,7 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
       }
     }
 
-    "for an EOPS Obligation" should {
+    "for the 1st EOPS Obligation" should {
 
       val obligation = obligationsEOPSDataSuccessModel.obligations.head
 
@@ -138,20 +97,45 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
         obligation.end shouldBe "2018-4-5".toLocalDate
       }
 
-      "have the due date as 1st May 2018" in {
-        obligation.due shouldBe "2018-5-1".toLocalDate
+      "have the due date as 1st Oct 2018" in {
+        obligation.due shouldBe "2017-10-1".toLocalDate
       }
 
-      "have the periodKey as '#001'" in {
-        obligation.periodKey shouldBe "#001"
-      }
-
-      "have the obligation met status as 'true'" in {
-        obligation.met shouldBe true
+      "have the periodKey as '#002'" in {
+        obligation.periodKey shouldBe "#002"
       }
 
       "return 'Open' with getObligationStatus" in {
-        obligation.getReportDeadlineStatus shouldBe Received
+        obligation.getReportDeadlineStatus shouldBe Overdue("2017-10-1")
+      }
+
+      "have the obligation type 'EopsObligation'" in {
+        obligation.obligationType shouldBe EopsObligation
+      }
+    }
+
+    "for the 2nd EOPS Obligation" should {
+
+      val obligation = obligationsEOPSDataSuccessModel.obligations(1)
+
+      "have the start date as 6th April 2017" in {
+        obligation.start shouldBe "2017-4-6".toLocalDate
+      }
+
+      "have the end date as 5th April 2018" in {
+        obligation.end shouldBe "2018-4-5".toLocalDate
+      }
+
+      "have the due date as 31st Oct 2018" in {
+        obligation.due shouldBe "2017-10-31".toLocalDate
+      }
+
+      "have the periodKey as '#003'" in {
+        obligation.periodKey shouldBe "#003"
+      }
+
+      "return 'Open' with getObligationStatus" in {
+        obligation.getReportDeadlineStatus shouldBe Open("2017-10-31")
       }
 
       "have the obligation type 'EopsObligation'" in {
@@ -201,7 +185,7 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
     }
 
     "create a ReportDeadlinesModel when passed the correct Json" in {
-      ReportDeadlinesResponseModel.apply("ReportDeadlineModel", reportDeadlineReceivedJson) shouldBe receivedObligation
+      ReportDeadlinesResponseModel.apply("ReportDeadlineModel", reportDeadlineOpenJson) shouldBe openObligation
     }
   }
 
@@ -214,7 +198,7 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
       ReportDeadlinesResponseModel.unapply(obligationsDataErrorModel) shouldBe Some(("ReportDeadlinesErrorModel", obligationsDataErrorJson))
     }
     "extract the ReportDeadlineModel and Json" in {
-      ReportDeadlinesResponseModel.unapply(receivedObligation) shouldBe Some(("ReportDeadlineModel", reportDeadlineReceivedJson))
+      ReportDeadlinesResponseModel.unapply(overdueObligation) shouldBe Some(("ReportDeadlineModel", reportDeadlineOverdueJson))
     }
   }
 }

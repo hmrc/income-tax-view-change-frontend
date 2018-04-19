@@ -19,7 +19,7 @@ package controllers
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
-import assets.ReportDeadlinesIntegrationTestConstants.multipleReceivedOpenReportDeadlinesModel
+import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 
@@ -37,7 +37,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
         And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReceivedOpenReportDeadlinesModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
@@ -78,7 +78,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReceivedOpenReportDeadlinesModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
