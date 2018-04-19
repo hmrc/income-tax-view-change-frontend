@@ -75,7 +75,7 @@ class ExitSurveyControllerSpec extends TestSupport with MockAuditingService {
 
     "Verify that an audit event has been called" in {
       await(result)
-      verifyAudit(auditModel, controllers.routes.ExitSurveyController.show().url)
+      verifyAudit(auditModel, Some(controllers.routes.ExitSurveyController.show().url))
     }
   }
 

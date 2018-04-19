@@ -55,6 +55,6 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
   }
 
   private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier): Unit =
-    auditingService.audit(ReportDeadlinesAuditModel(user), controllers.routes.ReportDeadlinesController.getReportDeadlines().url)
+    auditingService.audit(ReportDeadlinesAuditModel(user), Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url))
 
 }

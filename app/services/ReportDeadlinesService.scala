@@ -18,6 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
+import auth.MtdItUserWithNino
 import connectors._
 import models.reportDeadlines.ReportDeadlinesResponseModel
 import play.api.Logger
@@ -28,7 +29,7 @@ import scala.concurrent.Future
 @Singleton
 class ReportDeadlinesService @Inject()(val reportDeadlinesConnector: ReportDeadlinesConnector) {
 
-  def getReportDeadlines(incomeSourceId: String)(implicit hc: HeaderCarrier): Future[ReportDeadlinesResponseModel] = {
+  def getReportDeadlines(incomeSourceId: String)(implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[ReportDeadlinesResponseModel] = {
     Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting Report Deadlines for incomeSourceID: $incomeSourceId")
     reportDeadlinesConnector.getReportDeadlines(incomeSourceId)
   }

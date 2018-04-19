@@ -19,6 +19,7 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import audit.AuditingService
+import auth.MtdItUserWithNino
 import connectors.IncomeSourceDetailsConnector
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.incomeSourcesWithDeadlines._
@@ -33,15 +34,15 @@ class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: Inc
                                            val auditingService: AuditingService
                                           ) {
 
-  def getIncomeSourceDetails(mtditid: String, nino: String)(implicit hc: HeaderCarrier): Future[IncomeSourcesWithDeadlinesResponse] = {
+  def getIncomeSourceDetails()(implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[IncomeSourcesWithDeadlinesResponse] = {
     for {
-      sources <- incomeSourceDetailsConnector.getIncomeSources(mtditid, nino)
-      incomeSources <- createIncomeSourcesModel(nino, sources)
+      sources <- incomeSourceDetailsConnector.getIncomeSources(mtdUser.mtditid, mtdUser.nino)
+      incomeSources <- createIncomeSourcesModel(sources)
     } yield incomeSources
   }
 
-  def createIncomeSourcesModel(nino: String, incomeSourceResponse: IncomeSourceDetailsResponse)
-                              (implicit hc: HeaderCarrier): Future[IncomeSourcesWithDeadlinesResponse] = {
+  def createIncomeSourcesModel(incomeSourceResponse: IncomeSourceDetailsResponse)
+                              (implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[IncomeSourcesWithDeadlinesResponse] = {
     incomeSourceResponse match {
       case sources: IncomeSourceDetailsModel =>
         val businessIncomeModelFList: Future[List[BusinessIncomeWithDeadlinesModel]] =

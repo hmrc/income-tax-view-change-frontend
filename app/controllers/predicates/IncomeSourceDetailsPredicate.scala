@@ -42,7 +42,7 @@ class IncomeSourceDetailsPredicate @Inject()(implicit val messagesApi: MessagesA
     implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     implicit val req = request
 
-    incomeSourceDetailsService.getIncomeSourceDetails(request.mtditid, request.nino) map {
+    incomeSourceDetailsService.getIncomeSourceDetails() map {
       case sources: IncomeSourcesWithDeadlinesModel => Right(MtdItUser(request.mtditid, request.nino, request.userDetails, sources))
       case IncomeSourcesWithDeadlinesError => Left(itvcErrorHandler.showInternalServerError)
     }
