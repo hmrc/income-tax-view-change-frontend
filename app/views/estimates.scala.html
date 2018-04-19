@@ -36,28 +36,22 @@
     contentHeader = Some(breadcrumb)
 ) {
 
-    <section>
+    <header class="page-heading">
+        <h1 class="heading-xlarge" id="heading">@messages("estimates.heading")</h1>
+    </header>
 
-        @if(estimates.isEmpty){
-            <h1 id="page-heading" class="heading-xlarge">@messages("estimates.noEstimatesHeading")</h1>
-            <div>
-                <p id="no-estimates">@messages("estimates.noEstimates")</p>
-            </div>
-        } else {
-            <h1 id="page-heading" class="heading-xlarge">@messages("estimates.heading")</h1>
-            <div>
-                <p id="view-estimates">@messages("estimates.viewEstimates")</p>
-                <ul class="list list-bullet">
-                @for(calc <- estimates.reverse){
-                    <li>
-                        <a class="estimates-link" data-journey-click="EstimatesPage:ClickLink:@{calc.taxYear}" id="estimates-link-@{calc.taxYear}" href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}">
-                            @messages("estimates.estimatesLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")
-                        </a>
-                    </li>
-                }
-                </ul>
-            </div>
+    @if(estimates.isEmpty){
+        <p id="no-estimates">@messages("estimates.noEstimates")</p>
+    } else {
+        <p id="view-estimates">@messages("estimates.viewEstimates")</p>
+        <ul class="list list-bullet">
+        @for(calc <- estimates.reverse){
+            <li>
+                <a class="estimates-link" data-journey-click="EstimatesPage:ClickLink:@{calc.taxYear}" id="estimates-link-@{calc.taxYear}" href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}">
+                    @messages("estimates.estimatesLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")
+                </a>
+            </li>
         }
-    </section>
-
+        </ul>
+    }
 }

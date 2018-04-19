@@ -67,7 +67,7 @@ class EstimatesViewSpec extends TestSupport {
       }
 
       "have a header" in {
-        document.getElementById("page-heading").text shouldBe messages.heading
+        document.getElementById("heading").text shouldBe messages.heading
       }
 
       s"have the paragraph '${messages.p1}'" in {
@@ -90,7 +90,7 @@ class EstimatesViewSpec extends TestSupport {
       }
 
       "have a header" in {
-        document.getElementById("page-heading").text shouldBe messages.noEstimatesHeading
+        document.getElementById("heading").text shouldBe messages.heading
       }
 
       s"have the paragraph '${messages.noEstimates}'" in {

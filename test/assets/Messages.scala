@@ -30,12 +30,11 @@ object Messages {
 
   //Estimates Page Messages
   class Estimates {
-    val title = "Current estimates"
-    val heading = "View your estimates"
+    val title = "Estimates"
+    val heading = "Estimates"
     val noEstimates = "You don't have an estimate right now. We'll show your next Income Tax estimate when you submit a report using software."
-    val noEstimatesHeading = "Your Income Tax estimate"
-    val p1 = "View your current estimates."
-    val taxYearLink: (String, String) => String = (year, yearPlusOne) => s"Tax year: $year to $yearPlusOne"
+    val p1 = "View your current estimates:"
+    val taxYearLink: (String, String) => String = (year, yearPlusOne) => s"$year to $yearPlusOne tax year"
   }
 
   // Home Page Messages
@@ -281,7 +280,7 @@ object Messages {
   object Breadcrumbs {
     val bta = "Business tax account"
     val it = "Income Tax"
-    val estimates = "View your estimates"
+    val estimates = "Estimates"
     val itEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
     val bills = "Bills"
     val finalisedBill: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"

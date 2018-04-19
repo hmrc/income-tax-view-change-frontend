@@ -35,12 +35,11 @@ banner.recruitment.link                                         = Join our resea
 banner.recruitment.dismiss                                      = No, thankyou.
 
 ## Estimates Page ##
-estimates.title                                                 = Current estimates
-estimates.heading                                               = View your estimates
-estimates.viewEstimates                                         = View your current estimates.
-estimates.estimatesLink                                         = Tax year: {0} to {1}
+estimates.title                                                 = Estimates
+estimates.heading                                               = Estimates
+estimates.viewEstimates                                         = View your current estimates:
+estimates.estimatesLink                                         = {0} to {1} tax year
 estimates.noEstimates                                           = You don''t have an estimate right now. We''ll show your next Income Tax estimate when you submit a report using software.
-estimates.noEstimatesHeading                                    = Your Income Tax estimate
 
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = {0} to {1} tax year
@@ -227,10 +226,8 @@ thank_you.signIn                                                = Go back to sig
 ## Breadcrumbs ##
 breadcrumb-bta                                                  = Business tax account
 breadcrumb-it                                                   = Income Tax
-breadcrumb-estimates                                            = View your estimates
-breadcrumb-it-estimate                                          = Your Income Tax estimate
+breadcrumb-estimates                                            = Estimates
 breadcrumb-bills                                                = Bills
-breadcrumb-finalised-bill                                       = Your finalised Income Tax bill
 breadcrumb-obligations                                          = Report deadlines
 breadcrumb-statement                                            = Income Tax statement
 breadcrumb-account                                              = Account details
