@@ -40,9 +40,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
+        verifyIncomeSourceDetailsCall(testMtditid)
         verifyReportDeadlinesCall(testSelfEmploymentId)
 
         Then("the view displays the correct title, username and links")
@@ -79,9 +77,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
+        verifyIncomeSourceDetailsCall(testMtditid)
         verifyReportDeadlinesCall(testSelfEmploymentId)
 
         Then("an ISE is displayed")
@@ -101,8 +97,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        verifyIncomeSourceDetailsCall(testMtditid)
 
         Then("an ISE is displayed")
         res should have(
