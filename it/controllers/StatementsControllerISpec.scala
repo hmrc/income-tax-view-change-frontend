@@ -191,22 +191,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
         }
       }
 
-      "is Unauthorised" should {
-
-        "redirect to sign in" in {
-
-          isAuthorisedUser(false)
-
-          When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
-          val res = IncomeTaxViewChangeFrontend.getStatements
-
-          Then("redirect to the Sign In Url")
-          res should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.SignInController.signIn().url)
-          )
-        }
-      }
+      unauthorisedTest("/statements")
     }
   }
 }

@@ -288,23 +288,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
         }
       }
 
-      "unauthorised" should {
-
-        "redirect to sign in" in {
-
-          appConfig.features.billsEnabled(true)
-          isAuthorisedUser(false)
-
-          When("I call GET /report-quarterly/income-and-expenses/view/calculation")
-          val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
-
-          Then("the http response for an unauthorised user is returned")
-          res should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.SignInController.signIn().url)
-          )
-        }
-      }
+      unauthorisedTest("/bills")
     }
   }
 }
