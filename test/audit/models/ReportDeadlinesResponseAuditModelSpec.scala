@@ -54,21 +54,21 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
           "incomeSourceId" -> testSelfEmploymentId,
           "reportDeadlines" -> Json.arr(
             Json.obj(
-              "start" -> "2017-07-01",
-              "end" -> "2017-09-30",
-              "due" -> "2017-10-31",
+              "startDate" -> "2017-07-01",
+              "endDate" -> "2017-09-30",
+              "dueDate" -> "2017-10-31",
               "periodKey" -> "#003"
             ),
             Json.obj(
-              "start" -> "2017-07-01",
-              "end" -> "2017-09-30",
-              "due" -> "2017-10-31",
+              "startDate" -> "2017-07-01",
+              "endDate" -> "2017-09-30",
+              "dueDate" -> "2017-10-31",
               "periodKey" -> "#003"
             ),
             Json.obj(
-              "start" -> "2017-07-01",
-              "end" -> "2017-09-30",
-              "due" -> "2017-10-30",
+              "startDate" -> "2017-07-01",
+              "endDate" -> "2017-09-30",
+              "dueDate" -> "2017-10-30",
               "periodKey" -> "#002"
             )
           )
@@ -100,9 +100,9 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
           "incomeSourceId" -> testSelfEmploymentId,
           "reportDeadlines" -> Json.arr(
             Json.obj(
-              "start" -> "2017-07-01",
-              "end" -> "2017-09-30",
-              "due" -> "2017-10-31",
+              "startDate" -> "2017-07-01",
+              "endDate" -> "2017-09-30",
+              "dueDate" -> "2017-10-31",
               "periodKey" -> "#003"
             )
           )
