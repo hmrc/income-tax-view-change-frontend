@@ -18,6 +18,7 @@ package controllers
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
+import assets.LastTaxCalcIntegrationTestContants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import config.FrontendAppConfig
 import enums.{Crystallised, Estimate}
@@ -75,13 +76,7 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse =
-            LastTaxCalculation(testCalcId,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-              Crystallised
-            )
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
 
           And("I wiremock stub a successful Get CalculationData response")
           val calcBreakdownResponse = calculationDataSuccessWithEoYModel
@@ -125,23 +120,10 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse =
-            LastTaxCalculation(testCalcId,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-              Crystallised
-            )
-          val lastTaxCalcResponse2 =
-            LastTaxCalculation(testCalcId2,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-              Crystallised
-            )
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, lastTaxCalcResponse2)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, crystallisedLastTaxCalcResponse2)
 
           And("I wiremock stub a successful Get CalculationData response")
-          val calcBreakdownResponse = calculationDataSuccessWithEoYModel
           SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
           SelfAssessmentStub.stubGetCalcData(testNino, testCalcId2, calculationDataSuccessWithEoyJson.toString())
 
@@ -185,25 +167,10 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse =
-            LastTaxCalculation(
-              testCalcId,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-              Crystallised
-            )
-          val crystallisedLastTaxCalcResponse =
-            LastTaxCalculation(
-              testCalcId2,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessModel.totalIncomeTaxNicYtd,
-              Estimate
-            )
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, crystallisedLastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, estimateLastTaxCalcResponse)
 
           And("I wiremock stub a successful Get CalculationData response")
-          val calcBreakdownResponse = calculationDataSuccessWithEoYModel
           SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
           SelfAssessmentStub.stubGetCalcData(testNino, testCalcId2, calculationDataSuccessWithEoyJson.toString())
 
@@ -245,19 +212,10 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse =
-            LastTaxCalculation(
-              testCalcId,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-              Estimate
-            )
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, estimateLastTaxCalcResponse)
 
           And("I wiremock stub a successful Get CalculationData response")
-          val calcBreakdownResponse = calculationDataSuccessWithEoYModel
           SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
-
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
