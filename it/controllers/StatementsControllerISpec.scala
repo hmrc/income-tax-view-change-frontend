@@ -36,34 +36,11 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
     "the statements page feature is disabled" should {
 
-      "redirect to the home page" in {
-
-        appConfig.features.statementsEnabled(false)
-
-        And("I wiremock stub a successful Get Financial Transactions response")
-        val statementResponse = Json.toJson(singleFinancialTransactionsModel)
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
-        val res = IncomeTaxViewChangeFrontend.getStatements
-
-        Then("redirect to the home page")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.home().url)
-        )
-      }
-    }
-
-    "the statements page feature is disabled" should {
-
       "isAuthorisedUser with an active enrolment" which {
 
         "has a single statement with a single charge" should {
 
           "display the tax year for the statement and the associated charge" in {
-
-            appConfig.features.statementsEnabled(true)
 
             And("I wiremock stub a successful Get Financial Transactions response")
             val statementResponse = Json.toJson(singleFinancialTransactionsModel)
@@ -72,8 +49,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
             When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
             val res = IncomeTaxViewChangeFrontend.getStatements
 
-            Then("I verify the Financial Transactions response has been wiremocked")
-            FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
+            verifyFinancialTransactionsCall(testMtditid)
 
             Then("The view should have the correct headings and single statement")
             val model = singleChargeTransactionModel
@@ -95,8 +71,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           "display the tax year for the statements and the associated charge & payments" in {
 
-            appConfig.features.statementsEnabled(true)
-
             And("I wiremock stub a successful Get Financial Transactions response")
             val statementResponse = Json.toJson(singleFTModel1charge2payments)
             FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
@@ -104,8 +78,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
             When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
             val res = IncomeTaxViewChangeFrontend.getStatements
 
-            Then("I verify the Financial Transactions response has been wiremocked")
-            FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
+            verifyFinancialTransactionsCall(testMtditid)
 
             Then("The view should have the correct headings and single statement")
             val statement1Model = singleChargeTransactionModel
@@ -135,8 +108,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           "state that the user has no transactions since tey started reporting via software" in {
 
-            appConfig.features.statementsEnabled(true)
-
             And("I wiremock stub a successful Get Financial Transactions response")
             val statementResponse = Json.toJson(emptyFTModel)
             FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
@@ -144,8 +115,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
             When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
             val res = IncomeTaxViewChangeFrontend.getStatements
 
-            Then("I verify the Financial Transactions response has been wiremocked")
-            FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
+            verifyFinancialTransactionsCall(testMtditid)
 
             Then("The view should have the correct headings and single statement")
             res should have(
@@ -164,16 +134,13 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
           "return an error page" in {
 
-            appConfig.features.statementsEnabled(true)
-
             And("I wiremock stub a successful Get Financial Transactions response")
             FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.INTERNAL_SERVER_ERROR, Json.obj())
 
             When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
             val res = IncomeTaxViewChangeFrontend.getStatements
 
-            Then("I verify the Financial Transactions response has been wiremocked")
-            FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
+            verifyFinancialTransactionsCall(testMtditid)
 
             Then("The view should have the correct headings and single statement")
             res should have(
@@ -183,6 +150,32 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
             )
 
           }
+        }
+      }
+
+      unauthorisedTest("/statements")
+    }
+
+    "the statements page feature is disabled" when {
+
+      "Authorised" should {
+
+        "redirect to the home page" in {
+
+          appConfig.features.statementsEnabled(false)
+
+          And("I wiremock stub a successful Get Financial Transactions response")
+          val statementResponse = Json.toJson(singleFinancialTransactionsModel)
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
+          val res = IncomeTaxViewChangeFrontend.getStatements
+
+          Then("redirect to the home page")
+          res should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.HomeController.home().url)
+          )
         }
       }
 
