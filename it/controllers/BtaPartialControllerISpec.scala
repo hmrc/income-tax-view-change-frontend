@@ -28,8 +28,6 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
       "display the bta partial with the correct information" in {
 
-        isAuthorisedUser(true)
-
         When("I call GET /report-quarterly/income-and-expenses/view/partial")
         val res = IncomeTaxViewChangeFrontend.getBtaPartial
 

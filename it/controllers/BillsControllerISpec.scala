@@ -37,8 +37,6 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
       "redirect to home page" in {
 
         appConfig.features.billsEnabled(false)
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -68,8 +66,6 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
         "return the correct page with bills links" in {
 
           appConfig.features.billsEnabled(true)
-          isAuthorisedUser(true)
-          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -117,8 +113,6 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
         "return the correct page with tax links" in {
 
           appConfig.features.billsEnabled(true)
-          isAuthorisedUser(true)
-          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -179,8 +173,6 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
         "return the correct page with just the tax bill link" in {
 
           appConfig.features.billsEnabled(true)
-          isAuthorisedUser(true)
-          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -242,8 +234,6 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
         "return the correct page with no bills found message" in {
 
           appConfig.features.billsEnabled(true)
-          isAuthorisedUser(true)
-          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

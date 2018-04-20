@@ -39,7 +39,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
       "redirect to the home page" in {
 
         appConfig.features.statementsEnabled(false)
-        isAuthorisedUser(true)
 
         And("I wiremock stub a successful Get Financial Transactions response")
         val statementResponse = Json.toJson(singleFinancialTransactionsModel)
@@ -65,7 +64,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           "display the tax year for the statement and the associated charge" in {
 
             appConfig.features.statementsEnabled(true)
-            isAuthorisedUser(true)
 
             And("I wiremock stub a successful Get Financial Transactions response")
             val statementResponse = Json.toJson(singleFinancialTransactionsModel)
@@ -98,7 +96,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           "display the tax year for the statements and the associated charge & payments" in {
 
             appConfig.features.statementsEnabled(true)
-            isAuthorisedUser(true)
 
             And("I wiremock stub a successful Get Financial Transactions response")
             val statementResponse = Json.toJson(singleFTModel1charge2payments)
@@ -139,7 +136,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           "state that the user has no transactions since tey started reporting via software" in {
 
             appConfig.features.statementsEnabled(true)
-            isAuthorisedUser(true)
 
             And("I wiremock stub a successful Get Financial Transactions response")
             val statementResponse = Json.toJson(emptyFTModel)
@@ -169,7 +165,6 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           "return an error page" in {
 
             appConfig.features.statementsEnabled(true)
-            isAuthorisedUser(true)
 
             And("I wiremock stub a successful Get Financial Transactions response")
             FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.INTERNAL_SERVER_ERROR, Json.obj())

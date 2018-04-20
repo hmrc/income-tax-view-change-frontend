@@ -36,9 +36,6 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
 
       "render the home page" in {
 
-        isAuthorisedUser(true)
-        stubUserDetails()
-
         When("I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.getHome
 
