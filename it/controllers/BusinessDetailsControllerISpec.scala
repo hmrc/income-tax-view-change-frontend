@@ -20,7 +20,7 @@ import assets.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, t
 import assets.BusinessDetailsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
-import assets.messages.BusinessDetailsMessages._
+import assets.messages.{BusinessDetailsMessages => messages}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -60,19 +60,19 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         res should have(
           httpStatus(OK),
           pageTitle("business"),
-          elementTextByID(id = "reporting-period")(reportingPeriod(b1AccountingStart,b1AccountingEnd)),
-          elementTextByID(id = "cessation-date")(cessationDate(b1CessationDate)),
-          elementTextByID(id = "address-details")(addressDetails),
-          elementTextByID(id = "trading-name")(tradingName),
+          elementTextByID(id = "reporting-period")(messages.reportingPeriod(b1AccountingStart,b1AccountingEnd)),
+          elementTextByID(id = "cessation-date")(messages.cessationDate(b1CessationDate)),
+          elementTextByID(id = "address-details")(messages.addressDetails),
+          elementTextByID(id = "trading-name")(messages.tradingName),
           elementTextByID(id = "trading-name-business")(b1TradingName),
-          elementTextByID(id = "business-address")(businessAddress),
+          elementTextByID(id = "business-address")(messages.businessAddress),
           elementTextByID(id = "address-line-1")(b1AddressLine1),
           elementTextByID(id = "address-line-2")(b1AddressLine2),
           elementTextByID(id = "address-line-3")(b1AddressLine3),
           elementTextByID(id = "address-line-4")(b1AddressLine4),
           elementTextByID(id = "address-line-5")(b1AddressLine5),
-          elementTextByID(id = "additional-information")(additionalInformation),
-          elementTextByID(id = "accounting-method")(accountingMethod)
+          elementTextByID(id = "additional-information")(messages.additionalInformation),
+          elementTextByID(id = "accounting-method")(messages.accountingMethod)
         )
       }
     }

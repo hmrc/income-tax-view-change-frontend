@@ -20,7 +20,7 @@ import assets.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
 import assets.BusinessDetailsIntegrationTestConstants.b1TradingName
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.PropertyDetailsIntegrationTestConstants._
-import assets.messages.AccountDetailsMessages._
+import assets.messages.{AccountDetailsMessages => messages}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -55,12 +55,12 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
         Then("the view displays the correct title, username and links")
         res should have(
           httpStatus(OK),
-          pageTitle(accountTitle),
-          elementTextByID(id = "page-heading")(accountHeading),
-          elementTextByID(id = "your-businesses")(businessHeading),
+          pageTitle(messages.accountTitle),
+          elementTextByID(id = "page-heading")(messages.accountHeading),
+          elementTextByID(id = "your-businesses")(messages.businessHeading),
           elementTextByID(id = "business-link-1")(b1TradingName),
-          elementTextByID(id = "your-properties")(propertyHeading),
-          elementTextByID(id = "reporting-period")(reportingPeriod(propertyAccountingStart,propertyAccountingEnd))
+          elementTextByID(id = "your-properties")(messages.propertyHeading),
+          elementTextByID(id = "reporting-period")(messages.reportingPeriod(propertyAccountingStart,propertyAccountingEnd))
         )
       }
     }

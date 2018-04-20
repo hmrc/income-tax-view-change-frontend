@@ -16,11 +16,10 @@
 package controllers
 
 import assets.BaseIntegrationTestConstants._
-import assets.BusinessDetailsIntegrationTestConstants._
-import assets.PropertyDetailsIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants._
+import assets.messages.HomeMessages._
 import config.FrontendAppConfig
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub}
+import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import models.core.{Nino, NinoResponseError}
 import play.api.http.Status._
@@ -46,7 +45,7 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
           httpStatus(OK),
 
           //Check Redirect Location
-          pageTitle("Your Income Tax")
+          pageTitle(title)
         )
       }
     }
@@ -100,7 +99,7 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
 
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500")
+          pageTitle(internalServerError)
         )
       }
     }

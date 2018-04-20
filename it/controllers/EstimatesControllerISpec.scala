@@ -18,7 +18,7 @@ package controllers
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.messages.EstimatesMessages._
+import assets.messages.{EstimatesMessages => messages}
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import config.FrontendAppConfig
 import enums.{Crystallised, Estimate}
@@ -136,10 +136,10 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
           Then("The view should have the correct headings and two tax estimate links")
           res should have(
             httpStatus(OK),
-            pageTitle(estimatesTitle),
-            elementTextByID("view-estimates")(viewEstimates),
-            elementTextByID(s"estimates-link-$testYearPlusOne")(estimatesLink(testYearPlusOneInt)),
-            elementTextByID(s"estimates-link-$testYear")(estimatesLink(testYearInt)),
+            pageTitle(messages.estimatesTitle),
+            elementTextByID("view-estimates")(messages.viewEstimates),
+            elementTextByID(s"estimates-link-$testYearPlusOne")(messages.estimatesLink(testYearPlusOneInt)),
+            elementTextByID(s"estimates-link-$testYear")(messages.estimatesLink(testYearInt)),
             nElementsWithClass("estimates-link")(2)
           )
         }
@@ -243,8 +243,8 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
             httpStatus(OK),
-            pageTitle(estimatesTitle),
-            elementTextByID("no-estimates")(noEstimates),
+            pageTitle(messages.estimatesTitle),
+            elementTextByID("no-estimates")(messages.noEstimates),
             nElementsWithClass("estimates-link")(0)
           )
         }
