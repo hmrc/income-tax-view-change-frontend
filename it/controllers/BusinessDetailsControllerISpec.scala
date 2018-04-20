@@ -41,8 +41,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
     "isAuthorisedUser with an active enrolment and has at least 1 business" should {
 
       "return the correct page with a valid total" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -82,8 +80,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
     "isAuthorisedUser with an active enrolment, but has no business" should {
 
       "return an internal server error" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with Property Only income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -109,8 +105,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
     "isAuthorisedUser with an active enrolment, but the api returns an error response" should {
 
       "return an internal server error" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with single Business income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR, errorResponse)
@@ -128,21 +122,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
       }
     }
 
-    "unauthorised" should {
-
-      "redirect to sign in" in {
-
-        isAuthorisedUser(false)
-
-        When("I call GET /report-quarterly/income-and-expenses/view/business-details")
-        val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
-
-        Then("the http response for an unauthorised user is returned")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
-      }
-    }
+    unauthorisedTest("/account-details/0")
   }
 }

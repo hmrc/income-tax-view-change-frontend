@@ -40,8 +40,6 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
     "isAuthorisedUser with an active enrolment and has at least 1 business and property" should {
 
       "return the correct page with a valid total" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -67,21 +65,6 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
       }
     }
 
-    "unauthorised" should {
-
-      "redirect to sign in" in {
-
-        isAuthorisedUser(false)
-
-        When("I call GET /report-quarterly/income-and-expenses/view/account-details")
-        val res = IncomeTaxViewChangeFrontend.getAccountDetails
-
-        Then("the http response for an unauthorised user is returned")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
-      }
-    }
+    unauthorisedTest("/account-details")
   }
 }

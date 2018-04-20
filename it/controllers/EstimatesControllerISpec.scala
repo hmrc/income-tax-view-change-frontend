@@ -39,9 +39,6 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
 
         appConfig.features.estimatesEnabled(false)
 
-        isAuthorisedUser(true)
-        stubUserDetails()
-
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
@@ -62,8 +59,6 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         "return the correct page with tax links" in {
 
           appConfig.features.estimatesEnabled(true)
-          isAuthorisedUser(true)
-          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -104,8 +99,6 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         "return the correct page with tax links" in {
 
           appConfig.features.estimatesEnabled(true)
-          isAuthorisedUser(true)
-          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -156,8 +149,6 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         "return the correct estimate page" in {
 
           appConfig.features.estimatesEnabled(true)
-          isAuthorisedUser(true)
-          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -215,8 +206,6 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         "return the correct page with no estimates found message" in {
 
           appConfig.features.estimatesEnabled(true)
-          isAuthorisedUser(true)
-          stubUserDetails()
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -261,23 +250,7 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
         }
       }
 
-      "unauthorised" should {
-
-        "redirect to sign in" in {
-
-          appConfig.features.estimatesEnabled(true)
-          isAuthorisedUser(false)
-
-          When("I call GET /report-quarterly/income-and-expenses/view/calculation")
-          val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
-
-          Then("the http response for an unauthorised user is returned")
-          res should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.SignInController.signIn().url)
-          )
-        }
-      }
+      unauthorisedTest("/estimates")
     }
   }
 }

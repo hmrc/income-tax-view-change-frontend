@@ -37,8 +37,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
       "Redirect to the Income Tax View Change Home Page" in {
 
         appConfig.features.reportDeadlinesEnabled(false)
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -67,8 +65,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display a single obligation with the correct dates and status" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -113,8 +109,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display all obligations with the correct dates and status" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -179,8 +173,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display a single obligation with the correct dates and status" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -226,8 +218,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display a multiple obligations with the correct dates and status" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -290,7 +280,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display one obligation each for business and property with the correct dates and statuses" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
             stubUserDetailsError()
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
@@ -342,8 +331,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display all obligations with the correct dates and status" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -425,8 +412,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display the obligation of each business" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details responsewith multiple Business income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -485,8 +470,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display the obligation of each business and property" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with multiple Business income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -549,8 +532,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "display the obligation of each business and property" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with multiple Business income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -626,8 +607,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "Display an error message to the user" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -659,8 +638,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "Display an error message to the user" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -692,8 +669,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           "Display an error message to the user" in {
 
             appConfig.features.reportDeadlinesEnabled(true)
-            isAuthorisedUser(true)
-            stubUserDetails()
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -726,22 +701,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
       }
 
-      "unauthorised" should {
-
-        "redirect to sign in" in {
-
-          appConfig.features.reportDeadlinesEnabled(true)
-          isAuthorisedUser(false)
-
-          When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
-
-          res should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.SignInController.signIn().url)
-          )
-        }
-      }
+      unauthorisedTest("/obligations")
     }
   }
 }

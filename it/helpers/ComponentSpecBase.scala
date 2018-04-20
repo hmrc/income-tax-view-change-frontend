@@ -18,6 +18,7 @@ package helpers
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.http.Status.SEE_OTHER
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
@@ -76,6 +77,25 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getBusinessDetails(id: Int): WSResponse = get(s"/account-details/$id")
     def getBtaPartial: WSResponse = get(s"/partial")
     def getHome: WSResponse = get("/")
+  }
+
+  def unauthorisedTest(uri: String): Unit = {
+    "unauthorised" should {
+
+      "redirect to sign in" in {
+
+        isAuthorisedUser(false)
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/$uri")
+        val res = IncomeTaxViewChangeFrontend.get(uri)
+
+        Then("the http response for an unauthorised user is returned")
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.SignInController.signIn().url)
+        )
+      }
+    }
   }
 }
 

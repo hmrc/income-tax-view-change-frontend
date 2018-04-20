@@ -33,8 +33,6 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
       "display the bta partial with the correct information" in {
 
-        isAuthorisedUser(true)
-
         When("I call GET /report-quarterly/income-and-expenses/view/partial")
         val res = IncomeTaxViewChangeFrontend.getBtaPartial
 
@@ -49,20 +47,6 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
       }
     }
 
-    "Is not authenticated" should {
-
-      "redirect to GG Sign In" in {
-
-        isAuthorisedUser(false)
-
-        When("I call GET /report-quarterly/income-and-expenses/view/partial")
-        val res = IncomeTaxViewChangeFrontend.getBtaPartial
-
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
-      }
-    }
+    unauthorisedTest("/partial")
   }
 }
