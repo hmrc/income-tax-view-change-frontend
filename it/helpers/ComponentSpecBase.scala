@@ -56,6 +56,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def beforeAll(): Unit = {
     super.beforeAll()
     startWiremock()
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     isAuthorisedUser(true)
     stubUserDetails()
   }

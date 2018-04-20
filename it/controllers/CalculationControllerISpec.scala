@@ -148,7 +148,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           Then("I verify the Income Source Details has been successfully wiremocked")
           IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-          verifyFinancialTransactionsCall()
+          verifyFinancialTransactionsCall(testMtditid)
 
           Then("I verify the Estimated Tax Liability response has been wiremocked")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
@@ -228,7 +228,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           Then("I verify the Income Source Details has been successfully wiremocked")
           IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-          verifyFinancialTransactionsCall()
+          verifyFinancialTransactionsCall(testMtditid)
 
           Then("I verify the Estimated Tax Liability response has been wiremocked")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
@@ -305,7 +305,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           Then("I verify the Income Source Details has been successfully wiremocked")
           IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-          verifyFinancialTransactionsCall()
+          verifyFinancialTransactionsCall(testMtditid)
 
           Then("I verify the Estimated Tax Liability response has been wiremocked")
           IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
