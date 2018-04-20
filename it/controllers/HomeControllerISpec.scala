@@ -15,20 +15,11 @@
  */
 package controllers
 
-import assets.BaseIntegrationTestConstants._
-import assets.BusinessDetailsIntegrationTestConstants._
-import assets.PropertyDetailsIntegrationTestConstants._
-import assets.ReportDeadlinesIntegrationTestConstants._
-import config.FrontendAppConfig
-import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub, SelfAssessmentStub}
 import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.core.{Nino, NinoResponseError}
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
 class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with ImplicitDateFormatter {
-
-  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
 
@@ -41,68 +32,12 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
 
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
-
-          //Check Status OK (200) Result
           httpStatus(OK),
-
-          //Check Redirect Location
           pageTitle("Your Income Tax")
         )
       }
     }
 
     unauthorisedTest("")
-  }
-
-  "Navigating to /report-quarterly/income-and-expenses/view/obligations" when {
-    "a user is without a HMRC-NI enrolment" should {
-      "redirect to the report deadlines page" in {
-
-        Given("I wiremock stub an authorised with no Nino user response")
-        AuthStub.stubAuthorisedNoNino()
-
-        IncomeTaxViewChangeStub.stubGetNinoResponse(testMtditid, Nino(testNino))
-
-        stubUserDetails()
-
-        And("I wiremock stub a single business obligation response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleObligationOverdueModel)
-
-        When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-        val res = IncomeTaxViewChangeFrontend.getReportDeadlines
-
-        Then("Verify NINO lookup has been called")
-        IncomeTaxViewChangeStub.verifyGetNino(testMtditid)
-
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI("/report-quarterly/income-and-expenses/view/obligations")
-        )
-      }
-
-      "be displayed a technical error page if there is no NINO" in {
-
-        Given("I wiremock stub an authorised with no Nino user response")
-        AuthStub.stubAuthorisedNoNino()
-
-        IncomeTaxViewChangeStub.stubGetNinoError(testMtditid, NinoResponseError(INTERNAL_SERVER_ERROR, "Error Message"))
-
-        stubUserDetails()
-
-        And("I wiremock stub a single business obligation response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, singleObligationOverdueModel)
-
-        When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-        val res = IncomeTaxViewChangeFrontend.getReportDeadlines
-
-        Then("Verify NINO lookup has been called")
-        IncomeTaxViewChangeStub.verifyGetNino(testMtditid)
-
-        res should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500")
-        )
-      }
-    }
   }
 }
