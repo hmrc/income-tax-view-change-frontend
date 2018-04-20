@@ -41,11 +41,6 @@ trait GenericStubMethods extends CustomMatchers {
     UserDetailsStub.stubGetUserDetailsError()
   }
 
-  def stubPartial(): Unit = {
-    And("I wiremock stub a ServiceInfo Partial response")
-    BtaPartialStub.stubGetServiceInfoPartial()
-  }
-
   def verifyReportDeadlinesCall(incomeSourceIds: String*): Unit = {
     for(incomeSourceId <- incomeSourceIds) {
       Then(s"Verify that Report Deadlines has been called for $incomeSourceId")
