@@ -16,51 +16,76 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
+import assets.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 import assets.BusinessDetailsIntegrationTestConstants.b1TradingName
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.PropertyDetailsIntegrationTestConstants._
+import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import assets.messages.{AccountDetailsMessages => messages}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import helpers.ComponentSpecBase
+
+import config.FrontendAppConfig
 import play.api.http.Status.{OK, SEE_OTHER}
 import utils.ImplicitDateFormatter._
 
+class AccountDetailsControllerISpec extends ComponentSpecBase {
 
-/*
- TODO - Put messages in messages file
- TODO - Move unauthorised test to some BaseMethod file
- TODO - Move 'isAuthorisedUser(true)' and 'stubUserDetails()' to ComponentSpecBase & remove 'with GenericStubMethods'
- */
-
-class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMethods {
+  lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "Calling the AccountDetailsController.getAccountDetails" when {
 
-    "isAuthorisedUser with an active enrolment and has at least 1 business and property" should {
+    "The Account Details Feature is Enabled" when {
 
-      "return the correct page with a valid total" in {
+      "isAuthorisedUser with an active enrolment and has at least 1 business and property" should {
 
-        And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+        "return the correct page with a valid total" in {
 
-        When("I call GET /report-quarterly/income-and-expenses/view/account-details")
+          And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+
+          And("I wiremock stub multiple open and received obligations response")
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/account-details")
+          val res = IncomeTaxViewChangeFrontend.getAccountDetails
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+
+          Then("the view displays the correct title, username and links")
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.accountTitle),
+            elementTextByID(id = "page-heading")(messages.accountHeading),
+            elementTextByID(id = "your-businesses")(messages.businessHeading),
+            elementTextByID(id = "business-link-1")(b1TradingName),
+            elementTextByID(id = "your-properties")(messages.propertyHeading),
+            elementTextByID(id = "reporting-period")(messages.reportingPeriod(propertyAccountingStart,propertyAccountingEnd))
+          )
+        }
+      }
+
+      unauthorisedTest("/account-details")
+    }
+  }
+
+  "The Account Details Feature is Disabled" when {
+
+    "Authorised" should {
+
+      "Redirect to Home Page" in {
+
+        appConfig.features.accountDetailsEnabled(false)
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/account-details")
         val res = IncomeTaxViewChangeFrontend.getAccountDetails
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-        verifyReportDeadlinesCall(testSelfEmploymentId)
-
-        Then("the view displays the correct title, username and links")
+        Then("I should be redirected to the Home Page")
         res should have(
-          httpStatus(OK),
-          pageTitle(messages.accountTitle),
-          elementTextByID(id = "page-heading")(messages.accountHeading),
-          elementTextByID(id = "your-businesses")(messages.businessHeading),
-          elementTextByID(id = "business-link-1")(b1TradingName),
-          elementTextByID(id = "your-properties")(messages.propertyHeading),
-          elementTextByID(id = "reporting-period")(messages.reportingPeriod(propertyAccountingStart,propertyAccountingEnd))
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.HomeController.home().url)
         )
       }
     }

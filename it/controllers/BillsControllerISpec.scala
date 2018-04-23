@@ -18,6 +18,7 @@ package controllers
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
+import assets.LastTaxCalcIntegrationTestContants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import assets.messages.{BillsMessages => messages}
 import config.FrontendAppConfig
@@ -40,42 +41,13 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  "Calling the CalculationController.viewCrystallisedCalculations" when {
-
-    "the Bills Feature is disabled" should {
-
-      "redirect to home page" in {
-
-        appConfig.features.billsEnabled(false)
-
-        And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-
-        And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
-        And("I wiremock stub a successful Get CalculationData response")
-        SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
-        val res = IncomeTaxViewChangeFrontend.getBills
-
-        Then("The view should have the correct headings and a single tax bill link")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.home().url)
-        )
-      }
-    }
+  "Calling the BillsController" when {
 
     "the Bill Feature is enabled" when {
 
       "isAuthorisedUser with an active enrolment, and a single, valid crystallised estimate" should {
 
         "return the correct page with bills links" in {
-
-          appConfig.features.billsEnabled(true)
 
           And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -85,26 +57,14 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse =
-            LastTaxCalculation(testCalcId,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-              Crystallised
-            )
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-
-          And("I wiremock stub a successful Get CalculationData response")
-          val calcBreakdownResponse = calculationDataSuccessWithEoYModel
-          SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
-          Then("I verify the Income Source Details has been successfully wiremocked")
-          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-          Then("I verify the Estimated Tax Liability response has been wiremocked")
-          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+          verifyLastTaxCalculationCall(testNino, testYear)
 
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
@@ -122,12 +82,8 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
         "return the correct page with tax links" in {
 
-          appConfig.features.billsEnabled(true)
-
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, multipleBusinessesAndPropertyResponse
-          )
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
           And("I wiremock stub multiple open and received obligations response")
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -135,36 +91,16 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse =
-            LastTaxCalculation(testCalcId,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-              Crystallised
-            )
-          val lastTaxCalcResponse2 =
-            LastTaxCalculation(testCalcId2,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-              Crystallised
-            )
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, lastTaxCalcResponse2)
-
-          And("I wiremock stub a successful Get CalculationData response")
-          val calcBreakdownResponse = calculationDataSuccessWithEoYModel
-          SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
-          SelfAssessmentStub.stubGetCalcData(testNino, testCalcId2, calculationDataSuccessWithEoyJson.toString())
-
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, crystallisedLastTaxCalcResponse2)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
-          Then("I verify the Income Source Details has been successfully wiremocked")
-          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-          Then("I verify the Estimated Tax Liability response has been wiremocked")
-          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYearPlusOne)
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testSelfEmploymentId, otherTestSelfEmploymentId, testPropertyIncomeId)
+          verifyLastTaxCalculationCall(testNino, testYear)
+          verifyLastTaxCalculationCall(testNino, testYearPlusOne)
 
           Then("The view should have the correct headings and two tax bill links")
           res should have(
@@ -182,12 +118,8 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
       "isAuthorisedUser with an active enrolment, with a crystallised calculation and a tax estimate" should {
         "return the correct page with just the tax bill link" in {
 
-          appConfig.features.billsEnabled(true)
-
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, multipleBusinessesAndPropertyResponse
-          )
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
           And("I wiremock stub multiple open and received obligations response")
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -195,38 +127,16 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse =
-            LastTaxCalculation(
-              testCalcId,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-              Crystallised
-            )
-          val crystallisedLastTaxCalcResponse =
-            LastTaxCalculation(
-              testCalcId2,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessModel.totalIncomeTaxNicYtd,
-              Estimate
-            )
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, crystallisedLastTaxCalcResponse)
-
-          And("I wiremock stub a successful Get CalculationData response")
-          val calcBreakdownResponse = calculationDataSuccessWithEoYModel
-          SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
-          SelfAssessmentStub.stubGetCalcData(testNino, testCalcId2, calculationDataSuccessWithEoyJson.toString())
-
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, estimateLastTaxCalcResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
-          Then("I verify the Income Source Details has been successfully wiremocked")
-          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-          Then("I verify the Estimated Tax Liability response has been wiremocked")
-          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
-          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYearPlusOne)
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testSelfEmploymentId, otherTestSelfEmploymentId, testPropertyIncomeId)
+          verifyLastTaxCalculationCall(testNino, testYear)
+          verifyLastTaxCalculationCall(testNino, testYearPlusOne)
 
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
@@ -243,40 +153,22 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
       "isAuthorisedUser with an active enrolment, and no tax bills" should {
         "return the correct page with no bills found message" in {
 
-          appConfig.features.billsEnabled(true)
-
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, businessAndPropertyResponse
-          )
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
           And("I wiremock stub multiple open and received obligations response")
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          val lastTaxCalcResponse =
-            LastTaxCalculation(
-              testCalcId,
-              "2017-07-06T12:34:56.789Z",
-              calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
-              Estimate
-            )
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, lastTaxCalcResponse)
-
-          And("I wiremock stub a successful Get CalculationData response")
-          val calcBreakdownResponse = calculationDataSuccessWithEoYModel
-          SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
-
+          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, estimateLastTaxCalcResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
-          Then("I verify the Income Source Details has been successfully wiremocked")
-          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-          Then("I verify the Estimated Tax Liability response has been wiremocked")
-          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+          verifyLastTaxCalculationCall(testNino, testYear)
 
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
@@ -286,6 +178,25 @@ class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
             nElementsWithClass("bills-link")(0)
           )
         }
+      }
+
+      unauthorisedTest("/bills")
+    }
+
+    "the Bills Feature is disabled" should {
+
+      "redirect to home page" in {
+
+        appConfig.features.billsEnabled(false)
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
+        val res = IncomeTaxViewChangeFrontend.getBills
+
+        Then("I should be redirected to the Home Page")
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.HomeController.home().url)
+        )
       }
 
       unauthorisedTest("/bills")

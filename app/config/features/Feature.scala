@@ -21,6 +21,6 @@ import play.api.Configuration
 import scala.sys.SystemProperties
 
 class Feature(val key: String, config: Configuration) {
-  def apply(value: Boolean): SystemProperties = sys.props += key -> value.toString
+  def apply(value: Boolean): Unit = sys.props.update(key, value.toString)
   def apply(): Boolean = sys.props.get(key).fold(config.getBoolean(key).getOrElse(false))(_.toBoolean)
 }

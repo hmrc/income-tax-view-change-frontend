@@ -56,6 +56,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def beforeAll(): Unit = {
     super.beforeAll()
     startWiremock()
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
     isAuthorisedUser(true)
     stubUserDetails()
   }
@@ -71,7 +75,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getEstimates: WSResponse = get("/estimates")
     def getStatements: WSResponse = get("/statements")
     def getBills: WSResponse = get("/bills")
-    def getFinancialData(year: String): WSResponse = get(s"/calculation/$year")
+    def getCalculation(year: String): WSResponse = get(s"/calculation/$year")
     def getReportDeadlines: WSResponse = get(s"/obligations")
     def getAccountDetails: WSResponse = get(s"/account-details")
     def getBusinessDetails(id: Int): WSResponse = get(s"/account-details/$id")

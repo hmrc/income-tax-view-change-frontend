@@ -32,7 +32,7 @@ object SelfAssessmentStub {
     WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, calc)
   }
 
-  def stubGetCalcError(nino: String, year: String, error: CalculationDataErrorModel): Unit = {
+  def stubGetCalcDataError(nino: String, year: String, error: CalculationDataErrorModel): Unit = {
     WiremockHelper.stubGet(calcUrl(nino, year), Status.INTERNAL_SERVER_ERROR, Json.toJson(error).toString())
   }
 
