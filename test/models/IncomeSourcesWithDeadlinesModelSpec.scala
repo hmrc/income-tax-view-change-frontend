@@ -51,39 +51,39 @@ class IncomeSourcesWithDeadlinesModelSpec extends UnitSpec with Matchers {
 
     "the user has just a business income source" should {
       s"have a business ID of $testSelfEmploymentId" in {
-        businessIncomeSourceSuccess.businessIncomeSources.head.incomeSource.incomeSourceId shouldBe testSelfEmploymentId
+        singleBusinessIncomeWithDeadlines.businessIncomeSources.head.incomeSource.incomeSourceId shouldBe testSelfEmploymentId
       }
       s"have the businesses accounting period start date of ${testBusinessAccountingPeriod.start}" in {
-        businessIncomeSourceSuccess.businessIncomeSources.head.incomeSource.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
+        singleBusinessIncomeWithDeadlines.businessIncomeSources.head.incomeSource.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
       }
       s"have the businesses accounting period end date of ${testBusinessAccountingPeriod.end}" in {
-        businessIncomeSourceSuccess.businessIncomeSources.head.incomeSource.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
+        singleBusinessIncomeWithDeadlines.businessIncomeSources.head.incomeSource.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
       }
       s"should have the trading name of 'Test Business'" in {
-        businessIncomeSourceSuccess.businessIncomeSources.head.incomeSource.tradingName.get shouldBe testTradeName
+        singleBusinessIncomeWithDeadlines.businessIncomeSources.head.incomeSource.tradingName.get shouldBe testTradeName
       }
       //Test Property details
       s"should not have property details" in {
-        businessIncomeSourceSuccess.propertyIncomeSource shouldBe None
+        singleBusinessIncomeWithDeadlines.propertyIncomeSource shouldBe None
       }
     }
     "the user has just a property income source" should {
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        propertyIncomeSourceSuccess.propertyIncomeSource.get.incomeSource.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
+        propertyIncomeOnlyWithDeadlines.propertyIncomeSource.get.incomeSource.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        propertyIncomeSourceSuccess.propertyIncomeSource.get.incomeSource.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
+        propertyIncomeOnlyWithDeadlines.propertyIncomeSource.get.incomeSource.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
       }
       //Test Business Details
       "should not have business details" in {
-        propertyIncomeSourceSuccess.businessIncomeSources shouldBe List.empty
+        propertyIncomeOnlyWithDeadlines.businessIncomeSources shouldBe List.empty
       }
     }
     "the user has no income source" should {
       "return None for both business and property sources" in {
-        noIncomeSourceSuccess.propertyIncomeSource shouldBe None
-        noIncomeSourceSuccess.businessIncomeSources shouldBe List.empty
+        noIncomeDetailsWithNoDeadlines.propertyIncomeSource shouldBe None
+        noIncomeDetailsWithNoDeadlines.businessIncomeSources shouldBe List.empty
       }
     }
   }

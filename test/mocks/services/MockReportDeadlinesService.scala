@@ -128,10 +128,10 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
       .thenReturn(Future.successful(sources))
   }
 
-  def mockSingleBusinessIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(businessIncomeSourceSuccess)
-  def mockPropertyIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(propertyIncomeOnly)(propertyIncomeSourceSuccess)
+  def mockSingleBusinessIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(singleBusinessIncomeWithDeadlines)
+  def mockPropertyIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(propertyIncomeOnly)(propertyIncomeOnlyWithDeadlines)
   def mockBothIncomeSourcesWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(businessesAndPropertyIncome)(businessAndPropertyIncomeWithDeadlines)
-  def mockNoIncomeSourcesWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(noIncomeSourceSuccess)
-  def mockBothIncomeSourcesBusinessAlignedWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(businessAndPropertyAligned)(bothIncomeSourcesSuccessBusinessAligned)
+  def mockNoIncomeSourcesWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(noIncomeDetailsWithNoDeadlines)
+  def mockBothIncomeSourcesBusinessAlignedWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(businessAndPropertyAligned)(businessAndPropertyAlignedWithDeadlines)
   def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(IncomeSourcesWithDeadlinesError)
 }

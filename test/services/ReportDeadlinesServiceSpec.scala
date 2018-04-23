@@ -123,7 +123,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockReportDeadlinesCon
 
           setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
           await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(singleBusinessIncome)) shouldBe
-            businessIncomeSourceSuccess
+            singleBusinessIncomeWithDeadlines
         }
 
       }
@@ -155,7 +155,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockReportDeadlinesCon
 
           setupMockReportDeadlines(testPropertyIncomeId)(obligationsDataSuccessModel)
           await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(propertyIncomeOnly)) shouldBe
-            propertyIncomeSourceSuccess
+            propertyIncomeOnlyWithDeadlines
         }
 
       }
