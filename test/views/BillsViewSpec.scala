@@ -16,15 +16,14 @@
 
 package views
 
+import assets.BaseTestConstants._
+import assets.EstimatesTestConstants._
+import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.BusinessDetailsTestConstants._
-import assets.EstimatesTestConstants._
-import assets.PropertyDetailsTestConstants._
-import assets.BaseTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -37,24 +36,21 @@ class BillsViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), testIncomeSources)(FakeRequest())
-  val testBusinessIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), None)
-  val testPropertyIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List.empty, Some(propertyIncomeModel))
+  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessAndPropertyAligned)(FakeRequest())
 
-  private def pageSetup(incomeSources: IncomeSourcesWithDeadlinesModel) = new {
+  private def pageSetup() = new {
     lazy val pageNoBills: HtmlFormat.Appendable = views.html.bills(
-        List())(FakeRequest(),applicationMessages, mockAppConfig, incomeSources)
+        List())(FakeRequest(),applicationMessages, mockAppConfig)
     lazy val documentNoBills: Document = Jsoup.parse(contentAsString(pageNoBills))
 
     lazy val page2Bills: HtmlFormat.Appendable = views.html.bills(
-        lastTaxCalcWithYearCrystallisedList)(FakeRequest(),applicationMessages, mockAppConfig, incomeSources)
+        lastTaxCalcWithYearCrystallisedList)(FakeRequest(),applicationMessages, mockAppConfig)
     lazy val document2Bills: Document = Jsoup.parse(contentAsString(page2Bills))
   }
 
   "The Bills view" should {
 
-    val setup = pageSetup(testIncomeSources)
+    val setup = pageSetup()
     import setup._
     val messages = new Messages.Calculation(testYear).Bills
     val messages2019 = new Messages.Calculation(testYearPlusOne).Bills

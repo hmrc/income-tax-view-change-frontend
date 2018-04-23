@@ -36,13 +36,10 @@ class EstimatedTaxLiabilityErrorViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel), Some(propertyIncomeModel))
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), testIncomeSources)(FakeRequest())
-
   "The EstimatedTaxLiabilityError view" should {
 
     lazy val page: HtmlFormat.Appendable =
-      views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+      views.html.errorPages.estimatedTaxLiabilityError(testYear)(FakeRequest(), applicationMessages, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {

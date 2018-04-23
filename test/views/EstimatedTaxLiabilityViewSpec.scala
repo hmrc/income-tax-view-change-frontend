@@ -16,18 +16,16 @@
 
 package views
 
-import assets.Messages
-import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.BusinessDetailsTestConstants._
+import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import assets.EstimatesTestConstants._
-import assets.PropertyDetailsTestConstants._
 import assets.FinancialTransactionsTestConstants._
-import assets.BaseTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
+import assets.Messages
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.calculation.CalculationDataModel
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -35,28 +33,26 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import utils.ImplicitCurrencyFormatter._
-import utils.{ImplicitCurrencyFormatter, TestSupport}
-import utils.ImplicitDateFormatter
+import utils.{ImplicitCurrencyFormatter, ImplicitDateFormatter, TestSupport}
 
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
-  val testBusinessIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), None)
-  val testPropertyIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List.empty, Some(propertyIncomeModel))
+  val bizAndPropertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessAndPropertyAligned)(FakeRequest())
+  val bizUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), singleBusinessIncome)(FakeRequest())
+  val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
-  private def pageSetup(calcDataModel: CalculationDataModel, incomeSources: IncomeSourcesWithDeadlinesModel) = new {
-    val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), incomeSources)(FakeRequest())
+  private def pageSetup(calcDataModel: CalculationDataModel, user: MtdItUser[_]) = new {
     lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
       calculationDisplaySuccessModel(calcDataModel),
-      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+      testYear)(FakeRequest(),applicationMessages, mockAppConfig, user)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     lazy val cPage: HtmlFormat.Appendable = views.html.crystallised(
       calculationDisplaySuccessCrystalisationModel(calcDataModel), transactionModel(),
-      testYear)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser, incomeSources)
+      testYear)(FakeRequest(),applicationMessages, mockAppConfig, user)
     lazy val cDocument: Document = Jsoup.parse(contentAsString(cPage))
 
     implicit val model: CalculationDataModel = calcDataModel
@@ -70,7 +66,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
   "The EstimatedTaxLiability view" should {
 
-    val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
+    val setup = pageSetup(busPropBRTCalcDataModel, bizAndPropertyUser)
     import setup._
     val messages = new Messages.Calculation(testYear)
 
@@ -163,7 +159,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         "have just the basic rate of tax" should {
 
           val total = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty + model.incomeReceived.bankBuildingSocietyInterest).toCurrencyString
-          val setup = pageSetup(busPropBRTCalcDataModel, testIncomeSources)
+          val setup = pageSetup(busPropBRTCalcDataModel, bizAndPropertyUser)
           import setup._
 
           s"have a business profit section amount of $total" in {
@@ -218,7 +214,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         }
 
         "have the higher rate of tax" should {
-          val setup = pageSetup(busBropHRTCalcDataModel, testIncomeSources)
+          val setup = pageSetup(busBropHRTCalcDataModel, bizAndPropertyUser)
           import ImplicitCurrencyFormatter._
           import setup._
 
@@ -247,7 +243,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         }
 
         "have the additional rate of tax" should {
-          val setup = pageSetup(busPropARTCalcDataModel, testIncomeSources)
+          val setup = pageSetup(busPropARTCalcDataModel, bizAndPropertyUser)
           import ImplicitCurrencyFormatter._
           import setup._
           s"have an Income Tax section" which {
@@ -273,7 +269,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         }
 
         "has no taxable income and no NI contributions" should {
-          val setup = pageSetup(noTaxOrNICalcDataModel, testIncomeSources)
+          val setup = pageSetup(noTaxOrNICalcDataModel, bizAndPropertyUser)
           import ImplicitCurrencyFormatter._
           import setup._
           s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
@@ -288,7 +284,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         }
 
         "has no taxable income and some NI contribution" should {
-          val setup = pageSetup(noTaxJustNICalcDataModel, testIncomeSources)
+          val setup = pageSetup(noTaxJustNICalcDataModel, bizAndPropertyUser)
           import ImplicitCurrencyFormatter._
           import setup._
           s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
@@ -311,7 +307,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
       "for users with income from Dividends at the Basic Rate" should {
 
-        val setup = pageSetup(dividendAtBRT, testIncomeSources)
+        val setup = pageSetup(dividendAtBRT, bizAndPropertyUser)
         import setup._
 
         "display income from dividends" which {
@@ -371,7 +367,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
       "for users with income from Dividends at the Higher Rate" should {
 
-        val setup = pageSetup(dividendAtHRT, testIncomeSources)
+        val setup = pageSetup(dividendAtHRT, bizAndPropertyUser)
         import setup._
 
         "display income from dividends" which {
@@ -448,7 +444,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
       "for users with income from Dividends at the Additional Rate" should {
 
-        val setup = pageSetup(dividendAtART, testIncomeSources)
+        val setup = pageSetup(dividendAtART, bizAndPropertyUser)
         import setup._
 
         "display income from dividends" which {
@@ -543,7 +539,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
       "for users with both property and a business with income from savings and additional allowances" should {
 
-        val setup = pageSetup(calculationDataSuccessModel, testIncomeSources)
+        val setup = pageSetup(calculationDataSuccessModel, bizAndPropertyUser)
         import setup._
         val totalProfit = (model.incomeReceived.bankBuildingSocietyInterest + model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
 
@@ -572,7 +568,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
       "for users with only property and with income from savings" should {
 
-        val setup = pageSetup(justPropertyWithSavingsCalcDataModel, testPropertyIncomeSource)
+        val setup = pageSetup(justPropertyWithSavingsCalcDataModel, propertyUser)
         import setup._
         val totalProfit = (model.incomeReceived.bankBuildingSocietyInterest + model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
 
@@ -596,7 +592,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
       "for users with both property and a business with income from savings on the bills page" should {
 
-        val setup = pageSetup(calculationDataSuccessModel, testIncomeSources)
+        val setup = pageSetup(calculationDataSuccessModel, bizAndPropertyUser)
         import setup._
         val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
 
@@ -628,7 +624,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
       "for users with only property and with income from savings on the bills page" should {
 
-        val setup = pageSetup(justPropertyWithSavingsCalcDataModel, testPropertyIncomeSource)
+        val setup = pageSetup(justPropertyWithSavingsCalcDataModel, propertyUser)
         import setup._
         val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
 
@@ -660,7 +656,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
       "for users with income from savings of zero on the bills page" should {
 
-        val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
+        val setup = pageSetup(justPropertyCalcDataModel, propertyUser)
         import setup._
         val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
 
@@ -685,8 +681,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
           FakeRequest(),
           applicationMessages,
           mockAppConfig,
-          testMtdItUser,
-          testIncomeSources)
+          testMtdItUser)
         lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
 
         "not display a breakdown section" in {
@@ -696,7 +691,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
       "when the user only has businesses registered" should {
 
-        val setup = pageSetup(justBusinessCalcDataModel, testBusinessIncomeSource)
+        val setup = pageSetup(justBusinessCalcDataModel, bizUser)
         import setup._
 
         "display the business profit amount" in {
@@ -706,7 +701,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
       }
 
       "when the user only has a business registered but has a property profit value" should {
-        val setup = pageSetup(busPropBRTCalcDataModel, testBusinessIncomeSource)
+        val setup = pageSetup(busPropBRTCalcDataModel, bizUser)
         import setup._
 
         "display the business profit heading" in {
@@ -719,7 +714,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
       "when the user only has properties registered" should {
 
-        val setup = pageSetup(justPropertyCalcDataModel, testPropertyIncomeSource)
+        val setup = pageSetup(justPropertyCalcDataModel, propertyUser)
         import setup._
 
         "display the property profit heading" in {
@@ -731,7 +726,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
       }
 
       "when the user only has properties registered but has a business profit value" should {
-        val setup = pageSetup(busPropBRTCalcDataModel, testPropertyIncomeSource)
+        val setup = pageSetup(busPropBRTCalcDataModel, propertyUser)
         import setup._
 
         "display the Business profit heading" in {

@@ -16,15 +16,15 @@
 
 package views
 
+import assets.BaseTestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.BusinessDetailsTestConstants.businessIncomeModelAlignedTaxYear
-import assets.PropertyDetailsTestConstants.{propertyIncomeModel,ceasedPropertyIncomeModel}
-import assets.BusinessDetailsTestConstants._
-import assets.BaseTestConstants._
+import assets.PropertyDetailsTestConstants._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -37,12 +37,9 @@ class AccountDetailsViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), testIncomeSources)(FakeRequest())
-  val testBusinessIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), None)
-  val testPropertyIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List.empty, Some(propertyIncomeModel))
+  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessAndPropertyAligned)(FakeRequest())
 
-  private def pageSetup(businesses: List[(BusinessIncomeWithDeadlinesModel,Int)], properties: Option[PropertyIncomeWithDeadlinesModel]) = new {
+  private def pageSetup(businesses: List[(BusinessDetailsModel,Int)], properties: Option[PropertyDetailsModel]) = new {
     lazy val page: HtmlFormat.Appendable = views.html.accountDetailsView(
       businesses, properties)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
@@ -52,7 +49,7 @@ class AccountDetailsViewSpec extends TestSupport {
 
     "passed a business and a property" should {
 
-      val setup = pageSetup(List((businessIncomeModel, 0)), Some(propertyIncomeModel))
+      val setup = pageSetup(List((business1, 0)), Some(propertyDetails))
       import setup._
       val messages = Messages.AccountDetails
 
@@ -88,7 +85,7 @@ class AccountDetailsViewSpec extends TestSupport {
 
     "only passed a business" should {
 
-      val setup = pageSetup(List((businessIncomeModel, 0)), None)
+      val setup = pageSetup(List((business1, 0)), None)
       import setup._
       val messages = Messages.AccountDetails
 
@@ -123,7 +120,7 @@ class AccountDetailsViewSpec extends TestSupport {
 
     "only passed a property" should {
 
-      val setup = pageSetup(List(), Some(propertyIncomeModel))
+      val setup = pageSetup(List(), Some(propertyDetails))
       import setup._
       val messages = Messages.AccountDetails
 
@@ -163,7 +160,7 @@ class AccountDetailsViewSpec extends TestSupport {
 
     "only passed a ceased property" should {
 
-      val setup = pageSetup(List(), Some(ceasedPropertyIncomeModel))
+      val setup = pageSetup(List(), Some(ceasedPropertyDetails))
       import setup._
       val messages = Messages.AccountDetails
 

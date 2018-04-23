@@ -15,11 +15,8 @@
  */
 
 package views
-import assets.BaseTestConstants.{testMtditid, testNino, testUserDetails}
 import assets.Messages.{NoReportDeadlines => messages}
-import auth.MtdItUser
 import config.FrontendAppConfig
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -32,13 +29,10 @@ class NoReportDeadlinesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(), None)
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), testIncomeSources)(FakeRequest())
-
   "The noReportDeadlines view" should {
 
     lazy val page: HtmlFormat.Appendable =
-      views.html.noReportDeadlines()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      views.html.noReportDeadlines()(FakeRequest(), applicationMessages, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {

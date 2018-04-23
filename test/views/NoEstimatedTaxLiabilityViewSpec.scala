@@ -16,14 +16,9 @@
 
 package views
 
-import assets.BaseTestConstants._
-import assets.BusinessDetailsTestConstants._
 import assets.EstimatesTestConstants._
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, NoEstimatedTaxLiability => messages}
-import assets.PropertyDetailsTestConstants._
-import auth.MtdItUser
 import config.FrontendAppConfig
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -36,13 +31,10 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel), Some(propertyIncomeModel))
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), testIncomeSources)(FakeRequest())
-
   "The EstimatedTaxLiability view" should {
 
     lazy val page: HtmlFormat.Appendable =
-      views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser, testIncomeSources)
+      views.html.noEstimatedTaxLiability(testYear)(FakeRequest(), applicationMessages, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${messages.title}'" in {

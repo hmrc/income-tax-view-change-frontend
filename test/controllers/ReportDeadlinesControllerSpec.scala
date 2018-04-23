@@ -16,9 +16,9 @@
 
 package controllers
 
-import assets.Messages.{ISE => errorMessages, ReportDeadlines => messages}
+import assets.Messages.{ReportDeadlines => messages}
 import audit.AuditingService
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockReportDeadlinesService
@@ -27,16 +27,16 @@ import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 
-class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
-  with MockReportDeadlinesService {
+class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService {
 
   object TestReportDeadlinesController extends ReportDeadlinesController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService],
+    mockReportDeadlinesService,
+    app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi]
   )
@@ -49,7 +49,6 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
       "return Redirect (303)" in {
         mockSingleBusinessIncomeSource()
-        mockBusinessSuccess()
         TestReportDeadlinesController.config.features.reportDeadlinesEnabled(false)
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -75,7 +74,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
           "return Status OK (200)" in {
             mockSingleBusinessIncomeSource()
-            mockBusinessSuccess()
+            mockSingleBusinessIncomeSourceWithDeadlines()
             status(result) shouldBe Status.OK
           }
 
@@ -96,7 +95,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
           "return Status OK (200)" in {
             mockPropertyIncomeSource()
-            mockPropertySuccess()
+            mockPropertyIncomeSourceWithDeadlines()
             status(result) shouldBe Status.OK
           }
 
@@ -116,9 +115,8 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return Status OK (200)" in {
-            mockBothIncomeSources()
-            mockBusinessSuccess()
-            mockPropertySuccess()
+            mockBothIncomeSourcesBusinessAligned()
+            mockBothIncomeSourcesBusinessAlignedWithDeadlines()
             status(result) shouldBe Status.OK
           }
 
@@ -138,7 +136,8 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return Status OK (200)" in {
-            mockNoIncomeSources()
+            mockSingleBusinessIncomeSource()
+            mockNoIncomeSourcesWithDeadlines()
             status(result) shouldBe Status.OK
           }
 

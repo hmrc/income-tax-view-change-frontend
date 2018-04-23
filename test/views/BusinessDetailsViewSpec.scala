@@ -16,33 +16,28 @@
 
 package views
 
-import assets.Messages
-import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.BusinessDetailsTestConstants._
-import assets.PropertyDetailsTestConstants.propertyIncomeModel
 import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants._
+import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
+import assets.Messages
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.TestSupport
 import utils.ImplicitDateFormatter._
+import utils.TestSupport
 
 class BusinessDetailsViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), testIncomeSources)(FakeRequest())
-  val testBusinessIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), None)
-  val testPropertyIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List.empty, Some(propertyIncomeModel))
+  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessAndPropertyAligned)(FakeRequest())
 
   private def pageSetup(businessModel: BusinessDetailsModel) = new {
     lazy val page: HtmlFormat.Appendable = views.html.businessDetailsView(businessModel)(FakeRequest(),applicationMessages, mockAppConfig, testMtdItUser)
