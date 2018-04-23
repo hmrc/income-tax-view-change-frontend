@@ -136,7 +136,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           }
         }
 
-
         "has a single property obligation" should {
 
           "display a single obligation with the correct dates and status" in {
@@ -177,7 +176,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             )
           }
         }
-
 
         "has property with multiple obligations and no business obligations" should {
 
@@ -352,7 +350,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           }
         }
-
 
         "has 2 business with one obligation each" should {
 

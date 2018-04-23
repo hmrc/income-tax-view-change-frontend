@@ -21,7 +21,7 @@ import assets.PropertyDetailsTestConstants._
 import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 
 object IncomeSourcesWithDeadlinesTestConstants {
-  val bothIncomeSourceSuccessMisalignedTaxYear = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, businessIncomeModel2), Some(propertyIncomeModel))
+  val businessAndPropertyIncomeWithDeadlines = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, businessIncomeModel2), Some(propertyIncomeModel))
   val businessIncomeSourceSuccess = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel), None)
   val business2018IncomeSourceSuccess = IncomeSourcesWithDeadlinesModel(List(business2018IncomeModel), None)
   val business2018And19IncomeSourceSuccess = IncomeSourcesWithDeadlinesModel(List(business2018IncomeModel, business2019IncomeModel), None)

@@ -21,7 +21,6 @@ import assets.IncomeSourceDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import mocks.connectors.MockIncomeSourceDetailsConnector
 import mocks.services.MockReportDeadlinesService
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesError
 import utils.TestSupport
 
 

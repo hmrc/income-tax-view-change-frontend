@@ -130,7 +130,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
 
   def mockSingleBusinessIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(businessIncomeSourceSuccess)
   def mockPropertyIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(propertyIncomeOnly)(propertyIncomeSourceSuccess)
-  def mockBothIncomeSourcesWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(businessesAndPropertyIncome)(bothIncomeSourceSuccessMisalignedTaxYear)
+  def mockBothIncomeSourcesWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(businessesAndPropertyIncome)(businessAndPropertyIncomeWithDeadlines)
   def mockNoIncomeSourcesWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(noIncomeSourceSuccess)
   def mockBothIncomeSourcesBusinessAlignedWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(businessAndPropertyAligned)(bothIncomeSourcesSuccessBusinessAligned)
   def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(IncomeSourcesWithDeadlinesError)

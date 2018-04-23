@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.Messages.{ReportDeadlines => messages}
+import assets.Messages.{NoReportDeadlines, ReportDeadlines => messages}
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -130,14 +130,30 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
         }
 
-        "doesn't retrieve any ReportDeadlines from the ReportDeadlines service" should {
+        "receives an Error from the ReportDeadlines Service" should {
+
+          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val document = Jsoup.parse(bodyOf(result))
+
+          "return Status ISE (500)" in {
+            mockSingleBusinessIncomeSource()
+            mockErrorIncomeSourceWithDeadlines()
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+        }
+
+        "doesn't have any Income Source" should {
 
           lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(bodyOf(result))
 
           "return Status OK (200)" in {
-            mockSingleBusinessIncomeSource()
-            mockNoIncomeSourcesWithDeadlines()
+            mockNoIncomeSources()
             status(result) shouldBe Status.OK
           }
 
@@ -146,8 +162,12 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
             charset(result) shouldBe Some("utf-8")
           }
 
-          "render the ReportDeadlines page" in {
-            document.title shouldBe messages.title
+          "render the NoReportDeadlines page" in {
+            document.title shouldBe NoReportDeadlines.title
+          }
+
+          s"have the correct no report deadlines messges '${NoReportDeadlines.noReports}'" in {
+            document.getElementById("p1").text shouldBe NoReportDeadlines.noReports
           }
         }
 
