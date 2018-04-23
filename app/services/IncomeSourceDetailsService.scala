@@ -29,46 +29,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: IncomeSourceDetailsConnector,
-                                           val reportDeadlinesService: ReportDeadlinesService,
-                                           val auditingService: AuditingService
-                                          ) {
+class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: IncomeSourceDetailsConnector) {
 
-  def getIncomeSourceDetails()(implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[IncomeSourcesWithDeadlinesResponse] = {
-    for {
-      sources <- incomeSourceDetailsConnector.getIncomeSources(mtdUser.mtditid, mtdUser.nino)
-      incomeSources <- createIncomeSourcesModel(sources)
-    } yield incomeSources
-  }
+  def getIncomeSourceDetails()(implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] =
+    incomeSourceDetailsConnector.getIncomeSources(mtdUser.mtditid, mtdUser.nino)
 
-  def createIncomeSourcesModel(incomeSourceResponse: IncomeSourceDetailsResponse)
-                              (implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[IncomeSourcesWithDeadlinesResponse] = {
-    incomeSourceResponse match {
-      case sources: IncomeSourceDetailsModel =>
-        val businessIncomeModelFList: Future[List[BusinessIncomeWithDeadlinesModel]] =
-          Future.sequence(sources.businesses.map { seTrade =>
-            reportDeadlinesService.getReportDeadlines(seTrade.incomeSourceId).map { obs =>
-              BusinessIncomeWithDeadlinesModel(
-                seTrade,
-                obs
-              )
-            }
-          })
-
-        val propertyIncomeModelFOpt: Future[Option[PropertyIncomeWithDeadlinesModel]] =
-          Future.sequence(Option.option2Iterable(sources.property.map { propertyIncome =>
-            reportDeadlinesService.getReportDeadlines(propertyIncome.incomeSourceId).map { obs =>
-              PropertyIncomeWithDeadlinesModel(propertyIncome, obs)
-            }
-          })).map(_.headOption)
-
-        for {
-          businessList <- businessIncomeModelFList
-          property <- propertyIncomeModelFOpt
-        } yield {
-          IncomeSourcesWithDeadlinesModel(businessList, property)
-        }
-      case _: IncomeSourceDetailsError => Future.successful(IncomeSourcesWithDeadlinesError)
-    }
-  }
 }

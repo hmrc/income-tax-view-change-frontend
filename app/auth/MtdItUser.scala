@@ -17,7 +17,7 @@
 package auth
 
 import models.core.UserDetailsModel
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
 
 case class MtdItUserOptionNino[A](mtditid: String,
@@ -31,6 +31,6 @@ case class MtdItUserWithNino[A](mtditid: String,
 case class MtdItUser[A](mtditid: String,
                         nino: String,
                         userDetails: Option[UserDetailsModel],
-                        incomeSources: IncomeSourcesWithDeadlinesModel
+                        incomeSources: IncomeSourceDetailsModel
                        )(implicit request: Request[A]) extends WrappedRequest[A](request)
 

@@ -41,5 +41,5 @@ class AccountDetailsController @Inject()(implicit val config: FrontendAppConfig,
   }
 
   private def renderView[A](implicit user: MtdItUser[A]): Future[Result] =
-    Future.successful(Ok(views.html.accountDetailsView(user.incomeSources.sortedBusinesses, user.incomeSources.propertyIncomeSource)))
+    Future.successful(Ok(views.html.accountDetailsView(user.incomeSources.sortedBusinesses, user.incomeSources.property)))
 }

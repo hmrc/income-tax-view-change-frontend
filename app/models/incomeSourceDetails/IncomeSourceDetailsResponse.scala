@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails
 
+import models.core.AccountingPeriodModel
 import play.api.libs.json.{Format, JsValue, Json}
 
 sealed trait IncomeSourceDetailsResponse {
@@ -28,6 +29,18 @@ case class IncomeSourceDetailsModel(businesses: List[BusinessDetailsModel],
   override def toJson: JsValue = Json.toJson(this)
 
   val sortedBusinesses: List[(BusinessDetailsModel, Int)] = businesses.sortBy(_.incomeSourceId.substring(4)).zipWithIndex
+
+  val accountingPeriods: List[AccountingPeriodModel] = businesses.map(_.accountingPeriod) ++ property.map(_.accountingPeriod)
+  val orderedTaxYears: List[Int] = accountingPeriods.map(_.determineTaxYear).sortWith(_ < _).distinct
+
+  val hasPropertyIncome: Boolean = businesses.nonEmpty
+  val hasBusinessIncome: Boolean = property.nonEmpty
+  val hasBothIncomeSources: Boolean = hasPropertyIncome && hasBusinessIncome
+
+  val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
+
+  def findBusinessById(id: Int): Option[BusinessDetailsModel] = sortedBusinesses.find(_._2 == id).map(_._1)
+
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {

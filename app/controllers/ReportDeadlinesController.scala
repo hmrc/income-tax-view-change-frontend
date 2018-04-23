@@ -17,14 +17,15 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import audit.AuditingService
 import audit.models.ReportDeadlinesAuditing.ReportDeadlinesAuditModel
 import auth.MtdItUser
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import services.ReportDeadlinesService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -34,8 +35,9 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
                                           val authenticate: AuthenticationPredicate,
                                           val retrieveNino: NinoPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                          val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                           val auditingService: AuditingService,
+                                          val reportDeadlinesService: ReportDeadlinesService,
+                                          val itvcErrorHandler: ItvcErrorHandler,
                                           implicit val config: FrontendAppConfig,
                                           implicit val messagesApi: MessagesApi
                                      ) extends BaseController {
@@ -48,7 +50,12 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
   private def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
     if(user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       auditReportDeadlines(user)
-      Future.successful(Ok(views.html.report_deadlines(user.incomeSources)))
+      reportDeadlinesService.createIncomeSourcesWithDeadlinesModel(user.incomeSources).map {
+        case withDeadlines: IncomeSourcesWithDeadlinesModel =>
+          Ok(views.html.report_deadlines(withDeadlines))
+        case _ =>
+          itvcErrorHandler.showInternalServerError
+      }
     } else {
       Future.successful(Ok(views.html.noReportDeadlines()))
     }
