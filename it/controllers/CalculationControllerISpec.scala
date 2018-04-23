@@ -50,9 +50,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
       "return the correct page with a valid total" in {
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, businessAndPropertyResponse
-        )
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub multiple open and received obligations response")
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -65,13 +63,12 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
-        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-        Then("I verify the Estimated Tax Liability response has been wiremocked")
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+        verifyLastTaxCalculationCall(testNino, testYear)
+        verifyCalculationDataCall(testNino, testCalcId)
 
         res should have (
           httpStatus(OK),
@@ -119,9 +116,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         "return the correct page with a valid total" in {
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, businessAndPropertyResponse
-          )
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
           And("I wiremock stub multiple open and received obligations response")
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -138,15 +133,13 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, financialTransactionsJson(1000.0))
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
-          val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+          val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
-          Then("I verify the Income Source Details has been successfully wiremocked")
-          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-          verifyFinancialTransactionsCall()
-
-          Then("I verify the Estimated Tax Liability response has been wiremocked")
-          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+          verifyLastTaxCalculationCall(testNino, testYear)
+          verifyCalculationDataCall(testNino, testCalcId)
+          verifyFinancialTransactionsCall(testMtditid)
 
           res should have(
             httpStatus(OK),
@@ -196,9 +189,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         "return the correct page with a valid total" in {
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, businessAndPropertyResponse
-          )
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
           And("I wiremock stub multiple open and received obligations response")
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -215,15 +206,13 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, financialTransactionsJson(0.0))
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
-          val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+          val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
-          Then("I verify the Income Source Details has been successfully wiremocked")
-          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-          verifyFinancialTransactionsCall()
-
-          Then("I verify the Estimated Tax Liability response has been wiremocked")
-          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+          verifyLastTaxCalculationCall(testNino, testYear)
+          verifyCalculationDataCall(testNino, testCalcId)
+          verifyFinancialTransactionsCall(testMtditid)
 
           res should have(
             httpStatus(OK),
@@ -271,9 +260,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         "return an Internal Server Error page" in {
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-            OK, businessAndPropertyResponse
-          )
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
           And("I wiremock stub multiple open and received obligations response")
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -289,15 +276,13 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, financialTransactionsSingleErrorJson)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
-          val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+          val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
-          Then("I verify the Income Source Details has been successfully wiremocked")
-          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-          verifyFinancialTransactionsCall()
-
-          Then("I verify the Estimated Tax Liability response has been wiremocked")
-          IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+          verifyLastTaxCalculationCall(testNino, testYear)
+          verifyCalculationDataCall(testNino, testCalcId)
+          verifyFinancialTransactionsCall(testMtditid)
 
           res should have(httpStatus(INTERNAL_SERVER_ERROR))
 
@@ -310,9 +295,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
       "return the correct page with a valid total" in {
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, businessAndPropertyResponse
-        )
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub multiple open and received obligations response")
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -325,13 +308,12 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessJson.toString())
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
-        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-        Then("I verify the Estimated Tax Liability response has been wiremocked")
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+        verifyLastTaxCalculationCall(testNino, testYear)
+        verifyCalculationDataCall(testNino, testCalcId)
 
         res should have (
           httpStatus(OK),
@@ -379,9 +361,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         stubUserDetailsError()
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, businessAndPropertyResponse
-        )
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub multiple open and received obligations response")
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -391,16 +371,15 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, estimateLastTaxCalcResponse)
 
         And("I wiremock stub an erroneous response")
-        SelfAssessmentStub.stubGetCalcError(testNino, testCalcId, calculationDataErrorModel)
+        SelfAssessmentStub.stubGetCalcDataError(testNino, testCalcId, calculationDataErrorModel)
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
-        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-        Then("verification that the Estimated Tax Liability response has been wiremocked ")
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+        verifyLastTaxCalculationCall(testNino, testYear)
+        verifyCalculationDataCall(testNino, testCalcId)
 
         Then("a successful response is returned with the correct estimate")
         res should have(
@@ -418,9 +397,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
       "Return no data found response and render view explaining that this will be available once they've submitted income" in {
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, businessAndPropertyResponse
-        )
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub multiple open and received obligations response")
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -430,13 +407,11 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         IncomeTaxViewChangeStub.stubGetLastCalcNoData(testNino, testYear)
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
-        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-        Then("verification that the Estimated Tax Liability response has been wiremocked ")
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+        verifyLastTaxCalculationCall(testNino, testYear)
 
         Then("a Not Found response is returned and correct view rendered")
         res should have(
@@ -451,9 +426,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
       "Render the Estimated Tax Liability Error Page" in {
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK, businessAndPropertyResponse
-        )
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub multiple open and received obligations response")
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
@@ -463,13 +436,11 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
-        val res = IncomeTaxViewChangeFrontend.getFinancialData(testYear)
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-        Then("verification that the Estimated Tax Liability response has been wiremocked ")
-        IncomeTaxViewChangeStub.verifyGetLastTaxCalc(testNino, testYear)
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+        verifyLastTaxCalculationCall(testNino, testYear)
 
         Then("an Internal Server Error response is returned and correct view rendered")
         res should have(

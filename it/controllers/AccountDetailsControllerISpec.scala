@@ -16,41 +16,73 @@
 
 package controllers
 
+import assets.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.BaseIntegrationTestConstants.{testSelfEmploymentId, testMtditid}
+import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
+import config.FrontendAppConfig
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ComponentSpecBase, GenericStubMethods}
 import play.api.http.Status.{OK, SEE_OTHER}
 
 class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMethods {
 
+  lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
+
   "Calling the AccountDetailsController.getAccountDetails" when {
 
-    "isAuthorisedUser with an active enrolment and has at least 1 business and property" should {
+    "The Account Details Feature is Enabled" when {
 
-      "return the correct page with a valid total" in {
+      "isAuthorisedUser with an active enrolment and has at least 1 business and property" should {
 
-        And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+        "return the correct page with a valid total" in {
 
-        When("I call GET /report-quarterly/income-and-expenses/view/account-details")
+          And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+
+          And("I wiremock stub multiple open and received obligations response")
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/account-details")
+          val res = IncomeTaxViewChangeFrontend.getAccountDetails
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
+
+          Then("the view displays the correct title, username and links")
+          res should have(
+            httpStatus(OK),
+            pageTitle("Account details"),
+            elementTextByID(id = "page-heading")("Account details"),
+            elementTextByID(id = "your-businesses")("Your businesses"),
+            elementTextByID(id = "business-link-1")("business"),
+            elementTextByID(id = "your-properties")("Your properties"),
+            elementTextByID(id = "reporting-period")("Reporting period: 6 April - 5 April")
+          )
+        }
+      }
+
+      unauthorisedTest("/account-details")
+    }
+  }
+
+  "The Account Details Feature is Disabled" when {
+
+    "Authorised" should {
+
+      "Redirect to Home Page" in {
+
+        appConfig.features.accountDetailsEnabled(false)
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/account-details")
         val res = IncomeTaxViewChangeFrontend.getAccountDetails
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-        verifyReportDeadlinesCall(testSelfEmploymentId)
-
-        Then("the view displays the correct title, username and links")
+        Then("I should be redirected to the Home Page")
         res should have(
-          httpStatus(OK),
-          pageTitle("Account details"),
-          elementTextByID(id = "page-heading")("Account details"),
-          elementTextByID(id = "your-businesses")("Your businesses"),
-          elementTextByID(id = "business-link-1")("business"),
-          elementTextByID(id = "your-properties")("Your properties"),
-          elementTextByID(id = "reporting-period")("Reporting period: 6 April - 5 April")
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.HomeController.home().url)
         )
+
       }
     }
 
