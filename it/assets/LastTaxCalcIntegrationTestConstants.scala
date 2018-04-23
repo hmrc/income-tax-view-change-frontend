@@ -21,7 +21,7 @@ import assets.CalcDataIntegrationTestConstants.{calculationDataSuccessModel, cal
 import enums.{Crystallised, Estimate}
 import models.calculation.LastTaxCalculation
 
-object LastTaxCalcIntegrationTestContants {
+object LastTaxCalcIntegrationTestConstants {
 
   val crystallisedLastTaxCalcResponse =
     LastTaxCalculation(testCalcId,

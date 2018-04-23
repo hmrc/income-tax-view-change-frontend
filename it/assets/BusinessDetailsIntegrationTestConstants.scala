@@ -24,26 +24,52 @@ import utils.ImplicitDateFormatter._
 
 object BusinessDetailsIntegrationTestConstants {
 
+  val b1CessationDate = "2017-12-31"
+  val b1CessationReason = "It really, really was a bad idea"
+  val b1TradingStart = "2017-01-01"
+  val b1TradingName = "business"
+  val b1AccountingStart = "2017-01-01"
+  val b1AccountingEnd = "2017-12-31"
+  val b1AddressLine1 = "64 Zoo Lane"
+  val b1AddressLine2 = "Happy Place"
+  val b1AddressLine3 = "Magical Land"
+  val b1AddressLine4 = "England"
+  val b1AddressLine5 = "ZL1 064"
+  val b1CountryCode = "UK"
+
+  val b2CessationDate = "2018-12-31"
+  val b2CessationReason = "It really, really was a bad idea"
+  val b2TradingStart = "2018-01-01"
+  val b2TradingName = "secondBusiness"
+  val b2AccountingStart = "2018-01-01"
+  val b2AccountingEnd = "2018-12-31"
+  val b2AddressLine1 = "742 Evergreen Terrace"
+  val b2AddressLine2 = "Springfield"
+  val b2AddressLine3 = "Oregon"
+  val b2AddressLine4 = "USA"
+  val b2AddressLine5 = "51MP 50N5"
+  val b2CountryCode = "USA"
+
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = AccountingPeriodModel(
-      start = "2017-01-01",
-      end = "2017-12-31"
+      start = b1AccountingStart,
+      end = b1AccountingEnd
     ),
     cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-01-01"),
+    tradingStartDate = Some(b1TradingStart),
     cessation = Some(CessationModel(
-      date = Some("2017-12-31"),
-      reason = Some("It really, really was a bad idea")
+      date = Some(b1CessationDate),
+      reason = Some(b1CessationReason)
     )),
-    tradingName = Some("business"),
+    tradingName = Some(b1TradingName),
     address = Some(AddressModel(
-      addressLine1 = "64 Zoo Lane",
-      addressLine2 = Some("Happy Place"),
-      addressLine3 = Some("Magical Land"),
-      addressLine4 = Some("England"),
-      postCode = Some("ZL1 064"),
-      countryCode = "UK"
+      addressLine1 = b1AddressLine1,
+      addressLine2 = Some(b1AddressLine2),
+      addressLine3 = Some(b1AddressLine3),
+      addressLine4 = Some(b1AddressLine4),
+      postCode = Some(b1AddressLine5),
+      countryCode = b1CountryCode
     )),
     contactDetails = None,
     seasonal = None,
@@ -53,47 +79,50 @@ object BusinessDetailsIntegrationTestConstants {
   val business2 = BusinessDetailsModel(
     incomeSourceId = otherTestSelfEmploymentId,
     accountingPeriod = AccountingPeriodModel(
-      start = "2018-01-01",
-      end = "2018-12-31"
+      start = b2AccountingStart,
+      end = b2AccountingEnd
     ),
     cashOrAccruals = Some("CASH"),
-    tradingStartDate = Some("2017-01-01"),
+    tradingStartDate = Some(b2TradingStart),
     cessation = Some(CessationModel(
-      date = Some("2017-12-31"),
-      reason = Some("It really, really was a bad idea")
+      date = Some(b2CessationDate),
+      reason = Some(b2CessationReason)
     )),
-    tradingName = Some("secondBusiness"),
+    tradingName = Some(b2TradingName),
     address = Some(AddressModel(
-      addressLine1 = "742 Evergreen Terrace",
-      addressLine2 = Some("Springfield"),
-      addressLine3 = Some("Oregon"),
-      addressLine4 = Some("USA"),
-      postCode = Some("51MP 50N5"),
-      countryCode = "USA"
+      addressLine1 = b2AddressLine1,
+      addressLine2 = Some(b2AddressLine2),
+      addressLine3 = Some(b2AddressLine3),
+      addressLine4 = Some(b2AddressLine4),
+      postCode = Some(b2AddressLine5),
+      countryCode = b2CountryCode
     )),
     contactDetails = None,
     seasonal = None,
     paperless = None
   )
 
+
+
+
   val businessSuccessResponse: JsValue =
     Json.arr(
       Json.obj(
         "id" -> testSelfEmploymentId,
         "accountingPeriod" -> Json.obj(
-          "start" -> "2017-01-01",
-          "end" -> "2017-12-31"
+          "start" -> b1AccountingStart,
+          "end" -> b1AccountingEnd
         ),
         "accountingType" -> "CASH",
-        "commencementDate" -> "2017-01-01",
-        "cessationDate" -> "2017-12-31",
-        "tradingName" -> "business",
+        "commencementDate" -> b1TradingStart,
+        "cessationDate" -> b1CessationDate,
+        "tradingName" -> b1TradingName,
         "businessDescription" -> "a business",
-        "businessAddressLineOne" -> "64 Zoo Lane",
-        "businessAddressLineTwo" -> "Happy Place",
-        "businessAddressLineThree" -> "Magical Land",
-        "businessAddressLineFour" -> "England",
-        "businessPostcode" -> "ZL1 064"
+        "businessAddressLineOne" -> b1AddressLine1,
+        "businessAddressLineTwo" -> b1AddressLine2,
+        "businessAddressLineThree" -> b1AddressLine3,
+        "businessAddressLineFour" -> b1AddressLine4,
+        "businessPostcode" -> b1AddressLine5
       )
     )
 
@@ -102,58 +131,19 @@ object BusinessDetailsIntegrationTestConstants {
       Json.obj(
         "id" -> otherTestSelfEmploymentId,
         "accountingPeriod" -> Json.obj(
-          "start" -> "2018-01-01",
-          "end" -> "2018-12-31"
+          "start" -> b2AccountingStart,
+          "end" -> b2AccountingEnd
         ),
         "accountingType" -> "CASH",
-        "commencementDate" -> "2018-01-01",
-        "cessationDate" -> "2018-12-31",
-        "tradingName" -> "business",
+        "commencementDate" -> b2TradingStart,
+        "cessationDate" -> b2CessationDate,
+        "tradingName" -> b2TradingName,
         "businessDescription" -> "a business",
-        "businessAddressLineOne" -> "64 Zoo Lane",
-        "businessAddressLineTwo" -> "Happy Place",
-        "businessAddressLineThree" -> "Magical Land",
-        "businessAddressLineFour" -> "England",
-        "businessPostcode" -> "ZL1 064"
-      )
-    )
-
-
-  val multipleSuccessResponse: JsValue =
-    Json.arr(
-      Json.obj(
-        "id" -> testSelfEmploymentId,
-        "accountingPeriod" -> Json.obj(
-          "start" -> "2017-01-01",
-          "end" -> "2017-12-31"
-        ),
-        "accountingType" -> "CASH",
-        "commencementDate" -> "2017-01-06",
-        "cessationDate" -> "2017-12-31",
-        "tradingName" -> "firstBusiness",
-        "businessDescription" -> "a first business",
-        "businessAddressLineOne" -> "64 Zoo Lane",
-        "businessAddressLineTwo" -> "Happy Place",
-        "businessAddressLineThree" -> "Magical Land",
-        "businessAddressLineFour" -> "England",
-        "businessPostcode" -> "ZL1 064"
-      ),
-      Json.obj(
-        "id" -> otherTestSelfEmploymentId,
-        "accountingPeriod" -> Json.obj(
-          "start" -> "2018-01-01",
-          "end" -> "2018-12-31"
-        ),
-        "accountingType" -> "CASH",
-        "commencementDate" -> "2017-01-01",
-        "cessationDate" -> "2017-12-31",
-        "tradingName" -> "secondBusiness",
-        "businessDescription" -> "a second business",
-        "businessAddressLineOne" -> "742 Evergreen Terrace",
-        "businessAddressLineTwo" -> "Springfield",
-        "businessAddressLineThree" -> "Oregon",
-        "businessAddressLineFour" -> "USA",
-        "businessPostcode" -> "51MP 50N5"
+        "businessAddressLineOne" -> b1AddressLine1,
+        "businessAddressLineTwo" -> b1AddressLine2,
+        "businessAddressLineThree" -> b1AddressLine3,
+        "businessAddressLineFour" -> b1AddressLine4,
+        "businessPostcode" -> b1AddressLine5
       )
     )
 

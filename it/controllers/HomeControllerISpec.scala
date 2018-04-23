@@ -15,11 +15,12 @@
  */
 package controllers
 
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import assets.messages.HomeMessages._
+import helpers.ComponentSpecBase
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
-class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with ImplicitDateFormatter {
+class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
 
@@ -33,11 +34,10 @@ class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
           httpStatus(OK),
-          pageTitle("Your Income Tax")
+          pageTitle(title)
         )
       }
     }
-
     unauthorisedTest("")
   }
 }

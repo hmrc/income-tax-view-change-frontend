@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package controllers
 
+import assets.messages.{CalculationMessages => messages}
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.LastTaxCalcIntegrationTestContants._
+import assets.LastTaxCalcIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
-import enums.{Crystallised, Estimate}
 import helpers.servicemocks._
-import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.calculation.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
+import helpers.ComponentSpecBase
+import models.calculation.CalculationDataModel
 import models.financialTransactions.FinancialTransactionsModel
 import play.api.http.Status
 import play.api.http.Status._
 import utils.ImplicitCurrencyFormatter._
 
-class CalculationControllerISpec extends ComponentSpecBase with GenericStubMethods {
+class CalculationControllerISpec extends ComponentSpecBase {
 
   def totalProfit(calc: CalculationDataModel, includeInterest: Boolean = true): String = {
     import calc.incomeReceived._
@@ -72,10 +73,10 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         res should have (
           httpStatus(OK),
-          pageTitle("2017 to 2018 tax year"),
-          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString}"),
-          elementTextByID("heading")("2017 to 2018 tax year"),
-          elementTextByID("sub-heading")("Estimates"),
+          pageTitle(messages.title(testYearInt)),
+          elementTextByID("inYearEstimateHeading")(messages.EstimatedTaxAmount.currentEstimate(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString)),
+          elementTextByID("heading")(messages.heading(testYearInt)),
+          elementTextByID("sub-heading")(messages.EstimatedTaxAmount.subHeading),
           elementTextByID("business-profit")(totalProfit(calculationDataSuccessWithEoYModel)),
           elementTextByID("personal-allowance")(s"-${totalAllowance(calculationDataSuccessWithEoYModel)}"),
           elementTextByID("additional-allowances")("-" + calculationDataSuccessWithEoYModel.additionalAllowances.toCurrencyString),
@@ -143,12 +144,12 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           res should have(
             httpStatus(OK),
-            pageTitle("2017 to 2018 tax year"),
-            elementTextByID("heading")("2017 to 2018 tax year"),
-            elementTextByID("sub-heading")("Bills"),
-            elementTextByID("whatYouOweHeading")(s"${calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString}"),
+            pageTitle(messages.title(testYearInt)),
+            elementTextByID("heading")(messages.heading(testYearInt)),
+            elementTextByID("sub-heading")(messages.CrystalisedTaxAmount.subHeading),
+            elementTextByID("whatYouOweHeading")(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString),
             isElementVisibleById("calcBreakdown")(expectedValue = true),
-            elementTextByID("calcBreakdown")("How this figure was calculated"),
+            elementTextByID("calcBreakdown")(messages.CrystalisedTaxAmount.calcBreakdown),
             elementTextByID("business-profit")(totalProfit(calculationDataSuccessWithEoYModel, includeInterest = false)),
             elementTextByID("savings-income")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             elementTextByID("personal-allowance")(s"-${totalAllowance(calculationDataSuccessWithEoYModel)}"),
@@ -216,9 +217,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
           res should have(
             httpStatus(OK),
-            pageTitle("2017 to 2018 tax year"),
-            elementTextByID("sub-heading")("Bills"),
-            elementTextByID("heading")("2017 to 2018 tax year"),
+            pageTitle(messages.heading(testYearInt)),
+            elementTextByID("heading")(messages.heading(testYearInt)),
+            elementTextByID("sub-heading")(messages.CrystalisedTaxAmount.subHeading),
             isElementVisibleById("calcBreakdown")(expectedValue = false),
             elementTextByID("business-profit")(totalProfit(calculationDataSuccessWithEoYModel, includeInterest = false)),
             elementTextByID("savings-income")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
@@ -317,10 +318,10 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
 
         res should have (
           httpStatus(OK),
-          pageTitle("2017 to 2018 tax year"),
-          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calculationDataSuccessModel.totalIncomeTaxNicYtd.toCurrencyString}"),
-          elementTextByID("heading")("2017 to 2018 tax year"),
-          elementTextByID("sub-heading")("Estimates"),
+          pageTitle(messages.title(testYearInt)),
+          elementTextByID("inYearEstimateHeading")(messages.EstimatedTaxAmount.currentEstimate(calculationDataSuccessModel.totalIncomeTaxNicYtd.toCurrencyString)),
+          elementTextByID("heading")(messages.heading(testYearInt)),
+          elementTextByID("sub-heading")(messages.EstimatedTaxAmount.subHeading),
           elementTextByID("business-profit")(totalProfit(calculationDataSuccessModel)),
           elementTextByID("personal-allowance")(s"-${totalAllowance(calculationDataSuccessModel)}"),
           elementTextByID("additional-allowances")("-" + calculationDataSuccessModel.additionalAllowances.toCurrencyString),
@@ -384,9 +385,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         Then("a successful response is returned with the correct estimate")
         res should have(
           httpStatus(OK),
-          pageTitle("2017 to 2018 tax year"),
-          elementTextByID("inYearEstimateHeading")(s"Current estimate: ${calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString}"),
-          elementTextByID("inYearP1")("This is for 6 April 2017 to 6 July 2017."),
+          pageTitle(messages.title(testYearInt)),
+          elementTextByID("inYearEstimateHeading")(messages.EstimatedTaxAmount.currentEstimate(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString)),
+          elementTextByID("inYearP1")(messages.EstimatedTaxAmount.inYearp1("6 July 2017", testYearInt)),
           isElementVisibleById("inYearCalcBreakdown")(expectedValue = false)
         )
       }
@@ -416,7 +417,7 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         Then("a Not Found response is returned and correct view rendered")
         res should have(
           httpStatus(NOT_FOUND),
-          pageTitle("2017 to 2018 tax year")
+          pageTitle(messages.title(testYearInt))
         )
       }
     }
@@ -445,9 +446,9 @@ class CalculationControllerISpec extends ComponentSpecBase with GenericStubMetho
         Then("an Internal Server Error response is returned and correct view rendered")
         res should have(
           httpStatus(OK),
-          pageTitle("2017 to 2018 tax year"),
-          elementTextByID("p1")("We can't display your estimated tax amount at the moment."),
-          elementTextByID("p2")("Try refreshing the page in a few minutes.")
+          pageTitle(messages.title(testYearInt)),
+          elementTextByID("p1")(messages.internalServerErrorp1),
+          elementTextByID("p2")(messages.internalServerErrorp2)
         )
       }
     }

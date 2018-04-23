@@ -18,15 +18,17 @@ package controllers
 import java.time.LocalDate
 
 import assets.BaseIntegrationTestConstants._
-import assets.ReportDeadlinesIntegrationTestConstants._
+import assets.BusinessDetailsIntegrationTestConstants.b1TradingName
 import assets.IncomeSourceIntegrationTestConstants._
+import assets.ReportDeadlinesIntegrationTestConstants._
+import assets.messages.{ReportDeadlinesMessages => messages}
 import config.FrontendAppConfig
-import helpers.servicemocks.{IncomeTaxViewChangeStub, SelfAssessmentStub}
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.ComponentSpecBase
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
-class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
+class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -55,7 +57,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view displays the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines")
+              pageTitle(messages.title)
             )
 
             Then("the page displays one obligation")
@@ -65,9 +67,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the single business obligation data is")
             res should have(
-              elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
+              elementTextByID(id = "bi-1-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-status")(messages.overdue(LocalDate.now().minusDays(1)))
             )
 
             Then("the page should not contain any property obligations")
@@ -96,7 +98,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the correct title, username and links are displayed")
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines")
+              pageTitle(messages.title)
 
             )
 
@@ -107,22 +109,22 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the business obligation data is")
             res should have(
-              elementTextByID(id = "bi-1-ob-1-start")("1 Jan 2017"),
-              elementTextByID(id = "bi-1-ob-1-end")("31 Mar 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(128).toLongDateShort} Overdue"),
-              elementTextByID(id = "bi-1-ob-2-start")("1 Apr 2017"),
-              elementTextByID(id = "bi-1-ob-2-end")("30 Jun 2017"),
-              elementTextByID(id = "bi-1-ob-2-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
-              elementTextByID(id = "bi-1-ob-3-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "bi-1-ob-3-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
-              elementTextByID(id = "bi-1-ob-4-start")("1 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-4-end")("30 Sep 2017"),
+              elementTextByID(id = "bi-1-ob-1-start")(deadlineStart1.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-end")(deadlineEnd1.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-status")(messages.overdue(LocalDate.now().minusDays(128))),
+              elementTextByID(id = "bi-1-ob-2-start")(deadlineStart2.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-2-end")(deadlineEnd2.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-2-status")(messages.overdue(LocalDate.now().minusDays(36))),
+              elementTextByID(id = "bi-1-ob-3-eops")(messages.wholeTaxYear),
+              elementTextByID(id = "bi-1-ob-3-status")(messages.overdue(LocalDate.now().minusDays(36))),
+              elementTextByID(id = "bi-1-ob-4-start")(deadlineStart4.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-4-end")(deadlineEnd4.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-1-ob-4-status")(LocalDate.now().plusDays(30).toLongDateShort),
-              elementTextByID(id = "bi-1-ob-5-start")("1 Oct 2017"),
-              elementTextByID(id = "bi-1-ob-5-end")("31 Jan 2018"),
+              elementTextByID(id = "bi-1-ob-5-start")(deadlineStart5.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-5-end")(deadlineEnd5.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-1-ob-5-status")(LocalDate.now().plusDays(146).toLongDateShort),
-              elementTextByID(id = "bi-1-ob-6-start")("1 Nov 2017"),
-              elementTextByID(id = "bi-1-ob-6-end")("1 Feb 2018"),
+              elementTextByID(id = "bi-1-ob-6-start")(deadlineStart6.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-6-end")(deadlineEnd6.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-1-ob-6-status")(LocalDate.now().plusDays(174).toLongDateShort)
             )
 
@@ -164,8 +166,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the single property obligation data is")
             res should have(
-              elementTextByID(id = "pi-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "pi-ob-1-end")("5 Jul 2017"),
+              elementTextByID(id = "pi-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
               elementTextByID(id = "pi-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
             )
 
@@ -196,7 +198,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the correct title, username and links are displayed")
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines")
+              pageTitle(messages.title)
             )
 
             Then("the page displays six obligations")
@@ -206,22 +208,22 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the property obligation data is")
             res should have(
-              elementTextByID(id = "pi-ob-1-start")("1 Jan 2017"),
-              elementTextByID(id = "pi-ob-1-end")("31 Mar 2017"),
-              elementTextByID(id = "pi-ob-1-status")(s"${LocalDate.now().minusDays(128).toLongDateShort} Overdue"),
-              elementTextByID(id = "pi-ob-2-start")("1 Apr 2017"),
-              elementTextByID(id = "pi-ob-2-end")("30 Jun 2017"),
-              elementTextByID(id = "pi-ob-2-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
-              elementTextByID(id = "pi-ob-3-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "pi-ob-3-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
-              elementTextByID(id = "pi-ob-4-start")("1 Jul 2017"),
-              elementTextByID(id = "pi-ob-4-end")("30 Sep 2017"),
+              elementTextByID(id = "pi-ob-1-start")(deadlineStart1.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-1-end")(deadlineEnd1.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-1-status")(messages.overdue(LocalDate.now().minusDays(128))),
+              elementTextByID(id = "pi-ob-2-start")(deadlineStart2.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-2-end")(deadlineEnd2.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-2-status")(messages.overdue(LocalDate.now().minusDays(36))),
+              elementTextByID(id = "pi-ob-3-eops")(messages.wholeTaxYear),
+              elementTextByID(id = "pi-ob-3-status")(messages.overdue(LocalDate.now().minusDays(36))),
+              elementTextByID(id = "pi-ob-4-start")(deadlineStart4.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-4-end")(deadlineEnd4.toLocalDate.toLongDateShort),
               elementTextByID(id = "pi-ob-4-status")(LocalDate.now().plusDays(30).toLongDateShort),
-              elementTextByID(id = "pi-ob-5-start")("1 Oct 2017"),
-              elementTextByID(id = "pi-ob-5-end")("31 Jan 2018"),
+              elementTextByID(id = "pi-ob-5-start")(deadlineStart5.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-5-end")(deadlineEnd5.toLocalDate.toLongDateShort),
               elementTextByID(id = "pi-ob-5-status")(LocalDate.now().plusDays(146).toLongDateShort),
-              elementTextByID(id = "pi-ob-6-start")("1 Nov 2017"),
-              elementTextByID(id = "pi-ob-6-end")("1 Feb 2018"),
+              elementTextByID(id = "pi-ob-6-start")(deadlineStart6.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-6-end")(deadlineEnd6.toLocalDate.toLongDateShort),
               elementTextByID(id = "pi-ob-6-status")(LocalDate.now().plusDays(174).toLongDateShort)
             )
 
@@ -252,7 +254,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines")
+              pageTitle(messages.title)
             )
 
             Then("the page should display two obligations")
@@ -262,16 +264,16 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the single business obligation data is")
             res should have(
-              elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
+              elementTextByID(id = "bi-1-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-1-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
             )
 
             Then("the property obligation data is")
             res should have(
-              elementTextByID(id = "pi-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "pi-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "pi-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
+              elementTextByID(id = "pi-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-1-status")(messages.overdue(LocalDate.now().minusDays(1)))
             )
 
           }
@@ -297,7 +299,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the correct title, username and links are displayed")
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines")
+              pageTitle(messages.title)
 
             )
 
@@ -308,43 +310,43 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the business obligation data is")
             res should have(
-              elementTextByID(id = "bi-1-ob-1-start")("1 Jan 2017"),
-              elementTextByID(id = "bi-1-ob-1-end")("31 Mar 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(128).toLongDateShort} Overdue"),
-              elementTextByID(id = "bi-1-ob-2-start")("1 Apr 2017"),
-              elementTextByID(id = "bi-1-ob-2-end")("30 Jun 2017"),
-              elementTextByID(id = "bi-1-ob-2-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
-              elementTextByID(id = "bi-1-ob-3-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "bi-1-ob-3-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
-              elementTextByID(id = "bi-1-ob-4-start")("1 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-4-end")("30 Sep 2017"),
+              elementTextByID(id = "bi-1-ob-1-start")(deadlineStart1.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-end")(deadlineEnd1.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-status")(messages.overdue(LocalDate.now().minusDays(128))),
+              elementTextByID(id = "bi-1-ob-2-start")(deadlineStart2.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-2-end")(deadlineEnd2.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-2-status")(messages.overdue(LocalDate.now().minusDays(36))),
+              elementTextByID(id = "bi-1-ob-3-eops")(messages.wholeTaxYear),
+              elementTextByID(id = "bi-1-ob-3-status")(messages.overdue(LocalDate.now().minusDays(36))),
+              elementTextByID(id = "bi-1-ob-4-start")(deadlineStart4.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-4-end")(deadlineEnd4.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-1-ob-4-status")(LocalDate.now().plusDays(30).toLongDateShort),
-              elementTextByID(id = "bi-1-ob-5-start")("1 Oct 2017"),
-              elementTextByID(id = "bi-1-ob-5-end")("31 Jan 2018"),
+              elementTextByID(id = "bi-1-ob-5-start")(deadlineStart5.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-5-end")(deadlineEnd5.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-1-ob-5-status")(LocalDate.now().plusDays(146).toLongDateShort),
-              elementTextByID(id = "bi-1-ob-6-start")("1 Nov 2017"),
-              elementTextByID(id = "bi-1-ob-6-end")("1 Feb 2018"),
+              elementTextByID(id = "bi-1-ob-6-start")(deadlineStart6.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-6-end")(deadlineEnd6.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-1-ob-6-status")(LocalDate.now().plusDays(174).toLongDateShort)
             )
 
             Then("the property obligation data is")
             res should have(
-              elementTextByID(id = "pi-ob-1-start")("1 Jan 2017"),
-              elementTextByID(id = "pi-ob-1-end")("31 Mar 2017"),
-              elementTextByID(id = "pi-ob-1-status")(s"${LocalDate.now().minusDays(128).toLongDateShort} Overdue"),
-              elementTextByID(id = "pi-ob-2-start")("1 Apr 2017"),
-              elementTextByID(id = "pi-ob-2-end")("30 Jun 2017"),
-              elementTextByID(id = "pi-ob-2-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
-              elementTextByID(id = "pi-ob-3-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "pi-ob-3-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
-              elementTextByID(id = "pi-ob-4-start")("1 Jul 2017"),
-              elementTextByID(id = "pi-ob-4-end")("30 Sep 2017"),
+              elementTextByID(id = "pi-ob-1-start")(deadlineStart1.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-1-end")(deadlineEnd1.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-1-status")(messages.overdue(LocalDate.now().minusDays(128))),
+              elementTextByID(id = "pi-ob-2-start")(deadlineStart2.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-2-end")(deadlineEnd2.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-2-status")(messages.overdue(LocalDate.now().minusDays(36))),
+              elementTextByID(id = "pi-ob-3-eops")(messages.wholeTaxYear),
+              elementTextByID(id = "pi-ob-3-status")(messages.overdue(LocalDate.now().minusDays(36))),
+              elementTextByID(id = "pi-ob-4-start")(deadlineStart4.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-4-end")(deadlineEnd4.toLocalDate.toLongDateShort),
               elementTextByID(id = "pi-ob-4-status")(LocalDate.now().plusDays(30).toLongDateShort),
-              elementTextByID(id = "pi-ob-5-start")("1 Oct 2017"),
-              elementTextByID(id = "pi-ob-5-end")("31 Jan 2018"),
+              elementTextByID(id = "pi-ob-5-start")(deadlineStart5.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-5-end")(deadlineEnd5.toLocalDate.toLongDateShort),
               elementTextByID(id = "pi-ob-5-status")(LocalDate.now().plusDays(146).toLongDateShort),
-              elementTextByID(id = "pi-ob-6-start")("1 Nov 2017"),
-              elementTextByID(id = "pi-ob-6-end")("1 Feb 2018"),
+              elementTextByID(id = "pi-ob-6-start")(deadlineStart6.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-6-end")(deadlineEnd6.toLocalDate.toLongDateShort),
               elementTextByID(id = "pi-ob-6-status")(LocalDate.now().plusDays(174).toLongDateShort)
             )
 
@@ -376,7 +378,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines")
+              pageTitle(messages.title)
 
             )
 
@@ -387,15 +389,15 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the first business obligation data is")
             res should have(
-              elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
+              elementTextByID(id = "bi-1-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-status")(messages.overdue(LocalDate.now().minusDays(1)))
             )
 
             Then("the second business obligation data is")
             res should have(
-              elementTextByID(id = "bi-2-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "bi-2-ob-1-end")("5 Jul 2017"),
+              elementTextByID(id = "bi-2-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-2-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-2-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
             )
 
@@ -429,7 +431,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines")
+              pageTitle(messages.title)
 
             )
 
@@ -440,23 +442,23 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the first business obligation data is")
             res should have(
-              elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
+              elementTextByID(id = "bi-1-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-status")(messages.overdue(LocalDate.now().minusDays(1)))
             )
 
             Then("the second business obligation data is")
             res should have(
-              elementTextByID(id = "bi-2-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "bi-2-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-2-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
+              elementTextByID(id = "bi-2-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+            elementTextByID(id = "bi-2-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
+            elementTextByID(id = "bi-2-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
             )
 
             Then("the property obligation data is")
             res should have(
-              elementTextByID(id = "pi-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "pi-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "pi-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
+              elementTextByID(id = "pi-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-1-status")(messages.overdue(LocalDate.now().minusDays(1)))
             )
 
           }
@@ -485,7 +487,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the page should display the correct title, username and links")
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines")
+              pageTitle(messages.title)
 
             )
 
@@ -496,36 +498,36 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
             Then("the first business obligation data is")
             res should have(
-              elementTextByID(id = "bi-1-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "bi-1-ob-1-end")("5 Jul 2017"),
-              elementTextByID(id = "bi-1-ob-1-status")(s"${LocalDate.now().minusDays(1).toLongDateShort} Overdue")
+              elementTextByID(id = "bi-1-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-1-ob-1-status")(messages.overdue(LocalDate.now().minusDays(1)))
             )
 
             Then("the second business obligation data is")
             res should have(
-              elementTextByID(id = "bi-2-ob-1-start")("1 Jan 2017"),
-              elementTextByID(id = "bi-2-ob-1-end")("31 Mar 2017"),
-              elementTextByID(id = "bi-2-ob-1-status")(s"${LocalDate.now().minusDays(128).toLongDateShort} Overdue"),
-              elementTextByID(id = "bi-2-ob-2-start")("1 Apr 2017"),
-              elementTextByID(id = "bi-2-ob-2-end")("30 Jun 2017"),
-              elementTextByID(id = "bi-2-ob-2-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
-              elementTextByID(id = "bi-2-ob-3-eops")("Whole tax year (final check)"),
-              elementTextByID(id = "bi-2-ob-3-status")(s"${LocalDate.now().minusDays(36).toLongDateShort} Overdue"),
-              elementTextByID(id = "bi-2-ob-4-start")("1 Jul 2017"),
-              elementTextByID(id = "bi-2-ob-4-end")("30 Sep 2017"),
+              elementTextByID(id = "bi-2-ob-1-start")(deadlineStart1.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-2-ob-1-end")(deadlineEnd1.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-2-ob-1-status")(messages.overdue(LocalDate.now().minusDays(128))),
+              elementTextByID(id = "bi-2-ob-2-start")(deadlineStart2.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-2-ob-2-end")(deadlineEnd2.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-2-ob-2-status")(messages.overdue(LocalDate.now().minusDays(36))),
+              elementTextByID(id = "bi-2-ob-3-eops")(messages.wholeTaxYear),
+              elementTextByID(id = "bi-2-ob-3-status")(messages.overdue(LocalDate.now().minusDays(36))),
+              elementTextByID(id = "bi-2-ob-4-start")(deadlineStart4.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-2-ob-4-end")(deadlineEnd4.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-2-ob-4-status")(LocalDate.now().plusDays(30).toLongDateShort),
-              elementTextByID(id = "bi-2-ob-5-start")("1 Oct 2017"),
-              elementTextByID(id = "bi-2-ob-5-end")("31 Jan 2018"),
+              elementTextByID(id = "bi-2-ob-5-start")(deadlineStart5.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-2-ob-5-end")(deadlineEnd5.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-2-ob-5-status")(LocalDate.now().plusDays(146).toLongDateShort),
-              elementTextByID(id = "bi-2-ob-6-start")("1 Nov 2017"),
-              elementTextByID(id = "bi-2-ob-6-end")("1 Feb 2018"),
+              elementTextByID(id = "bi-2-ob-6-start")(deadlineStart6.toLocalDate.toLongDateShort),
+              elementTextByID(id = "bi-2-ob-6-end")(deadlineEnd6.toLocalDate.toLongDateShort),
               elementTextByID(id = "bi-2-ob-6-status")(LocalDate.now().plusDays(174).toLongDateShort)
             )
 
             Then("the property obligation data is")
             res should have(
-              elementTextByID(id = "pi-ob-1-start")("6 Apr 2017"),
-              elementTextByID(id = "pi-ob-1-end")("5 Jul 2017"),
+              elementTextByID(id = "pi-ob-1-start")(singleObligationStart.toLocalDate.toLongDateShort),
+              elementTextByID(id = "pi-ob-1-end")(singleObligationEnd.toLocalDate.toLongDateShort),
               elementTextByID(id = "pi-ob-1-status")(LocalDate.now().plusYears(1).toLongDateShort)
             )
 
@@ -552,10 +554,10 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view is displayed with an error message under the business income section")
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines"),
-              elementTextByID(id = "bi-1-section")("business"),
-              elementTextByID(id = "bi-1-p1")("We can't display your next report due date at the moment."),
-              elementTextByID(id = "bi-1-p2")("Try refreshing the page in a few minutes.")
+              pageTitle(messages.title),
+              elementTextByID(id = "bi-1-section")(b1TradingName),
+              elementTextByID(id = "bi-1-p1")(messages.errorp1),
+              elementTextByID(id = "bi-1-p2")(messages.errorp2)
             )
           }
         }
@@ -579,10 +581,10 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("the view is displayed with an error message under the property income section")
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines"),
-              elementTextByID(id = "pi-section")("Property income"),
-              elementTextByID(id = "pi-p1")("We can't display your next report due date at the moment."),
-              elementTextByID(id = "pi-p2")("Try refreshing the page in a few minutes.")
+              pageTitle(messages.title),
+              elementTextByID(id = "pi-section")(messages.propertyHeading),
+              elementTextByID(id = "pi-p1")(messages.errorp1),
+              elementTextByID(id = "pi-p2")(messages.errorp2)
             )
           }
         }
@@ -609,9 +611,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             Then("an error message for property obligations is returned and the correct view is displayed")
             res should have(
               httpStatus(OK),
-              pageTitle("Report deadlines"),
-              elementTextByID(id = "p1")("We can't display your next report due date at the moment."),
-              elementTextByID(id = "p2")("Try refreshing the page in a few minutes.")
+              pageTitle(messages.title),
+              elementTextByID(id = "p1")(messages.errorp1),
+              elementTextByID(id = "p2")(messages.errorp2)
             )
           }
         }

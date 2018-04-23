@@ -17,14 +17,19 @@
 package controllers
 
 import assets.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import assets.BusinessDetailsIntegrationTestConstants.b1TradingName
 import assets.IncomeSourceIntegrationTestConstants._
+import assets.PropertyDetailsIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
-import config.FrontendAppConfig
+import assets.messages.{AccountDetailsMessages => messages}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ComponentSpecBase, GenericStubMethods}
-import play.api.http.Status.{OK, SEE_OTHER}
+import helpers.ComponentSpecBase
 
-class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMethods {
+import config.FrontendAppConfig
+import play.api.http.Status.{OK, SEE_OTHER}
+import utils.ImplicitDateFormatter._
+
+class AccountDetailsControllerISpec extends ComponentSpecBase {
 
   lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -52,12 +57,12 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
           Then("the view displays the correct title, username and links")
           res should have(
             httpStatus(OK),
-            pageTitle("Account details"),
-            elementTextByID(id = "page-heading")("Account details"),
-            elementTextByID(id = "your-businesses")("Your businesses"),
-            elementTextByID(id = "business-link-1")("business"),
-            elementTextByID(id = "your-properties")("Your properties"),
-            elementTextByID(id = "reporting-period")("Reporting period: 6 April - 5 April")
+            pageTitle(messages.accountTitle),
+            elementTextByID(id = "page-heading")(messages.accountHeading),
+            elementTextByID(id = "your-businesses")(messages.businessHeading),
+            elementTextByID(id = "business-link-1")(b1TradingName),
+            elementTextByID(id = "your-properties")(messages.propertyHeading),
+            elementTextByID(id = "reporting-period")(messages.reportingPeriod(propertyAccountingStart,propertyAccountingEnd))
           )
         }
       }
@@ -82,7 +87,6 @@ class AccountDetailsControllerISpec extends ComponentSpecBase with GenericStubMe
           httpStatus(SEE_OTHER),
           redirectURI(controllers.routes.HomeController.home().url)
         )
-
       }
     }
 

@@ -16,18 +16,16 @@
 package controllers
 
 import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.LastTaxCalcIntegrationTestContants._
+import assets.LastTaxCalcIntegrationTestConstants._
+import assets.messages.{EstimatesMessages => messages}
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import config.FrontendAppConfig
-import enums.{Crystallised, Estimate}
 import helpers.servicemocks._
-import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.calculation.LastTaxCalculation
+import helpers.ComponentSpecBase
 import play.api.http.Status._
 
-class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods {
+class EstimatesControllerISpec extends ComponentSpecBase {
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -90,10 +88,10 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
           Then("The view should have the correct headings and two tax estimate links")
           res should have(
             httpStatus(OK),
-            pageTitle("Estimates"),
-            elementTextByID("view-estimates")("View your current estimates:"),
-            elementTextByID(s"estimates-link-$testYearPlusOne")(s"${testYearPlusOneInt - 1} to $testYearPlusOne tax year"),
-            elementTextByID(s"estimates-link-$testYear")(s"${testYearInt - 1} to $testYear tax year"),
+            pageTitle(messages.estimatesTitle),
+            elementTextByID("view-estimates")(messages.viewEstimates),
+            elementTextByID(s"estimates-link-$testYearPlusOne")(messages.estimatesLink(testYearPlusOneInt)),
+            elementTextByID(s"estimates-link-$testYear")(messages.estimatesLink(testYearInt)),
             nElementsWithClass("estimates-link")(2)
           )
         }
@@ -153,8 +151,8 @@ class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
             httpStatus(OK),
-            pageTitle("Estimates"),
-            elementTextByID("no-estimates")("You don't have an estimate right now. We'll show your next Income Tax estimate when you submit a report using software."),
+            pageTitle(messages.estimatesTitle),
+            elementTextByID("no-estimates")(messages.noEstimates),
             nElementsWithClass("estimates-link")(0)
           )
         }

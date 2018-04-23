@@ -16,11 +16,11 @@
 
 package controllers
 
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import helpers.ComponentSpecBase
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
-class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
+class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
   "calling the BtaPartialController" when {
 
