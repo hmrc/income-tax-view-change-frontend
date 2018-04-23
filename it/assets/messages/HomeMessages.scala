@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package config.features
+package assets.messages
 
-import play.api.Configuration
+object HomeMessages {
 
-import scala.sys.SystemProperties
+  val title = "Your Income Tax"
+  val internalServerError = "Sorry, we are experiencing technical difficulties - 500"
 
-class Feature(val key: String, config: Configuration) {
-  def apply(value: Boolean): Unit = sys.props.update(key, value.toString)
-  def apply(): Boolean = sys.props.get(key).fold(config.getBoolean(key).getOrElse(false))(_.toBoolean)
 }

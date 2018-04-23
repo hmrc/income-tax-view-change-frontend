@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package config.features
+package assets.messages
 
-import play.api.Configuration
+object StatementsMessages {
 
-import scala.sys.SystemProperties
-
-class Feature(val key: String, config: Configuration) {
-  def apply(value: Boolean): Unit = sys.props.update(key, value.toString)
-  def apply(): Boolean = sys.props.get(key).fold(config.getBoolean(key).getOrElse(false))(_.toBoolean)
+  val title = "Income Tax Statement"
+  val taxYear: Int => String = year => s"Tax year: ${year - 1}-$year"
+  val stillToPay: String => String = amount => s"Still to pay: $amount"
+  val paid: (String,String) => String = (amount, date) => s"You paid " + amount + " on " + date
+  val noTransactions = "You've had no transactions since you started reporting through accounting software."
+  val error = "We can't show your statement right now"
 }

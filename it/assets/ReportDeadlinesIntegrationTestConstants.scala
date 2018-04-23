@@ -33,44 +33,60 @@ object ReportDeadlinesIntegrationTestConstants {
     "reason" -> reason
   )
 
+  val deadlineStart1 = "2017-01-01"
+  val deadlineEnd1 = "2017-03-31"
+  val deadlineStart2 = "2017-04-01"
+  val deadlineEnd2 = "2017-06-30"
+  val deadlineStart3 = "2016-06-01"
+  val deadlineEnd3 = "2017-06-30"
+  val deadlineStart4 = "2017-07-01"
+  val deadlineEnd4 = "2017-09-30"
+  val deadlineStart5 = "2017-10-01"
+  val deadlineEnd5 = "2018-01-31"
+  val deadlineStart6 = "2017-11-01"
+  val deadlineEnd6 = "2018-02-01"
+
   val multipleReportDeadlinesDataSuccessModel = ReportDeadlinesModel(List(
     ReportDeadlineModel(
-      start = "2017-01-01",
-      end = "2017-03-31",
+      start = deadlineStart1,
+      end = deadlineEnd1,
       due = LocalDate.now().minusDays(128),
       periodKey = "periodKey"
     ), ReportDeadlineModel(
-      start = "2017-04-01",
-      end = "2017-06-30",
+      start = deadlineStart2,
+      end = deadlineEnd2,
       due = LocalDate.now().minusDays(36),
       periodKey = "periodKey"
     ), ReportDeadlineModel(
-      start = "2016-06-01",
-      end = "2017-06-30",
+      start = deadlineStart3,
+      end = deadlineEnd3,
       due = LocalDate.now().minusDays(36),
       periodKey = "periodKey"
     ), ReportDeadlineModel(
-      start = "2017-07-01",
-      end = "2017-09-30",
+      start = deadlineStart4,
+      end = deadlineEnd4,
       due = LocalDate.now().plusDays(30),
       periodKey = "periodKey"
     ),ReportDeadlineModel(
-      start = "2017-10-01",
-      end = "2018-01-31",
+      start = deadlineStart5,
+      end = deadlineEnd5,
       due = LocalDate.now().plusDays(146),
       periodKey = "periodKey"
     ), ReportDeadlineModel(
-      start = "2017-11-01",
-      end = "2018-02-01",
+      start = deadlineStart6,
+      end = deadlineEnd6,
       due = LocalDate.now().plusDays(174),
       periodKey = "periodKey"
     )
   ))
 
+  val singleObligationStart = "2017-04-06"
+  val singleObligationEnd = "2017-07-05"
+
   val singleObligationOverdueModel = ReportDeadlinesModel(List(
     ReportDeadlineModel(
-      start = "2017-04-06",
-      end = "2017-07-05",
+      start = singleObligationStart,
+      end = singleObligationEnd,
       due = LocalDate.now().minusDays(1),
       periodKey = "periodKey"
     )
