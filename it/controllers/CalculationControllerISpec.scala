@@ -21,7 +21,7 @@ import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.LastTaxCalcIntegrationTestContants._
+import assets.LastTaxCalcIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import helpers.servicemocks._
 import helpers.ComponentSpecBase

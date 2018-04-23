@@ -17,7 +17,7 @@ package controllers
 
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.LastTaxCalcIntegrationTestContants._
+import assets.LastTaxCalcIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import assets.messages.{BillsMessages => messages}
 import config.FrontendAppConfig
