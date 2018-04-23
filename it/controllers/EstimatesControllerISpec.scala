@@ -22,10 +22,10 @@ import assets.LastTaxCalcIntegrationTestContants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import config.FrontendAppConfig
 import helpers.servicemocks._
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import helpers.ComponentSpecBase
 import play.api.http.Status._
 
-class EstimatesControllerISpec extends ComponentSpecBase with GenericStubMethods {
+class EstimatesControllerISpec extends ComponentSpecBase {
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 

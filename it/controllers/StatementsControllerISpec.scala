@@ -21,14 +21,14 @@ import assets.StatementsIntegrationTestConstants._
 import assets.messages.{StatementsMessages => messages}
 import config.FrontendAppConfig
 import helpers.servicemocks._
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import helpers.ComponentSpecBase
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import utils.ImplicitDateFormatter
 import utils.ImplicitCurrencyFormatter
 
-class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with ImplicitCurrencyFormatter with GenericStubMethods {
+class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with ImplicitCurrencyFormatter {
 
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
@@ -163,8 +163,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           appConfig.features.statementsEnabled(false)
 
           And("I wiremock stub a successful Get Financial Transactions response")
-          val statementResponse = Json.toJson(singleFinancialTransactionsModel)
-          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, singleChargeStatementResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
           val res = IncomeTaxViewChangeFrontend.getStatements

@@ -17,27 +17,15 @@ package controllers
 
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
 import assets.LastTaxCalcIntegrationTestContants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import assets.messages.{BillsMessages => messages}
 import config.FrontendAppConfig
-import enums.{Crystallised, Estimate}
 import helpers.servicemocks._
-import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.calculation.LastTaxCalculation
+import helpers.ComponentSpecBase
 import play.api.http.Status._
 
-/*
- TODO - Remove stubbed CalcData from tests
- TODO - lastTaxCalcResponse to be moved to TestConstants file
- TODO - Put messages in messages file
- TODO - Take out stubbed ReportDeadlines once refactored out if incomeSources
- TODO - Move unauthorised test to some BaseMethod file
- TODO - Move 'isAuthorisedUser(true)' and 'stubUserDetails()' to ComponentSpecBase & remove 'with GenericStubMethods'
- */
-
-class BillsControllerISpec extends ComponentSpecBase with GenericStubMethods {
+class BillsControllerISpec extends ComponentSpecBase {
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 

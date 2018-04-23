@@ -22,19 +22,11 @@ import assets.IncomeSourceIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import assets.messages.{BusinessDetailsMessages => messages}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import helpers.ComponentSpecBase
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import utils.ImplicitDateFormatter._
 
-
-/*
- TODO - Put messages in messages file
- TODO - Take out stubbed ReportDeadlines once refactored out if incomeSources
- TODO - Move unauthorised test to some BaseMethod file
- TODO - Move 'isAuthorisedUser(true)' and 'stubUserDetails()' to ComponentSpecBase & remove 'with GenericStubMethods'
- */
-
-class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubMethods{
+class BusinessDetailsControllerISpec extends ComponentSpecBase {
 
   "Calling the BusinessDetailsController.getBusinessDetails" when {
 

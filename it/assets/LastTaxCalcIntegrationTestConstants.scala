@@ -17,26 +17,39 @@
 package assets
 
 import assets.BaseIntegrationTestConstants.{testCalcId, testCalcId2}
-import assets.CalcDataIntegrationTestConstants.calculationDataSuccessWithEoYModel
-import enums.Crystallised
-import models._
-import models.calculation._
-import play.api.libs.json.{JsValue, Json}
+import assets.CalcDataIntegrationTestConstants.{calculationDataSuccessModel, calculationDataSuccessWithEoYModel}
+import enums.{Crystallised, Estimate}
+import models.calculation.LastTaxCalculation
 
 object LastTaxCalcIntegrationTestConstants {
 
-  val lastTaxCalcResponse =
+  val crystallisedLastTaxCalcResponse =
     LastTaxCalculation(testCalcId,
       "2017-07-06T12:34:56.789Z",
       calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
       Crystallised
     )
 
-  val lastTaxCalcResponse2 =
+  val crystallisedLastTaxCalcResponse2 =
     LastTaxCalculation(testCalcId2,
       "2017-07-06T12:34:56.789Z",
       calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
       Crystallised
+    )
+
+  val estimateLastTaxCalcResponse =
+    LastTaxCalculation(testCalcId,
+      "2017-07-06T12:34:56.789Z",
+      calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
+      Estimate
+    )
+
+  val estimateLastTaxCalcResponse2 =
+    LastTaxCalculation(
+      testCalcId2,
+      "2017-07-06T12:34:56.789Z",
+      calculationDataSuccessModel.totalIncomeTaxNicYtd,
+      Estimate
     )
 
 }

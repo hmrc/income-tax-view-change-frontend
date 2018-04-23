@@ -16,11 +16,11 @@
 package controllers
 
 import assets.messages.HomeMessages._
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import helpers.ComponentSpecBase
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
-class HomeControllerISpec extends ComponentSpecBase with GenericStubMethods with ImplicitDateFormatter {
+class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
 

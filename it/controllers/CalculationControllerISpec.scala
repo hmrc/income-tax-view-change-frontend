@@ -23,16 +23,15 @@ import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.LastTaxCalcIntegrationTestContants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
-import enums.{Crystallised, Estimate}
 import helpers.servicemocks._
-import helpers.{ComponentSpecBase, GenericStubMethods}
-import models.calculation.{CalculationDataErrorModel, CalculationDataModel, LastTaxCalculation}
+import helpers.ComponentSpecBase
+import models.calculation.CalculationDataModel
 import models.financialTransactions.FinancialTransactionsModel
 import play.api.http.Status
 import play.api.http.Status._
 import utils.ImplicitCurrencyFormatter._
 
-class CalculationControllerISpec extends ComponentSpecBase with GenericStubMethods {
+class CalculationControllerISpec extends ComponentSpecBase {
 
   def totalProfit(calc: CalculationDataModel, includeInterest: Boolean = true): String = {
     import calc.incomeReceived._

@@ -24,11 +24,11 @@ import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.{ReportDeadlinesMessages => messages}
 import config.FrontendAppConfig
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import helpers.ComponentSpecBase
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
-class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
+class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
