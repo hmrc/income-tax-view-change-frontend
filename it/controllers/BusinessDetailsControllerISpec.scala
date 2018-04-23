@@ -16,22 +16,23 @@
 
 package controllers
 
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import assets.IncomeSourceIntegrationTestConstants._
 import assets.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import assets.BusinessDetailsIntegrationTestConstants._
+import assets.IncomeSourceIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import assets.messages.{BusinessDetailsMessages => messages}
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.ComponentSpecBase
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import utils.ImplicitDateFormatter._
 
-class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubMethods {
+class BusinessDetailsControllerISpec extends ComponentSpecBase {
 
   "Calling the BusinessDetailsController.getBusinessDetails" when {
 
     "isAuthorisedUser with an active enrolment and has at least 1 business" should {
 
       "return the correct page with a valid total" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -42,28 +43,26 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
+        verifyIncomeSourceDetailsCall(testMtditid)
         verifyReportDeadlinesCall(testSelfEmploymentId)
 
         Then("the view displays the correct title, username and links")
         res should have(
           httpStatus(OK),
           pageTitle("business"),
-          elementTextByID(id = "reporting-period")("Reporting period: 1 January - 31 December"),
-          elementTextByID(id = "cessation-date")("This business ceased trading on 31 December 2017."),
-          elementTextByID(id = "address-details")("Address and contact details"),
-          elementTextByID(id = "trading-name")("Trading name"),
-          elementTextByID(id = "trading-name-business")("business"),
-          elementTextByID(id = "business-address")("Business address"),
-          elementTextByID(id = "address-line-1")("64 Zoo Lane"),
-          elementTextByID(id = "address-line-2")("Happy Place"),
-          elementTextByID(id = "address-line-3")("Magical Land"),
-          elementTextByID(id = "address-line-4")("England"),
-          elementTextByID(id = "address-line-5")("ZL1 064"),
-          elementTextByID(id = "additional-information")("Additional information"),
-          elementTextByID(id = "accounting-method")("This business uses the cash accounting method.")
+          elementTextByID(id = "reporting-period")(messages.reportingPeriod(b1AccountingStart,b1AccountingEnd)),
+          elementTextByID(id = "cessation-date")(messages.cessationDate(b1CessationDate)),
+          elementTextByID(id = "address-details")(messages.addressDetails),
+          elementTextByID(id = "trading-name")(messages.tradingName),
+          elementTextByID(id = "trading-name-business")(b1TradingName),
+          elementTextByID(id = "business-address")(messages.businessAddress),
+          elementTextByID(id = "address-line-1")(b1AddressLine1),
+          elementTextByID(id = "address-line-2")(b1AddressLine2),
+          elementTextByID(id = "address-line-3")(b1AddressLine3),
+          elementTextByID(id = "address-line-4")(b1AddressLine4),
+          elementTextByID(id = "address-line-5")(b1AddressLine5),
+          elementTextByID(id = "additional-information")(messages.additionalInformation),
+          elementTextByID(id = "accounting-method")(messages.accountingMethod)
         )
       }
     }
@@ -71,8 +70,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
     "isAuthorisedUser with an active enrolment, but has no business" should {
 
       "return an internal server error" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with Property Only income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -83,9 +80,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
+        verifyIncomeSourceDetailsCall(testMtditid)
         verifyReportDeadlinesCall(testSelfEmploymentId)
 
         Then("an ISE is displayed")
@@ -98,8 +93,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
     "isAuthorisedUser with an active enrolment, but the api returns an error response" should {
 
       "return an internal server error" in {
-        isAuthorisedUser(true)
-        stubUserDetails()
 
         And("I wiremock stub a successful Income Source Details response with single Business income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR, errorResponse)
@@ -107,8 +100,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
-        Then("I verify the Income Source Details has been successfully wiremocked")
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        verifyIncomeSourceDetailsCall(testMtditid)
 
         Then("an ISE is displayed")
         res should have(
@@ -117,21 +109,6 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase with GenericStubM
       }
     }
 
-    "unauthorised" should {
-
-      "redirect to sign in" in {
-
-        isAuthorisedUser(false)
-
-        When("I call GET /report-quarterly/income-and-expenses/view/business-details")
-        val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
-
-        Then("the http response for an unauthorised user is returned")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
-      }
-    }
+    unauthorisedTest("/account-details/0")
   }
 }

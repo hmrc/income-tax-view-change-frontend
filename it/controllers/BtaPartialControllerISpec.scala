@@ -16,19 +16,17 @@
 
 package controllers
 
-import helpers.{ComponentSpecBase, GenericStubMethods}
+import helpers.ComponentSpecBase
 import play.api.http.Status._
 import utils.ImplicitDateFormatter
 
-class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with GenericStubMethods {
+class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
   "calling the BtaPartialController" when {
 
     "Is authenticated with an active enrolment" should {
 
       "display the bta partial with the correct information" in {
-
-        isAuthorisedUser(true)
 
         When("I call GET /report-quarterly/income-and-expenses/view/partial")
         val res = IncomeTaxViewChangeFrontend.getBtaPartial
@@ -44,20 +42,6 @@ class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateForma
       }
     }
 
-    "Is not authenticated" should {
-
-      "redirect to GG Sign In" in {
-
-        isAuthorisedUser(false)
-
-        When("I call GET /report-quarterly/income-and-expenses/view/partial")
-        val res = IncomeTaxViewChangeFrontend.getBtaPartial
-
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
-      }
-    }
+    unauthorisedTest("/partial")
   }
 }

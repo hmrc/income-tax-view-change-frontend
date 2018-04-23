@@ -41,21 +41,31 @@ trait GenericStubMethods extends CustomMatchers {
     UserDetailsStub.stubGetUserDetailsError()
   }
 
-  def stubPartial(): Unit = {
-    And("I wiremock stub a ServiceInfo Partial response")
-    BtaPartialStub.stubGetServiceInfoPartial()
+  def verifyIncomeSourceDetailsCall(mtditid: String): Unit = {
+    Then(s"Verify that Income Source Details has been called for MTDITID = $mtditid")
+    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(mtditid)
   }
 
   def verifyReportDeadlinesCall(incomeSourceIds: String*): Unit = {
     for(incomeSourceId <- incomeSourceIds) {
-      Then(s"Verify that Report Deadlines has been called for $incomeSourceId")
+      Then(s"Verify that Report Deadlines has been called for incomeSourceID = $incomeSourceId")
       IncomeTaxViewChangeStub.verifyGetReportDeadlines(incomeSourceId)
     }
   }
 
-  def verifyFinancialTransactionsCall(): Unit = {
+  def verifyFinancialTransactionsCall(mtditid: String): Unit = {
     Then("Verify that Financial Transactions has been called")
-    FinancialTransactionsStub.verifyGetFinancialTransactions(testMtditid)
+    FinancialTransactionsStub.verifyGetFinancialTransactions(mtditid)
+  }
+
+  def verifyLastTaxCalculationCall(nino: String, taxYear: String): Unit = {
+    Then(s"Verify that Last Tax Calculation has been called for NINO = $nino and CalcID = $taxYear")
+    IncomeTaxViewChangeStub.verifyGetLastTaxCalc(nino, taxYear)
+  }
+
+  def verifyCalculationDataCall(nino: String, calcId: String): Unit = {
+    Then(s"Verify that Calculation Data has been called for NINO = $nino and CalcID = $calcId")
+    SelfAssessmentStub.verifyGetCalcData(nino, calcId)
   }
 
 }

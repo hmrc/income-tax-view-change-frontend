@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package config.features
+package assets.messages
 
-import play.api.Configuration
+object BillsMessages {
 
-import scala.sys.SystemProperties
+  val billsTitle = "Bills"
+  val billsHeading = "Bills"
+  val finalBills = "View your finalised bills:"
+  val taxYearText: Int => String = testYear => s"${testYear-1} to $testYear tax year"
+  val earlierBills = "For earlier bills, view your Self Assessment calculations (opens in a new tab)."
+  val noBills = "You've had no bills since you started reporting through software."
 
-class Feature(val key: String, config: Configuration) {
-  def apply(value: Boolean): Unit = sys.props.update(key, value.toString)
-  def apply(): Boolean = sys.props.get(key).fold(config.getBoolean(key).getOrElse(false))(_.toBoolean)
 }

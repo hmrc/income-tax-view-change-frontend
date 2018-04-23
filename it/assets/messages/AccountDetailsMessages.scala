@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package config.features
+package assets.messages
 
-import play.api.Configuration
+import java.time.LocalDate
+import utils.ImplicitDateFormatter._
 
-import scala.sys.SystemProperties
+object AccountDetailsMessages {
 
-class Feature(val key: String, config: Configuration) {
-  def apply(value: Boolean): Unit = sys.props.update(key, value.toString)
-  def apply(): Boolean = sys.props.get(key).fold(config.getBoolean(key).getOrElse(false))(_.toBoolean)
+  val accountHeading = "Account details"
+  val accountTitle = "Account details"
+  val businessHeading = "Your businesses"
+  val propertyHeading = "Your properties"
+  val reportingPeriod: (LocalDate, LocalDate) => String = (start,end) => s"Reporting period: ${start.toLongDateNoYear} - ${end.toLongDateNoYear}"
+
 }

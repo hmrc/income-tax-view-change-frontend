@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package config.features
+package assets.messages
+import utils.ImplicitDateFormatter._
+import java.time.LocalDate
 
-import play.api.Configuration
+object ReportDeadlinesMessages {
 
-import scala.sys.SystemProperties
+  val title = "Report deadlines"
+  val overdue: LocalDate => String = date => s"${date.toLongDateShort} Overdue"
+  val wholeTaxYear = "Whole tax year (final check)"
+  val propertyHeading = "Property income"
+  val errorp1 = "We can't display your next report due date at the moment."
+  val errorp2 = "Try refreshing the page in a few minutes."
 
-class Feature(val key: String, config: Configuration) {
-  def apply(value: Boolean): Unit = sys.props.update(key, value.toString)
-  def apply(): Boolean = sys.props.get(key).fold(config.getBoolean(key).getOrElse(false))(_.toBoolean)
 }
