@@ -37,14 +37,10 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
-        And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyReportDeadlinesCall(testSelfEmploymentId)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -74,14 +70,10 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with Property Only income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
         When("I call GET /report-quarterly/income-and-expenses/view/business-details")
         val res = IncomeTaxViewChangeFrontend.getBusinessDetails(0)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyReportDeadlinesCall(testSelfEmploymentId)
 
         Then("an ISE is displayed")
         res should have(

@@ -44,15 +44,10 @@ class AccountDetailsControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub multiple open and received obligations response")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
           When("I call GET /report-quarterly/income-and-expenses/view/account-details")
           val res = IncomeTaxViewChangeFrontend.getAccountDetails
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
 
           Then("the view displays the correct title, username and links")
           res should have(

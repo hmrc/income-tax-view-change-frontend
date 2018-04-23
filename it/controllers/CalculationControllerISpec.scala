@@ -53,10 +53,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, estimateLastTaxCalcResponse)
 
@@ -67,7 +63,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
         verifyLastTaxCalculationCall(testNino, testYear)
         verifyCalculationDataCall(testNino, testCalcId)
 
@@ -119,10 +114,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub multiple open and received obligations response")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
 
@@ -137,7 +128,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
           verifyLastTaxCalculationCall(testNino, testYear)
           verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
@@ -192,10 +182,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub multiple open and received obligations response")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
 
@@ -210,7 +196,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
           verifyLastTaxCalculationCall(testNino, testYear)
           verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
@@ -263,10 +248,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub multiple open and received obligations response")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
 
@@ -280,7 +261,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
           verifyLastTaxCalculationCall(testNino, testYear)
           verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
@@ -298,10 +278,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, estimateLastTaxCalcResponse)
 
@@ -312,7 +288,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
         verifyLastTaxCalculationCall(testNino, testYear)
         verifyCalculationDataCall(testNino, testCalcId)
 
@@ -364,10 +339,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
         And("a successful Get Last Estimated Tax Liability response via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, estimateLastTaxCalcResponse)
 
@@ -378,7 +349,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
         verifyLastTaxCalculationCall(testNino, testYear)
         verifyCalculationDataCall(testNino, testCalcId)
 
@@ -400,10 +370,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
         And("a No Data Found response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcNoData(testNino, testYear)
 
@@ -411,7 +377,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
         verifyLastTaxCalculationCall(testNino, testYear)
 
         Then("a Not Found response is returned and correct view rendered")
@@ -429,10 +394,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("I wiremock stub multiple open and received obligations response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, multipleReportDeadlinesDataSuccessModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, multipleReportDeadlinesDataSuccessModel)
-
         And("an Error Response response from Get Last Estimated Tax Liability via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
 
@@ -440,7 +401,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyReportDeadlinesCall(testSelfEmploymentId, testPropertyIncomeId)
         verifyLastTaxCalculationCall(testNino, testYear)
 
         Then("an Internal Server Error response is returned and correct view rendered")
