@@ -34,7 +34,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
   "Calling the StatementsController" when {
 
-    "the statements page feature is disabled" should {
+    "the statements page feature is enabled" should {
 
       "isAuthorisedUser with an active enrolment" which {
 
@@ -43,8 +43,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           "display the tax year for the statement and the associated charge" in {
 
             And("I wiremock stub a successful Get Financial Transactions response")
-            val statementResponse = Json.toJson(singleFinancialTransactionsModel)
-            FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
+            FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, singleChargeStatementResponse)
 
             When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
             val res = IncomeTaxViewChangeFrontend.getStatements
@@ -72,8 +71,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           "display the tax year for the statements and the associated charge & payments" in {
 
             And("I wiremock stub a successful Get Financial Transactions response")
-            val statementResponse = Json.toJson(singleFTModel1charge2payments)
-            FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
+            FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, twoChargeStatementResponse)
 
             When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
             val res = IncomeTaxViewChangeFrontend.getStatements
@@ -109,8 +107,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
           "state that the user has no transactions since tey started reporting via software" in {
 
             And("I wiremock stub a successful Get Financial Transactions response")
-            val statementResponse = Json.toJson(emptyFTModel)
-            FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, statementResponse)
+            FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, emptyStatementResponse)
 
             When(s"I call GET /report-quarterly/income-and-expenses/view/statements")
             val res = IncomeTaxViewChangeFrontend.getStatements
