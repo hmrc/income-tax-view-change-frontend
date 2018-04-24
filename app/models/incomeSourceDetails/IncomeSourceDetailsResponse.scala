@@ -33,8 +33,8 @@ case class IncomeSourceDetailsModel(businesses: List[BusinessDetailsModel],
   val accountingPeriods: List[AccountingPeriodModel] = businesses.map(_.accountingPeriod) ++ property.map(_.accountingPeriod)
   val orderedTaxYears: List[Int] = accountingPeriods.map(_.determineTaxYear).sortWith(_ < _).distinct
 
-  val hasPropertyIncome: Boolean = businesses.nonEmpty
-  val hasBusinessIncome: Boolean = property.nonEmpty
+  val hasPropertyIncome: Boolean = property.nonEmpty
+  val hasBusinessIncome: Boolean = businesses.nonEmpty
   val hasBothIncomeSources: Boolean = hasPropertyIncome && hasBusinessIncome
 
   val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
