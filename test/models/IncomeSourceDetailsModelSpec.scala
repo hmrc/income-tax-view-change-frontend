@@ -17,73 +17,75 @@
 package models
 
 import assets.BaseTestConstants._
-import assets.IncomeSourcesWithDeadlinesTestConstants._
 import assets.BusinessDetailsTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
 import assets.PropertyDetailsTestConstants._
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 
-class IncomeSourcesWithDeadlinesModelSpec extends UnitSpec with Matchers {
+class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 
-  "The IncomeSourceDetailsWithDeadlinesModel" when {
+  "The IncomeSourceDetailsModel" when {
+
     "the user has both businesses and property income sources" should {
+
       //Test Business details
       s"have a business ID of $testSelfEmploymentId" in {
-        businessAndPropertyIncomeWithDeadlines.businessIncomeSources.head.incomeSource.incomeSourceId shouldBe testSelfEmploymentId
+        businessesAndPropertyIncome.businesses.head.incomeSourceId shouldBe testSelfEmploymentId
       }
       s"have the businesses accounting period start date of ${testBusinessAccountingPeriod.start}" in {
-        businessAndPropertyIncomeWithDeadlines.businessIncomeSources.head.incomeSource.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
+        businessesAndPropertyIncome.businesses.head.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
       }
       s"have the businesses accounting period end date of ${testBusinessAccountingPeriod.end}" in {
-        businessAndPropertyIncomeWithDeadlines.businessIncomeSources.head.incomeSource.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
+        businessesAndPropertyIncome.businesses.head.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
       }
       s"should have the trading name of 'Test Business'" in {
-        businessAndPropertyIncomeWithDeadlines.businessIncomeSources.head.incomeSource.tradingName.get shouldBe testTradeName
+        businessesAndPropertyIncome.businesses.head.tradingName.get shouldBe testTradeName
       }
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        businessAndPropertyIncomeWithDeadlines.propertyIncomeSource.get.incomeSource.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
+        businessesAndPropertyIncome.property.get.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        businessAndPropertyIncomeWithDeadlines.propertyIncomeSource.get.incomeSource.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
+        businessesAndPropertyIncome.property.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
       }
     }
 
     "the user has just a business income source" should {
       s"have a business ID of $testSelfEmploymentId" in {
-        singleBusinessIncomeWithDeadlines.businessIncomeSources.head.incomeSource.incomeSourceId shouldBe testSelfEmploymentId
+        singleBusinessIncome.businesses.head.incomeSourceId shouldBe testSelfEmploymentId
       }
       s"have the businesses accounting period start date of ${testBusinessAccountingPeriod.start}" in {
-        singleBusinessIncomeWithDeadlines.businessIncomeSources.head.incomeSource.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
+        singleBusinessIncome.businesses.head.accountingPeriod.start shouldBe testBusinessAccountingPeriod.start
       }
       s"have the businesses accounting period end date of ${testBusinessAccountingPeriod.end}" in {
-        singleBusinessIncomeWithDeadlines.businessIncomeSources.head.incomeSource.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
+        singleBusinessIncome.businesses.head.accountingPeriod.end shouldBe testBusinessAccountingPeriod.end
       }
       s"should have the trading name of 'Test Business'" in {
-        singleBusinessIncomeWithDeadlines.businessIncomeSources.head.incomeSource.tradingName.get shouldBe testTradeName
+        singleBusinessIncome.businesses.head.tradingName.get shouldBe testTradeName
       }
       //Test Property details
       s"should not have property details" in {
-        singleBusinessIncomeWithDeadlines.propertyIncomeSource shouldBe None
+        singleBusinessIncome.property shouldBe None
       }
     }
     "the user has just a property income source" should {
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        propertyIncomeOnlyWithDeadlines.propertyIncomeSource.get.incomeSource.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
+        propertyIncomeOnly.property.get.accountingPeriod.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        propertyIncomeOnlyWithDeadlines.propertyIncomeSource.get.incomeSource.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
+        propertyIncomeOnly.property.get.accountingPeriod.end shouldBe testPropertyAccountingPeriod.end
       }
       //Test Business Details
       "should not have business details" in {
-        propertyIncomeOnlyWithDeadlines.businessIncomeSources shouldBe List.empty
+        propertyIncomeOnly.businesses shouldBe List.empty
       }
     }
     "the user has no income source" should {
       "return None for both business and property sources" in {
-        noIncomeDetailsWithNoDeadlines.propertyIncomeSource shouldBe None
-        noIncomeDetailsWithNoDeadlines.businessIncomeSources shouldBe List.empty
+        noIncomeDetails.property shouldBe None
+        noIncomeDetails.businesses shouldBe List.empty
       }
     }
   }

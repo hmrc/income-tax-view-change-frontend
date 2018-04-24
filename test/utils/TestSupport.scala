@@ -17,7 +17,7 @@
 package utils
 
 import assets.BaseTestConstants._
-import assets.IncomeSourcesWithDeadlinesTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
 import auth.MtdItUser
 import com.typesafe.config.Config
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
@@ -57,18 +57,18 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
   implicit val config: Config = app.configuration.underlying
 
   implicit val user: MtdItUser[_] = MtdItUser(
-    mtditid = "12341234",
-    nino = "AA123456A",
+    mtditid = testMtditid,
+    nino = testNino,
     userDetails =
       Some(
         UserDetailsModel(
-          name = "Test User",
+          name = testUserName,
           email = None,
           affinityGroup = "",
           credentialRole = ""
         )
       ),
-    incomeSources = bothIncomeSourcesSuccessBusinessAligned
+    incomeSources = businessAndPropertyAligned
   )(FakeRequest())
 
   implicit val serviceInfo: Html = Html("")

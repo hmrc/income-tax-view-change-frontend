@@ -16,10 +16,10 @@
 
 package mocks.services
 
-import assets.BaseTestConstants.{testMtditid, testNino, testMtdUserNino}
-import assets.IncomeSourcesWithDeadlinesTestConstants._
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtdUserNino}
+import assets.IncomeSourceDetailsTestConstants._
 import auth.MtdItUserWithNino
-import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesError, IncomeSourcesWithDeadlinesResponse}
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.mockito.MockitoSugar
@@ -39,17 +39,17 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
     reset(mockIncomeSourceDetailsService)
   }
 
-  def setupMockGetIncomeSourceDetails(mtdUser: MtdItUserWithNino[_])(sources: IncomeSourcesWithDeadlinesResponse): Unit = {
+  def setupMockGetIncomeSourceDetails(mtdUser: MtdItUserWithNino[_])(sources: IncomeSourceDetailsResponse): Unit = {
     when(
       mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(sources))
   }
 
-  def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncomeSourceSuccess)
-  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(propertyIncomeSourceSuccess)
-  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(bothIncomeSourceSuccessMisalignedTaxYear)
-  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(noIncomeSourceSuccess)
-  def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(bothIncomeSourcesSuccessBusinessAligned)
-  def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourcesWithDeadlinesError)
+  def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(singleBusinessIncome)
+  def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(propertyIncomeOnly)
+  def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(businessesAndPropertyIncome)
+  def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(noIncomeDetails)
+  def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(businessAndPropertyAligned)
+  def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsError(testErrorStatus, testErrorMessage))
 
 }

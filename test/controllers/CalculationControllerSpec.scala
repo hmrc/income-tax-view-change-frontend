@@ -18,6 +18,7 @@ package controllers
 
 import assets.BaseTestConstants._
 import assets.EstimatesTestConstants._
+import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import assets.Messages
 import assets.Messages.EstimatedTaxLiabilityError
 import assets.IncomeSourcesWithDeadlinesTestConstants._
@@ -63,7 +64,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         "return Status OK (200)" in {
           mockFinancialTransactionFailed()
           mockCalculationSuccess()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018IncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
           status(result) shouldBe Status.OK
         }
 
@@ -153,7 +154,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         "return Status OK (200)" in {
           mockFinancialTransactionSuccess()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018IncomeSourceSuccess)
+          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
           mockCalculationNoBreakdown()
           status(result) shouldBe Status.OK
         }

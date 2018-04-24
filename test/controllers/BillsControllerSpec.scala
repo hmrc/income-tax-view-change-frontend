@@ -19,14 +19,14 @@ package controllers
 import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants._
 import assets.EstimatesTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages
-import assets.IncomeSourcesWithDeadlinesTestConstants._
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockCalculationService
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
@@ -58,7 +58,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
       "return redirect SEE_OTHER (303)" in {
         TestCalculationController.config.features.billsEnabled(false)
-        setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
+        setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))
         status(result) shouldBe Status.SEE_OTHER
       }
 
@@ -80,7 +80,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
           "return status OK (200)" in {
             TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, business2018IncomeModel), None))
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))
             mockGetAllLatestCalcSuccess()
             status(result) shouldBe Status.OK
           }
@@ -103,7 +103,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
           "return Status OK (200)" in {
             TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCrystallisedCalcSuccess()
             status(result) shouldBe Status.OK
           }
@@ -125,7 +125,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
           "return Status OK (200)" in {
             TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCalcSuccessEmpty()
             status(result) shouldBe Status.OK
           }
@@ -146,7 +146,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
           "return an OK (200)" in {
             TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCrystallisedCalcWithCalcNotFound()
             status(result) shouldBe Status.OK
           }
@@ -166,7 +166,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
 
           "return an ISE (500)" in {
             TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtdUserNino)(business2018And19IncomeSourceSuccess)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCrystallisedCalcWithError()
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }

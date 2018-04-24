@@ -16,7 +16,12 @@
 
 package mocks.services
 
-import assets.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtdUserNino, testPropertyIncomeId, testSelfEmploymentId}
+import assets.IncomeSourcesWithDeadlinesTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
+import auth.MtdItUserWithNino
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesError, IncomeSourcesWithDeadlinesResponse}
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -113,4 +118,20 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
   def mockPropertyError(): Unit = setupMockReportDeadlinesResult(testPropertyIncomeId)(
     ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
+
+
+  def setupMockGetIncomeSourceWithDeadlines(incomeSourceDetails: IncomeSourceDetailsModel)(sources: IncomeSourcesWithDeadlinesResponse): Unit = {
+    when(
+      mockReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(
+        ArgumentMatchers.eq(incomeSourceDetails)
+      )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(sources))
+  }
+
+  def mockSingleBusinessIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(singleBusinessIncomeWithDeadlines)
+  def mockPropertyIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(propertyIncomeOnly)(propertyIncomeOnlyWithDeadlines)
+  def mockBothIncomeSourcesWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(businessesAndPropertyIncome)(businessAndPropertyIncomeWithDeadlines)
+  def mockNoIncomeSourcesWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(noIncomeDetailsWithNoDeadlines)
+  def mockBothIncomeSourcesBusinessAlignedWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(businessAndPropertyAligned)(businessAndPropertyAlignedWithDeadlines)
+  def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockGetIncomeSourceWithDeadlines(singleBusinessIncome)(IncomeSourcesWithDeadlinesError)
 }

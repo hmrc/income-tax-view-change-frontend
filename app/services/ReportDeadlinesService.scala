@@ -16,21 +16,54 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
-
-import auth.MtdItUserWithNino
+import auth.{MtdItUser, MtdItUserWithNino}
 import connectors._
+import javax.inject.{Inject, Singleton}
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.incomeSourcesWithDeadlines._
 import models.reportDeadlines.ReportDeadlinesResponseModel
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReportDeadlinesService @Inject()(val reportDeadlinesConnector: ReportDeadlinesConnector) {
 
-  def getReportDeadlines(incomeSourceId: String)(implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[ReportDeadlinesResponseModel] = {
+  def getReportDeadlines(incomeSourceId: String)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
     Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting Report Deadlines for incomeSourceID: $incomeSourceId")
     reportDeadlinesConnector.getReportDeadlines(incomeSourceId)
+  }
+
+  def createIncomeSourcesWithDeadlinesModel(incomeSourceResponse: IncomeSourceDetailsResponse)
+                                           (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdUser: MtdItUser[_])
+  : Future[IncomeSourcesWithDeadlinesResponse] = {
+    incomeSourceResponse match {
+      case sources: IncomeSourceDetailsModel =>
+        val businessIncomeModelFList: Future[List[BusinessIncomeWithDeadlinesModel]] =
+          Future.sequence(sources.businesses.map { seTrade =>
+            getReportDeadlines(seTrade.incomeSourceId).map { obs =>
+              BusinessIncomeWithDeadlinesModel(
+                seTrade,
+                obs
+              )
+            }
+          })
+
+        val propertyIncomeModelFOpt: Future[Option[PropertyIncomeWithDeadlinesModel]] =
+          Future.sequence(Option.option2Iterable(sources.property.map { propertyIncome =>
+            getReportDeadlines(propertyIncome.incomeSourceId).map { obs =>
+              PropertyIncomeWithDeadlinesModel(propertyIncome, obs)
+            }
+          })).map(_.headOption)
+
+        for {
+          businessList <- businessIncomeModelFList
+          property <- propertyIncomeModelFOpt
+        } yield {
+          IncomeSourcesWithDeadlinesModel(businessList, property)
+        }
+      case _: IncomeSourceDetailsError => Future.successful(IncomeSourcesWithDeadlinesError)
+    }
   }
 }

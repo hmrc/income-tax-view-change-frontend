@@ -17,10 +17,9 @@
 package connectors
 
 import javax.inject.{Inject, Singleton}
-
 import audit.AuditingService
 import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
-import auth.MtdItUserWithNino
+import auth.{MtdItUser, MtdItUserWithNino}
 import config.FrontendAppConfig
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.Logger
@@ -41,7 +40,7 @@ class ReportDeadlinesConnector @Inject()(val http: HttpClient,
   private[connectors] lazy val getReportDeadlinesUrl: String => String = incomeSourceID =>
     s"${config.itvcProtectedService}/income-tax-view-change/income-source/$incomeSourceID/report-deadlines"
 
-  def getReportDeadlines(incomeSourceID: String)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[ReportDeadlinesResponseModel] = {
+  def getReportDeadlines(incomeSourceID: String)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
 
     val url = getReportDeadlinesUrl(incomeSourceID)
     Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - GET $url")

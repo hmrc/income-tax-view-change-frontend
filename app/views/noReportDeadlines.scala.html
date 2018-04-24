@@ -14,15 +14,11 @@
  * limitations under the License.
  *@
 
-@import utils.ImplicitDateFormatter._
-@import views.html.templates.main_template
-@import views.html.helpers.breadcrumbHelper
-@import views.helpers.ReportDeadlinesPage
-@import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
-@import views.html.helpers.backToHomeHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
+@import views.html.helpers.breadcrumbHelper
+@import views.html.templates.main_template
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(

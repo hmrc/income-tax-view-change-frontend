@@ -16,16 +16,11 @@
 
 package views
 
-import assets.BaseTestConstants.{testMtditid, testNino, testUserDetails}
-import assets.BusinessDetailsTestConstants._
 import assets.EstimatesTestConstants._
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
-import assets.PropertyDetailsTestConstants._
-import auth.MtdItUser
 import config.FrontendAppConfig
 import models.calculation.LastTaxCalculationWithYear
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -39,20 +34,15 @@ class EstimatesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testIncomeSources: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
-  val testBusinessIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), None)
-  val testPropertyIncomeSource: IncomeSourcesWithDeadlinesModel = IncomeSourcesWithDeadlinesModel(List.empty, Some(propertyIncomeModel))
-
-  private def pageSetup(incomeSources: IncomeSourcesWithDeadlinesModel, calcs: List[LastTaxCalculationWithYear]) = new {
-    val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), incomeSources)
+  private def pageSetup(calcs: List[LastTaxCalculationWithYear]) = new {
     lazy val page: HtmlFormat.Appendable =
-      views.html.estimates(calcs,testYear)(FakeRequest(),applicationMessages, mockAppConfig)
+      views.html.estimates(calcs,testYear)(FakeRequest(), applicationMessages, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
   "The EstimatedTaxLiability view" when {
     "the user has estimates for two tax years" should {
-      val setup = pageSetup(testIncomeSources, lastTaxCalcWithYearList)
+      val setup = pageSetup(lastTaxCalcWithYearList)
       import setup._
       val messages = new Messages.Estimates
 
@@ -81,7 +71,7 @@ class EstimatesViewSpec extends TestSupport {
     }
 
     "the user has no estimates" should {
-      val setup = pageSetup(testIncomeSources, List())
+      val setup = pageSetup(List())
       import setup._
       val messages = new Messages.Estimates
 
