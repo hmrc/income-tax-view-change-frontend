@@ -161,7 +161,7 @@ object Messages {
       val dropdownText = "How to submit a report"
       val dropdownLink = "Choose accounting software that supports this service (opens in a new tab)"
       val dropdown1 = "if you have not already."
-      val dropdown2 = "Use your software to record your income and expenses, then send an update to HMRC at least every quarter. We will email you to let you know when to send an update."
+      val dropdown2 = "Use your software to record your income and expenses, then send an update to HMRC at least every quarter."
       val dropdown3 = "Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs."
       val dropdown4 = "After you send your final report, you can see the Income Tax you owe for the tax year."
     }
