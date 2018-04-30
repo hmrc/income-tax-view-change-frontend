@@ -100,7 +100,7 @@ obligations.noReports                                           = You don''t hav
 obligations.dropdown.text                                       = How to submit a report
 obligations.dropdown.link                                       = Choose accounting software that supports this service (opens in a new tab)
 obligations.dropdown.p1                                         = if you have not already.
-obligations.dropdown.p2                                         = Use your software to record your income and expenses, then send an update to HMRC at least every quarter. We will email you to let you know when to send an update.
+obligations.dropdown.p2                                         = Use your software to record your income and expenses, then send an update to HMRC at least every quarter.
 obligations.dropdown.p3                                         = Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs.
 obligations.dropdown.p4                                         = After you send your final report, you can see the Income Tax you owe for the tax year.
 
