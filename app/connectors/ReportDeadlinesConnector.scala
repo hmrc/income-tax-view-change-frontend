@@ -37,18 +37,18 @@ class ReportDeadlinesConnector @Inject()(val http: HttpClient,
                                          val auditingService: AuditingService
                                         ) extends RawResponseReads {
 
-  private[connectors] lazy val getReportDeadlinesUrl: String => String = incomeSourceID =>
-    s"${config.itvcProtectedService}/income-tax-view-change/income-source/$incomeSourceID/report-deadlines"
+  private[connectors] def getReportDeadlinesUrl(incomeSourceID: String, nino: String): String =
+    s"${config.itvcProtectedService}/income-tax-view-change/$nino/income-source/$incomeSourceID/report-deadlines"
 
   def getReportDeadlines(incomeSourceID: String)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
 
-    val url = getReportDeadlinesUrl(incomeSourceID)
+    val url = getReportDeadlinesUrl(incomeSourceID, mtdUser.nino)
     Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - GET $url")
 
     //Audit Report Deadlines Request
     auditingService.audit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, incomeSourceID))
 
-    http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
+    http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map {
       response =>
         response.status match {
           case OK =>
