@@ -46,10 +46,10 @@ trait GenericStubMethods extends CustomMatchers {
     IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(mtditid)
   }
 
-  def verifyReportDeadlinesCall(incomeSourceIds: String*): Unit = {
+  def verifyReportDeadlinesCall(nino: String, incomeSourceIds: String*): Unit = {
     for(incomeSourceId <- incomeSourceIds) {
       Then(s"Verify that Report Deadlines has been called for incomeSourceID = $incomeSourceId")
-      IncomeTaxViewChangeStub.verifyGetReportDeadlines(incomeSourceId)
+      IncomeTaxViewChangeStub.verifyGetReportDeadlines(incomeSourceId, nino)
     }
   }
 

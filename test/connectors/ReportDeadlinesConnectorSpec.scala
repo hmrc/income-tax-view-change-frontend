@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class ReportDeadlinesConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(obligationsDataSuccessModel)))
+  val successResponse = HttpResponse(Status.OK, responseJson = Some(obligationsDataFromJson))
   val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
@@ -40,11 +40,11 @@ class ReportDeadlinesConnectorSpec extends TestSupport with MockHttp with MockAu
 
   "ReportDeadlinesDataConnector.getReportDeadlines()" should {
 
-    lazy val testUrl = TestReportDeadlinesDataConnector.getReportDeadlinesUrl(testSelfEmploymentId)
+    lazy val testUrl = TestReportDeadlinesDataConnector.getReportDeadlinesUrl(testSelfEmploymentId, testNino)
     def result: Future[ReportDeadlinesResponseModel] = TestReportDeadlinesDataConnector.getReportDeadlines(testSelfEmploymentId)
 
     "have the correct URL to ITVC backend" in {
-      testUrl shouldBe s"${frontendAppConfig.itvcProtectedService}/income-tax-view-change/income-source/$testSelfEmploymentId/report-deadlines"
+      testUrl shouldBe s"${frontendAppConfig.itvcProtectedService}/income-tax-view-change/$testNino/income-source/$testSelfEmploymentId/report-deadlines"
     }
 
     "return a SuccessResponse with JSON in case of success" in {
