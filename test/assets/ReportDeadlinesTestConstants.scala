@@ -61,6 +61,13 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     )
   )
 
+  val obligationsDataFromJson: JsValue = Json.obj(
+    "identification" -> testSelfEmploymentId,
+    "obligations" -> Json.arr(
+      reportDeadlineOverdueJson,
+      reportDeadlineOpenJson
+    )
+  )
 
   val overdueEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-04-06",

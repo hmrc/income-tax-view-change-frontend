@@ -78,15 +78,15 @@ object IncomeTaxViewChangeStub {
 
   //ReportDeadlines Stubs
   //=====================
-  val reportDeadlinesUrl: String => String = incomeSourceId => s"/income-tax-view-change/income-source/$incomeSourceId/report-deadlines"
+  def reportDeadlinesUrl(incomeSourceId: String, nino: String): String = s"/income-tax-view-change/$nino/income-source/$incomeSourceId/report-deadlines"
 
-  def stubGetReportDeadlines(incomeSourceId: String, deadlines: ReportDeadlinesModel): Unit =
-    WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId), Status.OK, Json.toJson(deadlines).toString())
+  def stubGetReportDeadlines(incomeSourceId: String, nino: String , deadlines: ReportDeadlinesModel): Unit =
+    WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId, nino), Status.OK, Json.toJson(deadlines).toString())
 
-  def stubGetReportDeadlinesError(incomeSourceId: String): Unit =
-    WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId), Status.INTERNAL_SERVER_ERROR, "ISE")
+  def stubGetReportDeadlinesError(incomeSourceId: String, nino: String): Unit =
+    WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId, nino), Status.INTERNAL_SERVER_ERROR, "ISE")
 
-  def verifyGetReportDeadlines(incomeSourceId: String): Unit =
-    WiremockHelper.verifyGet(reportDeadlinesUrl(incomeSourceId))
+  def verifyGetReportDeadlines(incomeSourceId: String, nino: String): Unit =
+    WiremockHelper.verifyGet(reportDeadlinesUrl(incomeSourceId, nino))
 
 }
