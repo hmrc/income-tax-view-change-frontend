@@ -61,6 +61,10 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val ggSignInContinueUrl: String = loadConfig("government-gateway.continue.url")
   lazy val signInUrl: String = loadConfig("base.sign-in")
 
+  //Exit Survey
+  lazy val exitSurveyBaseUrl:String = loadConfig("feedback-survey-frontend.host") + loadConfig("feedback-survey-frontend.url")
+  lazy val exitSurveyUrl = s"$exitSurveyBaseUrl/?origin=$contactFormServiceIdentifier"
+
   //Sign out
   lazy val ggUrl: String = loadConfig(s"government-gateway.url")
   lazy val ggSignOutUrl = s"$ggUrl/gg/sign-out?continue=$exitSurveyUrl"
@@ -86,9 +90,6 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val ftUrl: String = baseUrl("financial-transactions")
 
   lazy val paymentsUrl: String = loadConfig("payments-frontend.url")
-
-  //Exit Survey
-  lazy val exitSurveyUrl: String = s"$itvcFrontendEnvironment/$baseUrl/exit-survey"
 
   lazy val enterSurveyUrl: String = loadConfig("enter-survey.url")
 

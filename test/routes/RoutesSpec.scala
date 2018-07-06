@@ -73,17 +73,4 @@ class RoutesSpec extends TestSupport {
     }
   }
 
-  //ExitSurvey
-  "The URL for the ExitSurvey.show action" should {
-    s"be equal to $contextRoute/exit-survey" in {
-      controllers.routes.ExitSurveyController.show.url shouldBe s"$contextRoute/exit-survey"
-    }
-  }
-
-  //ThankyouPage route
-  "The URL for the ThankYouController.show " should {
-    s"be equal to $contextRoute/exit-survey/thankyou" in {
-      controllers.routes.ThankYouController.show.url shouldBe s"$contextRoute/exit-survey/thankyou"
-    }
-  }
 }
