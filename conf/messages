@@ -202,29 +202,6 @@ not_enrolled.heading                                            = You can''t vie
 not_enrolled.title                                              = You can''t view this page
 not_enrolled.sign-up                                            = You need to <a id="sign-up-link" href="{0}">sign up for quarterly reporting</a> before you can view this page.
 
-## Exit Survey ##
-exit_survey.title                                               = Give feedback
-exit_survey.heading                                             = Give feedback
-exit_survey.error.maxLengthImprovements                         = You can''t enter more than 1200 characters for your feedback
-
-exit_survey.q1                                                  = Overall, how did you feel about the service you received today?
-exit_survey.q1.option.size                                      = 5
-exit_survey.q1.option.1                                         = Very satisfied
-exit_survey.q1.option.2                                         = Satisfied
-exit_survey.q1.option.3                                         = Neither satisfied or dissatisfied
-exit_survey.q1.option.4                                         = Dissatisfied
-exit_survey.q1.option.5                                         = Very dissatisfied
-
-exit_survey.q2                                                  = How could we improve this service?
-exit_survey.line_1                                              = Please don''t include any personal or financial information, for example your National Insurance or credit card numbers.
-exit_survey.submit                                              = Send feedback
-
-## ThankYou page ##
-thank_you.title                                                 = Thank you
-thank_you.heading                                               = Thank you
-thank_you.line.1                                                = Your feedback will help us improve this service.
-thank_you.signIn                                                = Go back to sign in.
-
 ## Breadcrumbs ##
 breadcrumb-bta                                                  = Business tax account
 breadcrumb-it                                                   = Income Tax
