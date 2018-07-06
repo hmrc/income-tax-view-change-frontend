@@ -22,6 +22,10 @@
 @main_template(title = messages("timeout.title"), bodyClasses = None, showLogout = false, showBtaHeader = false) {
 
   <h1 class="h1-heading">@Messages("timeout.heading")</h1>
-  <p id="sign-in">@Html(Messages("timeout.signIn", controllers.routes.SignInController.signIn().url))</p>
+  <p id="sign-in">
+   @messages("timeout.signIn.1")
+   <a id="sign-in-link" href="@controllers.routes.SignInController.signIn().url">@messages("timeout.signIn.2")</a>
+   @messages("timeout.signIn.3")
+  </p>
 
 }

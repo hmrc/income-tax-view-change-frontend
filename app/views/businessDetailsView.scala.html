@@ -66,7 +66,10 @@
             @business.cashOrAccruals.map { accountingType =>
                 <h3 id="additional-information" class="heading-medium">@messages("business.additionalInfo")</h3>
 
-                <p id="accounting-method">@messages("business.accountingMethod", accountingType.toLowerCase)</p>
+                <p id="accounting-method">
+                  @messages("business.accountingMethod",
+                  if(accountingType.toLowerCase == "cash") messages("accountingMethod.cash") else messages("accountingMethod.accruals"))
+                </p>
             }
 
         </section>
