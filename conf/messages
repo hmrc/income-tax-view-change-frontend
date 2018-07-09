@@ -68,7 +68,6 @@ estimated_tax_liability.calc-breakdown.nic2                     = Class 2 Nation
 estimated_tax_liability.calc-breakdown.nic4                     = Class 4 National Insurance
 estimated_tax_liability.calc-breakdown.reliefs                  = Your tax reliefs
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
-estimated_tax_liability.estimated-date                          = Estimate up to your <span id="calc-date">{0}</span> submission
 estimated_tax_liability.no-data                                 = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
 estimated_tax_liability.error.p1                                = We can''t display your estimated tax amount at the moment.
 estimated_tax_liability.error.p2                                = Try refreshing the page in a few minutes.
@@ -154,7 +153,7 @@ statements.dueBy.screenReaderLink                               = pay your {0}-{
 statements.nothingToPay                                         = Nothing left to pay
 statements.paidBill                                             = You''ve paid this bill.
 statements.transactions                                         = Your transactions
-statements.charge                                               = You had a charge of <span id="{0}-charge">{1}</span>.
+statements.charge                                               = You had a charge of
 statements.youPaid                                              = You paid {0} on {1}
 statements.earlierTransactions                                  = For earlier transactions,
 statements.earlierTransactionsLink                              = view your Self Assessment
@@ -188,7 +187,9 @@ status.overdue                                                  = Overdue
 ## Timeout page ##
 timeout.title                                                   = Your session has timed out
 timeout.heading                                                 = Your session has timed out
-timeout.signIn                                                  = To view your quarterly reporting details, you''ll have to <a id="sign-in-link" href="{0}">sign in</a> using your Government Gateway ID.
+timeout.signIn.1                                                = To view your quarterly reporting details, you''ll have to
+timeout.signIn.2                                                = sign in
+timeout.signIn.3                                                = using your Government Gateway ID.
 
 
 ## BTA Partial ##
@@ -200,7 +201,9 @@ bta_partial.home_button                                         = View your Inco
 ## Not Enrolled
 not_enrolled.heading                                            = You can''t view this page
 not_enrolled.title                                              = You can''t view this page
-not_enrolled.sign-up                                            = You need to <a id="sign-up-link" href="{0}">sign up for quarterly reporting</a> before you can view this page.
+not_enrolled.sign-up.1                                          = You need to
+not_enrolled.sign-up.2                                          = sign up for quarterly reporting
+not_enrolled.sign-up.3                                          = before you can view this page.
 
 ## Breadcrumbs ##
 breadcrumb-bta                                                  = Business tax account
@@ -210,3 +213,7 @@ breadcrumb-bills                                                = Bills
 breadcrumb-obligations                                          = Report deadlines
 breadcrumb-statement                                            = Income Tax statement
 breadcrumb-account                                              = Account details
+
+## Accounting method ##
+accountingMethod.cash                                           = cash
+accountingMethod.accruals                                       = accruals

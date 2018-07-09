@@ -21,7 +21,11 @@
 
 @main_template(title = messages("not_enrolled.title"), bodyClasses = None, showLogout = true, showBtaHeader = false) {
 
-  <h1 class="h1-heading" id="page-heading">@Messages("not_enrolled.heading")</h1>
-  <p id="sign-up">@Html(Messages("not_enrolled.sign-up", appConfig.signUpUrl))</p>
+  <h1 class="h1-heading" id="page-heading">@messages("not_enrolled.heading")</h1>
+  <p id="sign-up">
+   @messages("not_enrolled.sign-up.1")
+   <a id="sign-up-link" href="@appConfig.signUpUrl">@messages("not_enrolled.sign-up.2")</a>
+   @messages("not_enrolled.sign-up.3")
+  </p>
 
 }
