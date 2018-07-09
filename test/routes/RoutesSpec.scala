@@ -64,8 +64,6 @@ class RoutesSpec extends TestSupport {
     }
   }
 
-
-
   //Not-Enrolled route
   "The URL for the NotEnrolledController.show action" should {
     s"be equal to $contextRoute/not-enrolled" in {
@@ -73,4 +71,10 @@ class RoutesSpec extends TestSupport {
     }
   }
 
+  //Language route
+  "The URL for the ItvcLanguageController.switchToLanguage" should {
+    s"be equal to $contextRoute/language/en" in {
+      controllers.routes.ItvcLanguageController.switchToLanguage("en").url shouldBe s"$contextRoute/language/en"
+    }
+  }
 }

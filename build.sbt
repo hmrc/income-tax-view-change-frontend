@@ -13,6 +13,7 @@ val govTemplateVersion        = "5.14.0"
 val playPartialsVersion       = "6.1.0"
 val authClientVersion         = "2.6.0"
 val playUiVersion             = "7.17.0"
+val playLanguageVersion       = "3.4.0"
 
 val scalaTestPlusVersion      = "2.0.0"
 val hmrcTestVersion           = "3.0.0"
@@ -29,7 +30,9 @@ val compile = Seq(
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
-  "uk.gov.hmrc" %% "auth-client" % authClientVersion
+  "uk.gov.hmrc" %% "auth-client" % authClientVersion,
+  "uk.gov.hmrc" %% "play-language" % playLanguageVersion
+
 )
 
 def test(scope: String = "test,it") = Seq(
