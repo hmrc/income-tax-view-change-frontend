@@ -133,6 +133,8 @@ class HomePageViewSpec extends TestSupport {
         mockAppConfig.features.statementsEnabled() shouldBe true
         mockAppConfig.features.accountDetailsEnabled(true)
         mockAppConfig.features.accountDetailsEnabled() shouldBe true
+        mockAppConfig.features.calcBreakdownEnabled(true)
+        mockAppConfig.features.calcBreakdownEnabled() shouldBe true
       }
 
       s"have the title '$title'" in {

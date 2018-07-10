@@ -24,4 +24,5 @@ case class FeatureSwitchModel(propertyDetailsEnabled: Boolean,
                               estimatesEnabled: Boolean,
                               billsEnabled: Boolean,
                               reportDeadlinesEnabled: Boolean,
-                              accountDetailsEnabled: Boolean)
+                              accountDetailsEnabled: Boolean,
+                              calcBreakdownEnabled: Boolean)
