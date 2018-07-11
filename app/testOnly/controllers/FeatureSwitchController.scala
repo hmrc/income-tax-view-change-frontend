@@ -39,7 +39,8 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
         estimatesEnabled = appConfig.features.estimatesEnabled(),
         billsEnabled = appConfig.features.billsEnabled(),
         reportDeadlinesEnabled = appConfig.features.reportDeadlinesEnabled(),
-        accountDetailsEnabled = appConfig.features.accountDetailsEnabled()
+        accountDetailsEnabled = appConfig.features.accountDetailsEnabled(),
+        calcBreakdownEnabled = appConfig.features.calcBreakdownEnabled()
       )
     )))
   }
@@ -61,6 +62,7 @@ class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit v
     appConfig.features.billsEnabled(model.billsEnabled)
     appConfig.features.reportDeadlinesEnabled(model.reportDeadlinesEnabled)
     appConfig.features.accountDetailsEnabled(model.accountDetailsEnabled)
+    appConfig.features.calcBreakdownEnabled(model.calcBreakdownEnabled)
     Redirect(routes.FeatureSwitchController.featureSwitch())
   }
 
