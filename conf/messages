@@ -1,4 +1,4 @@
-#Base
+## Base ##
 base.back                                                       = Back
 base.service_name                                               = Business tax account
 base.phase                                                      = BETA
@@ -7,12 +7,12 @@ base.submit                                                     = Submit
 base.error_heading                                              = There''s a problem
 base.backToHome                                                 = Back to Income Tax home
 
-#BTA Links
+## BTA Links ##
 bta.home                                                        = Business tax home
 bta.messages                                                    = Messages
 bta.manage-account                                              = Manage account
 
-#Feedback
+## Feedback ##
 feedback.title                                                  = Give feedback
 
 ## Home Page ##
@@ -177,7 +177,8 @@ business.addressAndContact                                      = Address and co
 business.tradingName                                            = Trading name
 business.businessAddress                                        = Business address
 business.additionalInfo                                         = Additional information
-business.accountingMethod                                       = This business uses the {0} accounting method.
+business.cashMethod                                             = This business uses the cash accounting method.
+business.accrualsMethod                                         = This business uses the accruals accounting method.
 business.backToAccount                                          = Back to account details
 
 ## Statuses ##
@@ -213,7 +214,3 @@ breadcrumb-bills                                                = Bills
 breadcrumb-obligations                                          = Report deadlines
 breadcrumb-statement                                            = Income Tax statement
 breadcrumb-account                                              = Account details
-
-## Accounting method ##
-accountingMethod.cash                                           = cash
-accountingMethod.accruals                                       = accruals

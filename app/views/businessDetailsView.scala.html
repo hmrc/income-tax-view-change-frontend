@@ -67,8 +67,11 @@
                 <h3 id="additional-information" class="heading-medium">@messages("business.additionalInfo")</h3>
 
                 <p id="accounting-method">
-                  @messages("business.accountingMethod",
-                  if(accountingType.toLowerCase == "cash") messages("accountingMethod.cash") else messages("accountingMethod.accruals"))
+                  @if(accountingType.toLowerCase == "cash") {
+                    @messages("business.cashMethod")
+                  } else {
+                    @messages("business.accrualsMethod")
+                  }
                 </p>
             }
 
