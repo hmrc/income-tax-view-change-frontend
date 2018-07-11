@@ -81,7 +81,7 @@
             </h2>
             <p id="inYearP1">@messages("estimated_tax_liability.inYearEstimate.p1", s"${taxYear - 1}", s"${calcModel.calcTimestamp.toLocalDateTime.toLongDateTime}")</p>
 
-            @if(calcModel.breakdownNonEmpty){
+            @if(calcModel.breakdownNonEmpty && appConfig.features.calcBreakdownEnabled()){
                 <h3 id="howCalculatedHeading" class="heading-medium">@messages("estimated_tax_liability.calc-breakdown.heading")</h3>
                 @calcBreakdown
             }
