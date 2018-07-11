@@ -25,7 +25,7 @@ import models.core.UserDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterAll, Suite}
+import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.HeaderNames
 import play.api.i18n.MessagesApi
@@ -39,7 +39,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar with BeforeAndAfterAll with MaterializerSupport {
+trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar with BeforeAndAfterEach with MaterializerSupport {
   this: Suite =>
 
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
