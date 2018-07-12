@@ -16,33 +16,36 @@
 
 package controllers
 
-import play.api.i18n.{Lang, MessagesApi}
+import play.api.i18n.Lang
 import utils.TestSupport
 
 class ItvcLanguageControllerSpec extends TestSupport {
 
-
   object TestItvcLanguageController extends ItvcLanguageController(
-    app.injector.instanceOf[MessagesApi]
+    frontendAppConfig,
+    messagesApi
   )
 
   "Calling LanguageController.langToCall" should {
     "when passed in english as a choice " in {
-      val result = TestItvcLanguageController.langToCall("en")
 
-      result.url shouldBe "/report-quarterly/income-and-expenses/view/language/en"
+      val result = TestItvcLanguageController.langToCall.apply("en").toString
+
+      result shouldBe "/report-quarterly/income-and-expenses/view/language/en"
     }
 
 
     "when passed in welsh as a choice" in {
-      val result = TestItvcLanguageController.langToCall("cy")
 
-      result.url shouldBe "/report-quarterly/income-and-expenses/view/language/cy"
+      val result = TestItvcLanguageController.langToCall.apply("cy").toString
+
+      result shouldBe "/report-quarterly/income-and-expenses/view/language/cy"
     }
   }
 
   "The fallback url" should {
     s"be ${controllers.routes.HomeController.home().url}" in {
+
       val result = TestItvcLanguageController.fallbackURL
 
       result shouldBe controllers.routes.HomeController.home().url

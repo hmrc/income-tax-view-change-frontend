@@ -16,27 +16,26 @@
 
 package controllers
 
-import javax.inject.Inject
-import play.api.{Configuration, Environment}
-import play.api.Mode.Mode
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import play.api.i18n.{Lang, MessagesApi}
-import play.api.mvc.Call
-import uk.gov.hmrc.play.config.RunMode
-import uk.gov.hmrc.play.language.LanguageController
+import play.api.i18n.MessagesApi
+import javax.inject.{Inject, Singleton}
+import config.FrontendAppConfig
+import play.api.i18n.{I18nSupport, Lang, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Call, Controller}
+import uk.gov.hmrc.play.language.LanguageUtils
 
-class ItvcLanguageController @Inject()(override val messagesApi: MessagesApi)  extends LanguageController with BaseController {
+class ItvcLanguageController @Inject()(val appConfig: FrontendAppConfig,
+                                       override val messagesApi: MessagesApi) extends BaseController {
 
-  /** Converts a string to a URL, using the route to this controller. **/
-  def langToCall(lang: String): Call = controllers.routes.ItvcLanguageController.switchToLanguage(lang)
+  def langToCall: String => Call = appConfig.routeToSwitchLanguage
 
-  /** Provides a fallback URL if there is no referer in the request header. **/
-  override def fallbackURL: String = controllers.routes.HomeController.home().url
+  protected[controllers] def fallbackURL: String = controllers.routes.HomeController.home().url
 
-  /** Returns a mapping between strings and the corresponding Lang object. **/
-  override def languageMap: Map[String, Lang] = Map(
-    "english" -> Lang("en"),
-    "cymraeg" -> Lang("cy")
-  )
+  def languageMap: Map[String, Lang] = appConfig.languageMap
+
+  def switchToLanguage(language: String): Action[AnyContent] = Action { implicit request =>
+     val lang = languageMap.getOrElse(language, LanguageUtils.getCurrentLang)
+     val redirectURL = request.headers.get(REFERER).getOrElse(fallbackURL)
+ 
+     Redirect(redirectURL).withLang(Lang.apply(lang.code)).flashing(LanguageUtils.FlashWithSwitchIndicator)
+  }
 }
