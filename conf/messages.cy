@@ -121,12 +121,6 @@ crystalisation.incorrect                                        = Ffigurau anghy
 crystalisation.adjustments                                      = Os oes unrhyw wallau, gallwch wneud addasiadau drwy''ch meddalwedd.
 crystalisation.changes                                          = Os gwnewch y newidiadau hyn cyn 31 Ionawr {0}, ni chewch eich cosbi.
 crystalisation.additionalPayment.heading                        = Taliad ychwanegol
-crystalisation.additionalPayment.para                           = Bydd taliad o flaen llaw ar gyfrif o {0} hefyd yn ddyledus erbyn 31 Gorffennaf {1}
-crystalisation.additionalPayment.aboutPayments                  = Ynglŷn â thaliadau ar gyfrif
-crystalisation.paymentsOnAccount.para1                          = Taliadau gorfodol yw''r rhain tuag at eich blwyddyn dreth nesaf. Rydych yn gwneud dau ohonynt: caiff un ei dalu ar ddiwedd y flwyddyn dreth, a''r llall ei dalu 6 mis yn ddiweddarach.
-crystalisation.paymentsOnAccount.para2                          = Mae pob taliad yn gyfystyr â hanner y dreth yr oedd arnoch chi y flwyddyn hon.
-crystalisation.paymentsOnAccount.para3                          = Cewch eich annog i dalu hwn drwy''ch cyfrif Treth Incwm.
-crystalisation.paymentsOnAccount.para4                          = Os ydych o''r farn y byddwch yn ennill llai y flwyddyn nesaf, gallwch leihau eich taliad ar gyfrif ar-lein.
 crystalisation.payNow                                           = Yn eich blaen i dalu
 
 ## Bills Page ##
@@ -144,7 +138,6 @@ statements.title                                                = Datganiad Tret
 statements.heading                                              = Datganiad Treth Incwm
 statements.p1                                                   = Cofnod o''ch costau a thaliadau.
 statements.taxYearStatement                                     = Blwyddyn dreth: {0}-{1}
-statements.totalCharges                                         = Cyfanswm taliadau
 statements.stillToPay                                           = Eto i dalu: {0}
 statements.dueBy                                                = Mae hyn yn ddyledus erbyn {0}.
 statements.dueBy.youCan                                         = Gallwch
