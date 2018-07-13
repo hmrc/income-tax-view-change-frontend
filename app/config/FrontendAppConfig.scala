@@ -18,6 +18,7 @@ package config
 
 import javax.inject.Singleton
 
+import play.api.i18n.Lang
 import com.google.inject.Inject
 import config.features.Features
 import play.api.Mode.Mode
@@ -99,6 +100,13 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   //Accounting software guidance
   lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
 
-  val features = new Features(runModeConfiguration)
+  //Translation
+  def languageMap: Map[String, Lang] = Map(
+      "english" -> Lang("en"),
+      "cymraeg" -> Lang("cy")
+  )
 
+  def routeToSwitchLanguage = (lang: String) => controllers.routes.ItvcLanguageController.switchToLanguage(lang)
+
+  val features = new Features(runModeConfiguration)
 }

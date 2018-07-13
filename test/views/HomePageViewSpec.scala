@@ -35,6 +35,7 @@ class HomePageViewSpec extends TestSupport {
 
   "The HomePage view" when {
 
+
     "the bills Feature is Disabled" should {
 
       lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -139,6 +140,10 @@ class HomePageViewSpec extends TestSupport {
 
       s"have the title '$title'" in {
         document.title() shouldBe title
+      }
+
+      "display the language selection switch" in {
+        document.getElementById("cymraeg-switch").text shouldBe "Cymraeg"
       }
 
       "have a breadcrumb trail" in {
