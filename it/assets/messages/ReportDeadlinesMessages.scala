@@ -15,10 +15,11 @@
  */
 
 package assets.messages
-import utils.ImplicitDateFormatter._
 import java.time.LocalDate
 
-object ReportDeadlinesMessages {
+import helpers.ComponentSpecBase
+
+object ReportDeadlinesMessages extends ComponentSpecBase{
 
   val title = "Report deadlines"
   val overdue: LocalDate => String = date => s"${date.toLongDateShort} Overdue"

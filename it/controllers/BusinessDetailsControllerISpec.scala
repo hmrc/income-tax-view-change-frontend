@@ -16,15 +16,13 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import assets.BaseIntegrationTestConstants.testMtditid
 import assets.BusinessDetailsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import assets.messages.{BusinessDetailsMessages => messages}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.ComponentSpecBase
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import utils.ImplicitDateFormatter._
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 
 class BusinessDetailsControllerISpec extends ComponentSpecBase {
 

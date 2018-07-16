@@ -17,9 +17,10 @@
 package assets.messages
 
 import java.time.LocalDate
-import utils.ImplicitDateFormatter._
 
-object AccountDetailsMessages {
+import helpers.ComponentSpecBase
+
+object AccountDetailsMessages extends ComponentSpecBase{
 
   val accountHeading = "Account details"
   val accountTitle = "Account details"

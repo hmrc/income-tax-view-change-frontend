@@ -18,8 +18,8 @@ package utils
 
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.time.format.DateTimeFormatter
-import java.time.format.TextStyle._
-import java.util.Locale._
+import play.api.i18n.Messages
+import uk.gov.hmrc.play.language.LanguageUtils.Dates
 
 trait ImplicitDateFormatter {
 
@@ -29,18 +29,30 @@ trait ImplicitDateFormatter {
     def toZonedDateTime: ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
   }
 
-  implicit class longDate(d: LocalDate) {
-    def toLongDate: String = d.getDayOfMonth + " " + d.getMonth.getDisplayName(FULL, UK) + " " + d.getYear
-    def toLongDateShort: String = d.getDayOfMonth + " " + d.getMonth.getDisplayName(SHORT, UK) + " " + d.getYear
-    def toLongDateNoYear: String = d.getDayOfMonth + " " + d.getMonth.getDisplayName(FULL, UK)
-  }
-
   implicit class shortDate(date: LocalDate) {
     def toShortDate: String = date.format(DateTimeFormatter.ofPattern("d/MM/uuuu"))
   }
 
-  implicit class longDateTime(dt: LocalDateTime) {
-    def toLongDateTime: String = dt.getDayOfMonth + " " + dt.getMonth.getDisplayName(FULL, UK) + " " + dt.getYear
+  implicit class longDate(d: LocalDate)(implicit messages: Messages) {
+
+    def toLongDateNoYear: String = {
+      val dt = Dates.formatDate(org.joda.time.LocalDate.parse(d.toString))(messages)
+      dt.split(" ")(0) + " " + dt.split(" ")(1);
+    }
+
+    def toLongDateShort: String = {
+      Dates.formatDateAbbrMonth(org.joda.time.LocalDate.parse(d.toString))(messages)
+    }
+
+    def toLongDate: String = {
+      Dates.formatDate(org.joda.time.LocalDate.parse(d.toString))(messages)
+    }
+  }
+
+  implicit class longDateTime(dt: LocalDateTime)(implicit messages: Messages) {
+    def toLongDateTime:String = {
+      Dates.formatDate(org.joda.time.LocalDate.parse(dt.toLocalDate.toString))(messages)
+    }
   }
 
   implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
@@ -50,3 +62,6 @@ trait ImplicitDateFormatter {
 object ImplicitDateFormatter extends ImplicitDateFormatter {
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.fromLessThan(_ isBefore _)
 }
+
+
+

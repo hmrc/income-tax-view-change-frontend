@@ -17,9 +17,10 @@
 package assets.messages
 
 import java.time.LocalDate
-import utils.ImplicitDateFormatter._
 
-object BusinessDetailsMessages {
+import helpers.ComponentSpecBase
+
+object BusinessDetailsMessages extends ComponentSpecBase {
 
   val reportingPeriod: (LocalDate,LocalDate) => String =
     (start,end) => s"Reporting period: ${start.toLongDateNoYear} - ${end.toLongDateNoYear}"
