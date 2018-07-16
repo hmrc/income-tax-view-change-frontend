@@ -207,3 +207,8 @@ breadcrumb-bills                                                = Bills
 breadcrumb-obligations                                          = Report deadlines
 breadcrumb-statement                                            = Income Tax statement
 breadcrumb-account                                              = Account details
+
+## Standard Error Page ##
+standardError.title                                             = There is a problem with the service - Income Tax reporting through software - GOV.UK
+standardError.heading                                           = Sorry, there is a problem with the service
+standardError.message                                           = Try again later.
