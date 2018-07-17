@@ -20,17 +20,21 @@ import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.Status.SEE_OTHER
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
+import utils.ImplicitDateFormatter
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
-  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods {
+  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods with ImplicitDateFormatter {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
+
+  implicit lazy val msgs: Messages = Messages(new Lang("en"), app.injector.instanceOf[MessagesApi])
 
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,
@@ -47,7 +51,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
   val btaPartialUrl = "/business-account/partial/service-info"
-  val testUserDetailsWiremockUrl = mockUrl + userDetailsUrl
+  val testUserDetailsWiremockUrl:String = mockUrl + userDetailsUrl
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))

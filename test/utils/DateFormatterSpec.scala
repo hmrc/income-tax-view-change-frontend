@@ -16,37 +16,49 @@
 
 package utils
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
+
+import play.api.i18n.{Lang, Messages}
 
 class DateFormatterSpec extends TestSupport with ImplicitDateFormatter {
 
-  "The implicit date formatter" should {
-
-    "format string dates" in {
-      "2017-04-01".toLocalDate shouldBe LocalDate.of(2017, 4, 1)
-    }
-
-    "format months with single digit values" in {
-      "2017-6-30".toLocalDate shouldBe LocalDate.of(2017, 6, 30)
-    }
-
-    "format days with single digit values" in {
-      "2017-6-1".toLocalDate shouldBe LocalDate.of(2017, 6, 1)
-    }
-
-    "format string DateTimes" in {
-      "2017-04-01T11:23:45.123Z".toLocalDateTime shouldBe LocalDateTime.parse("2017-04-01T11:23:45.123Z", DateTimeFormatter.ISO_DATE_TIME)
-    }
+  private trait Test {
+    implicit lazy val msgs: Messages = Messages(new Lang("en"), messagesApi)
   }
 
-  "The implicit date formatter" should {
-    "change localDate's to full dates" in {
-      "2017-04-01".toLocalDate.toLongDate shouldBe "1 April 2017"
+  "The implicit date formatter" when {
+
+    "given a date as a string" should {
+
+      "convert it to a LocalDate" in new Test{
+        "2017-04-01".toLocalDate shouldBe LocalDate.parse("2017-04-01")
+      }
+
+      "convert it to a LocalDate with single digit values" in new Test{
+        "2017-6-1".toLocalDate shouldBe LocalDate.parse("2017-06-01")
+      }
     }
 
-    "change LocalDateTime to long date output" in {
-      "2017-04-01T11:23:45.123Z".toLocalDateTime.toLongDateTime shouldBe "1 April 2017"
+    "The implicit date formatter" should {
+
+      "change localDates to full dates in English if the locale is not cy" in new Test{
+        "2017-04-01".toLocalDate.toLongDate shouldBe "1 April 2017"
+      }
+
+      "change LocalDateTime to long date output in English if the locale is not cy" in new Test {
+        "2017-04-01T11:23:45.123Z".toLocalDateTime.toLongDateTime shouldBe "1 April 2017"
+      }
+
+      "change LocalDateTime to long date output in Welsh if the locale is cy" in new Test{
+        override implicit lazy val msgs: Messages = Messages(new Lang("cy"), messagesApi)
+        "2017-04-01T11:23:45.123Z".toLocalDateTime.toLongDateTime shouldBe "1 Ebrill 2017"
+      }
+
+      "change localDates to full dates in Welsh if the locale is cy" in new Test {
+        override implicit lazy val msgs: Messages = Messages(new Lang("cy"), messagesApi)
+        "2017-04-01".toLocalDate.toLongDateShort shouldBe "1 Ebrill 2017"
+      }
+
     }
   }
 }
