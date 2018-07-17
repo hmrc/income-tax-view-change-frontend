@@ -90,14 +90,18 @@ class CrystallisedViewSpec extends TestSupport {
 
       "has a section for What you owe" which {
 
-        lazy val wyoSection = owedTaxSection.getElementById("inYearCalcBreakdown")
+        lazy val wyoSection = owedTaxSection.getElementById("whatYouOwe")
 
         s"has the correct 'whatYouOwe' p1 paragraph '${crysMessages.p1}'" in {
 
-          document.getElementById("inYearP1").text shouldBe crysMessages.p1
+          wyoSection.getElementById("inYearP1").text shouldBe crysMessages.p1
 
         }
 
+      }
+
+      s"has the correct 'p1' text '${crysMessages.p1}'" in {
+        document.getElementById("inYearP1").text shouldBe messages.Crystallised.p1
       }
 
       s"has the correct 'warning' text '${crysMessages.warning}'" in {

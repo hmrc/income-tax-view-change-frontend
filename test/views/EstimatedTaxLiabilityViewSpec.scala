@@ -156,14 +156,14 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
       }
     }
 
-    "have the calculation breakdown section and link hidden" when {
+    "have the calculation breakdown section hidden" when {
 
       "the feature switch is set to false" in {
+
         mockAppConfig.features.calcBreakdownEnabled(false)
         val setup = pageSetup(justBusinessCalcDataModel, bizUser)
         import setup._
-        document.getElementById("calc-breakdown-inner-link") shouldBe null
-        document.getElementById("howCalculatedHeading") shouldBe null
+        document.getElementById("calcBreakdown") shouldBe null
 
       }
     }
