@@ -23,6 +23,7 @@ import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.LastTaxCalcIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
+import config.FrontendAppConfig
 import helpers.servicemocks._
 import helpers.ComponentSpecBase
 import models.calculation.CalculationDataModel
@@ -32,6 +33,8 @@ import play.api.http.Status._
 import utils.ImplicitCurrencyFormatter._
 
 class CalculationControllerISpec extends ComponentSpecBase {
+
+  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   def totalProfit(calc: CalculationDataModel, includeInterest: Boolean = true): String = {
     import calc.incomeReceived._
@@ -46,9 +49,11 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
   "Calling the CalculationController.getEstimatedTaxLiability(year)" when {
 
-    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response and an EoY Estimate" should {
+    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response, an EoY Estimate and feature switch is enabled" should {
 
       "return the correct page with a valid total" in {
+
+        appConfig.features.calcBreakdownEnabled(true)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)

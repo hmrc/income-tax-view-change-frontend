@@ -44,6 +44,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
   val bizUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), singleBusinessIncome)(FakeRequest())
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
+  override def beforeEach() : Unit = {
+    mockAppConfig.features.calcBreakdownEnabled(true)
+  }
+
   private def pageSetup(calcDataModel: CalculationDataModel, user: MtdItUser[_]) = new {
     lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
       calculationDisplaySuccessModel(calcDataModel),
@@ -149,6 +153,18 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
             inYearSection.select("#whyMayChange ul li:nth-child(3)").text shouldBe messages.InYearEstimate.WhyThisMayChange.bullet3
           }
         }
+      }
+    }
+
+    "have the calculation breakdown section hidden" when {
+
+      "the feature switch is set to false" in {
+
+        mockAppConfig.features.calcBreakdownEnabled(false)
+        val setup = pageSetup(justBusinessCalcDataModel, bizUser)
+        import setup._
+        document.getElementById("calcBreakdown") shouldBe null
+
       }
     }
 
