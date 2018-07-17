@@ -16,11 +16,10 @@
 
 package controllers
 
-import play.api.i18n.MessagesApi
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import config.FrontendAppConfig
-import play.api.i18n.{I18nSupport, Lang, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, Controller}
+import play.api.i18n.{Lang, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.language.LanguageUtils
 
 class ItvcLanguageController @Inject()(val appConfig: FrontendAppConfig,

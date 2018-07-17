@@ -23,7 +23,6 @@ import mocks.controllers.predicates.MockAuthenticationPredicate
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.test.Helpers._
 
 class HomeControllerSpec extends MockAuthenticationPredicate {
 
