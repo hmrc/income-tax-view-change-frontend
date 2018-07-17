@@ -51,7 +51,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
   val btaPartialUrl = "/business-account/partial/service-info"
-  val testUserDetailsWiremockUrl = mockUrl + userDetailsUrl
+  val testUserDetailsWiremockUrl:String = mockUrl + userDetailsUrl
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))

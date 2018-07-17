@@ -31,11 +31,11 @@ class DateFormatterSpec extends TestSupport with ImplicitDateFormatter {
     "given a date as a string" should {
 
       "convert it to a LocalDate" in new Test{
-        "2017-04-01".toLocalDate shouldBe LocalDate.of(2017, 4, 1)
+        "2017-04-01".toLocalDate shouldBe LocalDate.parse("2017-04-01")
       }
 
       "convert it to a LocalDate with single digit values" in new Test{
-        "2017-6-1".toLocalDate shouldBe LocalDate.of(2017, 6, 1)
+        "2017-6-1".toLocalDate shouldBe LocalDate.parse("2017-06-01")
       }
     }
 

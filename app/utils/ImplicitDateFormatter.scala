@@ -37,7 +37,7 @@ trait ImplicitDateFormatter {
 
     def toLongDateNoYear: String = {
       val dt = Dates.formatDate(org.joda.time.LocalDate.parse(d.toString))(messages)
-      dt.split(" ")(0) + " " + dt.split(" ")(1);
+      dt.split(" ")(0) + " " + dt.split(" ")(1)
     }
 
     def toLongDateShort: String = {
