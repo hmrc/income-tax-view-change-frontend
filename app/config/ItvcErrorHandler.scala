@@ -18,18 +18,21 @@ package config
 
 import javax.inject.Inject
 
+import controllers.BaseController
 import play.api.i18n.MessagesApi
-import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Request, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
-import views.html.templates.error_template
 
 class ItvcErrorHandler @Inject()(val messagesApi: MessagesApi,
-                                 implicit val config: FrontendAppConfig) extends FrontendErrorHandler {
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): HtmlFormat.Appendable =
-    error_template(pageTitle, heading, message)
+                                 implicit val config: FrontendAppConfig) extends FrontendErrorHandler with BaseController {
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)
+                                    (implicit request: Request[_]): HtmlFormat.Appendable =
+    views.html.errorPages.standardError(pageTitle, heading, message)
 
-  def showInternalServerError(implicit request: Request[_]): Result = InternalServerError(internalServerErrorTemplate)
-
+  def showInternalServerError()(implicit request: Request[_]): Result = InternalServerError(standardErrorTemplate(
+    messagesApi.apply("standardError.title"),
+    messagesApi.apply("standardError.heading"),
+    messagesApi.apply("standardError.message")
+  ))
 }

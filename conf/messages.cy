@@ -207,3 +207,8 @@ breadcrumb-bills                                                = Billau
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
 breadcrumb-statement                                            = Datganiad Treth Incwm
 breadcrumb-account                                              = Manylion y cyfrif
+
+## Standard Error Page ##
+standardError.title                                             = Mae problem gyda''r gwasanaeth – Rhoi gwybod am eich Treth Incwm drwy feddalwedd – GOV.UK
+standardError.heading                                           = Mae''n ddrwg gennym, mae problem gyda''r gwasanaeth
+standardError.message                                           = Rhowch gynnig arall arni yn nes ymlaen.
