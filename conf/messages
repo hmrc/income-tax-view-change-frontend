@@ -212,3 +212,10 @@ breadcrumb-account                                              = Account detail
 standardError.title                                             = There is a problem with the service - Income Tax reporting through software - GOV.UK
 standardError.heading                                           = Sorry, there is a problem with the service
 standardError.message                                           = Try again later.
+
+## Beta Banner ##
+betaBanner.beta                                                 = BETA
+betaBanner.newService                                           = This is a new service
+betaBanner.your                                                 = – your
+betaBanner.feedback                                             = feedback
+betaBanner.improve                                              = will help us to improve it.
