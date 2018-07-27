@@ -212,3 +212,10 @@ breadcrumb-account                                              = Manylion y cyf
 standardError.title                                             = Mae problem gyda''r gwasanaeth – Rhoi gwybod am eich Treth Incwm drwy feddalwedd – GOV.UK
 standardError.heading                                           = Mae''n ddrwg gennym, mae problem gyda''r gwasanaeth
 standardError.message                                           = Rhowch gynnig arall arni yn nes ymlaen.
+
+## Beta Banner ##
+betaBanner.beta                                                 = BETA
+betaBanner.newService                                           = Mae hwn yn wasanaeth newydd
+betaBanner.your                                                 = – bydd eich
+betaBanner.feedback                                             = adborth
+betaBanner.improve                                              = yn ein helpu i''w wella.

@@ -70,7 +70,7 @@
 
 @serviceInfo = {
     @uiLayouts.serviceInfo(
-      betaBanner = phaseBanner(Messages("base.phase")),
+      betaBanner = views.html.helpers.betaBanner(),
       includeGridWrapper = false,
       serviceInfoContent = Some(serviceInfoContent),
       includeHMRCBranding = true,
