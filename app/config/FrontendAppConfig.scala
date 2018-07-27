@@ -46,8 +46,7 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val contactFrontendPartialBaseUrl: String = s"$contactFrontendService"
   lazy val reportAProblemPartialUrl: String = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl: String = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUrl = s"$baseUrl/feedback"
-  lazy val betaFeedbackUnauthenticatedUrl: String = betaFeedbackUrl
+  lazy val betaFeedbackUrl = s"/$baseUrl/feedback"
 
   //SA-API Config
   lazy val saApiService: String = baseUrl("self-assessment-api")
