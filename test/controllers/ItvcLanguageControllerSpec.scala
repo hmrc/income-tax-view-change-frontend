@@ -72,7 +72,7 @@ class ItvcLanguageControllerSpec extends TestSupport {
 
       "use the English language" in {
         cookies(result).get(Play.langCookieName) shouldBe
-          Some(Cookie("PLAY_LANG", "en", None, "/", None, secure = false, httpOnly = false))
+          Some(Cookie("PLAY_LANG", "en", None, "/", None, secure = false, httpOnly = true))
       }
     }
 
@@ -86,7 +86,7 @@ class ItvcLanguageControllerSpec extends TestSupport {
 
       "use the Welsh language" in {
         cookies(result).get(Play.langCookieName) shouldBe
-          Some(Cookie("PLAY_LANG", "cy", None, "/", None, secure = false, httpOnly = false))
+          Some(Cookie("PLAY_LANG", "cy", None, "/", None, secure = false, httpOnly = true))
       }
     }
 
@@ -101,7 +101,7 @@ class ItvcLanguageControllerSpec extends TestSupport {
 
       "keep the current language" in {
         cookies(result).get(Play.langCookieName) shouldBe
-          Some(Cookie("PLAY_LANG", "en", None, "/", None, secure = false, httpOnly = false))
+          Some(Cookie("PLAY_LANG", "en", None, "/", None, secure = false, httpOnly = true))
       }
     }
   }
