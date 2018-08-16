@@ -34,8 +34,8 @@ object FeatureSwitchForm {
       Keys.billsEnabled -> boolean,
       Keys.reportDeadlinesEnabled -> boolean,
       Keys.accountDetailsEnabled -> boolean,
-      Keys.calcBreakdownEnabled -> boolean
+      Keys.calcBreakdownEnabled -> boolean,
+      Keys.calcDataApiEnabled -> boolean
     )(FeatureSwitchModel.apply)(FeatureSwitchModel.unapply)
   )
-
 }

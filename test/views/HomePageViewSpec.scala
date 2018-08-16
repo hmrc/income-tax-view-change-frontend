@@ -35,7 +35,6 @@ class HomePageViewSpec extends TestSupport {
 
   "The HomePage view" when {
 
-
     "the bills Feature is Disabled" should {
 
       lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -52,7 +51,6 @@ class HomePageViewSpec extends TestSupport {
 
     }
 
-
     "the Report Deadlines Feature is Disabled" should {
 
       lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
@@ -68,7 +66,6 @@ class HomePageViewSpec extends TestSupport {
       }
 
     }
-
 
     "the Estimates feature is disabled" should {
 
@@ -136,6 +133,8 @@ class HomePageViewSpec extends TestSupport {
         mockAppConfig.features.accountDetailsEnabled() shouldBe true
         mockAppConfig.features.calcBreakdownEnabled(true)
         mockAppConfig.features.calcBreakdownEnabled() shouldBe true
+        mockAppConfig.features.calcDataApiEnabled(true)
+        mockAppConfig.features.calcDataApiEnabled() shouldBe true
       }
 
       s"have the title '$title'" in {

@@ -17,7 +17,6 @@
 package config.features
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.Configuration
 
 @Singleton
@@ -32,4 +31,5 @@ class Features @Inject()(config: Configuration) {
   val reportDeadlinesEnabled: Feature = new Feature(Keys.reportDeadlinesEnabled, config)
   val accountDetailsEnabled: Feature = new Feature(Keys.accountDetailsEnabled, config)
   val calcBreakdownEnabled: Feature = new Feature(Keys.calcBreakdownEnabled, config)
+  val calcDataApiEnabled: Feature = new Feature(Keys.calcDataApiEnabled, config)
 }
