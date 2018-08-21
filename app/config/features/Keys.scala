@@ -28,4 +28,5 @@ object Keys {
   val reportDeadlinesEnabled = s"$prefix.reportDeadlinesEnabled"
   val accountDetailsEnabled = s"$prefix.accountDetailsEnabled"
   val calcBreakdownEnabled = s"$prefix.calcBreakdownEnabled"
+  val calcDataApiEnabled = s"$prefix.calcDataApiEnabled"
 }
