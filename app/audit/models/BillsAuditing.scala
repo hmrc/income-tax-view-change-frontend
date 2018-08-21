@@ -20,30 +20,13 @@ import auth.MtdItUser
 import models.calculation.CalcDisplayModel
 import models.incomeSourceDetails.BusinessDetailsModel
 
-object EstimatesAuditing {
+object BillsAuditing {
 
-  case class EstimatesAuditModel[A](user: MtdItUser[A], dataModel: CalcDisplayModel) extends AuditModel {
+  case class BillsAuditModel[A](user: MtdItUser[A], dataModel: CalcDisplayModel) extends AuditModel {
 
-    val estimate: Option[BigDecimal] = dataModel.calcDataModel.flatMap { model =>
-      model.eoyEstimate.flatMap { estimate =>
-        Some(estimate.incomeTaxNicAmount)
-      }
-    }
+    override val auditType: String = "billsPageView"
+    override val transactionName: String = "bills-page-view"
 
-    val estimateDetails: Seq[(String, String)] = estimate match {
-      case Some(amount) => Seq(
-        "annualEstimate" -> amount.toString,
-        "currentEstimate" -> dataModel.calcDataModel.fold(dataModel.calcAmount)(_.totalIncomeTaxNicYtd).toString
-      )
-      case None => Seq(
-        "currentEstimate" -> dataModel.calcDataModel.fold(dataModel.calcAmount)(_.totalIncomeTaxNicYtd).toString
-      )
-    }
-
-    override val auditType: String = "estimatesPageView"
-    override val transactionName: String = "estimates-page-view"
-
-    //TODO: Auditing needs to be revisited for multiple businesses scenario - speak to Kris McLackland
     val business: Option[BusinessDetailsModel] = user.incomeSources.businesses.headOption
     override val detail: Seq[(String, String)] = Seq(
       "mtditid" -> user.mtditid,
@@ -53,7 +36,8 @@ object EstimatesAuditing {
       "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.start}"),
       "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.end}"),
       "propAccPeriodStart" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}")
-    ) ++ estimateDetails
+      "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}"),
+      "currentBill" -> dataModel.calcDataModel.fold(dataModel.calcAmount)(_.totalIncomeTaxNicYtd).toString
+    )
   }
 }

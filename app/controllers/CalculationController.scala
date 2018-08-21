@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import audit.AuditingService
 import audit.models.EstimatesAuditing.EstimatesAuditModel
+import audit.models.BillsAuditing.BillsAuditModel
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
@@ -58,15 +59,19 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       implicit val sources: IncomeSourceDetailsModel = user.incomeSources
       calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
         case calcDisplayModel: CalcDisplayModel =>
-          auditEstimate(user, calcDisplayModel.calcAmount.toString)
           calcDisplayModel.calcStatus match {
-            case Crystallised => renderCrystallisedView(calcDisplayModel, taxYear)
-            case Estimate => Future.successful(Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear)))
+            case Crystallised =>
+              audit(user, calcDisplayModel, isEstimate = false)
+              renderCrystallisedView(calcDisplayModel, taxYear)
+            case Estimate =>
+              audit(user, calcDisplayModel, isEstimate = true)
+              Future.successful(Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear)))
           }
+
         case CalcDisplayNoDataFound =>
           Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Not found")
-          auditEstimate(user, "No data found")
           Future.successful(NotFound(views.html.noEstimatedTaxLiability(taxYear)))
+
         case CalcDisplayError =>
           Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
           Future.successful(Ok(views.html.errorPages.estimatedTaxLiabilityError(taxYear)))
@@ -88,10 +93,10 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
     }
   }
 
-  private def auditEstimate(user: MtdItUser[_], estimate: String)(implicit hc: HeaderCarrier): Unit =
+  private def audit(user: MtdItUser[_], model: CalcDisplayModel, isEstimate: Boolean)(implicit hc: HeaderCarrier): Unit = {
     auditingService.audit(
-      EstimatesAuditModel(user, estimate),
+      if (isEstimate) EstimatesAuditModel(user, model) else BillsAuditModel(user, model),
       Some(controllers.routes.CalculationController.showCalculationForYear(user.incomeSources.earliestTaxYear.get).url)
     )
-
+  }
 }
