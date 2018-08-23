@@ -186,5 +186,4 @@ object FinancialTransactionsTestConstants extends ImplicitDateFormatter {
     processingDate = testProcessingDate,
     financialTransactions = Some(Seq(transactionModel(taxYear)))
   )
-
 }
