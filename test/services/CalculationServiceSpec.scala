@@ -91,4 +91,21 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
     }
 
   }
+
+  "The CalculationService.getLatestCalculation method" when {
+
+    object TestCalculationService extends CalculationService(mockLastTaxCalculationConnector, mockCalculationDataConnector) {
+      override def getLatestCalculation(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[String] = {
+        Future.successful("Congrats")
+      }
+    }
+
+    "successful response is returned from the CalculationDataConnector" should {
+
+      "return a String" in {
+        await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe "Congrats"
+      }
+
+    }
+  }
 }
