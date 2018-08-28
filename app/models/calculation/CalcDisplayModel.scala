@@ -38,8 +38,8 @@ case class CalcDisplayModel(calcTimestamp: String,
 
   val hasTaxReliefs: Boolean = calcDataModel.fold(false)(_.taxReliefs > 0)
 
-
 }
+
 case object CalcDisplayError extends CalcDisplayResponseModel
 case object CalcDisplayNoDataFound extends CalcDisplayResponseModel
 

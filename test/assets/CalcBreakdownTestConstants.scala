@@ -1428,4 +1428,12 @@ object CalcBreakdownTestConstants {
       None,
       Estimate
     )
+
+  val testCalcDisplayModel: CalcDisplayModel =
+    CalcDisplayModel(
+      lastTaxCalcSuccess.calcTimestamp,
+      lastTaxCalcSuccess.calcAmount,
+      Some(calculationDataSuccessModel),
+      Estimate
+    )
 }
