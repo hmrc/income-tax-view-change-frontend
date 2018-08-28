@@ -58,7 +58,3 @@ object CalculationModel {
     (JsPath \\ "incomeTaxNicAmount").readNullable[BigDecimal]
   ) (CalculationModel.apply _)
 }
-
-
-
-
