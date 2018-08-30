@@ -84,7 +84,7 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
     "return a CalculationModel with JSON in case of success" in {
       setupMockHttpGet(url)(successResponse)
-      await(result) shouldBe testCalculationModel
+      await(result) shouldBe testCalcModel
     }
 
     "return a CalculationErrorModel in case of failure" in {

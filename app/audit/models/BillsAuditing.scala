@@ -17,7 +17,7 @@
 package audit.models
 
 import auth.MtdItUser
-import models.calculation.CalcDisplayModel
+import models.calculation.{CalcDisplayModel, CalculationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
 
 object BillsAuditing {
@@ -39,5 +39,21 @@ object BillsAuditing {
       "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}"),
       "currentBill" -> dataModel.calcDataModel.fold(dataModel.calcAmount)(_.totalIncomeTaxNicYtd).toString
     )
+  }
+
+  case class BillsAuditModelApi19a[A](user: MtdItUser[A], dataModel: CalculationModel) extends AuditModel {
+
+    override val auditType: String = "billsPageView"
+    override val transactionName: String = "bills-page-view-api-19a"
+
+    val billAmount: Seq[(String, String)] = dataModel.displayAmount match {
+      case Some(amount) => Seq("currentBill" -> amount.toString)
+      case None => Seq.empty
+    }
+
+    override val detail: Seq[(String, String)] = Seq(
+      "mtditid" -> user.mtditid,
+      "nino" -> user.nino
+    ) ++ billAmount
   }
 }

@@ -28,11 +28,11 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers {
   "The CalculationModel" should {
 
     "be formatted to JSON correctly" in {
-      Json.toJson[CalculationModel](testCalculationModel) shouldBe testCalculationOutputJson
+      Json.toJson[CalculationModel](testCalcModel) shouldBe testCalculationOutputJson
     }
 
    "be able to parse a full JSON string into the Model" in {
-      Json.fromJson[CalculationModel](testCalculationInputJson) shouldBe JsSuccess(testCalculationModel)
+      Json.fromJson[CalculationModel](testCalculationInputJson) shouldBe JsSuccess(testCalcModel)
     }
   }
 

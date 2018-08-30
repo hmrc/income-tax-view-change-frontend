@@ -21,12 +21,10 @@ import play.api.libs.json._
 
 sealed trait CalculationResponseModel
 
-case class CalculationErrorModel(code: Int,
-                                 message: String) extends CalculationResponseModel
+case class CalculationErrorModel(code: Int, message: String) extends CalculationResponseModel
 
 object CalculationErrorModel {
-  implicit val format: Format[CalculationErrorModel] =
-    Json.format[CalculationErrorModel]
+  implicit val format: Format[CalculationErrorModel] = Json.format[CalculationErrorModel]
 }
 
 case class CalculationModel(calcId: String,
@@ -46,8 +44,7 @@ case class CalculationModel(calcId: String,
 }
 
 object CalculationModel {
-  implicit val writes: Writes[CalculationModel] =
-    Json.writes[CalculationModel]
+  implicit val writes: Writes[CalculationModel] = Json.writes[CalculationModel]
 
   implicit val reads: Reads[CalculationModel] = (
     (JsPath \\ "calcID").read[String] and

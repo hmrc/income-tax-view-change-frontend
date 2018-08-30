@@ -98,7 +98,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
     "successful response is returned from the CalculationDataConnector" should {
 
       "return a CalculationModel" in {
-        setUpLatestCalculationResponse(testNino, testYear)(testCalculationModel)
+        setUpLatestCalculationResponse(testNino, testYear)(testCalcModel)
         await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationModel(
           "CALCID",
           Some(543.21),
