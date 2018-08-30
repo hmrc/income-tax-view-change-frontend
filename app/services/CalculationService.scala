@@ -99,14 +99,14 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
 
   def getLatestCalculation(nino: String,
                            taxYear: Int)
-                          (implicit headerCarrier: HeaderCarrier): Future[String] = {
+                          (implicit headerCarrier: HeaderCarrier): Future[CalculationResponseModel] = {
     Logger.debug("[CalculationService][getLatestCalculation] - Requesting latest calc data from the backend")
     calculationDataConnector.getLatestCalculation(nino, taxYear) map {
-      case success: String =>
+      case success: CalculationModel =>
         Logger.debug(s"[CalculationService][getLatestCalculation] - Retrieved Calculation data: \n$success")
         success
-      case error: String =>
-        Logger.debug(s"[CalculationService][getLatestCalculation] - Error Response Status: $error, Message: $error")
+      case error: CalculationErrorModel =>
+        Logger.debug(s"[CalculationService][getLatestCalculation] - Error Response Status: ${error.code}, Message: ${error.message}")
         error
     }
   }

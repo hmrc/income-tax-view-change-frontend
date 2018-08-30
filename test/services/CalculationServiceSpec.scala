@@ -21,7 +21,7 @@ import assets.CalcBreakdownTestConstants._
 import assets.EstimatesTestConstants._
 import mocks.connectors.{MockCalculationDataConnector, MockLastTaxCalculationConnector}
 import mocks.services.MockCalculationService
-import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound, LastTaxCalculationResponseModel}
+import models.calculation._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestSupport
 
@@ -95,17 +95,24 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
   "The CalculationService.getLatestCalculation method" when {
 
     object TestCalculationService extends CalculationService(mockLastTaxCalculationConnector, mockCalculationDataConnector) {
-      override def getLatestCalculation(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[String] = {
-        Future.successful("Congrats")
+      override def getLatestCalculation(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalculationResponseModel] = {
+        Future.successful(CalculationModel("test", Some(10000), Some("timestamp"), None, Some(11), Some(22)))
       }
     }
 
     "successful response is returned from the CalculationDataConnector" should {
 
-      "return a String" in {
-        await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe "Congrats"
+      "return a CalculationModel" in {
+        await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationModel(
+          "test", Some(10000), Some("timestamp"), None, Some(11), Some(22))
       }
 
+    }
+
+    "error response is returned from the CalculationDataConnector" should {
+      "return a CalculationErrorModel" in {
+        await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationErrorModel(404, "Not found")
+      }
     }
   }
 }
