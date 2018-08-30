@@ -20,6 +20,7 @@ import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import assets.EstimatesTestConstants._
 import enums.{Crystallised, Estimate}
 import models.calculation._
+import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 
 object CalcBreakdownTestConstants {
@@ -1477,5 +1478,11 @@ object CalcBreakdownTestConstants {
       Some(true),
       Some(123.45),
       Some(987.65)
+    )
+
+  val errorCalculationModel: CalculationErrorModel =
+    CalculationErrorModel(
+      Status.INTERNAL_SERVER_ERROR,
+      "Internal server error"
     )
 }

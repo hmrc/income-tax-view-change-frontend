@@ -40,16 +40,16 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
       }
     } yield (lastCalc, calcBreakdown) match {
       case (calc: LastTaxCalculation, breakdown: CalculationDataModel) =>
-        Logger.debug("[FinancialDataService] Retrieved all Financial Data")
+        Logger.debug("[CalculationService] Retrieved all Financial Data")
         CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown), calc.calcStatus)
       case (calc: LastTaxCalculation, _) =>
-        Logger.debug("[FinancialDataService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
+        Logger.debug("[CalculationService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
         CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None, calc.calcStatus)
       case (_: LastTaxCalculationError, _) =>
-        Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. Downstream error.")
+        Logger.debug("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
       case (NoLastTaxCalculation, _) =>
-        Logger.debug("[FinancialDataService] Could not retrieve Last Tax Calculation. No data was found.")
+        Logger.debug("[CalculationService] Could not retrieve Last Tax Calculation. No data was found.")
         CalcDisplayNoDataFound
     }
   }
@@ -59,16 +59,16 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
                                      year: Int
                                     )(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 
-    Logger.debug("[FinancialDataService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")
+    Logger.debug("[CalculationService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")
     lastTaxCalculationConnector.getLastEstimatedTax(nino, year).map {
       case success: LastTaxCalculation =>
-        Logger.debug(s"[FinancialDataService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n$success")
+        Logger.debug(s"[CalculationService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n$success")
         success
       case NoLastTaxCalculation =>
-        Logger.debug(s"[FinancialDataService][getLastEstimatedTaxCalculation] - No Data Found response returned from connector")
+        Logger.debug(s"[CalculationService][getLastEstimatedTaxCalculation] - No Data Found response returned from connector")
         NoLastTaxCalculation
       case error: LastTaxCalculationError =>
-        Logger.debug(s"[FinancialDataService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
+        Logger.debug(s"[CalculationService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
         error
     }
   }
@@ -86,13 +86,27 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
                                                      taxCalculationId: String
                                                         )(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
 
-    Logger.debug("[FinancialDataService][getCalculationData] - Requesting calculation data from self-assessment api via Connector")
+    Logger.debug("[CalculationService][getCalculationData] - Requesting calculation data from self-assessment api via Connector")
     calculationDataConnector.getCalculationData(nino, taxCalculationId).map {
       case success: CalculationDataModel =>
-        Logger.debug(s"[FinancialDataService][getCalculationData] - Retrieved Calculation data: \n$success")
+        Logger.debug(s"[CalculationService][getCalculationData] - Retrieved Calculation data: \n$success")
         success
       case error: CalculationDataErrorModel =>
-        Logger.debug(s"[FinancialDataService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
+        Logger.debug(s"[CalculationService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
+        error
+    }
+  }
+
+  def getLatestCalculation(nino: String,
+                           taxYear: Int)
+                          (implicit headerCarrier: HeaderCarrier): Future[CalculationResponseModel] = {
+    Logger.debug("[CalculationService][getLatestCalculation] - Requesting latest calc data from the backend")
+    calculationDataConnector.getLatestCalculation(nino, taxYear) map {
+      case success: CalculationModel =>
+        Logger.debug(s"[CalculationService][getLatestCalculation] - Retrieved Calculation data: \n$success")
+        success
+      case error: CalculationErrorModel =>
+        Logger.debug(s"[CalculationService][getLatestCalculation] - Error Response Status: ${error.code}, Message: ${error.message}")
         error
     }
   }

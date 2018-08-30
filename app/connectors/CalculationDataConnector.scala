@@ -17,7 +17,6 @@
 package connectors
 
 import javax.inject.{Inject, Singleton}
-
 import config.FrontendAppConfig
 import models.calculation._
 import play.api.Logger

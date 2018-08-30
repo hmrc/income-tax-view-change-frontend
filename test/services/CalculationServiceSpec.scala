@@ -21,7 +21,8 @@ import assets.CalcBreakdownTestConstants._
 import assets.EstimatesTestConstants._
 import mocks.connectors.{MockCalculationDataConnector, MockLastTaxCalculationConnector}
 import mocks.services.MockCalculationService
-import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound, LastTaxCalculationResponseModel}
+import models.calculation._
+import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestSupport
 
@@ -90,5 +91,32 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
 
     }
 
+  }
+
+  "The CalculationService.getLatestCalculation method" when {
+
+    "successful response is returned from the CalculationDataConnector" should {
+
+      "return a CalculationModel" in {
+        setUpLatestCalculationResponse(testNino, testYear)(testCalculationModel)
+        await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationModel(
+          "CALCID",
+          Some(543.21),
+          Some("2017-07-06T12:34:56.789Z"),
+          Some(true),
+          Some(123.45),
+          Some(987.65)
+        )
+
+      }
+
+      "error response is returned from the CalculationDataConnector" should {
+        "return a CalculationErrorModel" in {
+          setUpLatestCalculationResponse(testNino, testYear)(errorCalculationModel)
+          await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationErrorModel(
+            Status.INTERNAL_SERVER_ERROR, "Internal server error")
+        }
+      }
+    }
   }
 }

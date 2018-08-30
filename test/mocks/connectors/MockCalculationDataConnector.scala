@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.CalculationDataConnector
-import models.calculation.CalculationDataResponseModel
+import models.calculation.{CalculationDataResponseModel, CalculationResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -41,5 +41,12 @@ trait MockCalculationDataConnector extends UnitSpec with MockitoSugar with Befor
         ArgumentMatchers.eq(nino),
         ArgumentMatchers.eq(taxCalculationId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
+
+  def setUpLatestCalculationResponse(nino: String, taxYear: Int)(response: CalculationResponseModel): Unit =
+    when(mockCalculationDataConnector
+      .getLatestCalculation(
+        ArgumentMatchers.eq(nino),
+        ArgumentMatchers.eq(taxYear))(ArgumentMatchers.any()))
+    .thenReturn(Future.successful(response))
 
 }
