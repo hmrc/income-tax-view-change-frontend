@@ -17,10 +17,10 @@
 package assets
 
 import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import enums.{Crystallised, Estimate}
-import play.api.libs.json.{JsValue, Json}
 import assets.EstimatesTestConstants._
+import enums.{Crystallised, Estimate}
 import models.calculation._
+import play.api.libs.json.{JsValue, Json}
 
 object CalcBreakdownTestConstants {
 
@@ -1397,7 +1397,6 @@ object CalcBreakdownTestConstants {
 
   val calculationDataSuccessMinJson: JsValue = Json.obj()
 
-
   val calculationDataErrorModel: CalculationDataErrorModel = CalculationDataErrorModel(testErrorStatus, testErrorMessage)
   val calculationDataErrorJson: JsValue =
      Json.obj(
@@ -1435,5 +1434,48 @@ object CalcBreakdownTestConstants {
       lastTaxCalcSuccess.calcAmount,
       Some(calculationDataSuccessModel),
       Estimate
+    )
+  
+  val testCalculationErrorModel: CalculationErrorModel = CalculationErrorModel(testErrorStatus, testErrorMessage)
+  val testCalculationErrorJson: JsValue =
+     Json.obj(
+       "code" -> testErrorStatus,
+       "message" -> testErrorMessage
+     )
+
+  val testCalculationInputJson: JsValue =
+    Json.obj(
+      "calcOutput" -> Json.obj(
+        "calcID" -> "CALCID", 
+        "calcAmount" -> 543.21, 
+        "calcTimestamp" -> "2017-07-06T12:34:56.789Z", 
+        "crystallised" -> true,
+        "calcResult" -> Json.obj(
+          "incomeTaxNicYtd" -> 123.45,
+          "eoyEstimate" -> Json.obj(
+            "incomeTaxNicAmount" -> 987.65
+          )
+       )       
+     )
+  )
+
+  val testCalculationOutputJson: JsValue =
+    Json.obj(
+      "calcId" -> "CALCID", 
+      "calcAmount" -> 543.21,
+      "calcTimestamp" -> "2017-07-06T12:34:56.789Z",
+      "crystallised" -> true,
+      "incomeTaxNicYtd" -> 123.45,
+      "incomeTaxNicAmount" -> 987.65
+    )
+
+  val testCalculationModel: CalculationModel =
+    CalculationModel(
+      "CALCID",
+      Some(543.21),
+      Some("2017-07-06T12:34:56.789Z"),
+      Some(true),
+      Some(123.45),
+      Some(987.65)
     )
 }
