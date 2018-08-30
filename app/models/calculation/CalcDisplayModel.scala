@@ -19,11 +19,12 @@ package models.calculation
 import enums.CalcStatus
 import play.api.libs.json.{Format, Json}
 
-sealed trait CalcDisplayResponseModel
+sealed trait CalcDisplayResponseModel extends CrystallisedViewModel
+
 case class CalcDisplayModel(calcTimestamp: String,
                             calcAmount: BigDecimal,
                             calcDataModel: Option[CalculationDataModel],
-                            calcStatus: CalcStatus) extends CalcDisplayResponseModel {
+                            calcStatus: CalcStatus) extends CalcDisplayResponseModel with CrystallisedViewModel {
 
   val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
   val hasEoyEstimate: Boolean = calcDataModel.fold(false)(_.eoyEstimate.nonEmpty)

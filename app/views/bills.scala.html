@@ -49,7 +49,7 @@
             <ul class="list list-bullet">
                 @for(calc <- calcModels.reverse){
                     <li>
-                        <a href="@{controllers.routes.CalculationController.showCalculationForYear(calc.taxYear).url}"
+                        <a href="@{controllers.routes.CalculationController.renderCalculationPage(calc.taxYear).url}"
                            class="bills-link"
                            data-journey-click="BillsPage:ClickLink:@{calc.taxYear}"
                            aria-label='@messages("bills.billLink.screenReaderPrefix") @messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")'

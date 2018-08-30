@@ -53,7 +53,7 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
         Logger.debug(s"[EstimatesController][viewEstimateCalculations] Retrieved at least one Errored Last Tax Calc. Response: $estimatesResponse")
         itvcErrorHandler.showInternalServerError
       case estimatesResponse if estimatesResponse.count(!_.matchesStatus(Crystallised)) == 1 =>
-        Redirect(controllers.routes.CalculationController.showCalculationForYear(estimatesResponse.filter(!_.matchesStatus(Crystallised)).head.taxYear))
+        Redirect(controllers.routes.CalculationController.renderCalculationPage(estimatesResponse.filter(!_.matchesStatus(Crystallised)).head.taxYear))
       case estimatesResponse => Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), user.incomeSources.earliestTaxYear.get))
     }
   }

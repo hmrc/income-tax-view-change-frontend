@@ -1480,6 +1480,16 @@ object CalcBreakdownTestConstants {
       Some(987.65)
     )
 
+  val testCalcModelEstimate: CalculationModel =
+    CalculationModel(
+      "CALCID",
+      Some(543.21),
+      Some("2017-07-06T12:34:56.789Z"),
+      None,
+      Some(123.45),
+      Some(987.65)
+    )
+
   val errorCalculationModel: CalculationErrorModel =
     CalculationErrorModel(
       Status.INTERNAL_SERVER_ERROR,

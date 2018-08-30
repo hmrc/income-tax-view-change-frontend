@@ -32,7 +32,8 @@ case class CalculationModel(calcId: String,
                             calcTimestamp: Option[String],
                             crystallised: Option[Boolean],
                             incomeTaxNicYtd: Option[BigDecimal],
-                            incomeTaxNicAmount: Option[BigDecimal]) extends CalculationResponseModel {
+                            incomeTaxNicAmount: Option[BigDecimal]
+                           ) extends CalculationResponseModel with CrystallisedViewModel {
 
   val displayAmount: Option[BigDecimal] = (calcAmount, incomeTaxNicYtd) match {
     case (_, Some(result))    => Some(result)
