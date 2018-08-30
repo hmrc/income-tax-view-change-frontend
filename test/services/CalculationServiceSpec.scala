@@ -22,6 +22,7 @@ import assets.EstimatesTestConstants._
 import mocks.connectors.{MockCalculationDataConnector, MockLastTaxCalculationConnector}
 import mocks.services.MockCalculationService
 import models.calculation._
+import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.TestSupport
 
@@ -94,24 +95,27 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
 
   "The CalculationService.getLatestCalculation method" when {
 
-    object TestCalculationService extends CalculationService(mockLastTaxCalculationConnector, mockCalculationDataConnector) {
-      override def getLatestCalculation(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalculationResponseModel] = {
-        Future.successful(CalculationModel("test", Some(10000), Some("timestamp"), None, Some(11), Some(22)))
-      }
-    }
-
     "successful response is returned from the CalculationDataConnector" should {
 
       "return a CalculationModel" in {
+        setUpLatestCalculationResponse(testNino, testYear)(testCalculationModel)
         await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationModel(
-          "test", Some(10000), Some("timestamp"), None, Some(11), Some(22))
+          "CALCID",
+          Some(543.21),
+          Some("2017-07-06T12:34:56.789Z"),
+          Some(true),
+          Some(123.45),
+          Some(987.65)
+        )
+
       }
 
-    }
-
-    "error response is returned from the CalculationDataConnector" should {
-      "return a CalculationErrorModel" in {
-        await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationErrorModel(404, "Not found")
+      "error response is returned from the CalculationDataConnector" should {
+        "return a CalculationErrorModel" in {
+          setUpLatestCalculationResponse(testNino, testYear)(errorCalculationModel)
+          await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationErrorModel(
+            Status.INTERNAL_SERVER_ERROR, "Internal server error")
+        }
       }
     }
   }
