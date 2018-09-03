@@ -61,4 +61,20 @@ object EstimatesTestConstants {
     LastTaxCalculationWithYear(lastTaxCalcNotFound, testYearPlusOne)
   )
   val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, testYear)
+
+  val fullEstimateViewModel: EstimatesViewModel =
+    EstimatesViewModel(
+      timestamp = "2017-07-06T12:34:56.789Z",
+      currentEstimate = 123.45,
+      taxYear = 2018,
+      annualEstimate = Some(543.21)
+    )
+
+  val minEstimateViewModel: EstimatesViewModel =
+    EstimatesViewModel(
+      timestamp = "2017-07-06T12:34:56.789Z",
+      currentEstimate = 123.45,
+      taxYear = 2018,
+      annualEstimate = None
+    )
 }
