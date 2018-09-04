@@ -22,7 +22,6 @@ import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
-import config.FrontendAppConfig
 import models.calculation.EstimatesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -34,14 +33,12 @@ import utils.{ImplicitDateFormatter, TestSupport}
 
 class EstimateViewSpec extends TestSupport with ImplicitDateFormatter {
 
-  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-
   val bizAndPropertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessAndPropertyAligned)(FakeRequest())
   val bizUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), singleBusinessIncome)(FakeRequest())
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
   private def pageSetup(model: EstimatesViewModel, user: MtdItUser[_]) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.api19a.estimate(model)(FakeRequest(),applicationMessages, mockAppConfig, user)
+    lazy val page: HtmlFormat.Appendable = views.html.api19a.estimate(model)(FakeRequest(),applicationMessages, frontendAppConfig, user)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 

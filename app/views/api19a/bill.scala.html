@@ -1,0 +1,78 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.main_template
+@import utils.ImplicitCurrencyFormatter._
+@import utils.ImplicitDateFormatter._
+@import models.calculation.BillsViewModel
+@import models.financialTransactions.TransactionModel
+@import views.helpers.EstimatesPage
+@import views.html.helpers.breadcrumbHelper
+@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
+@import views.html.helpers.backToHomeHelper
+@import controllers.PaymentController
+
+@(model: BillsViewModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-bills", Some(controllers.routes.BillsController.viewCrystallisedCalculations.url)),
+        BreadcrumbItem("breadcrumb-finalised-bill", None, Some(messages("crystalisation.heading",s"${model.taxYear-1}", s"${model.taxYear}")))
+    )), s"BillFor${model.taxYear}Page")
+}
+
+@main_template(
+title = messages("crystalisation.heading",s"${model.taxYear-1}", s"${model.taxYear}"),
+    bodyClasses = None,
+    scriptElem = None,
+    contentHeader = Some(breadcrumb)
+) {
+
+    <section id="owed-tax">
+
+        <header class="page-heading">
+          <h1 class="heading-xlarge" id="heading">@messages("crystalisation.heading",s"${model.taxYear-1}", s"${model.taxYear}")</h1>
+            <p class="heading-secondary" id="sub-heading">@messages("crystalisation.subheading")</p>
+        </header>
+
+        <section id="whatYouOwe">
+
+            @if(!model.isPaid) {
+                <div class="form-group divider--bottom">
+                    <p id="whatYouOweHeading" class="bold-medium">
+                        @Html(s"${model.currentBill.toCurrency}")
+                    </p>
+                    <p class="form-hint">
+                        @messages("crystalisation.dueBy", s"${model.taxYear+1}")
+                    </p>
+                </div>
+                <div class="form-group">
+                    <p id="warning">@messages("crystalisation.warning")</p>
+                </div>
+
+            }
+
+        </section>
+
+        @if(appConfig.features.paymentEnabled() && !model.isPaid){
+            <div class="form-group">
+                <a id="payment-button" data-journey-click="BillFor@{model.taxYear}Page:ClickLink:Pay" href="@controllers.routes.PaymentController.paymentHandoff(model.currentBill.toPence).url" class="button">@messages("crystalisation.payNow")</a>
+            </div>
+        }
+
+    </section>
+}
