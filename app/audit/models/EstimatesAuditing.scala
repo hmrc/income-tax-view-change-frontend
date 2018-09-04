@@ -17,7 +17,7 @@
 package audit.models
 
 import auth.MtdItUser
-import models.calculation.CalcDisplayModel
+import models.calculation.{CalcDisplayModel, CalculationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
 
 object EstimatesAuditing {
@@ -54,6 +54,24 @@ object EstimatesAuditing {
       "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.end}"),
       "propAccPeriodStart" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.start}"),
       "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}")
+    ) ++ estimateDetails
+  }
+
+  case class EstimatesAuditModelApi19a[A](user: MtdItUser[A], dataModel: CalculationModel) extends AuditModel {
+
+    override val auditType: String = "estimatesPageView"
+    override val transactionName: String = "estimates-page-view-api-19a"
+
+    val estimateDetails: Seq[(String, String)] = (dataModel.incomeTaxNicAmount, dataModel.displayAmount) match {
+      case (Some(annual), Some(current)) => Seq("annualEstimate" -> annual.toString, "currentEstimate" -> current.toString)
+      case (Some(annual), None) => Seq("annualEstimate" -> annual.toString)
+      case (None, Some(current)) => Seq("currentEstimate" -> current.toString)
+      case (None, None) => Seq.empty
+    }
+
+    override val detail: Seq[(String, String)] = Seq(
+      "mtditid" -> user.mtditid,
+      "nino" -> user.nino
     ) ++ estimateDetails
   }
 }

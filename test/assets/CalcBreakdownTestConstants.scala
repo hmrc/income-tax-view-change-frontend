@@ -1447,22 +1447,22 @@ object CalcBreakdownTestConstants {
   val testCalculationInputJson: JsValue =
     Json.obj(
       "calcOutput" -> Json.obj(
-        "calcID" -> "CALCID", 
-        "calcAmount" -> 543.21, 
-        "calcTimestamp" -> "2017-07-06T12:34:56.789Z", 
+        "calcID" -> "CALCID",
+        "calcAmount" -> 543.21,
+        "calcTimestamp" -> "2017-07-06T12:34:56.789Z",
         "crystallised" -> true,
         "calcResult" -> Json.obj(
           "incomeTaxNicYtd" -> 123.45,
           "eoyEstimate" -> Json.obj(
             "incomeTaxNicAmount" -> 987.65
           )
-       )       
+       )
      )
   )
 
   val testCalculationOutputJson: JsValue =
     Json.obj(
-      "calcId" -> "CALCID", 
+      "calcId" -> "CALCID",
       "calcAmount" -> 543.21,
       "calcTimestamp" -> "2017-07-06T12:34:56.789Z",
       "crystallised" -> true,
@@ -1470,7 +1470,7 @@ object CalcBreakdownTestConstants {
       "incomeTaxNicAmount" -> 987.65
     )
 
-  val testCalculationModel: CalculationModel =
+  val testCalcModel: CalculationModel =
     CalculationModel(
       "CALCID",
       Some(543.21),
@@ -1484,5 +1484,35 @@ object CalcBreakdownTestConstants {
     CalculationErrorModel(
       Status.INTERNAL_SERVER_ERROR,
       "Internal server error"
+    )
+
+  val testCalcModelNoDisplayAmount: CalculationModel =
+    CalculationModel(
+      "CACLID",
+      None,
+      Some("2017-07-06T12:34:56.789Z"),
+      Some(true),
+      None,
+      Some(987.65)
+    )
+
+  val testCalcModelNoAnnualEstimate: CalculationModel =
+    CalculationModel(
+      "CALCID",
+      Some(543.21),
+      Some("2017-07-06T12:34:56.789Z"),
+      Some(true),
+      Some(123.45),
+      None
+    )
+
+  val testCalcModelEmpty: CalculationModel =
+    CalculationModel(
+      "CALCID",
+      None,
+      None,
+      None,
+      None,
+      None
     )
 }
