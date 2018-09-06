@@ -22,7 +22,6 @@ import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.LastTaxCalcIntegrationTestConstants._
-import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import config.FrontendAppConfig
 import helpers.servicemocks._
 import helpers.ComponentSpecBase
@@ -46,6 +45,10 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
   def taxableIncome(calc: CalculationDataModel): String =
     (calc.totalTaxableIncome - calc.taxableDividendIncome).toCurrencyString
+
+  private trait CalculationDataApiDisabled {
+    appConfig.features.calcDataApiEnabled(false)
+  }
 
   "Calling the CalculationController.getEstimatedTaxLiability(year)" when {
 
@@ -414,6 +417,32 @@ class CalculationControllerISpec extends ComponentSpecBase {
           pageTitle(messages.title(testYearInt)),
           elementTextByID("p1")(messages.internalServerErrorp1),
           elementTextByID("p2")(messages.internalServerErrorp2)
+        )
+      }
+    }
+
+    "isAuthorisedUser with an active enrolment and the Get Calculation Data API feature is disabled" should {
+
+      "return the correct page with a valid total" in new CalculationDataApiDisabled {
+
+        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+
+        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, latestCalcModel)
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyLatestCalculationCall(testNino, testYear)
+
+        res should have (
+          httpStatus(OK),
+          pageTitle(messages.title(testYearInt)),
+          elementTextByID("heading")(messages.heading(testYearInt)),
+          isElementVisibleById("eoyEstimate")(expectedValue = true),
+          elementTextByID("inYearEstimateHeading")(messages.EstimatedTaxAmount.currentEstimate(latestCalcModel.displayAmount.get.toCurrencyString))
         )
       }
     }

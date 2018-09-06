@@ -1462,7 +1462,7 @@ object CalcBreakdownTestConstants {
 
   val testCalculationOutputJson: JsValue =
     Json.obj(
-      "calcId" -> "CALCID",
+      "calcID" -> "CALCID",
       "calcAmount" -> 543.21,
       "calcTimestamp" -> "2017-07-06T12:34:56.789Z",
       "crystallised" -> true,

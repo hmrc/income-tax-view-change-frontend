@@ -52,7 +52,7 @@ class EstimatesControllerISpec extends ComponentSpecBase {
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.CalculationController.showCalculationForYear(testYearInt).url)
+            redirectURI(controllers.routes.CalculationController.renderCalculationPage(testYearInt).url)
           )
         }
       }
@@ -106,7 +106,7 @@ class EstimatesControllerISpec extends ComponentSpecBase {
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.CalculationController.showCalculationForYear(testYearPlusOneInt).url)
+            redirectURI(controllers.routes.CalculationController.renderCalculationPage(testYearPlusOneInt).url)
           )
         }
       }

@@ -27,7 +27,7 @@ object CalculationErrorModel {
   implicit val format: Format[CalculationErrorModel] = Json.format[CalculationErrorModel]
 }
 
-case class CalculationModel(calcId: String,
+case class CalculationModel(calcID: String,
                             calcAmount: Option[BigDecimal],
                             calcTimestamp: Option[String],
                             crystallised: Option[Boolean],
