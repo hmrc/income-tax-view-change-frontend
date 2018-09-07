@@ -41,7 +41,7 @@ object BillsAuditing {
     )
   }
 
-  case class BillsAuditModelApi19a[A](user: MtdItUser[A], dataModel: CalculationModel) extends AuditModel {
+  case class BasicBillsAuditModel[A](user: MtdItUser[A], dataModel: CalculationModel) extends AuditModel {
 
     override val auditType: String = "billsPageView"
     override val transactionName: String = "bills-page-view-api-19a"

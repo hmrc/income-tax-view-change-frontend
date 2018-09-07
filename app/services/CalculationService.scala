@@ -55,9 +55,8 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
   }
 
 
-  def getLastEstimatedTaxCalculation(nino: String,
-                                     year: Int
-                                    )(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
+  def getLastEstimatedTaxCalculation(nino: String, year: Int)
+                                    (implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 
     Logger.debug("[CalculationService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")
     lastTaxCalculationConnector.getLastEstimatedTax(nino, year).map {
@@ -82,9 +81,8 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
     })
   }
 
-  private[CalculationService] def getCalculationData(nino: String,
-                                                     taxCalculationId: String
-                                                        )(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
+  private[CalculationService] def getCalculationData(nino: String, taxCalculationId: String)
+                                                    (implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
 
     Logger.debug("[CalculationService][getCalculationData] - Requesting calculation data from self-assessment api via Connector")
     calculationDataConnector.getCalculationData(nino, taxCalculationId).map {
@@ -97,8 +95,7 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
     }
   }
 
-  def getLatestCalculation(nino: String,
-                           taxYear: Int)
+  def getLatestCalculation(nino: String, taxYear: Int)
                           (implicit headerCarrier: HeaderCarrier): Future[CalculationResponseModel] = {
     Logger.debug("[CalculationService][getLatestCalculation] - Requesting latest calc data from the backend")
     calculationDataConnector.getLatestCalculation(nino, taxYear) map {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.api19a
+package views.getLatestCalculation
 
 import assets.BaseTestConstants._
 import assets.EstimatesTestConstants._
@@ -40,7 +40,7 @@ class BillViewSpec extends TestSupport {
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
   private def pageSetup(model: BillsViewModel, user: MtdItUser[_]) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.api19a.bill(model)(FakeRequest(), applicationMessages, frontendAppConfig, user)
+    lazy val page: HtmlFormat.Appendable = views.html.getLatestCalculation.bill(model)(FakeRequest(), applicationMessages, frontendAppConfig, user)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 

@@ -17,8 +17,7 @@
 package helpers.servicemocks
 
 import helpers.WiremockHelper
-import models._
-import models.calculation.LastTaxCalculation
+import models.calculation.{CalculationModel, LastTaxCalculation}
 import models.core.{Nino, NinoResponseError}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ReportDeadlinesModel
@@ -46,6 +45,20 @@ object IncomeTaxViewChangeStub {
 
   def verifyGetLastTaxCalc(nino: String, year: String): Unit =
     WiremockHelper.verifyGet(lastCalcUrl(nino, year))
+
+
+
+  // Get Latest Calculation Stubs
+  // ===================================
+  val latestCalculationUrl: (String, String) => String = (nino, year) =>
+    s"/income-tax-view-change/previous-tax-calculation/$nino/$year"
+
+  def stubGetLatestCalculation(nino: String, year: String, latestCalc: CalculationModel): Unit = {
+    WiremockHelper.stubGet(latestCalculationUrl(nino, year), Status.OK, Json.toJson(latestCalc).toString)
+  }
+
+  def verifyGetLatestCalculation(nino: String, year: String): Unit =
+    WiremockHelper.verifyGet(latestCalculationUrl(nino, year))
 
 
 
