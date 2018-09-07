@@ -18,18 +18,18 @@ package audit.models
 
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
-import audit.models.EstimatesAuditing.EstimatesAuditModelApi19a
+import audit.models.EstimatesAuditing.BasicEstimatesAuditModel
 
 import utils.TestSupport
 
-class EstimatesAuditModelApi19aSpec extends TestSupport {
+class BasicEstimatesAuditModelSpec extends TestSupport {
 
   val transactionName = "estimates-page-view-api-19a"
   val auditType = "estimatesPageView"
 
-  "The EstimatesAuditModelApi19a" should {
+  "The BasicEstimatesAuditModel" should {
 
-    val fullEstimatesAuditModel = EstimatesAuditModelApi19a(testMtdItUser, testCalcModel)
+    val fullEstimatesAuditModel = BasicEstimatesAuditModel(testMtdItUser, testCalcModel)
 
     s"have the correct transaction name of '$transactionName'" in {
       fullEstimatesAuditModel.transactionName shouldBe transactionName
@@ -51,7 +51,7 @@ class EstimatesAuditModelApi19aSpec extends TestSupport {
       }
 
       "the annual estimate is unavailable" in {
-        val estimatesAuditModel = EstimatesAuditModelApi19a(testMtdItUser, testCalcModelNoAnnualEstimate)
+        val estimatesAuditModel = BasicEstimatesAuditModel(testMtdItUser, testCalcModelNoAnnualEstimate)
 
         estimatesAuditModel.detail shouldBe Seq(
           "mtditid" -> testMtditid,
@@ -61,7 +61,7 @@ class EstimatesAuditModelApi19aSpec extends TestSupport {
       }
 
       "the current estimate is unavailable" in {
-        val estimatesAuditModel = EstimatesAuditModelApi19a(testMtdItUser, testCalcModelNoDisplayAmount)
+        val estimatesAuditModel = BasicEstimatesAuditModel(testMtdItUser, testCalcModelNoDisplayAmount)
 
         estimatesAuditModel.detail shouldBe Seq(
           "mtditid" -> testMtditid,
@@ -71,7 +71,7 @@ class EstimatesAuditModelApi19aSpec extends TestSupport {
       }
 
       "no estimates are available" in {
-        val estimatesAuditModel = EstimatesAuditModelApi19a(testMtdItUser, testCalcModelEmpty)
+        val estimatesAuditModel = BasicEstimatesAuditModel(testMtdItUser, testCalcModelEmpty)
 
         estimatesAuditModel.detail shouldBe Seq(
           "mtditid" -> testMtditid,

@@ -19,8 +19,8 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import audit.AuditingService
-import audit.models.EstimatesAuditing.{EstimatesAuditModel, EstimatesAuditModelApi19a}
-import audit.models.BillsAuditing.{BillsAuditModel, BillsAuditModelApi19a}
+import audit.models.EstimatesAuditing.{EstimatesAuditModel, BasicEstimatesAuditModel}
+import audit.models.BillsAuditing.{BillsAuditModel, BasicBillsAuditModel}
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
@@ -57,7 +57,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
     if(config.features.calcDataApiEnabled()) {
       showCalculationForYear(taxYear)
     } else {
-      showCalculationForYearApi19a(taxYear)
+      basicShowCalculationForYear(taxYear)
     }
   }
 
@@ -85,7 +85,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
-  private val showCalculationForYearApi19a: Int => Action[AnyContent] = taxYear => action.async {
+  private val basicShowCalculationForYear: Int => Action[AnyContent] = taxYear => action.async {
     implicit user =>
       implicit val sources: IncomeSourceDetailsModel = user.incomeSources
       calculationService.getLatestCalculation(user.nino, taxYear).flatMap {
@@ -103,9 +103,9 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                   taxYear,
                   calcModel.incomeTaxNicAmount
                 )
-                Future.successful(Ok(views.html.api19a.estimate(viewModel)))
+                Future.successful(Ok(views.html.getLatestCalculation.estimate(viewModel)))
               case _ =>
-                Logger.debug(s"[CalculationController][showCalculationForYearApi19a[$taxYear] Valid calculation information could not be retrieved.")
+                Logger.debug(s"[CalculationController][basicShowCalculationForYear[$taxYear] Valid calculation information could not be retrieved.")
                 Future.successful(itvcErrorHandler.showInternalServerError)
             }
           }
@@ -131,7 +131,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                   charge.isPaid,
                   taxYear
                 )
-                Ok(views.html.api19a.bill(viewModel))
+                Ok(views.html.getLatestCalculation.bill(viewModel))
               case None =>
                 Logger.debug(s"[CalculationController][renderCrystallisedView[$taxYear]] No current bill amount could be retrieved.")
                 itvcErrorHandler.showInternalServerError
@@ -156,7 +156,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   private def auditCalculationModel(user: MtdItUser[_], model: CalculationModel, isEstimate: Boolean)
                                    (implicit hc: HeaderCarrier): Unit =
     auditingService.audit(
-      if (isEstimate) EstimatesAuditModelApi19a(user, model) else BillsAuditModelApi19a(user, model),
+      if (isEstimate) BasicEstimatesAuditModel(user, model) else BasicBillsAuditModel(user, model),
       Some(controllers.routes.CalculationController.renderCalculationPage(user.incomeSources.earliestTaxYear.get).url)
     )
 }

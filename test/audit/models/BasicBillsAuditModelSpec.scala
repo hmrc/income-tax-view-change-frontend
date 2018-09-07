@@ -18,18 +18,18 @@ package audit.models
 
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
-import audit.models.BillsAuditing.BillsAuditModelApi19a
+import audit.models.BillsAuditing.BasicBillsAuditModel
 
 import utils.TestSupport
 
-class BillsAuditModelApi19aSpec extends TestSupport {
+class BasicBillsAuditModelSpec extends TestSupport {
 
   val transactionName = "bills-page-view-api-19a"
   val auditType = "billsPageView"
 
-  "The BillsAuditModelApi19a" should {
+  "The BasicBillsAuditModel" should {
 
-    val fullBillsAuditModel = BillsAuditModelApi19a(testMtdItUser, testCalcModel)
+    val fullBillsAuditModel = BasicBillsAuditModel(testMtdItUser, testCalcModel)
 
     s"have the correct transaction name of '$transactionName'" in {
       fullBillsAuditModel.transactionName shouldBe transactionName
@@ -50,7 +50,7 @@ class BillsAuditModelApi19aSpec extends TestSupport {
       }
 
       "the current bill is not available" in {
-        val billsAuditModel = BillsAuditModelApi19a(testMtdItUser, testCalcModelNoDisplayAmount)
+        val billsAuditModel = BasicBillsAuditModel(testMtdItUser, testCalcModelNoDisplayAmount)
 
         billsAuditModel.detail shouldBe Seq(
           "mtditid" -> testMtditid,

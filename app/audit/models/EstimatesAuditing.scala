@@ -57,7 +57,7 @@ object EstimatesAuditing {
     ) ++ estimateDetails
   }
 
-  case class EstimatesAuditModelApi19a[A](user: MtdItUser[A], dataModel: CalculationModel) extends AuditModel {
+  case class BasicEstimatesAuditModel[A](user: MtdItUser[A], dataModel: CalculationModel) extends AuditModel {
 
     override val auditType: String = "estimatesPageView"
     override val transactionName: String = "estimates-page-view-api-19a"
