@@ -60,7 +60,7 @@ object EstimatesAuditing {
   case class BasicEstimatesAuditModel[A](user: MtdItUser[A], dataModel: CalculationModel) extends AuditModel {
 
     override val auditType: String = "estimatesPageView"
-    override val transactionName: String = "estimates-page-view-api-19a"
+    override val transactionName: String = "view-estimates-page"
 
     val estimateDetails: Seq[(String, String)] = (dataModel.incomeTaxNicAmount, dataModel.displayAmount) match {
       case (Some(annual), Some(current)) => Seq("annualEstimate" -> annual.toString, "currentEstimate" -> current.toString)

@@ -44,7 +44,7 @@ object BillsAuditing {
   case class BasicBillsAuditModel[A](user: MtdItUser[A], dataModel: CalculationModel) extends AuditModel {
 
     override val auditType: String = "billsPageView"
-    override val transactionName: String = "bills-page-view-api-19a"
+    override val transactionName: String = "view-bills-page"
 
     val billAmount: Seq[(String, String)] = dataModel.displayAmount match {
       case Some(amount) => Seq("currentBill" -> amount.toString)

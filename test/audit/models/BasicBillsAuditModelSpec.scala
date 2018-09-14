@@ -24,7 +24,7 @@ import utils.TestSupport
 
 class BasicBillsAuditModelSpec extends TestSupport {
 
-  val transactionName = "bills-page-view-api-19a"
+  val transactionName = "view-bills-page"
   val auditType = "billsPageView"
 
   "The BasicBillsAuditModel" should {

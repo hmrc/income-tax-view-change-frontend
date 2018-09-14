@@ -24,7 +24,7 @@ import utils.TestSupport
 
 class BasicEstimatesAuditModelSpec extends TestSupport {
 
-  val transactionName = "estimates-page-view-api-19a"
+  val transactionName = "view-estimates-page"
   val auditType = "estimatesPageView"
 
   "The BasicEstimatesAuditModel" should {
