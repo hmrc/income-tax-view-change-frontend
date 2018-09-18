@@ -41,7 +41,7 @@ case class CalculationModel(calcID: String,
     case (None, None)         => None
   }
 
-  val isBill: Boolean = crystallised.isDefined
+  val isBill: Boolean = crystallised.getOrElse(false)
 }
 
 object CalculationModel {
