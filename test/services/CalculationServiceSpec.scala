@@ -28,9 +28,21 @@ import utils.TestSupport
 
 import scala.concurrent.Future
 
-class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConnector with MockCalculationDataConnector with MockCalculationService {
+class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConnector with MockCalculationDataConnector with MockCalculationService{
 
-  object TestCalculationService extends CalculationService(mockLastTaxCalculationConnector, mockCalculationDataConnector)
+  object TestCalculationService extends CalculationService(
+    mockLastTaxCalculationConnector,
+    mockCalculationDataConnector,
+    frontendAppConfig
+  )
+
+  private trait CalculationDataApiEnabled {
+    frontendAppConfig.features.calcDataApiEnabled(true)
+  }
+
+  private trait CalculationDataApiDisabled {
+    frontendAppConfig.features.calcDataApiEnabled(false)
+  }
 
   "The CalculationService.getCalculationData method" when {
 
@@ -73,24 +85,45 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
 
   "The CalculationService.getAllLatestCalculations method" when {
 
-    object TestCalculationService extends CalculationService(mockLastTaxCalculationConnector, mockCalculationDataConnector) {
+    object TestCalculationService extends CalculationService(
+      mockLastTaxCalculationConnector,
+      mockCalculationDataConnector,
+      frontendAppConfig
+    ) {
       override def getLastEstimatedTaxCalculation(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
         lastTaxCalcSuccess
+      }
+
+      override def getLatestCalculation(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalculationResponseModel] = {
+        testCalcModel
       }
     }
 
     "passed an ordered list of years" should {
 
-      "return a list of LastTaxCalculationWithYear models" in {
-        await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
+      "when the Calculation Data api feature switch is enabled" should {
+
+        "return a list of LastTaxCalculationWithYear models" in new CalculationDataApiEnabled {
+          await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
+        }
+
+        "passed an empty list of Ints" in new CalculationDataApiEnabled {
+          await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
+        }
       }
 
-      "passed an empty list of Ints" in {
-        await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
-      }
+      "when the feature switch is disabled" should {
 
+        "return a list of LastTaxCalculationWithYear models" in new CalculationDataApiDisabled {
+          setUpLatestCalculationResponse(testNino, testYear)(testCalcModel)
+          await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe test
+        }
+
+        "passed an empty list of Ints" in new CalculationDataApiDisabled {
+          await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
+        }
+      }
     }
-
   }
 
   "The CalculationService.getLatestCalculation method" when {

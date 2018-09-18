@@ -40,6 +40,29 @@ object EstimatesTestConstants {
     calcAmount = 543.21,
     calcStatus = Crystallised
   )
+
+  val lastCalcSuccessEstimate = CalculationModel(
+    calcID = testTaxCalculationId,
+    calcAmount = Some(543.21),
+    calcTimestamp = Some("2017-07-06T12:34:56.789Z"),
+    crystallised = None,
+    incomeTaxNicYtd = None,
+    incomeTaxNicAmount = None
+  )
+
+  val lastCalcSuccessBill = CalculationModel(
+    calcID = testTaxCalculationId,
+    calcAmount = Some(543.21),
+    calcTimestamp = Some("2017-07-06T12:34:56.789Z"),
+    crystallised = Some(true),
+    incomeTaxNicYtd = None,
+    incomeTaxNicAmount = None
+  )
+
+
+  val test = List(LastTaxCalculationWithYear(LastTaxCalculation("CALCID","2017-07-06T12:34:56.789Z",543.21,Crystallised),2018),
+    LastTaxCalculationWithYear(LastTaxCalculation("CALCID","2017-07-06T12:34:56.789Z",543.21,Crystallised),2019))
+
   val lastTaxCalcError = LastTaxCalculationError(testErrorStatus, testErrorMessage)
   val lastTaxCalcNotFound: LastTaxCalculationResponseModel = NoLastTaxCalculation
 
