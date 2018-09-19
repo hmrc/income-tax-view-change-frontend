@@ -16,7 +16,7 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
+import assets.BaseTestConstants._
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
 import play.api.libs.json.{JsValue, Json}
 import utils.ImplicitDateFormatter
@@ -26,7 +26,7 @@ object FinancialTransactionsTestConstants extends ImplicitDateFormatter {
   val testIdType = Some("MTDBSA")
   val testIdNumber = Some("XQIT00000000001")
   val testRegimeType = Some("ITSA")
-  val testProcessingDate = "2017-03-07T22:55:56.987Z".toZonedDateTime
+  val testProcessingDate = testTimeStampString.toZonedDateTime
 
   val financialTransactionsErrorJson : JsValue =
     Json.obj(
@@ -45,7 +45,7 @@ object FinancialTransactionsTestConstants extends ImplicitDateFormatter {
       "idType" -> "MTDBSA",
       "idNumber" -> "XQIT00000000001",
       "regimeType" -> "ITSA",
-      "processingDate" -> "2017-03-07T22:55:56.987Z",
+      "processingDate" -> testTimeStampString,
       "financialTransactions" -> Json.arr(
         Json.obj(
           "chargeType" -> "PAYE",

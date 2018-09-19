@@ -16,7 +16,7 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testTaxCalculationId}
+import assets.BaseTestConstants._
 import enums.{Crystallised, Estimate}
 import models.calculation._
 
@@ -30,13 +30,13 @@ object EstimatesTestConstants {
   //Last Tax Calculations
   val lastTaxCalcSuccess = LastTaxCalculation(
     calcID = testTaxCalculationId,
-    calcTimestamp = "2017-07-06T12:34:56.789Z",
+    calcTimestamp = testTimeStampString,
     calcAmount = 543.21,
     calcStatus = Estimate
   )
   val lastTaxCalcCrystallisedSuccess = LastTaxCalculation(
     calcID = testTaxCalculationId,
-    calcTimestamp = "2017-07-06T12:34:56.789Z",
+    calcTimestamp = testTimeStampString,
     calcAmount = 543.21,
     calcStatus = Crystallised
   )
@@ -44,7 +44,7 @@ object EstimatesTestConstants {
   val lastCalcSuccessEstimate = CalculationModel(
     calcID = testTaxCalculationId,
     calcAmount = Some(543.21),
-    calcTimestamp = Some("2017-07-06T12:34:56.789Z"),
+    calcTimestamp = Some(testTimeStampString),
     crystallised = None,
     incomeTaxNicYtd = None,
     incomeTaxNicAmount = None
@@ -53,15 +53,11 @@ object EstimatesTestConstants {
   val lastCalcSuccessBill = CalculationModel(
     calcID = testTaxCalculationId,
     calcAmount = Some(543.21),
-    calcTimestamp = Some("2017-07-06T12:34:56.789Z"),
+    calcTimestamp = Some(testTimeStampString),
     crystallised = Some(true),
     incomeTaxNicYtd = None,
     incomeTaxNicAmount = None
   )
-
-
-  val test = List(LastTaxCalculationWithYear(LastTaxCalculation("CALCID","2017-07-06T12:34:56.789Z",543.21,Crystallised),2018),
-    LastTaxCalculationWithYear(LastTaxCalculation("CALCID","2017-07-06T12:34:56.789Z",543.21,Crystallised),2019))
 
   val lastTaxCalcError = LastTaxCalculationError(testErrorStatus, testErrorMessage)
   val lastTaxCalcNotFound: LastTaxCalculationResponseModel = NoLastTaxCalculation
@@ -87,7 +83,7 @@ object EstimatesTestConstants {
 
   val fullEstimateViewModel: EstimatesViewModel =
     EstimatesViewModel(
-      timestamp = "2017-07-06T12:34:56.789Z",
+      timestamp = testTimeStampString,
       currentEstimate = 123.45,
       taxYear = 2018,
       annualEstimate = Some(543.21)
@@ -95,7 +91,7 @@ object EstimatesTestConstants {
 
   val minEstimateViewModel: EstimatesViewModel =
     EstimatesViewModel(
-      timestamp = "2017-07-06T12:34:56.789Z",
+      timestamp = testTimeStampString,
       currentEstimate = 123.45,
       taxYear = 2018,
       annualEstimate = None

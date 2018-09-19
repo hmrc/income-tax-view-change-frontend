@@ -89,39 +89,61 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
       mockLastTaxCalculationConnector,
       mockCalculationDataConnector,
       frontendAppConfig
-    ) {
-      override def getLastEstimatedTaxCalculation(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
-        lastTaxCalcSuccess
+    )
+
+    "when the Calculation Data api feature switch is enabled" should {
+
+      "passed an ordered list of years" should {
+
+        "for a list of Estimates" should {
+
+          "return a list of LastTaxCalculationWithYear estimate models" in new CalculationDataApiEnabled {
+            setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
+            setupLastTaxCalculationResponse(testNino, testYearPlusOne)(lastTaxCalcSuccess)
+            await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
+          }
+        }
+
+        "for a list of Bills" should {
+
+          "return a list of LastTaxCalculationWithYear bills models" in new CalculationDataApiEnabled {
+            setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcCrystallisedSuccess)
+            setupLastTaxCalculationResponse(testNino, testYearPlusOne)(lastTaxCalcCrystallisedSuccess)
+            await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearCrystallisedList
+          }
+        }
       }
 
-      override def getLatestCalculation(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalculationResponseModel] = {
-        testCalcModel
+      "passed an empty list of Ints" in new CalculationDataApiEnabled {
+        await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
       }
     }
 
-    "passed an ordered list of years" should {
+    "when the  Calculation Data api feature switch is disabled" should {
 
-      "when the Calculation Data api feature switch is enabled" should {
+      "passed an ordered list of years" should {
 
-        "return a list of LastTaxCalculationWithYear models" in new CalculationDataApiEnabled {
-          await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
+        "for a list of Estimates" should {
+
+          "return a list of LastTaxCalculationWithYear models" in new CalculationDataApiDisabled {
+            setUpLatestCalculationResponse(testNino, testYear)(testCalcModelEstimate)
+            setUpLatestCalculationResponse(testNino, testYearPlusOne)(testCalcModelEstimate)
+            await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
+          }
         }
 
-        "passed an empty list of Ints" in new CalculationDataApiEnabled {
-          await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
+        "for a list of Bills" should {
+
+          "return a list of LastTaxCalculationWithYear bills models" in new CalculationDataApiDisabled {
+            setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystalised)
+            setUpLatestCalculationResponse(testNino, testYearPlusOne)(testCalcModelCrystalised)
+            await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearCrystallisedList
+          }
         }
       }
 
-      "when the feature switch is disabled" should {
-
-        "return a list of LastTaxCalculationWithYear models" in new CalculationDataApiDisabled {
-          setUpLatestCalculationResponse(testNino, testYear)(testCalcModel)
-          await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe test
-        }
-
-        "passed an empty list of Ints" in new CalculationDataApiDisabled {
-          await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
-        }
+      "passed an empty list of Ints" in new CalculationDataApiDisabled {
+        await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
       }
     }
   }
@@ -131,11 +153,11 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
     "successful response is returned from the CalculationDataConnector" should {
 
       "return a CalculationModel" in {
-        setUpLatestCalculationResponse(testNino, testYear)(testCalcModel)
+        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystalised)
         await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationModel(
-          "CALCID",
+          testTaxCalculationId,
           Some(543.21),
-          Some("2017-07-06T12:34:56.789Z"),
+          Some(testTimeStampString),
           Some(true),
           Some(123.45),
           Some(987.65)
