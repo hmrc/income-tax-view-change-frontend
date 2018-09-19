@@ -16,9 +16,10 @@
 
 package services
 
+import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
-
 import connectors.{CalculationDataConnector, LastTaxCalculationConnector}
+import enums.{Crystallised, Estimate}
 import models.calculation._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,7 +29,8 @@ import scala.concurrent.Future
 
 @Singleton
 class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector,
-                                   val calculationDataConnector: CalculationDataConnector) {
+                                   val calculationDataConnector: CalculationDataConnector,
+                                  val frontendAppConfig: FrontendAppConfig) {
 
 
   def getCalculationDetail(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
@@ -75,8 +77,21 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
   def getAllLatestCalculations(nino: String, orderedYears: List[Int])
                               (implicit headerCarrier: HeaderCarrier): Future[List[LastTaxCalculationWithYear]] = {
     Future.sequence(orderedYears.map {
-      year => getLastEstimatedTaxCalculation(nino, year).map {
-        model => LastTaxCalculationWithYear(model, year)
+      year => {
+        if (frontendAppConfig.features.calcDataApiEnabled()) {
+          getLastEstimatedTaxCalculation(nino, year).map {
+            model => LastTaxCalculationWithYear(model, year)
+          }
+        } else {
+          getLatestCalculation(nino, year).map {
+            case x: CalculationModel => {
+              val status = if (x.isBill) Crystallised else Estimate
+              LastTaxCalculationWithYear(LastTaxCalculation(x.calcID, x.calcTimestamp.get, x.calcAmount.get, status), year)
+            }
+            case x: CalculationErrorModel =>
+              LastTaxCalculationWithYear(LastTaxCalculationError(x.code, x.message), year)
+          }
+        }
       }
     })
   }

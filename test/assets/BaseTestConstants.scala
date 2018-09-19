@@ -42,6 +42,7 @@ object BaseTestConstants {
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"
   val testTaxCalculationId = "CALCID"
+  val testTimeStampString = "2017-07-06T12:34:56.789Z"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
   val testAuthSuccessResponse = new ~(Enrolments(Set(

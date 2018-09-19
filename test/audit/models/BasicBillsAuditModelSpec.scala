@@ -29,7 +29,7 @@ class BasicBillsAuditModelSpec extends TestSupport {
 
   "The BasicBillsAuditModel" should {
 
-    val fullBillsAuditModel = BasicBillsAuditModel(testMtdItUser, testCalcModel)
+    val fullBillsAuditModel = BasicBillsAuditModel(testMtdItUser, testCalcModelCrystalised)
 
     s"have the correct transaction name of '$transactionName'" in {
       fullBillsAuditModel.transactionName shouldBe transactionName

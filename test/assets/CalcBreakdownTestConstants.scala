@@ -16,7 +16,7 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
+import assets.BaseTestConstants._
 import assets.EstimatesTestConstants._
 import enums.{Crystallised, Estimate}
 import models.calculation._
@@ -1447,9 +1447,9 @@ object CalcBreakdownTestConstants {
   val testCalculationInputJson: JsValue =
     Json.obj(
       "calcOutput" -> Json.obj(
-        "calcID" -> "CALCID",
+        "calcID" -> testTaxCalculationId,
         "calcAmount" -> 543.21,
-        "calcTimestamp" -> "2017-07-06T12:34:56.789Z",
+        "calcTimestamp" -> testTimeStampString,
         "crystallised" -> true,
         "calcResult" -> Json.obj(
           "incomeTaxNicYtd" -> 123.45,
@@ -1462,19 +1462,19 @@ object CalcBreakdownTestConstants {
 
   val testCalculationOutputJson: JsValue =
     Json.obj(
-      "calcID" -> "CALCID",
+      "calcID" -> testTaxCalculationId,
       "calcAmount" -> 543.21,
-      "calcTimestamp" -> "2017-07-06T12:34:56.789Z",
+      "calcTimestamp" -> testTimeStampString,
       "crystallised" -> true,
       "incomeTaxNicYtd" -> 123.45,
       "incomeTaxNicAmount" -> 987.65
     )
 
-  val testCalcModel: CalculationModel =
+  val testCalcModelCrystalised: CalculationModel =
     CalculationModel(
-      "CALCID",
+      testTaxCalculationId,
       Some(543.21),
-      Some("2017-07-06T12:34:56.789Z"),
+      Some(testTimeStampString),
       Some(true),
       Some(123.45),
       Some(987.65)
@@ -1482,9 +1482,9 @@ object CalcBreakdownTestConstants {
 
   val testCalcModelEstimate: CalculationModel =
     CalculationModel(
-      "CALCID",
+      testTaxCalculationId,
       Some(543.21),
-      Some("2017-07-06T12:34:56.789Z"),
+      Some(testTimeStampString),
       None,
       Some(123.45),
       Some(987.65)
@@ -1498,9 +1498,9 @@ object CalcBreakdownTestConstants {
 
   val testCalcModelNoDisplayAmount: CalculationModel =
     CalculationModel(
-      "CACLID",
+      testTaxCalculationId,
       None,
-      Some("2017-07-06T12:34:56.789Z"),
+      Some(testTimeStampString),
       Some(true),
       None,
       Some(987.65)
@@ -1508,9 +1508,9 @@ object CalcBreakdownTestConstants {
 
   val testCalcModelNoAnnualEstimate: CalculationModel =
     CalculationModel(
-      "CALCID",
+      testTaxCalculationId,
       Some(543.21),
-      Some("2017-07-06T12:34:56.789Z"),
+      Some(testTimeStampString),
       Some(true),
       Some(123.45),
       None
@@ -1518,7 +1518,7 @@ object CalcBreakdownTestConstants {
 
   val testCalcModelEmpty: CalculationModel =
     CalculationModel(
-      "CALCID",
+      testTaxCalculationId,
       None,
       None,
       None,
