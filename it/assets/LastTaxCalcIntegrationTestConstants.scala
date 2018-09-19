@@ -25,21 +25,21 @@ object LastTaxCalcIntegrationTestConstants {
 
   val crystallisedLastTaxCalcResponse =
     LastTaxCalculation(testCalcId,
-      testTimeStampString,
+      "2017-07-06T12:34:56.789Z",
       calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
       Crystallised
     )
 
   val crystallisedLastTaxCalcResponse2 =
     LastTaxCalculation(testCalcId2,
-      testTimeStampString,
+      "2017-07-06T12:34:56.789Z",
       calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
       Crystallised
     )
 
   val estimateLastTaxCalcResponse =
     LastTaxCalculation(testCalcId,
-      testTimeStampString,
+      "2017-07-06T12:34:56.789Z",
       calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd,
       Estimate
     )
@@ -47,7 +47,7 @@ object LastTaxCalcIntegrationTestConstants {
   val estimateLastTaxCalcResponse2 =
     LastTaxCalculation(
       testCalcId2,
-      testTimeStampString,
+      "2017-07-06T12:34:56.789Z",
       calculationDataSuccessModel.totalIncomeTaxNicYtd,
       Estimate
     )

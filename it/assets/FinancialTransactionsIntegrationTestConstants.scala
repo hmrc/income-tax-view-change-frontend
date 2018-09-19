@@ -27,7 +27,7 @@ object FinancialTransactionsIntegrationTestConstants {
   val testIdType: String = "MTDBSA"
   val testIdNumber: String = testMtditid
   val testRegimeType: String = "ITSA"
-  val testProcessingDate: ZonedDateTime = testTimeStampString.toZonedDateTime
+  val testProcessingDate: ZonedDateTime = "2017-03-07T22:55:56.987Z".toZonedDateTime
 
   val financialTransactionsSingleErrorJson: JsValue =
     Json.obj(
