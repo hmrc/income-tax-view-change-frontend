@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package utils
+package testUtils
 
+import implicits.ImplicitCurrencyFormatter
 import play.twirl.api.Html
 
 class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {

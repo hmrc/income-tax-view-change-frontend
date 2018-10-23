@@ -20,6 +20,7 @@ import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtdUserN
 import assets.IncomeSourcesWithDeadlinesTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import auth.MtdItUserWithNino
+import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesError, IncomeSourcesWithDeadlinesResponse}
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
@@ -30,7 +31,6 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
 import services.ReportDeadlinesService
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.ImplicitDateFormatter
 
 import scala.concurrent.Future
 

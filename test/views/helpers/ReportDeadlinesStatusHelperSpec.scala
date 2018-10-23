@@ -19,8 +19,8 @@ package views.helpers
 import models.reportDeadlines.{Open, Overdue}
 import play.api.i18n.Messages.Implicits._
 import play.twirl.api.Html
-import utils.ImplicitDateFormatter._
-import utils.TestSupport
+import implicits.ImplicitDateFormatter._
+import testUtils.TestSupport
 
 class ReportDeadlinesStatusHelperSpec extends TestSupport {
 

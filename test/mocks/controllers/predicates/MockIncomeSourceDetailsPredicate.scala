@@ -20,7 +20,7 @@ import config.ItvcErrorHandler
 import controllers.predicates.IncomeSourceDetailsPredicate
 import mocks.services._
 import play.api.i18n.MessagesApi
-import utils.TestSupport
+import testUtils.TestSupport
 
 trait MockIncomeSourceDetailsPredicate extends TestSupport with MockIncomeSourceDetailsService {
 

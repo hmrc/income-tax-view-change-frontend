@@ -27,7 +27,7 @@ import helpers.ComponentSpecBase
 
 import config.FrontendAppConfig
 import play.api.http.Status.{OK, SEE_OTHER}
-import utils.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter._
 
 class AccountDetailsControllerISpec extends ComponentSpecBase {
 

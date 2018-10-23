@@ -24,8 +24,8 @@ import mocks.MockHttp
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
+import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
-import utils.TestSupport
 
 import scala.concurrent.Future
 

@@ -16,7 +16,7 @@
 
 package forms.preprocess
 
-import utils.TestSupport
+import testUtils.TestSupport
 
 class XssFilterSpec extends TestSupport {
 

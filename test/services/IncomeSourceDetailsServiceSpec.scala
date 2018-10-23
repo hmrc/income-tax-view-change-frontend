@@ -21,7 +21,7 @@ import assets.IncomeSourceDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import mocks.connectors.MockIncomeSourceDetailsConnector
 import mocks.services.MockReportDeadlinesService
-import utils.TestSupport
+import testUtils.TestSupport
 
 
 class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDetailsConnector with MockReportDeadlinesService with MockAuditingService {

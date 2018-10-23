@@ -26,8 +26,8 @@ import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
+import testUtils.TestSupport
 import uk.gov.hmrc.auth.core._
-import utils.TestSupport
 
 import scala.concurrent.Future
 

@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package testUtils
 
-import java.text.DecimalFormat
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 
-import play.twirl.api.Html
-
-trait ImplicitCurrencyFormatter {
-  implicit class CurrencyFormatter(x: BigDecimal) {
-    val f = new DecimalFormat("#,##0.00")
-    def toCurrency: Html = Html("&pound;" + f.format(x).replace(".00",""))
-    def toCurrencyString: String = "£" + f.format(x).replace(".00","")
-    def toStringNoDecimal: String = x.toString.replace(".0","")
-    def toPence: Long = (x * 100).toLong
-  }
+trait MaterializerSupport {
+  implicit val system = ActorSystem("Sys")
+  implicit val materializer = ActorMaterializer()
 }
-
-object ImplicitCurrencyFormatter extends ImplicitCurrencyFormatter

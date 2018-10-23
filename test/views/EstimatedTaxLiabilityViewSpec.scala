@@ -32,8 +32,9 @@ import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.ImplicitCurrencyFormatter._
-import utils.{ImplicitCurrencyFormatter, ImplicitDateFormatter, TestSupport}
+import implicits.ImplicitCurrencyFormatter._
+import implicits.ImplicitDateFormatter
+import testUtils.TestSupport
 
 
 class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatter {
@@ -231,7 +232,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
         "have the higher rate of tax" should {
           val setup = pageSetup(busBropHRTCalcDataModel, bizAndPropertyUser)
-          import ImplicitCurrencyFormatter._
+          import implicits.ImplicitCurrencyFormatter._
           import setup._
 
           s"have an Income Tax section" which {
@@ -260,7 +261,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
         "have the additional rate of tax" should {
           val setup = pageSetup(busPropARTCalcDataModel, bizAndPropertyUser)
-          import ImplicitCurrencyFormatter._
+          import implicits.ImplicitCurrencyFormatter._
           import setup._
           s"have an Income Tax section" which {
             "has a BRT section" in {
@@ -286,7 +287,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
         "has no taxable income and no NI contributions" should {
           val setup = pageSetup(noTaxOrNICalcDataModel, bizAndPropertyUser)
-          import ImplicitCurrencyFormatter._
+          import implicits.ImplicitCurrencyFormatter._
           import setup._
           s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
             document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
@@ -301,7 +302,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
         "has no taxable income and some NI contribution" should {
           val setup = pageSetup(noTaxJustNICalcDataModel, bizAndPropertyUser)
-          import ImplicitCurrencyFormatter._
+          import implicits.ImplicitCurrencyFormatter._
           import setup._
           s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
             document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString

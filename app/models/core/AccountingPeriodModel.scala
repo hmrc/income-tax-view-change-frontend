@@ -19,7 +19,7 @@ package models.core
 import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
-import utils.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter._
 
 
 case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {

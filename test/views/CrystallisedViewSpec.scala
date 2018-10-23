@@ -33,8 +33,8 @@ import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.ImplicitCurrencyFormatter._
-import utils.{ImplicitCurrencyFormatter, TestSupport}
+import implicits.ImplicitCurrencyFormatter._
+import testUtils.TestSupport
 
 class CrystallisedViewSpec extends TestSupport {
 
@@ -169,7 +169,7 @@ class CrystallisedViewSpec extends TestSupport {
 
           "have the higher rate of tax" should {
             val setup = pageSetup(busBropHRTCalcDataModel, transactionModel(), bizAndPropertyUser)
-            import ImplicitCurrencyFormatter._
+            import implicits.ImplicitCurrencyFormatter._
             import setup._
 
             s"have an Income Tax section" which {
@@ -195,7 +195,7 @@ class CrystallisedViewSpec extends TestSupport {
 
           "have the additional rate of tax" should {
             val setup = pageSetup(busPropARTCalcDataModel, transactionModel(), bizAndPropertyUser)
-            import ImplicitCurrencyFormatter._
+            import implicits.ImplicitCurrencyFormatter._
             import setup._
             s"have an Income Tax section" which {
               "has a BRT section" in {
@@ -219,7 +219,7 @@ class CrystallisedViewSpec extends TestSupport {
 
           "has no taxable income and no NI contributions" should {
             val setup = pageSetup(noTaxOrNICalcDataModel, transactionModel(), bizAndPropertyUser)
-            import ImplicitCurrencyFormatter._
+            import implicits.ImplicitCurrencyFormatter._
             import setup._
             s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
               document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
@@ -234,7 +234,7 @@ class CrystallisedViewSpec extends TestSupport {
 
           "has no taxable income and some NI contribution" should {
             val setup = pageSetup(noTaxJustNICalcDataModel, transactionModel(), bizAndPropertyUser)
-            import ImplicitCurrencyFormatter._
+            import implicits.ImplicitCurrencyFormatter._
             import setup._
             s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
               document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString

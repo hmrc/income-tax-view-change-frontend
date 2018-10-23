@@ -17,10 +17,9 @@
 package audit.models
 
 import audit.models.BillsAuditing.BillsAuditModel
-
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
-import utils.TestSupport
+import testUtils.TestSupport
 
 class BillsAuditModelSpec extends TestSupport {
 

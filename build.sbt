@@ -4,15 +4,18 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.SbtAutoBuildPlugin
 import play.core.PlayVersion
+import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
+import uk.gov.hmrc.SbtArtifactory
+
 import sbt.Tests.{Group, SubProcess}
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion      = "1.6.0"
-val govTemplateVersion        = "5.14.0"
+val bootstrapPlayVersion      = "3.13.0"
+val govTemplateVersion        = "5.23.0"
 val playPartialsVersion       = "6.1.0"
-val authClientVersion         = "2.6.0"
-val playUiVersion             = "7.17.0"
+val authClientVersion         = "2.16.0-play-25"
+val playUiVersion             = "7.22.0"
 val playLanguageVersion       = "3.4.0"
 
 val scalaTestPlusVersion      = "2.0.0"
@@ -71,12 +74,13 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
 
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(Seq(play.sbt.PlayScala,SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) ++ plugins : _*)
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .settings(playSettings : _*)
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
   .settings(scoverageSettings: _*)
   .settings(defaultSettings(): _*)
+  .settings(majorVersion := 1)
   .settings(
     Keys.fork in Test := true,
     javaOptions in Test += "-Dlogger.resource=logback-test.xml",

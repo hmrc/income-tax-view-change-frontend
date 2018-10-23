@@ -30,8 +30,8 @@ import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.ImplicitDateFormatter._
-import utils.TestSupport
+import implicits.ImplicitDateFormatter._
+import testUtils.TestSupport
 
 class BusinessDetailsViewSpec extends TestSupport {
 

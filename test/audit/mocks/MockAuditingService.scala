@@ -21,7 +21,7 @@ import audit.models.{AuditModel, ExtendedAuditModel}
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import utils.TestSupport
+import testUtils.TestSupport
 
 import scala.concurrent.ExecutionContext
 import uk.gov.hmrc.http.HeaderCarrier

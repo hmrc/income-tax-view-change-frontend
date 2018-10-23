@@ -16,7 +16,7 @@
 
 package controllers.predicates
 
-import assets.BaseTestConstants.{testMtditid, testNino, testUserDetails, testErrorMessage, testErrorStatus}
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testUserDetails}
 import audit.AuditingService
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
@@ -25,7 +25,7 @@ import models.core.{Nino, NinoResponseError}
 import org.scalatest.EitherValues
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
-import utils.TestSupport
+import testUtils.TestSupport
 
 class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLookupService with EitherValues{
 

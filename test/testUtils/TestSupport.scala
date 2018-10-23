@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package testUtils
 
 import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants._

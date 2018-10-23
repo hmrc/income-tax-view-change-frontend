@@ -16,7 +16,7 @@
 
 package routes
 
-import utils.TestSupport
+import testUtils.TestSupport
 
 class RoutesSpec extends TestSupport {
 

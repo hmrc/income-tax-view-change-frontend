@@ -31,7 +31,7 @@ import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.TestSupport
+import testUtils.TestSupport
 
 class AccountDetailsViewSpec extends TestSupport {
 

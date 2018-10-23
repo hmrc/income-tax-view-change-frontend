@@ -19,7 +19,7 @@ package services
 import assets.BaseTestConstants._
 import assets.FinancialTransactionsTestConstants._
 import mocks.connectors.MockFinancialTransactionsConnector
-import utils.TestSupport
+import testUtils.TestSupport
 
 
 class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTransactionsConnector{

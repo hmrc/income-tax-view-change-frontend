@@ -24,7 +24,7 @@ import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.TestSupport
+import testUtils.TestSupport
 
 
 class HomePageViewSpec extends TestSupport {
