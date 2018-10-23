@@ -18,7 +18,7 @@ package audit.models
 
 import assets.BaseTestConstants._
 import play.api.libs.json.Json
-import utils.TestSupport
+import testUtils.TestSupport
 
 class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
 

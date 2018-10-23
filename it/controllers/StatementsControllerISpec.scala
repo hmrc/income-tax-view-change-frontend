@@ -25,8 +25,8 @@ import helpers.ComponentSpecBase
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
-import utils.ImplicitDateFormatter
-import utils.ImplicitCurrencyFormatter
+import implicits.ImplicitDateFormatter
+import implicits.ImplicitCurrencyFormatter
 
 class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with ImplicitCurrencyFormatter {
 

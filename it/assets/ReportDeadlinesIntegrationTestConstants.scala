@@ -19,7 +19,7 @@ import java.time.LocalDate
 
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
-import utils.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter._
 
 object ReportDeadlinesIntegrationTestConstants {
   def successResponse(obligationsModel: ReportDeadlinesModel): JsValue = {

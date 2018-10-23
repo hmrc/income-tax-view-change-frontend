@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package implicits
 
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
 import java.time.format.DateTimeFormatter

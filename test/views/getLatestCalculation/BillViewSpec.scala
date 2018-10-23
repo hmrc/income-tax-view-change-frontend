@@ -30,8 +30,8 @@ import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.ImplicitCurrencyFormatter._
-import utils.TestSupport
+import implicits.ImplicitCurrencyFormatter._
+import testUtils.TestSupport
 
 class BillViewSpec extends TestSupport {
 

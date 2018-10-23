@@ -22,7 +22,7 @@ import mocks.auth._
 import mocks.connectors.MockUserDetailsConnector
 import play.api.i18n.MessagesApi
 import play.api.{Configuration, Environment}
-import utils.TestSupport
+import testUtils.TestSupport
 
 trait MockAuthenticationPredicate extends TestSupport with MockUserDetailsConnector with MockFrontendAuthorisedFunctions {
 

@@ -29,7 +29,7 @@ import models.calculation.CalculationDataModel
 import models.financialTransactions.FinancialTransactionsModel
 import play.api.http.Status
 import play.api.http.Status._
-import utils.ImplicitCurrencyFormatter._
+import implicits.ImplicitCurrencyFormatter._
 
 class CalculationControllerISpec extends ComponentSpecBase {
 

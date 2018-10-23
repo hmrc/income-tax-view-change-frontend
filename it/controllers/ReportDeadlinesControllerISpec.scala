@@ -25,8 +25,9 @@ import assets.messages.{ReportDeadlinesMessages => messages}
 import config.FrontendAppConfig
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.ComponentSpecBase
+import implicits.ImplicitDateFormatter
 import play.api.http.Status._
-import utils.ImplicitDateFormatter
+import implicits.ImplicitDateFormatter
 
 class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 

@@ -23,7 +23,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
-import utils.TestSupport
+import testUtils.TestSupport
 
 class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 

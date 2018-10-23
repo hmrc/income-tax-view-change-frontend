@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.TestSupport
+import testUtils.TestSupport
 
 class StandardErrorViewSpec extends TestSupport {
 

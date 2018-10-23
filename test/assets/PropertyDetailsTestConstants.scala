@@ -18,10 +18,10 @@ package assets
 
 import assets.BaseTestConstants.testPropertyIncomeId
 import assets.ReportDeadlinesTestConstants._
+import implicits.ImplicitDateFormatter
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{PropertiesRentedModel, PropertyDetailsModel}
 import models.incomeSourcesWithDeadlines.PropertyIncomeWithDeadlinesModel
-import utils.ImplicitDateFormatter
 
 object PropertyDetailsTestConstants extends ImplicitDateFormatter {
 

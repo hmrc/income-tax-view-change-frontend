@@ -21,7 +21,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.{redirectLocation, _}
-import utils.TestSupport
+import testUtils.TestSupport
 
 import scala.concurrent.Future
 

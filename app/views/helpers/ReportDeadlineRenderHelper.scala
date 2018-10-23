@@ -19,7 +19,7 @@ package views.helpers
 import models.reportDeadlines._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import utils.ImplicitDateFormatter.localDateOrdering
+import implicits.ImplicitDateFormatter.localDateOrdering
 import views.html.templates.reportDeadlines.{reportDeadlines_error_template, reportDeadlines_template}
 
 object ReportDeadlineRenderHelper {

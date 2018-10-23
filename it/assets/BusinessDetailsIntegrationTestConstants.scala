@@ -20,7 +20,7 @@ import play.api.libs.json.{JsArray, JsValue, Json}
 import assets.BaseIntegrationTestConstants.{otherTestSelfEmploymentId, testSelfEmploymentId}
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
-import utils.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter._
 
 object BusinessDetailsIntegrationTestConstants {
 

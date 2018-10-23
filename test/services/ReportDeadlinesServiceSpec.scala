@@ -24,7 +24,7 @@ import assets.PropertyDetailsTestConstants.propertyDetails
 import assets.ReportDeadlinesTestConstants._
 import mocks.connectors.MockReportDeadlinesConnector
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesError, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import utils.TestSupport
+import testUtils.TestSupport
 
 class ReportDeadlinesServiceSpec extends TestSupport with MockReportDeadlinesConnector {
 

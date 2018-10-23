@@ -20,7 +20,7 @@ import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
 import assets.BaseIntegrationTestConstants.testPropertyIncomeId
-import utils.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter._
 
 object PropertyDetailsIntegrationTestConstants {
 

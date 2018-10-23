@@ -17,8 +17,9 @@ package controllers
 
 import assets.messages.HomeMessages._
 import helpers.ComponentSpecBase
+import implicits.ImplicitDateFormatter
 import play.api.http.Status._
-import utils.ImplicitDateFormatter
+import implicits.ImplicitDateFormatter
 
 class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 

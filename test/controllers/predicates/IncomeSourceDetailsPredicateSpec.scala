@@ -23,7 +23,7 @@ import config.ItvcErrorHandler
 import mocks.services.MockIncomeSourceDetailsService
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import utils.TestSupport
+import testUtils.TestSupport
 
 
 class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSourceDetailsService {

@@ -27,9 +27,9 @@ import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.ImplicitCurrencyFormatter._
-import utils.ImplicitDateFormatter._
-import utils.TestSupport
+import implicits.ImplicitCurrencyFormatter._
+import implicits.ImplicitDateFormatter._
+import testUtils.TestSupport
 
 class StatementsViewSpec extends TestSupport {
 

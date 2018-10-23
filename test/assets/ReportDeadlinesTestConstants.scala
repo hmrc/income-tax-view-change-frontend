@@ -17,9 +17,9 @@
 package assets
 
 import assets.BaseTestConstants._
+import implicits.ImplicitDateFormatter
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
-import utils.ImplicitDateFormatter
 
 object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
 

@@ -23,8 +23,8 @@ import mocks.connectors.{MockCalculationDataConnector, MockLastTaxCalculationCon
 import mocks.services.MockCalculationService
 import models.calculation._
 import play.api.http.Status
+import testUtils.TestSupport
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.TestSupport
 
 import scala.concurrent.Future
 

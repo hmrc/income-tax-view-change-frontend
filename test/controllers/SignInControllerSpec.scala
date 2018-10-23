@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import play.api.http.Status
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
-import utils.TestSupport
+import testUtils.TestSupport
 
 class SignInControllerSpec extends TestSupport {
 

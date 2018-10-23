@@ -17,7 +17,7 @@
 package audit.models
 
 import assets.BaseTestConstants.{testMtditid, testNino}
-import utils.TestSupport
+import testUtils.TestSupport
 
 class IncomeSourceDetailsRequestAuditModelSpec extends TestSupport {
 

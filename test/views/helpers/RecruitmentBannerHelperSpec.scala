@@ -19,7 +19,7 @@ package views.helpers
 import assets.Messages
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
-import utils.TestSupport
+import testUtils.TestSupport
 
 class RecruitmentBannerHelperSpec extends TestSupport{
 

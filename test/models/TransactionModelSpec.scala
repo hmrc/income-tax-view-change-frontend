@@ -19,7 +19,7 @@ package models
 import models.financialTransactions.{SubItemModel, TransactionModel}
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter._
 
 class TransactionModelSpec extends UnitSpec with Matchers {
 

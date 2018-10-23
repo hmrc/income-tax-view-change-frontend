@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package utils
+package testUtils
 
 import java.time.LocalDate
 
+import implicits.ImplicitDateFormatter
 import play.api.i18n.{Lang, Messages}
 
 class DateFormatterSpec extends TestSupport with ImplicitDateFormatter {

@@ -16,7 +16,7 @@
 
 package assets
 
-import utils.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter._
 
 object BaseIntegrationTestConstants {
 

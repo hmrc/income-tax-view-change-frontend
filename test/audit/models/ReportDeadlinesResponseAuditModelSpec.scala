@@ -20,7 +20,7 @@ import assets.BaseTestConstants._
 import assets.ReportDeadlinesTestConstants._
 import models.reportDeadlines.ReportDeadlineModel
 import play.api.libs.json.{Json, Writes}
-import utils.TestSupport
+import testUtils.TestSupport
 
 class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
 

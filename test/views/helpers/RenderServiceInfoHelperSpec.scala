@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import play.twirl.api.Html
-import utils.TestSupport
+import testUtils.TestSupport
 import views.html.helpers.renderServiceInfoHelper
 
 class RenderServiceInfoHelperSpec extends TestSupport {

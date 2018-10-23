@@ -18,7 +18,7 @@ package views.helpers
 
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
-import utils.TestSupport
+import testUtils.TestSupport
 
 class BetaBannerHelperSpec extends TestSupport {
 

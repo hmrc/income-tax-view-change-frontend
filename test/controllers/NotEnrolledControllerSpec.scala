@@ -22,7 +22,7 @@ import controllers.notEnrolled.NotEnrolledController
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import utils.TestSupport
+import testUtils.TestSupport
 
 class NotEnrolledControllerSpec extends TestSupport {
 
