@@ -11,15 +11,15 @@ import sbt.Tests.{Group, SubProcess}
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion      = "3.13.0"
+val bootstrapPlayVersion      = "4.7.0"
 val govTemplateVersion        = "5.23.0"
-val playPartialsVersion       = "6.1.0"
-val authClientVersion         = "2.16.0-play-25"
+val playPartialsVersion       = "6.3.0"
+val authClientVersion         = "2.18.0-play-25"
 val playUiVersion             = "7.22.0"
 val playLanguageVersion       = "3.4.0"
 
 val scalaTestPlusVersion      = "2.0.0"
-val hmrcTestVersion           = "3.0.0"
+val hmrcTestVersion           = "3.3.0"
 val scalatestVersion          = "3.0.0"
 val pegdownVersion            = "1.6.0"
 val jsoupVersion              = "1.10.2"
