@@ -34,7 +34,8 @@ val compile = Seq(
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "uk.gov.hmrc" %% "auth-client" % authClientVersion,
-  "uk.gov.hmrc" %% "play-language" % playLanguageVersion
+  "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
+  "uk.gov.hmrc" %% "logback-json-logger" % "4.0.0"
 
 )
 
