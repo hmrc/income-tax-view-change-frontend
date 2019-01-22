@@ -21,13 +21,12 @@ This service is written in [Scala](http://www.scala-lang.org/) and [Play](http:/
 To update from Nexus and start all services from the RELEASE version instead of snapshot
 
 ```
-sm --start ITVC_ALL -f
+sm --start ITVC_FRONTEND_ALL -f
 ```
 
 
 ### To run the application locally execute the following:
 
-Kill the service ```sm --stop INCOME_TAX_VIEW_CHANGE``` and run:
 ```
 sbt 'run 9081'
 ```
