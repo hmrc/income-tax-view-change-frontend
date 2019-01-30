@@ -53,10 +53,18 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
   val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
   def renderCalculationPage(taxYear: Int): Action[AnyContent] = {
-    if(config.features.calcDataApiEnabled()) {
-      showCalculationForYear(taxYear)
+    if(taxYear > 0) {
+      if (config.features.calcDataApiEnabled()) {
+        showCalculationForYear(taxYear)
+      } else {
+        basicShowCalculationForYear(taxYear)
+      }
     } else {
-      basicShowCalculationForYear(taxYear)
+      action.async { implicit request =>
+        Future.successful(BadRequest(views.html.errorPages.standardError(messagesApi.apply("standardError.title"),
+          messagesApi.apply("standardError.heading"),
+          messagesApi.apply("standardError.message"))))
+      }
     }
   }
 

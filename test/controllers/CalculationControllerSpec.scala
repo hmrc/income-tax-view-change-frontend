@@ -234,6 +234,17 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
             document.title() shouldBe messages.title
           }
         }
+
+        "provided with a negative tax year " should {
+          lazy val result = TestCalculationController.renderCalculationPage(-testYear)(fakeRequestWithActiveSession)
+
+          "return Status Bad Request Error (400)" in new CalculationDataApiEnabled {
+            mockFinancialTransactionFailed()
+            mockPropertyIncomeSource()
+            mockCalculationCrystalisationSuccess()
+            status(result) shouldBe Status.BAD_REQUEST
+          }
+        }
       }
 
       "the Calculation Data API feature is disabled" when {
@@ -389,6 +400,17 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
           s"Have a paragraph with the messages ${EstimatedTaxLiabilityError.p2}" in new CalculationDataApiDisabled {
             document.getElementById("p2").text() shouldBe EstimatedTaxLiabilityError.p2
+          }
+        }
+
+        "provided with a negative tax year " should {
+          lazy val result = TestCalculationController.renderCalculationPage(-testYear)(fakeRequestWithActiveSession)
+
+          "return Status Bad Request Error (400)" in new CalculationDataApiDisabled {
+            mockFinancialTransactionFailed()
+            mockPropertyIncomeSource()
+            mockCalculationCrystalisationSuccess()
+            status(result) shouldBe Status.BAD_REQUEST
           }
         }
       }
