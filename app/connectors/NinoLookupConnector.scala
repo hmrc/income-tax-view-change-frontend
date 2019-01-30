@@ -60,6 +60,9 @@ class NinoLookupConnector @Inject()(val http: HttpClient,
             NinoResponseError(response.status, response.body)
         }
     } recover {
+      case ex =>
+        Logger.warn(s"[NinoLookupConnector][getNino] - Unexpected future failed error ${ex.getMessage}")
+        NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error ${ex.getMessage}")
       case _ =>
         Logger.warn(s"[NinoLookupConnector][getNino] - Unexpected future failed error")
         NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")

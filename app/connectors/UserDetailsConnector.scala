@@ -51,6 +51,9 @@ class UserDetailsConnector @Inject()(val http: HttpClient) extends RawResponseRe
             UserDetailsError
         }
     } recover {
+      case ex=>
+        Logger.warn(s"[UserDetailsConnector][getUserDetails] - Unexpected future failed error ${ex.getMessage} when calling $userDetailsUrl.")
+        UserDetailsError
       case _ =>
         Logger.warn(s"[UserDetailsConnector][getUserDetails] - Unexpected future failed error when calling $userDetailsUrl.")
         UserDetailsError

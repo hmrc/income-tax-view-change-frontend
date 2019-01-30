@@ -61,6 +61,9 @@ class CalculationDataConnector @Inject()(val http: HttpClient,
             CalculationDataErrorModel(response.status, response.body)
         }
     } recover {
+      case ex =>
+        Logger.warn(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error ${ex.getMessage}")
+        CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error ${ex.getMessage}")
       case _ =>
         Logger.warn(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error")
         CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
@@ -90,6 +93,9 @@ class CalculationDataConnector @Inject()(val http: HttpClient,
             CalculationErrorModel(response.status, response.body)
         }
     } recover {
+      case ex =>
+        Logger.warn(s"[CalculationDataConnector][getLatestCalculation] - Unexpected future failed error ${ex.getMessage}")
+        CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error ${ex.getMessage}")
       case _ =>
         Logger.warn(s"[CalculationDataConnector][getLatestCalculation] - Unexpected future failed error")
         CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
