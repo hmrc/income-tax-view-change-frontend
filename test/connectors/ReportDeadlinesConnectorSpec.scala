@@ -68,7 +68,7 @@ class ReportDeadlinesConnectorSpec extends TestSupport with MockHttp with MockAu
 
     "return ReportDeadlinesErrorModel model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
       verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId))
     }
   }

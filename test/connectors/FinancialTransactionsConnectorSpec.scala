@@ -59,7 +59,7 @@ class FinancialTransactionsConnectorSpec extends TestSupport with MockHttp{
 
     "return FinancialTransactionErrorModel when GET fails" in {
       setupMockFailedHttpGetWithParams(testUrl,testParams)(badResponse)
-      await(result) shouldBe FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
+      await(result) shouldBe FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed, unknown error")
     }
 
   }
