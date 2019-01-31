@@ -17,12 +17,14 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+
 import audit.AuditingService
 import audit.models.ReportDeadlinesAuditing.ReportDeadlinesAuditModel
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
+import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.ReportDeadlinesService
@@ -53,7 +55,11 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
       reportDeadlinesService.createIncomeSourcesWithDeadlinesModel(user.incomeSources).map {
         case withDeadlines: IncomeSourcesWithDeadlinesModel =>
           Ok(views.html.report_deadlines(withDeadlines))
-        case _ =>
+        case ex: Exception =>
+          Logger.error(s"[ReportDeadlinesController][renderView] error ${ex.getMessage} encountered")
+          itvcErrorHandler.showInternalServerError
+        case _=>
+          Logger.error(s"[ReportDeadlinesController][renderView] error without exception occurred")
           itvcErrorHandler.showInternalServerError
       }
     } else {
