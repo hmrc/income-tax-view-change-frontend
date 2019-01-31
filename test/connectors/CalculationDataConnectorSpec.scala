@@ -71,7 +71,7 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
     "return CalculationDataErrorModel model in case of future failed scenario" in {
       setupMockFailedHttpGet(url)(badResponse)
-      await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
     }
   }
 
@@ -99,7 +99,7 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
 
     "return a CalculationErrorModel in case of failed GET request" in {
       setupMockFailedHttpGet(url)(badResponse)
-      await(result) shouldBe CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
+      await(result) shouldBe CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
     }
   }
 }

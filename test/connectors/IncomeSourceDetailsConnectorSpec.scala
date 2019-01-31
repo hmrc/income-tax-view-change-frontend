@@ -63,7 +63,7 @@ class IncomeSourceDetailsConnectorSpec extends TestSupport with MockHttp with Mo
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
+      await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
       verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino))
     }
   }

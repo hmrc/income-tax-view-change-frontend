@@ -64,8 +64,8 @@ class LastTaxCalculationConnector @Inject()(val http: HttpClient,
         }
     } recover {
       case ex =>
-        Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Unexpected future failed error ${ex.getMessage}")
-        LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error ${ex.getMessage}")
+        Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Unexpected future failed error, ${ex.getMessage}")
+        LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       case _ =>
         Logger.warn(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Unexpected future failed error")
         LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")

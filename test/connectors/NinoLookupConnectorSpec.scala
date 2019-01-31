@@ -57,7 +57,7 @@ class NinoLookupConnectorSpec extends TestSupport with MockHttp {
 
     "return NinoResponseError model in case of future failed scenario" in {
       setupMockFailedHttpGet(testUrl)(badResponse)
-      await(result) shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
+      await(result) shouldBe NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
     }
   }
 }
