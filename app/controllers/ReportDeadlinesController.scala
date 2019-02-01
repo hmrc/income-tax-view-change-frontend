@@ -55,11 +55,8 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
       reportDeadlinesService.createIncomeSourcesWithDeadlinesModel(user.incomeSources).map {
         case withDeadlines: IncomeSourcesWithDeadlinesModel =>
           Ok(views.html.report_deadlines(withDeadlines))
-        case ex: Exception =>
-          Logger.error(s"[ReportDeadlinesController][renderView] error ${ex.getMessage} encountered")
-          itvcErrorHandler.showInternalServerError
         case _=>
-          Logger.error(s"[ReportDeadlinesController][renderView] error without exception occurred")
+          Logger.error(s"[ReportDeadlinesController][renderView] error occurred while trying to render report Deadlines page")
           itvcErrorHandler.showInternalServerError
       }
     } else {
