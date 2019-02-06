@@ -95,6 +95,13 @@ class IncomeSourcesWithDeadlinesModelSpec extends UnitSpec with Matchers {
           Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligationsDataSuccessModel))).hasAnyServerErrors shouldBe true
       }
     }
+    "the user has an error with a single 5xx status in the business income sources" should {
+      "return a true for hasAnyServerErrors" in {
+        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataSuccessModel),
+          BusinessIncomeWithDeadlinesModel(business1, obligationsDataErrorModel)),
+          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligationsDataSuccessModel))).hasAnyServerErrors shouldBe true
+      }
+    }
     "the user has an error with a 5xx status in the property income sources" should {
       "return a true for hasAnyServerErrors" in {
         IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataErrorModel)),
