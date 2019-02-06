@@ -17,9 +17,11 @@
 package models
 
 import assets.BaseTestConstants._
-import assets.IncomeSourcesWithDeadlinesTestConstants._
 import assets.BusinessDetailsTestConstants._
+import assets.IncomeSourcesWithDeadlinesTestConstants._
 import assets.PropertyDetailsTestConstants._
+import assets.ReportDeadlinesTestConstants.{obligations4xxDataErrorModel, obligationsDataErrorModel}
+import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -84,6 +86,42 @@ class IncomeSourcesWithDeadlinesModelSpec extends UnitSpec with Matchers {
       "return None for both business and property sources" in {
         noIncomeDetailsWithNoDeadlines.propertyIncomeSource shouldBe None
         noIncomeDetailsWithNoDeadlines.businessIncomeSources shouldBe List.empty
+      }
+    }
+
+    "the user has an error with a 5xx status in the business income sources" should {
+      "return a true for hasAnyServerErrors" in {
+        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataErrorModel)),
+          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligationsDataSuccessModel))).hasAnyServerErrors shouldBe true
+      }
+    }
+    "the user has an error with a 5xx status in the property income sources" should {
+      "return a true for hasAnyServerErrors" in {
+        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataErrorModel)),
+          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligations4xxDataErrorModel))).hasAnyServerErrors shouldBe true
+      }
+    }
+    "the user has an error with a 4xx status in the business income sources" should {
+      "return a false for hasAnyServerErrors" in {
+        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligations4xxDataErrorModel)),
+          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligationsDataSuccessModel))).hasAnyServerErrors shouldBe false
+      }
+    }
+    "the user has an error with a 4xx status in the property income sources" should {
+      "return a false for hasAnyServerErrors" in {
+        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataSuccessModel)),
+          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligations4xxDataErrorModel))).hasAnyServerErrors shouldBe false
+      }
+    }
+    "the user has no errors for any income sources" should {
+      "return a false for hasAnyServerErrors" in {
+        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataSuccessModel)),
+          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligationsDataSuccessModel))).hasAnyServerErrors shouldBe false
+      }
+    }
+    "the user has no income sources" should {
+      "return a false for hasAnyServerErrors" in {
+        IncomeSourcesWithDeadlinesModel(List.empty, None).hasAnyServerErrors shouldBe false
       }
     }
   }
