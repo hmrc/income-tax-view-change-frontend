@@ -50,22 +50,22 @@ class CalculationDataConnector @Inject()(val http: HttpClient,
             Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[CalculationDataModel].fold(
               invalid => {
-                Logger.warn(s"[CalculationDataConnector][getCalculationData] - Json Validation Error. Parsing Calc Breakdown Response. Invalid=$invalid")
+                Logger.error(s"[CalculationDataConnector][getCalculationData] - Json Validation Error. Parsing Calc Breakdown Response. Invalid=$invalid")
                 CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Calc Breakdown Response")
               },
               valid => valid
             )
           case _ =>
-            Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(s"[CalculationDataConnector][getCalculationData] - Response status: [${response.status}] returned from Calc Breakdown call")
+            Logger.error(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.error(s"[CalculationDataConnector][getCalculationData] - Response status: [${response.status}] returned from Calc Breakdown call")
             CalculationDataErrorModel(response.status, response.body)
         }
     } recover {
       case ex =>
-        Logger.warn(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error, ${ex.getMessage}")
+        Logger.error(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error, ${ex.getMessage}")
         CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       case _ =>
-        Logger.warn(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error")
+        Logger.error(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error")
         CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
@@ -82,22 +82,22 @@ class CalculationDataConnector @Inject()(val http: HttpClient,
             Logger.debug(s"[CalculationDataConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.json}")
             response.json.validate[CalculationModel].fold(
               invalid => {
-                Logger.warn(s"[CalculationDataConnector][getLatestCalculation] - Json validation error parsing calculation model response. Invalid=$invalid")
+                Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Json validation error parsing calculation model response. Invalid=$invalid")
                 CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Json validation error parsing calculation model response")
               },
               valid => valid
             )
           case _ =>
-            Logger.debug(s"[CalculationDataConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.body}")
-            Logger.warn(s"[CalculationDataConnector][getLatestCalculation] - Response status: [${response.status}] returned from Latest Calculation call")
+            Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.body}")
+            Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Response status: [${response.status}] returned from Latest Calculation call")
             CalculationErrorModel(response.status, response.body)
         }
     } recover {
       case ex =>
-        Logger.warn(s"[CalculationDataConnector][getLatestCalculation] - Unexpected future failed error, ${ex.getMessage}")
+        Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Unexpected future failed error, ${ex.getMessage}")
         CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       case _ =>
-        Logger.warn(s"[CalculationDataConnector][getLatestCalculation] - Unexpected future failed error")
+        Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Unexpected future failed error")
         CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
     }
   }

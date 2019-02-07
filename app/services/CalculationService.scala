@@ -45,17 +45,16 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
         Logger.debug("[CalculationService] Retrieved all Financial Data")
         CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, Some(breakdown), calc.calcStatus)
       case (calc: LastTaxCalculation, _) =>
-        Logger.debug("[CalculationService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
+        Logger.warn("[CalculationService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
         CalcDisplayModel(calc.calcTimestamp, calc.calcAmount, None, calc.calcStatus)
       case (_: LastTaxCalculationError, _) =>
-        Logger.debug("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
+        Logger.error("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
       case (NoLastTaxCalculation, _) =>
-        Logger.debug("[CalculationService] Could not retrieve Last Tax Calculation. No data was found.")
+        Logger.warn("[CalculationService] Could not retrieve Last Tax Calculation. No data was found.")
         CalcDisplayNoDataFound
     }
   }
-
 
   def getLastEstimatedTaxCalculation(nino: String, year: Int)
                                     (implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
@@ -66,10 +65,10 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
         Logger.debug(s"[CalculationService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n$success")
         success
       case NoLastTaxCalculation =>
-        Logger.debug(s"[CalculationService][getLastEstimatedTaxCalculation] - No Data Found response returned from connector")
+        Logger.warn(s"[CalculationService][getLastEstimatedTaxCalculation] - No Data Found response returned from connector")
         NoLastTaxCalculation
       case error: LastTaxCalculationError =>
-        Logger.debug(s"[CalculationService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
+        Logger.error(s"[CalculationService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
         error
     }
   }
@@ -105,7 +104,7 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
         Logger.debug(s"[CalculationService][getCalculationData] - Retrieved Calculation data: \n$success")
         success
       case error: CalculationDataErrorModel =>
-        Logger.debug(s"[CalculationService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
+        Logger.error(s"[CalculationService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
         error
     }
   }
@@ -118,7 +117,7 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
         Logger.debug(s"[CalculationService][getLatestCalculation] - Retrieved Calculation data: \n$success")
         success
       case error: CalculationErrorModel =>
-        Logger.debug(s"[CalculationService][getLatestCalculation] - Error Response Status: ${error.code}, Message: ${error.message}")
+        Logger.error(s"[CalculationService][getLatestCalculation] - Error Response Status: ${error.code}, Message: ${error.message}")
         error
     }
   }

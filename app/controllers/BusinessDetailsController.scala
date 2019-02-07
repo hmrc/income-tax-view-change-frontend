@@ -48,7 +48,7 @@ class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig
       case Some(business) =>
         Future.successful(Ok(views.html.businessDetailsView(business)))
       case _ =>
-        Logger.debug(s"[BusinessDetailsController][getBusinessDetails] No Business Details found with ID: $id")
+        Logger.error(s"[BusinessDetailsController][getBusinessDetails] No Business Details found with ID: $id")
         Future.successful(itvcErrorHandler.showInternalServerError)
     }
   }

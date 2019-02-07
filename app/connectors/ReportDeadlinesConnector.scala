@@ -55,8 +55,8 @@ class ReportDeadlinesConnector @Inject()(val http: HttpClient,
             Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[ReportDeadlinesModel].fold(
               invalid => {
-                Logger.warn("[ReportDeadlinesConnector][getReportDeadlines] - Json Validation Error. Parsing Report Deadlines Data Response")
-                Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - Json Validation Error: $invalid")
+                Logger.error("[ReportDeadlinesConnector][getReportDeadlines] - Json Validation Error. Parsing Report Deadlines Data Response")
+                Logger.error(s"[ReportDeadlinesConnector][getReportDeadlines] - Json Validation Error: $invalid")
                 ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
               },
               valid => {
@@ -66,16 +66,16 @@ class ReportDeadlinesConnector @Inject()(val http: HttpClient,
               }
             )
           case _ =>
-            Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(s"[ReportDeadlinesConnector][getReportDeadlines] - Status: [${response.status}] Returned from business report deadlines call")
+            Logger.error(s"[ReportDeadlinesConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.error(s"[ReportDeadlinesConnector][getReportDeadlines] - Status: [${response.status}] Returned from business report deadlines call")
             ReportDeadlinesErrorModel(response.status, response.body)
         }
     } recover {
       case ex =>
-        Logger.warn(s"[ReportDeadlinesConnector][getReportDeadlines] - Unexpected future failed error, ${ex.getMessage}")
+        Logger.error(s"[ReportDeadlinesConnector][getReportDeadlines] - Unexpected future failed error, ${ex.getMessage}")
         ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       case _ =>
-        Logger.warn("[ReportDeadlinesConnector][getReportDeadlines] - Unexpected future failed error")
+        Logger.error("[ReportDeadlinesConnector][getReportDeadlines] - Unexpected future failed error")
         ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
     }
   }

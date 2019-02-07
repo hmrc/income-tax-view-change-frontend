@@ -49,22 +49,22 @@ class NinoLookupConnector @Inject()(val http: HttpClient,
             Logger.debug(s"[NinoLookupConnector][getNino] - RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[Nino].fold(
               invalid => {
-                Logger.warn(s"[NinoLookupConnector][getNino] - Json Validation Error. Parsing Nino Response")
+                Logger.error(s"[NinoLookupConnector][getNino] - Json Validation Error. Parsing Nino Response")
                 NinoResponseError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Nino Response")
               },
               valid => valid
             )
           case _ =>
-            Logger.debug(s"[NinoLookupConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(s"[NinoLookupConnector][getNino] - Response status: [${response.status}] from Get Nino call")
+            Logger.error(s"[NinoLookupConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.error(s"[NinoLookupConnector][getNino] - Response status: [${response.status}] from Get Nino call")
             NinoResponseError(response.status, response.body)
         }
     } recover {
       case ex =>
-        Logger.warn(s"[NinoLookupConnector][getNino] - Unexpected future failed error, ${ex.getMessage}")
+        Logger.error(s"[NinoLookupConnector][getNino] - Unexpected future failed error, ${ex.getMessage}")
         NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       case _ =>
-        Logger.warn(s"[NinoLookupConnector][getNino] - Unexpected future failed error")
+        Logger.error(s"[NinoLookupConnector][getNino] - Unexpected future failed error")
         NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }

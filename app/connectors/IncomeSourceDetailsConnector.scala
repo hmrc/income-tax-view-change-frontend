@@ -54,8 +54,8 @@ class IncomeSourceDetailsConnector @Inject()(val http: HttpClient,
             Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[IncomeSourceDetailsModel].fold(
               invalid => {
-                Logger.warn(s"[IncomeSourceDetailsConnector][getIncomeSources] - Json Validation Error. Parsing Latest Calc Response")
-                Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] $invalid")
+                Logger.error(s"[IncomeSourceDetailsConnector][getIncomeSources] - Json Validation Error. Parsing Latest Calc Response")
+                Logger.error(s"[IncomeSourceDetailsConnector][getIncomeSources] $invalid")
                 IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
               },
               valid => {
@@ -69,16 +69,16 @@ class IncomeSourceDetailsConnector @Inject()(val http: HttpClient,
               }
             )
           case _ =>
-            Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(s"[IncomeSourceDetailsConnector][getIncomeSources] - Response status: [${response.status}] from Latest Calc call")
+            Logger.error(s"[IncomeSourceDetailsConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.error(s"[IncomeSourceDetailsConnector][getIncomeSources] - Response status: [${response.status}] from Latest Calc call")
             IncomeSourceDetailsError(response.status, response.body)
         }
     } recover {
       case ex =>
-        Logger.warn(s"[IncomeSourceDetailsConnector][getIncomeSources] - Unexpected future failed error, ${ex.getMessage}")
+        Logger.error(s"[IncomeSourceDetailsConnector][getIncomeSources] - Unexpected future failed error, ${ex.getMessage}")
         IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       case _ =>
-        Logger.warn("[IncomeSourceDetailsConnector][getIncomeSources] - Unexpected future failed error")
+        Logger.error("[IncomeSourceDetailsConnector][getIncomeSources] - Unexpected future failed error")
         IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
 
