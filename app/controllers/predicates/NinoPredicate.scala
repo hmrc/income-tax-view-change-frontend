@@ -61,7 +61,7 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
           auditNinoLookup(nino, request.mtditid)
           Left(Redirect(request.uri).addingToSession("nino" -> nino.nino))
         case error: NinoResponseError =>
-          Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO could not be retrieved from NinoLookupService")
+          Logger.error(s"[NinoPredicate][buildMtdUserWithNino] NINO could not be retrieved from NinoLookupService")
           auditNinoLookupError(error, request.mtditid)
           Left(itvcErrorHandler.showInternalServerError)
       }

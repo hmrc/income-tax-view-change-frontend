@@ -54,23 +54,23 @@ class FinancialTransactionsConnector @Inject()(val http: HttpClient,
             Logger.debug(s"[FinancialTransactionsConnector][getFinancialTransactions] - RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[FinancialTransactionsModel].fold(
               invalid => {
-                Logger.warn(s"[FinancialTransactionsConnector][getFinancialTransactions] - Json Validation Error. Parsing Financial Transactions Response. Invalid=$invalid")
+                Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - Json Validation Error. Parsing Financial Transactions Response. Invalid=$invalid")
                 FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Financial Transactions response")
               },
               valid => valid
             )
           case _ =>
-            Logger.debug(s"[FinancialTransactionsConnector][getFinancialTransactions] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.warn(s"[FinancialTransactionsConnector][getFinancialTransactions] - Response status: [${response.status}] returned from Financial Transactions call")
+            Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - Response status: [${response.status}] returned from Financial Transactions call")
             FinancialTransactionsErrorModel(response.status, response.body)
 
         }
     } recover {
       case ex =>
-        Logger.warn(s"[FinancialTransactionsConnector][getFinancialTransactions] - Unexpected future failed error, ${ex.getMessage}")
+        Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - Unexpected future failed error, ${ex.getMessage}")
         FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed, ${ex.getMessage}")
       case _ =>
-        Logger.warn(s"[FinancialTransactionsConnector][getFinancialTransactions] - Unexpected future failed error")
+        Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - Unexpected future failed error")
         FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }

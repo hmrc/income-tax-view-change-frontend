@@ -83,11 +83,11 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
           }
 
         case CalcDisplayNoDataFound =>
-          Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Not found")
+          Logger.warn(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Not found")
           Future.successful(NotFound(views.html.noEstimatedTaxLiability(taxYear)))
 
         case CalcDisplayError =>
-          Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
+          Logger.error(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
           Future.successful(Ok(views.html.errorPages.estimatedTaxLiabilityError(taxYear)))
       }
   }
@@ -112,13 +112,13 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                 )
                 Future.successful(Ok(views.html.getLatestCalculation.estimate(viewModel)))
               case _ =>
-                Logger.debug(s"[CalculationController][basicShowCalculationForYear[$taxYear] Valid calculation information could not be retrieved.")
+                Logger.error(s"[CalculationController][basicShowCalculationForYear[$taxYear] Valid calculation information could not be retrieved.")
                 Future.successful(itvcErrorHandler.showInternalServerError)
             }
           }
 
         case _: CalculationErrorModel =>
-          Logger.debug(s"[CalculationController][showCalculationForYear[$taxYear]] No latest calculation data could be retrieved.")
+          Logger.error(s"[CalculationController][showCalculationForYear[$taxYear]] No latest calculation data could be retrieved.")
           Future.successful(Ok(views.html.errorPages.estimatedTaxLiabilityError(taxYear)))
       }
   }
@@ -140,15 +140,15 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                 )
                 Ok(views.html.getLatestCalculation.bill(viewModel))
               case None =>
-                Logger.debug(s"[CalculationController][renderCrystallisedView[$taxYear]] No current bill amount could be retrieved.")
+                Logger.error(s"[CalculationController][renderCrystallisedView[$taxYear]] No current bill amount could be retrieved.")
                 itvcErrorHandler.showInternalServerError
             }
           case _ =>
-            Logger.debug(s"[CalculationController][renderCrystallisedView[$taxYear]] No transaction could be retrieved for given year.")
+            Logger.error(s"[CalculationController][renderCrystallisedView[$taxYear]] No transaction could be retrieved for given year.")
             itvcErrorHandler.showInternalServerError
       }
       case _: FinancialTransactionsErrorModel =>
-        Logger.debug(s"[CalculationController][renderCrystallisedView[$taxYear]] FinancialTransactionErrorModel returned from ftResponse")
+        Logger.error(s"[CalculationController][renderCrystallisedView[$taxYear]] FinancialTransactionErrorModel returned from ftResponse")
         itvcErrorHandler.showInternalServerError
     }
   }

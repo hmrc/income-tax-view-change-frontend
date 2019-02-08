@@ -50,7 +50,7 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
         Logger.debug("[StatementsController][getStatements] Success Response received from financialTransactionsService")
         Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
       case _: FinancialTransactionsErrorModel =>
-        Logger.debug("[StatementsController][getStatements] Error Response received from financialTransactionsService")
+        Logger.error("[StatementsController][getStatements] Error Response received from financialTransactionsService")
         Ok(views.html.errorPages.statementsError())
     }
   }

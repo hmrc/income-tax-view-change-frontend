@@ -62,16 +62,16 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
       }
     } recover {
       case _: InsufficientEnrolments =>
-        Logger.debug("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
+        Logger.error("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
         Redirect(controllers.notEnrolled.routes.NotEnrolledController.show())
       case _: BearerTokenExpired =>
-        Logger.debug("[AuthenticationPredicate][async] Bearer Token Timed Out.")
+        Logger.error("[AuthenticationPredicate][async] Bearer Token Timed Out.")
         Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
       case _: AuthorisationException =>
-        Logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
+        Logger.error("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
         Redirect(controllers.routes.SignInController.signIn())
       case s =>
-        Logger.debug(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.\n${s.getMessage}\n\n$s\n")
+        Logger.error(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.\n${s.getMessage}\n\n$s\n")
         itvcErrorHandler.showInternalServerError
     }
   }

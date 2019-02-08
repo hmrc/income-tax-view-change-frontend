@@ -50,7 +50,7 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
   private[EstimatesController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
     calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears).map{
       case estimatesResponse if estimatesResponse.exists(_.isErrored) =>
-        Logger.debug(s"[EstimatesController][viewEstimateCalculations] Retrieved at least one Errored Last Tax Calc. Response: $estimatesResponse")
+        Logger.error(s"[EstimatesController][viewEstimateCalculations] Retrieved at least one Errored Last Tax Calc. Response: $estimatesResponse")
         itvcErrorHandler.showInternalServerError
       case estimatesResponse if estimatesResponse.count(!_.matchesStatus(Crystallised)) == 1 =>
         Redirect(controllers.routes.CalculationController.renderCalculationPage(estimatesResponse.filter(!_.matchesStatus(Crystallised)).head.taxYear))
