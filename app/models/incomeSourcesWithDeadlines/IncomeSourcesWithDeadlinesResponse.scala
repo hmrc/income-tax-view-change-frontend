@@ -32,6 +32,14 @@ case class IncomeSourcesWithDeadlinesModel(
 
   val incomeSources: List[IncomeModelWithDeadlines] = businessIncomeSources ++ propertyIncomeSource
 
+  val isServerError: ReportDeadlinesResponseModel => Boolean = {
+    case ReportDeadlinesErrorModel(status, _) if status >= 500 => true
+    case _ => false
+  }
+
+  val hasAnyServerErrors: Boolean = businessIncomeSources.map(_.reportDeadlines).exists(isServerError) ||
+    propertyIncomeSource.exists(x => isServerError(x.reportDeadlines))
+
   val hasPropertyIncome: Boolean = propertyIncomeSource.nonEmpty
   val hasBusinessIncome: Boolean = businessIncomeSources.nonEmpty
   val hasBothIncomeSources: Boolean = hasPropertyIncome && hasBusinessIncome

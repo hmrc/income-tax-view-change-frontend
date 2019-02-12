@@ -99,6 +99,9 @@ object IncomeTaxViewChangeStub {
   def stubGetReportDeadlinesError(incomeSourceId: String, nino: String): Unit =
     WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId, nino), Status.INTERNAL_SERVER_ERROR, "ISE")
 
+  def stubGetReportDeadlinesNotFound(incomeSourceId: String, nino: String): Unit =
+    WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId, nino), Status.NO_CONTENT, "")
+
   def verifyGetReportDeadlines(incomeSourceId: String, nino: String): Unit =
     WiremockHelper.verifyGet(reportDeadlinesUrl(incomeSourceId, nino))
 

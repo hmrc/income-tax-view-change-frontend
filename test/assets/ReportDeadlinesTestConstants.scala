@@ -106,6 +106,7 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
   val twoObligationsSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueObligation, openEOPSObligation))
 
   val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
+  val obligations4xxDataErrorModel = ReportDeadlinesErrorModel(404, testErrorMessage)
 
   val obligationsDataErrorJson = Json.obj(
     "code" -> testErrorStatus,
