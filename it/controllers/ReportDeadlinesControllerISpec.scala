@@ -535,13 +535,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         "has business income but returns an error response from business obligations" should {
 
-          "Display an error message to the user" in {
+          "Display an error message to the user with a no content error" in {
 
             And("I wiremock stub a successful Income Source Details response with single Business income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
             And("I wiremock stub an error for the business obligations response")
-            IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testSelfEmploymentId, testNino)
+            IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testSelfEmploymentId, testNino)
 
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
@@ -558,17 +558,38 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               elementTextByID(id = "bi-1-p2")(messages.errorp2)
             )
           }
+
+          "Display an error message to the user with a server error" in {
+
+            And("I wiremock stub a successful Income Source Details response with single Business income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+            And("I wiremock stub an error for the business obligations response")
+            IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testSelfEmploymentId, testNino)
+
+            When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+            val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+            verifyIncomeSourceDetailsCall(testMtditid)
+            verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+
+            Then("the view is displayed with an error message under the business income section")
+            res should have(
+              httpStatus(INTERNAL_SERVER_ERROR),
+              pageTitle("There is a problem with the service - Income Tax reporting through software - GOV.UK")
+            )
+          }
         }
 
         "has property income but returns an error response from property obligations" should {
 
-          "Display an error message to the user" in {
+          "Display an error message to the user on the page on a no content error" in {
 
             And("I wiremock stub a successful Income Source Details response with Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             And("I wiremock stub an error for the property obligations response")
-            IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testPropertyIncomeId, testNino)
+            IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testPropertyIncomeId, testNino)
 
             When("I call GET /report-quarterly/income-and-expenses/view/obligations")
             val res = IncomeTaxViewChangeFrontend.getReportDeadlines
@@ -585,11 +606,58 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
               elementTextByID(id = "pi-p2")(messages.errorp2)
             )
           }
+
+          "Display an error page for a server error" in {
+
+            And("I wiremock stub a successful Income Source Details response with Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+            And("I wiremock stub an error for the property obligations response")
+            IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testPropertyIncomeId, testNino)
+
+            When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+            val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+            verifyIncomeSourceDetailsCall(testMtditid)
+            verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
+
+            Then("the view is displayed with an error message under the property income section")
+            res should have(
+              httpStatus(INTERNAL_SERVER_ERROR),
+              pageTitle("There is a problem with the service - Income Tax reporting through software - GOV.UK")
+            )
+          }
         }
 
         "has both property income and business income but both return error responses when retrieving obligations" should {
 
-          "Display an error message to the user" in {
+          "Display an error message to the user when not found" in {
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+
+            And("I wiremock stub an error for the property obligations response")
+            IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testPropertyIncomeId, testNino)
+
+            And("I wiremock stub an error for the business obligations response")
+            IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testSelfEmploymentId, testNino)
+
+            When("I call GET /report-quarterly/income-and-expenses/view/obligations")
+            val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+            verifyIncomeSourceDetailsCall(testMtditid)
+            verifyReportDeadlinesCall(testNino, testSelfEmploymentId, testPropertyIncomeId)
+
+            Then("an error message for property obligations is returned and the correct view is displayed")
+            res should have(
+              httpStatus(OK),
+              pageTitle(messages.title),
+              elementTextByID(id = "p1")(messages.errorp1),
+              elementTextByID(id = "p2")(messages.errorp2)
+            )
+          }
+
+          "Display an error message to the user when a server error occurs" in {
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -606,12 +674,10 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             verifyIncomeSourceDetailsCall(testMtditid)
             verifyReportDeadlinesCall(testNino, testSelfEmploymentId, testPropertyIncomeId)
 
-            Then("an error message for property obligations is returned and the correct view is displayed")
+            Then("an error view is displayed")
             res should have(
-              httpStatus(OK),
-              pageTitle(messages.title),
-              elementTextByID(id = "p1")(messages.errorp1),
-              elementTextByID(id = "p2")(messages.errorp2)
+              httpStatus(INTERNAL_SERVER_ERROR),
+              pageTitle("There is a problem with the service - Income Tax reporting through software - GOV.UK")
             )
           }
         }
