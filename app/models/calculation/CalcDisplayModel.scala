@@ -16,8 +16,10 @@
 
 package models.calculation
 
-import enums.CalcStatus
+import auth.MtdItUser
+import enums.{CalcStatus, Crystallised, Estimate}
 import play.api.libs.json.{Format, Json}
+import implicits.ImplicitCurrencyFormatter._
 
 sealed trait CalcDisplayResponseModel extends CrystallisedViewModel
 
@@ -39,6 +41,19 @@ case class CalcDisplayModel(calcTimestamp: String,
 
   val hasTaxReliefs: Boolean = calcDataModel.fold(false)(_.taxReliefs > 0)
 
+  def crystallisedWithBBSInterest :Boolean = {
+    calcStatus == Crystallised && calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0
+  }
+
+  def personalAllowanceHeading: String = {
+    (calcStatus, calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0) match {
+      case (Estimate, false) => ".pa-estimates"
+      case (Estimate, _)     => ".pa-estimates-savings"
+      case (_, false)        => ".pa-bills"
+      case (_, _)            => ".pa-bills-savings"
+    }
+
+  }
 }
 
 case object CalcDisplayError extends CalcDisplayResponseModel
@@ -46,4 +61,17 @@ case object CalcDisplayNoDataFound extends CalcDisplayResponseModel
 
 object CalcDisplayModel {
   implicit val format: Format[CalcDisplayModel] = Json.format[CalcDisplayModel]
+
+  def selfEmployedIncomeOrReceived[A](implicit user: MtdItUser[A], taxYear: Int, breakdown: CalculationDataModel): Boolean = {
+    if((user.incomeSources.hasBusinessIncome && user.incomeSources.businesses.exists(_.accountingPeriod.determineTaxYear == taxYear)) || breakdown.incomeReceived.selfEmployment > 0) true else false
+  }
+
+  def propertyIncomeOrReceived[A](implicit user: MtdItUser[A], taxYear: Int, breakdown: CalculationDataModel): Boolean = {
+    if((user.incomeSources.hasPropertyIncome && user.incomeSources.property.get.accountingPeriod.determineTaxYear == taxYear) || breakdown.incomeReceived.ukProperty > 0) true else false
+  }
+
+  def estimatedBankBuildingSocietyInterest(breakdown: CalculationDataModel, calcStatus: CalcDisplayModel): Boolean = {
+    if(breakdown.incomeReceived.bankBuildingSocietyInterest > 0 && calcStatus.calcStatus == Estimate) true else false
+  }
+
 }
