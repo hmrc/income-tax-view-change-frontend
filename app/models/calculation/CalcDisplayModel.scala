@@ -18,6 +18,8 @@ package models.calculation
 
 import enums.CalcStatus
 import play.api.libs.json.{Format, Json}
+import implicits.ImplicitCurrencyFormatter._
+
 
 sealed trait CalcDisplayResponseModel extends CrystallisedViewModel
 
@@ -38,7 +40,7 @@ case class CalcDisplayModel(calcTimestamp: String,
   val hasNISection: Boolean = hasNic2Amount || hasNic4Amount
 
   val hasTaxReliefs: Boolean = calcDataModel.fold(false)(_.taxReliefs > 0)
-
+  val whatYouOwe : String = s"${calcDataModel.fold(calcAmount.toCurrency)(_.totalIncomeTaxNicYtd.toCurrency)}"
 }
 
 case object CalcDisplayError extends CalcDisplayResponseModel
