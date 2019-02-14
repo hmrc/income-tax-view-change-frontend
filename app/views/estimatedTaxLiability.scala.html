@@ -27,12 +27,6 @@
 
 @(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
-@calcBreakdown = {
-    <section id="inYearCalcBreakdown">
-        @calcBreakdownHelper(calcModel, None, taxYear)
-    </section>
-}
-
 @whyThisMayChange = {
     <div id="whyMayChange">
         <p id="whyMayChangeP1">@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.p1")</p>
@@ -83,7 +77,9 @@
 
             @if(calcModel.breakdownNonEmpty && appConfig.features.calcBreakdownEnabled()){
                 <h3 id="howCalculatedHeading" class="heading-medium">@messages("estimated_tax_liability.calc-breakdown.heading")</h3>
-                @calcBreakdown
+                <section id="inYearCalcBreakdown">
+                    @calcBreakdownHelper(calcModel, None, taxYear)
+                </section>
             }
 
             <p id="changes">
