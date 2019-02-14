@@ -18,6 +18,7 @@ package models.financialTransactions
 
 import java.time.LocalDate
 
+import config.FrontendAppConfig
 import play.api.libs.json.{Format, Json}
 
 case class TransactionModel(chargeType: Option[String] = None,
@@ -47,6 +48,10 @@ case class TransactionModel(chargeType: Option[String] = None,
   def charges(): Seq[SubItemModel] = items.getOrElse(Seq()).filter(_.dueDate.isDefined)
 
   def payments(): Seq[SubItemModel] = items.getOrElse(Seq()).filter(_.paymentReference.isDefined)
+
+  def eligibleToPay(appConfig: FrontendAppConfig) :Boolean = {
+    !isPaid && appConfig.features.paymentEnabled()
+  }
 
 }
 

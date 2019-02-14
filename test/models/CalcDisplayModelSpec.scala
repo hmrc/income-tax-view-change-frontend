@@ -20,9 +20,9 @@ import assets.CalcBreakdownTestConstants
 import enums.Estimate
 import models.calculation.CalcDisplayModel
 import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
+import testUtils.TestSupport
 
-class CalcDisplayModelSpec extends UnitSpec with Matchers {
+class CalcDisplayModelSpec extends TestSupport with Matchers {
 
   "whatYouOwe" should {
 
@@ -37,6 +37,31 @@ class CalcDisplayModelSpec extends UnitSpec with Matchers {
 
       "calculation data does not exist" in {
         CalcDisplayModel("", 2, None, Estimate).whatYouOwe shouldBe "&pound;2"
+      }
+    }
+  }
+
+  "displayCalcBreakdown" should {
+
+    "return a true " when {
+
+      "breakdown is enabled and is not empty" in {
+        frontendAppConfig.features.calcBreakdownEnabled(true)
+        CalcDisplayModel("",2, Some(CalcBreakdownTestConstants.justBusinessCalcDataModel), Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe true
+      }
+    }
+
+    "return a false" when {
+
+      "breakdown is disabled" in {
+        frontendAppConfig.features.calcBreakdownEnabled(false)
+        CalcDisplayModel("",2, Some(CalcBreakdownTestConstants.justBusinessCalcDataModel), Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe false
+      }
+
+
+      "breakdown is empty " in {
+        frontendAppConfig.features.calcBreakdownEnabled(true)
+        CalcDisplayModel("",2, None, Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe false
       }
     }
   }

@@ -81,7 +81,7 @@
 
             }
             <div class="form-group">
-                @if(calcModel.breakdownNonEmpty && appConfig.features.calcBreakdownEnabled()){
+                @if(calcModel.displayCalcBreakdown(appConfig)){
                     @if(transactionModel.isPaid) {
                         @calcBreakdown
                     } else {
@@ -92,7 +92,7 @@
 
         </section>
 
-        @if(appConfig.features.paymentEnabled() && !transactionModel.isPaid){
+        @if(transactionModel.eligibleToPay(appConfig)){
             <div class="form-group">
                 <a id="payment-button" data-journey-click="BillFor@{taxYear}Page:ClickLink:Pay" href="@controllers.routes.PaymentController.paymentHandoff(calcModel.calcAmount.toPence).url" class="button">@messages("crystalisation.payNow")</a>
             </div>
