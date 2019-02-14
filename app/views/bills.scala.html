@@ -21,16 +21,13 @@
 
 @(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@breadcrumb = {
-    @breadcrumbHelper(Breadcrumb(Vector(
-        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-bills", None)
-    )), "BillsPage")
-}
 
 @main_template(
     title = messages("bills.title"),
-    contentHeader = Some(breadcrumb),
+    contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-bills", None)
+        )), "BillsPage")),
     bodyClasses = None,
     scriptElem = None
 ) {

@@ -76,21 +76,14 @@ class BillViewSpec extends TestSupport {
       }
     }
 
-    "NOT show a button to go to payments, when the payment feature is disabled" in {
+    "NOT show a button to go to payments, when the the eligibility is false" in {
       frontendAppConfig.features.paymentEnabled(false)
       val setup = pageSetup(paidBillsViewModel, bizAndPropertyUser)
       import setup._
       Option(document.getElementById("payment-button")) shouldBe None
     }
 
-    "NOT show a button to go to payments, when the payment feature is enabled but the bill is paid" in {
-      frontendAppConfig.features.paymentEnabled(true)
-      val setup = pageSetup(paidBillsViewModel, bizAndPropertyUser)
-      import setup._
-      Option(document.getElementById("payment-button")) shouldBe None
-    }
-
-    "show a button to go to payments, when the payment feature is enabled and the bill is not paid" in {
+    "show a button to go to payments, when the the eligibility is true" in {
       frontendAppConfig.features.paymentEnabled(true)
       val setup = pageSetup(unpaidBillsViewModel, bizAndPropertyUser)
       import setup._
