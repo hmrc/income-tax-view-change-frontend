@@ -58,7 +58,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
   }
 
 
-  "The Calculation Breakdown VIew on the Estimate Page" should {
+  "The Calculation Breakdown view on the Estimate Page" should {
 
     val messages = new Messages.Calculation(testYear)
 
