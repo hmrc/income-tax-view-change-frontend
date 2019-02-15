@@ -51,8 +51,6 @@ case class CalcDisplayModel(calcTimestamp: String,
       case (_, false)        => ".pa-bills"
       case (_, _)            => ".pa-bills-savings"
     }
-
-
   }
 }
 
