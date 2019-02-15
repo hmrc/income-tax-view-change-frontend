@@ -21,7 +21,6 @@ import enums.CalcStatus
 import auth.MtdItUser
 import enums.{CalcStatus, Crystallised, Estimate}
 import play.api.libs.json.{Format, Json}
-import implicits.ImplicitCurrencyFormatter._
 
 import implicits.ImplicitCurrencyFormatter._
 
@@ -60,6 +59,7 @@ case class CalcDisplayModel(calcTimestamp: String,
       case (_, false)        => ".pa-bills"
       case (_, _)            => ".pa-bills-savings"
     }
+
 
   }
 }
