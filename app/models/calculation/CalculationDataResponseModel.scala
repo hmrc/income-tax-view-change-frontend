@@ -49,6 +49,12 @@ case class CalculationDataModel(
     personalAllowance + savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
   }
 
+  def brtITCalc :BigDecimal = payPensionsProfit.basicBand.taxableIncome + savingsAndGains.basicBand.taxableIncome
+  def brtITAmount : BigDecimal  = payPensionsProfit.basicBand.taxAmount + savingsAndGains.basicBand.taxAmount
+  def hrtITCalc : BigDecimal = payPensionsProfit.higherBand.taxableIncome + savingsAndGains.higherBand.taxableIncome
+  def hrtITAmount : BigDecimal = payPensionsProfit.higherBand.taxAmount + savingsAndGains.higherBand.taxAmount
+  def artITCalc : BigDecimal = payPensionsProfit.additionalBand.taxableIncome + savingsAndGains.additionalBand.taxableIncome
+  def artITAmount : BigDecimal = payPensionsProfit.additionalBand.taxAmount + savingsAndGains.additionalBand.taxAmount
 }
 
 case class IncomeReceivedModel(selfEmployment: BigDecimal,

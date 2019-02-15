@@ -19,7 +19,6 @@ package models.calculation
 import auth.MtdItUser
 import enums.{CalcStatus, Crystallised, Estimate}
 import play.api.libs.json.{Format, Json}
-import implicits.ImplicitCurrencyFormatter._
 
 sealed trait CalcDisplayResponseModel extends CrystallisedViewModel
 
@@ -52,6 +51,7 @@ case class CalcDisplayModel(calcTimestamp: String,
       case (_, false)        => ".pa-bills"
       case (_, _)            => ".pa-bills-savings"
     }
+
 
   }
 }
