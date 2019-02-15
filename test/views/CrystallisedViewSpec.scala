@@ -346,7 +346,7 @@ class CrystallisedViewSpec extends TestSupport {
         Option(document.getElementById("changes")) shouldBe None
         document.select("div.divider--bottom p.bold-medium").size() shouldBe 0
         document.select("div.divider--bottom p.form-hint").size() shouldBe 0
-
+        document.select("section#inYearCalcBreakdown div.form-group p").size() shouldBe 0
       }
 
       "have a couple of sentences about adjustments when the bill has not been paid" in {
