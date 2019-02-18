@@ -20,20 +20,29 @@ import java.time.LocalDateTime
 
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
+import assets.BusinessDetailsTestConstants._
+import assets.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import assets.PropertyDetailsTestConstants.propertyDetails
+import auth.MtdItUser
 import enums.{CalcStatus, Crystallised, Estimate}
+import implicits.ImplicitDateFormatter
 import models.calculation._
+import models.core.AccountingPeriodModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import org.eclipse.jetty.server.Authentication.User
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
+import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.UnitSpec
 
-class CalculationResponseModelSpec extends UnitSpec with Matchers {
+class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitDateFormatter{
 
   "The CalcDisplayModel" when {
 
     val calcDisplayModelTimestamp: String = LocalDateTime.now().toString
     val calcAmount: BigDecimal = 1
 
-    def calcDisplayModel(calcStatus: CalcStatus, bankBuildingSocietyInterest: BigDecimal): CalcDisplayModel = {
+    def calcDisplayModelBBSInterestCalcStatus(calcStatus: CalcStatus, bankBuildingSocietyInterest: BigDecimal): CalcDisplayModel = {
 
       val incomeReceived: IncomeReceivedModel = IncomeReceivedModel(calculationDataSuccessModel.incomeReceived.selfEmployment,
         calculationDataSuccessModel.incomeReceived.ukProperty,
@@ -57,50 +66,160 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers {
       CalcDisplayModel(calcDisplayModelTimestamp, calcAmount, calcDataModel, calcStatus)
     }
 
+    def calcDisplayModelIncomeSourcesSA(selfEmployed: BigDecimal): CalculationDataModel = {
+
+      val incomeReceived: IncomeReceivedModel = IncomeReceivedModel(selfEmployed,
+        calculationDataSuccessModel.incomeReceived.ukProperty,
+        calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest,
+        calculationDataSuccessModel.incomeReceived.ukDividends)
+
+     CalculationDataModel(calculationDataSuccessModel.totalIncomeTaxNicYtd,
+        calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
+        calculationDataSuccessModel.personalAllowance: BigDecimal,
+        calculationDataSuccessModel.taxReliefs: BigDecimal,
+        calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
+        incomeReceived: IncomeReceivedModel,
+        calculationDataSuccessModel.payPensionsProfit,
+        calculationDataSuccessModel.savingsAndGains,
+        calculationDataSuccessModel.dividends,
+        calculationDataSuccessModel.nic,
+        calculationDataSuccessModel.eoyEstimate)
+
+    }
+
+    def calcDisplayModelIncomeSourcesProperty(property: BigDecimal): CalculationDataModel = {
+
+      val incomeReceived: IncomeReceivedModel = IncomeReceivedModel(calculationDataSuccessModel.incomeReceived.selfEmployment,
+        property,
+        calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest,
+        calculationDataSuccessModel.incomeReceived.ukDividends)
+
+      CalculationDataModel(calculationDataSuccessModel.totalIncomeTaxNicYtd,
+        calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
+        calculationDataSuccessModel.personalAllowance: BigDecimal,
+        calculationDataSuccessModel.taxReliefs: BigDecimal,
+        calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
+        incomeReceived: IncomeReceivedModel,
+        calculationDataSuccessModel.payPensionsProfit,
+        calculationDataSuccessModel.savingsAndGains,
+        calculationDataSuccessModel.dividends,
+        calculationDataSuccessModel.nic,
+        calculationDataSuccessModel.eoyEstimate)
+
+    }
+
+
+    val mockAccountingPeriod = AccountingPeriodModel(start = ("2017-6-1".toLocalDate), end = ("2018-5-30".toLocalDate))
+
+    val businesses: BusinessDetailsModel = BusinessDetailsModel(
+      incomeSourceId = testSelfEmploymentId,
+      accountingPeriod = mockAccountingPeriod,
+      cashOrAccruals = Some("CASH"),
+      tradingStartDate = Some("2017-1-1"),
+      cessation = None,
+      tradingName = Some(testTradeName2),
+      address = Some(testBizAddress),
+      contactDetails = None,
+      seasonal = None,
+      paperless = None)
+
+    val properties: PropertyDetailsModel = propertyDetails
+
+    def mtdUserSA(businessIncome: List[BusinessDetailsModel], propertyIncome: Option[PropertyDetailsModel]): MtdItUser[_] = {
+
+      val businessesAndPropertyIncome: IncomeSourceDetailsModel  = IncomeSourceDetailsModel(businessIncome, propertyIncome)
+
+      MtdItUser(testMtditid, testNino, Some(testUserDetails), businessesAndPropertyIncome)(FakeRequest())
+    }
+
+
+
     "displaying crystallisedWithBBSInterest as true" should  {
     "be crystallised and greater then zero" in {
-      calcDisplayModel(Crystallised, 10).crystallisedWithBBSInterest shouldBe true
+      calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).crystallisedWithBBSInterest shouldBe true
     }
   }
 
     "displaying crystallisedWithBBSInterest as false" should {
       "be estimate and greater then zero" in {
-        calcDisplayModel(Estimate, 10).crystallisedWithBBSInterest shouldBe false
+        calcDisplayModelBBSInterestCalcStatus(Estimate, 10).crystallisedWithBBSInterest shouldBe false
       }
 
       "be estimate and zero" in {
-        calcDisplayModel(Estimate, 0).crystallisedWithBBSInterest shouldBe false
+        calcDisplayModelBBSInterestCalcStatus(Estimate, 0).crystallisedWithBBSInterest shouldBe false
       }
 
       "be Crystallised and less then zero" in {
-        calcDisplayModel(Crystallised, -1).crystallisedWithBBSInterest shouldBe false
+        calcDisplayModelBBSInterestCalcStatus(Crystallised, -1).crystallisedWithBBSInterest shouldBe false
       }
 
       "be crystallised and zero" in {
-        calcDisplayModel(Crystallised, 0).crystallisedWithBBSInterest shouldBe false
+        calcDisplayModelBBSInterestCalcStatus(Crystallised, 0).crystallisedWithBBSInterest shouldBe false
       }
     }
 
     "displaying personalAllowanceHeading" should {
       "show pa-estimates message" in{
-        calcDisplayModel(Estimate, 0).personalAllowanceHeading shouldBe ".pa-estimates"
+        calcDisplayModelBBSInterestCalcStatus(Estimate, 0).personalAllowanceHeading shouldBe ".pa-estimates"
       }
       "show pa-estimates savings message" in{
-        calcDisplayModel(Estimate, 10).personalAllowanceHeading shouldBe ".pa-estimates-savings"
+        calcDisplayModelBBSInterestCalcStatus(Estimate, 10).personalAllowanceHeading shouldBe ".pa-estimates-savings"
       }
       "show pa-bills message" in{
-        calcDisplayModel(Crystallised, 0).personalAllowanceHeading shouldBe ".pa-bills"
+        calcDisplayModelBBSInterestCalcStatus(Crystallised, 0).personalAllowanceHeading shouldBe ".pa-bills"
       }
       "show pa-bills saving message" in{
-        calcDisplayModel(Crystallised, 10).personalAllowanceHeading shouldBe ".pa-bills-savings"
+        calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).personalAllowanceHeading shouldBe ".pa-bills-savings"
+      }
+
+    }
+
+    "display selfEmployedIncomeOrReceived as true" should {
+
+      "have a self employed income source and be determined tax year is more then zero " in {
+        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(10)) shouldBe true
+      }
+       "have a self employed income source and be determined tax year is zero " in {
+         CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(0)) shouldBe true
+      }
+
+      "have no self employed income source and be determined tax year is more then zero " in {
+        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(), None), 2019, calcDisplayModelIncomeSourcesSA(10)) shouldBe true
       }
     }
 
-//    "display selfEmployedIncomeOrReceived" should {
-//      "be ????????????" in {
-//        CalcDisplayModel.selfEmployedIncomeOrReceived(, 2019, calculationDataSuccessModel ).
-//      }
-//    }
+    "display selfEmployedIncomeOrReceived as false" should {
+      "have no self employed income source and be determined tax year is less then zero " in {
+        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(), None), 2019, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
+      }
+
+      "have a self employed income source and be determined tax year does not match tax year and is less then zero  " in {
+        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(businesses), None), 2018, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
+      }
+
+      "have a property income source and be determined tax year is less then zero " in {
+        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(), Some(properties)), 2019, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
+      }
+
+    }
+
+    "display propertyIncomeOrReceived as true" should {
+      " " in {
+
+      }
+      " " in {
+
+      }
+      " " in {
+      }
+      " " in {
+
+      }
+    }
+
+    "display propertyIncomeOrReceived as false" should {
+
+    }
   }
 
   "The CalculationModel" should {
