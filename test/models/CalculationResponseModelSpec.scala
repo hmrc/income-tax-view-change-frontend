@@ -125,7 +125,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
 
     val properties: PropertyDetailsModel = propertyDetails
 
-    def mtdUserSA(businessIncome: List[BusinessDetailsModel], propertyIncome: Option[PropertyDetailsModel]): MtdItUser[_] = {
+    def mtdUser(businessIncome: List[BusinessDetailsModel], propertyIncome: Option[PropertyDetailsModel]): MtdItUser[_] = {
 
       val businessesAndPropertyIncome: IncomeSourceDetailsModel  = IncomeSourceDetailsModel(businessIncome, propertyIncome)
 
@@ -177,49 +177,81 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
     "display selfEmployedIncomeOrReceived as true" should {
 
       "have a self employed income source and be determined tax year is more then zero " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(10)) shouldBe true
+        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(10)) shouldBe true
       }
        "have a self employed income source and be determined tax year is zero " in {
-         CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(0)) shouldBe true
+         CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(0)) shouldBe true
       }
 
       "have no self employed income source and be determined tax year is more then zero " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(), None), 2019, calcDisplayModelIncomeSourcesSA(10)) shouldBe true
+        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(), None), 2019, calcDisplayModelIncomeSourcesSA(10)) shouldBe true
       }
     }
 
     "display selfEmployedIncomeOrReceived as false" should {
       "have no self employed income source and be determined tax year is less then zero " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(), None), 2019, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
+        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(), None), 2019, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
       }
 
       "have a self employed income source and be determined tax year does not match tax year and is less then zero  " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(businesses), None), 2018, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
+        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(businesses), None), 2018, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
       }
 
       "have a property income source and be determined tax year is less then zero " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUserSA(List(), Some(properties)), 2019, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
+        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(), Some(properties)), 2019, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
       }
 
     }
 
     "display propertyIncomeOrReceived as true" should {
-      " " in {
+      "have a property source and a property tax year matches current and be more then zero " in {
+        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2018, calcDisplayModelIncomeSourcesProperty(10) ) shouldBe true
+      }
+      "have a property source and a property tax year matches current and be less then zero " in {
+        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2018, calcDisplayModelIncomeSourcesProperty(-1)) shouldBe true
+      }
+      "not have a property source and tax year matches current and be more then zero" in {
 
-      }
-      " " in {
+        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), None), 2019 , calcDisplayModelIncomeSourcesProperty(10)) shouldBe true
 
-      }
-      " " in {
-      }
-      " " in {
 
       }
     }
 
     "display propertyIncomeOrReceived as false" should {
+      "not have a property source and a property tax year matches current and be less than zero " in {
+        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), None), 2019, calcDisplayModelIncomeSourcesProperty(-1) ) shouldBe false
+      }
+
+    "have a property source and a property tax year that does not match current and be equal than zero " in {
+      CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2019, calcDisplayModelIncomeSourcesProperty(0) ) shouldBe false
+    }
+      "have a business income source and a property tax year that does  match current and be less than zero " in {
+        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(businesses), None), 2018, calcDisplayModelIncomeSourcesProperty(0) ) shouldBe false
+      }
+    }
+
+    "display estimatedBankBuildingSocietyInterest as true" should {
+      "have bank building society interest more then zero and calculation status is estimate" in {
+        calcDisplayModelBBSInterestCalcStatus(Estimate, 10).estimatedWithBBSInterest shouldBe true
+      }
 
     }
+
+    "display estimatedBankBuildingSociety Interest as false" should {
+      "have bank building society interest is zero and calculation status is estimate" in {
+        calcDisplayModelBBSInterestCalcStatus(Estimate, 0).estimatedWithBBSInterest shouldBe false
+      }
+      "have bank building society interest more than zero and calculation status is not estimate" in {
+        calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).estimatedWithBBSInterest shouldBe false
+      }
+      "have bank building society interest less than zero and calculation status is not estimate" in {
+        calcDisplayModelBBSInterestCalcStatus(Crystallised, -1).estimatedWithBBSInterest shouldBe false
+      }
+
+
+    }
+
   }
 
   "The CalculationModel" should {

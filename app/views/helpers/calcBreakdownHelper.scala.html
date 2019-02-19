@@ -34,7 +34,7 @@
                         messages("estimated_tax_liability.calc-breakdown.property-profit")
                     }
                 }
-                @if(CalcDisplayModel.estimatedBankBuildingSocietyInterest(breakdown, calcModel)) {@messages("estimated_tax_liability.calc-breakdown.and-savings")}
+                @if(calcModel.estimatedWithBBSInterest) {@messages("estimated_tax_liability.calc-breakdown.and-savings")}
             </td>
 
             <td id="business-profit"  class="summary-data">

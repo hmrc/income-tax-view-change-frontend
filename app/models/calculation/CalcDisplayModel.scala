@@ -52,6 +52,10 @@ case class CalcDisplayModel(calcTimestamp: String,
       case (_, _)            => ".pa-bills-savings"
     }
   }
+
+  def estimatedWithBBSInterest : Boolean = {
+    if(calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0 && calcStatus == Estimate) true else false
+  }
 }
 
 case object CalcDisplayError extends CalcDisplayResponseModel
@@ -68,8 +72,6 @@ object CalcDisplayModel {
     if((user.incomeSources.hasPropertyIncome && user.incomeSources.property.get.accountingPeriod.determineTaxYear == taxYear) || breakdown.incomeReceived.ukProperty > 0) true else false
   }
 
-  def estimatedBankBuildingSocietyInterest(breakdown: CalculationDataModel, calcStatus: CalcDisplayModel): Boolean = {
-    if(breakdown.incomeReceived.bankBuildingSocietyInterest > 0 && calcStatus.calcStatus == Estimate) true else false
-  }
+
 
 }
