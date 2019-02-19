@@ -16,6 +16,13 @@
 
 package models.calculation
 
+import config.FrontendAppConfig
+
 case class BillsViewModel(currentBill: BigDecimal,
                           isPaid: Boolean,
-                          taxYear: Int)
+                          taxYear: Int) {
+
+  def eligibleForPayment(appConfig: FrontendAppConfig): Boolean = {
+    appConfig.features.paymentEnabled() && !isPaid
+  }
+}
