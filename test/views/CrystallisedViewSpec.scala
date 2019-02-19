@@ -98,6 +98,14 @@ class CrystallisedViewSpec extends TestSupport {
 
         }
 
+        "have a what you owe heading displayed with the correct value" in {
+           wyoSection.select("div.divider--bottom p.bold-medium").text shouldBe "£149.86"
+        }
+
+        "have the correct message for the tax year due date" in {
+          wyoSection.select("div.divider--bottom p.form-hint").text shouldBe crysMessages.payDeadline
+        }
+
       }
 
       s"has the correct 'p1' text '${crysMessages.p1}'" in {
@@ -110,11 +118,29 @@ class CrystallisedViewSpec extends TestSupport {
     }
 
     "have the calculation breakdown section and link hidden" when {
-      "the feature switch is set to false" in {
+      "when the breakdown is not required" in {
         mockAppConfig.features.calcBreakdownEnabled(false)
         val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizUser)
         import setup._
         document.getElementById("inYearCalcBreakdown") shouldBe null
+      }
+    }
+
+    "have the calculation breakdown section visible" when {
+
+      "the bill has been paid and breakdown is required without a progressive disclosure element" in {
+        mockAppConfig.features.calcBreakdownEnabled(true)
+        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizUser)
+        import setup._
+        document.select("details table.itvc-table").size() shouldBe 0
+        document.select("table.itvc-table").size() shouldBe 1
+      }
+
+      "the bill has not been paid and breakdown is required inside a progressive disclosure element" in {
+        mockAppConfig.features.calcBreakdownEnabled(true)
+        val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizUser)
+        import setup._
+        document.select("details table.itvc-table").size() shouldBe 1
       }
     }
 
@@ -313,11 +339,14 @@ class CrystallisedViewSpec extends TestSupport {
 
       }
 
-      "NOT have a couple of sentences about adjustments when the bill has been paid" in {
+      "NOT have payment related content when the bill has been paid" in {
         val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
         import setup._
         Option(document.getElementById("adjustments")) shouldBe None
         Option(document.getElementById("changes")) shouldBe None
+        document.select("div.divider--bottom p.bold-medium").size() shouldBe 0
+        document.select("div.divider--bottom p.form-hint").size() shouldBe 0
+        document.select("section#inYearCalcBreakdown div.form-group p").size() shouldBe 0
       }
 
       "have a couple of sentences about adjustments when the bill has not been paid" in {
@@ -327,21 +356,14 @@ class CrystallisedViewSpec extends TestSupport {
         document.getElementById("changes").text shouldBe crysMessages.changes
       }
 
-      "NOT show a button to go to payments, when the payment feature is disabled" in {
-        mockAppConfig.features.paymentEnabled(false)
-        val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
-        import setup._
-        Option(document.getElementById("payment-button")) shouldBe None
-      }
-
-      "NOT show a button to go to payments, when the payment feature is enabled but the bill is paid" in {
+      "NOT show a button to go to payments, when not eligible for payments" in {
         mockAppConfig.features.paymentEnabled(true)
         val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
         import setup._
         Option(document.getElementById("payment-button")) shouldBe None
       }
 
-      "show a button to go to payments, when the payment feature is enabled and the bill is not paid" in {
+      "show a button to go to payments, when eligible for payments" in {
         mockAppConfig.features.paymentEnabled(true)
         val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
         import setup._
@@ -349,6 +371,5 @@ class CrystallisedViewSpec extends TestSupport {
         document.getElementById("payment-button").attr("href") shouldBe
           controllers.routes.PaymentController.paymentHandoff(calculationDisplaySuccessModel(busPropBRTCalcDataModel).calcAmount.toPence).url
       }
-
     }
 }

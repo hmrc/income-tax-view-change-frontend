@@ -35,7 +35,7 @@ import play.api.libs.json.{JsSuccess, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.UnitSpec
 
-class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitDateFormatter {
+class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitDateFormatter{
 
   "The CalcDisplayModel" when {
 
@@ -73,7 +73,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest,
         calculationDataSuccessModel.incomeReceived.ukDividends)
 
-      CalculationDataModel(calculationDataSuccessModel.totalIncomeTaxNicYtd,
+     CalculationDataModel(calculationDataSuccessModel.totalIncomeTaxNicYtd,
         calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
         calculationDataSuccessModel.personalAllowance: BigDecimal,
         calculationDataSuccessModel.taxReliefs: BigDecimal,
@@ -127,52 +127,51 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
 
     def mtdUser(businessIncome: List[BusinessDetailsModel], propertyIncome: Option[PropertyDetailsModel]): MtdItUser[_] = {
 
-      val businessesAndPropertyIncome: IncomeSourceDetailsModel = IncomeSourceDetailsModel(businessIncome, propertyIncome)
+      val businessesAndPropertyIncome: IncomeSourceDetailsModel  = IncomeSourceDetailsModel(businessIncome, propertyIncome)
 
       MtdItUser(testMtditid, testNino, Some(testUserDetails), businessesAndPropertyIncome)(FakeRequest())
     }
 
 
-    "displaying crystallisedWithBBSInterest as true" should {
-      "have calculation status crystallised and bank Building Society Interest greater then zero" in {
-        calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).crystallisedWithBBSInterest shouldBe true
-      }
+
+    "displaying crystallisedWithBBSInterest as true" should  {
+    "be crystallised and greater then zero" in {
+      calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).crystallisedWithBBSInterest shouldBe true
     }
+  }
 
     "displaying crystallisedWithBBSInterest as false" should {
-      "have calculation status estimate and bank Building Society Interest greater then zero" in {
+      "be estimate and greater then zero" in {
         calcDisplayModelBBSInterestCalcStatus(Estimate, 10).crystallisedWithBBSInterest shouldBe false
       }
 
-      "have calculationstatus estimate and bank Building Society Interest is zero" in {
+      "be estimate and zero" in {
         calcDisplayModelBBSInterestCalcStatus(Estimate, 0).crystallisedWithBBSInterest shouldBe false
       }
 
-      "have calculation status Crystallised and bank Building Society Interest is less then zero" in {
+      "be Crystallised and less then zero" in {
         calcDisplayModelBBSInterestCalcStatus(Crystallised, -1).crystallisedWithBBSInterest shouldBe false
       }
 
-      "have calculation status crystallised and bank Building Society Interest is zero" in {
+      "be crystallised and zero" in {
         calcDisplayModelBBSInterestCalcStatus(Crystallised, 0).crystallisedWithBBSInterest shouldBe false
       }
     }
 
     "displaying personalAllowanceHeading" should {
-      "show pa-estimates message when status is calculation Estimate and bank Building Society Interest is zero" in {
+      "show pa-estimates message" in{
         calcDisplayModelBBSInterestCalcStatus(Estimate, 0).personalAllowanceHeading shouldBe ".pa-estimates"
       }
-
-      "show pa-estimates savings message when calculation status is Estimate and bank Building Society Interest is greater than zero" in {
+      "show pa-estimates savings message" in{
         calcDisplayModelBBSInterestCalcStatus(Estimate, 10).personalAllowanceHeading shouldBe ".pa-estimates-savings"
       }
-
-      "show pa-bills message when calculation status is Crystallised and bank Building Society Interest is zero" in {
+      "show pa-bills message" in{
         calcDisplayModelBBSInterestCalcStatus(Crystallised, 0).personalAllowanceHeading shouldBe ".pa-bills"
       }
-
-      "show pa-bills saving message when calculation status is Crystallised and bank Building Society Interest is greater than zero" in {
+      "show pa-bills saving message" in{
         calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).personalAllowanceHeading shouldBe ".pa-bills-savings"
       }
+
     }
 
     "display selfEmployedIncomeOrReceived as true" should {
@@ -180,9 +179,8 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
       "have a self employed income source and be determined tax year is more then zero " in {
         CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(10)) shouldBe true
       }
-
-      "have a self employed income source and be determined tax year is zero " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(0)) shouldBe true
+       "have a self employed income source and be determined tax year is zero " in {
+         CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(0)) shouldBe true
       }
 
       "have no self employed income source and be determined tax year is more then zero " in {
@@ -206,30 +204,30 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
     }
 
     "display propertyIncomeOrReceived as true" should {
-      "have a property source, a property tax year matches current year and income received from selfEmployment is more then zero " in {
-        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2018, calcDisplayModelIncomeSourcesProperty(10)) shouldBe true
+      "have a property source and a property tax year matches current and be more then zero " in {
+        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2018, calcDisplayModelIncomeSourcesProperty(10) ) shouldBe true
       }
-
-      "have a property source, a property tax year matches current year and income received from selfEmployment is less then zero " in {
+      "have a property source and a property tax year matches current and be less then zero " in {
         CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2018, calcDisplayModelIncomeSourcesProperty(-1)) shouldBe true
       }
+      "not have a property source and tax year matches current and be more then zero" in {
 
-      "not have a property source, tax year matches current year and income received from selfEmployment is more then zero" in {
+        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), None), 2019 , calcDisplayModelIncomeSourcesProperty(10)) shouldBe true
 
-        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), None), 2019, calcDisplayModelIncomeSourcesProperty(10)) shouldBe true
+
       }
     }
 
     "display propertyIncomeOrReceived as false" should {
-      "not have a property source and a property tax year matches current year and income from UK property is less than zero" in {
-        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), None), 2019, calcDisplayModelIncomeSourcesProperty(-1)) shouldBe false
+      "not have a property source and a property tax year matches current and be less than zero " in {
+        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), None), 2019, calcDisplayModelIncomeSourcesProperty(-1) ) shouldBe false
       }
 
-      "have a property source and a property tax year that does not match current year and income from UK property is equal to zero" in {
-        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2019, calcDisplayModelIncomeSourcesProperty(0)) shouldBe false
-      }
-      "have a business income source and a property tax year that does match current year and income from UK property is less than zero" in {
-        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(businesses), None), 2018, calcDisplayModelIncomeSourcesProperty(0)) shouldBe false
+    "have a property source and a property tax year that does not match current and be equal than zero " in {
+      CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2019, calcDisplayModelIncomeSourcesProperty(0) ) shouldBe false
+    }
+      "have a business income source and a property tax year that does  match current and be less than zero " in {
+        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(businesses), None), 2018, calcDisplayModelIncomeSourcesProperty(0) ) shouldBe false
       }
     }
 
@@ -237,20 +235,20 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
       "have bank building society interest more then zero and calculation status is estimate" in {
         calcDisplayModelBBSInterestCalcStatus(Estimate, 10).estimatedWithBBSInterest shouldBe true
       }
+
     }
 
     "display estimatedBankBuildingSociety Interest as false" should {
       "have bank building society interest is zero and calculation status is estimate" in {
         calcDisplayModelBBSInterestCalcStatus(Estimate, 0).estimatedWithBBSInterest shouldBe false
       }
-
       "have bank building society interest more than zero and calculation status is not estimate" in {
         calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).estimatedWithBBSInterest shouldBe false
       }
-
       "have bank building society interest less than zero and calculation status is not estimate" in {
         calcDisplayModelBBSInterestCalcStatus(Crystallised, -1).estimatedWithBBSInterest shouldBe false
       }
+
 
     }
 

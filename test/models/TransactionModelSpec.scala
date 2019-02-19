@@ -18,10 +18,10 @@ package models
 
 import models.financialTransactions.{SubItemModel, TransactionModel}
 import org.scalatest.Matchers
-import uk.gov.hmrc.play.test.UnitSpec
 import implicits.ImplicitDateFormatter._
+import testUtils.TestSupport
 
-class TransactionModelSpec extends UnitSpec with Matchers {
+class TransactionModelSpec extends TestSupport with Matchers {
 
   lazy val charge = SubItemModel(dueDate = Some("2018-07-01"))
   lazy val payment = SubItemModel(paymentReference = Some("XYZ"))
@@ -82,6 +82,31 @@ class TransactionModelSpec extends UnitSpec with Matchers {
     "return no charges when no sub items are held" in {
       val model = TransactionModel()
       model.charges().length shouldBe 0
+    }
+  }
+
+  "TransactionModel.eligibleToPay" should {
+
+    "return a true" when {
+
+      "payment is enabled and has not been made" in {
+        frontendAppConfig.features.paymentEnabled(true)
+        TransactionModel(outstandingAmount = Some(1)).eligibleToPay(frontendAppConfig) shouldBe true
+      }
+    }
+
+    "return a false" when {
+
+      "payment is disabled" in {
+        frontendAppConfig.features.paymentEnabled(false)
+        TransactionModel(outstandingAmount = Some(1)).eligibleToPay(frontendAppConfig) shouldBe false
+      }
+
+      "payment has been made" in {
+        frontendAppConfig.features.paymentEnabled(true)
+        TransactionModel(outstandingAmount = Some(0)).eligibleToPay(frontendAppConfig) shouldBe false
+
+      }
     }
   }
 
