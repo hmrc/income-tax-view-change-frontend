@@ -18,9 +18,11 @@ package models.calculation
 
 import config.FrontendAppConfig
 import enums.CalcStatus
+import auth.MtdItUser
+import enums.{CalcStatus, Crystallised, Estimate}
 import play.api.libs.json.{Format, Json}
-import implicits.ImplicitCurrencyFormatter._
 
+import implicits.ImplicitCurrencyFormatter._
 
 sealed trait CalcDisplayResponseModel extends CrystallisedViewModel
 
@@ -46,6 +48,22 @@ case class CalcDisplayModel(calcTimestamp: String,
   def displayCalcBreakdown(appConfig: FrontendAppConfig): Boolean = {
     breakdownNonEmpty && appConfig.features.calcBreakdownEnabled()
   }
+  def crystallisedWithBBSInterest :Boolean = {
+    calcStatus == Crystallised && calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0
+  }
+
+  def personalAllowanceHeading: String = {
+    (calcStatus, calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0) match {
+      case (Estimate, false) => ".pa-estimates"
+      case (Estimate, _)     => ".pa-estimates-savings"
+      case (_, false)        => ".pa-bills"
+      case (_, _)            => ".pa-bills-savings"
+    }
+  }
+
+  def estimatedWithBBSInterest : Boolean = {
+    if(calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0 && calcStatus == Estimate) true else false
+  }
 }
 
 case object CalcDisplayError extends CalcDisplayResponseModel
@@ -53,4 +71,15 @@ case object CalcDisplayNoDataFound extends CalcDisplayResponseModel
 
 object CalcDisplayModel {
   implicit val format: Format[CalcDisplayModel] = Json.format[CalcDisplayModel]
+
+  def selfEmployedIncomeOrReceived[A](implicit user: MtdItUser[A], taxYear: Int, breakdown: CalculationDataModel): Boolean = {
+    (user.incomeSources.hasBusinessIncome && user.incomeSources.businesses.exists(_.accountingPeriod.determineTaxYear == taxYear)) || breakdown.incomeReceived.selfEmployment > 0
+  }
+
+  def propertyIncomeOrReceived[A](implicit user: MtdItUser[A], taxYear: Int, breakdown: CalculationDataModel): Boolean = {
+    (user.incomeSources.hasPropertyIncome && user.incomeSources.property.get.accountingPeriod.determineTaxYear == taxYear) || breakdown.incomeReceived.ukProperty > 0
+  }
+
+
+
 }

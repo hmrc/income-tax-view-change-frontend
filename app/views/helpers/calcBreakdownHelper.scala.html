@@ -28,24 +28,25 @@
         <tr id="business-profit-section" class="no-border-bottom">
             <td id="business-profit-heading">
                 @{
-                    if((user.incomeSources.hasBusinessIncome && user.incomeSources.businesses.exists(_.accountingPeriod.determineTaxYear == taxYear)) || breakdown.incomeReceived.selfEmployment > 0) {
+                    if(CalcDisplayModel.selfEmployedIncomeOrReceived(user, taxYear, breakdown)) {
                         messages("estimated_tax_liability.calc-breakdown.business-profit")
-                    } else if((user.incomeSources.hasPropertyIncome && user.incomeSources.property.get.accountingPeriod.determineTaxYear == taxYear) || breakdown.incomeReceived.ukProperty > 0) {
+                    } else if(CalcDisplayModel.propertyIncomeOrReceived(user, taxYear, breakdown)) {
                         messages("estimated_tax_liability.calc-breakdown.property-profit")
                     }
                 }
-                @if(breakdown.incomeReceived.bankBuildingSocietyInterest > 0 && calcModel.calcStatus == Estimate) {@messages("estimated_tax_liability.calc-breakdown.and-savings")}
+                @if(calcModel.estimatedWithBBSInterest) {@messages("estimated_tax_liability.calc-breakdown.and-savings")}
             </td>
 
             <td id="business-profit"  class="summary-data">
                 @{
-                    if(calcModel.calcStatus == Estimate){(breakdown.incomeReceived.selfEmployment + breakdown.incomeReceived.ukProperty + breakdown.incomeReceived.bankBuildingSocietyInterest).toCurrency}
-                    else { (breakdown.incomeReceived.selfEmployment + breakdown.incomeReceived.ukProperty).toCurrency}
+                    if(calcModel.calcStatus == Estimate){(breakdown.incomeReceived.estimateBuisnessProfit).toCurrency}
+                    else { (breakdown.incomeReceived.buisnessProfit).toCurrency}
                 }
+
             </td>
         </tr>
 
-        @if(calcModel.calcStatus == Crystallised && breakdown.incomeReceived.bankBuildingSocietyInterest > 0){
+        @if(calcModel.crystallisedWithBBSInterest){
             <tr id="savings-income-section"  class="no-border-bottom">
                 <td id="savings-income-heading">@messages("estimated_tax_liability.calc-breakdown.income-savings")</td>
                 <td id="savings-income" class="summary-data">@breakdown.incomeReceived.bankBuildingSocietyInterest.toCurrency</td>
@@ -55,17 +56,10 @@
         @if(breakdown.additionalAllowances == 0) {<tr id="personal-allowance-section">
         } else {<tr id="personal-allowance-section" class="no-border-bottom">}
             <td id="personal-allowance-heading">
-                @{
-                    (calcModel.calcStatus, breakdown.incomeReceived.bankBuildingSocietyInterest > 0) match {
-                        case (Estimate, false) => messages("estimated_tax_liability.calc-breakdown.pa-estimates")
-                        case (Estimate, _)     => messages("estimated_tax_liability.calc-breakdown.pa-estimates-savings")
-                        case (_, false)        => messages("estimated_tax_liability.calc-breakdown.pa-bills")
-                        case (_, _)            => messages("estimated_tax_liability.calc-breakdown.pa-bills-savings")
-                    }
-                }
+                @{messages("estimated_tax_liability.calc-breakdown" + calcModel.personalAllowanceHeading)}
             </td>
             <td id="personal-allowance" class="summary-data">
-                -@{(breakdown.personalAllowance + breakdown.savingsAndGains.startBand.taxableIncome + breakdown.savingsAndGains.zeroBand.taxableIncome).toCurrency}
+                -@{breakdown.personalAllowanceSummaryData.toCurrency}
             </td>
         </tr>
 
@@ -106,33 +100,33 @@
             <tr id="brt-section" class="no-border-bottom">
                 <td id="brt-it-calc-heading">
                     @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                    (<span id="brt-it-calc">@{(breakdown.payPensionsProfit.basicBand.taxableIncome + breakdown.savingsAndGains.basicBand.taxableIncome).toCurrencyString}</span>
+                    (<span id="brt-it-calc">@{breakdown.brtITCalc.toCurrencyString}</span>
                     @messages("estimated_tax_liability.calc-breakdown.at")
                     <span id="brt-rate">@breakdown.payPensionsProfit.basicBand.taxRate</span>%)
                 </td>
-                <td id="brt-amount" class="summary-data">@{(breakdown.payPensionsProfit.basicBand.taxAmount + breakdown.savingsAndGains.basicBand.taxAmount).toCurrency}</td>
+                <td id="brt-amount" class="summary-data">@{(breakdown.brtITAmount).toCurrency}</td>
             </tr>
 
             @if(calcModel.hasHRTSection){
                 <tr id="hrt-section" class="no-border-bottom">
                     <td id="hrt-it-calc-heading">
                         @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                        (<span id="hrt-it-calc">@{(breakdown.payPensionsProfit.higherBand.taxableIncome + breakdown.savingsAndGains.higherBand.taxableIncome).toCurrencyString}</span>
+                        (<span id="hrt-it-calc"> @{breakdown.hrtITCalc.toCurrencyString}</span>
                         @messages("estimated_tax_liability.calc-breakdown.at")
                         <span id="hrt-rate">@breakdown.payPensionsProfit.higherBand.taxRate</span>%)
                     </td>
-                    <td id="hrt-amount" class="summary-data">@{(breakdown.payPensionsProfit.higherBand.taxAmount + breakdown.savingsAndGains.higherBand.taxAmount).toCurrency}</td>
+                    <td id="hrt-amount" class="summary-data">@{breakdown.hrtITAmount.toCurrency}</td>
                 </tr>
 
                 @if(calcModel.hasARTSection){
                     <tr id="art-section" class="no-border-bottom">
                         <td id="art-it-calc-heading">
                             @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                            (<span id="art-it-calc">@{(breakdown.payPensionsProfit.additionalBand.taxableIncome + breakdown.savingsAndGains.additionalBand.taxableIncome).toCurrencyString}</span>
+                            (<span id="art-it-calc">@{breakdown.artITCalc.toCurrencyString}</span>
                             @messages("estimated_tax_liability.calc-breakdown.at")
                             <span id="art-rate">@breakdown.payPensionsProfit.additionalBand.taxRate</span>%)
                         </td>
-                        <td id="art-amount" class="summary-data">@{(breakdown.payPensionsProfit.additionalBand.taxAmount + breakdown.savingsAndGains.additionalBand.taxAmount).toCurrency}</td>
+                        <td id="art-amount" class="summary-data">@{breakdown.artITAmount.toCurrency}</td>
                     </tr>
                 }
             }
