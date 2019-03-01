@@ -24,6 +24,7 @@ import play.api.libs.json.{Json, _}
 sealed trait CalculationDataResponseModel
 
 case class CalculationDataModel(
+                                 nationalRegime: Option[String] = None,
                                  totalTaxableIncome: BigDecimal,
                                  totalIncomeTaxNicYtd: BigDecimal,
                                  personalAllowance: BigDecimal,
@@ -95,6 +96,7 @@ case class EoyEstimate(incomeTaxNicAmount: BigDecimal)
 object CalculationDataModel {
   val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](BigDecimal(0)))
   implicit val reads: Reads[CalculationDataModel] = (
+    (__ \ "nationalRegime").readNullable[String] and
     defaultZero(__ \ "totalIncomeOnWhichTaxIsDue") and
       (__ \ "incomeTaxYTD").read[BigDecimal] and
       defaultZero(__ \ "proportionAllowance") and

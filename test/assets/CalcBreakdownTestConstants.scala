@@ -26,6 +26,7 @@ import play.api.libs.json.{JsValue, Json}
 object CalcBreakdownTestConstants {
 
   val calculationDataSuccessModel = CalculationDataModel(
+    nationalRegime = Some("UK"),
     totalIncomeTaxNicYtd = 90500.00,
     totalTaxableIncome = 198500.00,
     personalAllowance = 11500.00,
@@ -1079,6 +1080,7 @@ object CalcBreakdownTestConstants {
   )
 
   val calculationDataSuccessJson: JsValue = Json.obj(
+    "nationalRegime" -> "UK",
     "totalTaxableIncome" -> 198500,
     "totalIncomeTaxNicYtd" -> 90500,
     "personalAllowance" -> 11500,
@@ -1161,8 +1163,8 @@ object CalcBreakdownTestConstants {
      )
   )
 
-
   val calculationDataFullJson: JsValue = Json.obj(
+    "nationalRegime" -> "UK",
    "incomeTaxYTD" -> 90500,
    "incomeTaxThisPeriod" -> 20,
    "payFromAllEmployments" -> 0,
@@ -1309,7 +1311,6 @@ object CalcBreakdownTestConstants {
    "marriageAllowanceTransferAmount" -> 0,
    "marriageAllowanceTransferRelief" -> 0,
    "marriageAllowanceTransferMaximumAllowable" -> 0,
-   "nationalRegime" -> "0",
    "allowance" -> 0,
    "limitBRT" -> 0,
    "limitHRT" -> 0,
