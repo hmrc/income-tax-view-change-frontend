@@ -72,6 +72,11 @@ class CalcBreakdownHelperSpec extends TestSupport {
           import setup._
           val total = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty + model.incomeReceived.bankBuildingSocietyInterest).toCurrencyString
 
+          s"have a national regime section" in {
+            document.getElementById("national-regime-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nationalRegime
+            document.getElementById("national-regime").text shouldBe "Scotland"
+          }
+
           s"have a business profit section amount of $total" in {
             document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
             document.getElementById("business-profit").text shouldBe total

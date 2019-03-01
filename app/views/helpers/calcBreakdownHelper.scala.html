@@ -25,6 +25,12 @@
     <table class="itvc-table">
         <tbody>
 
+        @if(breakdown.nationalRegime.nonEmpty){
+            <tr id="national-regime-section"  class="no-border-bottom">
+                <td id="national-regime-heading">@messages("estimated_tax_liability.calc-breakdown.nationalRegime")</td>
+                <td id="national-regime" class="summary-data">@breakdown.nationalRegime</td>
+            </tr>
+        }
         <tr id="business-profit-section" class="no-border-bottom">
             <td id="business-profit-heading">
                 @{

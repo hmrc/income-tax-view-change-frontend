@@ -269,6 +269,7 @@ object CalcBreakdownTestConstants {
 
 
   val busPropBRTCalcDataModel = CalculationDataModel(
+    nationalRegime = Some("Scotland"),
     totalIncomeTaxNicYtd = 149.86,
     totalTaxableIncome = 132.00,
     personalAllowance = 2868.00,
