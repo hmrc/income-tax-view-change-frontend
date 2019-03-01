@@ -101,7 +101,12 @@ object CalcBreakdownTestConstants {
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
       TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
-    )
+    ),
+    giftAid = GiftAidModel(
+    paymentsMade = 56328826030.57,
+    rate = 90.26,
+    taxableAmount = 88891578018.95
+  )
   )
 
 
@@ -414,6 +419,11 @@ object CalcBreakdownTestConstants {
       class2 = 0.00,
       class4 = 0.00
     ),
+      giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
+    ),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 0.00, 0.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
@@ -495,6 +505,11 @@ object CalcBreakdownTestConstants {
       TaxBandModel("BRT", 20.0, 0.00, 0.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
       TaxBandModel("ART", 45.0, 0.00, 0.00)
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
     )
   )
 
@@ -651,6 +666,11 @@ object CalcBreakdownTestConstants {
       TaxBandModel("BRT", 20.0, 8352.00, 1670.00),
       TaxBandModel("HRT", 40.0, 26654.00, 10661.00),
       TaxBandModel("ART", 45.0, 0.00, 0.00)
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
     )
   )
 
@@ -728,6 +748,11 @@ object CalcBreakdownTestConstants {
       TaxBandModel("BRT", 20.0, 8352.00, 1670.00),
       TaxBandModel("HRT", 40.0, 29044.00, 11617.00),
       TaxBandModel("ART", 45.0, 609.00, 274.00)
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
     )
   )
 
@@ -801,12 +826,17 @@ object CalcBreakdownTestConstants {
       class2 = 10000.00,
       class4 = 14000.00
     ),
-    eoyEstimate = Some(EoyEstimate(66000.00)),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
       TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
-    )
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
+    ),
+    eoyEstimate = Some(EoyEstimate(66000.00))
   )
 
   val dividendAtHRT = CalculationDataModel(
@@ -878,6 +908,11 @@ object CalcBreakdownTestConstants {
     nic = NicModel(
       class2 = 10000.00,
       class4 = 14000.00
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
     ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
     payAndPensionsProfitBands = List(
@@ -957,6 +992,11 @@ object CalcBreakdownTestConstants {
       class2 = 10000.00,
       class4 = 14000.00
     ),
+    giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
+    ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
@@ -1035,6 +1075,11 @@ object CalcBreakdownTestConstants {
       class2 = 100.0,
       class4 = 23.86
     ),
+    giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
+    ),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 132.00, 26.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
@@ -1111,6 +1156,11 @@ object CalcBreakdownTestConstants {
     nic = NicModel(
       class2 = 100.0,
       class4 = 23.86
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
     ),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 132.00, 26.00),
@@ -1189,6 +1239,11 @@ object CalcBreakdownTestConstants {
       class2 = 100.0,
       class4 = 23.86
     ),
+    giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
+    ),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 132.00, 26.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
@@ -1242,6 +1297,11 @@ object CalcBreakdownTestConstants {
     nic = NicModel(
       class2 = 0.0,
       class4 = 0.0
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 0.0,
+      rate = 0.06,
+      taxableAmount = 0.0
     ),
     payAndPensionsProfitBands = Nil
   )
