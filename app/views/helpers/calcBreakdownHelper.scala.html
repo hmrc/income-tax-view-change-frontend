@@ -60,7 +60,8 @@
         }
 
         @if(breakdown.additionalAllowances == 0) {<tr id="personal-allowance-section">
-        }
+        } else {<tr id="personal-allowance-section" class="no-border-bottom">
+
             <td id="personal-allowance-heading">
                 @{messages("estimated_tax_liability.calc-breakdown.pa-estimates")}
             </td>
@@ -68,15 +69,15 @@
                 -@{breakdown.personalAllowance.toCurrency}
             </td>
         </tr>
-
-            <td id="savings-allowance-heading">
+               <tr id="savings-allowance-section" class="no-border-bottom">
+            <td id="savings-allowance-heading" class="no-border-bottom">
                 @{messages("estimated_tax_liability.calc-breakdown" + calcModel.savingsAllowanceHeading)}
             </td>
             <td id="savings-allowance" class="summary-data">
                 -@{breakdown.taxableSavingsInterest.toCurrency}
             </td>
         </tr>
-
+               }
 
         @if(breakdown.additionalAllowances > 0) {
         <tr id="additional-allowances-section">
