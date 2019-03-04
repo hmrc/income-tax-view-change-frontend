@@ -51,6 +51,17 @@ case class CalculationDataModel(
   def personalAllowanceSummaryData: BigDecimal = {
     personalAllowance + savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
   }
+
+  def srtSiITCalc :BigDecimal = savingsAndGains.startBand.taxableIncome
+  def srtSiITAmount : BigDecimal  = savingsAndGains.startBand.taxAmount
+  def zrtSiITCalc :BigDecimal = savingsAndGains.zeroBand.taxableIncome
+  def zrtSiITAmount : BigDecimal  = savingsAndGains.zeroBand.taxAmount
+  def brtSiITCalc :BigDecimal = savingsAndGains.basicBand.taxableIncome
+  def brtSiITAmount : BigDecimal  = savingsAndGains.basicBand.taxAmount
+  def hrtSiITCalc : BigDecimal = savingsAndGains.higherBand.taxableIncome
+  def hrtSiITAmount : BigDecimal = savingsAndGains.higherBand.taxAmount
+  def artSiITCalc : BigDecimal = savingsAndGains.additionalBand.taxableIncome
+  def artSiITAmount : BigDecimal = savingsAndGains.additionalBand.taxAmount
 }
 
 case class IncomeReceivedModel(selfEmployment: BigDecimal,
