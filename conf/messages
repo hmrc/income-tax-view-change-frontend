@@ -57,6 +57,7 @@ estimated_tax_liability.calc-breakdown.pa-estimates-savings     = Savings Allowa
 estimated_tax_liability.calc-breakdown.pa-bills                 = Personal Allowance
 estimated_tax_liability.calc-breakdown.pa-bills-savings         = Savings Allowance
 estimated_tax_liability.calc-breakdown.additional-allowances    = Additional allowances
+estimated_tax_liability.calc-breakdown.gift-aid-payment                = Gift Aid Payment
 estimated_tax_liability.calc-breakdown.taxable-income           = Your taxable income (Income Tax)
 estimated_tax_liability.calc-breakdown.dividend-income          = Income from dividends
 estimated_tax_liability.calc-breakdown.dividend-allowance       = Personal Allowance (dividends)

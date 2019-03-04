@@ -103,9 +103,9 @@ object CalcBreakdownTestConstants {
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
     ),
     giftAid = GiftAidModel(
-    paymentsMade = 56328826030.57,
-    rate = 90.26,
-    taxableAmount = 88891578018.95
+    paymentsMade = 150,
+    rate = 0.0,
+    taxableAmount = 0
   )
   )
 
@@ -420,8 +420,8 @@ object CalcBreakdownTestConstants {
       class4 = 0.00
     ),
       giftAid = GiftAidModel(
-      paymentsMade = 0.0,
-      rate = 0.06,
+      paymentsMade = 100.0,
+      rate = 0.00,
       taxableAmount = 0.0
     ),
     payAndPensionsProfitBands = List(
@@ -507,8 +507,8 @@ object CalcBreakdownTestConstants {
       TaxBandModel("ART", 45.0, 0.00, 0.00)
     ),
     giftAid = GiftAidModel(
-      paymentsMade = 0.0,
-      rate = 0.06,
+      paymentsMade = 200.0,
+      rate = 0.00,
       taxableAmount = 0.0
     )
   )
@@ -583,6 +583,11 @@ object CalcBreakdownTestConstants {
     nic = NicModel(
       class2 = 110,
       class4 = 13.86
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 300.0,
+      rate = 0.00,
+      taxableAmount = 0.0
     ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
     payAndPensionsProfitBands = List(
@@ -668,8 +673,8 @@ object CalcBreakdownTestConstants {
       TaxBandModel("ART", 45.0, 0.00, 0.00)
     ),
     giftAid = GiftAidModel(
-      paymentsMade = 0.0,
-      rate = 0.06,
+      paymentsMade = 400.0,
+      rate = 0.00,
       taxableAmount = 0.0
     )
   )
@@ -750,8 +755,8 @@ object CalcBreakdownTestConstants {
       TaxBandModel("ART", 45.0, 609.00, 274.00)
     ),
     giftAid = GiftAidModel(
-      paymentsMade = 0.0,
-      rate = 0.06,
+      paymentsMade = 500.0,
+      rate = 0.00,
       taxableAmount = 0.0
     )
   )
@@ -832,8 +837,8 @@ object CalcBreakdownTestConstants {
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
     ),
     giftAid = GiftAidModel(
-      paymentsMade = 0.0,
-      rate = 0.06,
+      paymentsMade = 600.0,
+      rate = 0.00,
       taxableAmount = 0.0
     ),
     eoyEstimate = Some(EoyEstimate(66000.00))
@@ -910,8 +915,8 @@ object CalcBreakdownTestConstants {
       class4 = 14000.00
     ),
     giftAid = GiftAidModel(
-      paymentsMade = 0.0,
-      rate = 0.06,
+      paymentsMade = 700.0,
+      rate = 0.00,
       taxableAmount = 0.0
     ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
@@ -993,8 +998,8 @@ object CalcBreakdownTestConstants {
       class4 = 14000.00
     ),
     giftAid = GiftAidModel(
-      paymentsMade = 0.0,
-      rate = 0.06,
+      paymentsMade = 800.0,
+      rate = 0.00,
       taxableAmount = 0.0
     ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
@@ -1076,8 +1081,8 @@ object CalcBreakdownTestConstants {
       class4 = 23.86
     ),
     giftAid = GiftAidModel(
-      paymentsMade = 0.0,
-      rate = 0.06,
+      paymentsMade = 900.0,
+      rate = 0.00,
       taxableAmount = 0.0
     ),
     payAndPensionsProfitBands = List(
@@ -1158,8 +1163,8 @@ object CalcBreakdownTestConstants {
       class4 = 23.86
     ),
     giftAid = GiftAidModel(
-      paymentsMade = 0.0,
-      rate = 0.06,
+      paymentsMade = 30.0,
+      rate = 0.00,
       taxableAmount = 0.0
     ),
     payAndPensionsProfitBands = List(
@@ -1240,8 +1245,8 @@ object CalcBreakdownTestConstants {
       class4 = 23.86
     ),
     giftAid = GiftAidModel(
-      paymentsMade = 0.0,
-      rate = 0.06,
+      paymentsMade = 40.0,
+      rate = 0.00,
       taxableAmount = 0.0
     ),
     payAndPensionsProfitBands = List(
@@ -1300,7 +1305,7 @@ object CalcBreakdownTestConstants {
     ),
     giftAid = GiftAidModel(
       paymentsMade = 0.0,
-      rate = 0.06,
+      rate = 0.00,
       taxableAmount = 0.0
     ),
     payAndPensionsProfitBands = Nil
@@ -1354,6 +1359,11 @@ object CalcBreakdownTestConstants {
     "nic" -> Json.obj(
       "class2" -> 10000,
       "class4" -> 14000
+    ),
+    "giftAid" -> Json.obj(
+      "paymentsMade" -> 150 ,
+      "rate" -> 0.0,
+      "taxableAmount" -> 0
     ),
     "eoyEstimate" -> Json.obj(
       "incomeTaxNicAmount" -> 66000
@@ -1608,6 +1618,15 @@ object CalcBreakdownTestConstants {
     "proportionClass4NICsLimitBR" -> 0.00,
     "proportionClass4NICsLimitHR" -> 0.00,
     "proportionReducedAllowanceLimit" -> 0.00,
+    "calcResult" -> Json.obj(
+      "incomeTax" -> Json.obj(
+        "giftAid" -> Json.obj(
+          "paymentsMade" -> 150,
+          "rate" -> 0.0,
+          "taxableIncome" -> 0,
+        )
+      )
+    ),
     "eoyEstimate" -> Json.obj(
       "selfEmployment" -> Json.arr(
         Json.obj(
