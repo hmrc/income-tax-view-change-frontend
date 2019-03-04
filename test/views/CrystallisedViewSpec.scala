@@ -25,7 +25,7 @@ import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.calculation.{CalcDisplayModel, CalculationDataModel}
+import models.calculation.{CalcDisplayModel, CalculationDataModel, TaxBandModel}
 import models.financialTransactions.TransactionModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -151,7 +151,6 @@ class CrystallisedViewSpec extends TestSupport {
 
             val total = (model.incomeReceived.ukProperty + model.incomeReceived.selfEmployment).toCurrencyString
             val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
-            import setup._
 
             s"have a business profit section amount of ${model.incomeReceived.selfEmployment}" in {
               document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
@@ -169,14 +168,13 @@ class CrystallisedViewSpec extends TestSupport {
             }
 
             s"have an Income Tax section" which {
-              "has the correct amount of income taxed at BRT" in {
-                document.getElementById("brt-it-calc").text shouldBe model.payPensionsProfit.basicBand.taxableIncome.toCurrencyString
-              }
-              "has the correct BRT rate" in {
-                document.getElementById("brt-rate").text shouldBe model.payPensionsProfit.basicBand.taxRate.toString
+              val brtBand: TaxBandModel = model.payAndPensionsProfitBands.find(_.name == "BRT").get
+
+              "has the correct amount of income taxed at BRT and the correct BRT rate" in {
+                document.getElementById("BRT-it-calc-heading").text shouldBe s"Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate}%)"
               }
               "has the correct tax charged at BRT" in {
-                document.getElementById("brt-amount").text shouldBe model.payPensionsProfit.basicBand.taxAmount.toCurrencyString
+                document.getElementById("BRT-amount").text shouldBe brtBand.amount.toCurrencyString
               }
             }
             s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
@@ -195,50 +193,49 @@ class CrystallisedViewSpec extends TestSupport {
 
           "have the higher rate of tax" should {
             val setup = pageSetup(busBropHRTCalcDataModel, transactionModel(), bizAndPropertyUser)
-            import implicits.ImplicitCurrencyFormatter._
             import setup._
 
             s"have an Income Tax section" which {
+
+              val hrtBand: TaxBandModel = model.payAndPensionsProfitBands.find(_.name == "HRT").get
+
               "has a BRT section" in {
-                document.getElementById("brt-section") should not be null
+                document.getElementById("BRT-section") should not be null
               }
 
-              "has the correct amount of income taxed at HRT" in {
-                document.getElementById("hrt-it-calc").text shouldBe model.payPensionsProfit.higherBand.taxableIncome.toCurrencyString
-              }
-              "has the correct HRT rate" in {
-                document.getElementById("hrt-rate").text shouldBe model.payPensionsProfit.higherBand.taxRate.toString
+              "has the correct amount of income taxed at HRT and the correct HRT rate" in {
+                document.getElementById("HRT-it-calc-heading").text shouldBe s"Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate}%)"
               }
               "has the correct tax charged at HRT" in {
-                document.getElementById("hrt-amount").text shouldBe model.payPensionsProfit.higherBand.taxAmount.toCurrencyString
+                document.getElementById("HRT-amount").text shouldBe hrtBand.amount.toCurrencyString
               }
 
               "does not have an ART section" in {
-                document.getElementById("art-section") shouldBe null
+                document.getElementById("ART-section") shouldBe null
               }
             }
           }
 
           "have the additional rate of tax" should {
             val setup = pageSetup(busPropARTCalcDataModel, transactionModel(), bizAndPropertyUser)
-            import implicits.ImplicitCurrencyFormatter._
             import setup._
+
             s"have an Income Tax section" which {
+
+              val artBand: TaxBandModel = model.payAndPensionsProfitBands.find(_.name == "ART").get
+
               "has a BRT section" in {
-                document.getElementById("brt-section") should not be null
+                document.getElementById("BRT-section") should not be null
               }
               "has a HRT section" in {
-                document.getElementById("hrt-section") should not be null
+                document.getElementById("HRT-section") should not be null
               }
 
               "has the correct amount of income taxed at ART" in {
-                document.getElementById("art-it-calc").text shouldBe model.payPensionsProfit.additionalBand.taxableIncome.toCurrencyString
-              }
-              "has the correct ART rate" in {
-                document.getElementById("art-rate").text shouldBe model.payPensionsProfit.additionalBand.taxRate.toString
+                document.getElementById("ART-it-calc-heading").text shouldBe s"Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate}%)"
               }
               "has the correct tax charged at ART" in {
-                document.getElementById("art-amount").text shouldBe model.payPensionsProfit.additionalBand.taxAmount.toCurrencyString
+                document.getElementById("ART-amount").text shouldBe artBand.amount.toCurrencyString
               }
             }
           }

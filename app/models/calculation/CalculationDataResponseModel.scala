@@ -30,11 +30,12 @@ case class CalculationDataModel(
                                  taxReliefs: BigDecimal,
                                  totalIncomeAllowancesUsed: BigDecimal,
                                  incomeReceived: IncomeReceivedModel,
-                                 payPensionsProfit: PayPensionsProfitModel,
                                  savingsAndGains: SavingsAndGainsModel,
                                  dividends: DividendsModel,
                                  nic: NicModel,
-                                 eoyEstimate: Option[EoyEstimate] = None) extends CalculationDataResponseModel {
+                                 eoyEstimate: Option[EoyEstimate] = None,
+                                 payAndPensionsProfitBands: List[TaxBandModel] = Nil
+                               ) extends CalculationDataResponseModel {
 
   val taxableDividendIncome: BigDecimal =
     dividends.basicBand.taxableIncome + dividends.higherBand.taxableIncome + dividends.additionalBand.taxableIncome
@@ -48,13 +49,6 @@ case class CalculationDataModel(
   def personalAllowanceSummaryData: BigDecimal = {
     personalAllowance + savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
   }
-
-  def brtITCalc :BigDecimal = payPensionsProfit.basicBand.taxableIncome + savingsAndGains.basicBand.taxableIncome
-  def brtITAmount : BigDecimal  = payPensionsProfit.basicBand.taxAmount + savingsAndGains.basicBand.taxAmount
-  def hrtITCalc : BigDecimal = payPensionsProfit.higherBand.taxableIncome + savingsAndGains.higherBand.taxableIncome
-  def hrtITAmount : BigDecimal = payPensionsProfit.higherBand.taxAmount + savingsAndGains.higherBand.taxAmount
-  def artITCalc : BigDecimal = payPensionsProfit.additionalBand.taxableIncome + savingsAndGains.additionalBand.taxableIncome
-  def artITAmount : BigDecimal = payPensionsProfit.additionalBand.taxAmount + savingsAndGains.additionalBand.taxAmount
 }
 
 case class IncomeReceivedModel(selfEmployment: BigDecimal,
@@ -66,10 +60,6 @@ case class IncomeReceivedModel(selfEmployment: BigDecimal,
 
   def buisnessProfit: BigDecimal = selfEmployment + ukProperty
 }
-
-case class PayPensionsProfitModel(basicBand: BandModel,
-                                  higherBand: BandModel,
-                                  additionalBand: BandModel)
 
 case class SavingsAndGainsModel(startBand: BandModel,
                                 zeroBand: BandModel,
@@ -86,6 +76,12 @@ case class BandModel(taxableIncome: BigDecimal,
                      taxRate: BigDecimal,
                      taxAmount: BigDecimal)
 
+case class TaxBandModel(name: String, rate: BigDecimal, income: BigDecimal, amount: BigDecimal)
+
+object TaxBandModel {
+  implicit val format: Format[TaxBandModel] = Json.format[TaxBandModel]
+}
+
 case class NicModel(class2: BigDecimal,
                     class4: BigDecimal)
 
@@ -93,7 +89,7 @@ case class EoyEstimate(incomeTaxNicAmount: BigDecimal)
 
 
 object CalculationDataModel {
-  val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](BigDecimal(0)))
+  val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](0.00))
   implicit val reads: Reads[CalculationDataModel] = (
     defaultZero(__ \ "totalIncomeOnWhichTaxIsDue") and
       (__ \ "incomeTaxYTD").read[BigDecimal] and
@@ -101,13 +97,26 @@ object CalculationDataModel {
       defaultZero(__ \ "totalAllowancesAndReliefs") and
       defaultZero(__ \ "totalIncomeAllowancesUsed") and
       __.read[IncomeReceivedModel] and
-      __.read[PayPensionsProfitModel] and
       __.read[SavingsAndGainsModel] and
       __.read[DividendsModel] and
       __.read[NicModel] and
-      (__ \ "eoyEstimate").readNullable[EoyEstimate]
+      (__ \ "eoyEstimate").readNullable[EoyEstimate] and
+      (__ \ "incomeTax" \ "payAndPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
     ) (CalculationDataModel.apply _)
-  implicit val writes: Writes[CalculationDataModel] = Json.writes[CalculationDataModel]
+
+  implicit val writes: Writes[CalculationDataModel] = (
+    (__ \ "totalTaxableIncome").write[BigDecimal] and
+      (__ \ "totalIncomeTaxNicYtd").write[BigDecimal] and
+      (__ \ "personalAllowance").write[BigDecimal] and
+      (__ \ "taxReliefs").write[BigDecimal] and
+      (__ \ "totalIncomeAllowancesUsed").write[BigDecimal] and
+      (__ \ "incomeReceived").write[IncomeReceivedModel] and
+      (__ \ "savingsAndGains").write[SavingsAndGainsModel] and
+      (__ \ "dividends").write[DividendsModel] and
+      (__ \ "nic").write[NicModel] and
+      (__ \ "eoyEstimate").writeNullable[EoyEstimate] and
+      (__ \ "incomeTax" \ "payAndPensionsProfit" \ "band").write[List[TaxBandModel]]
+    )(unlift(CalculationDataModel.unapply))
 }
 
 object IncomeReceivedModel {
@@ -118,15 +127,6 @@ object IncomeReceivedModel {
       defaultZero(__ \ "dividendsFromUkCompanies")
     ) (IncomeReceivedModel.apply _)
   implicit val writes: Writes[IncomeReceivedModel] = Json.writes[IncomeReceivedModel]
-}
-
-object PayPensionsProfitModel {
-  implicit val reads: Reads[PayPensionsProfitModel] = (
-    __.read[BandModel](BandModel.payPensionsProfitReadsBRT) and
-      __.read[BandModel](BandModel.payPensionsProfitReadsHRT) and
-      __.read[BandModel](BandModel.payPensionsProfitReadsART)
-    ) (PayPensionsProfitModel.apply _)
-  implicit val writes: Writes[PayPensionsProfitModel] = Json.writes[PayPensionsProfitModel]
 }
 
 object SavingsAndGainsModel {
@@ -173,10 +173,10 @@ object BandModel {
 
   // Bank and Building Society Interest Reads
   val interestReadsStartingRate: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtStartingRate") and Reads.pure[BigDecimal](0) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtStartingRate")
+    defaultZero(__ \ "interestReceivedAtStartingRate") and Reads.pure[BigDecimal](0.00) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtStartingRate")
     ) (BandModel.apply _)
   val interestReadsZeroRate: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtZeroRate") and Reads.pure[BigDecimal](0) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtZeroRate")
+    defaultZero(__ \ "interestReceivedAtZeroRate") and Reads.pure[BigDecimal](0.00) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtZeroRate")
     ) (BandModel.apply _)
   val interestReadsBRT: Reads[BandModel] = (
     defaultZero(__ \ "interestReceivedAtBRT") and defaultZero(__ \ "rateBRT") and defaultZero(__ \ "incomeTaxOnInterestReceivedAtBRT")

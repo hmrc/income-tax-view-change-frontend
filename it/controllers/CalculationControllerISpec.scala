@@ -74,6 +74,10 @@ class CalculationControllerISpec extends ComponentSpecBase {
         verifyLastTaxCalculationCall(testNino, testYear)
         verifyCalculationDataCall(testNino, testCalcId)
 
+        val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "BRT").get
+        val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "HRT").get
+        val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "ART").get
+
         res should have (
           httpStatus(OK),
           pageTitle(messages.title(testYearInt)),
@@ -84,15 +88,12 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextByID("personal-allowance")(s"-${totalAllowance(calculationDataSuccessWithEoYModel)}"),
           elementTextByID("additional-allowances")("-" + calculationDataSuccessWithEoYModel.additionalAllowances.toCurrencyString),
           elementTextByID("taxable-income")(taxableIncome(calculationDataSuccessWithEoYModel)),
-          elementTextByID("brt-it-calc")((calculationDataSuccessWithEoYModel.payPensionsProfit.basicBand.taxableIncome + calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
-          elementTextByID("brt-rate")(calculationDataSuccessWithEoYModel.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
-          elementTextByID("brt-amount")((calculationDataSuccessWithEoYModel.payPensionsProfit.basicBand.taxAmount + calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxAmount).toCurrencyString),
-          elementTextByID("hrt-it-calc")((calculationDataSuccessWithEoYModel.payPensionsProfit.higherBand.taxableIncome + calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxableIncome).toCurrencyString),
-          elementTextByID("hrt-rate")(calculationDataSuccessWithEoYModel.payPensionsProfit.higherBand.taxRate.toStringNoDecimal),
-          elementTextByID("hrt-amount")((calculationDataSuccessWithEoYModel.payPensionsProfit.higherBand.taxAmount + calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxAmount).toCurrencyString),
-          elementTextByID("art-it-calc")((calculationDataSuccessWithEoYModel.payPensionsProfit.additionalBand.taxableIncome + calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxableIncome).toCurrencyString),
-          elementTextByID("art-rate")(calculationDataSuccessWithEoYModel.payPensionsProfit.additionalBand.taxRate.toStringNoDecimal),
-          elementTextByID("art-amount")((calculationDataSuccessWithEoYModel.payPensionsProfit.additionalBand.taxAmount + calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxAmount).toCurrencyString),
+          elementTextByID("BRT-it-calc-heading")(s"Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate.toStringNoDecimal}%)"),
+          elementTextByID("BRT-amount")(brtBand.amount.toCurrencyString),
+          elementTextByID("HRT-it-calc-heading")(s"Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate.toStringNoDecimal}%)"),
+          elementTextByID("HRT-amount")(hrtBand.amount.toCurrencyString),
+          elementTextByID("ART-it-calc-heading")(s"Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate.toStringNoDecimal}%)"),
+          elementTextByID("ART-amount")(artBand.amount.toCurrencyString),
           elementTextByID("dividend-income")(calculationDataSuccessWithEoYModel.incomeReceived.ukDividends.toCurrencyString),
           elementTextByID("dividend-allowance")(s"-${calculationDataSuccessWithEoYModel.dividends.allowance.toCurrencyString}"),
           elementTextByID("taxable-dividend-income")(calculationDataSuccessWithEoYModel.taxableDividendIncome.toCurrencyString),
@@ -140,6 +141,10 @@ class CalculationControllerISpec extends ComponentSpecBase {
           verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
 
+          val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "BRT").get
+          val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "HRT").get
+          val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "ART").get
+
           res should have(
             httpStatus(OK),
             pageTitle(messages.title(testYearInt)),
@@ -153,15 +158,12 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("personal-allowance")(s"-${totalAllowance(calculationDataSuccessWithEoYModel)}"),
             elementTextByID("additional-allowances")("-" + calculationDataSuccessWithEoYModel.additionalAllowances.toCurrencyString),
             elementTextByID("taxable-income")(taxableIncome(calculationDataSuccessWithEoYModel)),
-            elementTextByID("brt-it-calc")((calculationDataSuccessWithEoYModel.payPensionsProfit.basicBand.taxableIncome + calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
-            elementTextByID("brt-rate")(calculationDataSuccessWithEoYModel.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
-            elementTextByID("brt-amount")((calculationDataSuccessWithEoYModel.payPensionsProfit.basicBand.taxAmount + calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxAmount).toCurrencyString),
-            elementTextByID("hrt-it-calc")((calculationDataSuccessWithEoYModel.payPensionsProfit.higherBand.taxableIncome + calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxableIncome).toCurrencyString),
-            elementTextByID("hrt-rate")(calculationDataSuccessWithEoYModel.payPensionsProfit.higherBand.taxRate.toStringNoDecimal),
-            elementTextByID("hrt-amount")((calculationDataSuccessWithEoYModel.payPensionsProfit.higherBand.taxAmount + calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxAmount).toCurrencyString),
-            elementTextByID("art-it-calc")((calculationDataSuccessWithEoYModel.payPensionsProfit.additionalBand.taxableIncome + calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxableIncome).toCurrencyString),
-            elementTextByID("art-rate")(calculationDataSuccessWithEoYModel.payPensionsProfit.additionalBand.taxRate.toStringNoDecimal),
-            elementTextByID("art-amount")((calculationDataSuccessWithEoYModel.payPensionsProfit.additionalBand.taxAmount + calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxAmount).toCurrencyString),
+            elementTextByID("BRT-it-calc-heading")(s"Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate.toStringNoDecimal}%)"),
+            elementTextByID("BRT-amount")(brtBand.amount.toCurrencyString),
+            elementTextByID("HRT-it-calc-heading")(s"Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate.toStringNoDecimal}%)"),
+            elementTextByID("HRT-amount")(hrtBand.amount.toCurrencyString),
+            elementTextByID("ART-it-calc-heading")(s"Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate.toStringNoDecimal}%)"),
+            elementTextByID("ART-amount")(artBand.amount.toCurrencyString),
             elementTextByID("dividend-income")(calculationDataSuccessWithEoYModel.incomeReceived.ukDividends.toCurrencyString),
             elementTextByID("dividend-allowance")(s"-${calculationDataSuccessWithEoYModel.dividends.allowance.toCurrencyString}"),
             elementTextByID("taxable-dividend-income")(calculationDataSuccessWithEoYModel.taxableDividendIncome.toCurrencyString),
@@ -208,6 +210,10 @@ class CalculationControllerISpec extends ComponentSpecBase {
           verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
 
+          val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "BRT").get
+          val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "HRT").get
+          val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "ART").get
+
           res should have(
             httpStatus(OK),
             pageTitle(messages.heading(testYearInt)),
@@ -219,15 +225,12 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("personal-allowance")(s"-${totalAllowance(calculationDataSuccessWithEoYModel)}"),
             elementTextByID("additional-allowances")("-" + calculationDataSuccessWithEoYModel.additionalAllowances.toCurrencyString),
             elementTextByID("taxable-income")(taxableIncome(calculationDataSuccessWithEoYModel)),
-            elementTextByID("brt-it-calc")((calculationDataSuccessWithEoYModel.payPensionsProfit.basicBand.taxableIncome + calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
-            elementTextByID("brt-rate")(calculationDataSuccessWithEoYModel.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
-            elementTextByID("brt-amount")((calculationDataSuccessWithEoYModel.payPensionsProfit.basicBand.taxAmount + calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxAmount).toCurrencyString),
-            elementTextByID("hrt-it-calc")((calculationDataSuccessWithEoYModel.payPensionsProfit.higherBand.taxableIncome + calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxableIncome).toCurrencyString),
-            elementTextByID("hrt-rate")(calculationDataSuccessWithEoYModel.payPensionsProfit.higherBand.taxRate.toStringNoDecimal),
-            elementTextByID("hrt-amount")((calculationDataSuccessWithEoYModel.payPensionsProfit.higherBand.taxAmount + calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxAmount).toCurrencyString),
-            elementTextByID("art-it-calc")((calculationDataSuccessWithEoYModel.payPensionsProfit.additionalBand.taxableIncome + calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxableIncome).toCurrencyString),
-            elementTextByID("art-rate")(calculationDataSuccessWithEoYModel.payPensionsProfit.additionalBand.taxRate.toStringNoDecimal),
-            elementTextByID("art-amount")((calculationDataSuccessWithEoYModel.payPensionsProfit.additionalBand.taxAmount + calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxAmount).toCurrencyString),
+            elementTextByID("BRT-it-calc-heading")(s"Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate.toStringNoDecimal}%)"),
+            elementTextByID("BRT-amount")(brtBand.amount.toCurrencyString),
+            elementTextByID("HRT-it-calc-heading")(s"Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate.toStringNoDecimal}%)"),
+            elementTextByID("HRT-amount")(hrtBand.amount.toCurrencyString),
+            elementTextByID("ART-it-calc-heading")(s"Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate.toStringNoDecimal}%)"),
+            elementTextByID("ART-amount")(artBand.amount.toCurrencyString),
             elementTextByID("dividend-income")(calculationDataSuccessWithEoYModel.incomeReceived.ukDividends.toCurrencyString),
             elementTextByID("dividend-allowance")(s"-${calculationDataSuccessWithEoYModel.dividends.allowance.toCurrencyString}"),
             elementTextByID("taxable-dividend-income")(calculationDataSuccessWithEoYModel.taxableDividendIncome.toCurrencyString),
@@ -299,6 +302,10 @@ class CalculationControllerISpec extends ComponentSpecBase {
         verifyLastTaxCalculationCall(testNino, testYear)
         verifyCalculationDataCall(testNino, testCalcId)
 
+        val brtBand = calculationDataSuccessModel.payAndPensionsProfitBands.find(_.name == "BRT").get
+        val hrtBand = calculationDataSuccessModel.payAndPensionsProfitBands.find(_.name == "HRT").get
+        val artBand = calculationDataSuccessModel.payAndPensionsProfitBands.find(_.name == "ART").get
+
         res should have (
           httpStatus(OK),
           pageTitle(messages.title(testYearInt)),
@@ -309,15 +316,12 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextByID("personal-allowance")(s"-${totalAllowance(calculationDataSuccessModel)}"),
           elementTextByID("additional-allowances")("-" + calculationDataSuccessModel.additionalAllowances.toCurrencyString),
           elementTextByID("taxable-income")(taxableIncome(calculationDataSuccessModel)),
-          elementTextByID("brt-it-calc")((calculationDataSuccessModel.payPensionsProfit.basicBand.taxableIncome + calculationDataSuccessModel.savingsAndGains.basicBand.taxableIncome).toCurrencyString),
-          elementTextByID("brt-rate")(calculationDataSuccessModel.payPensionsProfit.basicBand.taxRate.toStringNoDecimal),
-          elementTextByID("brt-amount")((calculationDataSuccessModel.payPensionsProfit.basicBand.taxAmount + calculationDataSuccessModel.savingsAndGains.basicBand.taxAmount).toCurrencyString),
-          elementTextByID("hrt-it-calc")((calculationDataSuccessModel.payPensionsProfit.higherBand.taxableIncome + calculationDataSuccessModel.savingsAndGains.higherBand.taxableIncome).toCurrencyString),
-          elementTextByID("hrt-rate")(calculationDataSuccessModel.payPensionsProfit.higherBand.taxRate.toStringNoDecimal),
-          elementTextByID("hrt-amount")((calculationDataSuccessModel.payPensionsProfit.higherBand.taxAmount + calculationDataSuccessModel.savingsAndGains.higherBand.taxAmount).toCurrencyString),
-          elementTextByID("art-it-calc")((calculationDataSuccessModel.payPensionsProfit.additionalBand.taxableIncome + calculationDataSuccessModel.savingsAndGains.additionalBand.taxableIncome).toCurrencyString),
-          elementTextByID("art-rate")(calculationDataSuccessModel.payPensionsProfit.additionalBand.taxRate.toStringNoDecimal),
-          elementTextByID("art-amount")((calculationDataSuccessModel.payPensionsProfit.additionalBand.taxAmount + calculationDataSuccessModel.savingsAndGains.additionalBand.taxAmount).toCurrencyString),
+          elementTextByID("BRT-it-calc-heading")(s"Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate.toStringNoDecimal}%)"),
+          elementTextByID("BRT-amount")(brtBand.amount.toCurrencyString),
+          elementTextByID("HRT-it-calc-heading")(s"Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate.toStringNoDecimal}%)"),
+          elementTextByID("HRT-amount")(hrtBand.amount.toCurrencyString),
+          elementTextByID("ART-it-calc-heading")(s"Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate.toStringNoDecimal}%)"),
+          elementTextByID("ART-amount")(artBand.amount.toCurrencyString),
           elementTextByID("dividend-income")(calculationDataSuccessModel.incomeReceived.ukDividends.toCurrencyString),
           elementTextByID("dividend-allowance")(s"-${calculationDataSuccessModel.dividends.allowance.toCurrencyString}"),
           elementTextByID("taxable-dividend-income")(calculationDataSuccessModel.taxableDividendIncome.toCurrencyString),

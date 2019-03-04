@@ -32,23 +32,6 @@ object CalcDataIntegrationTestConstants {
       bankBuildingSocietyInterest = 2000.00,
       ukDividends = 11000.00
     ),
-    payPensionsProfit = PayPensionsProfitModel(
-      basicBand = BandModel(
-        taxableIncome = 20000.00,
-        taxRate = 20.0,
-        taxAmount = 4000.00
-      ),
-      higherBand = BandModel(
-        taxableIncome = 100000.00,
-        taxRate = 40.0,
-        taxAmount = 40000.00
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 50000.00,
-        taxRate = 45.0,
-        taxAmount = 22500.00
-      )
-    ),
     savingsAndGains = SavingsAndGainsModel(
       startBand = BandModel(
         taxableIncome = 1.00,
@@ -98,7 +81,12 @@ object CalcDataIntegrationTestConstants {
       class2 = 10000.00,
       class4 = 14000.00
     ),
-    eoyEstimate = Some(EoyEstimate(25000.00))
+    eoyEstimate = Some(EoyEstimate(25000.00)),
+    payAndPensionsProfitBands = List(
+      TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
+      TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
+      TaxBandModel("ART", 45.0, 50000.00, 22500.00)
+    )
   )
 
   val calculationDataSuccessModel = CalculationDataModel(
@@ -113,23 +101,6 @@ object CalcDataIntegrationTestConstants {
       bankBuildingSocietyInterest = 2000.00,
       ukDividends = 11000.00
     ),
-    payPensionsProfit = PayPensionsProfitModel(
-      basicBand = BandModel(
-        taxableIncome = 20000.00,
-        taxRate = 20.0,
-        taxAmount = 4000.00
-      ),
-      higherBand = BandModel(
-        taxableIncome = 100000.00,
-        taxRate = 40.0,
-        taxAmount = 40000.00
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 50000.00,
-        taxRate = 45.0,
-        taxAmount = 22500.00
-      )
-    ),
     savingsAndGains = SavingsAndGainsModel(
       startBand = BandModel(
         taxableIncome = 1.00,
@@ -178,6 +149,11 @@ object CalcDataIntegrationTestConstants {
     nic = NicModel(
       class2 = 10000.00,
       class4 = 14000.00
+    ),
+    payAndPensionsProfitBands = List(
+      TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
+      TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
+      TaxBandModel("ART", 45.0, 50000.00, 22500.00)
     )
   )
 
@@ -414,6 +390,27 @@ object CalcDataIntegrationTestConstants {
         "nic4" -> 89999999.99,
         "totalNicAmount" -> 9999999.99,
         "incomeTaxNicAmount" -> 66000.00
+      ),
+      "incomeTax" -> Json.obj(
+        "payAndPensionsProfit" -> Json.obj(
+          "band" -> Json.arr(Json.obj(
+            "name" -> "BRT",
+            "rate" -> 20.0,
+            "income" -> 20000.00,
+            "amount" -> 4000.00
+          ), Json.obj(
+            "name" -> "HRT",
+            "rate" -> 40.0,
+            "income" -> 100000.00,
+            "amount" -> 40000.00
+          ), Json.obj(
+            "name" -> "ART",
+            "rate" -> 45.0,
+            "income" -> 50000.00,
+            "amount" -> 22500.00
+          )
+          )
+        )
       )
     )
 
@@ -618,7 +615,28 @@ object CalcDataIntegrationTestConstants {
     "proportionClass2NICsLimit" -> 0,
     "proportionClass4NICsLimitBR" -> 0,
     "proportionClass4NICsLimitHR" -> 0,
-    "proportionReducedAllowanceLimit" -> 0
+    "proportionReducedAllowanceLimit" -> 0,
+    "incomeTax" -> Json.obj(
+      "payAndPensionsProfit" -> Json.obj(
+        "band" -> Json.arr(Json.obj(
+          "name" -> "BRT",
+          "rate" -> 20.0,
+          "income" -> 20000.00,
+          "amount" -> 4000.00
+        ), Json.obj(
+          "name" -> "HRT",
+          "rate" -> 40.0,
+          "income" -> 100000.00,
+          "amount" -> 40000.00
+        ), Json.obj(
+          "name" -> "ART",
+          "rate" -> 45.0,
+          "income" -> 50000.00,
+          "amount" -> 22500.00
+        )
+        )
+      )
+    )
   )
 
   val latestCalcModel: CalculationModel =

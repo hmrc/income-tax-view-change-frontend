@@ -18,7 +18,7 @@ package models
 
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
-import models.calculation.{CalculationDataErrorModel, CalculationDataModel}
+import models.calculation.{CalculationDataErrorModel, CalculationDataModel, TaxBandModel}
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
@@ -42,17 +42,11 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
 
         calculationDataSuccessModel.taxReliefs shouldBe 0
 
-        calculationDataSuccessModel.payPensionsProfit.basicBand.taxableIncome shouldBe 20000
-        calculationDataSuccessModel.payPensionsProfit.basicBand.taxRate shouldBe 20
-        calculationDataSuccessModel.payPensionsProfit.basicBand.taxAmount shouldBe 4000
-
-        calculationDataSuccessModel.payPensionsProfit.higherBand.taxableIncome shouldBe 100000
-        calculationDataSuccessModel.payPensionsProfit.higherBand.taxRate shouldBe 40
-        calculationDataSuccessModel.payPensionsProfit.higherBand.taxAmount shouldBe 40000
-
-        calculationDataSuccessModel.payPensionsProfit.additionalBand.taxableIncome shouldBe 50000
-        calculationDataSuccessModel.payPensionsProfit.additionalBand.taxRate shouldBe 45
-        calculationDataSuccessModel.payPensionsProfit.additionalBand.taxAmount shouldBe 22500
+        calculationDataSuccessModel.payAndPensionsProfitBands shouldBe List(
+          TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
+          TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
+          TaxBandModel("ART", 45.0, 50000.00, 22500.00)
+        )
 
         calculationDataSuccessModel.savingsAndGains.startBand.taxableIncome shouldBe 1
         calculationDataSuccessModel.savingsAndGains.startBand.taxRate shouldBe 0
