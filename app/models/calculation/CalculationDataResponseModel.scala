@@ -43,14 +43,13 @@ case class CalculationDataModel(
     dividends.basicBand.taxableIncome + dividends.higherBand.taxableIncome + dividends.additionalBand.taxableIncome
   val taxableIncomeTaxIncome: BigDecimal = totalTaxableIncome - taxableDividendIncome
   val additionalAllowances: BigDecimal = totalIncomeAllowancesUsed - personalAllowance
+  val taxablePayPensionsProfit: BigDecimal = payPensionsProfit.basicBand.taxableIncome + payPensionsProfit.higherBand.taxableIncome + payPensionsProfit.additionalBand.taxableIncome
+  val taxableSavingsInterest : BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome + savingsAndGains.basicBand.taxableIncome + savingsAndGains.higherBand.taxableIncome + savingsAndGains.additionalBand.taxableIncome
 
   val hasDividendsAtBRT: Boolean = dividends.basicBand.taxAmount > 0
   val hasDividendsAtHRT: Boolean = dividends.higherBand.taxAmount > 0
   val hasDividendsAtART: Boolean = dividends.additionalBand.taxAmount > 0
-
-  def personalAllowanceSummaryData: BigDecimal = {
-    personalAllowance + savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
-  }
+  val savingsAllowanceSummaryData: BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
 
   def srtSiITCalc :BigDecimal = savingsAndGains.startBand.taxableIncome
   def srtSiITAmount : BigDecimal  = savingsAndGains.startBand.taxAmount

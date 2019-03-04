@@ -53,12 +53,10 @@ case class CalcDisplayModel(calcTimestamp: String,
     calcStatus == Crystallised && calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0
   }
 
-  def personalAllowanceHeading: String = {
-    (calcStatus, calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0) match {
-      case (Estimate, false) => ".pa-estimates"
-      case (Estimate, _)     => ".pa-estimates-savings"
-      case (_, false)        => ".pa-bills"
-      case (_, _)            => ".pa-bills-savings"
+  def savingsAllowanceHeading: String = {
+    (calcStatus) match {
+      case (Estimate)     => ".pa-estimates-savings"
+      case (_)            => ".pa-bills-savings"
     }
   }
 
