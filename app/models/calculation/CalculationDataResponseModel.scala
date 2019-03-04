@@ -39,17 +39,15 @@ case class CalculationDataModel(
                                  payAndPensionsProfitBands: List[TaxBandModel] = Nil
                                ) extends CalculationDataResponseModel {
 
-  val taxableDividendIncome: BigDecimal =
-    dividends.basicBand.taxableIncome + dividends.higherBand.taxableIncome + dividends.additionalBand.taxableIncome
+  val taxableDividendIncome: BigDecimal = dividends.totalAmount
+
   val taxableIncomeTaxIncome: BigDecimal = totalTaxableIncome - taxableDividendIncome
   val savingsAllowanceSummaryData: BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
   val additionalAllowances: BigDecimal = totalIncomeAllowancesUsed - personalAllowance - savingsAllowanceSummaryData
   val taxablePayPensionsProfit: BigDecimal = payAndPensionsProfitBands.map(_.income).sum
   val taxableSavingsInterest : BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome + savingsAndGains.basicBand.taxableIncome + savingsAndGains.higherBand.taxableIncome + savingsAndGains.additionalBand.taxableIncome
 
-  val hasDividendsAtBRT: Boolean = dividends.basicBand.taxAmount > 0
-  val hasDividendsAtHRT: Boolean = dividends.higherBand.taxAmount > 0
-  val hasDividendsAtART: Boolean = dividends.additionalBand.taxAmount > 0
+  def hasDividensAtSpecfiedRate(taxAmount: BigDecimal): Boolean = taxAmount > 0
 
 
   def srtSiITCalc :BigDecimal = savingsAndGains.startBand.taxableIncome
@@ -80,10 +78,15 @@ case class SavingsAndGainsModel(startBand: BandModel,
                                 higherBand: BandModel,
                                 additionalBand: BandModel)
 
-case class DividendsModel(allowance: BigDecimal,
-                          basicBand: BandModel,
-                          higherBand: BandModel,
-                          additionalBand: BandModel)
+case class DividendsModel(totalAmount: BigDecimal,
+                          dividendsBands: Seq[DividendsBandModel])
+
+case class DividendsBandModel(name: String,
+                              rate: BigDecimal,
+                              threshold: Option[Int],
+                              apportionedThreshold: Option[Int],
+                              income: BigDecimal,
+                              amount : BigDecimal)
 
 case class BandModel(taxableIncome: BigDecimal,
                      taxRate: BigDecimal,
@@ -162,10 +165,8 @@ object SavingsAndGainsModel {
 
 object DividendsModel {
   implicit val reads: Reads[DividendsModel] = (
-    defaultZero(__ \ "dividendAllowance") and
-      __.read[BandModel](BandModel.dividendsReadsBRT) and
-      __.read[BandModel](BandModel.dividendsReadsHRT) and
-      __.read[BandModel](BandModel.dividendsReadsART)
+    defaultZero(__ \ "incomeTax" \ "dividends" \ "totalAmount") and
+      (__ \ "incomeTax" \ "dividends" \ "band").read[Seq[DividendsBandModel]]
     ) (DividendsModel.apply _)
   implicit val writes: Writes[DividendsModel] = Json.writes[DividendsModel]
 }
@@ -231,4 +232,18 @@ case class CalculationDataErrorModel(code: Int, message: String) extends Calcula
 
 object CalculationDataErrorModel {
   implicit val format: Format[CalculationDataErrorModel] = Json.format[CalculationDataErrorModel]
+}
+
+object DividendsBandModel {
+  implicit val writes: Writes[DividendsBandModel] = Json.writes[DividendsBandModel]
+
+  implicit val reads: Reads[DividendsBandModel] = (
+    (__ \ "name").read[String] and
+      (__ \ "rate").read[BigDecimal] and
+      (__ \ "threshold").readNullable[Int] and
+      (__ \ "apportionedThreshold").readNullable[Int] and
+      (__ \ "income").read[BigDecimal] and
+      (__ \ "amount").read[BigDecimal]
+    ) (DividendsBandModel.apply _)
+
 }
