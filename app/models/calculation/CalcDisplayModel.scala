@@ -34,10 +34,6 @@ case class CalcDisplayModel(calcTimestamp: String,
   val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
   val hasEoyEstimate: Boolean = calcDataModel.fold(false)(_.eoyEstimate.nonEmpty)
 
-  val hasBRTSection: Boolean = calcDataModel.fold(false)(_.payPensionsProfit.basicBand.taxableIncome > 0)
-  val hasHRTSection: Boolean = calcDataModel.fold(false)(_.payPensionsProfit.higherBand.taxableIncome > 0)
-  val hasARTSection: Boolean = calcDataModel.fold(false)(_.payPensionsProfit.additionalBand.taxableIncome > 0)
-
   val hasNic2Amount: Boolean = calcDataModel.fold(false)(_.nic.class2 > 0)
   val hasNic4Amount: Boolean = calcDataModel.fold(false)(_.nic.class4 > 0)
   val hasNISection: Boolean = hasNic2Amount || hasNic4Amount

@@ -55,11 +55,12 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calculationDataSuccessModel.taxReliefs: BigDecimal,
         calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
         incomeReceived: IncomeReceivedModel,
-        calculationDataSuccessModel.payPensionsProfit,
         calculationDataSuccessModel.savingsAndGains,
         calculationDataSuccessModel.dividends,
         calculationDataSuccessModel.nic,
-        calculationDataSuccessModel.eoyEstimate)
+        calculationDataSuccessModel.eoyEstimate,
+        calculationDataSuccessModel.payAndPensionsProfitBands
+      )
 
       val calcDataModel: Option[CalculationDataModel] = Some(calculationDataModel)
 
@@ -74,16 +75,17 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calculationDataSuccessModel.incomeReceived.ukDividends)
 
      CalculationDataModel(calculationDataSuccessModel.totalIncomeTaxNicYtd,
-        calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
-        calculationDataSuccessModel.personalAllowance: BigDecimal,
-        calculationDataSuccessModel.taxReliefs: BigDecimal,
-        calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
-        incomeReceived: IncomeReceivedModel,
-        calculationDataSuccessModel.payPensionsProfit,
-        calculationDataSuccessModel.savingsAndGains,
-        calculationDataSuccessModel.dividends,
-        calculationDataSuccessModel.nic,
-        calculationDataSuccessModel.eoyEstimate)
+       calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
+       calculationDataSuccessModel.personalAllowance: BigDecimal,
+       calculationDataSuccessModel.taxReliefs: BigDecimal,
+       calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
+       incomeReceived: IncomeReceivedModel,
+       calculationDataSuccessModel.savingsAndGains,
+       calculationDataSuccessModel.dividends,
+       calculationDataSuccessModel.nic,
+       calculationDataSuccessModel.eoyEstimate,
+       calculationDataSuccessModel.payAndPensionsProfitBands
+     )
 
     }
 
@@ -100,11 +102,12 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calculationDataSuccessModel.taxReliefs: BigDecimal,
         calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
         incomeReceived: IncomeReceivedModel,
-        calculationDataSuccessModel.payPensionsProfit,
         calculationDataSuccessModel.savingsAndGains,
         calculationDataSuccessModel.dividends,
         calculationDataSuccessModel.nic,
-        calculationDataSuccessModel.eoyEstimate)
+        calculationDataSuccessModel.eoyEstimate,
+        calculationDataSuccessModel.payAndPensionsProfitBands
+      )
 
     }
 
