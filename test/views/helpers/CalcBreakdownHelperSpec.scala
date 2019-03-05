@@ -63,7 +63,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
   val basicModel = CalculationDataModel(
     None,0, 0, 0, 0, 0,
     IncomeReceivedModel(0, 0, 0, 0),
-    SavingsAndGainsModel(BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
+    SavingsAndGainsModel(0, Seq(BandModel(0, 0, 0, "SSR"),BandModel(0, 0, 0, "ZRT"),BandModel(0, 0, 0, "BRT"),BandModel(0, 0, 0, "HRT"),BandModel(0, 0, 0, "ART"))),
     DividendsModel(0, Seq(DividendsBandModel("basic band",0, None, None, 0,0))),
     GiftAidModel(0,0,0),
     NicModel(0, 0),
@@ -72,11 +72,14 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
   val allSavingInterestModel: CalculationDataModel = basicModel.copy(
     savingsAndGains = SavingsAndGainsModel(
-      BandModel(5000, 0.0, 5000),
-      BandModel(4000, 0.0, 4000),
-      BandModel(3000, 20, 600),
-      BandModel(2000, 40, 800),
-      BandModel(1000, 45, 450)
+      0,
+      Seq(
+        BandModel(5000, 0.0, 5000, "SSR"),
+        BandModel(4000, 0.0, 4000, "ZRT"),
+        BandModel(3000, 20, 600, "BRT"),
+        BandModel(2000, 40, 800, "HRT"),
+        BandModel(1000, 45, 450, "ART")
+      )
     )
   )
 

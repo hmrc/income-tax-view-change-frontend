@@ -73,15 +73,18 @@ case class IncomeReceivedModel(selfEmployment: BigDecimal,
   def buisnessProfit: BigDecimal = selfEmployment + ukProperty
 }
 
-case class SavingsAndGainsModel(startBand: BandModel,
+case class PayPensionsProfitModel(basicBand: BandModel,
+                                  higherBand: BandModel,
+                                  additionalBand: BandModel)
+
+case class OldSavingsAndGainsModel(startBand: BandModel,
                                 zeroBand: BandModel,
                                 basicBand: BandModel,
                                 higherBand: BandModel,
                                 additionalBand: BandModel)
 
-
-case class NewSavingsAndGainsModel(total: BigDecimal,
-                                   bands: Seq[BandModel]) {
+case class SavingsAndGainsModel(total: BigDecimal,
+                                bands: Seq[BandModel]) {
   val defaultBand = BandModel(0, 0, 0)
 
   val startBand: BandModel = bands.find(_.name == "SSR").getOrElse(defaultBand)
@@ -182,22 +185,32 @@ object IncomeReceivedModel {
   implicit val writes: Writes[IncomeReceivedModel] = Json.writes[IncomeReceivedModel]
 }
 
-object NewSavingsAndGainsModel {
-  implicit val reads: Reads[NewSavingsAndGainsModel] = (
-  defaultZero(__ \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "totalAmount") and
-    (__ \ "calcResult" \ "incomeTax" \ "savingsAndGains").read[Seq[BandModel]]
-    ) (NewSavingsAndGainsModel.apply _)
-}
-
 object SavingsAndGainsModel {
   implicit val reads: Reads[SavingsAndGainsModel] = (
+  defaultZero(__ \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "totalAmount") and
+    (__ \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "band").read[Seq[BandModel]].orElse(Reads.pure(Seq.empty[BandModel]))
+    ) (SavingsAndGainsModel.apply _)
+  implicit val writes: Writes[SavingsAndGainsModel] = Json.writes[SavingsAndGainsModel]
+}
+
+object PayPensionsProfitModel {
+  implicit val reads: Reads[PayPensionsProfitModel] = (
+    __.read[BandModel](BandModel.payPensionsProfitReadsBRT) and
+      __.read[BandModel](BandModel.payPensionsProfitReadsHRT) and
+      __.read[BandModel](BandModel.payPensionsProfitReadsART)
+    ) (PayPensionsProfitModel.apply _)
+  implicit val writes: Writes[PayPensionsProfitModel] = Json.writes[PayPensionsProfitModel]
+}
+
+object OldSavingsAndGainsModel {
+  implicit val reads: Reads[OldSavingsAndGainsModel] = (
     __.read[BandModel](BandModel.interestReadsStartingRate) and
       __.read[BandModel](BandModel.interestReadsZeroRate) and
       __.read[BandModel](BandModel.interestReadsBRT) and
       __.read[BandModel](BandModel.interestReadsHRT) and
       __.read[BandModel](BandModel.interestReadsART)
-    ) (SavingsAndGainsModel.apply _)
-  implicit val writes: Writes[SavingsAndGainsModel] = Json.writes[SavingsAndGainsModel]
+    ) (OldSavingsAndGainsModel.apply _)
+  implicit val writes: Writes[OldSavingsAndGainsModel] = Json.writes[OldSavingsAndGainsModel]
 }
 
 object DividendsModel {
@@ -217,8 +230,6 @@ object NicModel {
 }
 
 object BandModel {
-
-  implicit val genericBandSeqReads: Reads[Seq[BandModel]] = (__ \ "band").read[Seq[BandModel]]
 
   implicit val genericBandReads: Reads[BandModel] = (
     defaultZero(__ \ "income") and defaultZero(__ \ "rate") and defaultZero(__ \ "taxAmount") and (__ \ "name").read[String]

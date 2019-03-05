@@ -39,36 +39,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 1.00,
         taxRate = 0.0,
         taxAmount = 0.0,
         name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 20.00,
         taxRate = 0.0,
         taxAmount = 0.0,
         name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
         taxAmount = 0.0,
         name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
         taxAmount = 0.0,
         name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
         taxAmount = 0.0,
         name = "ART"
-      )
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -129,31 +130,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 1000.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -214,31 +221,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -298,31 +311,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -382,31 +401,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -464,31 +489,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -547,31 +578,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0.0,
@@ -630,31 +667,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0.0,
@@ -712,31 +755,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0.0,
@@ -794,31 +843,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 1.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 20.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -877,31 +932,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 1.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 20.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -960,31 +1021,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 1.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 20.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -1043,31 +1110,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -1125,31 +1198,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -1207,31 +1286,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 2500.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -1289,36 +1374,8 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
-        taxableIncome = 0.00,
-        taxRate = 0.0,
-        taxAmount = 0.0,
-        name = "SSR"
-      ),
-      zeroBand = BandModel(
-        taxableIncome = 0.00,
-        taxRate = 0.0,
-        taxAmount = 0.0,
-        name = "ZRT"
-      ),
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0,
-        name = "BRT"
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0,
-        name = "HRT"
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0,
-        name = "ART"
-      )
+      0,
+      Seq()
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -1355,38 +1412,41 @@ object CalcBreakdownTestConstants {
       "bankBuildingSocietyInterest" -> 1999,
       "ukDividends" -> 10000
     ),
-    "savingsAndGains" -> Json.obj(
-      "startBand" -> Json.obj(
-        "taxableIncome" -> 1.00,
-        "taxRate" -> 0,
+  "savingsAndGains" -> Json.obj(
+    "bands" -> Json.arr(
+      Json.obj(
+        "name" -> "SSR",
+        "taxableIncome" -> 1,
         "taxAmount" -> 0,
-        "name" -> "SSR"
+        "taxRate" -> 0
       ),
-      "zeroBand" -> Json.obj(
-        "taxableIncome" -> 20.00,
-        "taxRate" -> 0,
+      Json.obj(
+        "name" -> "ZRT",
+        "taxableIncome" -> 20,
         "taxAmount" -> 0,
-        "name" -> "ZRT"
+        "taxRate" -> 0
       ),
-      "basicBand" -> Json.obj(
+      Json.obj(
+        "name" -> "BRT",
         "taxableIncome" -> 0,
-        "taxRate" -> 20,
         "taxAmount" -> 0,
-        "name" -> "BRT"
+        "taxRate" -> 20
       ),
-      "higherBand" -> Json.obj(
+      Json.obj(
+        "name" -> "HRT",
         "taxableIncome" -> 0,
-        "taxRate" -> 40,
         "taxAmount" -> 0,
-        "name" -> "HRT"
+        "taxRate" -> 40
       ),
-      "additionalBand" -> Json.obj(
+      Json.obj(
+        "name" -> "ART",
         "taxableIncome" -> 0,
-        "taxRate" -> 45,
         "taxAmount" -> 0,
-        "name" -> "ART"
+        "taxRate" -> 45
       )
     ),
+    "total" -> 0
+  ),
     "nic" -> Json.obj(
       "class2" -> 10000,
       "class4" -> 14000
@@ -1456,16 +1516,6 @@ object CalcBreakdownTestConstants {
     "payPensionsProfitAtART" -> 50000,
     "incomeTaxOnPayPensionsProfitAtART" -> 22500,
     "netPropertyFinanceCosts" -> 0,
-    "interestReceivedAtStartingRate" -> 1,
-    "incomeTaxOnInterestReceivedAtStartingRate" -> 0,
-    "interestReceivedAtZeroRate" -> 20,
-    "incomeTaxOnInterestReceivedAtZeroRate" -> 0,
-    "interestReceivedAtBRT" -> 0,
-    "incomeTaxOnInterestReceivedAtBRT" -> 0,
-    "interestReceivedAtHRT" -> 0,
-    "incomeTaxOnInterestReceivedAtHRT" -> 0,
-    "interestReceivedAtART" -> 0,
-    "incomeTaxOnInterestReceivedAtART" -> 0,
     "dividendsAtZeroRate" -> 0,
     "incomeTaxOnDividendsAtZeroRate" -> 0,
     "dividendsAtBRT" -> 1000,
@@ -1542,6 +1592,53 @@ object CalcBreakdownTestConstants {
           "paymentsMade" -> 0,
           "rate" -> 0.0,
           "taxableIncome" -> 0
+        ),
+        "savingsAndGains" -> Json.obj(
+          "totalAmount" -> 0,
+          "taxableIncome" -> 60207080823.340004,
+          "band" -> Json.arr(
+            Json.obj(
+              "name" -> "SSR",
+              "rate" -> 0,
+              "income" -> 1,
+              "taxAmount" -> 0,
+              "threshold" -> 4000,
+              "apportionedThreshold" -> 5000
+            ),
+            Json.obj(
+              "name" -> "ZRT",
+              "rate" -> 0,
+              "income" -> 20,
+              "taxAmount" -> 0,
+              "threshold" -> 1,
+              "apportionedThreshold" -> 1
+            ),
+            Json.obj(
+              "name" -> "BRT",
+              "rate" -> 20,
+              "income" -> 0,
+              "taxAmount" -> 0,
+              "threshold" -> 1,
+              "apportionedThreshold" -> 1
+            ),
+            Json.obj(
+              "name" -> "HRT",
+              "rate" -> 40,
+              "income" -> 0,
+              "taxAmount" -> 0,
+              "threshold" -> 1,
+              "apportionedThreshold" -> 1
+            ),
+            Json.obj(
+              "name" -> "ART",
+              "rate" -> 45,
+              "income" -> 0,
+              "taxAmount" -> 0,
+              "threshold" -> 1,
+              "apportionedThreshold" -> 1
+            )
+          ),
+          "personalAllowanceUsed" -> 15487995938.37
         )
       ),
       "taxableIncome" -> Json.obj(
