@@ -92,6 +92,11 @@ object CalcDataIntegrationTestConstants {
       class2 = 10000.00,
       class4 = 14000.00
     ),
+    giftAid = GiftAidModel(
+      paymentsMade = 150,
+      rate = 0.0,
+      taxableAmount = 0
+    ),
     eoyEstimate = Some(EoyEstimate(25000.00)),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
@@ -169,6 +174,11 @@ object CalcDataIntegrationTestConstants {
     nic = NicModel(
       class2 = 10000.00,
       class4 = 14000.00
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 150,
+      rate = 0.0,
+      taxableAmount = 0
     ),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),

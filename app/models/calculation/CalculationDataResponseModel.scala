@@ -142,6 +142,7 @@ object CalculationDataModel {
       (__ \ "incomeReceived").write[IncomeReceivedModel] and
       (__ \ "savingsAndGains").write[SavingsAndGainsModel] and
       (__ \ "incomeTax" \ "dividends").write[DividendsModel] and
+      (__ \ "giftAid").write[GiftAidModel] and
       (__ \ "nic").write[NicModel] and
       (__ \ "eoyEstimate").writeNullable[EoyEstimate] and
       (__ \ "incomeTax" \ "payAndPensionsProfit" \ "band").write[List[TaxBandModel]]

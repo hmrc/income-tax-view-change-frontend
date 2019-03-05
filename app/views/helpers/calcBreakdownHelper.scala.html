@@ -90,7 +90,7 @@
         }
 
         @if(breakdown.additionalAllowances > 0) {
-        <tr id="additional-allowances-section">
+        <tr id="additional-allowances-section" class="no-border-bottom">
             <td id="additional-allowances-heading">
                 @messages("estimated_tax_liability.calc-breakdown.additional-allowances")
             </td>
@@ -100,18 +100,16 @@
         </tr>
         }
 
-        @if(breakdown.additionalAllowances > 0){
-        <tr id ="gift-aid-section" >
+        @if(breakdown.giftAid.taxableAmount > 0) {
+        <tr id ="gift-aid-section" class="no-border-bottom">
             <td id="gift-aid-heading">
                 @messages("estimated_tax_liability.calc-breakdown.gift-aid-payment")
             </td>
             <td id="gift-aid" class="summary-data">
-                -@{(breakdown.additionalAllowances).toCurrency}
+                @{(breakdown.giftAid.taxableAmount).toCurrency}
             </td>
         </tr>
-
-        }
-
+           }
 
         <tr id="taxable-income-section" class="total-section">
             <td id="taxable-income-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-income")</td>

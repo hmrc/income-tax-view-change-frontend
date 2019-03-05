@@ -181,6 +181,11 @@ object CalcBreakdownTestConstants {
       class2 = 110,
       class4 = 13.86
     ),
+    giftAid = GiftAidModel(
+      paymentsMade = 200.0,
+      rate = 0.00,
+      taxableAmount = 0.0
+    ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
     payAndPensionsProfitBands = List(
       TaxBandModel("SRT", 15.0, 5000.00, 750.00),
@@ -261,6 +266,11 @@ object CalcBreakdownTestConstants {
       class2 = 110,
       class4 = 13.86
     ),
+    giftAid = GiftAidModel(
+      paymentsMade = 200.0,
+      rate = 0.00,
+      taxableAmount = 0.0
+    ),
     payAndPensionsProfitBands = List(
       TaxBandModel("SRT", 15.0, 5000.00, 750.00),
       TaxBandModel("BRT", 20.0, 10000.00, 2000.00),
@@ -339,6 +349,11 @@ object CalcBreakdownTestConstants {
     nic = NicModel(
       class2 = 110,
       class4 = 13.86
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 200.0,
+      rate = 0.00,
+      taxableAmount = 0.0
     ),
     payAndPensionsProfitBands = List(
       TaxBandModel("SRT", 15.0, 5000.00, 750.00),
@@ -1623,7 +1638,7 @@ object CalcBreakdownTestConstants {
         "giftAid" -> Json.obj(
           "paymentsMade" -> 150,
           "rate" -> 0.0,
-          "taxableIncome" -> 0,
+          "taxableIncome" -> 0
         )
       )
     ),
@@ -1839,4 +1854,5 @@ object CalcBreakdownTestConstants {
       None,
       None
     )
+
 }
