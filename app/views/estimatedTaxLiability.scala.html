@@ -67,7 +67,7 @@
 
         @if(calcModel.hasEoyEstimate) {
             <section id="eoyEstimate" class="form-group">
-                <h2 id="eoyEstimateHeading" class="heading-large">@Html(messages("estimated_tax_liability.eoyEstimate.heading", s"${calcModel.calcDataModel.get.eoyEstimate.get.incomeTaxNicAmount.toCurrency}"))</h2>
+                <h2 id="eoyEstimateHeading" class="heading-large">@Html(messages("estimated_tax_liability.eoyEstimate.heading", s"${calcModel.calcDataModel.get.eoyEstimate.get.totalNicAmount.toCurrency}"))</h2>
                 <p id="eoyP1">@messages("estimated_tax_liability.eoyEstimate.p1", s"${taxYear - 1}", s"$taxYear")</p>
             </section>
         }

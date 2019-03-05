@@ -79,6 +79,19 @@ case class SavingsAndGainsModel(startBand: BandModel,
                                 higherBand: BandModel,
                                 additionalBand: BandModel)
 
+
+case class NewSavingsAndGainsModel(total: BigDecimal,
+                                   bands: Seq[BandModel]) {
+  val defaultBand = BandModel(0, 0, 0)
+
+  val startBand: BandModel = bands.find(_.name == "SSR").getOrElse(defaultBand)
+  val zeroBand: BandModel = bands.find(_.name == "ZRT").getOrElse(defaultBand)
+  val basicBand: BandModel = bands.find(_.name == "BRT").getOrElse(defaultBand)
+  val higherBand: BandModel = bands.find(_.name == "HRT").getOrElse(defaultBand)
+  val additionalBand: BandModel = bands.find(_.name == "ART").getOrElse(defaultBand)
+}
+
+
 case class DividendsModel(totalAmount: BigDecimal,
                           band: Seq[DividendsBandModel])
 
@@ -95,7 +108,8 @@ case class GiftAidModel (paymentsMade: BigDecimal,
 
 case class BandModel(taxableIncome: BigDecimal,
                      taxRate: BigDecimal,
-                     taxAmount: BigDecimal)
+                     taxAmount: BigDecimal,
+                     name: String = "")
 
 case class TaxBandModel(name: String, rate: BigDecimal, income: BigDecimal, amount: BigDecimal)
 
@@ -106,7 +120,7 @@ object TaxBandModel {
 case class NicModel(class2: BigDecimal,
                     class4: BigDecimal)
 
-case class EoyEstimate(incomeTaxNicAmount: BigDecimal)
+case class EoyEstimate(totalNicAmount: BigDecimal)
 
 
 object CalculationDataModel {
@@ -117,19 +131,19 @@ object CalculationDataModel {
   }
 
   implicit val reads: Reads[CalculationDataModel] = (
-    logFieldError(__ \ "nationalRegime") and
-    defaultZero(__ \ "totalIncomeOnWhichTaxIsDue") and
-      (__ \ "incomeTaxYTD").read[BigDecimal] and
-      defaultZero(__ \ "proportionAllowance") and
-      defaultZero(__ \ "totalAllowancesAndReliefs") and
-      defaultZero(__ \ "totalIncomeAllowancesUsed") and
+      logFieldError(__ \ "nationalRegime") and
+      defaultZero(__ \ "calcResult" \ "totalTaxableIncome") and
+      (__ \ "calcResult" \ "incomeTaxNicYtd").read[BigDecimal] and
+      defaultZero(__ \ "calcResult" \ "annualAllowances" \ "personalAllowance") and
+      defaultZero(__ \ "calcResult" \ "incomeTax" \ "totalAllowancesAndReliefs") and
+      defaultZero(__ \ "calcResult" \ "taxableIncome" \ "totalIncomeAllowancesUsed") and
       __.read[IncomeReceivedModel] and
       __.read[SavingsAndGainsModel] and
       __.read[DividendsModel] and
       __.read[GiftAidModel] and
       __.read[NicModel] and
-      (__ \ "eoyEstimate").readNullable[EoyEstimate] and
-      (__ \ "incomeTax" \ "payAndPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
+        (__ \ "calcResult" \ "eoyEstimate").readNullable[EoyEstimate] and
+        (__ \ "incomeTax" \ "payAndPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
     ) (CalculationDataModel.apply _)
 
   implicit val writes: Writes[CalculationDataModel] = (
@@ -160,12 +174,19 @@ object GiftAidModel {
 
 object IncomeReceivedModel {
   implicit val reads: Reads[IncomeReceivedModel] = (
-    defaultZero(__ \ "profitFromSelfEmployment") and
-      defaultZero(__ \ "profitFromUkLandAndProperty") and
-      defaultZero(__ \ "interestReceivedFromUkBanksAndBuildingSocieties") and
-      defaultZero(__ \ "dividendsFromUkCompanies")
+    defaultZero(__ \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "selfEmploymentIncome") and
+      defaultZero(__ \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "ukPropertyIncome") and
+      defaultZero(__ \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "bbsiIncome") and
+      defaultZero(__ \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "ukDividendIncome")
     ) (IncomeReceivedModel.apply _)
   implicit val writes: Writes[IncomeReceivedModel] = Json.writes[IncomeReceivedModel]
+}
+
+object NewSavingsAndGainsModel {
+  implicit val reads: Reads[NewSavingsAndGainsModel] = (
+  defaultZero(__ \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "totalAmount") and
+    (__ \ "calcResult" \ "incomeTax" \ "savingsAndGains").read[Seq[BandModel]]
+    ) (NewSavingsAndGainsModel.apply _)
 }
 
 object SavingsAndGainsModel {
@@ -189,51 +210,59 @@ object DividendsModel {
 
 object NicModel {
   implicit val reads: Reads[NicModel] = (
-    defaultZero(__ \ "nationalInsuranceClass2Amount") and
-      defaultZero(__ \ "totalClass4Charge")
+    defaultZero(__ \ "calcResult" \ "nic" \ "class2" \ "amount") and
+      defaultZero(__ \ "calcResult" \ "nic" \ "class4" \ "totalAmount")
     ) (NicModel.apply _)
   implicit val writes: Writes[NicModel] = Json.writes[NicModel]
 }
 
 object BandModel {
 
+  implicit val genericBandSeqReads: Reads[Seq[BandModel]] = (__ \ "band").read[Seq[BandModel]]
+
+  implicit val genericBandReads: Reads[BandModel] = (
+    defaultZero(__ \ "income") and defaultZero(__ \ "rate") and defaultZero(__ \ "taxAmount") and (__ \ "name").read[String]
+    ) (BandModel.apply _)
+
   // SE Business and Property Reads
   val payPensionsProfitReadsBRT: Reads[BandModel] = (
-    defaultZero(__ \ "payPensionsProfitAtBRT") and defaultZero(__ \ "rateBRT") and defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtBRT")
+    defaultZero(__ \ "payPensionsProfitAtBRT") and defaultZero(__ \ "rateBRT") and defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtBRT") and Reads.pure("BRT")
     ) (BandModel.apply _)
   val payPensionsProfitReadsHRT: Reads[BandModel] = (
-    defaultZero(__ \ "payPensionsProfitAtHRT") and defaultZero(__ \ "rateHRT") and defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtHRT")
+    defaultZero(__ \ "payPensionsProfitAtHRT") and defaultZero(__ \ "rateHRT") and defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtHRT") and Reads.pure("HRT")
     ) (BandModel.apply _)
   val payPensionsProfitReadsART: Reads[BandModel] = (
-    defaultZero(__ \ "payPensionsProfitAtART") and defaultZero(__ \ "rateART") and defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtART")
+    defaultZero(__ \ "payPensionsProfitAtART") and defaultZero(__ \ "rateART") and defaultZero(__ \ "incomeTaxOnPayPensionsProfitAtART") and Reads.pure("ART")
     ) (BandModel.apply _)
 
   // Bank and Building Society Interest Reads
   val interestReadsStartingRate: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtStartingRate") and Reads.pure[BigDecimal](0) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtStartingRate")
+    defaultZero(__ \ "interestReceivedAtStartingRate") and Reads.pure[BigDecimal](0) and
+      defaultZero(__ \ "incomeTaxOnInterestReceivedAtStartingRate") and Reads.pure("SSR")
     ) (BandModel.apply _)
   val interestReadsZeroRate: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtZeroRate") and Reads.pure[BigDecimal](0) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtZeroRate")
+    defaultZero(__ \ "interestReceivedAtZeroRate") and Reads.pure[BigDecimal](0) and
+      defaultZero(__ \ "incomeTaxOnInterestReceivedAtZeroRate") and Reads.pure("ZRT")
     ) (BandModel.apply _)
   val interestReadsBRT: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtBRT") and defaultZero(__ \ "rateBRT") and defaultZero(__ \ "incomeTaxOnInterestReceivedAtBRT")
+    defaultZero(__ \ "interestReceivedAtBRT") and defaultZero(__ \ "rateBRT") and defaultZero(__ \ "incomeTaxOnInterestReceivedAtBRT") and Reads.pure("BRT")
     ) (BandModel.apply _)
   val interestReadsHRT: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtHRT") and defaultZero(__ \ "rateHRT") and defaultZero(__ \ "incomeTaxOnInterestReceivedAtHRT")
+    defaultZero(__ \ "interestReceivedAtHRT") and defaultZero(__ \ "rateHRT") and defaultZero(__ \ "incomeTaxOnInterestReceivedAtHRT") and Reads.pure("HRT")
     ) (BandModel.apply _)
   val interestReadsART: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtART") and defaultZero(__ \ "rateART") and defaultZero(__ \ "incomeTaxOnInterestReceivedAtART")
+    defaultZero(__ \ "interestReceivedAtART") and defaultZero(__ \ "rateART") and defaultZero(__ \ "incomeTaxOnInterestReceivedAtART") and Reads.pure("ART")
     ) (BandModel.apply _)
 
   // Dividends Reads
   val dividendsReadsBRT: Reads[BandModel] = (
-    defaultZero(__ \ "dividendsAtBRT") and defaultZero(__ \ "dividendBRT") and defaultZero(__ \ "incomeTaxOnDividendsAtBRT")
+    defaultZero(__ \ "dividendsAtBRT") and defaultZero(__ \ "dividendBRT") and defaultZero(__ \ "incomeTaxOnDividendsAtBRT") and Reads.pure("BRT")
     ) (BandModel.apply _)
   val dividendsReadsHRT: Reads[BandModel] = (
-    defaultZero(__ \ "dividendsAtHRT") and defaultZero(__ \ "dividendHRT") and defaultZero(__ \ "incomeTaxOnDividendsAtHRT")
+    defaultZero(__ \ "dividendsAtHRT") and defaultZero(__ \ "dividendHRT") and defaultZero(__ \ "incomeTaxOnDividendsAtHRT") and Reads.pure("HRT")
     ) (BandModel.apply _)
   val dividendsReadsART: Reads[BandModel] = (
-    defaultZero(__ \ "dividendsAtART") and defaultZero(__ \ "dividendART") and defaultZero(__ \ "incomeTaxOnDividendsAtART")
+    defaultZero(__ \ "dividendsAtART") and defaultZero(__ \ "dividendART") and defaultZero(__ \ "incomeTaxOnDividendsAtART") and Reads.pure("ART")
     ) (BandModel.apply _)
 
   // Implicit Writes
