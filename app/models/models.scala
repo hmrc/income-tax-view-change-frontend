@@ -33,5 +33,5 @@ import play.api.libs.json.{JsPath, Reads}
  */
 
 package object models {
-  val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](BigDecimal(0)))
+  val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](0.00))
 }

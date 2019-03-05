@@ -62,6 +62,7 @@ estimated_tax_liability.calc-breakdown.dividend-income          = Income from di
 estimated_tax_liability.calc-breakdown.dividend-allowance       = Personal Allowance (dividends)
 estimated_tax_liability.calc-breakdown.taxable-dividend-income  = Your taxable income (dividends)
 estimated_tax_liability.calc-breakdown.income-tax               = Income Tax
+estimated_tax_liability.calc-breakdown.income-tax-band          = Income Tax ({0} at {1}%)
 estimated_tax_liability.calc-breakdown.dividend-tax             = Dividend tax
 estimated_tax_liability.calc-breakdown.at                       = at
 estimated_tax_liability.calc-breakdown.nic2                     = Class 2 National Insurance

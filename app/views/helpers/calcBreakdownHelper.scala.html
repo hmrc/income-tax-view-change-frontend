@@ -102,42 +102,17 @@
         }
 
         <!-- Income Tax Section -->
-        @if(calcModel.hasBRTSection) {
-            <tr id="brt-section" class="no-border-bottom">
-                <td id="brt-it-calc-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                    (<span id="brt-it-calc">@{breakdown.brtITCalc.toCurrencyString}</span>
-                    @messages("estimated_tax_liability.calc-breakdown.at")
-                    <span id="brt-rate">@breakdown.payPensionsProfit.basicBand.taxRate</span>%)
+
+        @for(band <- breakdown.payAndPensionsProfitBands if band.income > 0) {
+            <tr id="@{band.name}-section" class="no-border-bottom">
+                <td id="@{band.name}-it-calc-heading">
+                    @messages("estimated_tax_liability.calc-breakdown.income-tax-band", band.income.toCurrencyString, band.rate.toString)
                 </td>
-                <td id="brt-amount" class="summary-data">@{(breakdown.brtITAmount).toCurrency}</td>
+                <td id="@{band.name}-amount" class="summary-data">
+                    @band.amount.toCurrency
+                </td>
             </tr>
-
-            @if(calcModel.hasHRTSection){
-                <tr id="hrt-section" class="no-border-bottom">
-                    <td id="hrt-it-calc-heading">
-                        @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                        (<span id="hrt-it-calc"> @{breakdown.hrtITCalc.toCurrencyString}</span>
-                        @messages("estimated_tax_liability.calc-breakdown.at")
-                        <span id="hrt-rate">@breakdown.payPensionsProfit.higherBand.taxRate</span>%)
-                    </td>
-                    <td id="hrt-amount" class="summary-data">@{breakdown.hrtITAmount.toCurrency}</td>
-                </tr>
-
-                @if(calcModel.hasARTSection){
-                    <tr id="art-section" class="no-border-bottom">
-                        <td id="art-it-calc-heading">
-                            @messages("estimated_tax_liability.calc-breakdown.income-tax")
-                            (<span id="art-it-calc">@{breakdown.artITCalc.toCurrencyString}</span>
-                            @messages("estimated_tax_liability.calc-breakdown.at")
-                            <span id="art-rate">@breakdown.payPensionsProfit.additionalBand.taxRate</span>%)
-                        </td>
-                        <td id="art-amount" class="summary-data">@{breakdown.artITAmount.toCurrency}</td>
-                    </tr>
-                }
-            }
         }
-
 
         <!-- Dividends Section -->
         @if(breakdown.hasDividendsAtBRT) {

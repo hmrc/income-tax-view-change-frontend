@@ -62,6 +62,7 @@ estimated_tax_liability.calc-breakdown.dividend-income          = Incwm o ddifid
 estimated_tax_liability.calc-breakdown.dividend-allowance       = Lwfans Personol (difidendau)
 estimated_tax_liability.calc-breakdown.taxable-dividend-income  = Eich incwm trethadwy (difidendau)
 estimated_tax_liability.calc-breakdown.income-tax               = Treth Incwm
+estimated_tax_liability.calc-breakdown.income-tax-band          = Treth Incwn ({0} ar {1})
 estimated_tax_liability.calc-breakdown.dividend-tax             = Treth ar Ddifidendau
 estimated_tax_liability.calc-breakdown.at                       = ar
 estimated_tax_liability.calc-breakdown.nic2                     = Yswiriant Gwladol Dosbarth 2

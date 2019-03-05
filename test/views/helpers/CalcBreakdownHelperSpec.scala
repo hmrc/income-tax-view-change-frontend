@@ -66,7 +66,65 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
       "for users with both a property and a business" which {
 
-        "have just the basic rate of tax" should {
+        "have just the starter rate of tax" should {
+          val setup = pageSetup(scottishBandModelJustSRT, bizAndPropertyUser)
+          import setup._
+
+          val total = (
+            model.incomeReceived.selfEmployment +
+              model.incomeReceived.ukProperty +
+              model.incomeReceived.bankBuildingSocietyInterest
+            ).toCurrencyString
+
+          s"have a business profit section amount of $total" in {
+            document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
+            document.getElementById("business-profit").text shouldBe total
+          }
+
+          s"have a personal allowance amount of ${model.personalAllowance}" in {
+            document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
+            document.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+          }
+
+          "not show the additional allowances section" in {
+            document.getElementById("additionalAllowances") shouldBe null
+          }
+
+          s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
+            document.getElementById("taxable-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableIncome
+            document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
+          }
+
+          s"have an Income Tax section" which {
+            val srtBand = model.payAndPensionsProfitBands.find(_.name == "SRT").get
+
+            "has the correct amount of income taxed at SRT" in {
+              document.getElementById("SRT-it-calc-heading").text shouldBe s"Income Tax (${srtBand.income.toCurrencyString} at ${srtBand.rate}%)"
+            }
+            "has the correct tax charged at SRT" in {
+              document.getElementById("SRT-amount").text shouldBe srtBand.amount.toCurrencyString
+            }
+          }
+          s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
+            document.getElementById("nic2-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic2
+            document.getElementById("nic2-amount").text shouldBe model.nic.class2.toCurrencyString
+          }
+          s"have a National Insurance Class 4 amount of ${model.nic.class4}" in {
+            document.getElementById("nic4-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic4
+            document.getElementById("nic4-amount").text shouldBe model.nic.class4.toCurrencyString
+          }
+          s"have a Tax reliefs amount of ${model.taxReliefs}" in {
+            document.getElementById("tax-relief-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.reliefs
+            document.getElementById("tax-relief").text shouldBe "-" + model.taxReliefs.toCurrencyString
+          }
+          s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
+
+            document.getElementById("total-estimate-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.total
+            document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
+          }
+        }
+
+        "have the basic rate of tax" should {
 
           val setup = pageSetup(busPropBRTCalcDataModel, bizAndPropertyUser)
           import setup._
@@ -97,16 +155,79 @@ class CalcBreakdownHelperSpec extends TestSupport {
           }
 
           s"have an Income Tax section" which {
+            val brtBand = model.payAndPensionsProfitBands.find(_.name == "BRT").get
+
             "has the correct amount of income taxed at BRT" in {
-              document.getElementById("brt-it-calc").text shouldBe
-                (model.payPensionsProfit.basicBand.taxableIncome + model.savingsAndGains.basicBand.taxableIncome).toCurrencyString
-            }
-            "has the correct BRT rate" in {
-              document.getElementById("brt-rate").text shouldBe model.payPensionsProfit.basicBand.taxRate.toString
+              document.getElementById("BRT-it-calc-heading").text shouldBe s"Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate}%)"
             }
             "has the correct tax charged at BRT" in {
-              document.getElementById("brt-amount").text shouldBe
-                (model.payPensionsProfit.basicBand.taxAmount + model.savingsAndGains.basicBand.taxAmount).toCurrencyString
+              document.getElementById("BRT-amount").text shouldBe brtBand.amount.toCurrencyString
+            }
+          }
+          s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
+            document.getElementById("nic2-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic2
+            document.getElementById("nic2-amount").text shouldBe model.nic.class2.toCurrencyString
+          }
+          s"have a National Insurance Class 4 amount of ${model.nic.class4}" in {
+            document.getElementById("nic4-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic4
+            document.getElementById("nic4-amount").text shouldBe model.nic.class4.toCurrencyString
+          }
+          s"have a Tax reliefs amount of ${model.taxReliefs}" in {
+            document.getElementById("tax-relief-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.reliefs
+            document.getElementById("tax-relief").text shouldBe "-" + model.taxReliefs.toCurrencyString
+          }
+          s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
+
+            document.getElementById("total-estimate-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.total
+            document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
+          }
+        }
+
+        "have just the IRT rate of tax" should {
+          val setup = pageSetup(scottishBandModelIRT, bizAndPropertyUser)
+          import setup._
+
+          val total = (
+            model.incomeReceived.selfEmployment +
+              model.incomeReceived.ukProperty +
+              model.incomeReceived.bankBuildingSocietyInterest
+            ).toCurrencyString
+
+          s"have a business profit section amount of $total" in {
+            document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
+            document.getElementById("business-profit").text shouldBe total
+          }
+
+          s"have a personal allowance amount of ${model.personalAllowance}" in {
+            document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
+            document.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+          }
+
+          "not show the additional allowances section" in {
+            document.getElementById("additionalAllowances") shouldBe null
+          }
+
+          s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
+            document.getElementById("taxable-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableIncome
+            document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
+          }
+
+          s"have an Income Tax section" which {
+            val irtBand = model.payAndPensionsProfitBands.find(_.name == "IRT").get
+
+            "has a SRT section" in {
+              document.getElementById("SRT-section") should not be null
+            }
+
+            "has a BRT section" in {
+              document.getElementById("BRT-section") should not be null
+            }
+
+            "has the correct amount of income taxed at IRT" in {
+              document.getElementById("IRT-it-calc-heading").text shouldBe s"Income Tax (${irtBand.income.toCurrencyString} at ${irtBand.rate}%)"
+            }
+            "has the correct tax charged at IRT" in {
+              document.getElementById("IRT-amount").text shouldBe irtBand.amount.toCurrencyString
             }
           }
           s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
@@ -130,25 +251,25 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
         "have the higher rate of tax" should {
           val setup = pageSetup(busBropHRTCalcDataModel, bizAndPropertyUser)
-          import implicits.ImplicitCurrencyFormatter._
           import setup._
 
           s"have an Income Tax section" which {
+
+            val hrtBand = model.payAndPensionsProfitBands.find(_.name == "HRT").get
+
+            "has a SRT section" in {
+              document.getElementById("BRT-section") should not be null
+            }
+
             "has a BRT section" in {
-              document.getElementById("brt-section") should not be null
+              document.getElementById("BRT-section") should not be null
             }
 
             "has the correct amount of income taxed at HRT" in {
-              document.getElementById("hrt-it-calc").text shouldBe
-                (model.payPensionsProfit.higherBand.taxableIncome + model.savingsAndGains.higherBand.taxableIncome).toCurrencyString
-            }
-            "has the correct HRT rate" in {
-              document.getElementById("hrt-rate").text shouldBe model.payPensionsProfit.higherBand.taxRate.toString
+              document.getElementById("HRT-it-calc-heading").text shouldBe s"Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate}%)"
             }
             "has the correct tax charged at HRT" in {
-              document.getElementById("hrt-amount").text shouldBe
-                (model.payPensionsProfit.higherBand.taxAmount + model.savingsAndGains.higherBand.taxAmount).toCurrencyString
-
+              document.getElementById("HRT-amount").text shouldBe hrtBand.amount.toCurrencyString
             }
 
             "does not have an ART section" in {
@@ -159,26 +280,48 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
         "have the additional rate of tax" should {
           val setup = pageSetup(busPropARTCalcDataModel, bizAndPropertyUser)
-          import implicits.ImplicitCurrencyFormatter._
           import setup._
+
           s"have an Income Tax section" which {
+
+            val artBand = model.payAndPensionsProfitBands.find(_.name == "ART").get
+
             "has a BRT section" in {
-              document.getElementById("brt-section") should not be null
+              document.getElementById("BRT-section") should not be null
             }
             "has a HRT section" in {
-              document.getElementById("hrt-section") should not be null
+              document.getElementById("HRT-section") should not be null
             }
 
             "has the correct amount of income taxed at ART" in {
-              document.getElementById("art-it-calc").text shouldBe
-                (model.payPensionsProfit.additionalBand.taxableIncome + model.savingsAndGains.additionalBand.taxableIncome).toCurrencyString
-            }
-            "has the correct ART rate" in {
-              document.getElementById("art-rate").text shouldBe model.payPensionsProfit.additionalBand.taxRate.toString
+              document.getElementById("ART-it-calc-heading").text shouldBe s"Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate}%)"
             }
             "has the correct tax charged at ART" in {
-              document.getElementById("art-amount").text shouldBe
-                (model.payPensionsProfit.additionalBand.taxAmount + model.savingsAndGains.additionalBand.taxAmount).toCurrencyString
+              document.getElementById("ART-amount").text shouldBe artBand.amount.toCurrencyString
+            }
+          }
+        }
+
+        "have all the tax bands including scotish" should {
+          val setup = pageSetup(scottishBandModelAllIncomeBands, bizAndPropertyUser)
+          import setup._
+
+          s"have an Income Tax section" which {
+
+            "has a SRT section" in {
+              document.getElementById("SRT-section") should not be null
+            }
+            "has a BRT section" in {
+              document.getElementById("BRT-section") should not be null
+            }
+            "has a IRT section" in {
+              document.getElementById("IRT-section") should not be null
+            }
+            "has a HRT section" in {
+              document.getElementById("HRT-section") should not be null
+            }
+            "has a ART section" in {
+              document.getElementById("ART-section") should not be null
             }
           }
         }
