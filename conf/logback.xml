@@ -43,7 +43,7 @@
         <appender-ref ref="STDOUT_IGNORE_NETTY" />
     </logger>
 
-    <logger name="application" level="DEBUG"/>
+    <logger name="application" level="INFO"/>
     <logger name="com.google.inject" level="INFO"/>
     <logger name="org.asynchttpclient.netty" level="INFO"/>
     <logger name="uk.gov.hmrc.play.bootstrap.audit" level="WARN"/>
@@ -55,7 +55,7 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>

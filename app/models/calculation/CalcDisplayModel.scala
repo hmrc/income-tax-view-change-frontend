@@ -54,9 +54,9 @@ case class CalcDisplayModel(calcTimestamp: String,
   }
 
   def savingsAllowanceHeading: String = {
-    (calcStatus) match {
-      case (Estimate)     => ".pa-estimates-savings"
-      case (_)            => ".pa-bills-savings"
+    calcStatus match {
+      case Estimate     => ".pa-estimates-savings"
+      case _            => ".pa-bills-savings"
     }
   }
 

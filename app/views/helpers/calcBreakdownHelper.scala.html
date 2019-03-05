@@ -59,9 +59,11 @@
             </tr>
         }
 
-        @if(breakdown.additionalAllowances == 0) {<tr id="personal-allowance-section">
-        } else {<tr id="personal-allowance-section" class="no-border-bottom">
-
+        @if(breakdown.savingsAllowanceSummaryData == 0 && breakdown.additionalAllowances == 0) {
+        <tr id="personal-allowance-section">
+        } else {
+        <tr id="personal-allowance-section" class="no-border-bottom">
+        }
             <td id="personal-allowance-heading">
                 @{messages("estimated_tax_liability.calc-breakdown.pa-estimates")}
             </td>
@@ -69,15 +71,23 @@
                 -@{breakdown.personalAllowance.toCurrency}
             </td>
         </tr>
-               <tr id="savings-allowance-section" class="no-border-bottom">
-            <td id="savings-allowance-heading" class="no-border-bottom">
+
+        @if(breakdown.savingsAllowanceSummaryData > 0) {
+
+        @if(breakdown.additionalAllowances <= 0 ) {
+        <tr id="savings-allowance-section">
+        } else {
+        <tr id="savings-allowance-section" class="no-border-bottom">
+        }
+            <td id="savings-allowance-heading">
                 @{messages("estimated_tax_liability.calc-breakdown" + calcModel.savingsAllowanceHeading)}
             </td>
             <td id="savings-allowance" class="summary-data">
-                -@{breakdown.taxableSavingsInterest.toCurrency}
+                -@{breakdown.savingsAllowanceSummaryData.toCurrency}
             </td>
         </tr>
-               }
+
+        }
 
         @if(breakdown.additionalAllowances > 0) {
         <tr id="additional-allowances-section">
@@ -96,19 +106,20 @@
         </tr>
 
         @if(breakdown.incomeReceived.ukDividends > 0) {
-            <tr class="no-border-bottom">
-                <td id="dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-income")</td>
-                <td id="dividend-income" class="summary-data">@breakdown.incomeReceived.ukDividends.toCurrency</td>
+        <tr class="no-border-bottom">
+            <td id="dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-income")</td>
+            <td id="dividend-income" class="summary-data">@breakdown.incomeReceived.ukDividends.toCurrency</td>
             </tr>
 
-            <tr>
-                <td id="dividend-allowance-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-allowance")</td>
-                <td id="dividend-allowance" class="summary-data">-@breakdown.dividends.allowance.toCurrency</td>
-            </tr>
-            <tr class="total-section">
-                <td id="taxable-dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-dividend-income")</td>
-                <td id="taxable-dividend-income" class="summary-data">@breakdown.taxableDividendIncome.toCurrency</td>
-            </tr>
+        <tr>
+            <td id="dividend-allowance-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-allowance")</td>
+            <td id="dividend-allowance" class="summary-data">-@breakdown.dividends.allowance.toCurrency</td>
+        </tr>
+
+        <tr class="total-section">
+            <td id="taxable-dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-dividend-income")</td>
+            <td id="taxable-dividend-income" class="summary-data">@breakdown.taxableDividendIncome.toCurrency</td>
+        </tr>
         }
 
         <!-- Income Tax Section from PayPensionsProfit-->
@@ -125,7 +136,7 @@
         }
 
         <!-- Income Tax Section from savingsInterest-->
-        @if(calcModel.hasBRTSiSection) {
+        @if(calcModel.hasSRTSiSection) {
             <tr id="srtSi-section" class="no-border-bottom">
                 <td id="srtSi-it-calc-heading">
                     @messages("estimated_tax_liability.calc-breakdown.savingsInterest-income")
