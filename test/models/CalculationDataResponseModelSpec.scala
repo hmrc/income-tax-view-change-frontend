@@ -68,17 +68,17 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
         calculationDataSuccessModel.savingsAndGains.additionalBand.taxRate shouldBe 45
         calculationDataSuccessModel.savingsAndGains.additionalBand.taxAmount shouldBe 0
 
-        calculationDataSuccessModel.dividends.basicBand.taxableIncome shouldBe 1000
-        calculationDataSuccessModel.dividends.basicBand.taxRate shouldBe 7.5
-        calculationDataSuccessModel.dividends.basicBand.taxAmount shouldBe 75
+        calculationDataSuccessModel.dividends.band(0).income shouldBe 1000
+        calculationDataSuccessModel.dividends.band(0).rate shouldBe 7.5
+        calculationDataSuccessModel.dividends.band(0).amount shouldBe 75
 
-        calculationDataSuccessModel.dividends.higherBand.taxableIncome shouldBe 2000
-        calculationDataSuccessModel.dividends.higherBand.taxRate shouldBe 37.5
-        calculationDataSuccessModel.dividends.higherBand.taxAmount shouldBe 750
+        calculationDataSuccessModel.dividends.band(1).income shouldBe 2000
+        calculationDataSuccessModel.dividends.band(1).rate shouldBe 37.5
+        calculationDataSuccessModel.dividends.band(1).amount shouldBe 750
 
-        calculationDataSuccessModel.dividends.additionalBand.taxableIncome shouldBe 3000
-        calculationDataSuccessModel.dividends.additionalBand.taxRate shouldBe 38.1
-        calculationDataSuccessModel.dividends.additionalBand.taxAmount shouldBe 1143
+        calculationDataSuccessModel.dividends.band(2).income shouldBe 3000
+        calculationDataSuccessModel.dividends.band(2).rate shouldBe 38.1
+        calculationDataSuccessModel.dividends.band(2).amount shouldBe 1143
 
         calculationDataSuccessModel.nic.class2 shouldBe 10000
         calculationDataSuccessModel.nic.class4 shouldBe 14000
@@ -96,7 +96,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
       Json.fromJson[CalculationDataModel](calculationDataFullJson) shouldBe JsSuccess(calculationDataSuccessModel)
     }
 
-    "If only mandatory values aren returned from DES then defaulted others to 0" in {
+    "If only mandatory values are returned from DES then defaulted others to 0" in {
       Json.fromJson[CalculationDataModel](mandatoryCalculationDataSuccessJson) shouldBe JsSuccess(mandatoryOnlyDataModel)
     }
   }

@@ -196,16 +196,16 @@
         }
 
         <!-- Dividends Section -->
-        @for(band <- breakdown.dividends.dividendsBands){
+        @for(band <- breakdown.dividends.band){
         @if(band.amount > 0) {
-        <tr id=s"dividend-${breakdown.dividends.dividendsBands(i).name}-section" class="no-border-bottom">
-            <td id=s"dividend-${breakdown.dividends.dividendsBands(i).name}-calc-heading">
-                @{messages("estimated_tax_liability.calc-breakdown.dividend-tax")+ s" ${band.name}" }
-                (<span id=s"dividend-${breakdown.dividends.dividendsBands(i).name}-calc">@band.income.toCurrencyString</span>
+        <tr id=@(s"dividend-${band.name}-section") class="no-border-bottom">
+            <td id=@(s"dividend-${band.name}-calc-heading")>
+                @{messages("estimated_tax_liability.calc-breakdown.dividend-tax")}
+                (<span id=@(s"dividend-${band.name}-calc")>@band.income.toCurrencyString</span>
                 @messages("estimated_tax_liability.calc-breakdown.at")
-                <span id=s"dividend-${breakdown.dividends.dividendsBands(i).name}-rate">@band.rate</span>%)
+                <span id=@(s"dividend-${band.name}-rate")>@band.rate</span>%)
             </td>
-            <td id=s"dividend-${breakdown.dividends.dividendsBands(i).name}-amount" class="summary-data">@band.amount.toCurrency</td>
+            <td id=@(s"dividend-${band.name}-amount") class="summary-data">@band.amount.toCurrency</td>
         </tr>
         }
         }

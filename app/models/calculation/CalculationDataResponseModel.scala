@@ -79,7 +79,7 @@ case class SavingsAndGainsModel(startBand: BandModel,
                                 additionalBand: BandModel)
 
 case class DividendsModel(totalAmount: BigDecimal,
-                          dividendsBands: Seq[DividendsBandModel])
+                          band: Seq[DividendsBandModel])
 
 case class DividendsBandModel(name: String,
                               rate: BigDecimal,
@@ -166,7 +166,7 @@ object SavingsAndGainsModel {
 object DividendsModel {
   implicit val reads: Reads[DividendsModel] = (
     defaultZero(__ \ "incomeTax" \ "dividends" \ "totalAmount") and
-      (__ \ "incomeTax" \ "dividends" \ "band").read[Seq[DividendsBandModel]]
+      (__ \ "incomeTax" \ "dividends" \ "band").read[Seq[DividendsBandModel]].orElse(Reads.pure(Nil))
     ) (DividendsModel.apply _)
   implicit val writes: Writes[DividendsModel] = Json.writes[DividendsModel]
 }
