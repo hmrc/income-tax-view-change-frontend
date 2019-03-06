@@ -393,6 +393,15 @@ object CalcDataIntegrationTestConstants {
       "proportionClass4NICsLimitBR" -> 0,
       "proportionClass4NICsLimitHR" -> 0,
       "proportionReducedAllowanceLimit" -> 0,
+      "calcResult" -> Json.obj(
+        "incomeTax" -> Json.obj(
+          "giftAid" -> Json.obj(
+            "paymentsMade" -> 150,
+            "rate" -> 0.0,
+            "taxableIncome" -> 0
+          )
+        )
+      ),
       "eoyEstimate" -> Json.obj(
         "selfEmployment" -> Json.arr(
           Json.obj(
@@ -669,6 +678,15 @@ object CalcDataIntegrationTestConstants {
     "proportionClass4NICsLimitBR" -> 0,
     "proportionClass4NICsLimitHR" -> 0,
     "proportionReducedAllowanceLimit" -> 0,
+    "calcResult" -> Json.obj(
+      "incomeTax" -> Json.obj(
+        "giftAid" -> Json.obj(
+          "paymentsMade" -> 150,
+          "rate" -> 0.0,
+          "taxableIncome" -> 0
+        )
+      )
+    ),
     "incomeTax" -> Json.obj(
       "payAndPensionsProfit" -> Json.obj(
         "band" -> Json.arr(Json.obj(
