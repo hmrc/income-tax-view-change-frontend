@@ -17,6 +17,7 @@
 package models.calculation
 
 import models._
+import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json.{Json, _}
@@ -91,8 +92,13 @@ case class EoyEstimate(incomeTaxNicAmount: BigDecimal)
 
 object CalculationDataModel {
   val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](0.00))
+  val logFieldError: JsPath => Reads[Option[String]] = _.readNullable[String] map {
+    case None => Logger.error(s"[CalculationDataResponseModel][CalculationDataModel] - National Regime field is missing from json");None
+    case data => data
+  }
+
   implicit val reads: Reads[CalculationDataModel] = (
-    (__ \ "nationalRegime").readNullable[String] and
+    logFieldError(__ \ "nationalRegime") and
     defaultZero(__ \ "totalIncomeOnWhichTaxIsDue") and
       (__ \ "incomeTaxYTD").read[BigDecimal] and
       defaultZero(__ \ "proportionAllowance") and
