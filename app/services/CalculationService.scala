@@ -32,22 +32,21 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
                                    val calculationDataConnector: CalculationDataConnector,
                                   val frontendAppConfig: FrontendAppConfig) {
 
-
   def getCalculationDetail(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
     for {
       lastCalc <- getLatestCalculation(nino, taxYear)
       calcBreakdown <- lastCalc match {
-        case calculationData: LastTaxCalculation => getCalculationData(nino, calculationData.calcID)
+        case calculationData: CalculationModel => getCalculationData(nino, calculationData.calcID)
         case other => Future.successful(other)
       }
     } yield (lastCalc, calcBreakdown) match {
       case (calc: CalculationModel, breakdown: CalculationDataModel) =>
         Logger.debug("[CalculationService] Retrieved all Financial Data")
-        CalcDisplayModel(calc.calcTimestamp.getOrElse(""), calc.calcAmount.getOrElse(0.0), Some(breakdown), None)
+        CalcDisplayModel(calc.calcTimestamp.getOrElse(""), calc.calcAmount.getOrElse(0.0), Some(breakdown), calc.status)
       case (calc: CalculationModel, _) =>
         Logger.warn("[CalculationService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
-        CalcDisplayModel(calc.calcTimestamp.getOrElse(""), calc.calcAmount.getOrElse(0.0), None, None)
-      case (_: CalculationModel, _) =>
+        CalcDisplayModel(calc.calcTimestamp.getOrElse(""), calc.calcAmount.getOrElse(0.0), None, calc.status)
+      case (_: CalculationErrorModel, _) =>
         Logger.error("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
       case _ =>
