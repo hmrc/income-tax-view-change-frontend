@@ -100,10 +100,10 @@ trait   CustomMatchers extends UnitSpec with GivenWhenThen {
         Then(s"the text of elementId '$id' should be '$expectedValue'")
 
         HavePropertyMatchResult(
-          body.getElementById(id).text == expectedValue,
+          body.select(s"#$id").text == expectedValue,
           s"elementByID($id)",
           expectedValue,
-          body.getElementById(id).text
+          body.select(s"#$id").text
         )
       }
     }
