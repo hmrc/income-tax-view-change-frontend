@@ -135,7 +135,7 @@ object CalculationDataModel {
       (__ \ "totalIncomeAllowancesUsed").write[BigDecimal] and
       (__ \ "incomeReceived").write[IncomeReceivedModel] and
       (__ \ "savingsAndGains").write[SavingsAndGainsModel] and
-      (__ \ "dividends").write[DividendsModel] and
+      (__ \ "incomeTax" \ "dividends").write[DividendsModel] and
       (__ \ "nic").write[NicModel] and
       (__ \ "eoyEstimate").writeNullable[EoyEstimate] and
       (__ \ "incomeTax" \ "payAndPensionsProfit" \ "band").write[List[TaxBandModel]]
