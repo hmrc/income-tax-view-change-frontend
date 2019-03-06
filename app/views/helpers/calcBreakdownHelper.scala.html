@@ -140,7 +140,7 @@
             <tr id="srtSi-section" class="no-border-bottom">
                 <td id="srtSi-it-calc-heading">
                     @messages("estimated_tax_liability.calc-breakdown.savingsInterest-income")
-                    (<span id="srtSi-it-calcPpp">@{breakdown.srtSiITCalc.toCurrencyString}</span>
+                    (<span id="srtSi-it-calc">@{breakdown.srtSiITCalc.toCurrencyString}</span>
                     @messages("estimated_tax_liability.calc-breakdown.at")
                     <span id="srtSi-rate">@breakdown.savingsAndGains.startBand.taxRate</span>%)
                 </td>
@@ -151,7 +151,7 @@
             <tr id="zrtSi-section" class="no-border-bottom">
                 <td id="zrtSi-it-calc-heading">
                     @messages("estimated_tax_liability.calc-breakdown.savingsInterest-income")
-                    (<span id="zrtSi-it-calcPpp">@{breakdown.zrtSiITCalc.toCurrencyString}</span>
+                    (<span id="zrtSi-it-calc">@{breakdown.zrtSiITCalc.toCurrencyString}</span>
                     @messages("estimated_tax_liability.calc-breakdown.at")
                     <span id="zrtSi-rate">@breakdown.savingsAndGains.zeroBand.taxRate</span>%)
                 </td>
@@ -162,7 +162,7 @@
             <tr id="brtSi-section" class="no-border-bottom">
                 <td id="brtSi-it-calc-heading">
                     @messages("estimated_tax_liability.calc-breakdown.savingsInterest-income")
-                    (<span id="brtSi-it-calcPpp">@{breakdown.brtSiITCalc.toCurrencyString}</span>
+                    (<span id="brtSi-it-calc">@{breakdown.brtSiITCalc.toCurrencyString}</span>
                     @messages("estimated_tax_liability.calc-breakdown.at")
                     <span id="brtSi-rate">@breakdown.savingsAndGains.basicBand.taxRate</span>%)
                 </td>
@@ -173,7 +173,7 @@
             <tr id="hrtSi-section" class="no-border-bottom">
                  <td id="hrtSi-it-calc-heading">
                     @messages("estimated_tax_liability.calc-breakdown.savingsInterest-income")
-                    (<span id="hrtSi-it-calc"> @{breakdown.hrtSiITCalc.toCurrencyString}</span>
+                    (<span id="hrtSi-it-calc">@{breakdown.hrtSiITCalc.toCurrencyString}</span>
                     @messages("estimated_tax_liability.calc-breakdown.at")
                     <span id="hrtSi-rate">@breakdown.savingsAndGains.higherBand.taxRate</span>%)
                  </td>

@@ -193,10 +193,10 @@ object BandModel {
 
   // Bank and Building Society Interest Reads
   val interestReadsStartingRate: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtStartingRate") and Reads.pure[BigDecimal](0.00) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtStartingRate")
+    defaultZero(__ \ "interestReceivedAtStartingRate") and Reads.pure[BigDecimal](0) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtStartingRate")
     ) (BandModel.apply _)
   val interestReadsZeroRate: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtZeroRate") and Reads.pure[BigDecimal](0.00) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtZeroRate")
+    defaultZero(__ \ "interestReceivedAtZeroRate") and Reads.pure[BigDecimal](0) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtZeroRate")
     ) (BandModel.apply _)
   val interestReadsBRT: Reads[BandModel] = (
     defaultZero(__ \ "interestReceivedAtBRT") and defaultZero(__ \ "rateBRT") and defaultZero(__ \ "incomeTaxOnInterestReceivedAtBRT")

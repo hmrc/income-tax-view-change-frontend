@@ -109,7 +109,7 @@ object CalcBreakdownTestConstants {
     ),
     savingsAndGains = SavingsAndGainsModel(
       startBand = BandModel(
-        taxableIncome = 0.00,
+        taxableIncome = 1000.00,
         taxRate = 0.0,
         taxAmount = 0.0
       ),

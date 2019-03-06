@@ -24,7 +24,7 @@ import assets.Messages
 import auth.MtdItUser
 import config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter._
-import models.calculation.CalculationDataModel
+import models.calculation._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -53,9 +53,71 @@ class CalcBreakdownHelperSpec extends TestSupport {
     def personalAllowance: String = "-" + (
       model.personalAllowance
       ).toCurrencyString
+
+    def savingsAllowance: String = "-" + (
+      model.savingsAllowanceSummaryData
+      ).toCurrencyString
   }
 
+  val basicModel = CalculationDataModel(
+    0, 0, 0, 0, 0,
+    IncomeReceivedModel(0, 0, 0, 0),
+    SavingsAndGainsModel(BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
+    DividendsModel(0, BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
+    NicModel(0, 0),
+    None
+  )
 
+  val allSavingInterestModel: CalculationDataModel = basicModel.copy(
+    savingsAndGains = SavingsAndGainsModel(
+      BandModel(5000, 0.0, 5000),
+      BandModel(4000, 0.0, 4000),
+      BandModel(3000, 20, 600),
+      BandModel(2000, 40, 800),
+      BandModel(1000, 45, 450)
+    )
+  )
+
+  "saving interests" should {
+
+
+    def getBandText(document: Document, bandName : String) : Option[String] = {
+      Option(document.getElementById(s"$bandName-it-calc-heading")).map(_.text)
+    }
+
+    def getBandAmountText(document: Document, bandName : String) : Option[String] = {
+      Option(document.getElementById(s"$bandName-amount")).map(_.text)
+    }
+
+    "not display all savings interest bands when no band have income" in {
+      val setup = pageSetup(basicModel, bizAndPropertyUser)
+      import setup._
+
+      getBandText(document, "srtSi") shouldBe None
+      getBandText(document, "zrtSi") shouldBe None
+      getBandText(document, "brtSi") shouldBe None
+      getBandText(document, "hrtSi") shouldBe None
+      getBandText(document, "artSi") shouldBe None
+    }
+
+    "display all savings interests bands when all bands have income" in {
+      val setup = pageSetup(allSavingInterestModel, bizAndPropertyUser)
+      import setup._
+
+      getBandText(document, "srtSi") shouldBe Some("Savings Interest (£5,000 at 0.0%)")
+      getBandText(document, "zrtSi") shouldBe Some("Savings Interest (£4,000 at 0.0%)")
+      getBandText(document, "brtSi") shouldBe Some("Savings Interest (£3,000 at 20%)")
+      getBandText(document, "hrtSi") shouldBe Some("Savings Interest (£2,000 at 40%)")
+      getBandText(document, "artSi") shouldBe Some("Savings Interest (£1,000 at 45%)")
+
+      getBandAmountText(document, "srtSi") shouldBe Some("£5,000")
+      getBandAmountText(document, "zrtSi") shouldBe Some("£4,000")
+      getBandAmountText(document, "brtSi") shouldBe Some("£600")
+      getBandAmountText(document, "hrtSi") shouldBe Some("£800")
+      getBandAmountText(document, "artSi") shouldBe Some("£450")
+    }
+
+  }
   "The Calculation Breakdown view on the Estimate Page" should {
 
     val messages = new Messages.Calculation(testYear)
@@ -67,7 +129,6 @@ class CalcBreakdownHelperSpec extends TestSupport {
         "have just the starter rate of tax" should {
           val setup = pageSetup(scottishBandModelJustSRT, bizAndPropertyUser)
           import setup._
-
           val total = (
             model.incomeReceived.selfEmployment +
               model.incomeReceived.ukProperty +
@@ -82,6 +143,11 @@ class CalcBreakdownHelperSpec extends TestSupport {
           s"have a personal allowance amount of ${model.personalAllowance}" in {
             document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
             document.getElementById("personal-allowance").text shouldBe personalAllowance
+          }
+
+          s"have a savings allowance amount of ${model.savingsAllowanceSummaryData}" in {
+            document.getElementById("savings-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.savingsAllownce
+            document.getElementById("savings-allowance").text shouldBe savingsAllowance
           }
 
           "not show the additional allowances section" in {
@@ -143,6 +209,10 @@ class CalcBreakdownHelperSpec extends TestSupport {
             document.getElementById("personal-allowance").text shouldBe personalAllowance
           }
 
+          s"have a savings allowance amount of ${model.savingsAllowanceSummaryData}" in {
+            Option(document.getElementById("savings-allowance-heading")) shouldBe None
+          }
+
           "not show the additional allowances section" in {
             document.getElementById("additionalAllowances") shouldBe null
           }
@@ -200,6 +270,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
             document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
             document.getElementById("personal-allowance").text shouldBe personalAllowance
           }
+
 
           "not show the additional allowances section" in {
             document.getElementById("additionalAllowances") shouldBe null
