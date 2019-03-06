@@ -81,6 +81,7 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.p1      = Your estimates
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = rates and allowances will not be applied in full until the end of the tax year
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = you may earn more money
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that is not reported in your accounting software
+estimated_tax_liability.calc-breakdown.nationalRegime           = National Regime
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Report deadlines

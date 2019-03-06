@@ -49,7 +49,8 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         bankBuildingSocietyInterest,
         calculationDataSuccessModel.incomeReceived.ukDividends)
 
-      val calculationDataModel = CalculationDataModel(calculationDataSuccessModel.totalIncomeTaxNicYtd,
+      val calculationDataModel = CalculationDataModel(calculationDataSuccessModel.nationalRegime,
+        calculationDataSuccessModel.totalIncomeTaxNicYtd,
         calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
         calculationDataSuccessModel.personalAllowance: BigDecimal,
         calculationDataSuccessModel.taxReliefs: BigDecimal,
@@ -74,7 +75,8 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest,
         calculationDataSuccessModel.incomeReceived.ukDividends)
 
-     CalculationDataModel(calculationDataSuccessModel.totalIncomeTaxNicYtd,
+     CalculationDataModel(calculationDataSuccessModel.nationalRegime,
+       calculationDataSuccessModel.totalIncomeTaxNicYtd,
        calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
        calculationDataSuccessModel.personalAllowance: BigDecimal,
        calculationDataSuccessModel.taxReliefs: BigDecimal,
@@ -96,7 +98,8 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest,
         calculationDataSuccessModel.incomeReceived.ukDividends)
 
-      CalculationDataModel(calculationDataSuccessModel.totalIncomeTaxNicYtd,
+      CalculationDataModel(calculationDataSuccessModel.nationalRegime,
+        calculationDataSuccessModel.totalIncomeTaxNicYtd,
         calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
         calculationDataSuccessModel.personalAllowance: BigDecimal,
         calculationDataSuccessModel.taxReliefs: BigDecimal,
