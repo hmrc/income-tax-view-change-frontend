@@ -64,14 +64,6 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
       }
     }
 
-    "a Not Found Response is returned from the CalculationDataConnector" should {
-
-      "return none" in {
-        setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcNotFound)
-        await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe CalcDisplayNoDataFound
-      }
-    }
-
     "an Error Response is returned from the CalculationDataConnector" should {
 
       "return a correctly formatted CalcDisplayModel model with calcDataModel = None" in {
