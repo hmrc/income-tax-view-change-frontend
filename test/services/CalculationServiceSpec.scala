@@ -49,7 +49,7 @@ class CalculationServiceSpec extends TestSupport with MockLastTaxCalculationConn
     "successful responses are returned from the CalculationDataConnector & EstimatedTaxLiabilityConnector" should {
 
       "return a correctly formatted CalculationData model" in {
-        setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
+        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelSuccess)
         setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
 
         await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
