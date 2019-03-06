@@ -39,7 +39,7 @@ class EstimateViewSpec extends TestSupport with ImplicitDateFormatter {
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
   private def pageSetup(model: EstimatesViewModel, user: MtdItUser[_]) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.getLatestCalculation.estimate(model)(FakeRequest(), applicationMessages, frontendAppConfig, user)
+    lazy val page: HtmlFormat.Appendable = views.html.getLatestCalculation.estimate(model)(FakeRequest(),applicationMessages, frontendAppConfig, user)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
@@ -87,7 +87,7 @@ class EstimateViewSpec extends TestSupport with ImplicitDateFormatter {
             messages.EoyEstimate.heading(annualEstimateText)
           }" in {
             eoySection.getElementById("eoyEstimateHeading").text shouldBe
-              messages.EoyEstimate.heading(annualEstimateText)
+            messages.EoyEstimate.heading(annualEstimateText)
           }
 
           s"has the correct estimate p1 paragraph '${messages.EoyEstimate.p1}'" in {
@@ -104,7 +104,7 @@ class EstimateViewSpec extends TestSupport with ImplicitDateFormatter {
             messages.InYearEstimate.heading(currentEstimateText)
           }" in {
             inYearSection.getElementById("inYearEstimateHeading").text shouldBe
-              messages.InYearEstimate.heading(currentEstimateText)
+            messages.InYearEstimate.heading(currentEstimateText)
           }
 
           s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)}'" in {
@@ -154,25 +154,7 @@ class EstimateViewSpec extends TestSupport with ImplicitDateFormatter {
         lazy val eoySection = estimateSection.getElementById("eoyEstimate")
 
         intercept[NullPointerException](eoySection.getElementById("eoyEstimateHeading").text)
-
-        intercept[NullPointerException](eoySection.getElementById("eoyP1").text)
-
-        "has no section for InYearP1 Estimate" in {
-
-          lazy val inYearSection = estimateSection.getElementById("inYearEstimate")
-
-          intercept[NullPointerException](inYearSection.getElementById("inYearEstimateHeading").text)
-
-          intercept[NullPointerException](inYearSection.getElementById("inYearP1").text)
-
-          "has  no id for  owCalculatedHeading" in {
-            estimateSection.getElementById("howCalculatedHeading").text
-
-          }
-        }
       }
     }
   }
 }
-
-

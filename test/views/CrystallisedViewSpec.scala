@@ -171,10 +171,10 @@ class CrystallisedViewSpec extends TestSupport {
               val brtBand: TaxBandModel = model.payAndPensionsProfitBands.find(_.name == "BRT").get
 
               "has the correct amount of income taxed at BRT and the correct BRT rate" in {
-                document.getElementById("BRT-it-calc-heading").text shouldBe s"Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate}%)"
+                document.getElementById("BRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate}%)"
               }
               "has the correct tax charged at BRT" in {
-                document.getElementById("BRT-amount").text shouldBe brtBand.amount.toCurrencyString
+                document.getElementById("BRTPpp-amount").text shouldBe brtBand.amount.toCurrencyString
               }
             }
             s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
@@ -200,14 +200,14 @@ class CrystallisedViewSpec extends TestSupport {
               val hrtBand: TaxBandModel = model.payAndPensionsProfitBands.find(_.name == "HRT").get
 
               "has a BRT section" in {
-                document.getElementById("BRT-section") should not be null
+                document.getElementById("BRTPpp-section") should not be null
               }
 
               "has the correct amount of income taxed at HRT and the correct HRT rate" in {
-                document.getElementById("HRT-it-calc-heading").text shouldBe s"Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate}%)"
+                document.getElementById("HRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate}%)"
               }
               "has the correct tax charged at HRT" in {
-                document.getElementById("HRT-amount").text shouldBe hrtBand.amount.toCurrencyString
+                document.getElementById("HRTPpp-amount").text shouldBe hrtBand.amount.toCurrencyString
               }
 
               "does not have an ART section" in {
@@ -225,17 +225,17 @@ class CrystallisedViewSpec extends TestSupport {
               val artBand: TaxBandModel = model.payAndPensionsProfitBands.find(_.name == "ART").get
 
               "has a BRT section" in {
-                document.getElementById("BRT-section") should not be null
+                document.getElementById("BRTPpp-section") should not be null
               }
               "has a HRT section" in {
-                document.getElementById("HRT-section") should not be null
+                document.getElementById("HRTPpp-section") should not be null
               }
 
               "has the correct amount of income taxed at ART" in {
-                document.getElementById("ART-it-calc-heading").text shouldBe s"Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate}%)"
+                document.getElementById("ARTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate}%)"
               }
               "has the correct tax charged at ART" in {
-                document.getElementById("ART-amount").text shouldBe artBand.amount.toCurrencyString
+                document.getElementById("ARTPpp-amount").text shouldBe artBand.amount.toCurrencyString
               }
             }
           }
