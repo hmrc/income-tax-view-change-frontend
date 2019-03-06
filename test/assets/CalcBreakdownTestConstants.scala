@@ -772,7 +772,7 @@ object CalcBreakdownTestConstants {
     giftAid = GiftAidModel(
       paymentsMade = 500.0,
       rate = 0.00,
-      taxableAmount = 0.0
+      taxableAmount = 5.0
     )
   )
 
@@ -1180,7 +1180,7 @@ object CalcBreakdownTestConstants {
     giftAid = GiftAidModel(
       paymentsMade = 30.0,
       rate = 0.00,
-      taxableAmount = 0.0
+      taxableAmount = 5.0
     ),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 132.00, 26.00),

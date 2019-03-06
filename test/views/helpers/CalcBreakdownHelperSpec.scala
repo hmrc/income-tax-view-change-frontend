@@ -348,6 +348,32 @@ class CalcBreakdownHelperSpec extends TestSupport {
           }
         }
 
+        "have gift aid payment" should {
+          val setup = pageSetup(busPropARTCalcDataModel, bizAndPropertyUser)
+          import setup._
+
+          "have text Gift Aid payment" in {
+            document.getElementById("gift-aid-heading").text shouldBe messages.Bills.giftAid
+          }
+
+          "have gift aid charge £5" in {
+            document.getElementById("gift-aid").text shouldBe "£5"
+          }
+        }
+
+        "when no gift aid payment" should {
+          val setup1 = pageSetup(calculationDataSuccessModel, propertyUser)
+          import setup1._
+
+          "not have text Gift Aid payment" in {
+            document.getElementById("gift-aid-heading") shouldBe null
+          }
+
+          "not have gift aid charges" in {
+            document.getElementById("gift-aid") shouldBe null
+          }
+        }
+
         "have the additional rate of tax" should {
           val setup = pageSetup(busPropARTCalcDataModel, bizAndPropertyUser)
           import setup._
@@ -720,7 +746,6 @@ class CalcBreakdownHelperSpec extends TestSupport {
         }
       }
 
-
       "for users with income from savings of zero on the bills page" should {
 
         val setup = pageSetup(justPropertyCalcDataModel, propertyUser)
@@ -731,6 +756,32 @@ class CalcBreakdownHelperSpec extends TestSupport {
           document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
         }
 
+        "have gift aid payment" should {
+          val setup1 = pageSetup(justPropertyCalcDataModel, propertyUser)
+          import setup._
+
+          "have text Gift Aid payment" in {
+            document.getElementById("gift-aid-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.giftAid
+          }
+
+          "have gift aid charge £5" in {
+            document.getElementById("gift-aid").text shouldBe "£5"
+          }
+
+        }
+
+        "when no gift aid payment" should {
+          val setup1 = pageSetup(calculationDataSuccessModel, propertyUser)
+          import setup1._
+
+          "not have text Gift Aid payment" in {
+            document.getElementById("gift-aid-heading") shouldBe null
+          }
+
+          "not have gift aid charge £5" in {
+            document.getElementById("gift-aid") shouldBe null
+          }
+        }
       }
 
       "when no breakdown data is retrieved" should {
