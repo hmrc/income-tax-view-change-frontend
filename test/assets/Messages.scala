@@ -91,6 +91,7 @@ object Messages {
       val p1: String => String = calcDate => s"This is for 6 April ${taxYear-1} to $calcDate."
       object CalculationBreakdown {
         val heading = "How we calculated this estimate"
+        val nationalRegime = "National Regime"
         val businessProfit = "Business profit"
         val propertyProfit = "Property profit"
         val personalAllowance = "Personal Allowance (for period reported)"
