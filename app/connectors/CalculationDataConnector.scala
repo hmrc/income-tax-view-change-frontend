@@ -46,7 +46,6 @@ class CalculationDataConnector @Inject()(val http: HttpClient,
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
       response =>
-          println("\n\n" + response.status + "\n\n" +  response.body + "\n\n")
         response.status match {
           case OK =>
             Logger.debug(s"[CalculationDataConnector][getCalculationData] - RESPONSE status: ${response.status}, json: ${response.json}")
