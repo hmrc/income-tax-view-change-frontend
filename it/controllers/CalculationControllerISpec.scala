@@ -52,7 +52,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
   "Calling the CalculationController.getEstimatedTaxLiability(year)" when {
 
-    "isAuthorisedUser with an active enrolment, valid latest calc estimate, valid breakdown response, an EoY Estimate and feature switch is enabled" should {
+    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response, an EoY Estimate and feature switch is enabled" should {
 
       "return the correct page with a valid total" in {
 
@@ -351,7 +351,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("a successful Get Last Estimated Tax Liability response via wiremock stub")
+        And("a successful Get Latest Calculation response via wiremock stub")
         IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
 
         And("I wiremock stub an erroneous response")
