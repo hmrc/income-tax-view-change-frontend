@@ -24,7 +24,7 @@ import assets.Messages
 import auth.MtdItUser
 import config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter._
-import models.calculation.CalculationDataModel
+import models.calculation._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -50,14 +50,74 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
     implicit val model: CalculationDataModel = calcDataModel
 
-    def personalAllowanceTotal: String = "-" + (
-      model.personalAllowance +
-        model.savingsAndGains.startBand.taxableIncome +
-        model.savingsAndGains.zeroBand.taxableIncome
+    def personalAllowance: String = "-" + (
+      model.personalAllowance
+      ).toCurrencyString
+
+    def savingsAllowance: String = "-" + (
+      model.savingsAllowanceSummaryData
       ).toCurrencyString
   }
 
+  val basicModel = CalculationDataModel(
+    None,0, 0, 0, 0, 0,
+    IncomeReceivedModel(0, 0, 0, 0),
+    SavingsAndGainsModel(BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
+    DividendsModel(0, BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
+    NicModel(0, 0),
+    None
+  )
 
+  val allSavingInterestModel: CalculationDataModel = basicModel.copy(
+    savingsAndGains = SavingsAndGainsModel(
+      BandModel(5000, 0.0, 5000),
+      BandModel(4000, 0.0, 4000),
+      BandModel(3000, 20, 600),
+      BandModel(2000, 40, 800),
+      BandModel(1000, 45, 450)
+    )
+  )
+
+  "saving interests" should {
+
+
+    def getBandText(document: Document, bandName : String) : Option[String] = {
+      Option(document.getElementById(s"$bandName-it-calc-heading")).map(_.text)
+    }
+
+    def getBandAmountText(document: Document, bandName : String) : Option[String] = {
+      Option(document.getElementById(s"$bandName-amount")).map(_.text)
+    }
+
+    "not display all savings interest bands when no band have income" in {
+      val setup = pageSetup(basicModel, bizAndPropertyUser)
+      import setup._
+
+      getBandText(document, "srtSi") shouldBe None
+      getBandText(document, "zrtSi") shouldBe None
+      getBandText(document, "brtSi") shouldBe None
+      getBandText(document, "hrtSi") shouldBe None
+      getBandText(document, "artSi") shouldBe None
+    }
+
+    "display all savings interests bands when all bands have income" in {
+      val setup = pageSetup(allSavingInterestModel, bizAndPropertyUser)
+      import setup._
+
+      getBandText(document, "srtSi") shouldBe Some("Savings Interest (£5,000 at 0.0%)")
+      getBandText(document, "zrtSi") shouldBe Some("Savings Interest (£4,000 at 0.0%)")
+      getBandText(document, "brtSi") shouldBe Some("Savings Interest (£3,000 at 20%)")
+      getBandText(document, "hrtSi") shouldBe Some("Savings Interest (£2,000 at 40%)")
+      getBandText(document, "artSi") shouldBe Some("Savings Interest (£1,000 at 45%)")
+
+      getBandAmountText(document, "srtSi") shouldBe Some("£5,000")
+      getBandAmountText(document, "zrtSi") shouldBe Some("£4,000")
+      getBandAmountText(document, "brtSi") shouldBe Some("£600")
+      getBandAmountText(document, "hrtSi") shouldBe Some("£800")
+      getBandAmountText(document, "artSi") shouldBe Some("£450")
+    }
+
+  }
   "The Calculation Breakdown view on the Estimate Page" should {
 
     val messages = new Messages.Calculation(testYear)
@@ -69,7 +129,6 @@ class CalcBreakdownHelperSpec extends TestSupport {
         "have just the starter rate of tax" should {
           val setup = pageSetup(scottishBandModelJustSRT, bizAndPropertyUser)
           import setup._
-
           val total = (
             model.incomeReceived.selfEmployment +
               model.incomeReceived.ukProperty +
@@ -83,7 +142,12 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"have a personal allowance amount of ${model.personalAllowance}" in {
             document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
-            document.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+            document.getElementById("personal-allowance").text shouldBe personalAllowance
+          }
+
+          s"have a savings allowance amount of ${model.savingsAllowanceSummaryData}" in {
+            document.getElementById("savings-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.savingsAllownce
+            document.getElementById("savings-allowance").text shouldBe savingsAllowance
           }
 
           "not show the additional allowances section" in {
@@ -98,11 +162,11 @@ class CalcBreakdownHelperSpec extends TestSupport {
           s"have an Income Tax section" which {
             val srtBand = model.payAndPensionsProfitBands.find(_.name == "SRT").get
 
-            "has the correct amount of income taxed at SRT" in {
-              document.getElementById("SRT-it-calc-heading").text shouldBe s"Income Tax (${srtBand.income.toCurrencyString} at ${srtBand.rate}%)"
+            "has the correct amount of income taxed from payPensionsProfit at SRT" in {
+              document.getElementById("SRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${srtBand.income.toCurrencyString} at ${srtBand.rate}%)"
             }
             "has the correct tax charged at SRT" in {
-              document.getElementById("SRT-amount").text shouldBe srtBand.amount.toCurrencyString
+              document.getElementById("SRTPpp-amount").text shouldBe srtBand.amount.toCurrencyString
             }
           }
           s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
@@ -142,7 +206,11 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"have a personal allowance amount of ${model.personalAllowance}" in {
             document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
-            document.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+            document.getElementById("personal-allowance").text shouldBe personalAllowance
+          }
+
+          s"have a savings allowance amount of ${model.savingsAllowanceSummaryData}" in {
+            Option(document.getElementById("savings-allowance-heading")) shouldBe None
           }
 
           "not show the additional allowances section" in {
@@ -154,14 +222,14 @@ class CalcBreakdownHelperSpec extends TestSupport {
             document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
           }
 
-          s"have an Income Tax section" which {
+          s"have an Income Tax from payPensionsProfit section" which {
             val brtBand = model.payAndPensionsProfitBands.find(_.name == "BRT").get
 
             "has the correct amount of income taxed at BRT" in {
-              document.getElementById("BRT-it-calc-heading").text shouldBe s"Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate}%)"
+              document.getElementById("BRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate}%)"
             }
             "has the correct tax charged at BRT" in {
-              document.getElementById("BRT-amount").text shouldBe brtBand.amount.toCurrencyString
+              document.getElementById("BRTPpp-amount").text shouldBe brtBand.amount.toCurrencyString
             }
           }
           s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
@@ -200,8 +268,9 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"have a personal allowance amount of ${model.personalAllowance}" in {
             document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
-            document.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+            document.getElementById("personal-allowance").text shouldBe personalAllowance
           }
+
 
           "not show the additional allowances section" in {
             document.getElementById("additionalAllowances") shouldBe null
@@ -212,22 +281,22 @@ class CalcBreakdownHelperSpec extends TestSupport {
             document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
           }
 
-          s"have an Income Tax section" which {
+          s"have an Income Tax from payPensionsProfit section" which {
             val irtBand = model.payAndPensionsProfitBands.find(_.name == "IRT").get
 
             "has a SRT section" in {
-              document.getElementById("SRT-section") should not be null
+              document.getElementById("SRTPpp-section") should not be null
             }
 
             "has a BRT section" in {
-              document.getElementById("BRT-section") should not be null
+              document.getElementById("BRTPpp-section") should not be null
             }
 
             "has the correct amount of income taxed at IRT" in {
-              document.getElementById("IRT-it-calc-heading").text shouldBe s"Income Tax (${irtBand.income.toCurrencyString} at ${irtBand.rate}%)"
+              document.getElementById("IRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${irtBand.income.toCurrencyString} at ${irtBand.rate}%)"
             }
             "has the correct tax charged at IRT" in {
-              document.getElementById("IRT-amount").text shouldBe irtBand.amount.toCurrencyString
+              document.getElementById("IRTPpp-amount").text shouldBe irtBand.amount.toCurrencyString
             }
           }
           s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
@@ -253,27 +322,27 @@ class CalcBreakdownHelperSpec extends TestSupport {
           val setup = pageSetup(busBropHRTCalcDataModel, bizAndPropertyUser)
           import setup._
 
-          s"have an Income Tax section" which {
+          s"have an Income Tax from payPensionsProfit section" which {
 
             val hrtBand = model.payAndPensionsProfitBands.find(_.name == "HRT").get
 
             "has a SRT section" in {
-              document.getElementById("BRT-section") should not be null
+              document.getElementById("BRTPpp-section") should not be null
             }
 
             "has a BRT section" in {
-              document.getElementById("BRT-section") should not be null
+              document.getElementById("BRTPpp-section") should not be null
             }
 
             "has the correct amount of income taxed at HRT" in {
-              document.getElementById("HRT-it-calc-heading").text shouldBe s"Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate}%)"
+              document.getElementById("HRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate}%)"
             }
             "has the correct tax charged at HRT" in {
-              document.getElementById("HRT-amount").text shouldBe hrtBand.amount.toCurrencyString
+              document.getElementById("HRTPpp-amount").text shouldBe hrtBand.amount.toCurrencyString
             }
 
             "does not have an ART section" in {
-              document.getElementById("art-section") shouldBe null
+              document.getElementById("artPpp-section") shouldBe null
             }
           }
         }
@@ -282,22 +351,22 @@ class CalcBreakdownHelperSpec extends TestSupport {
           val setup = pageSetup(busPropARTCalcDataModel, bizAndPropertyUser)
           import setup._
 
-          s"have an Income Tax section" which {
+          s"have an Income Tax from payPensionsProfit section" which {
 
             val artBand = model.payAndPensionsProfitBands.find(_.name == "ART").get
 
             "has a BRT section" in {
-              document.getElementById("BRT-section") should not be null
+              document.getElementById("BRTPpp-section") should not be null
             }
             "has a HRT section" in {
-              document.getElementById("HRT-section") should not be null
+              document.getElementById("HRTPpp-section") should not be null
             }
 
             "has the correct amount of income taxed at ART" in {
-              document.getElementById("ART-it-calc-heading").text shouldBe s"Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate}%)"
+              document.getElementById("ARTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate}%)"
             }
             "has the correct tax charged at ART" in {
-              document.getElementById("ART-amount").text shouldBe artBand.amount.toCurrencyString
+              document.getElementById("ARTPpp-amount").text shouldBe artBand.amount.toCurrencyString
             }
           }
         }
@@ -306,22 +375,22 @@ class CalcBreakdownHelperSpec extends TestSupport {
           val setup = pageSetup(scottishBandModelAllIncomeBands, bizAndPropertyUser)
           import setup._
 
-          s"have an Income Tax section" which {
+          s"have an Income Tax from payPensionsProfit section" which {
 
             "has a SRT section" in {
-              document.getElementById("SRT-section") should not be null
+              document.getElementById("SRTPpp-section") should not be null
             }
             "has a BRT section" in {
-              document.getElementById("BRT-section") should not be null
+              document.getElementById("BRTPpp-section") should not be null
             }
             "has a IRT section" in {
-              document.getElementById("IRT-section") should not be null
+              document.getElementById("IRTPpp-section") should not be null
             }
             "has a HRT section" in {
-              document.getElementById("HRT-section") should not be null
+              document.getElementById("HRTPpp-section") should not be null
             }
             "has a ART section" in {
-              document.getElementById("ART-section") should not be null
+              document.getElementById("ARTPpp-section") should not be null
             }
           }
         }
@@ -620,7 +689,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
         }
 
         "display the personal allowances heading with income savings" in {
-          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsEstimates
+          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceEstimates
         }
 
         s"have an additional allowances section with an amount of ${model.additionalAllowances}" in {
@@ -646,7 +715,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
         }
 
         "display the personal allowances heading with income savings" in {
-          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsEstimates
+          document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceEstimates
         }
       }
 

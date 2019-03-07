@@ -164,18 +164,12 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
       }
     }
 
-    "displaying personalAllowanceHeading" should {
-      "show pa-estimates message" in{
-        calcDisplayModelBBSInterestCalcStatus(Estimate, 0).personalAllowanceHeading shouldBe ".pa-estimates"
-      }
+    "displaying savingsAllowanceHeading" should {
       "show pa-estimates savings message" in{
-        calcDisplayModelBBSInterestCalcStatus(Estimate, 10).personalAllowanceHeading shouldBe ".pa-estimates-savings"
-      }
-      "show pa-bills message" in{
-        calcDisplayModelBBSInterestCalcStatus(Crystallised, 0).personalAllowanceHeading shouldBe ".pa-bills"
+        calcDisplayModelBBSInterestCalcStatus(Estimate, 10).savingsAllowanceHeading shouldBe ".pa-estimates-savings"
       }
       "show pa-bills saving message" in{
-        calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).personalAllowanceHeading shouldBe ".pa-bills-savings"
+        calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).savingsAllowanceHeading shouldBe ".pa-bills-savings"
       }
 
     }

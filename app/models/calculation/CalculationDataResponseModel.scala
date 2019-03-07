@@ -42,15 +42,26 @@ case class CalculationDataModel(
   val taxableDividendIncome: BigDecimal =
     dividends.basicBand.taxableIncome + dividends.higherBand.taxableIncome + dividends.additionalBand.taxableIncome
   val taxableIncomeTaxIncome: BigDecimal = totalTaxableIncome - taxableDividendIncome
-  val additionalAllowances: BigDecimal = totalIncomeAllowancesUsed - personalAllowance
+  val savingsAllowanceSummaryData: BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
+  val additionalAllowances: BigDecimal = totalIncomeAllowancesUsed - personalAllowance - savingsAllowanceSummaryData
+  val taxablePayPensionsProfit: BigDecimal = payAndPensionsProfitBands.map(_.income).sum
+  val taxableSavingsInterest : BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome + savingsAndGains.basicBand.taxableIncome + savingsAndGains.higherBand.taxableIncome + savingsAndGains.additionalBand.taxableIncome
 
   val hasDividendsAtBRT: Boolean = dividends.basicBand.taxAmount > 0
   val hasDividendsAtHRT: Boolean = dividends.higherBand.taxAmount > 0
   val hasDividendsAtART: Boolean = dividends.additionalBand.taxAmount > 0
 
-  def personalAllowanceSummaryData: BigDecimal = {
-    personalAllowance + savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
-  }
+
+  def srtSiITCalc :BigDecimal = savingsAndGains.startBand.taxableIncome
+  def srtSiITAmount : BigDecimal  = savingsAndGains.startBand.taxAmount
+  def zrtSiITCalc :BigDecimal = savingsAndGains.zeroBand.taxableIncome
+  def zrtSiITAmount : BigDecimal  = savingsAndGains.zeroBand.taxAmount
+  def brtSiITCalc :BigDecimal = savingsAndGains.basicBand.taxableIncome
+  def brtSiITAmount : BigDecimal  = savingsAndGains.basicBand.taxAmount
+  def hrtSiITCalc : BigDecimal = savingsAndGains.higherBand.taxableIncome
+  def hrtSiITAmount : BigDecimal = savingsAndGains.higherBand.taxAmount
+  def artSiITCalc : BigDecimal = savingsAndGains.additionalBand.taxableIncome
+  def artSiITAmount : BigDecimal = savingsAndGains.additionalBand.taxAmount
 }
 
 case class IncomeReceivedModel(selfEmployment: BigDecimal,
@@ -182,10 +193,10 @@ object BandModel {
 
   // Bank and Building Society Interest Reads
   val interestReadsStartingRate: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtStartingRate") and Reads.pure[BigDecimal](0.00) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtStartingRate")
+    defaultZero(__ \ "interestReceivedAtStartingRate") and Reads.pure[BigDecimal](0) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtStartingRate")
     ) (BandModel.apply _)
   val interestReadsZeroRate: Reads[BandModel] = (
-    defaultZero(__ \ "interestReceivedAtZeroRate") and Reads.pure[BigDecimal](0.00) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtZeroRate")
+    defaultZero(__ \ "interestReceivedAtZeroRate") and Reads.pure[BigDecimal](0) and defaultZero(__ \ "incomeTaxOnInterestReceivedAtZeroRate")
     ) (BandModel.apply _)
   val interestReadsBRT: Reads[BandModel] = (
     defaultZero(__ \ "interestReceivedAtBRT") and defaultZero(__ \ "rateBRT") and defaultZero(__ \ "incomeTaxOnInterestReceivedAtBRT")

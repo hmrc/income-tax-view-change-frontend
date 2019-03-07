@@ -33,6 +33,11 @@ case class CalcDisplayModel(calcTimestamp: String,
 
   val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
   val hasEoyEstimate: Boolean = calcDataModel.fold(false)(_.eoyEstimate.nonEmpty)
+  val hasSRTSiSection: Boolean = calcDataModel.fold(false)(_.savingsAndGains.startBand.taxableIncome > 0)
+  val hasZRTSiSection: Boolean = calcDataModel.fold(false)(_.savingsAndGains.zeroBand.taxableIncome > 0)
+  val hasBRTSiSection: Boolean = calcDataModel.fold(false)(_.savingsAndGains.basicBand.taxableIncome > 0)
+  val hasHRTSiSection: Boolean = calcDataModel.fold(false)(_.savingsAndGains.higherBand.taxableIncome > 0)
+  val hasARTSiSection: Boolean = calcDataModel.fold(false)(_.savingsAndGains.additionalBand.taxableIncome > 0)
 
   val hasNic2Amount: Boolean = calcDataModel.fold(false)(_.nic.class2 > 0)
   val hasNic4Amount: Boolean = calcDataModel.fold(false)(_.nic.class4 > 0)
@@ -49,11 +54,16 @@ case class CalcDisplayModel(calcTimestamp: String,
   }
 
   def personalAllowanceHeading: String = {
-    (calcStatus, calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0) match {
-      case (Estimate, false) => ".pa-estimates"
-      case (Estimate, _)     => ".pa-estimates-savings"
-      case (_, false)        => ".pa-bills"
-      case (_, _)            => ".pa-bills-savings"
+    calcStatus match {
+      case Estimate     => ".pa-estimates"
+      case _            => ".pa-bills"
+    }
+  }
+
+  def savingsAllowanceHeading: String = {
+    calcStatus match {
+      case Estimate     => ".pa-estimates-savings"
+      case _            => ".pa-bills-savings"
     }
   }
 

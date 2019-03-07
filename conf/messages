@@ -53,16 +53,16 @@ estimated_tax_liability.calc-breakdown.property-profit          = Property profi
 estimated_tax_liability.calc-breakdown.and-savings              = and income from savings
 estimated_tax_liability.calc-breakdown.income-savings           = Income from savings
 estimated_tax_liability.calc-breakdown.pa-estimates             = Personal Allowance (for period reported)
-estimated_tax_liability.calc-breakdown.pa-estimates-savings     = Personal Allowance, incl. Savings (for period reported)
-estimated_tax_liability.calc-breakdown.pa-bills                 = Personal Allowance (for period reported)
-estimated_tax_liability.calc-breakdown.pa-bills-savings         = Personal Allowance (Income Tax and savings)
+estimated_tax_liability.calc-breakdown.pa-estimates-savings     = Savings Allowance (for period reported)
+estimated_tax_liability.calc-breakdown.pa-bills                 = Personal Allowance
+estimated_tax_liability.calc-breakdown.pa-bills-savings         = Savings Allowance
 estimated_tax_liability.calc-breakdown.additional-allowances    = Additional allowances
 estimated_tax_liability.calc-breakdown.taxable-income           = Your taxable income (Income Tax)
 estimated_tax_liability.calc-breakdown.dividend-income          = Income from dividends
 estimated_tax_liability.calc-breakdown.dividend-allowance       = Personal Allowance (dividends)
 estimated_tax_liability.calc-breakdown.taxable-dividend-income  = Your taxable income (dividends)
 estimated_tax_liability.calc-breakdown.income-tax               = Income Tax
-estimated_tax_liability.calc-breakdown.income-tax-band          = Income Tax ({0} at {1}%)
+estimated_tax_liability.calc-breakdown.payPensionsProfit-income = Pay, Pensions, Profit Income Tax ({0} at {1}%)
 estimated_tax_liability.calc-breakdown.dividend-tax             = Dividend tax
 estimated_tax_liability.calc-breakdown.at                       = at
 estimated_tax_liability.calc-breakdown.nic2                     = Class 2 National Insurance
@@ -82,6 +82,11 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = rates and allo
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = you may earn more money
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that is not reported in your accounting software
 estimated_tax_liability.calc-breakdown.nationalRegime           = National Regime
+estimated_tax_liability.calc-breakdown.savingsInterest-income   = Savings Interest
+estimated_tax_liability.calc-breakdown.taxable-payPensionsProfit-income = Your taxable income (pay, pensions, profit)
+estimated_tax_liability.calc-breakdown.taxable-savingsInterest-income = Your taxable income (savings interest)
+estimated_tax_liability.calc-breakdown.pa-personalAllowance         = Personal Allowance
+
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Report deadlines

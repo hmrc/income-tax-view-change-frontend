@@ -62,10 +62,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
     implicit val model: CalculationDataModel = calcDataModel
 
-    def personalAllowanceTotal: String = "-" + (
-      model.personalAllowance +
-        model.savingsAndGains.startBand.taxableIncome +
-        model.savingsAndGains.zeroBand.taxableIncome
+    def personalAllowance: String = "-" + (
+      model.personalAllowance
       ).toCurrencyString
   }
 
@@ -196,12 +194,12 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
             cDocument.getElementById("savings-income").text shouldBe model.incomeReceived.bankBuildingSocietyInterest.toCurrencyString
           }
 
-          "display the personal allowances heading with income savings" in {
-            cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsBills
+          "display the personal allowances heading" in {
+            cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceBill
           }
 
           "display the correct personal allowance amount" in {
-            cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+            cDocument.getElementById("personal-allowance").text shouldBe personalAllowance
           }
 
         }
@@ -229,11 +227,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
           }
 
           "display the personal allowances heading with income savings" in {
-            cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceSavingsBills
+            cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceBill
           }
 
           "display the correct personal allowance amount" in {
-            cDocument.getElementById("personal-allowance").text shouldBe personalAllowanceTotal
+            cDocument.getElementById("personal-allowance").text shouldBe personalAllowance
           }
 
         }
