@@ -94,7 +94,7 @@ object CalcDataIntegrationTestConstants {
     ),
     giftAid = GiftAidModel(
       paymentsMade = 150,
-      rate = 0.0,
+      rate = 0,
       taxableAmount = 0
     ),
     eoyEstimate = Some(EoyEstimate(25000.00)),
@@ -178,7 +178,7 @@ object CalcDataIntegrationTestConstants {
     giftAid = GiftAidModel(
       paymentsMade = 150,
       rate = 0.0,
-      taxableAmount = 0
+      taxableAmount = 1.5
     ),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
@@ -397,7 +397,7 @@ object CalcDataIntegrationTestConstants {
         "incomeTax" -> Json.obj(
           "giftAid" -> Json.obj(
             "paymentsMade" -> 150,
-            "rate" -> 0.0,
+            "rate" -> 0,
             "taxableIncome" -> 0
           )
         )
@@ -682,8 +682,8 @@ object CalcDataIntegrationTestConstants {
       "incomeTax" -> Json.obj(
         "giftAid" -> Json.obj(
           "paymentsMade" -> 150,
-          "rate" -> 0.0,
-          "taxableIncome" -> 0
+          "rate" -> 1.0,
+          "taxableIncome" -> 1.5
         )
       )
     ),
