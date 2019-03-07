@@ -60,7 +60,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
   }
 
   val basicModel = CalculationDataModel(
-    0, 0, 0, 0, 0,
+    None,0, 0, 0, 0, 0,
     IncomeReceivedModel(0, 0, 0, 0),
     SavingsAndGainsModel(BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
     DividendsModel(0, BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
