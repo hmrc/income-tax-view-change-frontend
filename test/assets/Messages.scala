@@ -95,6 +95,7 @@ object Messages {
         val businessProfit = "Business profit"
         val propertyProfit = "Property profit"
         val personalAllowance = "Personal Allowance (for period reported)"
+        val personalAllowanceBill = "Personal Allowance"
         val savingsAllownce = "Savings Allowance (for period reported)"
         val personalAllowanceEstimates = "Personal Allowance (for period reported)"
         val additionalAllowances = "Additional allowances"

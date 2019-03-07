@@ -195,7 +195,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
           }
 
           "display the personal allowances heading" in {
-            cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
+            cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceBill
           }
 
           "display the correct personal allowance amount" in {
@@ -227,7 +227,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
           }
 
           "display the personal allowances heading with income savings" in {
-            cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
+            cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceBill
           }
 
           "display the correct personal allowance amount" in {

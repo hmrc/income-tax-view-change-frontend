@@ -65,7 +65,7 @@
         <tr id="personal-allowance-section" class="no-border-bottom">
         }
             <td id="personal-allowance-heading">
-                @{messages("estimated_tax_liability.calc-breakdown.pa-estimates")}
+                @{messages("estimated_tax_liability.calc-breakdown" + calcModel.personalAllowanceHeading)}
             </td>
             <td id="personal-allowance" class="summary-data">
                 -@{breakdown.personalAllowance.toCurrency}
