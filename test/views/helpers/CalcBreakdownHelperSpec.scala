@@ -65,6 +65,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
     IncomeReceivedModel(0, 0, 0, 0),
     SavingsAndGainsModel(BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
     DividendsModel(0, Seq(DividendsBandModel("basic band",0, None, None, 0,0))),
+    GiftAidModel(0,0,0),
     NicModel(0, 0),
     None
   )
