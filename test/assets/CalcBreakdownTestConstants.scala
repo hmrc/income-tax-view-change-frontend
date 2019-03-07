@@ -1394,8 +1394,10 @@ object CalcBreakdownTestConstants {
   )
 
   val mandatoryCalculationDataSuccessJson: JsValue = Json.obj(
-    "calcResult" -> Json.obj(
-      "incomeTaxNicYtd" -> 90500
+    "calcObject" -> Json.obj(
+      "calcResult" -> Json.obj(
+        "incomeTaxNicYtd" -> 90500
+      )
     )
   )
 
@@ -1509,33 +1511,74 @@ object CalcBreakdownTestConstants {
 
   val calculationDataFullJson: JsValue = Json.obj(
     "nationalRegime" -> "UK",
-  "payPensionsProfitAtBRT" -> 20000,
-    "incomeTaxOnPayPensionsProfitAtBRT" -> 4000,
-    "payPensionsProfitAtHRT" -> 100000,
-    "incomeTaxOnPayPensionsProfitAtHRT" -> 40000,
-    "payPensionsProfitAtART" -> 50000,
-    "incomeTaxOnPayPensionsProfitAtART" -> 22500,
-    "netPropertyFinanceCosts" -> 0,
-    "dividendsAtZeroRate" -> 0,
-    "incomeTaxOnDividendsAtZeroRate" -> 0,
-    "dividendsAtBRT" -> 1000,
-    "incomeTaxOnDividendsAtBRT" -> 75,
-    "dividendsAtHRT" -> 2000,
-    "incomeTaxOnDividendsAtHRT" -> 750,
-    "dividendsAtART" -> 3000,
-    "incomeTaxOnDividendsAtART" -> 1143,
-    "limitBRT" -> 0,
-    "limitHRT" -> 0,
-    "rateBRT" -> 20,
-    "rateHRT" -> 40,
-    "rateART" -> 45,
-    "allowanceBRT" -> 0,
-    "interestAllowanceHRT" -> 0,
-    "interestAllowanceBRT" -> 0,
-    "dividendAllowance" -> 5000,
-    "dividendBRT" -> 7.5,
-    "dividendHRT" -> 37.5,
-    "dividendART" -> 38.1,
+   "payPensionsProfitAtBRT" -> 20000,
+   "incomeTaxOnPayPensionsProfitAtBRT" -> 4000,
+   "payPensionsProfitAtHRT" -> 100000,
+   "incomeTaxOnPayPensionsProfitAtHRT" -> 40000,
+   "payPensionsProfitAtART" -> 50000,
+   "incomeTaxOnPayPensionsProfitAtART" -> 22500,
+   "netPropertyFinanceCosts" -> 0,
+   "dividendsAtZeroRate" -> 0,
+   "incomeTaxOnDividendsAtZeroRate" -> 0,
+   "dividendsAtBRT" -> 1000,
+   "incomeTaxOnDividendsAtBRT" -> 75,
+   "dividendsAtHRT" -> 2000,
+   "incomeTaxOnDividendsAtHRT" -> 750,
+   "dividendsAtART" -> 3000,
+   "incomeTaxOnDividendsAtART" -> 1143,
+   "limitBRT" -> 0,
+   "limitHRT" -> 0,
+   "rateBRT" -> 20,
+   "rateHRT" -> 40,
+   "rateART" -> 45,
+   "allowanceBRT" -> 0,
+   "dividendAllowance" -> 5000,
+   "dividendBRT" -> 7.5,
+   "dividendHRT" -> 37.5,
+   "dividendART" -> 38.1,
+    "incomeTax" -> Json.obj(
+      "payAndPensionsProfit" -> Json.obj(
+        "band" -> Json.arr(Json.obj(
+          "name" -> "BRT",
+          "rate" -> 20.0,
+          "income" -> 20000.00,
+          "amount" -> 4000.00
+        ), Json.obj(
+          "name" -> "HRT",
+          "rate" -> 40.0,
+          "income" -> 100000.00,
+          "amount" -> 40000.00
+        ), Json.obj(
+          "name" -> "ART",
+          "rate" -> 45.0,
+          "income" -> 50000.00,
+          "amount" -> 22500.00
+        )
+        )
+      ),
+      "dividends" -> Json.obj(
+        "totalAmount" -> 5000,
+        "band" -> Json.arr(
+          Json.obj(
+            "name" -> "basic-band",
+            "rate" -> 7.5,
+            "income" -> 1000,
+            "amount" -> 75.0
+          ),
+          Json.obj(
+            "name" -> "higher-band",
+            "rate" -> 37.5,
+            "income" -> 2000,
+            "amount" -> 750
+          ),
+          Json.obj(
+            "name" -> "additional-band",
+            "rate" -> 38.1,
+            "income" -> 3000,
+            "amount" -> 1143
+          )))
+    ),
+    "calcObject" -> Json.obj(
     "calcSummary" -> Json.obj(
       "nationalRegime" -> "UK",
       "incomeTaxGross" -> 68985412739.5,
@@ -1741,48 +1784,36 @@ object CalcBreakdownTestConstants {
         )
       )
     ),
-    "incomeTax" -> Json.obj(
-      "payAndPensionsProfit" -> Json.obj(
-        "band" -> Json.arr(Json.obj(
-          "name" -> "BRT",
-          "rate" -> 20.0,
-          "income" -> 20000.00,
-          "amount" -> 4000.00
-        ), Json.obj(
-          "name" -> "HRT",
-          "rate" -> 40.0,
-          "income" -> 100000.00,
-          "amount" -> 40000.00
-        ), Json.obj(
-          "name" -> "ART",
-          "rate" -> 45.0,
-          "income" -> 50000.00,
-          "amount" -> 22500.00
-        )
-        )
-      ),
-      "dividends" -> Json.obj(
-        "totalAmount" -> 5000,
-        "band" -> Json.arr(
-          Json.obj(
-            "name" -> "basic-band",
-            "rate" -> 7.5,
-            "income" -> 1000,
-            "amount" -> 75.0
-          ),
-          Json.obj(
-            "name" -> "higher-band",
-            "rate" -> 37.5,
-            "income" -> 2000,
-            "amount" -> 750
-          ),
-          Json.obj(
-            "name" -> "additional-band",
-            "rate" -> 38.1,
-            "income" -> 3000,
-            "amount" -> 1143
-          )))
-    )
+    "eoyEstimate" -> Json.obj(
+      "totalTaxableIncome" -> 198500,
+      "incomeTaxAmount" -> 89999999.99,
+      "nic2" -> 89999999.99,
+      "nic4" -> 89999999.99,
+      "totalNicAmount" -> 66000,
+      "incomeTaxNicAmount" -> 66000.00,
+      "selfEmployment" -> Json.arr(
+         Json.obj(
+           "id" -> "selfEmploymentId1",
+           "taxableIncome" -> 89999999.99,
+           "supplied" -> true,
+           "finalised" -> true
+         ),
+         Json.obj(
+           "id" -> "selfEmploymentId2",
+           "taxableIncome" -> 89999999.99,
+           "supplied" -> true,
+           "finalised" -> true
+         )
+       ),
+       "ukProperty" -> Json.arr(
+         Json.obj(
+           "taxableIncome" -> 89999999.99,
+           "supplied" -> true,
+           "finalised" -> true
+         )
+       )
+     )
+   )
   )
 
   val calculationDataSuccessMinJson: JsValue = Json.obj()
