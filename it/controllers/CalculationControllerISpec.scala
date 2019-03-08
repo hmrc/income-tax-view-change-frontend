@@ -127,8 +127,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextByID("nic4-amount")(calculationDataSuccessWithEoYModel.nic.class4.toCurrencyString),
           //elementTextByID("gift-aid")(calculationDataSuccessWithEoYModel.giftAid.taxableAmount.toCurrencyString),
           elementTextByID("total-estimate")(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString),
-         isElementVisibleById("eoyEstimate")(expectedValue = true)
-
+         isElementVisibleById("eoyEstimate")(expectedValue = true),
+          isElementVisibleById("gift-aid")(expectedValue = false)
         )
       }
     }
