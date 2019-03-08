@@ -1468,19 +1468,19 @@ object CalcBreakdownTestConstants {
             "name" -> "BRT",
             "rate" -> 20.0,
             "income" -> 20000.00,
-            "amount" -> 4000.00
+            "taxAmount" -> 4000.00
           ),
           Json.obj(
             "name" -> "HRT",
             "rate" -> 40.0,
             "income" -> 100000.00,
-            "amount" -> 40000.00
+            "taxAmount" -> 40000.00
           ),
           Json.obj(
             "name" -> "ART",
             "rate" -> 45.0,
             "income" -> 50000.00,
-            "amount" -> 22500.00
+            "taxAmount" -> 22500.00
           )
         )
       ),
@@ -1621,17 +1621,17 @@ object CalcBreakdownTestConstants {
             "name" -> "BRT",
             "rate" -> 20.0,
             "income" -> 20000.00,
-            "amount" -> 4000.00
+            "taxAmount" -> 4000.00
           ), Json.obj(
             "name" -> "HRT",
             "rate" -> 40.0,
             "income" -> 100000.00,
-            "amount" -> 40000.00
+            "taxAmount" -> 40000.00
           ), Json.obj(
             "name" -> "ART",
             "rate" -> 45.0,
             "income" -> 50000.00,
-            "amount" -> 22500.00
+            "taxAmount" -> 22500.00
           )
           )
         ),

@@ -114,7 +114,7 @@ case class BandModel(taxableIncome: BigDecimal,
                      taxAmount: BigDecimal,
                      name: String = "")
 
-case class TaxBandModel(name: String, rate: BigDecimal, income: BigDecimal, amount: BigDecimal)
+case class TaxBandModel(name: String, rate: BigDecimal, income: BigDecimal, taxAmount: BigDecimal)
 
 object TaxBandModel {
   implicit val format: Format[TaxBandModel] = Json.format[TaxBandModel]

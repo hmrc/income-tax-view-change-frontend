@@ -171,7 +171,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
               document.getElementById("SRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${srtBand.income.toCurrencyString} at ${srtBand.rate}%)"
             }
             "has the correct tax charged at SRT" in {
-              document.getElementById("SRTPpp-amount").text shouldBe srtBand.amount.toCurrencyString
+              document.getElementById("SRTPpp-amount").text shouldBe srtBand.taxAmount.toCurrencyString
             }
           }
           s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
@@ -234,7 +234,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
               document.getElementById("BRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate}%)"
             }
             "has the correct tax charged at BRT" in {
-              document.getElementById("BRTPpp-amount").text shouldBe brtBand.amount.toCurrencyString
+              document.getElementById("BRTPpp-amount").text shouldBe brtBand.taxAmount.toCurrencyString
             }
           }
           s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
@@ -301,7 +301,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
               document.getElementById("IRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${irtBand.income.toCurrencyString} at ${irtBand.rate}%)"
             }
             "has the correct tax charged at IRT" in {
-              document.getElementById("IRTPpp-amount").text shouldBe irtBand.amount.toCurrencyString
+              document.getElementById("IRTPpp-amount").text shouldBe irtBand.taxAmount.toCurrencyString
             }
           }
           s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
@@ -343,7 +343,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
               document.getElementById("HRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate}%)"
             }
             "has the correct tax charged at HRT" in {
-              document.getElementById("HRTPpp-amount").text shouldBe hrtBand.amount.toCurrencyString
+              document.getElementById("HRTPpp-amount").text shouldBe hrtBand.taxAmount.toCurrencyString
             }
 
             "does not have an ART section" in {
@@ -397,7 +397,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
               document.getElementById("ARTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate}%)"
             }
             "has the correct tax charged at ART" in {
-              document.getElementById("ARTPpp-amount").text shouldBe artBand.amount.toCurrencyString
+              document.getElementById("ARTPpp-amount").text shouldBe artBand.taxAmount.toCurrencyString
             }
           }
         }
