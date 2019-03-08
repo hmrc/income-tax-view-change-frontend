@@ -22,6 +22,7 @@ import assets.EstimatesTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages
 import auth.MtdItUser
+import ch.qos.logback.core.pattern.color.MagentaCompositeConverter
 import config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter._
 import models.calculation._
@@ -63,7 +64,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
     None,0, 0, 0, 0, 0,
     IncomeReceivedModel(0, 0, 0, 0),
     SavingsAndGainsModel(BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
-    DividendsModel(0, BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
+    DividendsModel(0, Seq(DividendsBandModel("basic band",0, None, None, 0,0))),
     NicModel(0, 0),
     None
   )
@@ -455,8 +456,8 @@ class CalcBreakdownHelperSpec extends TestSupport {
             document.getElementById("dividend-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.dividendAllowance
           }
 
-          s"should have the amount ${dividendAtBRT.dividends.allowance}" in {
-            document.getElementById("dividend-allowance").text shouldBe "-" + dividendAtBRT.dividends.allowance.toCurrencyString
+          s"should have the amount ${dividendAtBRT.dividends.totalAmount}" in {
+            document.getElementById("dividend-allowance").text shouldBe "-" + dividendAtBRT.dividends.totalAmount.toCurrencyString
           }
 
         }
@@ -477,17 +478,17 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"should have the heading ${
             messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-              dividendAtBRT.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtBRT.dividends.basicBand.taxRate.toString.replace(".0", "")
+              dividendAtBRT.dividends.band(0).income.toCurrencyString, dividendAtBRT.dividends.band(0).rate.toString.replace(".0", "")
             )
           }" in {
-            document.getElementById("dividend-brt-calc-heading").text shouldBe
+            document.getElementById(s"dividend-${dividendAtBRT.dividends.band(0).name}-calc-heading").text shouldBe
               messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-                dividendAtBRT.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtBRT.dividends.basicBand.taxRate.toString.replace(".0", "")
+                dividendAtBRT.dividends.band(0).income.toCurrencyString, dividendAtBRT.dividends.band(0).rate.toString.replace(".0", "")
               )
           }
 
-          s"should have the amount ${dividendAtBRT.dividends.basicBand.taxAmount}" in {
-            document.getElementById("dividend-brt-amount").text shouldBe dividendAtBRT.dividends.basicBand.taxAmount.toCurrencyString
+          s"should have the amount ${dividendAtBRT.dividends.band(0).amount}" in {
+           document.getElementById(s"dividend-${dividendAtBRT.dividends.band(0).name}-amount").text shouldBe dividendAtBRT.dividends.band(0).amount.toCurrencyString
           }
 
         }
@@ -517,8 +518,8 @@ class CalcBreakdownHelperSpec extends TestSupport {
             document.getElementById("dividend-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.dividendAllowance
           }
 
-          s"should have the amount ${dividendAtHRT.dividends.allowance}" in {
-            document.getElementById("dividend-allowance").text shouldBe "-" + dividendAtHRT.dividends.allowance.toCurrencyString
+          s"should have the amount ${dividendAtHRT.dividends.totalAmount}" in {
+            document.getElementById("dividend-allowance").text shouldBe "-" + dividendAtHRT.dividends.totalAmount.toCurrencyString
           }
 
         }
@@ -539,17 +540,17 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"should have the heading ${
             messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-              dividendAtHRT.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtHRT.dividends.basicBand.taxRate.toString.replace(".0", "")
+              dividendAtHRT.dividends.band(0).income.toCurrencyString, dividendAtHRT.dividends.band(0).rate.toString.replace(".0", "")
             )
           }" in {
-            document.getElementById("dividend-brt-calc-heading").text shouldBe
+            document.getElementById(s"dividend-${dividendAtBRT.dividends.band(0).name}-calc-heading").text shouldBe
               messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-                dividendAtHRT.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtHRT.dividends.basicBand.taxRate.toString.replace(".0", "")
+                dividendAtHRT.dividends.band(0).income.toCurrencyString, dividendAtHRT.dividends.band(0).rate.toString.replace(".0", "")
               )
           }
 
-          s"should have the amount ${dividendAtHRT.dividends.basicBand.taxAmount}" in {
-            document.getElementById("dividend-brt-amount").text shouldBe dividendAtHRT.dividends.basicBand.taxAmount.toCurrencyString
+          s"should have the amount ${dividendAtHRT.dividends.band(0).amount}" in {
+            document.getElementById(s"dividend-${dividendAtBRT.dividends.band(0).name}-amount").text shouldBe dividendAtHRT.dividends.band(0).amount.toCurrencyString
           }
 
         }
@@ -558,17 +559,17 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"should have the heading ${
             messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-              dividendAtHRT.dividends.higherBand.taxableIncome.toCurrencyString, dividendAtHRT.dividends.higherBand.taxRate.toString.replace(".0", "")
+              dividendAtHRT.dividends.band(1).income.toCurrencyString, dividendAtHRT.dividends.band(1).rate.toString.replace(".0", "")
             )
           }" in {
-            document.getElementById("dividend-hrt-calc-heading").text shouldBe
+            document.getElementById(s"dividend-${dividendAtHRT.dividends.band(1).name}-calc-heading").text shouldBe
               messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-                dividendAtHRT.dividends.higherBand.taxableIncome.toCurrencyString, dividendAtHRT.dividends.higherBand.taxRate.toString.replace(".0", "")
+                dividendAtHRT.dividends.band(1).income.toCurrencyString, dividendAtHRT.dividends.band(1).rate.toString.replace(".0", "")
               )
           }
 
-          s"should have the amount ${dividendAtHRT.dividends.higherBand.taxAmount}" in {
-            document.getElementById("dividend-hrt-amount").text shouldBe dividendAtHRT.dividends.higherBand.taxAmount.toCurrencyString
+          s"should have the amount ${dividendAtHRT.dividends.band(1).amount}" in {
+            document.getElementById(s"dividend-${dividendAtHRT.dividends.band(1).name}-amount").text shouldBe dividendAtHRT.dividends.band(1).amount.toCurrencyString
           }
 
         }
@@ -598,8 +599,8 @@ class CalcBreakdownHelperSpec extends TestSupport {
             document.getElementById("dividend-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.dividendAllowance
           }
 
-          s"should have the amount ${dividendAtART.dividends.allowance}" in {
-            document.getElementById("dividend-allowance").text shouldBe "-" + dividendAtART.dividends.allowance.toCurrencyString
+          s"should have the amount ${dividendAtART.dividends.totalAmount}" in {
+            document.getElementById("dividend-allowance").text shouldBe "-" + dividendAtART.dividends.totalAmount.toCurrencyString
           }
 
         }
@@ -620,17 +621,17 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"should have the heading ${
             messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-              dividendAtART.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtART.dividends.basicBand.taxRate.toString.replace(".0", "")
+              dividendAtART.dividends.band(0).income.toCurrencyString, dividendAtART.dividends.band(0).rate.toString.replace(".0", "")
             )
           }" in {
-            document.getElementById("dividend-brt-calc-heading").text shouldBe
+            document.getElementById(s"dividend-${dividendAtBRT.dividends.band(0).name}-calc-heading").text shouldBe
               messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-                dividendAtART.dividends.basicBand.taxableIncome.toCurrencyString, dividendAtART.dividends.basicBand.taxRate.toString.replace(".0", "")
+                dividendAtART.dividends.band(0).income.toCurrencyString, dividendAtART.dividends.band(0).rate.toString.replace(".0", "")
               )
           }
 
-          s"should have the amount ${dividendAtART.dividends.basicBand.taxAmount}" in {
-            document.getElementById("dividend-brt-amount").text shouldBe dividendAtART.dividends.basicBand.taxAmount.toCurrencyString
+          s"should have the amount ${dividendAtART.dividends.band(0).amount}" in {
+            document.getElementById(s"dividend-${dividendAtBRT.dividends.band(0).name}-amount").text shouldBe dividendAtART.dividends.band(0).amount.toCurrencyString
           }
 
         }
@@ -639,17 +640,17 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"should have the heading ${
             messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-              dividendAtART.dividends.higherBand.taxableIncome.toCurrencyString, dividendAtART.dividends.higherBand.taxRate.toString.replace(".0", "")
+              dividendAtART.dividends.band(1).income.toCurrencyString, dividendAtART.dividends.band(1).rate.toString.replace(".0", "")
             )
           }" in {
-            document.getElementById("dividend-hrt-calc-heading").text shouldBe
+            document.getElementById(s"dividend-${dividendAtBRT.dividends.band(1).name}-calc-heading").text shouldBe
               messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-                dividendAtART.dividends.higherBand.taxableIncome.toCurrencyString, dividendAtART.dividends.higherBand.taxRate.toString.replace(".0", "")
+                dividendAtART.dividends.band(1).income.toCurrencyString, dividendAtART.dividends.band(1).rate.toString.replace(".0", "")
               )
           }
 
-          s"should have the amount ${dividendAtART.dividends.higherBand.taxAmount}" in {
-            document.getElementById("dividend-hrt-amount").text shouldBe dividendAtART.dividends.higherBand.taxAmount.toCurrencyString
+          s"should have the amount ${dividendAtART.dividends.band(1).amount}" in {
+            document.getElementById(s"dividend-${dividendAtBRT.dividends.band(1).name}-amount").text shouldBe dividendAtART.dividends.band(1).amount.toCurrencyString
           }
 
         }
@@ -658,17 +659,17 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"should have the heading ${
             messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-              dividendAtART.dividends.additionalBand.taxableIncome.toCurrencyString, dividendAtART.dividends.additionalBand.taxRate.toString.replace(".0", "")
+              dividendAtART.dividends.band(2).income.toCurrencyString, dividendAtART.dividends.band(2).rate.toString.replace(".0", "")
             )
           }" in {
-            document.getElementById("dividend-art-calc-heading").text shouldBe
+            document.getElementById(s"dividend-${dividendAtBRT.dividends.band(2).name}-calc-heading").text shouldBe
               messages.InYearEstimate.CalculationBreakdown.dividendAtRate(
-                dividendAtART.dividends.additionalBand.taxableIncome.toCurrencyString, dividendAtART.dividends.additionalBand.taxRate.toString.replace(".0", "")
+                dividendAtART.dividends.band(2).income.toCurrencyString, dividendAtART.dividends.band(2).rate.toString.replace(".0", "")
               )
           }
 
-          s"should have the amount ${dividendAtART.dividends.additionalBand.taxAmount}" in {
-            document.getElementById("dividend-art-amount").text shouldBe dividendAtART.dividends.additionalBand.taxAmount.toCurrencyString
+          s"should have the amount ${dividendAtART.dividends.band(2).amount}" in {
+            document.getElementById(s"dividend-${dividendAtBRT.dividends.band(2).name}-amount").text shouldBe dividendAtART.dividends.band(2).amount.toCurrencyString
           }
         }
       }

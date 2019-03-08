@@ -111,15 +111,14 @@
             <td id="dividend-income" class="summary-data">@breakdown.incomeReceived.ukDividends.toCurrency</td>
             </tr>
 
-        <tr>
-            <td id="dividend-allowance-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-allowance")</td>
-            <td id="dividend-allowance" class="summary-data">-@breakdown.dividends.allowance.toCurrency</td>
-        </tr>
-
-        <tr class="total-section">
-            <td id="taxable-dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-dividend-income")</td>
-            <td id="taxable-dividend-income" class="summary-data">@breakdown.taxableDividendIncome.toCurrency</td>
-        </tr>
+            <tr>
+                <td id="dividend-allowance-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-allowance")</td>
+                <td id="dividend-allowance" class="summary-data">-@breakdown.dividends.totalAmount.toCurrency</td>
+            </tr>
+            <tr class="total-section">
+                <td id="taxable-dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-dividend-income")</td>
+                <td id="taxable-dividend-income" class="summary-data">@breakdown.taxableDividendIncome.toCurrency</td>
+            </tr>
         }
 
         <!-- Income Tax Section from PayPensionsProfit-->
@@ -197,40 +196,18 @@
         }
 
         <!-- Dividends Section -->
-        @if(breakdown.hasDividendsAtBRT) {
-            <tr id="dividend-brt-section" class="no-border-bottom">
-                <td id="dividend-brt-calc-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.dividend-tax")
-                    (<span id="dividend-brt-calc">@breakdown.dividends.basicBand.taxableIncome.toCurrencyString</span>
-                    @messages("estimated_tax_liability.calc-breakdown.at")
-                    <span id="dividend-brt-rate">@breakdown.dividends.basicBand.taxRate</span>%)
-                </td>
-                <td id="dividend-brt-amount" class="summary-data">@breakdown.dividends.basicBand.taxAmount.toCurrency</td>
-            </tr>
-
-            @if(breakdown.hasDividendsAtHRT) {
-                <tr id="dividend-hrt-section" class="no-border-bottom">
-                    <td id="dividend-hrt-calc-heading">
-                        @messages("estimated_tax_liability.calc-breakdown.dividend-tax")
-                        (<span id="dividend-hrt-calc">@breakdown.dividends.higherBand.taxableIncome.toCurrencyString</span>
-                        @messages("estimated_tax_liability.calc-breakdown.at")
-                        <span id="dividend-hrt-rate">@breakdown.dividends.higherBand.taxRate</span>%)
-                    </td>
-                    <td id="dividend-hrt-amount" class="summary-data">@breakdown.dividends.higherBand.taxAmount.toCurrency</td>
-                </tr>
-
-                @if(breakdown.hasDividendsAtART) {
-                    <tr id="dividend-art-section" class="no-border-bottom">
-                        <td id="dividend-art-calc-heading">
-                            @messages("estimated_tax_liability.calc-breakdown.dividend-tax")
-                            (<span id="dividend-art-calc">@breakdown.dividends.additionalBand.taxableIncome.toCurrencyString</span>
-                            @messages("estimated_tax_liability.calc-breakdown.at")
-                            <span id="dividend-art-rate">@breakdown.dividends.additionalBand.taxRate</span>%)
-                        </td>
-                        <td id="dividend-art-amount" class="summary-data">@breakdown.dividends.additionalBand.taxAmount.toCurrency</td>
-                    </tr>
-                }
-            }
+        @for(band <- breakdown.dividends.band){
+        @if(band.amount > 0) {
+        <tr id=@(s"dividend-${band.name}-section") class="no-border-bottom">
+            <td id=@(s"dividend-${band.name}-calc-heading")>
+                @{messages("estimated_tax_liability.calc-breakdown.dividend-tax")}
+                (<span id=@(s"dividend-${band.name}-calc")>@band.income.toCurrencyString</span>
+                @messages("estimated_tax_liability.calc-breakdown.at")
+                <span id=@(s"dividend-${band.name}-rate")>@band.rate</span>%)
+            </td>
+            <td id=@(s"dividend-${band.name}-amount") class="summary-data">@band.amount.toCurrency</td>
+        </tr>
+        }
         }
 
 
@@ -284,4 +261,3 @@
         </tbody>
     </table>
     }
-

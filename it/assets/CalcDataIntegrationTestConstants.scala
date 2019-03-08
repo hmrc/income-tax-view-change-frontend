@@ -62,21 +62,30 @@ object CalcDataIntegrationTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 5000.0,
-      basicBand = BandModel(
-        taxableIncome = 1000.0,
-        taxRate = 7.5,
-        taxAmount = 75.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 2000.0,
-        taxRate = 37.5,
-        taxAmount = 750.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 3000.0,
-        taxRate = 38.1,
-        taxAmount = 1143.0
+      totalAmount = 5000.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 7.5, threshold = None,
+          apportionedThreshold = None,
+          income = 1000.0,
+          amount = 75.0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 37.5, threshold = None,
+          apportionedThreshold = None,
+          income = 2000.0,
+          amount = 750.0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 38.1,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 3000.0,
+          amount = 1143.0
+        )
       )
     ),
     nic = NicModel(
@@ -131,21 +140,30 @@ object CalcDataIntegrationTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 5000.0,
-      basicBand = BandModel(
-        taxableIncome = 1000.0,
-        taxRate = 7.5,
-        taxAmount = 75.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 2000.0,
-        taxRate = 37.5,
-        taxAmount = 750.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 3000.0,
-        taxRate = 38.1,
-        taxAmount = 1143.0
+      totalAmount = 5000.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 7.5, threshold = None,
+          apportionedThreshold = None,
+          income = 1000.0,
+          amount = 75.0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 37.5, threshold = None,
+          apportionedThreshold = None,
+          income = 2000.0,
+          amount = 750.0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 38.1,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 3000.0,
+          amount = 1143.0
+        )
       )
     ),
     nic = NicModel(
@@ -163,6 +181,7 @@ object CalcDataIntegrationTestConstants {
 
   val calculationDataSuccessWithEoyJson: JsValue =
     Json.obj(
+      "nationalRegime" -> "UK",
       "incomeTaxYTD" -> 90500,
       "incomeTaxThisPeriod" -> 2000,
       "payFromAllEmployments" -> 0,
@@ -412,11 +431,33 @@ object CalcDataIntegrationTestConstants {
             "amount" -> 22500.00
           )
           )
-        )
+        ),
+        "dividends" -> Json.obj(
+          "totalAmount" -> 5000,
+          "band" -> Json.arr(
+            Json.obj(
+              "name" -> "basic-band",
+              "rate" -> 7.5,
+              "income" -> 1000,
+              "amount" -> 75.0
+            ),
+            Json.obj(
+              "name" -> "higher-band",
+              "rate" -> 37.5,
+              "income" -> 2000,
+              "amount" -> 750
+            ),
+            Json.obj(
+              "name" -> "additional-band",
+              "rate" -> 38.1,
+              "income" -> 3000,
+              "amount" -> 1143
+            )))
       )
     )
 
   val calculationDataSuccessJson: JsValue = Json.obj(
+    "nationalRegime" -> "UK",
     "incomeTaxYTD" -> 90500,
     "incomeTaxThisPeriod" -> 2000,
     "payFromAllEmployments" -> 0,
@@ -637,7 +678,28 @@ object CalcDataIntegrationTestConstants {
           "amount" -> 22500.00
         )
         )
-      )
+      ),
+      "dividends" -> Json.obj(
+        "totalAmount" -> 5000,
+        "band" -> Json.arr(
+          Json.obj(
+            "name" -> "basic-band",
+            "rate" -> 7.5,
+            "income" -> 1000,
+            "amount" -> 75.0
+          ),
+          Json.obj(
+            "name" -> "higher-band",
+            "rate" -> 37.5,
+            "income" -> 2000,
+            "amount" -> 750
+          ),
+          Json.obj(
+            "name" -> "additional-band",
+            "rate" -> 38.1,
+            "income" -> 3000,
+            "amount" -> 1143
+          )))
     )
   )
 

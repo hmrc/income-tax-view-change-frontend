@@ -66,21 +66,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 5000.0,
-      basicBand = BandModel(
-        taxableIncome = 1000.0,
-        taxRate = 7.5,
-        taxAmount = 75.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 2000.0,
-        taxRate = 37.5,
-        taxAmount = 750.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 3000.0,
-        taxRate = 38.1,
-        taxAmount = 1143.0
+      totalAmount = 5000.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 7.5, threshold = None,
+          apportionedThreshold = None,
+          income = 1000,
+          amount = 75.0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 37.5, threshold = None,
+          apportionedThreshold = None,
+          income = 2000,
+          amount = 750.0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 38.1,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 3000,
+          amount = 1143.0
+        )
       )
     ),
     nic = NicModel(
@@ -94,6 +103,8 @@ object CalcBreakdownTestConstants {
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
     )
   )
+
+
 
   val scottishBandModelJustSRT = CalculationDataModel(
     totalIncomeTaxNicYtd = 149.86,
@@ -135,21 +146,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 5000.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 1000,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -206,21 +226,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 5000.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 1000,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -276,21 +305,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 5000.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 1000,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -346,21 +384,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -414,21 +461,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -447,7 +503,7 @@ object CalcBreakdownTestConstants {
     totalIncomeTaxNicYtd = 149.86,
     totalTaxableIncome = 132.00,
     personalAllowance = 2868.00,
-    taxReliefs=24.90,
+    taxReliefs = 24.90,
     totalIncomeAllowancesUsed = 2868.00,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 1500.00,
@@ -483,21 +539,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 0.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -552,21 +617,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 0.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -620,21 +694,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 0.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -688,21 +771,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 5000.0,
-      basicBand = BandModel(
-        taxableIncome = 1000.0,
-        taxRate = 7.5,
-        taxAmount = 75.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 5000.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 7.5, threshold = None,
+          apportionedThreshold = None,
+          income = 1000.0,
+          amount = 75.0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -757,21 +849,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 5000.0,
-      basicBand = BandModel(
-        taxableIncome = 1000.0,
-        taxRate = 7.5,
-        taxAmount = 75.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 2000.0,
-        taxRate = 37.5,
-        taxAmount = 750.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 5000.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 7.5, threshold = None,
+          apportionedThreshold = None,
+          income = 1000.0,
+          amount = 75.0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 37.5, threshold = None,
+          apportionedThreshold = None,
+          income = 2000.0,
+          amount = 750.0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -826,21 +927,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 5000.0,
-      basicBand = BandModel(
-        taxableIncome = 1000.0,
-        taxRate = 7.5,
-        taxAmount = 75.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 2000.0,
-        taxRate = 37.5,
-        taxAmount = 750.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 3000.0,
-        taxRate = 38.1,
-        taxAmount = 1143.0
+      totalAmount = 5000.0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 7.5, threshold = None,
+          apportionedThreshold = None,
+          income = 1000.0,
+          amount = 75.0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 37.5, threshold = None,
+          apportionedThreshold = None,
+          income = 2000.0,
+          amount = 750.0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 38.1,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 3000.0,
+          amount = 1143.0
+        )
       )
     ),
     nic = NicModel(
@@ -895,21 +1005,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -963,21 +1082,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -1031,21 +1159,30 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
+      totalAmount = 0,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
       )
     ),
     nic = NicModel(
@@ -1099,22 +1236,8 @@ object CalcBreakdownTestConstants {
       )
     ),
     dividends = DividendsModel(
-      allowance = 0.0,
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      )
+      totalAmount = 0,
+      Seq()
     ),
     nic = NicModel(
       class2 = 0.0,
@@ -1168,24 +1291,6 @@ object CalcBreakdownTestConstants {
         "taxAmount" -> 0
       )
     ),
-    "dividends" -> Json.obj(
-      "allowance" -> 5000,
-      "basicBand" -> Json.obj(
-        "taxableIncome" -> 1000,
-        "taxRate" -> 7.5,
-        "taxAmount" -> 75
-      ),
-      "higherBand" -> Json.obj(
-        "taxableIncome" -> 2000,
-        "taxRate" -> 37.5,
-        "taxAmount" -> 750
-      ),
-      "additionalBand" -> Json.obj(
-        "taxableIncome" -> 3000,
-        "taxRate" -> 38.1,
-        "taxAmount" -> 1143
-      )
-    ),
     "nic" -> Json.obj(
       "class2" -> 10000,
       "class4" -> 14000
@@ -1215,6 +1320,28 @@ object CalcBreakdownTestConstants {
             "amount" -> 22500.00
           )
         )
+      ),
+      "dividends" -> Json.obj(
+        "totalAmount" -> 5000,
+        "band" -> Json.arr(
+          Json.obj(
+            "name" -> "basic-band",
+            "rate" -> 7.5,
+            "income" -> 1000,
+            "amount" -> 75.0
+          ),
+          Json.obj(
+            "name" -> "higher-band",
+            "rate" -> 37.5,
+            "income" -> 2000,
+            "amount" -> 750
+          ),
+          Json.obj(
+            "name" -> "additional-band",
+            "rate" -> 38.1,
+            "income" -> 3000,
+            "amount" -> 1143
+          ))
       )
     )
   )
@@ -1469,19 +1596,39 @@ object CalcBreakdownTestConstants {
           "amount" -> 22500.00
         )
         )
-      )
+      ),
+      "dividends" -> Json.obj(
+        "totalAmount" -> 5000,
+        "band" -> Json.arr(
+          Json.obj(
+            "name" -> "basic-band",
+            "rate" -> 7.5,
+            "income" -> 1000,
+            "amount" -> 75.0
+          ),
+          Json.obj(
+            "name" -> "higher-band",
+            "rate" -> 37.5,
+            "income" -> 2000,
+            "amount" -> 750
+          ),
+          Json.obj(
+            "name" -> "additional-band",
+            "rate" -> 38.1,
+            "income" -> 3000,
+            "amount" -> 1143
+          )))
     )
   )
-
 
   val calculationDataSuccessMinJson: JsValue = Json.obj()
 
   val calculationDataErrorModel: CalculationDataErrorModel = CalculationDataErrorModel(testErrorStatus, testErrorMessage)
   val calculationDataErrorJson: JsValue =
-     Json.obj(
-       "code" ->testErrorStatus,
-       "message" ->testErrorMessage
-     )
+    Json.obj(
+      "code" -> testErrorStatus,
+      "message" -> testErrorMessage
+    )
 
   val calculationDisplaySuccessModel: CalculationDataModel => CalcDisplayModel = calcModel =>
     CalcDisplayModel(
@@ -1514,13 +1661,13 @@ object CalcBreakdownTestConstants {
       Some(calculationDataSuccessModel),
       Estimate
     )
-  
+
   val testCalculationErrorModel: CalculationErrorModel = CalculationErrorModel(testErrorStatus, testErrorMessage)
   val testCalculationErrorJson: JsValue =
-     Json.obj(
-       "code" -> testErrorStatus,
-       "message" -> testErrorMessage
-     )
+    Json.obj(
+      "code" -> testErrorStatus,
+      "message" -> testErrorMessage
+    )
 
   val testCalculationInputJson: JsValue =
     Json.obj(
@@ -1534,9 +1681,9 @@ object CalcBreakdownTestConstants {
           "eoyEstimate" -> Json.obj(
             "incomeTaxNicAmount" -> 987.65
           )
-       )
-     )
-  )
+        )
+      )
+    )
 
   val testCalculationOutputJson: JsValue =
     Json.obj(
