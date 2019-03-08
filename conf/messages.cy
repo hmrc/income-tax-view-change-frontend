@@ -81,6 +81,7 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.p1      = Gallai eich am
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = ni fydd cyfraddau na lwfansau''n cael eu cymhwyso''n llawn tan ddiwedd y flwyddyn dreth
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = efallai y byddwch yn ennill mwy o arian
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = efallai bod gennych incwm nac adroddir amdano yn eich meddalwedd cyfrifyddu
+estimated_tax_liability.calc-breakdown.nationalRegime           = Cyfundrefn Genedlaethol
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
