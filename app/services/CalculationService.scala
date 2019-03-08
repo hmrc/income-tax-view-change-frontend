@@ -71,19 +71,13 @@ class CalculationService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
                               (implicit headerCarrier: HeaderCarrier): Future[List[LastTaxCalculationWithYear]] = {
     Future.sequence(orderedYears.map {
       year => {
-        if (frontendAppConfig.features.calcDataApiEnabled()) {
-          getLastEstimatedTaxCalculation(nino, year).map {
-            model => LastTaxCalculationWithYear(model, year)
+        getLatestCalculation(nino, year).map {
+          case x: CalculationModel => {
+            val status = if (x.isBill) Crystallised else Estimate
+            LastTaxCalculationWithYear(LastTaxCalculation(x.calcID, x.calcTimestamp.get, x.calcAmount.get, status), year)
           }
-        } else {
-          getLatestCalculation(nino, year).map {
-            case x: CalculationModel => {
-              val status = if (x.isBill) Crystallised else Estimate
-              LastTaxCalculationWithYear(LastTaxCalculation(x.calcID, x.calcTimestamp.get, x.calcAmount.get, status), year)
-            }
-            case x: CalculationErrorModel =>
-              LastTaxCalculationWithYear(LastTaxCalculationError(x.code, x.message), year)
-          }
+          case x: CalculationErrorModel =>
+            LastTaxCalculationWithYear(LastTaxCalculationError(x.code, x.message), year)
         }
       }
     })

@@ -76,34 +76,6 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       frontendAppConfig
     )
 
-    "when the Calculation Data api feature switch is enabled" should {
-
-      "passed an ordered list of years" should {
-
-        "for a list of Estimates" should {
-
-          "return a list of LastTaxCalculationWithYear estimate models" in new CalculationDataApiEnabled {
-            setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
-            setupLastTaxCalculationResponse(testNino, testYearPlusOne)(lastTaxCalcSuccess)
-            await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
-          }
-        }
-
-        "for a list of Bills" should {
-
-          "return a list of LastTaxCalculationWithYear bills models" in new CalculationDataApiEnabled {
-            setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcCrystallisedSuccess)
-            setupLastTaxCalculationResponse(testNino, testYearPlusOne)(lastTaxCalcCrystallisedSuccess)
-            await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearCrystallisedList
-          }
-        }
-      }
-
-      "passed an empty list of Ints" in new CalculationDataApiEnabled {
-        await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
-      }
-    }
-
     "when the  Calculation Data api feature switch is disabled" should {
 
       "passed an ordered list of years" should {

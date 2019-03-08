@@ -15,7 +15,7 @@
  */
 package assets
 
-import assets.BaseIntegrationTestConstants.testCalcId
+import assets.BaseIntegrationTestConstants.{testCalcId, testCalcId2}
 import enums.Estimate
 import models.calculation._
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -1437,6 +1437,25 @@ object CalcDataIntegrationTestConstants {
       "incomeTaxNicAmount" -> 987.65
     )
   )
+
+  val estimateLatestTaxCalcResponse =
+    CalculationModel(testCalcId,
+      Some(90500.00),
+      Some("2017-07-06T12:34:56.789Z"),
+      None,
+      None,
+      None
+    )
+
+  val estimateLatestTaxCalcResponse2 =
+    CalculationModel(
+      testCalcId2,
+      Some(90500.00),
+      Some("2017-07-06T12:34:56.789Z"),
+      None,
+      None,
+      None
+    )
 
   val latestCalcModel: CalculationModel =
     CalculationModel(
