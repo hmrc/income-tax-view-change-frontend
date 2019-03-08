@@ -26,7 +26,7 @@ import play.api.libs.json.{JsValue, Json}
 object CalcBreakdownTestConstants {
 
   val calculationDataSuccessModel = CalculationDataModel(
-    nationalRegime = Some("UK"),
+    nationalRegime = Some("Scotland"),
     totalIncomeTaxNicYtd = 90500.00,
     totalTaxableIncome = 198500.00,
     personalAllowance = 11500.00,
@@ -1402,7 +1402,7 @@ object CalcBreakdownTestConstants {
   )
 
   val calculationDataSuccessJson: JsValue = Json.obj(
-    "nationalRegime" -> "UK",
+    "nationalRegime" -> "Scotland",
     "totalTaxableIncome" -> 198500,
     "totalIncomeTaxNicYtd" -> 90500,
     "personalAllowance" -> 11500,
@@ -1510,7 +1510,6 @@ object CalcBreakdownTestConstants {
   )
 
   val calculationDataFullJson: JsValue = Json.obj(
-    "nationalRegime" -> "UK",
    "payPensionsProfitAtBRT" -> 20000,
    "incomeTaxOnPayPensionsProfitAtBRT" -> 4000,
    "payPensionsProfitAtHRT" -> 100000,
@@ -1537,25 +1536,6 @@ object CalcBreakdownTestConstants {
    "dividendHRT" -> 37.5,
    "dividendART" -> 38.1,
     "incomeTax" -> Json.obj(
-      "payAndPensionsProfit" -> Json.obj(
-        "band" -> Json.arr(Json.obj(
-          "name" -> "BRT",
-          "rate" -> 20.0,
-          "income" -> 20000.00,
-          "amount" -> 4000.00
-        ), Json.obj(
-          "name" -> "HRT",
-          "rate" -> 40.0,
-          "income" -> 100000.00,
-          "amount" -> 40000.00
-        ), Json.obj(
-          "name" -> "ART",
-          "rate" -> 45.0,
-          "income" -> 50000.00,
-          "amount" -> 22500.00
-        )
-        )
-      ),
       "dividends" -> Json.obj(
         "totalAmount" -> 5000,
         "band" -> Json.arr(
@@ -1635,6 +1615,25 @@ object CalcBreakdownTestConstants {
           "paymentsMade" -> 0,
           "rate" -> 0.0,
           "taxableIncome" -> 0
+        ),
+        "payAndPensionsProfit" -> Json.obj(
+          "band" -> Json.arr(Json.obj(
+            "name" -> "BRT",
+            "rate" -> 20.0,
+            "income" -> 20000.00,
+            "amount" -> 4000.00
+          ), Json.obj(
+            "name" -> "HRT",
+            "rate" -> 40.0,
+            "income" -> 100000.00,
+            "amount" -> 40000.00
+          ), Json.obj(
+            "name" -> "ART",
+            "rate" -> 45.0,
+            "income" -> 50000.00,
+            "amount" -> 22500.00
+          )
+          )
         ),
         "savingsAndGains" -> Json.obj(
           "totalAmount" -> 0,

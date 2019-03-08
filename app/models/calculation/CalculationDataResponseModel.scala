@@ -134,7 +134,7 @@ object CalculationDataModel {
   }
 
   implicit val reads: Reads[CalculationDataModel] = (
-      logFieldError(__ \ "nationalRegime") and
+      logFieldError(__ \ "calcObject" \ "calcResult" \ "nationalRegime") and
       defaultZero(__ \ "calcObject" \ "calcResult" \ "totalTaxableIncome") and
       (__ \ "calcObject" \ "calcResult" \ "incomeTaxNicYtd").read[BigDecimal] and
       defaultZero(__ \ "calcObject" \ "calcResult" \ "annualAllowances" \ "personalAllowance") and
@@ -146,7 +146,7 @@ object CalculationDataModel {
       __.read[GiftAidModel] and
       __.read[NicModel] and
         (__ \ "calcObject" \ "calcResult" \ "eoyEstimate").readNullable[EoyEstimate].orElse(Reads.pure(None)) and
-        (__ \ "incomeTax" \ "payAndPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
+        (__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "payAndPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
     ) (CalculationDataModel.apply _)
 
   implicit val writes: Writes[CalculationDataModel] = (
