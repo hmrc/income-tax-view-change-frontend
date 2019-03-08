@@ -61,8 +61,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, estimateLastTaxCalcResponse)
+        And("I wiremock stub a successful Get Last latest Tax calculation response")
+        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
         SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
@@ -71,7 +71,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyLastTaxCalculationCall(testNino, testYear)
+        verifyLatestCalculationCall(testNino, testYear)
         verifyCalculationDataCall(testNino, testCalcId)
 
         val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "BRT").get
@@ -131,7 +131,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
       }
     }
 
-    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response and Crystallised EoY amount" when {
+    "isAuthorisedUser with an active enrolment, valid latest calc estimate, valid breakdown response and Crystallised EoY amount" when {
 
       "a successful response is retrieved for the financial transactions and there is an outstanding amount (unpaid)" should {
 
@@ -140,8 +140,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
+          And("I wiremock stub a successful Get Latest Tax Calculation response")
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
 
           And("I wiremock stub a successful Get CalculationData response")
           SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
@@ -154,7 +154,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLastTaxCalculationCall(testNino, testYear)
+          verifyLatestCalculationCall(testNino, testYear)
           verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
 
@@ -225,8 +225,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
+          And("I wiremock stub a successful Get Latest Tax Calculation response")
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
 
           And("I wiremock stub a successful Get CalculationData response")
           SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
@@ -239,7 +239,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLastTaxCalculationCall(testNino, testYear)
+          verifyLatestCalculationCall(testNino, testYear)
           verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
 
@@ -308,8 +308,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
+          And("I wiremock stub a successful Get Latest Tax Calculation response")
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
 
           And("I wiremock stub a successful Get CalculationData response")
           SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
@@ -321,7 +321,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLastTaxCalculationCall(testNino, testYear)
+          verifyLatestCalculationCall(testNino, testYear)
           verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
 
@@ -331,7 +331,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
       }
     }
 
-    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response but NO EoY Estimate" should {
+    "isAuthorisedUser with an active enrolment, valid latest calc estimate, valid breakdown response but NO EoY Estimate" should {
 
       "return the correct page with a valid total" in {
 
@@ -339,7 +339,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, estimateLastTaxCalcResponse)
+        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
 
         And("I wiremock stub a successful Get CalculationData response")
         SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessJson.toString())
@@ -348,7 +348,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyLastTaxCalculationCall(testNino, testYear)
+        verifyLatestCalculationCall(testNino, testYear)
         verifyCalculationDataCall(testNino, testCalcId)
 
         val brtBand = calculationDataSuccessModel.payAndPensionsProfitBands.find(_.name == "BRT").get
@@ -416,8 +416,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("a successful Get Last Estimated Tax Liability response via wiremock stub")
-        IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, estimateLastTaxCalcResponse)
+        And("a successful Get Latest Calculation response via wiremock stub")
+        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
 
         And("I wiremock stub an erroneous response")
         SelfAssessmentStub.stubGetCalcDataError(testNino, testCalcId, calculationDataErrorModel)
@@ -426,7 +426,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyLastTaxCalculationCall(testNino, testYear)
+        verifyLatestCalculationCall(testNino, testYear)
         verifyCalculationDataCall(testNino, testCalcId)
 
         Then("a successful response is returned with the correct estimate")
@@ -440,30 +440,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
       }
     }
 
-    "isAuthorisedUser with an active enrolment no data found response from Last Calculation" should {
-
-      "Return no data found response and render view explaining that this will be available once they've submitted income" in {
-
-        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-
-        And("a No Data Found response from Get Last Estimated Tax Liability via wiremock stub")
-        IncomeTaxViewChangeStub.stubGetLastCalcNoData(testNino, testYear)
-
-        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyLastTaxCalculationCall(testNino, testYear)
-
-        Then("a Not Found response is returned and correct view rendered")
-        res should have(
-          httpStatus(NOT_FOUND),
-          pageTitle(messages.title(testYearInt))
-        )
-      }
-    }
-
     "isAuthorisedUser with an active enrolment but error response from Get Last Calculation" should {
 
       "Render the Estimated Tax Liability Error Page" in {
@@ -471,14 +447,14 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("an Error Response response from Get Last Estimated Tax Liability via wiremock stub")
-        IncomeTaxViewChangeStub.stubGetLastCalcError(testNino, testYear)
+        And("an Error Response response from Get Latest Calculation via wiremock stub")
+        IncomeTaxViewChangeStub.stubGetLatestCalcError(testNino, testYear)
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyLastTaxCalculationCall(testNino, testYear)
+        verifyLatestCalculationCall(testNino, testYear)
 
         Then("an Internal Server Error response is returned and correct view rendered")
         res should have(

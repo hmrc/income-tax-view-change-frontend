@@ -1548,6 +1548,16 @@ object CalcBreakdownTestConstants {
       "incomeTaxNicAmount" -> 987.65
     )
 
+  val testCalcModelSuccess: CalculationModel =
+    CalculationModel(
+      testTaxCalculationId,
+      Some(543.21),
+      Some(testTimeStampString),
+      None,
+      None,
+      None
+    )
+
   val testCalcModelCrystalised: CalculationModel =
     CalculationModel(
       testTaxCalculationId,
