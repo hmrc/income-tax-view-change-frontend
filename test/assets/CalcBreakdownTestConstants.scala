@@ -1535,29 +1535,6 @@ object CalcBreakdownTestConstants {
    "dividendBRT" -> 7.5,
    "dividendHRT" -> 37.5,
    "dividendART" -> 38.1,
-    "incomeTax" -> Json.obj(
-      "dividends" -> Json.obj(
-        "totalAmount" -> 5000,
-        "band" -> Json.arr(
-          Json.obj(
-            "name" -> "basic-band",
-            "rate" -> 7.5,
-            "income" -> 1000,
-            "amount" -> 75.0
-          ),
-          Json.obj(
-            "name" -> "higher-band",
-            "rate" -> 37.5,
-            "income" -> 2000,
-            "amount" -> 750
-          ),
-          Json.obj(
-            "name" -> "additional-band",
-            "rate" -> 38.1,
-            "income" -> 3000,
-            "amount" -> 1143
-          )))
-    ),
     "calcObject" -> Json.obj(
     "calcSummary" -> Json.obj(
       "nationalRegime" -> "UK",
@@ -1681,7 +1658,28 @@ object CalcBreakdownTestConstants {
             )
           ),
           "personalAllowanceUsed" -> 15487995938.37
-        )
+        ),
+        "dividends" -> Json.obj(
+          "totalAmount" -> 5000,
+          "band" -> Json.arr(
+            Json.obj(
+              "name" -> "basic-band",
+              "rate" -> 7.5,
+              "income" -> 1000,
+              "taxAmount" -> 75.0
+            ),
+            Json.obj(
+              "name" -> "higher-band",
+              "rate" -> 37.5,
+              "income" -> 2000,
+              "taxAmount" -> 750
+            ),
+            Json.obj(
+              "name" -> "additional-band",
+              "rate" -> 38.1,
+              "income" -> 3000,
+              "taxAmount" -> 1143
+            )))
       ),
       "taxableIncome" -> Json.obj(
         "totalIncomeAllowancesUsed" -> 12005,

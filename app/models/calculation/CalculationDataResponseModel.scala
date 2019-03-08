@@ -215,8 +215,8 @@ object OldSavingsAndGainsModel {
 
 object DividendsModel {
   implicit val reads: Reads[DividendsModel] = (
-    defaultZero(__ \ "incomeTax" \ "dividends" \ "totalAmount") and
-      (__ \ "incomeTax" \ "dividends" \ "band").read[Seq[DividendsBandModel]].orElse(Reads.pure(Nil))
+    defaultZero(__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "dividends" \ "totalAmount") and
+      (__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "dividends" \ "band").read[Seq[DividendsBandModel]].orElse(Reads.pure(Nil))
     ) (DividendsModel.apply _)
   implicit val writes: Writes[DividendsModel] = Json.writes[DividendsModel]
 }
@@ -299,7 +299,7 @@ object DividendsBandModel {
       (__ \ "threshold").readNullable[Int] and
       (__ \ "apportionedThreshold").readNullable[Int] and
       (__ \ "income").read[BigDecimal] and
-      (__ \ "amount").read[BigDecimal]
+      (__ \ "taxAmount").read[BigDecimal]
     ) (DividendsBandModel.apply _)
 
 }
