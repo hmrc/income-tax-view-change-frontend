@@ -34,6 +34,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
+import play.api.mvc.Request
 import testUtils.TestSupport
 
 
@@ -49,10 +50,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
     mockAppConfig.features.calcBreakdownEnabled(true)
   }
 
-  private def pageSetup(calcDataModel: CalculationDataModel, user: MtdItUser[_]) = new {
+  private def pageSetup(calcDataModel: CalculationDataModel, user: MtdItUser[_])(implicit request: Request[_] = FakeRequest()) = new {
     lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
       calculationDisplaySuccessModel(calcDataModel),
-      testYear)(FakeRequest(), applicationMessages, mockAppConfig, user)
+      testYear)(request, applicationMessages, mockAppConfig, user)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     lazy val cPage: HtmlFormat.Appendable = views.html.crystallised(
@@ -62,14 +63,38 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
     implicit val model: CalculationDataModel = calcDataModel
 
+
     def personalAllowance: String = "-" + (
       model.personalAllowance
       ).toCurrencyString
   }
 
+  "breadcrumb trail" should {
+
+    "have a breadcrumb trail with estimate when there is more than one estimate tax year" in {
+      implicit val request : Request[_] = FakeRequest().withSession("singleEstimate"->"false")
+      val setup = pageSetup(busPropBRTCalcDataModel, bizAndPropertyUser)(request)
+      import setup._
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+      document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
+      document.getElementById("breadcrumb-it-estimate").text shouldBe breadcrumbMessages.itEstimate(testYear)
+    }
+
+    "have a breadcrumb trail without estimate when there is only one estimate tax year" in {
+      implicit val request : Request[_] = FakeRequest().withSession("singleEstimate"->"true")
+      val setup = pageSetup(busPropBRTCalcDataModel, bizAndPropertyUser)(request)
+      import setup._
+      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+      Option(document.getElementById("breadcrumb-estimates")) shouldBe None
+      document.getElementById("breadcrumb-it-estimate").text shouldBe breadcrumbMessages.itEstimate(testYear)
+    }
+  }
+
   "The EstimatedTaxLiability view" should {
 
-    val setup = pageSetup(busPropBRTCalcDataModel, bizAndPropertyUser)
+    val setup = pageSetup(busPropBRTCalcDataModel, bizAndPropertyUser)(FakeRequest())
     import setup._
     val messages = new Messages.Calculation(testYear)
 
@@ -77,12 +102,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
       document.title() shouldBe messages.title
     }
 
-    "have a breadcrumb trail" in {
-      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-      document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
-      document.getElementById("breadcrumb-it-estimate").text shouldBe breadcrumbMessages.itEstimate(testYear)
-    }
+
 
     s"have the tax year '${messages.subheading}'" in {
       document.getElementById("sub-heading").text() shouldBe messages.subheading
@@ -161,7 +181,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
       "the feature switch is set to false" in {
 
         mockAppConfig.features.calcBreakdownEnabled(false)
-        val setup = pageSetup(justBusinessCalcDataModel, bizUser)
+        val setup = pageSetup(justBusinessCalcDataModel, bizUser)(FakeRequest())
         import setup._
         document.getElementById("calcBreakdown") shouldBe null
 
@@ -174,7 +194,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
         "for users with both property and a business with income from savings on the bills page" should {
 
-          val setup = pageSetup(calculationDataSuccessModel, bizAndPropertyUser)
+          val setup = pageSetup(calculationDataSuccessModel, bizAndPropertyUser)(FakeRequest())
           import setup._
           val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
 
@@ -206,7 +226,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
         "for users with only property and with income from savings on the bills page" should {
 
-          val setup = pageSetup(justPropertyWithSavingsCalcDataModel, propertyUser)
+          val setup = pageSetup(justPropertyWithSavingsCalcDataModel, propertyUser)(FakeRequest())
           import setup._
           val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
 
@@ -238,7 +258,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
         "for users with income from savings of zero on the bills page" should {
 
-          val setup = pageSetup(justPropertyCalcDataModel, propertyUser)
+          val setup = pageSetup(justPropertyCalcDataModel, propertyUser)(FakeRequest())
           import setup._
           val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
 

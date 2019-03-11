@@ -54,7 +54,9 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
         itvcErrorHandler.showInternalServerError
       case estimatesResponse if estimatesResponse.count(!_.matchesStatus(Crystallised)) == 1 =>
         Redirect(controllers.routes.CalculationController.renderCalculationPage(estimatesResponse.filter(!_.matchesStatus(Crystallised)).head.taxYear))
+          .addingToSession("singleEstimate" -> "true")
       case estimatesResponse => Ok(views.html.estimates(estimatesResponse.filter(!_.matchesStatus(Crystallised)), user.incomeSources.earliestTaxYear.get))
+        .addingToSession("singleEstimate" -> "false")
     }
   }
 
