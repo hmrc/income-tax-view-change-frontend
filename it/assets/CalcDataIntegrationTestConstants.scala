@@ -222,7 +222,7 @@ object CalcDataIntegrationTestConstants {
       "dividendBRT" -> 7.5,
       "dividendHRT" -> 37.5,
       "dividendART" -> 38.1,
-      "calcObject" -> Json.obj(
+      "calcOutput" -> Json.obj(
         "calcSummary" -> Json.obj(
           "nationalRegime" -> "UK",
           "incomeTaxGross" -> 68985412739.5,
@@ -486,7 +486,7 @@ object CalcDataIntegrationTestConstants {
     "dividendBRT" -> 7.5,
     "dividendHRT" -> 37.5,
     "dividendART" -> 38.1,
-    "calcObject" -> Json.obj(
+    "calcOutput" -> Json.obj(
       "calcSummary" -> Json.obj(
         "nationalRegime" -> "UK",
         "incomeTaxGross" -> 68985412739.5,

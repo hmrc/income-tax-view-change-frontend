@@ -134,19 +134,19 @@ object CalculationDataModel {
   }
 
   implicit val reads: Reads[CalculationDataModel] = (
-      logFieldError(__ \ "calcObject" \ "calcResult" \ "nationalRegime") and
-      defaultZero(__ \ "calcObject" \ "calcResult" \ "totalTaxableIncome") and
-      (__ \ "calcObject" \ "calcResult" \ "incomeTaxNicYtd").read[BigDecimal] and
-      defaultZero(__ \ "calcObject" \ "calcResult" \ "annualAllowances" \ "personalAllowance") and
-      defaultZero(__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "totalAllowancesAndReliefs") and
-      defaultZero(__ \ "calcObject" \ "calcResult" \ "taxableIncome" \ "totalIncomeAllowancesUsed") and
+      logFieldError(__ \ "calcOutput" \ "calcResult" \ "nationalRegime") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "totalTaxableIncome") and
+      (__ \ "calcOutput" \ "calcResult" \ "incomeTaxNicYtd").read[BigDecimal] and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "annualAllowances" \ "personalAllowance") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "totalAllowancesAndReliefs") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "totalIncomeAllowancesUsed") and
       __.read[IncomeReceivedModel] and
       __.read[SavingsAndGainsModel] and
       __.read[DividendsModel] and
       __.read[GiftAidModel] and
       __.read[NicModel] and
-        (__ \ "calcObject" \ "calcResult" \ "eoyEstimate").readNullable[EoyEstimate].orElse(Reads.pure(None)) and
-        (__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "payAndPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
+        (__ \ "calcOutput" \ "calcResult" \ "eoyEstimate").readNullable[EoyEstimate].orElse(Reads.pure(None)) and
+        (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "payAndPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
     ) (CalculationDataModel.apply _)
 
   implicit val writes: Writes[CalculationDataModel] = (
@@ -177,18 +177,18 @@ object GiftAidModel {
 
 object IncomeReceivedModel {
   implicit val reads: Reads[IncomeReceivedModel] = (
-    defaultZero(__ \ "calcObject" \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "selfEmploymentIncome") and
-      defaultZero(__ \ "calcObject" \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "ukPropertyIncome") and
-      defaultZero(__ \ "calcObject" \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "bbsiIncome") and
-      defaultZero(__ \ "calcObject" \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "ukDividendIncome")
+    defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "selfEmploymentIncome") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "ukPropertyIncome") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "bbsiIncome") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "incomeReceived" \ "ukDividendIncome")
     ) (IncomeReceivedModel.apply _)
   implicit val writes: Writes[IncomeReceivedModel] = Json.writes[IncomeReceivedModel]
 }
 
 object SavingsAndGainsModel {
   implicit val reads: Reads[SavingsAndGainsModel] = (
-  defaultZero(__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "totalAmount") and
-    (__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "band").read[Seq[BandModel]].orElse(Reads.pure(Seq.empty[BandModel]))
+  defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "totalAmount") and
+    (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "band").read[Seq[BandModel]].orElse(Reads.pure(Seq.empty[BandModel]))
     ) (SavingsAndGainsModel.apply _)
   implicit val writes: Writes[SavingsAndGainsModel] = Json.writes[SavingsAndGainsModel]
 }
@@ -215,16 +215,16 @@ object OldSavingsAndGainsModel {
 
 object DividendsModel {
   implicit val reads: Reads[DividendsModel] = (
-    defaultZero(__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "dividends" \ "totalAmount") and
-      (__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "dividends" \ "band").read[Seq[DividendsBandModel]].orElse(Reads.pure(Nil))
+    defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "dividends" \ "totalAmount") and
+      (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "dividends" \ "band").read[Seq[DividendsBandModel]].orElse(Reads.pure(Nil))
     ) (DividendsModel.apply _)
   implicit val writes: Writes[DividendsModel] = Json.writes[DividendsModel]
 }
 
 object NicModel {
   implicit val reads: Reads[NicModel] = (
-    defaultZero(__ \ "calcObject" \ "calcResult" \ "nic" \ "class2" \ "amount") and
-      defaultZero(__ \ "calcObject" \ "calcResult" \ "nic" \ "class4" \ "totalAmount")
+    defaultZero(__ \ "calcOutput" \ "calcResult" \ "nic" \ "class2" \ "amount") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "nic" \ "class4" \ "totalAmount")
     ) (NicModel.apply _)
   implicit val writes: Writes[NicModel] = Json.writes[NicModel]
 }

@@ -1394,7 +1394,7 @@ object CalcBreakdownTestConstants {
   )
 
   val mandatoryCalculationDataSuccessJson: JsValue = Json.obj(
-    "calcObject" -> Json.obj(
+    "calcOutput" -> Json.obj(
       "calcResult" -> Json.obj(
         "incomeTaxNicYtd" -> 90500
       )
@@ -1535,7 +1535,7 @@ object CalcBreakdownTestConstants {
    "dividendBRT" -> 7.5,
    "dividendHRT" -> 37.5,
    "dividendART" -> 38.1,
-    "calcObject" -> Json.obj(
+    "calcOutput" -> Json.obj(
     "calcSummary" -> Json.obj(
       "nationalRegime" -> "UK",
       "incomeTaxGross" -> 68985412739.5,
