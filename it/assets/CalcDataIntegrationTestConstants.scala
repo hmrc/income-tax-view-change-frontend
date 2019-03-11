@@ -396,7 +396,7 @@ object CalcDataIntegrationTestConstants {
       "calcResult" -> Json.obj(
         "incomeTax" -> Json.obj(
           "giftAid" -> Json.obj(
-            "paymentsMade" -> 150,
+            "paymentsMade" -> 0,
             "rate" -> 0,
             "taxableIncome" -> 0
           )

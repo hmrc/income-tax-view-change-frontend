@@ -357,8 +357,8 @@ class CalcBreakdownHelperSpec extends TestSupport {
             document.getElementById("gift-aid-heading").text shouldBe messages.Bills.giftAid
           }
 
-          "have gift aid charge £5" in {
-            document.getElementById("gift-aid").text shouldBe "£5"
+          "have gift aid charge £500" in {
+            document.getElementById("gift-aid").text shouldBe "£500"
           }
         }
 
@@ -765,8 +765,8 @@ class CalcBreakdownHelperSpec extends TestSupport {
             document.getElementById("gift-aid-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.giftAid
           }
 
-          "have gift aid charge £5" in {
-            document.getElementById("gift-aid").text shouldBe "£5"
+          "have gift aid charge £30" in {
+            document.getElementById("gift-aid").text shouldBe "£30"
           }
 
         }

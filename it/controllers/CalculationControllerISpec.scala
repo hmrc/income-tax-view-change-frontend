@@ -400,7 +400,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(2).name}-calc")(calculationDataSuccessModel.dividends.band(2).income.toCurrencyString),
           elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(2).name}-rate")(calculationDataSuccessModel.dividends.band(2).rate.toStringNoDecimal),
           elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(2).name}-amount")(calculationDataSuccessModel.dividends.band(2).amount.toCurrencyString),
-          elementTextByID("gift-aid")(calculationDataSuccessModel.giftAid.taxableAmount.toCurrencyString),
+          elementTextByID("gift-aid")(calculationDataSuccessModel.giftAid.paymentsMade.toCurrencyString),
           elementTextByID("nic2-amount")(calculationDataSuccessModel.nic.class2.toCurrencyString),
           elementTextByID("nic4-amount")(calculationDataSuccessModel.nic.class4.toCurrencyString),
           elementTextByID("total-estimate")(calculationDataSuccessModel.totalIncomeTaxNicYtd.toCurrencyString),

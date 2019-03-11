@@ -80,7 +80,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
         calculationDataSuccessModel.dividends.band(2).rate shouldBe 38.1
         calculationDataSuccessModel.dividends.band(2).amount shouldBe 1143
 
-        calculationDataSuccessModel.giftAid.paymentsMade shouldBe 150
+        calculationDataSuccessModel.giftAid.paymentsMade shouldBe 0
         calculationDataSuccessModel.giftAid.rate shouldBe 0.0
         calculationDataSuccessModel.giftAid.taxableAmount shouldBe 0
 

@@ -103,7 +103,7 @@ object CalcBreakdownTestConstants {
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
     ),
     giftAid = GiftAidModel(
-    paymentsMade = 150,
+    paymentsMade = 0,
     rate = 0.0,
     taxableAmount = 0
   )
@@ -1376,7 +1376,7 @@ object CalcBreakdownTestConstants {
       "class4" -> 14000
     ),
     "giftAid" -> Json.obj(
-      "paymentsMade" -> 150 ,
+      "paymentsMade" -> 0 ,
       "rate" -> 0.0,
       "taxableAmount" -> 0
     ),
@@ -1636,7 +1636,7 @@ object CalcBreakdownTestConstants {
     "calcResult" -> Json.obj(
       "incomeTax" -> Json.obj(
         "giftAid" -> Json.obj(
-          "paymentsMade" -> 150,
+          "paymentsMade" -> 0,
           "rate" -> 0.0,
           "taxableIncome" -> 0
         )
