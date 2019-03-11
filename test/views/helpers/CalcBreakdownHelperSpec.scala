@@ -850,6 +850,24 @@ class CalcBreakdownHelperSpec extends TestSupport {
           document.getElementById("business-profit").text shouldBe "£3,000"
         }
       }
+
+      "when the user has property income, self Employed Income and  Savings and gains"  should {
+        val setup = pageSetup(dividendAtART, bizAndPropertyUser)
+        import setup._
+
+        "display bbs interest section " in {
+          document.getElementById("business-profit-self-employed-heading").text shouldBe "Business profit(for self employment)"
+        }
+
+        "display income recieved from self income" in {
+          document.getElementById("business-profit-property-heading").text shouldBe "Business profit(for property)"
+        }
+
+        "display income recieved from property" in {
+          document.getElementById("business-profit-bbs-interest-heading").text    shouldBe "Income from savings(for business profit)"
+        }
+
+      }
     }
   }
 }

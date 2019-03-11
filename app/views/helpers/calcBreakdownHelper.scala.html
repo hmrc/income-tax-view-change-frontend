@@ -31,7 +31,7 @@
                 <td id="national-regime" class="summary-data">@breakdown.nationalRegime</td>
             </tr>
         }
-        <tr id="business-profit-section" class="no-border-bottom">
+        <tr id="business-profit-section" class="total-section">
             <td id="business-profit-heading">
                 @{
                     if(CalcDisplayModel.selfEmployedIncomeOrReceived(user, taxYear, breakdown)) {
@@ -50,6 +50,39 @@
                 }
 
             </td>
+        </tr>
+
+
+        <tr id="business-profit-self-employed-section" class="no-border-bottom">
+            <td id="business-profit-self-employed-heading">
+                @messages("estimated_tax_liability.calc-breakdown.business-profit-self-employment")
+            </td>
+
+            <td id="business-profit-self-employed"  class="summary-data">
+                @{(breakdown.incomeReceived.selfEmployment).toCurrency}
+            </td>
+        </tr>
+
+        <tr id="business-profit-property-section" class="no-border-bottom">
+            <td id="business-profit-property-heading">
+                @messages("estimated_tax_liability.calc-breakdown.business-profit-property")
+            </td>
+
+            <td id="business-profit-property"  class="summary-data">
+                @{(breakdown.incomeReceived.ukProperty).toCurrency}
+            </td>
+
+        </tr>
+
+        <tr id="business-profit-section-bbs-interest-section" >
+            <td id="business-profit-bbs-interest-heading">
+                @messages("estimated_tax_liability.calc-breakdown.and-savings")
+            </td>
+
+            <td id="business-profit-bbs-interest"  class="summary-data">
+                @{(breakdown.incomeReceived.bankBuildingSocietyInterest).toCurrency}
+            </td>
+
         </tr>
 
         @if(calcModel.crystallisedWithBBSInterest){
