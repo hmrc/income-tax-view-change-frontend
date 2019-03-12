@@ -87,7 +87,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
         calculationDataSuccessModel.nic.class2 shouldBe 10000
         calculationDataSuccessModel.nic.class4 shouldBe 14000
 
-        calculationDataSuccessModel.eoyEstimate.get.incomeTaxNicAmount shouldBe 66000
+        calculationDataSuccessModel.eoyEstimate.get.totalNicAmount shouldBe 66000
       }
 
     }

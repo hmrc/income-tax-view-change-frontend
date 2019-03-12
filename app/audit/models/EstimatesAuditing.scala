@@ -26,7 +26,7 @@ object EstimatesAuditing {
 
     val estimate: Option[BigDecimal] = dataModel.calcDataModel.flatMap { model =>
       model.eoyEstimate.flatMap { estimate =>
-        Some(estimate.incomeTaxNicAmount)
+        Some(estimate.totalNicAmount)
       }
     }
 

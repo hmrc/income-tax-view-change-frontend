@@ -144,7 +144,7 @@
                     @messages("estimated_tax_liability.calc-breakdown.payPensionsProfit-income", band.income.toCurrencyString, band.rate.toString)
                 </td>
                 <td id="@{band.name}Ppp-amount" class="summary-data">
-                    @band.amount.toCurrency
+                    @band.taxAmount.toCurrency
                 </td>
             </tr>
         }

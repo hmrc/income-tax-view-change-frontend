@@ -26,7 +26,7 @@ import play.api.libs.json.{JsValue, Json}
 object CalcBreakdownTestConstants {
 
   val calculationDataSuccessModel = CalculationDataModel(
-    nationalRegime = Some("UK"),
+    nationalRegime = Some("Scotland"),
     totalIncomeTaxNicYtd = 90500.00,
     totalTaxableIncome = 198500.00,
     personalAllowance = 11500.00,
@@ -39,31 +39,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 1.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 20.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -124,31 +130,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 1000.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -209,31 +221,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -293,31 +311,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -377,31 +401,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -459,31 +489,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -542,31 +578,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0.0,
@@ -625,31 +667,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0.0,
@@ -707,31 +755,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0.0,
@@ -789,31 +843,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 1.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 20.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -872,31 +932,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 1.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 20.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -955,31 +1021,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 1.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 20.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
@@ -1038,31 +1110,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -1120,31 +1198,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -1202,31 +1286,37 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
+      0,
+      Seq(BandModel(
         taxableIncome = 2500.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "SSR"
       ),
-      zeroBand = BandModel(
+      BandModel(
         taxableIncome = 0.00,
         taxRate = 0.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "ZRT"
       ),
-      basicBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 20.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "BRT"
       ),
-      higherBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 40.0,
-        taxAmount = 0.0
+        taxAmount = 0.0,
+        name = "HRT"
       ),
-      additionalBand = BandModel(
+      BandModel(
         taxableIncome = 0.0,
         taxRate = 45.0,
-        taxAmount = 0.0
-      )
+        taxAmount = 0.0,
+        name = "ART"
+      ))
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -1284,31 +1374,8 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
-      startBand = BandModel(
-        taxableIncome = 0.00,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      zeroBand = BandModel(
-        taxableIncome = 0.00,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      basicBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      higherBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      ),
-      additionalBand = BandModel(
-        taxableIncome = 0.0,
-        taxRate = 0.0,
-        taxAmount = 0.0
-      )
+      0,
+      Seq()
     ),
     dividends = DividendsModel(
       totalAmount = 0,
@@ -1327,12 +1394,15 @@ object CalcBreakdownTestConstants {
   )
 
   val mandatoryCalculationDataSuccessJson: JsValue = Json.obj(
-    "incomeTaxYTD" -> 90500,
-    "incomeTaxThisPeriod" -> 2000
+    "calcOutput" -> Json.obj(
+      "calcResult" -> Json.obj(
+        "incomeTaxNicYtd" -> 90500
+      )
+    )
   )
 
   val calculationDataSuccessJson: JsValue = Json.obj(
-    "nationalRegime" -> "UK",
+    "nationalRegime" -> "Scotland",
     "totalTaxableIncome" -> 198500,
     "totalIncomeTaxNicYtd" -> 90500,
     "personalAllowance" -> 11500,
@@ -1344,33 +1414,41 @@ object CalcBreakdownTestConstants {
       "bankBuildingSocietyInterest" -> 1999,
       "ukDividends" -> 10000
     ),
-    "savingsAndGains" -> Json.obj(
-      "startBand" -> Json.obj(
-        "taxableIncome" -> 1.00,
-        "taxRate" -> 0,
-        "taxAmount" -> 0
+  "savingsAndGains" -> Json.obj(
+    "bands" -> Json.arr(
+      Json.obj(
+        "name" -> "SSR",
+        "taxableIncome" -> 1,
+        "taxAmount" -> 0,
+        "taxRate" -> 0
       ),
-      "zeroBand" -> Json.obj(
-        "taxableIncome" -> 20.00,
-        "taxRate" -> 0,
-        "taxAmount" -> 0
+      Json.obj(
+        "name" -> "ZRT",
+        "taxableIncome" -> 20,
+        "taxAmount" -> 0,
+        "taxRate" -> 0
       ),
-      "basicBand" -> Json.obj(
+      Json.obj(
+        "name" -> "BRT",
         "taxableIncome" -> 0,
-        "taxRate" -> 20,
-        "taxAmount" -> 0
+        "taxAmount" -> 0,
+        "taxRate" -> 20
       ),
-      "higherBand" -> Json.obj(
+      Json.obj(
+        "name" -> "HRT",
         "taxableIncome" -> 0,
-        "taxRate" -> 40,
-        "taxAmount" -> 0
+        "taxAmount" -> 0,
+        "taxRate" -> 40
       ),
-      "additionalBand" -> Json.obj(
+      Json.obj(
+        "name" -> "ART",
         "taxableIncome" -> 0,
-        "taxRate" -> 45,
-        "taxAmount" -> 0
+        "taxAmount" -> 0,
+        "taxRate" -> 45
       )
     ),
+    "total" -> 0
+  ),
     "nic" -> Json.obj(
       "class2" -> 10000,
       "class4" -> 14000
@@ -1381,7 +1459,7 @@ object CalcBreakdownTestConstants {
       "taxableAmount" -> 0
     ),
     "eoyEstimate" -> Json.obj(
-      "incomeTaxNicAmount" -> 66000
+      "totalNicAmount" -> 66000
     ),
     "incomeTax" -> Json.obj(
       "payAndPensionsProfit" -> Json.obj(
@@ -1390,19 +1468,19 @@ object CalcBreakdownTestConstants {
             "name" -> "BRT",
             "rate" -> 20.0,
             "income" -> 20000.00,
-            "amount" -> 4000.00
+            "taxAmount" -> 4000.00
           ),
           Json.obj(
             "name" -> "HRT",
             "rate" -> 40.0,
             "income" -> 100000.00,
-            "amount" -> 40000.00
+            "taxAmount" -> 40000.00
           ),
           Json.obj(
             "name" -> "ART",
             "rate" -> 45.0,
             "income" -> 50000.00,
-            "amount" -> 22500.00
+            "taxAmount" -> 22500.00
           )
         )
       ),
@@ -1432,287 +1510,307 @@ object CalcBreakdownTestConstants {
   )
 
   val calculationDataFullJson: JsValue = Json.obj(
-    "nationalRegime" -> "UK",
-    "incomeTaxYTD" -> 90500.00,
-    "incomeTaxThisPeriod" -> 20.00,
-    "payFromAllEmployments" -> 0.00,
-    "totalIncomeAllowancesUsed" -> 12005.00,
-    "benefitsAndExpensesReceived" -> 0.00,
-    "allowableExpenses" -> 0.00,
-    "payFromAllEmploymentsAfterExpenses" -> 0.00,
-    "shareSchemes" -> 0.00,
-    "profitFromSelfEmployment" -> 200000.00,
-    "profitFromPartnerships" -> 0.00,
-    "profitFromUkLandAndProperty" -> 10000.00,
-    "dividendsFromForeignCompanies" -> 0.00,
-    "foreignIncome" -> 0.00,
-    "trustsAndEstates" -> 0.00,
-    "interestReceivedFromUkBanksAndBuildingSocieties" -> 1999.00,
-    "dividendsFromUkCompanies" -> 10000.00,
-    "ukPensionsAndStateBenefits" -> 0.00,
-    "gainsOnLifeInsurance" -> 0.00,
-    "otherIncome" -> 0.00,
-    "totalIncomeReceived" -> 230000.00,
-    "paymentsIntoARetirementAnnuity" -> 0.00,
-    "foreignTaxOnEstates" -> 0.00,
-    "incomeTaxRelief" -> 0.00,
-    "incomeTaxReliefReducedToMaximumAllowable" -> 0.00,
-    "annuities" -> 0.00,
-    "giftOfInvestmentsAndPropertyToCharity" -> 0.00,
-    "personalAllowance" -> 11500.00,
-    "marriageAllowanceTransfer" -> 0.00,
-    "blindPersonAllowance" -> 0.00,
-    "blindPersonSurplusAllowanceFromSpouse" -> 0.00,
-    "incomeExcluded" -> 0.00,
-    "totalIncomeOnWhichTaxIsDue" -> 198500.00,
-    "payPensionsExtender" -> 0.00,
-    "giftExtender" -> 0.00,
-    "extendedBR" -> 0.00,
-    "payPensionsProfitAtBRT" -> 20000.00,
-    "incomeTaxOnPayPensionsProfitAtBRT" -> 4000.00,
-    "payPensionsProfitAtHRT" -> 100000.00,
-    "incomeTaxOnPayPensionsProfitAtHRT" -> 40000.00,
-    "payPensionsProfitAtART" -> 50000.00,
-    "incomeTaxOnPayPensionsProfitAtART" -> 22500.00,
-    "netPropertyFinanceCosts" -> 0.00,
-    "interestReceivedAtStartingRate" -> 1.00,
-    "incomeTaxOnInterestReceivedAtStartingRate" -> 0.00,
-    "interestReceivedAtZeroRate" -> 20.00,
-    "incomeTaxOnInterestReceivedAtZeroRate" -> 0.00,
-    "interestReceivedAtBRT" -> 0.00,
-    "incomeTaxOnInterestReceivedAtBRT" -> 0.00,
-    "interestReceivedAtHRT" -> 0.00,
-    "incomeTaxOnInterestReceivedAtHRT" -> 0.00,
-    "interestReceivedAtART" -> 0.00,
-    "incomeTaxOnInterestReceivedAtART" -> 0.00,
-    "dividendsAtZeroRate" -> 0.00,
-    "incomeTaxOnDividendsAtZeroRate" -> 0.00,
-    "dividendsAtBRT" -> 1000.00,
-    "incomeTaxOnDividendsAtBRT" -> 75.00,
-    "dividendsAtHRT" -> 2000.00,
-    "incomeTaxOnDividendsAtHRT" -> 750.00,
-    "dividendsAtART" -> 3000.00,
-    "incomeTaxOnDividendsAtART" -> 1143.00,
-    "totalIncomeOnWhichTaxHasBeenCharged" -> 0.00,
-    "taxOnOtherIncome" -> 0.00,
-    "incomeTaxDue" -> 66500.00,
-    "incomeTaxCharged" -> 0.00,
-    "deficiencyRelief" -> 0.00,
-    "topSlicingRelief" -> 0.00,
-    "ventureCapitalTrustRelief" -> 0.00,
-    "enterpriseInvestmentSchemeRelief" -> 0.00,
-    "seedEnterpriseInvestmentSchemeRelief" -> 0.00,
-    "communityInvestmentTaxRelief" -> 0.00,
-    "socialInvestmentTaxRelief" -> 0.00,
-    "maintenanceAndAlimonyPaid" -> 0.00,
-    "marriedCouplesAllowance" -> 0.00,
-    "marriedCouplesAllowanceRelief" -> 0.00,
-    "surplusMarriedCouplesAllowance" -> 0.00,
-    "surplusMarriedCouplesAllowanceRelief" -> 0.00,
-    "notionalTaxFromLifePolicies" -> 0.00,
-    "notionalTaxFromDividendsAndOtherIncome" -> 0.00,
-    "foreignTaxCreditRelief" -> 0.00,
-    "incomeTaxDueAfterAllowancesAndReliefs" -> 0.00,
-    "giftAidPaymentsAmount" -> 0.00,
-    "giftAidTaxDue" -> 0.00,
-    "capitalGainsTaxDue" -> 0.00,
-    "remittanceForNonDomiciles" -> 0.00,
-    "highIncomeChildBenefitCharge" -> 0.00,
-    "totalGiftAidTaxReduced" -> 0.00,
-    "incomeTaxDueAfterGiftAidReduction" -> 0.00,
-    "annuityAmount" -> 0.00,
-    "taxDueOnAnnuity" -> 0.00,
-    "taxCreditsOnDividendsFromUkCompanies" -> 0.00,
-    "incomeTaxDueAfterDividendTaxCredits" -> 0.00,
-    "nationalInsuranceContributionAmount" -> 0.00,
-    "nationalInsuranceContributionCharge" -> 0.00,
-    "nationalInsuranceContributionSupAmount" -> 0.00,
-    "nationalInsuranceContributionSupCharge" -> 0.00,
-    "totalClass4Charge" -> 14000.00,
-    "nationalInsuranceClass1Amount" -> 0.00,
-    "nationalInsuranceClass2Amount" -> 10000.00,
-    "nicTotal" -> 24000.00,
-    "underpaidTaxForPreviousYears" -> 0.00,
-    "studentLoanRepayments" -> 0.00,
-    "pensionChargesGross" -> 0.00,
-    "pensionChargesTaxPaid" -> 0.00,
-    "totalPensionSavingCharges" -> 0.00,
-    "pensionLumpSumAmount" -> 0.00,
-    "pensionLumpSumRate" -> 0.00,
-    "statePensionLumpSumAmount" -> 0.00,
-    "remittanceBasisChargeForNonDomiciles" -> 0.00,
-    "additionalTaxDueOnPensions" -> 0.00,
-    "additionalTaxReliefDueOnPensions" -> 0.00,
-    "incomeTaxDueAfterPensionDeductions" -> 0.00,
-    "employmentsPensionsAndBenefits" -> 0.00,
-    "outstandingDebtCollectedThroughPaye" -> 0.00,
-    "payeTaxBalance" -> 0.00,
-    "cisAndTradingIncome" -> 0.00,
-    "partnerships" -> 0.00,
-    "ukLandAndPropertyTaxPaid" -> 0.00,
-    "foreignIncomeTaxPaid" -> 0.00,
-    "trustAndEstatesTaxPaid" -> 0.00,
-    "overseasIncomeTaxPaid" -> 0.00,
-    "interestReceivedTaxPaid" -> 0.00,
-    "voidISAs" -> 0.00,
-    "otherIncomeTaxPaid" -> 0.00,
-    "underpaidTaxForPriorYear" -> 0.00,
-    "totalTaxDeducted" -> 0.00,
-    "incomeTaxOverpaid" -> 0.00,
-    "incomeTaxDueAfterDeductions" -> 0.00,
-    "propertyFinanceTaxDeduction" -> 0.00,
-    "taxableCapitalGains" -> 0.00,
-    "capitalGainAtEntrepreneurRate" -> 0.00,
-    "incomeTaxOnCapitalGainAtEntrepreneurRate" -> 0.00,
-    "capitalGrainsAtLowerRate" -> 0.00,
-    "incomeTaxOnCapitalGainAtLowerRate" -> 0.00,
-    "capitalGainAtHigherRate" -> 0.00,
-    "incomeTaxOnCapitalGainAtHigherTax" -> 0.00,
-    "capitalGainsTaxAdjustment" -> 0.00,
-    "foreignTaxCreditReliefOnCapitalGains" -> 0.00,
-    "liabilityFromOffShoreTrusts" -> 0.00,
-    "taxOnGainsAlreadyCharged" -> 0.00,
-    "totalCapitalGainsTax" -> 0.00,
-    "incomeAndCapitalGainsTaxDue" -> 0.00,
-    "taxRefundedInYear" -> 0.00,
-    "unpaidTaxCalculatedForEarlierYears" -> 0.00,
-    "marriageAllowanceTransferAmount" -> 0.00,
-    "marriageAllowanceTransferRelief" -> 0.00,
-    "marriageAllowanceTransferMaximumAllowable" -> 0.00,
-    "allowance" -> 0.00,
-    "limitBRT" -> 0.00,
-    "limitHRT" -> 0.00,
-    "rateBRT" -> 20.00,
-    "rateHRT" -> 40.00,
-    "rateART" -> 45.00,
-    "limitAIA" -> 0.00,
-    "limitAIA" -> 0.00,
-    "allowanceBRT" -> 0.00,
-    "interestAllowanceHRT" -> 0.00,
-    "interestAllowanceBRT" -> 0.00,
-    "dividendAllowance" -> 5000.00,
-    "dividendBRT" -> 7.5,
-    "dividendHRT" -> 37.5,
-    "dividendART" -> 38.1,
-    "class2NICsLimit" -> 0.00,
-    "class2NICsPerWeek" -> 0.00,
-    "class4NICsLimitBR" -> 0.00,
-    "class4NICsLimitHR" -> 0.00,
-    "class4NICsBRT" -> 0.00,
-    "class4NICsHRT" -> 0.00,
-    "proportionAllowance" -> 11500.00,
-    "proportionLimitBRT" -> 0.00,
-    "proportionLimitHRT" -> 0.00,
-    "proportionalTaxDue" -> 0.00,
-    "proportionInterestAllowanceBRT" -> 0.00,
-    "proportionInterestAllowanceHRT" -> 0.00,
-    "proportionDividendAllowance" -> 0.00,
-    "proportionPayPensionsProfitAtART" -> 0.00,
-    "proportionIncomeTaxOnPayPensionsProfitAtART" -> 0.00,
-    "proportionPayPensionsProfitAtBRT" -> 0.00,
-    "proportionIncomeTaxOnPayPensionsProfitAtBRT" -> 0.00,
-    "proportionPayPensionsProfitAtHRT" -> 0.00,
-    "proportionIncomeTaxOnPayPensionsProfitAtHRT" -> 0.00,
-    "proportionInterestReceivedAtZeroRate" -> 0.00,
-    "proportionIncomeTaxOnInterestReceivedAtZeroRate" -> 0.00,
-    "proportionInterestReceivedAtBRT" -> 0.00,
-    "proportionIncomeTaxOnInterestReceivedAtBRT" -> 0.00,
-    "proportionInterestReceivedAtHRT" -> 0.00,
-    "proportionIncomeTaxOnInterestReceivedAtHRT" -> 0.00,
-    "proportionInterestReceivedAtART" -> 0.00,
-    "proportionIncomeTaxOnInterestReceivedAtART" -> 0.00,
-    "proportionDividendsAtZeroRate" -> 0.00,
-    "proportionIncomeTaxOnDividendsAtZeroRate" -> 0.00,
-    "proportionDividendsAtBRT" -> 0.00,
-    "proportionIncomeTaxOnDividendsAtBRT" -> 0.00,
-    "proportionDividendsAtHRT" -> 0.00,
-    "proportionIncomeTaxOnDividendsAtHRT" -> 0.00,
-    "proportionDividendsAtART" -> 0.00,
-    "proportionIncomeTaxOnDividendsAtART" -> 0.00,
-    "proportionClass2NICsLimit" -> 0.00,
-    "proportionClass4NICsLimitBR" -> 0.00,
-    "proportionClass4NICsLimitHR" -> 0.00,
-    "proportionReducedAllowanceLimit" -> 0.00,
+   "payPensionsProfitAtBRT" -> 20000,
+   "incomeTaxOnPayPensionsProfitAtBRT" -> 4000,
+   "payPensionsProfitAtHRT" -> 100000,
+   "incomeTaxOnPayPensionsProfitAtHRT" -> 40000,
+   "payPensionsProfitAtART" -> 50000,
+   "incomeTaxOnPayPensionsProfitAtART" -> 22500,
+   "netPropertyFinanceCosts" -> 0,
+   "dividendsAtZeroRate" -> 0,
+   "incomeTaxOnDividendsAtZeroRate" -> 0,
+   "dividendsAtBRT" -> 1000,
+   "incomeTaxOnDividendsAtBRT" -> 75,
+   "dividendsAtHRT" -> 2000,
+   "incomeTaxOnDividendsAtHRT" -> 750,
+   "dividendsAtART" -> 3000,
+   "incomeTaxOnDividendsAtART" -> 1143,
+   "limitBRT" -> 0,
+   "limitHRT" -> 0,
+   "rateBRT" -> 20,
+   "rateHRT" -> 40,
+   "rateART" -> 45,
+   "allowanceBRT" -> 0,
+   "dividendAllowance" -> 5000,
+   "dividendBRT" -> 7.5,
+   "dividendHRT" -> 37.5,
+   "dividendART" -> 38.1,
+    "calcOutput" -> Json.obj(
+    "calcSummary" -> Json.obj(
+      "nationalRegime" -> "UK",
+      "incomeTaxGross" -> 68985412739.5,
+      "taxDeducted" -> 33971782272.57,
+      "incomeTaxNetOfDeductions" -> 39426248386.69,
+      "nic2Gross" -> 10000,
+      "nic4Gross" -> 14000,
+      "nic2NetOfDeductions" -> 89311246978.32,
+      "nic4NetOfDeductions" -> 193784559071.9
+    ),
     "calcResult" -> Json.obj(
+      "incomeTaxNicYtd" -> 90500,
+      "nationalRegime" -> "Scotland",
+      "totalTaxableIncome" -> 198500,
+      "totalNic" -> 180000,
+      "nic" -> Json.obj(
+        "class2" -> Json.obj(
+          "amount" -> 10000,
+          "weekRate" -> 2.95,
+          "weeks" -> 13,
+          "limit" -> 6205,
+          "apportionedLimit" -> 1547
+        ),
+        "class4" -> Json.obj(
+          "totalAmount" -> 14000,
+          "band" -> Json.arr(
+            Json.obj(
+              "name" -> "ZRT",
+              "rate" -> 0,
+              "threshold" -> 8424,
+              "apportionedThreshold" -> 2101,
+              "income" -> 2101,
+              "amount" -> 0
+            ),
+            Json.obj(
+              "name" -> "BRT",
+              "rate" -> 9,
+              "threshold" -> 46350,
+              "apportionedThreshold" -> 11556,
+              "income" -> 3096,
+              "amount" -> 278.64
+            )
+          )
+        )
+      ),
+      "totalBeforeTaxDeducted" -> 100,
+      "totalTaxDeducted" -> 200,
+      "annualAllowances" -> Json.obj(
+        "personalAllowance" -> 11500
+      ),
       "incomeTax" -> Json.obj(
+        "totalAllowancesAndReliefs" -> 0,
         "giftAid" -> Json.obj(
           "paymentsMade" -> 0,
           "rate" -> 0.0,
           "taxableIncome" -> 0
+        ),
+        "payAndPensionsProfit" -> Json.obj(
+          "band" -> Json.arr(Json.obj(
+            "name" -> "BRT",
+            "rate" -> 20.0,
+            "income" -> 20000.00,
+            "taxAmount" -> 4000.00
+          ), Json.obj(
+            "name" -> "HRT",
+            "rate" -> 40.0,
+            "income" -> 100000.00,
+            "taxAmount" -> 40000.00
+          ), Json.obj(
+            "name" -> "ART",
+            "rate" -> 45.0,
+            "income" -> 50000.00,
+            "taxAmount" -> 22500.00
+          )
+          )
+        ),
+        "savingsAndGains" -> Json.obj(
+          "totalAmount" -> 0,
+          "taxableIncome" -> 60207080823.340004,
+          "band" -> Json.arr(
+            Json.obj(
+              "name" -> "SSR",
+              "rate" -> 0,
+              "income" -> 1,
+              "taxAmount" -> 0,
+              "threshold" -> 4000,
+              "apportionedThreshold" -> 5000
+            ),
+            Json.obj(
+              "name" -> "ZRT",
+              "rate" -> 0,
+              "income" -> 20,
+              "taxAmount" -> 0,
+              "threshold" -> 1,
+              "apportionedThreshold" -> 1
+            ),
+            Json.obj(
+              "name" -> "BRT",
+              "rate" -> 20,
+              "income" -> 0,
+              "taxAmount" -> 0,
+              "threshold" -> 1,
+              "apportionedThreshold" -> 1
+            ),
+            Json.obj(
+              "name" -> "HRT",
+              "rate" -> 40,
+              "income" -> 0,
+              "taxAmount" -> 0,
+              "threshold" -> 1,
+              "apportionedThreshold" -> 1
+            ),
+            Json.obj(
+              "name" -> "ART",
+              "rate" -> 45,
+              "income" -> 0,
+              "taxAmount" -> 0,
+              "threshold" -> 1,
+              "apportionedThreshold" -> 1
+            )
+          ),
+          "personalAllowanceUsed" -> 15487995938.37
+        ),
+        "dividends" -> Json.obj(
+          "totalAmount" -> 5000,
+          "band" -> Json.arr(
+            Json.obj(
+              "name" -> "basic-band",
+              "rate" -> 7.5,
+              "income" -> 1000,
+              "taxAmount" -> 75.0
+            ),
+            Json.obj(
+              "name" -> "higher-band",
+              "rate" -> 37.5,
+              "income" -> 2000,
+              "taxAmount" -> 750
+            ),
+            Json.obj(
+              "name" -> "additional-band",
+              "rate" -> 38.1,
+              "income" -> 3000,
+              "taxAmount" -> 1143
+            )))
+      ),
+      "taxableIncome" -> Json.obj(
+        "totalIncomeAllowancesUsed" -> 12005,
+        "incomeReceived" -> Json.obj(
+          "employmentIncome" -> 100,
+          "selfEmploymentIncome" -> 200000,
+          "ukPropertyIncome" -> 10000,
+          "bbsiIncome" -> 1999,
+          "ukDividendIncome" -> 10000,
+          "employments"-> Json.obj(
+            "totalPay" -> 55000961025.98,
+            "totalBenefitsAndExpenses"-> 96945498573.96,
+            "totalAllowableExpenses"-> 94037790451.1,
+            "employment"-> Json.arr(
+              Json.obj(
+                "incomeSourceID"-> "33j38jIEnKNa5aV",
+                "latestDate"-> "3661-09-02",
+                "netPay"-> 57775446337.53,
+                "benefitsAndExpenses"-> 25047077371.97,
+                "allowableExpenses"-> 3585774590.1800003
+              )
+            )
+          ),
+          "selfEmployment" -> Json.arr(
+            Json.obj(
+              "incomeSourceID" -> "BcjTLlMBb3vlAne",
+              "latestDate" -> "8225-09-22",
+              "taxableIncome" -> 60455823926.5,
+              "accountStartDate" -> "9571-09-26",
+              "accountEndDate" -> "5906-07-06",
+              "finalised" -> false,
+              "losses" -> 56154428355.74
+            ),
+            Json.obj(
+              "incomeSourceID" -> "v4wly6Tn5JfwLjB",
+              "latestDate" -> "5217-10-10",
+              "taxableIncome" -> 82204159598.88,
+              "accountStartDate" -> "5688-03-30",
+              "accountEndDate" -> "6756-05-09",
+              "finalised" -> true,
+              "losses" -> 16496201041.710001
+            )
+          ),
+          "ukProperty" -> Json.obj(
+            "incomeSourceID" -> "Q9wFE164KgzVR2m",
+            "latestDate" -> "0379-03-30",
+            "taxableProfit" -> 60297189257.64,
+            "taxableProfitFhlUk" -> 7347733383.54,
+            "finalised" -> false,
+            "losses" -> 4549677842.09,
+            "lossesFhlUk" -> 79888527010.89
+          ),
+          "bbsi" -> Json.obj(
+            "totalTaxedInterestIncome" -> 66480042461.21,
+            "taxedAccounts" -> Json.arr(
+              Json.obj(
+                "incomeSourceID" -> "yysKzVIfqcLWVuQ",
+                "latestDate" -> "7650-11-26",
+                "name" -> "eiusmod Ut et dolore deserunt",
+                "gross" -> 10513891004.58,
+                "net" -> 63946537010.58,
+                "taxDeducted" -> 32104251608.440002
+              )
+            )
+          ),
+          "ukDividend" -> Json.obj(
+            "ukDividends" -> 7549829503.03,
+            "otherUkDividends" -> 34590087015.69
+          )
+        )
+      ),
+      "eoyEstimate" -> Json.obj(
+        "totalTaxableIncome" -> 198500,
+        "incomeTaxAmount" -> 89999999.99,
+        "nic2" -> 89999999.99,
+        "nic4" -> 89999999.99,
+        "totalNicAmount" -> 66000,
+        "incomeTaxNicAmount" -> 66000.00,
+        "selfEmployment" -> Json.arr(
+          Json.obj(
+            "id" -> "selfEmploymentId1",
+            "taxableIncome" -> 89999999.99,
+            "supplied" -> true,
+            "finalised" -> true
+          ),
+          Json.obj(
+            "id" -> "selfEmploymentId2",
+            "taxableIncome" -> 89999999.99,
+            "supplied" -> true,
+            "finalised" -> true
+          )
+        ),
+        "ukProperty" -> Json.arr(
+          Json.obj(
+            "taxableIncome" -> 89999999.99,
+            "supplied" -> true,
+            "finalised" -> true
+          )
         )
       )
     ),
     "eoyEstimate" -> Json.obj(
-      "selfEmployment" -> Json.arr(
-        Json.obj(
-          "id" -> "selfEmploymentId1",
-          "taxableIncome" -> 89999999.99,
-          "supplied" -> true,
-          "finalised" -> true
-        ),
-        Json.obj(
-          "id" -> "selfEmploymentId2",
-          "taxableIncome" -> 89999999.99,
-          "supplied" -> true,
-          "finalised" -> true
-        )
-      ),
-      "ukProperty" -> Json.arr(
-        Json.obj(
-          "taxableIncome" -> 89999999.99,
-          "supplied" -> true,
-          "finalised" -> true
-        )
-      ),
-      "totalTaxableIncome" -> 89999999.99,
+      "totalTaxableIncome" -> 198500,
       "incomeTaxAmount" -> 89999999.99,
       "nic2" -> 89999999.99,
       "nic4" -> 89999999.99,
-      "totalNicAmount" -> 9999999.99,
-      "incomeTaxNicAmount" -> 66000.00
-    ),
-    "incomeTax" -> Json.obj(
-      "payAndPensionsProfit" -> Json.obj(
-        "band" -> Json.arr(Json.obj(
-          "name" -> "BRT",
-          "rate" -> 20.0,
-          "income" -> 20000.00,
-          "amount" -> 4000.00
-        ), Json.obj(
-          "name" -> "HRT",
-          "rate" -> 40.0,
-          "income" -> 100000.00,
-          "amount" -> 40000.00
-        ), Json.obj(
-          "name" -> "ART",
-          "rate" -> 45.0,
-          "income" -> 50000.00,
-          "amount" -> 22500.00
-        )
-        )
-      ),
-      "dividends" -> Json.obj(
-        "totalAmount" -> 5000,
-        "band" -> Json.arr(
-          Json.obj(
-            "name" -> "basic-band",
-            "rate" -> 7.5,
-            "income" -> 1000,
-            "amount" -> 75.0
-          ),
-          Json.obj(
-            "name" -> "higher-band",
-            "rate" -> 37.5,
-            "income" -> 2000,
-            "amount" -> 750
-          ),
-          Json.obj(
-            "name" -> "additional-band",
-            "rate" -> 38.1,
-            "income" -> 3000,
-            "amount" -> 1143
-          )))
-    )
+      "totalNicAmount" -> 66000,
+      "incomeTaxNicAmount" -> 66000.00,
+      "selfEmployment" -> Json.arr(
+         Json.obj(
+           "id" -> "selfEmploymentId1",
+           "taxableIncome" -> 89999999.99,
+           "supplied" -> true,
+           "finalised" -> true
+         ),
+         Json.obj(
+           "id" -> "selfEmploymentId2",
+           "taxableIncome" -> 89999999.99,
+           "supplied" -> true,
+           "finalised" -> true
+         )
+       ),
+       "ukProperty" -> Json.arr(
+         Json.obj(
+           "taxableIncome" -> 89999999.99,
+           "supplied" -> true,
+           "finalised" -> true
+         )
+       )
+     )
+   )
   )
 
   val calculationDataSuccessMinJson: JsValue = Json.obj()

@@ -125,10 +125,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         lazy val eoySection = estimateSection.getElementById("eoyEstimate")
 
         s"has the correct Annual Tax Amount Estimate Heading of '${
-          messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.incomeTaxNicAmount.toCurrencyString)
+          messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.totalNicAmount.toCurrencyString)
         }" in {
           eoySection.getElementById("eoyEstimateHeading").text shouldBe
-            messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.incomeTaxNicAmount.toCurrencyString)
+            messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.totalNicAmount.toCurrencyString)
         }
 
         s"has the correct estimate p1 paragraph '${messages.EoyEstimate.p1}'" in {
