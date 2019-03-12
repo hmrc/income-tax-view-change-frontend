@@ -92,6 +92,11 @@ object CalcDataIntegrationTestConstants {
       class2 = 10000.00,
       class4 = 14000.00
     ),
+    giftAid = GiftAidModel(
+      paymentsMade = 150,
+      rate = 0,
+      taxableAmount = 0
+    ),
     eoyEstimate = Some(EoyEstimate(25000.00)),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
@@ -169,6 +174,11 @@ object CalcDataIntegrationTestConstants {
     nic = NicModel(
       class2 = 10000.00,
       class4 = 14000.00
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 150,
+      rate = 0.0,
+      taxableAmount = 1.5
     ),
     payAndPensionsProfitBands = List(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
@@ -383,6 +393,15 @@ object CalcDataIntegrationTestConstants {
       "proportionClass4NICsLimitBR" -> 0,
       "proportionClass4NICsLimitHR" -> 0,
       "proportionReducedAllowanceLimit" -> 0,
+      "calcResult" -> Json.obj(
+        "incomeTax" -> Json.obj(
+          "giftAid" -> Json.obj(
+            "paymentsMade" -> 0,
+            "rate" -> 0,
+            "taxableIncome" -> 0
+          )
+        )
+      ),
       "eoyEstimate" -> Json.obj(
         "selfEmployment" -> Json.arr(
           Json.obj(
@@ -659,6 +678,15 @@ object CalcDataIntegrationTestConstants {
     "proportionClass4NICsLimitBR" -> 0,
     "proportionClass4NICsLimitHR" -> 0,
     "proportionReducedAllowanceLimit" -> 0,
+    "calcResult" -> Json.obj(
+      "incomeTax" -> Json.obj(
+        "giftAid" -> Json.obj(
+          "paymentsMade" -> 150,
+          "rate" -> 1.0,
+          "taxableIncome" -> 1.5
+        )
+      )
+    ),
     "incomeTax" -> Json.obj(
       "payAndPensionsProfit" -> Json.obj(
         "band" -> Json.arr(Json.obj(

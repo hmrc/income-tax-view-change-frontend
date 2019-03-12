@@ -34,6 +34,7 @@ case class CalculationDataModel(
                                  incomeReceived: IncomeReceivedModel,
                                  savingsAndGains: SavingsAndGainsModel,
                                  dividends: DividendsModel,
+                                 giftAid : GiftAidModel,
                                  nic: NicModel,
                                  eoyEstimate: Option[EoyEstimate] = None,
                                  payAndPensionsProfitBands: List[TaxBandModel] = Nil
@@ -88,6 +89,10 @@ case class DividendsBandModel(name: String,
                               income: BigDecimal,
                               amount : BigDecimal)
 
+case class GiftAidModel (paymentsMade: BigDecimal,
+                         rate: BigDecimal,
+                         taxableAmount: BigDecimal)
+
 case class BandModel(taxableIncome: BigDecimal,
                      taxRate: BigDecimal,
                      taxAmount: BigDecimal)
@@ -121,6 +126,7 @@ object CalculationDataModel {
       __.read[IncomeReceivedModel] and
       __.read[SavingsAndGainsModel] and
       __.read[DividendsModel] and
+      __.read[GiftAidModel] and
       __.read[NicModel] and
       (__ \ "eoyEstimate").readNullable[EoyEstimate] and
       (__ \ "incomeTax" \ "payAndPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
@@ -136,10 +142,20 @@ object CalculationDataModel {
       (__ \ "incomeReceived").write[IncomeReceivedModel] and
       (__ \ "savingsAndGains").write[SavingsAndGainsModel] and
       (__ \ "incomeTax" \ "dividends").write[DividendsModel] and
+      (__ \ "giftAid").write[GiftAidModel] and
       (__ \ "nic").write[NicModel] and
       (__ \ "eoyEstimate").writeNullable[EoyEstimate] and
       (__ \ "incomeTax" \ "payAndPensionsProfit" \ "band").write[List[TaxBandModel]]
     )(unlift(CalculationDataModel.unapply))
+}
+
+object GiftAidModel {
+  implicit val reads: Reads[GiftAidModel] = (
+    defaultZero(__ \ "calcResult" \ "incomeTax" \ "giftAid" \ "paymentsMade") and
+      defaultZero(__ \ "calcResult" \ "incomeTax" \ "giftAid" \ "rate") and
+      defaultZero(__ \ "calcResult" \ "incomeTax" \ "giftAid" \ "taxableIncome")
+    ) (GiftAidModel.apply _)
+  implicit val writes: Writes[GiftAidModel] = Json.writes[GiftAidModel]
 }
 
 object IncomeReceivedModel {

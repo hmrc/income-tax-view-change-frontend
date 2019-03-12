@@ -65,6 +65,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
     IncomeReceivedModel(0, 0, 0, 0),
     SavingsAndGainsModel(BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0),BandModel(0, 0, 0)),
     DividendsModel(0, Seq(DividendsBandModel("basic band",0, None, None, 0,0))),
+    GiftAidModel(0,0,0),
     NicModel(0, 0),
     None
   )
@@ -345,6 +346,32 @@ class CalcBreakdownHelperSpec extends TestSupport {
             "does not have an ART section" in {
               document.getElementById("artPpp-section") shouldBe null
             }
+          }
+        }
+
+        "have gift aid payment" should {
+          val setup = pageSetup(busPropARTCalcDataModel, bizAndPropertyUser)
+          import setup._
+
+          "have text Gift Aid payment" in {
+            document.getElementById("gift-aid-heading").text shouldBe messages.Bills.giftAid
+          }
+
+          "have gift aid charge £500" in {
+            document.getElementById("gift-aid").text shouldBe "£500"
+          }
+        }
+
+        "when no gift aid payment" should {
+          val setup1 = pageSetup(calculationDataSuccessModel, propertyUser)
+          import setup1._
+
+          "not have text Gift Aid payment" in {
+            document.getElementById("gift-aid-heading") shouldBe null
+          }
+
+          "not have gift aid charges" in {
+            document.getElementById("gift-aid") shouldBe null
           }
         }
 
@@ -720,7 +747,6 @@ class CalcBreakdownHelperSpec extends TestSupport {
         }
       }
 
-
       "for users with income from savings of zero on the bills page" should {
 
         val setup = pageSetup(justPropertyCalcDataModel, propertyUser)
@@ -731,6 +757,32 @@ class CalcBreakdownHelperSpec extends TestSupport {
           document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
         }
 
+        "have gift aid payment" should {
+          val setup1 = pageSetup(justPropertyCalcDataModel, propertyUser)
+          import setup._
+
+          "have text Gift Aid payment" in {
+            document.getElementById("gift-aid-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.giftAid
+          }
+
+          "have gift aid charge £30" in {
+            document.getElementById("gift-aid").text shouldBe "£30"
+          }
+
+        }
+
+        "when no gift aid payment" should {
+          val setup1 = pageSetup(calculationDataSuccessModel, propertyUser)
+          import setup1._
+
+          "not have text Gift Aid payment" in {
+            document.getElementById("gift-aid-heading") shouldBe null
+          }
+
+          "not have gift aid charge £5" in {
+            document.getElementById("gift-aid") shouldBe null
+          }
+        }
       }
 
       "when no breakdown data is retrieved" should {

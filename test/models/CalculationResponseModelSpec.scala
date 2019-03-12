@@ -58,6 +58,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         incomeReceived: IncomeReceivedModel,
         calculationDataSuccessModel.savingsAndGains,
         calculationDataSuccessModel.dividends,
+        calculationDataSuccessModel.giftAid,
         calculationDataSuccessModel.nic,
         calculationDataSuccessModel.eoyEstimate,
         calculationDataSuccessModel.payAndPensionsProfitBands
@@ -84,6 +85,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
        incomeReceived: IncomeReceivedModel,
        calculationDataSuccessModel.savingsAndGains,
        calculationDataSuccessModel.dividends,
+       calculationDataSuccessModel.giftAid,
        calculationDataSuccessModel.nic,
        calculationDataSuccessModel.eoyEstimate,
        calculationDataSuccessModel.payAndPensionsProfitBands
@@ -107,6 +109,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         incomeReceived: IncomeReceivedModel,
         calculationDataSuccessModel.savingsAndGains,
         calculationDataSuccessModel.dividends,
+        calculationDataSuccessModel.giftAid,
         calculationDataSuccessModel.nic,
         calculationDataSuccessModel.eoyEstimate,
         calculationDataSuccessModel.payAndPensionsProfitBands
