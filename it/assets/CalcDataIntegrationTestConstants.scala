@@ -18,7 +18,7 @@ package assets
 import assets.BaseIntegrationTestConstants.testCalcId
 import enums.Estimate
 import models.calculation._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 
 object CalcDataIntegrationTestConstants {
 
@@ -704,21 +704,33 @@ object CalcDataIntegrationTestConstants {
       )
     )
   )
-  
-  val taxCalculationResponse: CalculationModel = CalculationModel(testCalcId,
-    Some(90500.00),
-    Some("2017-07-06T12:34:56.789Z"),
-    None,
-    None,
-    None
+
+
+  val taxCalculationResponse: JsObject = Json.obj(
+    "calcOutput" -> Json.obj(
+      "calcID" -> testCalcId,
+      "calcAmount" -> 90500.00,
+      "calcTimestamp" -> "2017-07-06T12:34:56.789Z"
+    )
   )
 
-  val taxCalculationCrystallisedResponse: CalculationModel = CalculationModel(testCalcId,
-    Some(90500.00),
-    Some("2017-07-06T12:34:56.789Z"),
-    Some(true),
-    None,
-    None
+  val taxCalculationCrystallisedResponse: JsObject = Json.obj(
+    "calcOutput" -> Json.obj(
+      "calcID" -> testCalcId,
+      "calcAmount" -> 90500.00,
+      "calcTimestamp" -> "2017-07-06T12:34:56.789Z",
+      "crystallised" -> true
+    )
+  )
+
+  val latestCalcModelJson: JsObject = Json.obj(
+    "calcOutput" -> Json.obj(
+      "calcID" -> "CALCID",
+      "calcAmount" -> 543.21,
+      "calcTimestamp" -> "2017-07-06T12:34:56.789Z",
+      "incomeTaxNicYtd" -> 123.45,
+      "incomeTaxNicAmount" -> 987.65
+    )
   )
 
   val latestCalcModel: CalculationModel =

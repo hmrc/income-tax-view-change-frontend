@@ -493,7 +493,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, latestCalcModel)
+        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, latestCalcModelJson)
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
