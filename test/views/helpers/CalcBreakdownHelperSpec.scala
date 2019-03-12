@@ -856,7 +856,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
         import setup._
 
         "display bbs interest section " in {
-          document.getElementById("business-profit-self-employed-heading").text shouldBe "Business profit(for self employment)"
+          document.getElementById("business-profit-self-employed-heading").text shouldBe "Business profit(for self-employment)"
         }
 
         "display income recieved from self income" in {

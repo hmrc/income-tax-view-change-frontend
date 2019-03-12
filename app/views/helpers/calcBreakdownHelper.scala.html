@@ -76,11 +76,14 @@
 
         <tr id="business-profit-section-bbs-interest-section" >
             <td id="business-profit-bbs-interest-heading">
-                @messages("estimated_tax_liability.calc-breakdown.and-savings")
+                @messages("estimated_tax_liability.calc-breakdown.business-profit-savings")
             </td>
 
             <td id="business-profit-bbs-interest"  class="summary-data">
-                @{(breakdown.incomeReceived.bankBuildingSocietyInterest).toCurrency}
+                @{
+                if(calcModel.calcStatus == Estimate){(breakdown.incomeReceived.bankBuildingSocietyInterest).toCurrency}
+                else {(BigDecimal(0).toCurrency)}
+                }
             </td>
 
         </tr>
