@@ -16,9 +16,10 @@
 
 package services
 
-import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
-import connectors.{CalculationDataConnector, LastTaxCalculationConnector}
+
+import config.FrontendAppConfig
+import connectors.{CalculationDataConnector, IncomeTaxViewChangeConnector}
 import enums.{Crystallised, Estimate}
 import models.calculation._
 import play.api.Logger
@@ -28,7 +29,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalculationConnector,
+class CalculationService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                    val calculationDataConnector: CalculationDataConnector,
                                   val frontendAppConfig: FrontendAppConfig) {
 
@@ -59,7 +60,7 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
                                     (implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
 
     Logger.debug("[CalculationService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")
-    lastTaxCalculationConnector.getLastEstimatedTax(nino, year).map {
+    incomeTaxViewChangeConnector.getLastEstimatedTax(nino, year).map {
       case success: LastTaxCalculation =>
         Logger.debug(s"[CalculationService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n$success")
         success
@@ -111,7 +112,7 @@ class CalculationService @Inject()(val lastTaxCalculationConnector: LastTaxCalcu
   def getLatestCalculation(nino: String, taxYear: Int)
                           (implicit headerCarrier: HeaderCarrier): Future[CalculationResponseModel] = {
     Logger.debug("[CalculationService][getLatestCalculation] - Requesting latest calc data from the backend")
-    calculationDataConnector.getLatestCalculation(nino, taxYear) map {
+    incomeTaxViewChangeConnector.getLatestCalculation(nino, taxYear) map {
       case success: CalculationModel =>
         Logger.debug(s"[CalculationService][getLatestCalculation] - Retrieved Calculation data: \n$success")
         success

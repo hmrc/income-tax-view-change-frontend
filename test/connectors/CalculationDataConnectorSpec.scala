@@ -19,7 +19,7 @@ package connectors
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import mocks.MockHttp
-import models.calculation.{CalculationDataErrorModel, CalculationDataResponseModel, CalculationErrorModel, CalculationResponseModel}
+import models.calculation.{CalculationDataErrorModel, CalculationDataResponseModel}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testUtils.TestSupport
@@ -41,10 +41,6 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
         "http://localhost:9084/ni/AB123456C/calculations/CALCID"
     }
 
-    "have the correct URL for the getLatestCalculation endpoint" in {
-      TestCalculationDataConnector.getLatestCalculationUrl(testNino, testTaxYear.toString) shouldBe
-        "http://localhost:9082/income-tax-view-change/previous-tax-calculation/AB123456C/2018"
-    }
   }
 
   "CalculationDataConnector.getCalculationData" should {
@@ -72,34 +68,6 @@ class CalculationDataConnectorSpec extends TestSupport with MockHttp {
     "return CalculationDataErrorModel model in case of future failed scenario" in {
       setupMockFailedHttpGet(url)(badResponse)
       await(result) shouldBe CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
-    }
-  }
-
-  "CalculationDataConnector.getLatestCalculation" should {
-
-    val successResponse = HttpResponse(Status.OK, Some(testCalculationInputJson))
-
-    lazy val url = TestCalculationDataConnector.getLatestCalculationUrl(testNino, testTaxYear.toString)
-    def result: Future[CalculationResponseModel] = TestCalculationDataConnector.getLatestCalculation(testNino, testTaxYear)
-
-    "return a CalculationModel with JSON in case of success" in {
-      setupMockHttpGet(url)(successResponse)
-      await(result) shouldBe testCalcModelCrystalised
-    }
-
-    "return a CalculationErrorModel in case of failure" in {
-      setupMockHttpGet(url)(badResponse)
-      await(result) shouldBe CalculationErrorModel(Status.BAD_REQUEST, "Error Message")
-    }
-
-    "return a CalculationErrorModel when bad JSON is received" in {
-      setupMockHttpGet(url)(successResponseBadJson)
-      await(result) shouldBe CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Json validation error parsing calculation model response")
-    }
-
-    "return a CalculationErrorModel in case of failed GET request" in {
-      setupMockFailedHttpGet(url)(badResponse)
-      await(result) shouldBe CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
     }
   }
 }
