@@ -168,9 +168,9 @@ object CalculationDataModel {
 
 object GiftAidModel {
   implicit val reads: Reads[GiftAidModel] = (
-    defaultZero(__ \  "calcObject" \ "calcResult" \ "incomeTax" \ "giftAid" \ "paymentsMade") and
-      defaultZero(__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "giftAid" \ "rate") and
-      defaultZero(__ \ "calcObject" \ "calcResult" \ "incomeTax" \ "giftAid" \ "taxableIncome")
+    defaultZero(__ \  "calcOutput" \ "calcResult" \ "incomeTax" \ "giftAid" \ "paymentsMade") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "giftAid" \ "rate") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "giftAid" \ "taxableIncome")
     ) (GiftAidModel.apply _)
   implicit val writes: Writes[GiftAidModel] = Json.writes[GiftAidModel]
 }
