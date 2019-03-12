@@ -60,7 +60,7 @@
         }
 
         @if(breakdown.savingsAllowanceSummaryData == 0 && breakdown.additionalAllowances == 0 && breakdown.giftAid.paymentsMade == 0) {
-        <tr id="personal-allowance-section" class="no-border-bottom">
+        <tr id="personal-allowance-section">
         } else {
         <tr id="personal-allowance-section" class="no-border-bottom">
         }
@@ -92,11 +92,9 @@
         @if(breakdown.additionalAllowances > 0) {
         @if(breakdown.giftAid.paymentsMade <= 0) {
         <tr id="additional-allowances-section">
-            }
-            else
-            {
+        } else {
         <tr id="additional-allowances-section" class="no-border-bottom">
-            }
+        }
             <td id="additional-allowances-heading">
                 @messages("estimated_tax_liability.calc-breakdown.additional-allowances")
             </td>
