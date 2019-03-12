@@ -34,7 +34,7 @@ case class CalculationModel(calcID: String,
                             crystallised: Option[Boolean],
                             incomeTaxNicYtd: Option[BigDecimal],
                             incomeTaxNicAmount: Option[BigDecimal],
-                            calculationDataResponseModel: Option[CalculationDataModel] = None
+                            calculationDataModel: Option[CalculationDataModel] = None
                            ) extends CalculationResponseModel with CrystallisedViewModel {
 
   val displayAmount: Option[BigDecimal] = (calcAmount, incomeTaxNicYtd) match {
@@ -57,6 +57,6 @@ object CalculationModel {
     (JsPath \\ "calcOutput" \ "crystallised").readNullable[Boolean] and
     (JsPath \\ "incomeTaxNicYtd").readNullable[BigDecimal] and
     (JsPath \\ "incomeTaxNicAmount").readNullable[BigDecimal] and
-      __.readNullable[CalculationDataModel].orElse(Reads.pure(None))
+      JsPath.read[CalculationDataModel].map(x => Option(x)).orElse(Reads.pure(None))
   ) (CalculationModel.apply _)
 }

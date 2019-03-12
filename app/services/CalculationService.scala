@@ -36,18 +36,14 @@ class CalculationService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
   def getCalculationDetail(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
     for {
       lastCalc <- getLatestCalculation(nino, taxYear)
-      calcBreakdown <- lastCalc match {
-        case calculationData: CalculationModel => getCalculationData(nino, calculationData.calcID)
-        case other => Future.successful(other)
-      }
-    } yield (lastCalc, calcBreakdown) match {
-      case (calc: CalculationModel, breakdown: CalculationDataModel) =>
+    } yield lastCalc match {
+      case calc: CalculationModel if calc.calculationDataModel.isDefined =>
         Logger.debug("[CalculationService] Retrieved all Financial Data")
-        CalcDisplayModel(calc.calcTimestamp.getOrElse(""), calc.calcAmount.getOrElse(0.0), Some(breakdown), calc.status)
-      case (calc: CalculationModel, _) =>
+        CalcDisplayModel(calc.calcTimestamp.getOrElse(""), calc.calcAmount.getOrElse(0.0), calc.calculationDataModel, calc.status)
+      case calc: CalculationModel =>
         Logger.warn("[CalculationService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
         CalcDisplayModel(calc.calcTimestamp.getOrElse(""), calc.calcAmount.getOrElse(0.0), None, calc.status)
-      case (_: CalculationErrorModel, _) =>
+      case _: CalculationErrorModel =>
         Logger.error("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
       case _ =>

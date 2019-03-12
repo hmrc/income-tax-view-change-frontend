@@ -67,10 +67,4 @@ trait GenericStubMethods extends CustomMatchers {
     Then(s"Verify that Latest Calculation has been called for NINO = $nino and year = $taxYear")
     IncomeTaxViewChangeStub.verifyGetLatestCalculation(nino, taxYear)
   }
-
-  def verifyCalculationDataCall(nino: String, calcId: String): Unit = {
-    Then(s"Verify that Calculation Data has been called for NINO = $nino and CalcID = $calcId")
-    SelfAssessmentStub.verifyGetCalcData(nino, calcId)
-  }
-
 }

@@ -63,7 +63,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub a successful Get Last latest Tax calculation response")
-        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
+        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponseWithEOY)
 
         And("I wiremock stub a successful Get CalculationData response")
         SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
@@ -73,7 +73,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyLatestCalculationCall(testNino, testYear)
-        verifyCalculationDataCall(testNino, testCalcId)
 
         val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "BRT").get
         val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "HRT").get
@@ -161,7 +160,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
           verifyIncomeSourceDetailsCall(testMtditid)
           verifyLatestCalculationCall(testNino, testYear)
-          verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
 
           val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "BRT").get
@@ -250,7 +248,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
           verifyIncomeSourceDetailsCall(testMtditid)
           verifyLatestCalculationCall(testNino, testYear)
-          verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
 
           val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "BRT").get
@@ -336,7 +333,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
           verifyIncomeSourceDetailsCall(testMtditid)
           verifyLatestCalculationCall(testNino, testYear)
-          verifyCalculationDataCall(testNino, testCalcId)
           verifyFinancialTransactionsCall(testMtditid)
 
           res should have(httpStatus(INTERNAL_SERVER_ERROR))
@@ -363,7 +359,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyLatestCalculationCall(testNino, testYear)
-        verifyCalculationDataCall(testNino, testCalcId)
 
         val brtBand = calculationDataSuccessModel.payAndPensionsProfitBands.find(_.name == "BRT").get
         val hrtBand = calculationDataSuccessModel.payAndPensionsProfitBands.find(_.name == "HRT").get
@@ -422,39 +417,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
           isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
           isElementVisibleById("business-profit-property-section")(expectedValue = true),
           isElementVisibleById("business-profit-section-bbs-interest-section")(expectedValue = true)
-        )
-      }
-    }
-
-    "isAuthorisedUser with an active enrolment, valid last tax estimate response, but error in calc breakdown" should {
-
-      "Return the estimated tax liability without the calculation breakdown" in {
-
-        stubUserDetailsError()
-
-        And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-
-        And("a successful Get Latest Calculation response via wiremock stub")
-        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
-
-        And("I wiremock stub an erroneous response")
-        SelfAssessmentStub.stubGetCalcDataError(testNino, testCalcId, calculationDataErrorModel)
-
-        When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyLatestCalculationCall(testNino, testYear)
-        verifyCalculationDataCall(testNino, testCalcId)
-
-        Then("a successful response is returned with the correct estimate")
-        res should have(
-          httpStatus(OK),
-          pageTitle(messages.title(testYearInt)),
-          elementTextByID("inYearEstimateHeading")(messages.EstimatedTaxAmount.currentEstimate(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString)),
-          elementTextByID("inYearP1")(messages.EstimatedTaxAmount.inYearp1("6 July 2017", testYearInt)),
-          isElementVisibleById("inYearCalcBreakdown")(expectedValue = false)
         )
       }
     }
