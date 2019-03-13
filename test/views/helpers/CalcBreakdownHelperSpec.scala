@@ -504,6 +504,18 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
         }
 
+        "display the total taxable savings and gains" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.taxableDividends}" in {
+            document.getElementById("taxable-savings-and-gains-heading").text shouldBe "Income from Saving and Gains"
+          }
+
+          s"should have the amount ${dividendAtBRT.taxableDividendIncome}" in {
+            document.getElementById("taxable-savings-and-gains").text shouldBe dividendAtBRT.savingsAndGains.total.toCurrencyString
+          }
+
+        }
+
         "have a section for Dividends charged at the Basic Rate" which {
 
           s"should have the heading ${

@@ -41,9 +41,8 @@ case class CalculationDataModel(
                                ) extends CalculationDataResponseModel {
 
   val taxableDividendIncome: BigDecimal = dividends.totalAmount
-//  val taxableSavingsIncome: BigDecimal = savingsAndGains.totalAmount
-  val taxableIncomeTaxIncome: BigDecimal = totalTaxableIncome - taxableDividendIncome
-  //- taxableSavingsIncome
+  val taxableSavingsIncome: BigDecimal = savingsAndGains.total
+  val taxableIncomeTaxIncome: BigDecimal = totalTaxableIncome - taxableDividendIncome - taxableSavingsIncome
   val savingsAllowanceSummaryData: BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
   val additionalAllowances: BigDecimal = totalIncomeAllowancesUsed - personalAllowance - savingsAllowanceSummaryData
   val taxablePayPensionsProfit: BigDecimal = payAndPensionsProfitBands.map(_.income).sum

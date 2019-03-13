@@ -156,6 +156,11 @@
             <td id="taxable-income" class="summary-data">@breakdown.taxableIncomeTaxIncome.toCurrency</td>
         </tr>
 
+        <tr id="taxable-savings-and-gains-section" class="no-border-bottom">
+        <td id="taxable-savings-and-gains-heading"> @messages("estimated_tax_liability.calc-breakdown.taxable-savings-and-gains")</td>
+            <td id="taxable-savings-and-gains" class="summary-data"> @breakdown.savingsAndGains.total.toCurrency </td>
+        </tr>
+
         @if(breakdown.incomeReceived.ukDividends > 0) {
         <tr class="no-border-bottom">
             <td id="dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-income")</td>

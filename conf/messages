@@ -90,7 +90,7 @@ estimated_tax_liability.calc-breakdown.pa-personalAllowance                    =
 estimated_tax_liability.calc-breakdown.business-profit-property                = Business profit(for property)
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Business profit(for self-employment)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Income from savings(for business profit)
-
+estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
 
 
 ## ReportDeadlines Page ##
