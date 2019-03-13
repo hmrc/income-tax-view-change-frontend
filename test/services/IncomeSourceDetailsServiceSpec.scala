@@ -19,14 +19,14 @@ package services
 import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import audit.mocks.MockAuditingService
-import mocks.connectors.MockIncomeSourceDetailsConnector
+import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.MockReportDeadlinesService
 import testUtils.TestSupport
 
 
-class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeSourceDetailsConnector with MockReportDeadlinesService with MockAuditingService {
+class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockReportDeadlinesService with MockAuditingService {
 
-  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeSourceDetailsConnector)
+  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector)
 
   "The IncomeSourceDetailsService.getIncomeSourceDetails method" when {
 

@@ -22,13 +22,13 @@ import assets.IncomeSourceDetailsTestConstants._
 import assets.IncomeSourcesWithDeadlinesTestConstants._
 import assets.PropertyDetailsTestConstants.propertyDetails
 import assets.ReportDeadlinesTestConstants._
-import mocks.connectors.MockReportDeadlinesConnector
+import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesError, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
 import testUtils.TestSupport
 
-class ReportDeadlinesServiceSpec extends TestSupport with MockReportDeadlinesConnector {
+class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
 
-  object TestReportDeadlinesService extends ReportDeadlinesService(mockReportDeadlinesConnector)
+  object TestReportDeadlinesService extends ReportDeadlinesService(mockIncomeTaxViewChangeConnector)
 
   "The ReportDeadlinesService.getReportDeadlines method" when {
 

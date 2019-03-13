@@ -36,9 +36,6 @@ class CalculationDataConnector @Inject()(val http: HttpClient,
   private[connectors] lazy val getCalculationDataUrl: (String, String) => String =
     (nino, taxCalculationId) => s"${config.saApiService}/ni/$nino/calculations/$taxCalculationId"
 
-  private[connectors] lazy val getLatestCalculationUrl: (String, String) => String =
-    (nino, taxYear) => s"${config.itvcProtectedService}/income-tax-view-change/previous-tax-calculation/$nino/$taxYear"
-
   def getCalculationData(nino: String, taxCalculationId: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
 
     val url = getCalculationDataUrl(nino, taxCalculationId)
@@ -68,38 +65,6 @@ class CalculationDataConnector @Inject()(val http: HttpClient,
       case _ =>
         Logger.error(s"[CalculationDataConnector][getCalculationData] - Unexpected future failed error")
         CalculationDataErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
-    }
-  }
-
-  def getLatestCalculation(nino: String, taxYear: Int)(implicit hc: HeaderCarrier): Future[CalculationResponseModel] = {
-
-    val url = getLatestCalculationUrl(nino, taxYear.toString)
-    Logger.debug(s"[CalculationDataConnector][getLatestCalculation] - GET $url")
-
-    http.GET[HttpResponse](url)(httpReads, hc.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map {
-      response =>
-        response.status match {
-          case OK =>
-            Logger.debug(s"[CalculationDataConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.json}")
-            response.json.validate[CalculationModel].fold(
-              invalid => {
-                Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Json validation error parsing calculation model response. Invalid=$invalid")
-                CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Json validation error parsing calculation model response")
-              },
-              valid => valid
-            )
-          case _ =>
-            Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.body}")
-            Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Response status: [${response.status}] returned from Latest Calculation call")
-            CalculationErrorModel(response.status, response.body)
-        }
-    } recover {
-      case ex =>
-        Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Unexpected future failed error, ${ex.getMessage}")
-        CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-      case _ =>
-        Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Unexpected future failed error")
-        CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
     }
   }
 }

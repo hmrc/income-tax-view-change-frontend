@@ -18,20 +18,17 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import audit.AuditingService
 import auth.MtdItUserWithNino
-import connectors.IncomeSourceDetailsConnector
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import models.incomeSourcesWithDeadlines._
+import connectors.IncomeTaxViewChangeConnector
+import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val incomeSourceDetailsConnector: IncomeSourceDetailsConnector) {
+class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
 
   def getIncomeSourceDetails()(implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] =
-    incomeSourceDetailsConnector.getIncomeSources(mtdUser.mtditid, mtdUser.nino)
+    incomeTaxViewChangeConnector.getIncomeSources(mtdUser.mtditid, mtdUser.nino)
 
 }

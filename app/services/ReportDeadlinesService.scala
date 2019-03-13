@@ -16,9 +16,10 @@
 
 package services
 
-import auth.{MtdItUser, MtdItUserWithNino}
-import connectors._
 import javax.inject.{Inject, Singleton}
+
+import auth.MtdItUser
+import connectors._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.incomeSourcesWithDeadlines._
 import models.reportDeadlines.ReportDeadlinesResponseModel
@@ -28,11 +29,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReportDeadlinesService @Inject()(val reportDeadlinesConnector: ReportDeadlinesConnector) {
+class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
 
   def getReportDeadlines(incomeSourceId: String)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
     Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting Report Deadlines for incomeSourceID: $incomeSourceId")
-    reportDeadlinesConnector.getReportDeadlines(incomeSourceId)
+    incomeTaxViewChangeConnector.getReportDeadlines(incomeSourceId)
   }
 
   def createIncomeSourcesWithDeadlinesModel(incomeSourceResponse: IncomeSourceDetailsResponse)

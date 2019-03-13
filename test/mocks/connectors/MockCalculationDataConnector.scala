@@ -42,11 +42,4 @@ trait MockCalculationDataConnector extends UnitSpec with MockitoSugar with Befor
         ArgumentMatchers.eq(taxCalculationId))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
-  def setUpLatestCalculationResponse(nino: String, taxYear: Int)(response: CalculationResponseModel): Unit =
-    when(mockCalculationDataConnector
-      .getLatestCalculation(
-        ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(taxYear))(ArgumentMatchers.any()))
-    .thenReturn(Future.successful(response))
-
 }

@@ -18,8 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.NinoLookupConnector
-import models._
+import connectors.IncomeTaxViewChangeConnector
 import models.core.NinoResponse
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,12 +26,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.Future
 
 @Singleton
-class NinoLookupService @Inject()(val ninoLookupConnector: NinoLookupConnector
-                                      ) {
+class NinoLookupService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
 
   def getNino(mtdRef:String)(implicit hc: HeaderCarrier): Future[NinoResponse] = {
-    Logger.debug(
-      s"[NinoLookupService][getNino] - Requesting NINO from connector for user with MtdRef: $mtdRef")
-    ninoLookupConnector.getNino(mtdRef)
+    Logger.debug(s"[NinoLookupService][getNino] - Requesting NINO from connector for user with MtdRef: $mtdRef")
+    incomeTaxViewChangeConnector.getNino(mtdRef)
   }
 }
