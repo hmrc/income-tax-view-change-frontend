@@ -55,8 +55,8 @@ object CalculationModel {
     (JsPath \\ "calcOutput" \ "calcAmount").readNullable[BigDecimal] and
     (JsPath \\ "calcOutput" \ "calcTimestamp").readNullable[String] and
     (JsPath \\ "calcOutput" \ "crystallised").readNullable[Boolean] and
-    (JsPath \\ "incomeTaxNicYtd").readNullable[BigDecimal] and
-    (JsPath \\ "incomeTaxNicAmount").readNullable[BigDecimal] and
+    (JsPath \\ "calcOutput" \ "calcResult" \ "incomeTaxNicYtd").readNullable[BigDecimal] and
+    (JsPath \\ "calcOutput" \ "calcResult" \ "eoyEstimate" \ "incomeTaxNicAmount").readNullable[BigDecimal].orElse(Reads.pure(None)) and
       JsPath.read[CalculationDataModel].map(x => Option(x)).orElse(Reads.pure(None))
   ) (CalculationModel.apply _)
 }

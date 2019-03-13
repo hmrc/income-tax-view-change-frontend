@@ -367,7 +367,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
         res should have (
           httpStatus(OK),
           pageTitle(messages.title(testYearInt)),
-          elementTextByID("inYearEstimateHeading")(messages.EstimatedTaxAmount.currentEstimate(calculationDataSuccessModel.totalIncomeTaxNicYtd.toCurrencyString)),
           elementTextByID("heading")(messages.heading(testYearInt)),
           elementTextByID("sub-heading")(messages.EstimatedTaxAmount.subHeading),
           elementTextByID("business-profit")(totalProfit(calculationDataSuccessModel)),
@@ -467,8 +466,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitle(messages.title(testYearInt)),
           elementTextByID("heading")(messages.heading(testYearInt)),
-          isElementVisibleById("eoyEstimate")(expectedValue = true),
-          elementTextByID("inYearEstimateHeading")(messages.EstimatedTaxAmount.currentEstimate(latestCalcModel.displayAmount.get.toCurrencyString))
+          isElementVisibleById("eoyEstimate")(expectedValue = false)
         )
       }
     }
