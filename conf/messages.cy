@@ -87,6 +87,8 @@ estimated_tax_liability.calc-breakdown.nationalRegime           = Cyfundrefn Gen
 estimated_tax_liability.calc-breakdown.business-profit-property                = Elw busnes(Am eiddo)
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Elw busnes(Am hunangyflogaeth)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Incwm o gynilion(Am Elw busnes)
+estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
+
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
