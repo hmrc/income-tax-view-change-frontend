@@ -504,6 +504,18 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
         }
 
+        "display the total taxable savings and gains" which {
+
+          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.taxableDividends}" in {
+            document.getElementById("taxable-savings-and-gains-heading").text shouldBe "Income from Saving and Gains"
+          }
+
+          s"should have the amount ${dividendAtBRT.taxableDividendIncome}" in {
+            document.getElementById("taxable-savings-and-gains").text shouldBe dividendAtBRT.savingsAndGains.total.toCurrencyString
+          }
+
+        }
+
         "have a section for Dividends charged at the Basic Rate" which {
 
           s"should have the heading ${
@@ -849,6 +861,24 @@ class CalcBreakdownHelperSpec extends TestSupport {
         "display the business profit amount" in {
           document.getElementById("business-profit").text shouldBe "£3,000"
         }
+      }
+
+      "when the user has property income, self Employed Income and  Savings and gains"  should {
+        val setup = pageSetup(dividendAtART, bizAndPropertyUser)
+        import setup._
+
+        "display bbs interest section " in {
+          document.getElementById("business-profit-self-employed-heading").text shouldBe "Business profit(for self-employment)"
+        }
+
+        "display income recieved from self income" in {
+          document.getElementById("business-profit-property-heading").text shouldBe "Business profit(for property)"
+        }
+
+        "display income recieved from property" in {
+          document.getElementById("business-profit-bbs-interest-heading").text    shouldBe "Income from savings(for business profit)"
+        }
+
       }
     }
   }

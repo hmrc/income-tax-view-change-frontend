@@ -83,6 +83,13 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = efallai y bydd
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = efallai bod gennych incwm nac adroddir amdano yn eich meddalwedd cyfrifyddu
 estimated_tax_liability.calc-breakdown.nationalRegime           = Cyfundrefn Genedlaethol
 
+# TODO properly translate welsh for message #
+estimated_tax_liability.calc-breakdown.business-profit-property                = Elw busnes(Am eiddo)
+estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Elw busnes(Am hunangyflogaeth)
+estimated_tax_liability.calc-breakdown.business-profit-savings                 = Incwm o gynilion(Am Elw busnes)
+estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
+
+
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau

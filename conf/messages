@@ -85,8 +85,12 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have i
 estimated_tax_liability.calc-breakdown.nationalRegime           = National Regime
 estimated_tax_liability.calc-breakdown.savingsInterest-income   = Savings Interest
 estimated_tax_liability.calc-breakdown.taxable-payPensionsProfit-income = Your taxable income (pay, pensions, profit)
-estimated_tax_liability.calc-breakdown.taxable-savingsInterest-income = Your taxable income (savings interest)
-estimated_tax_liability.calc-breakdown.pa-personalAllowance         = Personal Allowance
+estimated_tax_liability.calc-breakdown.taxable-savingsInterest-income          = Your taxable income (savings interest)
+estimated_tax_liability.calc-breakdown.pa-personalAllowance                    = Personal Allowance
+estimated_tax_liability.calc-breakdown.business-profit-property                = Business profit(for property)
+estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Business profit(for self-employment)
+estimated_tax_liability.calc-breakdown.business-profit-savings                 = Income from savings(for business profit)
+estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
 
 
 ## ReportDeadlines Page ##
