@@ -54,15 +54,7 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
       )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
-  def setupMockGetLastEstimatedTaxCalculation(nino: String, year: Int)(response: LastTaxCalculationResponseModel): Unit =
-    when(mockCalculationService
-      .getLastEstimatedTaxCalculation(
-        ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(year)
-      )(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
-
-  def setupMockGetAllLatestCalculations(nino: String, orderedYears: List[Int])(response: List[LastTaxCalculationWithYear]): Unit =
+  def setupMockGetAllLatestCalculations(nino: String, orderedYears: List[Int])(response: List[CalculationResponseModelWithYear]): Unit =
     when(mockCalculationService
       .getAllLatestCalculations(
         ArgumentMatchers.eq(nino),
@@ -86,8 +78,6 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearCrystallisedList)
   def mockGetAllLatestCrystallisedCalcWithError():Unit =
     setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListWithError)
-  def mockGetAllLatestCrystallisedCalcWithCalcNotFound():Unit =
-    setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListWithCalcNotFound)
   def mockGetAllLatestCalcSuccessEmpty():Unit =
     setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(List())
   def mockLatestCalculationSuccess(): Unit =

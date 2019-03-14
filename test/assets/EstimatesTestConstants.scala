@@ -17,28 +17,32 @@
 package assets
 
 import assets.BaseTestConstants._
-import enums.{Crystallised, Estimate}
 import models.calculation._
+import play.api.http.Status
 
 object EstimatesTestConstants {
 
   val testYear = 2018
   val testYearPlusOne = 2019
   val testYearPlusTwo = 2020
-  val testCalcType = "it"
 
   //Last Tax Calculations
-  val lastTaxCalcSuccess = LastTaxCalculation(
-    calcID = testTaxCalculationId,
-    calcTimestamp = testTimeStampString,
-    calcAmount = 543.21,
-    calcStatus = Estimate
+  val lastTaxCalcSuccess = CalculationModel(
+    testTaxCalculationId,
+    Some(543.21),
+    Some(testTimeStampString),
+    Some(false),
+    Some(123.45),
+    Some(987.65)
   )
-  val lastTaxCalcCrystallisedSuccess = LastTaxCalculation(
-    calcID = testTaxCalculationId,
-    calcTimestamp = testTimeStampString,
-    calcAmount = 543.21,
-    calcStatus = Crystallised
+
+  val lastTaxCalcCrystallisedSuccess = CalculationModel(
+    testTaxCalculationId,
+    Some(543.21),
+    Some(testTimeStampString),
+    Some(true),
+    Some(123.45),
+    Some(987.65)
   )
 
   val lastCalcSuccessEstimate = CalculationModel(
@@ -59,27 +63,27 @@ object EstimatesTestConstants {
     incomeTaxNicAmount = None
   )
 
-  val lastTaxCalcError = LastTaxCalculationError(testErrorStatus, testErrorMessage)
-  val lastTaxCalcNotFound: LastTaxCalculationResponseModel = NoLastTaxCalculation
+  val lastTaxCalcError = CalculationErrorModel(testErrorStatus, testErrorMessage)
+  val lastTaxCalcNotFound: CalculationResponseModel = CalculationErrorModel(Status.NOT_FOUND, "Not found")
 
   //Last Tax Calculation With Years (for sub pages)
-  val lastTaxCalcSuccessWithYear = LastTaxCalculationWithYear(lastTaxCalcSuccess, testYear)
+  val lastTaxCalcSuccessWithYear = CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear)
   val lastTaxCalcWithYearList = List(
-    LastTaxCalculationWithYear(lastTaxCalcSuccess, testYear),
-    LastTaxCalculationWithYear(lastTaxCalcSuccess, testYearPlusOne))
+    CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear),
+    CalculationResponseModelWithYear(lastTaxCalcSuccess, testYearPlusOne))
   val lastTaxCalcWithYearCrystallisedList = List(
-    LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYear),
-    LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYearPlusOne)
+    CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYear),
+    CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYearPlusOne)
   )
   val lastTaxCalcWithYearListWithError = List(
-    LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYear),
-    LastTaxCalculationWithYear(lastTaxCalcError, testYearPlusOne)
+    CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYear),
+    CalculationResponseModelWithYear(lastTaxCalcError, testYearPlusOne)
   )
   val lastTaxCalcWithYearListWithCalcNotFound = List(
-    LastTaxCalculationWithYear(lastTaxCalcCrystallisedSuccess, testYear),
-    LastTaxCalculationWithYear(lastTaxCalcNotFound, testYearPlusOne)
+    CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYear),
+    CalculationResponseModelWithYear(lastTaxCalcNotFound, testYearPlusOne)
   )
-  val lastTaxCalcErrorWithYear = LastTaxCalculationWithYear(lastTaxCalcError, testYear)
+  val lastTaxCalcErrorWithYear = CalculationResponseModelWithYear(lastTaxCalcError, testYear)
 
   val fullEstimateViewModel: EstimatesViewModel =
     EstimatesViewModel(

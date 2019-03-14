@@ -16,7 +16,7 @@
 
 package models.calculation
 
-import enums.{Crystallised, Estimate}
+import enums.{CalcStatus, Crystallised, Estimate}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -44,7 +44,19 @@ case class CalculationModel(calcID: String,
   }
 
   val isBill: Boolean = crystallised.getOrElse(false)
-  val status = if(isBill) Crystallised else Estimate
+  val status: CalcStatus = if(isBill) Crystallised else Estimate
+}
+
+case class CalculationResponseModelWithYear(model: CalculationResponseModel, year: Int) {
+  val isError: Boolean = model match {
+    case model: CalculationErrorModel => true
+    case _ => false
+  }
+
+  val isCrystalised: Boolean = model match {
+    case model: CalculationModel => model.status == Crystallised
+    case _ => false
+  }
 }
 
 object CalculationModel {

@@ -1824,32 +1824,32 @@ object CalcBreakdownTestConstants {
 
   val calculationDisplaySuccessModel: CalculationDataModel => CalcDisplayModel = calcModel =>
     CalcDisplayModel(
-      lastTaxCalcSuccess.calcTimestamp,
-      lastTaxCalcSuccess.calcAmount,
+      lastTaxCalcSuccess.calcTimestamp.get,
+      lastTaxCalcSuccess.calcAmount.get,
       Some(calcModel),
       Estimate
     )
 
   val calculationDisplaySuccessCrystalisationModel: CalculationDataModel => CalcDisplayModel = calcModel =>
     CalcDisplayModel(
-      lastTaxCalcSuccess.calcTimestamp,
-      lastTaxCalcSuccess.calcAmount,
+      lastTaxCalcSuccess.calcTimestamp.get,
+      lastTaxCalcSuccess.calcAmount.get,
       Some(calcModel),
       Crystallised
     )
 
   val calculationDisplayNoBreakdownModel =
     CalcDisplayModel(
-      lastTaxCalcSuccess.calcTimestamp,
-      lastTaxCalcSuccess.calcAmount,
+      lastTaxCalcSuccess.calcTimestamp.get,
+      lastTaxCalcSuccess.calcAmount.get,
       None,
       Estimate
     )
 
   val testCalcDisplayModel: CalcDisplayModel =
     CalcDisplayModel(
-      lastTaxCalcSuccess.calcTimestamp,
-      lastTaxCalcSuccess.calcAmount,
+      lastTaxCalcSuccess.calcTimestamp.get,
+      lastTaxCalcSuccess.calcAmount.get,
       Some(calculationDataSuccessModel),
       Estimate
     )
@@ -1956,7 +1956,7 @@ object CalcBreakdownTestConstants {
       testTaxCalculationId,
       Some(543.21),
       Some(testTimeStampString),
-      None,
+      Some(false),
       Some(123.45),
       Some(987.65)
     )

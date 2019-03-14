@@ -58,11 +58,6 @@ trait GenericStubMethods extends CustomMatchers {
     FinancialTransactionsStub.verifyGetFinancialTransactions(mtditid)
   }
 
-  def verifyLastTaxCalculationCall(nino: String, taxYear: String): Unit = {
-    Then(s"Verify that Last Tax Calculation has been called for NINO = $nino and year = $taxYear")
-    IncomeTaxViewChangeStub.verifyGetLastTaxCalc(nino, taxYear)
-  }
-
   def verifyLatestCalculationCall(nino: String, taxYear: String): Unit = {
     Then(s"Verify that Latest Calculation has been called for NINO = $nino and year = $taxYear")
     IncomeTaxViewChangeStub.verifyGetLatestCalculation(nino, taxYear)

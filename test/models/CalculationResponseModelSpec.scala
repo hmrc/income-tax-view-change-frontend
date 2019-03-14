@@ -299,4 +299,35 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
       Json.fromJson[CalculationErrorModel](testCalculationErrorJson) shouldBe JsSuccess(testCalculationErrorModel)
     }
   }
+
+  "CalculationResponseModelWithYear" should {
+
+    val errorModel = CalculationResponseModelWithYear(CalculationErrorModel(5, "test"), 2020)
+    val calcModelCrystallised = CalculationResponseModelWithYear(CalculationModel("calcId", None, None, Some(true), None, None), 2020)
+    val calcModelEstimate = CalculationResponseModelWithYear(CalculationModel("calcId", None, None, Some(false), None, None), 2020)
+
+    "return true for isError" when {
+      "the model it contains is of type CalculationErrorModel" in {
+        errorModel.isError shouldBe true
+      }
+    }
+    "return false for isError" when {
+      "the model it contains is not of type CalculationErrorModel" in {
+        calcModelCrystallised.isError shouldBe false
+      }
+    }
+    "return true for isCrystallised" when {
+      "the model it contains is a CalculationModel and is Crystallised" in {
+        calcModelCrystallised.isCrystalised shouldBe true
+      }
+    }
+    "return false for isCrystallised" when {
+      "the model it contains is a CalculationModel but is an Estimate" in {
+        calcModelEstimate.isCrystalised shouldBe false
+      }
+      "the model it contains is not a CalculationModel" in {
+        errorModel.isCrystalised shouldBe false
+      }
+    }
+  }
 }
