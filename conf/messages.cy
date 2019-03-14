@@ -83,19 +83,27 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = efallai y bydd
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = efallai bod gennych incwm nac adroddir amdano yn eich meddalwedd cyfrifyddu
 estimated_tax_liability.calc-breakdown.nationalRegime           = Cyfundrefn Genedlaethol
 
-# TODO properly translate welsh for message #
+# TODO properly translate welsh for message calc-breakdown #
 estimated_tax_liability.calc-breakdown.business-profit-property                = Elw busnes(Am eiddo)
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Elw busnes(Am hunangyflogaeth)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Incwm o gynilion(Am Elw busnes)
 estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
-obligation.dropdown.declarations.info                                          = Information about declarations
-obligation.dropdown.quarterlyReturn.info                                       = Information about quarterly returns
-obligations.dropdown.declarations.types                                        = There are two types of declarations.
-obligations.dropdown.declarations.li1.type1                                    = End of accounting period for every entity
-obligations.dropdown.declarations.li2.type2                                    = Final check
-obligations.dropdown.declarations.li1.text                                     = - Depending on the end date of your entity's accounting period, you will need to submit a declaration through your software. This is to confirm all of the returns you submitted during the course of your entity's accounting period were true to your knowledge.
-obligations.dropdown.declarations.li2.text                                     = - This is to confirm that you have disclosed your income from all sources true to your knowledge. You need to do send this declaration using your software.
-obligation.dropdown.quarterlyReturn.text                                       = A quarterly return is the amount of income generated in a 3 month period.
+
+## Obligation Page ##
+# TODO properly translate welsh for message obligations #
+obligations.heading.v2                                                            = Returns
+obligations.sub-heading.v2                                                        = Returns due
+obligations.sub-heading.info.prt1.v2                                              = Use your
+obligations.sub-heading.info.hyperlink.v2                                         = accounting software
+obligations.sub-heading.info.prt2.v2                                              = to submit your returns as per the below details
+obligation.dropdown.declarations.info.v2                                          = Information about declarations
+obligation.dropdown.quarterlyReturn.info.v2                                       = Information about quarterly returns
+obligations.dropdown.declarations.types.v2                                        = There are two types of declarations.
+obligations.dropdown.declarations.li1.type1.v2                                    = End of accounting period for every entity
+obligations.dropdown.declarations.li2.type2.v2                                    = Final check
+obligations.dropdown.declarations.li1.text.v2                                     = - Depending on the end date of your entity's accounting period, you will need to submit a declaration through your software. This is to confirm all of the returns you submitted during the course of your entity's accounting period were true to your knowledge.
+obligations.dropdown.declarations.li2.text.v2                                     = - This is to confirm that you have disclosed your income from all sources true to your knowledge. You need to do send this declaration using your software.
+obligation.dropdown.quarterlyReturn.text.v2                                       = A quarterly return is the amount of income generated in a 3 month period.
 
 
 ## ReportDeadlines Page ##
