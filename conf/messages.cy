@@ -88,6 +88,14 @@ estimated_tax_liability.calc-breakdown.business-profit-property                =
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Elw busnes(Am hunangyflogaeth)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Incwm o gynilion(Am Elw busnes)
 estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
+obligation.dropdown.declarations.info                                          = Information about declarations
+obligation.dropdown.quarterlyReturn.info                                       = Information about quarterly returns
+obligations.dropdown.declarations.types                                        = There are two types of declarations.
+obligations.dropdown.declarations.li1.type1                                    = End of accounting period for every entity
+obligations.dropdown.declarations.li2.type2                                    = Final check
+obligations.dropdown.declarations.li1.text                                     = - Depending on the end date of your entity's accounting period, you will need to submit a declaration through your software. This is to confirm all of the returns you submitted during the course of your entity's accounting period were true to your knowledge.
+obligations.dropdown.declarations.li2.text                                     = - This is to confirm that you have disclosed your income from all sources true to your knowledge. You need to do send this declaration using your software.
+obligation.dropdown.quarterlyReturn.text                                       = A quarterly return is the amount of income generated in a 3 month period.
 
 
 ## ReportDeadlines Page ##
