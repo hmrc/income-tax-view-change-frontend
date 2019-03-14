@@ -41,16 +41,19 @@ contentHeader = Some(breadcrumb)
 <!--
     Heading content section
 -->
+<header class="page-heading">
+    <h1 id="page-heading" class="heading-xlarge"> @Messages("obligations.heading.v2")</h1>
+</header>
 
-<h1 class="heading-xlarge"> @Messages("obligations.heading") </h1>
+<section id="sub-heading-section">
+    <h1 id="page-sub-heading" class="heading large"> @Messages("obligations.sub-heading.v2") </h1>
 
-<h1 class="heading large"> @Messages("obligations.sub-heading") </h1>
-
-<p>@Messages("obligations.sub-heading.info.prt1")
-    <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax">
-        @Messages("obligations.sub-heading.info.hyperlink") </a>
-    @Messages("obligations.sub-heading.info.prt2")
-</p>
+    <p>@Messages("obligations.sub-heading.info.prt1.v2")
+        <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax">
+            @Messages("obligations.sub-heading.info.hyperlink.v2") </a>
+        @Messages("obligations.sub-heading.info.prt2.v2")
+    </p>
+</section>
 
 <!--
     Declarations section
@@ -61,17 +64,17 @@ contentHeader = Some(breadcrumb)
 -->
 <details role="group">
 
-    <summary role="button" aria-controls="details-content-0" aria-expanded="false">
-        @Messages("obligation.dropdown.declarations.info")
+    <summary id="declaration-dropdown-title" role="button" aria-controls="details-content-0" aria-expanded="false">
+        @Messages("obligation.dropdown.declarations.info.v2")
     </summary>
 
 
     <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-        <p>@Messages("obligations.dropdown.declarations.types")</p>
+        <p>@Messages("obligations.dropdown.declarations.types.v2")</p>
         <ol class="list list-number">
-            <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li1.type1")</span>@Messages("obligations.dropdown.declarations.li1.text")
+            <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li1.type1.v2")</span>@Messages("obligations.dropdown.declarations.li1.text.v2")
             </li>
-            <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li2.type2")</span>@Messages("obligations.dropdown.declarations.li2.text")
+            <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li2.type2.v2")</span>@Messages("obligations.dropdown.declarations.li2.text.v2")
             </li>
         </ol>
 
@@ -99,14 +102,14 @@ contentHeader = Some(breadcrumb)
 
 <details role="group">
 
-    <summary role="button" aria-controls="details-content-1" aria-expanded="false">
-        @Messages("obligation.dropdown.quarterlyReturn.info")
+    <summary id="quarterly-dropdown-title" role="button" aria-controls="details-content-1" aria-expanded="false">
+        @Messages("obligation.dropdown.quarterlyReturn.info.v2")
     </summary>
 
 
     <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
 
-        <p>@Messages("obligation.dropdown.quarterlyReturn.text")</p>
+        <p>@Messages("obligation.dropdown.quarterlyReturn.text.v2")</p>
     </div>
 
 </details>

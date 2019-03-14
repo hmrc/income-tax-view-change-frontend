@@ -299,4 +299,13 @@ object Messages {
     val statement = "Income Tax statement"
     val details = "Account details"
   }
+
+  //ReportDeadlines Page Messages
+  object Obligations {
+    val title = "Returns"
+    val subTitle = "Returns due"
+    val declerationDropDown = "Information about declarations"
+    val quarterlyDropDown = "Information about quarterly returns"
+  }
+
 }
