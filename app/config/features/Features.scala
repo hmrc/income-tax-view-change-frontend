@@ -32,4 +32,5 @@ class Features @Inject()(config: Configuration) {
   val accountDetailsEnabled: Feature = new Feature(Keys.accountDetailsEnabled, config)
   val calcBreakdownEnabled: Feature = new Feature(Keys.calcBreakdownEnabled, config)
   val calcDataApiEnabled: Feature = new Feature(Keys.calcDataApiEnabled, config)
+  val obligationsPageEnabled: Feature = new Feature(Keys.obligationsPageEnabled, config)
 }
