@@ -44,19 +44,19 @@ contentHeader = None
     -->
 <details role="group" open="">
 
-    <summary role="button" aria-controls="details-content-0" aria-expanded="false"> @Messages("obligation.dropdown.declarations.info")</summary>
+    <summary role="button" aria-controls="details-content-0" aria-expanded="false">
+        @Messages("obligation.dropdown.declarations.info")
+    </summary>
 
 
     <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-
-        <p>@Messages("obligations.dropdown.declarations.types")<span>
-
-    </span></p><ol class="list list-number">
-        <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li1.type1")</span>@Messages("obligations.dropdown.declarations.li1.text") </li>
-        <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li2.type2")</span>@Messages("obligations.dropdown.declarations.li2.text") </li>
-    </ol>
-
-
+        <p>@Messages("obligations.dropdown.declarations.types")</p>
+        <ol class="list list-number">
+            <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li1.type1")</span>@Messages("obligations.dropdown.declarations.li1.text")
+            </li>
+            <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li2.type2")</span>@Messages("obligations.dropdown.declarations.li2.text")
+            </li>
+        </ol>
 
 
     </div>
@@ -80,18 +80,19 @@ contentHeader = None
     -->
 
 
+<details role="group" open="">
 
-    <details role="group" open="">
+    <summary role="button" aria-controls="details-content-1" aria-expanded="false">
+        @Messages("obligation.dropdown.quarterlyReturn.info")
+    </summary>
 
-        <summary role="button" aria-controls="details-content-1" aria-expanded="false">@Messages("obligation.dropdown.quarterlyReturn.info")</summary>
 
+    <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
 
-        <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
+        <p>@Messages("obligation.dropdown.quarterlyReturn.text")</p>
+    </div>
 
-            <p>@Messages("obligation.dropdown.quarterlyReturn.text")</p>
-        </div>
-
-    </details>
+</details>
 
     <!--
         Property income quarterly subsection
