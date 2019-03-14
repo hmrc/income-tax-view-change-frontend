@@ -16,6 +16,7 @@
 
 package controllers
 
+import assets.BaseTestConstants.testUserDetails
 import assets.Messages.{NoReportDeadlines, ReportDeadlines => messages}
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -180,6 +181,41 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.SEE_OTHER
         }
+      }
+    }
+  }
+
+  "getNextObligation" should {
+    "show the obligations page" when {
+
+      "the obligationsPageEnabled feature switch is set to true" in {
+        mockBothIncomeSourcesBusinessAligned()
+        mockBothIncomeSourcesBusinessAlignedWithDeadlines()
+
+        TestReportDeadlinesController.config.features.reportDeadlinesEnabled(true)
+
+        TestReportDeadlinesController.config.features.obligationsPageEnabled(true)
+
+        val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+        val document = Jsoup.parse(bodyOf(result))
+
+        document.getElementById("page-heading").text shouldBe "Reports"
+
+      }
+    }
+    "show the report deadlines page" when {
+      "the obligationsPageEnabled feature switch is set to false" in {
+        mockBothIncomeSourcesBusinessAligned()
+        mockBothIncomeSourcesBusinessAlignedWithDeadlines()
+
+        TestReportDeadlinesController.config.features.reportDeadlinesEnabled(true)
+
+        TestReportDeadlinesController.config.features.obligationsPageEnabled(false)
+        val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+        val document = Jsoup.parse(bodyOf(result))
+
+        document.select("#page-heading").text shouldBe "Report deadlines"
+
       }
     }
   }
