@@ -83,11 +83,19 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = efallai y bydd
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = efallai bod gennych incwm nac adroddir amdano yn eich meddalwedd cyfrifyddu
 estimated_tax_liability.calc-breakdown.nationalRegime           = Cyfundrefn Genedlaethol
 
-# TODO properly translate welsh for message #
+# TODO properly translate welsh for message calc-breakdown #
 estimated_tax_liability.calc-breakdown.business-profit-property                = Elw busnes(Am eiddo)
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Elw busnes(Am hunangyflogaeth)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Incwm o gynilion(Am Elw busnes)
 estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
+
+## Obligation Page ##
+# TODO properly translate welsh for message obligations #
+obligations.heading                                                            = Returns
+obligations.sub-heading                                                        = Returns due
+obligations.sub-heading.info.prt1                                              = Use your
+obligations.sub-heading.info.hyperlink                                         = accounting software
+obligations.sub-heading.info.prt2                                              = to submit your returns as per the below details
 obligation.dropdown.declarations.info                                          = Information about declarations
 obligation.dropdown.quarterlyReturn.info                                       = Information about quarterly returns
 obligations.dropdown.declarations.types                                        = There are two types of declarations.

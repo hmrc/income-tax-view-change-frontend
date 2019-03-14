@@ -114,14 +114,6 @@ obligations.dropdown.p1                                         = if you have no
 obligations.dropdown.p2                                         = Use your software to record your income and expenses, then send an update to HMRC at least every quarter.
 obligations.dropdown.p3                                         = Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs.
 obligations.dropdown.p4                                         = After you send your final report, you can see the Income Tax you owe for the tax year.
-obligation.dropdown.declarations.info                           = Information about declarations
-obligation.dropdown.quarterlyReturn.info                        = Information about quarterly returns
-obligations.dropdown.declarations.types                         = There are two types of declarations.
-obligations.dropdown.declarations.li1.type1                     = End of accounting period for every entity
-obligations.dropdown.declarations.li2.type2                     = Final check
-obligations.dropdown.declarations.li1.text                      = - Depending on the end date of your entity's accounting period, you will need to submit a declaration through your software. This is to confirm all of the returns you submitted during the course of your entity's accounting period were true to your knowledge.
-obligations.dropdown.declarations.li2.text                      = - This is to confirm that you have disclosed your income from all sources true to your knowledge. You need to do send this declaration using your software.
-obligation.dropdown.quarterlyReturn.text                        = A quarterly return is the amount of income generated in a 3 month period.
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission
@@ -239,4 +231,18 @@ betaBanner.your                                                 = – your
 betaBanner.feedback                                             = feedback
 betaBanner.improve                                              = will help us to improve it.
 
+## Obligations Page ##
+obligations.heading                                             = Returns
+obligations.sub-heading                                         = Returns due
+obligations.sub-heading.info.prt1                               = Use your
+obligations.sub-heading.info.hyperlink                          = accounting software
+obligations.sub-heading.info.prt2                               = to submit your returns as per the below details
+obligation.dropdown.declarations.info                           = Information about declarations
+obligation.dropdown.quarterlyReturn.info                        = Information about quarterly returns
+obligations.dropdown.declarations.types                         = There are two types of declarations.
+obligations.dropdown.declarations.li1.type1                     = End of accounting period for every entity
+obligations.dropdown.declarations.li2.type2                     = Final check
+obligations.dropdown.declarations.li1.text                      = - Depending on the end date of your entity's accounting period, you will need to submit a declaration through your software. This is to confirm all of the returns you submitted during the course of your entity's accounting period were true to your knowledge.
+obligations.dropdown.declarations.li2.text                      = - This is to confirm that you have disclosed your income from all sources true to your knowledge. You need to do send this declaration using your software.
+obligation.dropdown.quarterlyReturn.text                        = A quarterly return is the amount of income generated in a 3 month period.
 
