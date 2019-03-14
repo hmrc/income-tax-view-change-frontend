@@ -54,6 +54,9 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
       auditReportDeadlines(user)
       reportDeadlinesService.createIncomeSourcesWithDeadlinesModel(user.incomeSources).map {
         case withDeadlines: IncomeSourcesWithDeadlinesModel if !withDeadlines.hasAnyServerErrors =>
+          println(Console.RED + Console.BOLD + "#################################################################" +
+            s"${withDeadlines}" +
+            "####################################################" + Console.RESET)
           if(config.features.obligationsPageEnabled()) {
             Ok(views.html.obligations(withDeadlines))
           } else {

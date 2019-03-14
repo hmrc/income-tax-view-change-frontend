@@ -131,6 +131,35 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     }
 
     //Property income quarterly subsection
+    "show the property income quarterly return title on the page" in{
+
+      document.getElementById("property-income-quarterly-return-title").text shouldBe messages.piQuarterlyReturn
+    }
+
+    "show the property income quarterly return Due title on the page" in{
+
+      document.getElementById("pi-quarter-due-on-title").text shouldBe messages.dueOn
+    }
+
+
+    "show the property income quarterly return period on the page" in{
+
+      val result = document.getElementById("pi-quarter-return-period").text
+
+
+      val expectedResult = businessIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start +
+        "to" + businessIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).end
+
+
+      result shouldBe expectedResult
+    }
+
+    "show the property income quarterly return due date" in {
+      val result = document.getElementById("pi-quarter-return-due-date").text
+      val expectedResult = businessIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).due
+      result shouldBe expectedResult
+    }
+
 
     //Income source quarterly subsection
   }

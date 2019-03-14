@@ -17,11 +17,13 @@
 @import implicits.ImplicitDateFormatter._
 @import views.html.templates.main_template
 @import views.html.helpers.breadcrumbHelper
-@import views.helpers.ReportDeadlinesPage
+@import views.helpers.{ReportDeadlinesPage, ReportDeadlineStatusHelper}
 @import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
 @import views.html.helpers.backToHomeHelper
 @import views.html.helpers.accordionHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
+@import models.reportDeadlines.ReportDeadlinesModel
+@import models.reportDeadlines.QuarterlyObligation
 @import models.reportDeadlines.ReportDeadlinesModel
 @import models.reportDeadlines.EopsObligation
 @import models.reportDeadlines.QuarterlyObligation
@@ -144,8 +146,56 @@ case _ => {}
 </details>
 
 <!--
-    Property income quarterly subsection
+   Property income quarterly subsection
 -->
+
+
+@{
+incomeSources.propertyIncomeSource.get.reportDeadlines match {
+case propertyDeadlines: ReportDeadlinesModel => { if(propertyDeadlines.obligations.count(_.obligationType == QuarterlyObligation) > 0) {
+
+
+<div class="grid-row divider--bottom">
+    <div class="row-border">
+        <div class="column-half">
+            <p style="font-weight:bold">
+                        <span id="pi-quarterly-return-title">{messages("obligations.pi.subheading")}
+                            <span id="pi-quarterly-return-period" style="font-weight:normal"><br/>
+
+                                {s"${propertyDeadlines.obligations.filter(_.obligationType == QuarterlyObligation).head.start.toLongDateShort} ${messages("obligations.quarterly.to")} ${propertyDeadlines.obligations.filter(_.obligationType == QuarterlyObligation).head.end.toLongDateShort}"}
+                            </span>
+                        </span>
+            </p>
+        </div>
+
+        <div class="column-half">
+            <p style="font-weight:bold">
+                        <span id="pi-quarterly-due-on-title">
+                            {messages("obligations.reportDueOn")}
+                        </span><br/>
+                <span id="pi-quarterly-return-due-date" style="font-weight:normal">
+                            {propertyDeadlines.obligations.filter(_.obligationType == QuarterlyObligation).head.due.toLongDateShort}
+                        </span>
+            </p>
+        </div>
+
+
+    </div>
+</div>
+
+
+}
+}
+
+case _ => "n/a"
+}
+}
+
+
+
+
+
+
 
 <!--
     Income source quarterly subsection

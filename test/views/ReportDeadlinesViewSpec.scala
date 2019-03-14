@@ -70,7 +70,12 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
     "have a table containing the obligations" should {
 
       "contain the heading for Report period" in {
-        document.getElementById("bi-1-period-heading").text() shouldBe "Report period"
+
+        println(document.body())
+
+        val res = document.getElementById("bi-1-period-heading").text()
+
+        res shouldBe "Report period"
       }
 
       "contain the heading for Status" in {
