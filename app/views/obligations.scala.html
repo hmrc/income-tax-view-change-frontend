@@ -1,18 +1,18 @@
 @*
-* Copyright 2019 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import implicits.ImplicitDateFormatter._
 @import views.html.templates.main_template
@@ -42,6 +42,26 @@ contentHeader = None
     <!--
         Heading and dropdown subsection
     -->
+<details role="group" open="">
+
+    <summary role="button" aria-controls="details-content-0" aria-expanded="false"> @Messages("obligation.dropdown.declarations.info")</summary>
+
+
+    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+
+        <p>@Messages("obligations.dropdown.declarations.types")<span>
+
+    </span></p><ol class="list list-number">
+        <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li1.type1")</span>@Messages("obligations.dropdown.declarations.li1.text") </li>
+        <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li2.type2")</span>@Messages("obligations.dropdown.declarations.li2.text") </li>
+    </ol>
+
+
+
+
+    </div>
+
+</details>
 
     <!--
         Property income EOPS subsection
@@ -58,6 +78,20 @@ contentHeader = None
     <!--
         Heading and dropdown subsection
     -->
+
+
+
+    <details role="group" open="">
+
+        <summary role="button" aria-controls="details-content-1" aria-expanded="false">@Messages("obligation.dropdown.quarterlyReturn.info")</summary>
+
+
+        <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
+
+            <p>@Messages("obligation.dropdown.quarterlyReturn.text")</p>
+        </div>
+
+    </details>
 
     <!--
         Property income quarterly subsection
