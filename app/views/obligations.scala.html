@@ -38,7 +38,7 @@ BreadcrumbItem("breadcrumb-obligations", None)
         @propertyIncomeSource.reportDeadlines match {
             case propertyDeadlines: ReportDeadlinesModel => {
                 @for(deadline <- propertyDeadlines.obligations.filter(_.periodKey == "EOPS")) {
-                    <tr>
+                    <tr id="eopsPropertyTableRow">
                         <td>
                             <div id="eops-pi-heading" class="bold">@messages("obligations.propertyIncome")</div>
                             <div id="eops-pi-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
@@ -96,9 +96,11 @@ contentHeader = Some(breadcrumb)
     <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
         <p>@Messages("obligations.dropdown.declarations.types.v2")</p>
         <ol class="list list-number">
-            <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li1.type1.v2")</span>@Messages("obligations.dropdown.declarations.li1.text.v2")
+            <li id="declarations-dropdown-list-one">
+                <span class="bold">@Messages("obligations.dropdown.declarations.li1.type1.v2")</span> @Messages("obligations.dropdown.declarations.li1.text.v2")
             </li>
-            <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li2.type2.v2")</span>@Messages("obligations.dropdown.declarations.li2.text.v2")
+            <li id="declarations-dropdown-list-two">
+                <span class="bold">@Messages("obligations.dropdown.declarations.li2.type2.v2")</span> @Messages("obligations.dropdown.declarations.li2.text.v2")
             </li>
         </ol>
 

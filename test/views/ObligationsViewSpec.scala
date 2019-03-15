@@ -16,13 +16,18 @@
 
 package views
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants.testMtdItUser
-import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
 import assets.BusinessDetailsTestConstants.business1
+import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
 import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
-import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel}
+import models.core.AccountingPeriodModel
+import models.incomeSourceDetails.PropertyDetailsModel
+import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -40,6 +45,11 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
+  class Setup(model: IncomeSourcesWithDeadlinesModel) {
+    val html: HtmlFormat.Appendable = views.html.obligations(model)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
+    val pageDocument: Document = Jsoup.parse(contentAsString(views.html.obligations(model)))
+  }
+
   "The Deadline Reports Page" should {
     lazy val businessIncomeSource = IncomeSourcesWithDeadlinesModel(
       List(
@@ -50,6 +60,22 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       ),
       None
     )
+
+    lazy val eopsPropertyIncomeSource = IncomeSourcesWithDeadlinesModel(
+      List(),
+      Some(
+        PropertyIncomeWithDeadlinesModel(
+          PropertyDetailsModel("testIncomeSource", AccountingPeriodModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 1)), None, None, None, None),
+          ReportDeadlinesModel(
+            List(
+              ReportDeadlineModel(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 4, 1), LocalDate.of(2020, 1, 1), "EOPS")
+            )
+          )
+        )
+      )
+    )
+
+    lazy val noIncomeSource = IncomeSourcesWithDeadlinesModel(List(), None)
 
     val setup = pageSetup(businessIncomeSource)
     import setup._
@@ -70,18 +96,29 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       document.getElementById("page-sub-heading").text shouldBe messages.subTitle
     }
 
-
-
-
-
     //Declarations section
+    "show the heading for the declarations section" in new Setup(eopsPropertyIncomeSource) {
+      pageDocument.getElementById("declarations-heading").text shouldBe messages.declarationsHeading
+    }
 
     //Heading and dropdown subsection
-    "show the Declaration heading and drop down section on the page" in{
-      document.getElementById("declaration-dropdown-title").text shouldBe messages.declerationDropDown
+    "show the Declaration heading and drop down section on the page" in new Setup(eopsPropertyIncomeSource) {
+      pageDocument.getElementById("declaration-dropdown-title").text shouldBe messages.declerationDropDown
+      pageDocument.getElementById("declarations-dropdown-list-one").text shouldBe messages.declarationDropdownListOne
+      pageDocument.getElementById("declarations-dropdown-list-two").text shouldBe messages.declarationDropdownListTwo
     }
 
     //Property income EOPS subsection
+    "show the eops property income section" in new Setup(eopsPropertyIncomeSource) {
+      pageDocument.getElementById("eops-pi-heading").text shouldBe messages.propertyIncome
+      pageDocument.getElementById("eops-pi-dates").text shouldBe messages.fromToDates("1 January 2019", "1 April 2019")
+      pageDocument.getElementById("eops-pi-due-on").text shouldBe messages.dueOn
+      pageDocument.getElementById("eops-pi-due-date").text shouldBe s"1 January 2020"
+    }
+
+    "not show the eops property section when there is no property income report" in new Setup(noIncomeSource) {
+      Option(pageDocument.getElementById("eopsPropertyTableRow")) shouldBe None
+    }
 
     //Income source EOPS subsection
 
