@@ -22,6 +22,7 @@
 @import views.html.helpers.backToHomeHelper
 @import views.html.helpers.accordionHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
+@import models.reportDeadlines.ReportDeadlinesModel
 
 @(incomeSources: models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
@@ -30,6 +31,28 @@
 BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
 BreadcrumbItem("breadcrumb-obligations", None)
 )), "ReportDeadlinesPage")
+}
+
+@eopsPropertyReportDeadlines = {
+    @for(propertyIncomeSource <- incomeSources.propertyIncomeSource if !incomeSources.hasPropertyReportErrors) {
+        @propertyIncomeSource.reportDeadlines match {
+            case propertyDeadlines: ReportDeadlinesModel => {
+                @for(deadline <- propertyDeadlines.obligations.filter(_.periodKey == "EOPS")) {
+                    <tr>
+                        <td>
+                            <div id="eops-pi-heading" class="bold">@messages("obligations.propertyIncome")</div>
+                            <div id="eops-pi-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
+                        </td>
+                        <td>
+                            <div id="eops-pi-due-on">@messages("obligations.dueOn")</div>
+                            <div id="eops-pi-due-date">@deadline.due.toLongDate</div>
+                        </td>
+                    </tr>
+                }
+            }
+            case _ => {}
+        }
+    }
 }
 
 @main_template(
@@ -58,6 +81,7 @@ contentHeader = Some(breadcrumb)
 <!--
     Declarations section
 -->
+<h2 id="declarations-heading" class="heading">@messages("obligations.declarations")</h2>
 
 <!--
     Heading and dropdown subsection
@@ -86,6 +110,9 @@ contentHeader = Some(breadcrumb)
 <!--
     Property income EOPS subsection
 -->
+<table>
+    @eopsPropertyReportDeadlines
+</table>
 
 <!--
     Income source EOPS subsection
