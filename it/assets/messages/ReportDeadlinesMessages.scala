@@ -21,11 +21,15 @@ import helpers.ComponentSpecBase
 
 object ReportDeadlinesMessages extends ComponentSpecBase{
 
+  //Report deadlines view messages
   val title = "Report deadlines"
   val overdue: LocalDate => String = date => s"${date.toLongDateShort} Overdue"
   val wholeTaxYear = "Whole tax year (final check)"
   val propertyHeading = "Property income"
   val errorp1 = "We can't display your next report due date at the moment."
   val errorp2 = "Try refreshing the page in a few minutes."
+
+  //Obligations view messages
+  val obligationsTitle = "Report deadlines"
 
 }

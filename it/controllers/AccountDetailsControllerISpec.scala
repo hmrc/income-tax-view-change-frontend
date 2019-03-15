@@ -72,6 +72,9 @@ class AccountDetailsControllerISpec extends ComponentSpecBase {
 
       "Redirect to Home Page" in {
 
+        When("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+
         appConfig.features.accountDetailsEnabled(false)
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/account-details")

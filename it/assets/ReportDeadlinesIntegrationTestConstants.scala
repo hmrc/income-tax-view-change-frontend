@@ -82,6 +82,7 @@ object ReportDeadlinesIntegrationTestConstants {
 
   val singleObligationStart = "2017-04-06"
   val singleObligationEnd = "2017-07-05"
+  val singleObligationDue = "2018-01-01"
 
   val singleObligationOverdueModel = ReportDeadlinesModel(List(
     ReportDeadlineModel(
@@ -90,6 +91,19 @@ object ReportDeadlinesIntegrationTestConstants {
       due = LocalDate.now().minusDays(1),
       periodKey = "periodKey"
     )
+  ))
+
+  val singleObligationEOPSPropertyModel = ReportDeadlinesModel(List(
+    ReportDeadlineModel(
+      singleObligationStart,
+      singleObligationEnd,
+      singleObligationDue,
+      "EOPS"
+    )
+  ))
+
+  val noObligationsModel = ReportDeadlinesModel(List(
+
   ))
 
   val singleObligationPlusYearOpenModel = ReportDeadlinesModel(List(

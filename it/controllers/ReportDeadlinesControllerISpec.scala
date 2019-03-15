@@ -685,6 +685,57 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
       }
 
       unauthorisedTest("/obligations")
+
+      "the obligations feature switch is enabled" when {
+
+        "the user has a eops property income obligation only" in {
+          appConfig.features.obligationsPageEnabled(true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationEOPSPropertyModel)
+
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+
+          Then("the view displays the correct title, username and links")
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.obligationsTitle)
+          )
+
+          Then("the page displays one eops property income obligation")
+          res should have(
+            elementTextByID("eops-pi-dates")("6 April 2017 to 5 July 2017"),
+            elementTextByID("eops-pi-due-date")("1 January 2018")
+          )
+        }
+
+        "the user has no obligations" in {
+          appConfig.features.obligationsPageEnabled(true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, noObligationsModel)
+
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+
+          Then("the view displays the correct title, username and links")
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.obligationsTitle)
+          )
+
+          Then("the page displays no property obligation dates")
+          res should have(
+            isElementVisibleById("eops-pi-dates")(expectedValue = false),
+            isElementVisibleById("eops-pi-due-date")(expectedValue = false)
+          )
+        }
+      }
     }
 
     "the ReportDeadlines Feature is disabled" should {

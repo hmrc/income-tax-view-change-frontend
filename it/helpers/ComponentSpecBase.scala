@@ -65,6 +65,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    wireMockServer.resetMappings()
     isAuthorisedUser(true)
     stubUserDetails()
   }
