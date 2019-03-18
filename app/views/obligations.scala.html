@@ -33,28 +33,6 @@ BreadcrumbItem("breadcrumb-obligations", None)
 )), "ReportDeadlinesPage")
 }
 
-@eopsPropertyReportDeadlines = {
-    @for(propertyIncomeSource <- incomeSources.propertyIncomeSource if !incomeSources.hasPropertyReportErrors) {
-        @propertyIncomeSource.reportDeadlines match {
-            case propertyDeadlines: ReportDeadlinesModel => {
-                @for(deadline <- propertyDeadlines.obligations.filter(_.periodKey == "EOPS")) {
-                    <tr id="eopsPropertyTableRow">
-                        <td>
-                            <div id="eops-pi-heading" class="bold">@messages("obligations.propertyIncome")</div>
-                            <div id="eops-pi-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
-                        </td>
-                        <td>
-                            <div id="eops-pi-due-on">@messages("obligations.dueOn")</div>
-                            <div id="eops-pi-due-date">@deadline.due.toLongDate</div>
-                        </td>
-                    </tr>
-                }
-            }
-            case _ => {}
-        }
-    }
-}
-
 @main_template(
 title = messages("obligations.title"),
 bodyClasses = None,
@@ -112,9 +90,25 @@ contentHeader = Some(breadcrumb)
 <!--
     Property income EOPS subsection
 -->
-<table>
-    @eopsPropertyReportDeadlines
-</table>
+@for(propertyIncomeSource <- incomeSources.propertyIncomeSource if !incomeSources.hasPropertyReportErrors) {
+@propertyIncomeSource.reportDeadlines match {
+case propertyDeadlines: ReportDeadlinesModel => {
+@for(deadline <- propertyDeadlines.obligations.filter(_.periodKey == "EOPS")) {
+<div id="eopsPropertyTableRow" class="grid-row divider--bottom">
+    <div class="column-half">
+        <div id="eops-pi-heading" class="bold">@messages("obligations.propertyIncome")</div>
+        <div id="eops-pi-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
+    </div>
+    <div class="column-half">
+        <div id="eops-pi-due-on">@messages("obligations.dueOn")</div>
+        <div id="eops-pi-due-date">@deadline.due.toLongDate</div>
+    </div>
+</div>
+}
+}
+case _ => {}
+}
+}
 
 <!--
     Income source EOPS subsection
