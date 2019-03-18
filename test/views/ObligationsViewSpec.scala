@@ -21,13 +21,16 @@ import java.time.LocalDate
 import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
-import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
+import assets.PropertyDetailsTestConstants.propertyDetails
+import assets.ReportDeadlinesTestConstants.{obligationsDataSuccessModel, twoObligationsSuccessModel}
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
 import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel}
+import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
+import models.reportDeadlines.{QuarterlyObligation, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -81,18 +84,18 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     import setup._
 
     //Main content section
-    "show the breadcrumb trail on the page" in{
+    "show the breadcrumb trail on the page" in {
       document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
       document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
       document.getElementById("breadcrumb-obligations").text shouldBe breadcrumbMessages.obligations
     }
 
-    s"show the title ${messages.title} on the page" in{
+    s"show the title ${messages.title} on the page" in {
       document.getElementById("page-heading").text shouldBe messages.title
     }
 
 
-    s"show the Sub heading ${messages.subTitle} on page" in{
+    s"show the Sub heading ${messages.subTitle} on page" in {
       document.getElementById("page-sub-heading").text shouldBe messages.subTitle
     }
 
@@ -126,37 +129,41 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     //Quarterly returns section
 
     //Heading and dropdown subsection
-    "show the Quarterly heading and drop down section on the page" in{
+    "show the Quarterly heading and drop down section on the page" in {
       document.getElementById("quarterly-dropdown-title").text shouldBe messages.quarterlyDropDown
     }
 
+
+
+
+
+
     //Property income quarterly subsection
-    "show the property income quarterly return title on the page" in{
+    "show the property income quarterly return title on the page" in {
 
-      document.getElementById("property-income-quarterly-return-title").text shouldBe messages.piQuarterlyReturn
+      document.getElementById("pi-quarterly-return-title").text shouldBe messages.piQuarterlyReturn
     }
 
-    "show the property income quarterly return Due title on the page" in{
+    "show the property income quarterly return Due title on the page" in {
 
-      document.getElementById("pi-quarter-due-on-title").text shouldBe messages.dueOn
+      document.getElementById("pi-quarterly-due-on-title").text shouldBe messages.dueOn
     }
 
 
-    "show the property income quarterly return period on the page" in{
+    "show the property income quarterly return period on the page" in {
 
-      val result = document.getElementById("pi-quarter-return-period").text
+      val result = document.getElementById("pi-quarterly-return-period").text
 
 
-      val expectedResult = businessIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start +
-        "to" + businessIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).end
+      val expectedResult = "1 Jul 2017 to 30 Sep 2017"
 
 
       result shouldBe expectedResult
     }
 
     "show the property income quarterly return due date" in {
-      val result = document.getElementById("pi-quarter-return-due-date").text
-      val expectedResult = businessIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).due
+      val result = document.getElementById("pi-quarterly-return-due-date").text
+      val expectedResult = "30 Oct 2017"
       result shouldBe expectedResult
     }
 

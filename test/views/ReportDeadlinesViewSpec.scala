@@ -71,8 +71,6 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
 
       "contain the heading for Report period" in {
 
-        println(document.body())
-
         val res = document.getElementById("bi-1-period-heading").text()
 
         res shouldBe "Report period"
