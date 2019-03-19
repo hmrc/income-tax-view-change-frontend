@@ -305,7 +305,13 @@ object Messages {
     val title = "Returns"
     val subTitle = "Returns due"
     val declerationDropDown = "Information about declarations"
+    val declarationDropdownListOne = "End of accounting period for every entity - Depending on the end date of your entity's accounting period, you will need to submit a declaration through your software. This is to confirm all of the returns you submitted during the course of your entity's accounting period were true to your knowledge."
+    val declarationDropdownListTwo = "Final check - This is to confirm that you have disclosed your income from all sources true to your knowledge. You need to do send this declaration using your software."
     val quarterlyDropDown = "Information about quarterly returns"
+    val declarationsHeading = "Declarations"
+    val propertyIncome = "Property Income"
+    def fromToDates(from: String, to: String) = s"$from to $to"
+    val dueOn = "Due on:"
   }
 
 }

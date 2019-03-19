@@ -153,6 +153,9 @@ class BillsControllerISpec extends ComponentSpecBase {
 
       "redirect to home page" in {
 
+        When("I wiremock stub a successful Income Source Details response with single Business and Property income")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+
         appConfig.features.billsEnabled(false)
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
