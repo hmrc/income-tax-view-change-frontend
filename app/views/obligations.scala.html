@@ -123,7 +123,7 @@ case _ => {}
 <!--
     Quarterly returns section
 -->
-
+<h2 id="quarterlyReturns-heading" class="heading">@messages("obligations.quarterlyReturns")</h2>
 <!--
     Heading and dropdown subsection
 -->
@@ -145,13 +145,13 @@ case _ => {}
 <!--
    Property income quarterly subsection
 -->
-
 @{
 incomeSources.propertyIncomeSource.get.reportDeadlines match {
     case propertyDeadlines: ReportDeadlinesModel => {
         if(propertyDeadlines.obligations.head.obligationType == QuarterlyObligation) {
 
-            <div class="grid-row divider--bottom">
+
+            <div id="pi-quarterly-return-section"  class="grid-row divider--bottom">
                 <div class="row-border">
                     <div class="column-half">
                         <p style="font-weight:bold">
@@ -174,9 +174,9 @@ incomeSources.propertyIncomeSource.get.reportDeadlines match {
                     </div>
                 </div>
             </div>
-
         }
     }
+case _ => {}
 }
 }
 

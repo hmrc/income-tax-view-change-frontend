@@ -104,6 +104,7 @@ obligations.dropdown.declarations.li2.type2.v2                                  
 obligations.dropdown.declarations.li1.text.v2                                     = - Depending on the end date of your entity's accounting period, you will need to submit a declaration through your software. This is to confirm all of the returns you submitted during the course of your entity's accounting period were true to your knowledge.
 obligations.dropdown.declarations.li2.text.v2                                     = - This is to confirm that you have disclosed your income from all sources true to your knowledge. You need to do send this declaration using your software.
 obligation.dropdown.quarterlyReturn.text.v2                                       = A quarterly return is the amount of income generated in a 3 month period.
+obligations.quarterlyReturns                                                      = Quarterly returns
 obligations.declarations                                        = Declarations
 obligations.propertyIncome                                      = Property Income
 obligations.dueOn                                               = Due on:

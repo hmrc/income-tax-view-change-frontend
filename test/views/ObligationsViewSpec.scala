@@ -155,7 +155,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       val result = document.getElementById("pi-quarterly-return-period").text
 
 
-      val expectedResult = "1 Jul 2017 to 30 Sep 2017"
+      val expectedResult = "1 July 2017 to 30 September 2017"
 
 
       result shouldBe expectedResult
@@ -163,7 +163,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
     "show the property income quarterly return due date" in {
       val result = document.getElementById("pi-quarterly-return-due-date").text
-      val expectedResult = "30 Oct 2017"
+      val expectedResult = "30 October 2017"
       result shouldBe expectedResult
     }
 
