@@ -33,6 +33,7 @@ import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, Inco
 import models.reportDeadlines.{QuarterlyObligation, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -180,8 +181,28 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       result shouldBe expectedResult
     }
 
- }
+    //Income source quarterly subsection
+    "show the name of the income sources" in {
+      businessIncomeSource.businessIncomeSources.foreach(incomeSource =>
+      document.getElementById(s"business-income-${incomeSource.incomeSource.tradingName}-heading") shouldBe incomeSource.incomeSource.tradingName)
+    }
 
-  //Income source quarterly subsection
+    "show the period of the income source" in {
+        val result = document.getElementById(s"business-income-${businessIncomeSource.businessIncomeSources(0).incomeSource.tradingName}-period")
+        val expectedResult =
+          businessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start +
+            "to" +
+          businessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start
+
+    }
+
+    "show the due date of the income source" in {
+      val result = document.getElementById(s"business-income-${businessIncomeSource.businessIncomeSources(0).incomeSource.tradingName}-due")
+
+      val expectedResult = businessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).due
+      result shouldBe  expectedResult
+    }
+
+  }
 }
 
