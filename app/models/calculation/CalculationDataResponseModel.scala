@@ -146,7 +146,7 @@ object CalculationDataModel {
       __.read[GiftAidModel] and
       __.read[NicModel] and
         (__ \ "calcOutput" \ "calcResult" \ "eoyEstimate").readNullable[EoyEstimate].orElse(Reads.pure(None)) and
-        (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "payAndPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
+        (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "payPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
     ) (CalculationDataModel.apply _)
 
   implicit val writes: Writes[CalculationDataModel] = (
@@ -162,7 +162,7 @@ object CalculationDataModel {
       (__ \ "giftAid").write[GiftAidModel] and
       (__ \ "nic").write[NicModel] and
       (__ \ "eoyEstimate").writeNullable[EoyEstimate] and
-      (__ \ "incomeTax" \ "payAndPensionsProfit" \ "band").write[List[TaxBandModel]]
+      (__ \ "incomeTax" \ "payPensionsProfit" \ "band").write[List[TaxBandModel]]
     )(unlift(CalculationDataModel.unapply))
 }
 
