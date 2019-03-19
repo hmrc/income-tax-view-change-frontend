@@ -27,7 +27,7 @@ import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
+import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -68,7 +68,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
           PropertyDetailsModel("testIncomeSource", AccountingPeriodModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 1)), None, None, None, None),
           ReportDeadlinesModel(
             List(
-              ReportDeadlineModel(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 4, 1), LocalDate.of(2020, 1, 1), "EOPS")
+              ReportDeadlineModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 31), LocalDate.of(2020, 1, 1), "EOPS")
             )
           )
         )
@@ -110,8 +110,9 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
     //Property income EOPS subsection
     "show the eops property income section" in new Setup(eopsPropertyIncomeSource) {
+      eopsPropertyIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).obligationType shouldBe EopsObligation
       pageDocument.getElementById("eops-pi-heading").text shouldBe messages.propertyIncome
-      pageDocument.getElementById("eops-pi-dates").text shouldBe messages.fromToDates("1 January 2019", "1 April 2019")
+      pageDocument.getElementById("eops-pi-dates").text shouldBe messages.fromToDates("1 January 2019", "31 January 2020")
       pageDocument.getElementById("eops-pi-due-on").text shouldBe messages.dueOn
       pageDocument.getElementById("eops-pi-due-date").text shouldBe s"1 January 2020"
     }

@@ -23,6 +23,8 @@
 @import views.html.helpers.accordionHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import models.reportDeadlines.ReportDeadlinesModel
+@import models.reportDeadlines.EopsObligation
+@import models.reportDeadlines.QuarterlyObligation
 
 @(incomeSources: models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
@@ -93,7 +95,7 @@ contentHeader = Some(breadcrumb)
 @for(propertyIncomeSource <- incomeSources.propertyIncomeSource if !incomeSources.hasPropertyReportErrors) {
 @propertyIncomeSource.reportDeadlines match {
 case propertyDeadlines: ReportDeadlinesModel => {
-@for(deadline <- propertyDeadlines.obligations.filter(_.periodKey == "EOPS")) {
+@for(deadline <- propertyDeadlines.obligations.filter(_.obligationType == EopsObligation)) {
 <div id="eopsPropertyTableRow" class="grid-row divider--bottom">
     <div class="column-half">
         <div id="eops-pi-heading" class="bold">@messages("obligations.propertyIncome")</div>

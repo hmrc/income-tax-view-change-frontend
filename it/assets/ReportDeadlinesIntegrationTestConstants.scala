@@ -93,11 +93,15 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
+  val singleObligationStartEOPs = "2017-04-06"
+  val singleObligationEndEOPs = "2018-07-05"
+  val singleObligationDueEOPs = "2018-01-01"
+
   val singleObligationEOPSPropertyModel = ReportDeadlinesModel(List(
     ReportDeadlineModel(
-      singleObligationStart,
-      singleObligationEnd,
-      singleObligationDue,
+      singleObligationStartEOPs,
+      singleObligationEndEOPs,
+      singleObligationDueEOPs,
       "EOPS"
     )
   ))

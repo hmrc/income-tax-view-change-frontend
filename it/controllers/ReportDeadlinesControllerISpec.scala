@@ -707,7 +707,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays one eops property income obligation")
           res should have(
-            elementTextByID("eops-pi-dates")("6 April 2017 to 5 July 2017"),
+            elementTextByID("eops-pi-dates")("6 April 2017 to 5 July 2018"),
             elementTextByID("eops-pi-due-date")("1 January 2018")
           )
         }
