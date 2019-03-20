@@ -24,7 +24,7 @@
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import models.reportDeadlines.ReportDeadlinesModel
 @import models.reportDeadlines.QuarterlyObligation
-@import models.reportDeadlines.ReportDeadlinesModel
+@import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesResponse, PropertyIncomeWithDeadlinesModel}
 @import models.reportDeadlines.EopsObligation
 @import models.reportDeadlines.QuarterlyObligation
 
@@ -146,40 +146,43 @@ case _ => {}
    Property income quarterly subsection
 -->
 @{
-incomeSources.propertyIncomeSource.get.reportDeadlines match {
-    case propertyDeadlines: ReportDeadlinesModel => {
-        if(propertyDeadlines.obligations.head.obligationType == QuarterlyObligation) {
 
+incomeSources.propertyIncomeSource match {
+    case Some(propertyIncomeWithDeadlines) => propertyIncomeWithDeadlines.reportDeadlines match {
+        case reportDeadlines: ReportDeadlinesModel => {
+            if(reportDeadlines.obligations.filter(_.obligationType == QuarterlyObligation).head.start.toLongDateShort) {
 
-            <div id="pi-quarterly-return-section"  class="grid-row divider--bottom">
-                <div class="row-border">
-                    <div class="column-half">
-                        <p style="font-weight:bold">
-                            <span id="pi-quarterly-return-title">{messages("obligations.pi.subheading")}</span><br/>
-                            <span id="pi-quarterly-return-period" style="font-weight:normal">
-                                {s"${propertyDeadlines.obligations.head.start.toLongDate} ${messages("obligations.quarterly.to")} ${propertyDeadlines.obligations.head.end.toLongDate}"}
-                            </span>
-                        </p>
-                    </div>
+                <div id="pi-quarterly-return-section"  class="grid-row divider--bottom">
+                    <div class="row-border">
+                        <div class="column-half">
+                            <p style="font-weight:bold">
+                                <span id="pi-quarterly-return-title">{messages("obligations.pi.subheading")}</span><br/>
+                                <span id="pi-quarterly-return-period" style="font-weight:normal">
+                                    {s"${reportDeadlines.obligations.filter(_.obligationType == QuarterlyObligation).head.start.toLongDate} ${messages("obligations.quarterly.to")} ${reportDeadlines.obligations.filter(_.obligationType == QuarterlyObligation).head.end.toLongDate}"}
+                                </span>
+                            </p>
+                        </div>
 
-                    <div class="column-half">
-                        <p>
-                            <span id="pi-quarterly-due-on-title">
-                                {messages("obligations.reportDueOn")}
-                            </span><br/>
-                            <span id="pi-quarterly-return-due-date" style="font-weight:normal">
-                                {propertyDeadlines.obligations.head.due.toLongDate}
-                            </span>
-                        </p>
+                        <div class="column-half">
+                            <p>
+                                <span id="pi-quarterly-due-on-title">
+                                    {messages("obligations.reportDueOn")}
+                                </span><br/>
+                                <span id="pi-quarterly-return-due-date" style="font-weight:normal">
+                                    {reportDeadlines.obligations.head.due.toLongDate}
+                                </span>
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         }
-    }
-case _ => {}
-}
-}
+        case _ => {}
+        }
 
+    case _ => {}
+}
+}
 <!--
     Income source quarterly subsection
 -->
