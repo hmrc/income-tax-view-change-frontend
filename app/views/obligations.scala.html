@@ -22,6 +22,9 @@
 @import views.html.helpers.backToHomeHelper
 @import views.html.helpers.accordionHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
+@import models.reportDeadlines.ReportDeadlinesModel
+@import models.reportDeadlines.EopsObligation
+@import models.reportDeadlines.QuarterlyObligation
 
 @(incomeSources: models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
@@ -58,6 +61,7 @@ contentHeader = Some(breadcrumb)
 <!--
     Declarations section
 -->
+<h2 id="declarations-heading" class="heading">@messages("obligations.declarations")</h2>
 
 <!--
     Heading and dropdown subsection
@@ -72,9 +76,11 @@ contentHeader = Some(breadcrumb)
     <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
         <p>@Messages("obligations.dropdown.declarations.types.v2")</p>
         <ol class="list list-number">
-            <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li1.type1.v2")</span>@Messages("obligations.dropdown.declarations.li1.text.v2")
+            <li id="declarations-dropdown-list-one">
+                <span class="bold">@Messages("obligations.dropdown.declarations.li1.type1.v2")</span> @Messages("obligations.dropdown.declarations.li1.text.v2")
             </li>
-            <li><span style="font-weight:bold">@Messages("obligations.dropdown.declarations.li2.type2.v2")</span>@Messages("obligations.dropdown.declarations.li2.text.v2")
+            <li id="declarations-dropdown-list-two">
+                <span class="bold">@Messages("obligations.dropdown.declarations.li2.type2.v2")</span> @Messages("obligations.dropdown.declarations.li2.text.v2")
             </li>
         </ol>
 
@@ -86,6 +92,29 @@ contentHeader = Some(breadcrumb)
 <!--
     Property income EOPS subsection
 -->
+@for(propertyIncomeSource <- incomeSources.propertyIncomeSource if !incomeSources.hasPropertyReportErrors) {
+@propertyIncomeSource.reportDeadlines match {
+case propertyDeadlines: ReportDeadlinesModel => {
+@for(deadline <- propertyDeadlines.obligations.filter(_.obligationType == EopsObligation)) {
+<div id="eopsPropertyTableRow" class="grid-row divider--bottom">
+    <div class="column-half">
+        <p>
+            <div id="eops-pi-heading" class="bold">@messages("obligations.propertyIncome")</div>
+            <div id="eops-pi-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
+        </p>
+    </div>
+    <div class="column-half">
+        <p>
+            <div id="eops-pi-due-on">@messages("obligations.dueOn")</div>
+            <div id="eops-pi-due-date">@deadline.due.toLongDate</div>
+        </p>
+    </div>
+</div>
+}
+}
+case _ => {}
+}
+}
 
 <!--
     Income source EOPS subsection

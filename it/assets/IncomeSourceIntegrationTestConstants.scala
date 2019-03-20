@@ -60,6 +60,10 @@ object IncomeSourceIntegrationTestConstants {
     property = Some(property)
   )
 
+  val noPropertyOrBusinessResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    List(), None
+  )
+
   val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500,"ISE")
 
 }
