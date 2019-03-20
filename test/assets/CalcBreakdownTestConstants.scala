@@ -1462,7 +1462,7 @@ object CalcBreakdownTestConstants {
       "totalNicAmount" -> 66000
     ),
     "incomeTax" -> Json.obj(
-      "payAndPensionsProfit" -> Json.obj(
+      "payPensionsProfit" -> Json.obj(
         "band" -> Json.arr(
           Json.obj(
             "name" -> "BRT",
@@ -1593,7 +1593,7 @@ object CalcBreakdownTestConstants {
           "rate" -> 0.0,
           "taxableIncome" -> 0
         ),
-        "payAndPensionsProfit" -> Json.obj(
+        "payPensionsProfit" -> Json.obj(
           "band" -> Json.arr(Json.obj(
             "name" -> "BRT",
             "rate" -> 20.0,
@@ -1906,7 +1906,7 @@ object CalcBreakdownTestConstants {
             "totalAmount" -> 0,
             "band" -> Json.arr()
           ),
-          "payAndPensionsProfit" -> Json.obj(
+          "payPensionsProfit" -> Json.obj(
             "band" -> Json.arr()
           )
         ),

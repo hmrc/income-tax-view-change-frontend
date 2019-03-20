@@ -19,17 +19,16 @@ package services
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import assets.EstimatesTestConstants._
-import mocks.connectors.{MockCalculationDataConnector, MockIncomeTaxViewChangeConnector}
+import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.MockCalculationService
 import models.calculation._
 import play.api.http.Status
 import testUtils.TestSupport
 
-class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockCalculationDataConnector with MockCalculationService{
+class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockCalculationService {
 
   object TestCalculationService extends CalculationService(
     mockIncomeTaxViewChangeConnector,
-    mockCalculationDataConnector,
     frontendAppConfig
   )
 
@@ -74,7 +73,6 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
     object TestCalculationService extends CalculationService(
       mockIncomeTaxViewChangeConnector,
-      mockCalculationDataConnector,
       frontendAppConfig
     )
 

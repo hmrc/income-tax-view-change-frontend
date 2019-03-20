@@ -16,11 +16,10 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
-
 import config.FrontendAppConfig
-import connectors.{CalculationDataConnector, IncomeTaxViewChangeConnector}
+import connectors.IncomeTaxViewChangeConnector
 import enums.{Crystallised, Estimate}
+import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,8 +29,7 @@ import scala.concurrent.Future
 
 @Singleton
 class CalculationService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                   val calculationDataConnector: CalculationDataConnector,
-                                  val frontendAppConfig: FrontendAppConfig) {
+                                   val frontendAppConfig: FrontendAppConfig) {
 
   def getCalculationDetail(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
     for {
@@ -89,20 +87,6 @@ class CalculationService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
         }
       }
     })
-  }
-
-  private[CalculationService] def getCalculationData(nino: String, taxCalculationId: String)
-                                                    (implicit headerCarrier: HeaderCarrier): Future[CalculationDataResponseModel] = {
-
-    Logger.debug("[CalculationService][getCalculationData] - Requesting calculation data from self-assessment api via Connector")
-    calculationDataConnector.getCalculationData(nino, taxCalculationId).map {
-      case success: CalculationDataModel =>
-        Logger.debug(s"[CalculationService][getCalculationData] - Retrieved Calculation data: \n$success")
-        success
-      case error: CalculationDataErrorModel =>
-        Logger.error(s"[CalculationService][getCalculationData] - Error Response Status: ${error.code}, Message: ${error.message}")
-        error
-    }
   }
 
   def getLatestCalculation(nino: String, taxYear: Int)
