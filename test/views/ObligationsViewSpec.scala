@@ -21,13 +21,13 @@ import java.time.LocalDate
 import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
-import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
+import assets.ReportDeadlinesTestConstants.{openEOPSObligation, twoObligationsSuccessModel}
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.PropertyDetailsModel
+import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel}
+import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -75,6 +75,13 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       )
     )
 
+    lazy val eopsSEIncomeSource = IncomeSourcesWithDeadlinesModel(businessIncomeSources =
+      List(BusinessIncomeWithDeadlinesModel(
+        incomeSource = business1,
+        reportDeadlines = openEOPSObligation
+      )),
+      propertyIncomeSource = None)
+
     lazy val noIncomeSource = IncomeSourcesWithDeadlinesModel(List(), None)
 
     val setup = pageSetup(businessIncomeSource)
@@ -119,10 +126,15 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
     "not show the eops property section when there is no property income report" in new Setup(noIncomeSource) {
       Option(pageDocument.getElementById("eopsPropertyTableRow")) shouldBe None
-    }
 
     //Income source EOPS subsection
-
+    "Show EOPS SE income source" in new Setup(eopsSEIncomeSource){
+      pageDocument.getElementById("eops-SEI-heading").text shouldBe messages.SEIncomeSource
+      pageDocument.getElementById("eops-SEI-dates").text shouldBe messages.fromToDates("06 April 2017", "05 April 2018")
+      pageDocument.getElementById("eops-SEI-due-on").text shouldBe messages.dueOn
+      pageDocument.getElementById("eops-SEI-due-dates").text shouldBe "31 October 2017"
+    }
+    }
     
     //Quarterly returns section
 
