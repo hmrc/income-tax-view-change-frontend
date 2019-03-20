@@ -150,13 +150,13 @@ case _ => {}
 incomeSources.propertyIncomeSource match {
     case Some(propertyIncomeWithDeadlines) => propertyIncomeWithDeadlines.reportDeadlines match {
         case reportDeadlines: ReportDeadlinesModel => {
-            if(reportDeadlines.obligations.filter(_.obligationType == QuarterlyObligation).head.start.toLongDateShort) {
+            if(reportDeadlines.obligations.count(_.obligationType == QuarterlyObligation) > 0) {
 
                 <div id="pi-quarterly-return-section"  class="grid-row divider--bottom">
                     <div class="row-border">
                         <div class="column-half">
                             <p style="font-weight:bold">
-                                <span id="pi-quarterly-return-title">{messages("obligations.pi.subheading")}</span><br/>
+                                <span id="pi-quarterly-return-title">{messages("obligations.propertyIncome")}</span><br/>
                                 <span id="pi-quarterly-return-period" style="font-weight:normal">
                                     {s"${reportDeadlines.obligations.filter(_.obligationType == QuarterlyObligation).head.start.toLongDate} ${messages("obligations.quarterly.to")} ${reportDeadlines.obligations.filter(_.obligationType == QuarterlyObligation).head.end.toLongDate}"}
                                 </span>
@@ -166,7 +166,7 @@ incomeSources.propertyIncomeSource match {
                         <div class="column-half">
                             <p>
                                 <span id="pi-quarterly-due-on-title">
-                                    {messages("obligations.reportDueOn")}
+                                    {messages("obligations.dueOn")}
                                 </span><br/>
                                 <span id="pi-quarterly-return-due-date" style="font-weight:normal">
                                     {reportDeadlines.obligations.head.due.toLongDate}

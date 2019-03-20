@@ -58,26 +58,6 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       List(
         BusinessIncomeWithDeadlinesModel(
           business1,
-          reportDeadlines = twoObligationsSuccessModel
-        )
-      ),
-      None
-    )
-  private def pageSetup(model: IncomeSourcesWithDeadlinesModel) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.obligations(model)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
-    lazy val document: Document = Jsoup.parse(contentAsString(page))
-  }
-
-  class Setup(model: IncomeSourcesWithDeadlinesModel) {
-    val html: HtmlFormat.Appendable = views.html.obligations(model)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
-    val pageDocument: Document = Jsoup.parse(contentAsString(html))
-  }
-
-  "The Deadline Reports Page" should {
-    lazy val businessIncomeSource = IncomeSourcesWithDeadlinesModel(
-      List(
-        BusinessIncomeWithDeadlinesModel(
-          business1,
           twoObligationsSuccessModel
         )
       ),
@@ -108,8 +88,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
     lazy val noIncomeSource = IncomeSourcesWithDeadlinesModel(List(), None)
 
-    val setup = pageSetup(businessIncomeSource)
-    import setup._
+
     val setup = pageSetup(businessIncomeSource)
     import setup._
 
@@ -166,7 +145,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     //Property income quarterly subsection
 
    "show the property income quarterly return title" in new Setup(piQuarterlyReturnSource) {
-     pageDocument.getElementById("pi-quarterly-return-title").text shouldBe messages.piQuarterlyReturn
+     pageDocument.getElementById("pi-quarterly-return-title").text shouldBe messages.propertyIncome
    }
 
    "show the property income quarterly return Due title on the page" in new Setup(piQuarterlyReturnSource) {
