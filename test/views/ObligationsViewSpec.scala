@@ -22,7 +22,7 @@ import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
 import assets.PropertyDetailsTestConstants.propertyDetails
-import assets.ReportDeadlinesTestConstants.{obligationsDataSuccessModel, twoObligationsSuccessModel}
+import assets.ReportDeadlinesTestConstants._
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
@@ -71,6 +71,16 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
         reportDeadlines  = obligationsDataSuccessModel
       ))
     )
+
+
+    lazy val twoPiQuarterlyReturnSource = IncomeSourcesWithDeadlinesModel(
+      List(),
+      Some(PropertyIncomeWithDeadlinesModel(
+        propertyDetails,
+        reportDeadlines  = quarterlyObligationsDataSuccessModel
+      ))
+    )
+
 
     lazy val eopsPropertyIncomeSource = IncomeSourcesWithDeadlinesModel(
       List(),
@@ -163,6 +173,13 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
      val expectedResult = "30 October 2017"
      result shouldBe expectedResult
    }
+
+    "show the property income quarterly return due date most recent when there are more then one" in new Setup(twoPiQuarterlyReturnSource) {
+      val result = pageDocument.getElementById("pi-quarterly-return-period").text
+      val expectedResult = "1 July 2017 to 30 September 2017"
+      result shouldBe expectedResult
+    }
+
  }
 
   //Income source quarterly subsection

@@ -215,9 +215,6 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
         case OK =>
-          println(Console.RED + Console.BOLD + "#################################################################" +
-            s"${response.body}" +
-            "####################################################" + Console.RESET)
           Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[ReportDeadlinesModel].fold(
             invalid => {
