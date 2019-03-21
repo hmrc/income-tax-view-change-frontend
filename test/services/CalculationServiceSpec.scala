@@ -19,17 +19,16 @@ package services
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import assets.EstimatesTestConstants._
-import mocks.connectors.{MockCalculationDataConnector, MockIncomeTaxViewChangeConnector}
+import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.MockCalculationService
 import models.calculation._
 import play.api.http.Status
 import testUtils.TestSupport
 
-class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockCalculationDataConnector with MockCalculationService{
+class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockCalculationService {
 
   object TestCalculationService extends CalculationService(
     mockIncomeTaxViewChangeConnector,
-    mockCalculationDataConnector,
     frontendAppConfig
   )
 
@@ -46,14 +45,13 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     "successful responses are returned from the CalculationDataConnector" should {
 
       "return a correctly formatted CalculationData model" in {
-        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelSuccess)
-        setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
+        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelSuccess.copy(calculationDataModel = Some(calculationDataSuccessModel)))
 
         await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
       }
     }
 
-    "an Error Response is returned from the CalculationDataConnector" should {
+    "an Error Response is returned from the CalculationConnector" should {
 
       "return none" in {
         setUpLatestCalculationResponse(testNino, testYear)(errorCalculationModel)
@@ -61,11 +59,10 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       }
     }
 
-    "an Error Response is returned from the CalculationDataConnector" should {
+    "no calculation data is returned from the CalculationDataConnector" should {
 
       "return a correctly formatted CalcDisplayModel model with calcDataModel = None" in {
         setUpLatestCalculationResponse(testNino, testYear)(testCalcModelSuccess)
-        setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataErrorModel)
 
         await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel
       }
@@ -76,7 +73,6 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
     object TestCalculationService extends CalculationService(
       mockIncomeTaxViewChangeConnector,
-      mockCalculationDataConnector,
       frontendAppConfig
     )
 
@@ -149,7 +145,16 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
           Some(testTimeStampString),
           Some(true),
           Some(123.45),
-          Some(987.65)
+          Some(987.65),
+          Some(CalculationDataModel(
+            None, 0.0, 123.45, 0, 0, 0,
+            IncomeReceivedModel(0, 0, 0, 0),
+            SavingsAndGainsModel(0, List()),
+            DividendsModel(0, List()),
+            GiftAidModel(0, 0, 0),
+            NicModel(0, 0),
+            None, List()
+          ))
         )
 
       }

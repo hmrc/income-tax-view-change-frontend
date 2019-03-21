@@ -33,7 +33,8 @@ case class CalculationModel(calcID: String,
                             calcTimestamp: Option[String],
                             crystallised: Option[Boolean],
                             incomeTaxNicYtd: Option[BigDecimal],
-                            incomeTaxNicAmount: Option[BigDecimal]
+                            incomeTaxNicAmount: Option[BigDecimal],
+                            calculationDataModel: Option[CalculationDataModel] = None
                            ) extends CalculationResponseModel with CrystallisedViewModel {
 
   val displayAmount: Option[BigDecimal] = (calcAmount, incomeTaxNicYtd) match {
@@ -50,11 +51,12 @@ object CalculationModel {
   implicit val writes: Writes[CalculationModel] = Json.writes[CalculationModel]
 
   implicit val reads: Reads[CalculationModel] = (
-    (JsPath \\ "calcID").read[String] and
-    (JsPath \\ "calcAmount").readNullable[BigDecimal] and
-    (JsPath \\ "calcTimestamp").readNullable[String] and
-    (JsPath \\ "crystallised").readNullable[Boolean] and
-    (JsPath \\ "incomeTaxNicYtd").readNullable[BigDecimal] and
-    (JsPath \\ "incomeTaxNicAmount").readNullable[BigDecimal]
+    (JsPath \\ "calcOutput" \ "calcID").read[String] and
+    (JsPath \\ "calcOutput" \ "calcAmount").readNullable[BigDecimal] and
+    (JsPath \\ "calcOutput" \ "calcTimestamp").readNullable[String] and
+    (JsPath \\ "calcOutput" \ "crystallised").readNullable[Boolean] and
+    (JsPath \\ "calcOutput" \ "calcResult" \ "incomeTaxNicYtd").readNullable[BigDecimal] and
+    (JsPath \\ "calcOutput" \ "calcResult" \ "eoyEstimate" \ "incomeTaxNicAmount").readNullable[BigDecimal].orElse(Reads.pure(None)) and
+      JsPath.read[CalculationDataModel].map(x => Option(x)).orElse(Reads.pure(None))
   ) (CalculationModel.apply _)
 }

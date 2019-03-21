@@ -1462,7 +1462,7 @@ object CalcBreakdownTestConstants {
       "totalNicAmount" -> 66000
     ),
     "incomeTax" -> Json.obj(
-      "payAndPensionsProfit" -> Json.obj(
+      "payPensionsProfit" -> Json.obj(
         "band" -> Json.arr(
           Json.obj(
             "name" -> "BRT",
@@ -1593,7 +1593,7 @@ object CalcBreakdownTestConstants {
           "rate" -> 0.0,
           "taxableIncome" -> 0
         ),
-        "payAndPensionsProfit" -> Json.obj(
+        "payPensionsProfit" -> Json.obj(
           "band" -> Json.arr(Json.obj(
             "name" -> "BRT",
             "rate" -> 20.0,
@@ -1884,7 +1884,42 @@ object CalcBreakdownTestConstants {
       "calcTimestamp" -> testTimeStampString,
       "crystallised" -> true,
       "incomeTaxNicYtd" -> 123.45,
-      "incomeTaxNicAmount" -> 987.65
+      "incomeTaxNicAmount" -> 987.65,
+      "calculationDataModel" -> Json.obj(
+        "totalTaxableIncome" -> 0,
+        "totalIncomeTaxNicYtd" -> 123.45,
+        "personalAllowance" -> 0,
+        "taxReliefs" -> 0,
+        "totalIncomeAllowancesUsed" -> 0,
+        "incomeReceived" -> Json.obj(
+          "selfEmployment" -> 0,
+          "ukProperty" -> 0,
+          "bankBuildingSocietyInterest" -> 0,
+          "ukDividends" -> 0
+        ),
+        "savingsAndGains" -> Json.obj(
+          "total" -> 0,
+          "bands" -> Json.arr()
+        ),
+        "incomeTax" -> Json.obj(
+          "dividends" -> Json.obj(
+            "totalAmount" -> 0,
+            "band" -> Json.arr()
+          ),
+          "payPensionsProfit" -> Json.obj(
+            "band" -> Json.arr()
+          )
+        ),
+        "giftAid" -> Json.obj(
+          "paymentsMade" -> 0,
+          "rate" -> 0,
+          "taxableAmount" -> 0
+        ),
+        "nic" -> Json.obj(
+          "class2" -> 0,
+          "class4" -> 0
+        )
+      )
     )
 
   val testCalcModelSuccess: CalculationModel =
@@ -1904,7 +1939,16 @@ object CalcBreakdownTestConstants {
       Some(testTimeStampString),
       Some(true),
       Some(123.45),
-      Some(987.65)
+      Some(987.65),
+      Some(CalculationDataModel(
+        None, 0.0, 123.45, 0, 0, 0,
+        IncomeReceivedModel(0, 0, 0, 0),
+        SavingsAndGainsModel(0, List()),
+        DividendsModel(0, List()),
+        GiftAidModel(0, 0, 0),
+        NicModel(0, 0),
+        None, List()
+      ))
     )
 
   val testCalcModelEstimate: CalculationModel =
