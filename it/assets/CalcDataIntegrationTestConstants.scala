@@ -275,7 +275,7 @@ object CalcDataIntegrationTestConstants {
           ),
           "incomeTax" -> Json.obj(
             "totalAllowancesAndReliefs" -> 0,
-            "payAndPensionsProfit" -> Json.obj(
+            "payPensionsProfit" -> Json.obj(
               "band" -> Json.arr(Json.obj(
                 "name" -> "BRT",
                 "rate" -> 20.0,
@@ -544,7 +544,7 @@ object CalcDataIntegrationTestConstants {
             "taxableIncome" -> 1.5
           ),
           "totalAllowancesAndReliefs" -> 0,
-          "payAndPensionsProfit" -> Json.obj(
+          "payPensionsProfit" -> Json.obj(
             "band" -> Json.arr(Json.obj(
               "name" -> "BRT",
               "rate" -> 20.0,
@@ -769,7 +769,7 @@ object CalcDataIntegrationTestConstants {
             "taxableIncome" -> 1.5
           ),
           "totalAllowancesAndReliefs" -> 0,
-          "payAndPensionsProfit" -> Json.obj(
+          "payPensionsProfit" -> Json.obj(
             "band" -> Json.arr(Json.obj(
               "name" -> "BRT",
               "rate" -> 20.0,
@@ -988,7 +988,7 @@ object CalcDataIntegrationTestConstants {
         ),
         "incomeTax" -> Json.obj(
           "totalAllowancesAndReliefs" -> 0,
-          "payAndPensionsProfit" -> Json.obj(
+          "payPensionsProfit" -> Json.obj(
             "band" -> Json.arr(Json.obj(
               "name" -> "BRT",
               "rate" -> 20.0,
@@ -1237,7 +1237,7 @@ object CalcDataIntegrationTestConstants {
         ),
         "incomeTax" -> Json.obj(
           "totalAllowancesAndReliefs" -> 0,
-          "payAndPensionsProfit" -> Json.obj(
+          "payPensionsProfit" -> Json.obj(
             "band" -> Json.arr(Json.obj(
               "name" -> "BRT",
               "rate" -> 20.0,
