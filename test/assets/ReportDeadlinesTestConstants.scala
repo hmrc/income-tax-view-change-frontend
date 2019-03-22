@@ -18,7 +18,7 @@ package assets
 
 import assets.BaseTestConstants._
 import implicits.ImplicitDateFormatter
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.libs.json.{JsValue, Json}
 
 object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
@@ -40,6 +40,17 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     due = "2017-10-31",
     periodKey = "#003"
   ))
+
+  val secondQuarterlyObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+    start = "2017-10-1",
+    end = "2017-12-30",
+    due = "2017-10-31",
+    periodKey = "#002"
+  ))
+
+
+  val quarterlyObligationsDataSuccessModel : ReportDeadlinesModel = ReportDeadlinesModel(List(secondQuarterlyObligation, openObligation))
+
   val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueObligation, openObligation))
 
   val reportDeadlineOverdueJson = Json.obj(
@@ -82,7 +93,6 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     periodKey = "#003"
   ))
   val obligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueEOPSObligation, openEOPSObligation))
-
 
   val reportDeadlineEOPSOverdueJson: JsValue = Json.obj(
     "start" -> "2017-04-06",

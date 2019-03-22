@@ -17,12 +17,14 @@
 @import implicits.ImplicitDateFormatter._
 @import views.html.templates.main_template
 @import views.html.helpers.breadcrumbHelper
-@import views.helpers.ReportDeadlinesPage
+@import views.helpers.{ReportDeadlinesPage, ReportDeadlineStatusHelper}
 @import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
 @import views.html.helpers.backToHomeHelper
 @import views.html.helpers.accordionHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import models.reportDeadlines.ReportDeadlinesModel
+@import models.reportDeadlines.QuarterlyObligation
+@import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesResponse, PropertyIncomeWithDeadlinesModel}
 @import models.reportDeadlines.EopsObligation
 @import models.reportDeadlines.QuarterlyObligation
 
@@ -72,7 +74,6 @@ contentHeader = Some(breadcrumb)
         @Messages("obligation.dropdown.declarations.info.v2")
     </summary>
 
-
     <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
         <p>@Messages("obligations.dropdown.declarations.types.v2")</p>
         <ol class="list list-number">
@@ -83,7 +84,6 @@ contentHeader = Some(breadcrumb)
                 <span class="bold">@Messages("obligations.dropdown.declarations.li2.type2.v2")</span> @Messages("obligations.dropdown.declarations.li2.text.v2")
             </li>
         </ol>
-
 
     </div>
 
@@ -123,7 +123,7 @@ case _ => {}
 <!--
     Quarterly returns section
 -->
-
+<h2 id="quarterlyReturns-heading" class="heading">@messages("obligations.quarterlyReturns")</h2>
 <!--
     Heading and dropdown subsection
 -->
@@ -135,7 +135,6 @@ case _ => {}
         @Messages("obligation.dropdown.quarterlyReturn.info.v2")
     </summary>
 
-
     <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
 
         <p>@Messages("obligation.dropdown.quarterlyReturn.text.v2")</p>
@@ -144,9 +143,45 @@ case _ => {}
 </details>
 
 <!--
-    Property income quarterly subsection
+   Property income quarterly subsection
 -->
+@{
 
+incomeSources.propertyIncomeSource match {
+    case Some(propertyIncomeWithDeadlines) => propertyIncomeWithDeadlines.reportDeadlines match {
+        case reportDeadlines: ReportDeadlinesModel => {
+            if(reportDeadlines.currentQuarterlyDeadlines.nonEmpty) {
+                <div id="pi-quarterly-return-section"  class="grid-row divider--bottom">
+                    <div class="row-border">
+                        <div class="column-half">
+                            <p style="font-weight:bold">
+                                <span id="pi-quarterly-return-title">{messages("obligations.propertyIncome")}</span><br/>
+                                <span id="pi-quarterly-return-period" style="font-weight:normal">
+                                    {s"${reportDeadlines.currentQuarterlyDeadlines.head.start.toLongDate} ${messages("obligations.quarterly.to")} ${reportDeadlines.currentQuarterlyDeadlines.head.end.toLongDate}"}
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="column-half">
+                            <p>
+                                <span id="pi-quarterly-due-on-title">
+                                    {messages("obligations.dueOn")}
+                                </span><br/>
+                                <span id="pi-quarterly-return-due-date" style="font-weight:normal">
+                                    {reportDeadlines.obligations.head.due.toLongDate}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        case _ => {}
+        }
+
+    case _ => {}
+}
+}
 <!--
     Income source quarterly subsection
 -->
