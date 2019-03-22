@@ -22,18 +22,15 @@ import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
 import assets.PropertyDetailsTestConstants.propertyDetails
-import assets.ReportDeadlinesTestConstants._
+import assets.ReportDeadlinesTestConstants.{twoObligationsSuccessModel, _}
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
 import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel}
-import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import models.reportDeadlines.{QuarterlyObligation, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -73,7 +70,6 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       ))
     )
 
-
     lazy val twoPiQuarterlyReturnSource = IncomeSourcesWithDeadlinesModel(
       List(),
       Some(PropertyIncomeWithDeadlinesModel(
@@ -82,6 +78,16 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       ))
     )
 
+
+    lazy val quarterlyBusinessIncomeSource = IncomeSourcesWithDeadlinesModel(
+      List(
+        BusinessIncomeWithDeadlinesModel(
+          business1,
+          reportDeadlines = ReportDeadlinesModel(List(quarterlyBusinessObligation))
+        )
+      ),
+      None
+    )
 
     lazy val eopsPropertyIncomeSource = IncomeSourcesWithDeadlinesModel(
       List(),
@@ -182,13 +188,13 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     }
 
     //Income source quarterly subsection
-    "show the name of the income sources" in {
+    "show the name of the income sources" in new Setup(quarterlyBusinessIncomeSource){
       businessIncomeSource.businessIncomeSources.foreach(incomeSource =>
-      document.getElementById(s"business-income-${incomeSource.incomeSource.tradingName}-heading") shouldBe incomeSource.incomeSource.tradingName)
+        pageDocument.getElementById(s"quarterly-bi-${incomeSource.incomeSource.tradingName.get}-heading") shouldBe incomeSource.incomeSource.tradingName.get)
     }
 
-    "show the period of the income source" in {
-        val result = document.getElementById(s"business-income-${businessIncomeSource.businessIncomeSources(0).incomeSource.tradingName}-period")
+    "show the period of the income source" in new Setup(quarterlyBusinessIncomeSource) {
+        val result = pageDocument.getElementById(s"quarterly-bi-${businessIncomeSource.businessIncomeSources(0).incomeSource.tradingName.get}-period")
         val expectedResult =
           businessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start +
             "to" +
@@ -196,8 +202,8 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
     }
 
-    "show the due date of the income source" in {
-      val result = document.getElementById(s"business-income-${businessIncomeSource.businessIncomeSources(0).incomeSource.tradingName}-due")
+    "show the due date of the income source" in new Setup(quarterlyBusinessIncomeSource){
+      val result = pageDocument.getElementById(s"quarterly-bi-${businessIncomeSource.businessIncomeSources(0).incomeSource.tradingName.get}-due")
 
       val expectedResult = businessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).due
       result shouldBe  expectedResult
