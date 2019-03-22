@@ -189,23 +189,24 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
     //Income source quarterly subsection
     "show the name of the income sources" in new Setup(quarterlyBusinessIncomeSource){
-      businessIncomeSource.businessIncomeSources.foreach(incomeSource =>
-        pageDocument.getElementById(s"quarterly-bi-${incomeSource.incomeSource.tradingName.get}-heading") shouldBe incomeSource.incomeSource.tradingName.get)
+      quarterlyBusinessIncomeSource.businessIncomeSources.foreach(incomeSource =>
+        pageDocument.getElementById(s"quarterly-bi-${incomeSource.incomeSource.tradingName.get}-heading").text shouldBe incomeSource.incomeSource.tradingName.get)
     }
 
     "show the period of the income source" in new Setup(quarterlyBusinessIncomeSource) {
-        val result = pageDocument.getElementById(s"quarterly-bi-${businessIncomeSource.businessIncomeSources(0).incomeSource.tradingName.get}-period")
+        val result = pageDocument.getElementById(s"quarterly-bi-${quarterlyBusinessIncomeSource.businessIncomeSources(0).incomeSource.tradingName.get}-period").text
         val expectedResult =
-          businessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start +
-            "to" +
-          businessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start
+          quarterlyBusinessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start.toLongDate +
+            " to " +
+            quarterlyBusinessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).end.toLongDate
 
+      result shouldBe  expectedResult
     }
 
     "show the due date of the income source" in new Setup(quarterlyBusinessIncomeSource){
-      val result = pageDocument.getElementById(s"quarterly-bi-${businessIncomeSource.businessIncomeSources(0).incomeSource.tradingName.get}-due")
+      val result = pageDocument.getElementById(s"quarterly-bi-${quarterlyBusinessIncomeSource.businessIncomeSources(0).incomeSource.tradingName.get}-due").text
 
-      val expectedResult = businessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).due
+      val expectedResult = quarterlyBusinessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).due.toLongDate
       result shouldBe  expectedResult
     }
 

@@ -190,24 +190,28 @@ incomeSources.propertyIncomeSource match {
     <section id="quarterly-income-returns">
     @businessIncomeSource.reportDeadlines match{
     case businessDeadlines: ReportDeadlinesModel => {
-    @for(deadline <- businessDeadlines.obligations.filter(_.obligationType == "QuarterlyObligation")) {
+
+    @for(deadline <- businessDeadlines.obligations.filter(_.obligationType == QuarterlyObligation)) {
     <div id="quarterlyIncomeTableRow" class="grid-row divider--bottom">
         <div class="column-half">
             <p>
-            <div id=s"quarterly-bi-${incomeSources.businessIncomeSources(0).incomeSource.tradingName.get}-heading" class="bold">@incomeSources.businessIncomeSources(0).incomeSource.tradingName.get</div>
-            <div id=s"quarterly-bi-${incomeSources.businessIncomeSources(0).incomeSource.tradingName.get}-period">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
+            <div id="quarterly-bi-@{incomeSources.businessIncomeSources(0).incomeSource.tradingName.get}-heading" class="bold">@{incomeSources.businessIncomeSources(0).incomeSource.tradingName.get}</div>
+            <div id="quarterly-bi-@{incomeSources.businessIncomeSources(0).incomeSource.tradingName.get}-period">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
             </p>
         </div>
         <div class="column-half">
             <p>
             <div id="quarterly-bi-due-on">@messages("obligations.dueOn")</div>
-            <div id=s"quarterly-bi-${incomeSources.businessIncomeSources(0).incomeSource.tradingName.get}-due">@deadline.due</div>
+            <div id="quarterly-bi-@{incomeSources.businessIncomeSources(0).incomeSource.tradingName.get}-due">@{deadline.due.toLongDate}</div>
             </p>
         </div>
     </div>
         }
         }
-    case _ => {}
+    case _ => {
+
+
+        }
     }
     }
 
