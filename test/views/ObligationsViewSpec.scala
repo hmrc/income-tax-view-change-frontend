@@ -78,7 +78,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     lazy val eopsSEIncomeSource = IncomeSourcesWithDeadlinesModel(businessIncomeSources =
       List(BusinessIncomeWithDeadlinesModel(
         incomeSource = business1,
-        reportDeadlines = openEOPSObligation
+        reportDeadlines = ReportDeadlinesModel(List(openEOPSObligation))
       )),
       propertyIncomeSource = None)
 
@@ -88,18 +88,18 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     import setup._
 
     //Main content section
-    "show the breadcrumb trail on the page" in{
+    "show the breadcrumb trail on the page" in {
       document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
       document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
       document.getElementById("breadcrumb-obligations").text shouldBe breadcrumbMessages.obligations
     }
 
-    s"show the title ${messages.title} on the page" in{
+    s"show the title ${messages.title} on the page" in {
       document.getElementById("page-heading").text shouldBe messages.title
     }
 
 
-    s"show the Sub heading ${messages.subTitle} on page" in{
+    s"show the Sub heading ${messages.subTitle} on page" in {
       document.getElementById("page-sub-heading").text shouldBe messages.subTitle
     }
 
@@ -127,15 +127,30 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     "not show the eops property section when there is no property income report" in new Setup(noIncomeSource) {
       Option(pageDocument.getElementById("eopsPropertyTableRow")) shouldBe None
 
+    }
+
     //Income source EOPS subsection
-    "Show EOPS SE income source" in new Setup(eopsSEIncomeSource){
-      pageDocument.getElementById("eops-SEI-heading").text shouldBe messages.SEIncomeSource
-      pageDocument.getElementById("eops-SEI-dates").text shouldBe messages.fromToDates("06 April 2017", "05 April 2018")
+
+    "Show EOPS SE income source" when {
+      lazy val setup = new Setup(eopsSEIncomeSource)
+      import setup._
+    "has heading Whole tax year (final check)" in {
+        pageDocument.getElementById("eops-SEI-heading").text shouldBe messages.SEIncomeSource
+    }
+
+    "has tax year dates" in  {
+      pageDocument.getElementById("eops-SEI-dates").text shouldBe messages.fromToDates("6 April 2017", "5 April 2018")
+    }
+
+    "has text due on" in {
       pageDocument.getElementById("eops-SEI-due-on").text shouldBe messages.dueOn
-      pageDocument.getElementById("eops-SEI-due-dates").text shouldBe "31 October 2017"
     }
+
+    "has EOPS due date 31 October 2017 for SE income source" in {
+      pageDocument.getElementById("eops-SEI-due-date").text shouldBe "31 October 2017"
     }
-    
+  }
+
     //Quarterly returns section
 
     //Heading and dropdown subsection

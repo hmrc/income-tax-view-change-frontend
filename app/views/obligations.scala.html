@@ -119,28 +119,28 @@ case _ => {}
 <!--
     Income source EOPS subsection
 -->
-@for(businessIncomeSource <- incomeSources.businessIncomeSource if !IncomeSources.hasBusinessReportErrors){
-@businessIncomeSource.reportDeadlines match {
-case businessIncomeDeadlines: ReportDeadlinesModel => {
-@for(deadline <- businessIncomeDeadlines.obligations.filter(_.obligationType == EopsObligation)){
-<div id = "eopsSEIncomeSection"  class="grid-row divider--bottom">
-    <div class="column-half">
-        <p>
-        <div id="eops-SEI-heading" class="bold">@messages("obligations.SEIncomeSource")</div>
-        <div id="eops-SEI-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
-        </p>
-    </div>
-    <div class="column-half">
-        <p>
-        <div id="eops-SEI-due-on">@messages("obligations.dueOn")</div>
-        <div id="eops-SEI-due-date">@deadline.due.toLongDate</div>
-        </p>
-    </div>
-</div>
-}
-}
-case _ => {}
-}
+@for(businessIncomeSource <- incomeSources.businessIncomeSources if !incomeSources.hasBusinessReportErrors){
+    @businessIncomeSource.reportDeadlines match {
+        case businessIncomeDeadlines: ReportDeadlinesModel => {
+            @for(deadline <- businessIncomeDeadlines.obligations.filter(_.obligationType == EopsObligation)){
+                <div id = "eopsSEIncomeSection"  class="grid-row divider--bottom">
+                    <div class="column-half">
+                        <p>
+                        <div id="eops-SEI-heading" class="bold">@messages("obligations.SEIncomeSource")</div>
+                        <div id="eops-SEI-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
+                        </p>
+                    </div>
+                    <div class="column-half">
+                        <p>
+                        <div id="eops-SEI-due-on">@messages("obligations.dueOn")</div>
+                        <div id="eops-SEI-due-date">@deadline.due.toLongDate</div>
+                        </p>
+                    </div>
+                </div>
+            }
+        }
+        case _ => {}
+    }
 }
 
 <!--
