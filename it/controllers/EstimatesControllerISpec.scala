@@ -63,8 +63,8 @@ class EstimatesControllerISpec extends ComponentSpecBase {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, estimateLatestTaxCalcResponse)
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, estimateLatestTaxCalcResponse2)
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, estimateLatestTaxCalcResponseJson)
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, estimateLatestTaxCalcResponseJson2)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
           val res = IncomeTaxViewChangeFrontend.getEstimates
@@ -93,7 +93,7 @@ class EstimatesControllerISpec extends ComponentSpecBase {
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
           IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, estimateLatestTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, estimateLatestTaxCalcResponseJson)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
           val res = IncomeTaxViewChangeFrontend.getEstimates

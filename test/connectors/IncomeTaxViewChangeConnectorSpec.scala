@@ -91,7 +91,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       setupMockHttpGet(getLatestCalculationTestUrl)(successResponse)
 
       val result: Future[CalculationResponseModel] = getLatestCalculation(testNino, testTaxYear)
-      await(result) shouldBe testCalcModelCrystalised
+      await(result) shouldBe testCalcModelCrystallised
     }
 
     "return a CalculationErrorModel in case of failure" in new Setup {

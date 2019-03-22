@@ -260,23 +260,23 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
   "The CalculationModel" should {
 
     "be formatted to JSON correctly" in {
-      Json.toJson[CalculationModel](testCalcModelCrystalised) shouldBe testCalculationOutputJson
+      Json.toJson[CalculationModel](testCalcModelCrystallised) shouldBe testCalculationOutputJson
     }
 
     "be able to parse a full JSON string into the Model" in {
-      Json.fromJson[CalculationModel](testCalculationInputJson) shouldBe JsSuccess(testCalcModelCrystalised)
+      Json.fromJson[CalculationModel](testCalculationInputJson) shouldBe JsSuccess(testCalcModelCrystallised)
     }
 
     "return status as Crystallised when json data for attribute crystallised is true" in {
-      testCalcModelCrystalised.status shouldBe Crystallised
+      testCalcModelCrystallised.status shouldBe Crystallised
     }
 
     "return status as Estimate when json data for attribute crystallised is false" in {
-      testCalcModelCrystalised.copy(crystallised = Some(false)).status shouldBe Estimate
+      testCalcModelCrystallised.copy(crystallised = Some(false)).status shouldBe Estimate
     }
 
     "return status as Estimate when json data for attribute crystallised is None" in {
-      testCalcModelCrystalised.copy(crystallised = None).status shouldBe Estimate
+      testCalcModelCrystallised.copy(crystallised = None).status shouldBe Estimate
     }
 
   }

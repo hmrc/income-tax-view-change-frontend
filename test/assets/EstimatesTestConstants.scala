@@ -42,7 +42,16 @@ object EstimatesTestConstants {
     Some(testTimeStampString),
     Some(true),
     Some(123.45),
-    Some(987.65)
+    Some(987.65),
+    Some(CalculationDataModel(
+      None, 0.0, 123.45, 0, 0, 0,
+      IncomeReceivedModel(0, 0, 0, 0),
+      SavingsAndGainsModel(0, List()),
+      DividendsModel(0, List()),
+      GiftAidModel(0, 0, 0),
+      NicModel(0, 0),
+      None, List()
+    ))
   )
 
   val lastCalcSuccessEstimate = CalculationModel(

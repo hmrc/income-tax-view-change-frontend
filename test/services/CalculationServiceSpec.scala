@@ -92,8 +92,8 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         "for a list of Bills" should {
 
           "return a list of CalculationResponseModelWithYear bills models" in new CalculationDataApiDisabled {
-            setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystalised)
-            setUpLatestCalculationResponse(testNino, testYearPlusOne)(testCalcModelCrystalised)
+            setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystallised)
+            setUpLatestCalculationResponse(testNino, testYearPlusOne)(testCalcModelCrystallised)
             await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearCrystallisedList
           }
         }
@@ -110,7 +110,7 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     "successful response is returned from the CalculationDataConnector" should {
 
       "return a CalculationModel" in {
-        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystalised)
+        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystallised)
         await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationModel(
           testTaxCalculationId,
           Some(543.21),

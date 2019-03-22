@@ -1932,7 +1932,7 @@ object CalcBreakdownTestConstants {
       None
     )
 
-  val testCalcModelCrystalised: CalculationModel =
+  val testCalcModelCrystallised: CalculationModel =
     CalculationModel(
       testTaxCalculationId,
       Some(543.21),

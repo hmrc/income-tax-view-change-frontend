@@ -1447,6 +1447,14 @@ object CalcDataIntegrationTestConstants {
       None
     )
 
+  val estimateLatestTaxCalcResponseJson: JsObject = Json.obj(
+    "calcOutput" -> Json.obj(
+      "calcID" -> testCalcId,
+      "calcAmount" -> 90500.00,
+      "calcTimestamp" -> "2017-07-06T12:34:56.789Z"
+    )
+  )
+
   val estimateLatestTaxCalcResponse2 =
     CalculationModel(
       testCalcId2,
@@ -1456,6 +1464,14 @@ object CalcDataIntegrationTestConstants {
       None,
       None
     )
+
+  val estimateLatestTaxCalcResponseJson2: JsObject = Json.obj(
+    "calcOutput" -> Json.obj(
+      "calcID" -> testCalcId2,
+      "calcAmount" -> 90500.00,
+      "calcTimestamp" -> "2017-07-06T12:34:56.789Z"
+    )
+  )
 
   val latestCalcModel: CalculationModel =
     CalculationModel(
