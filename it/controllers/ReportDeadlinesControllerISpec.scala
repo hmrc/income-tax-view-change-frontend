@@ -736,7 +736,22 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           )
         }
       }
+
+        "the user has a quarterly property income obligation only" in {
+          appConfig.features.obligationsPageEnabled(true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines()
+        }
+
+      "the user has a quarterly business income obligation only" in {
+        appConfig.features.obligationsPageEnabled(true)
+
+      }
+
     }
+
+
 
     "the ReportDeadlines Feature is disabled" should {
 
