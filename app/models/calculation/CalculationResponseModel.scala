@@ -53,7 +53,7 @@ case class CalculationResponseModelWithYear(model: CalculationResponseModel, yea
     case _ => false
   }
 
-  val isCrystalised: Boolean = model match {
+  val isCrystallised: Boolean = model match {
     case model: CalculationModel => model.status == Crystallised
     case _ => false
   }

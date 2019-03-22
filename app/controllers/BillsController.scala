@@ -50,7 +50,7 @@ class BillsController @Inject()(implicit val config: FrontendAppConfig,
       case lastTaxCalcs if lastTaxCalcs.exists(_.isError) =>
         Logger.error(s"[BillsController][viewCrystallisedCalculations] Retrieved at least one Errored Last Tax Calc. Response: $lastTaxCalcs")
         itvcErrorHandler.showInternalServerError
-      case lastTaxCalcs => Ok(views.html.bills(lastTaxCalcs.filter(_.isCrystalised)))
+      case lastTaxCalcs => Ok(views.html.bills(lastTaxCalcs.filter(_.isCrystallised)))
     }
   }
 }

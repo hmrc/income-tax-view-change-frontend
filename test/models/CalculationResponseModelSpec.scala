@@ -318,15 +318,15 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
     }
     "return true for isCrystallised" when {
       "the model it contains is a CalculationModel and is Crystallised" in {
-        calcModelCrystallised.isCrystalised shouldBe true
+        calcModelCrystallised.isCrystallised shouldBe true
       }
     }
     "return false for isCrystallised" when {
       "the model it contains is a CalculationModel but is an Estimate" in {
-        calcModelEstimate.isCrystalised shouldBe false
+        calcModelEstimate.isCrystallised shouldBe false
       }
       "the model it contains is not a CalculationModel" in {
-        errorModel.isCrystalised shouldBe false
+        errorModel.isCrystallised shouldBe false
       }
     }
   }

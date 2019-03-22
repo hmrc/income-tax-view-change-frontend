@@ -52,10 +52,10 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
       case estimatesResponse if estimatesResponse.exists(_.isError) =>
         Logger.error(s"[EstimatesController][viewEstimateCalculations] Retrieved at least one Errored Last Tax Calc. Response: $estimatesResponse")
         itvcErrorHandler.showInternalServerError
-      case estimatesResponse if estimatesResponse.count(!_.isCrystalised) == 1 =>
-        Redirect(controllers.routes.CalculationController.renderCalculationPage(estimatesResponse.filter(!_.isCrystalised).head.year))
+      case estimatesResponse if estimatesResponse.count(!_.isCrystallised) == 1 =>
+        Redirect(controllers.routes.CalculationController.renderCalculationPage(estimatesResponse.filter(!_.isCrystallised).head.year))
           .addingToSession("singleEstimate" -> "true")
-      case estimatesResponse => Ok(views.html.estimates(estimatesResponse.filter(!_.isCrystalised)))
+      case estimatesResponse => Ok(views.html.estimates(estimatesResponse.filter(!_.isCrystallised)))
         .addingToSession("singleEstimate" -> "false")
     }
   }
