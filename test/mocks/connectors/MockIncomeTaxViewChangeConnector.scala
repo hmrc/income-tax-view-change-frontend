@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.IncomeTaxViewChangeConnector
-import models.calculation.{CalculationResponseModel, LastTaxCalculationResponseModel}
+import models.calculation.CalculationResponseModel
 import models.core.NinoResponse
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ReportDeadlinesResponseModel
@@ -50,13 +50,6 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
       ArgumentMatchers.eq(mtditid),
       ArgumentMatchers.eq(nino)
     )(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(response))
-
-  def setupLastTaxCalculationResponse(nino: String, year: Int)(response: LastTaxCalculationResponseModel): Unit =
-    when(mockIncomeTaxViewChangeConnector
-      .getLastEstimatedTax(
-        ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(year))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
   def setupNinoLookupResponse(mtdRef: String)(response: NinoResponse): Unit =

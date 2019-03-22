@@ -22,7 +22,6 @@ import audit.AuditingService
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import enums.Crystallised
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
@@ -48,10 +47,10 @@ class BillsController @Inject()(implicit val config: FrontendAppConfig,
 
   private[BillsController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
     calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears).map {
-      case lastTaxCalcs if lastTaxCalcs.exists(_.isErrored) =>
+      case lastTaxCalcs if lastTaxCalcs.exists(_.isError) =>
         Logger.error(s"[BillsController][viewCrystallisedCalculations] Retrieved at least one Errored Last Tax Calc. Response: $lastTaxCalcs")
         itvcErrorHandler.showInternalServerError
-      case lastTaxCalcs => Ok(views.html.bills(lastTaxCalcs.filter(_.matchesStatus(Crystallised))))
+      case lastTaxCalcs => Ok(views.html.bills(lastTaxCalcs.filter(_.isCrystallised)))
     }
   }
 }

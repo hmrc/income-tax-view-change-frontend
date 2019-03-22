@@ -18,7 +18,6 @@ package services
 
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import enums.{Crystallised, Estimate}
 import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
@@ -50,43 +49,15 @@ class CalculationService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
     }
   }
 
-  def getLastEstimatedTaxCalculation(nino: String, year: Int)
-                                    (implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
-
-    Logger.debug("[CalculationService][getLastEstimatedTaxCalculation] - Requesting Last Tax from Backend via Connector")
-    incomeTaxViewChangeConnector.getLastEstimatedTax(nino, year).map {
-      case success: LastTaxCalculation =>
-        Logger.debug(s"[CalculationService][getLastEstimatedTaxCalculation] - Retrieved Estimated Tax Liability: \n$success")
-        success
-      case NoLastTaxCalculation =>
-        Logger.warn(s"[CalculationService][getLastEstimatedTaxCalculation] - No Data Found response returned from connector")
-        NoLastTaxCalculation
-      case error: LastTaxCalculationError =>
-        Logger.error(s"[CalculationService][getLastEstimatedTaxCalculation] - Error Response Status: ${error.status}, Message: ${error.message}")
-        error
-    }
-  }
-
   def getAllLatestCalculations(nino: String, orderedYears: List[Int])
-                              (implicit headerCarrier: HeaderCarrier): Future[List[LastTaxCalculationWithYear]] = {
-    Future.sequence(orderedYears.map {
-      year => {
-        if (frontendAppConfig.features.calcDataApiEnabled()) {
-          getLastEstimatedTaxCalculation(nino, year).map {
-            model => LastTaxCalculationWithYear(model, year)
-          }
-        } else {
-          getLatestCalculation(nino, year).map {
-            case x: CalculationModel => {
-              val status = if (x.isBill) Crystallised else Estimate
-              LastTaxCalculationWithYear(LastTaxCalculation(x.calcID, x.calcTimestamp.get, x.calcAmount.get, status), year)
-            }
-            case x: CalculationErrorModel =>
-              LastTaxCalculationWithYear(LastTaxCalculationError(x.code, x.message), year)
-          }
+                              (implicit headerCarrier: HeaderCarrier): Future[List[CalculationResponseModelWithYear]] = {
+    Future.sequence(
+      orderedYears.map { year =>
+        getLatestCalculation(nino, year).map {
+          model => CalculationResponseModelWithYear(model, year)
         }
       }
-    })
+    )
   }
 
   def getLatestCalculation(nino: String, taxYear: Int)

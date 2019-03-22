@@ -20,7 +20,7 @@ import assets.EstimatesTestConstants._
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import config.FrontendAppConfig
-import models.calculation.LastTaxCalculationWithYear
+import models.calculation.CalculationResponseModelWithYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
@@ -34,9 +34,9 @@ class EstimatesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  private def pageSetup(calcs: List[LastTaxCalculationWithYear]) = new {
+  private def pageSetup(calcs: List[CalculationResponseModelWithYear]) = new {
     lazy val page: HtmlFormat.Appendable =
-      views.html.estimates(calcs,testYear)(FakeRequest(), applicationMessages, mockAppConfig)
+      views.html.estimates(calcs)(FakeRequest(), applicationMessages, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 

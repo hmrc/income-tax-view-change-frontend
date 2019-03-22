@@ -67,12 +67,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
   }
 
-  "getEstimatedTaxLiabilityUrl" should {
-    "return the correct url" in new Setup {
-      getEstimatedTaxLiabilityUrl(testNino, testTaxYear.toString) shouldBe s"$baseUrl/income-tax-view-change/estimated-tax-liability/$testNino/$testTaxYear/it"
-    }
-  }
-
   "getNinoLookupUrl" should {
     "return the correct url" in new Setup {
       getNinoLookupUrl(testMtditid) shouldBe s"$baseUrl/income-tax-view-change/nino-lookup/$testMtditid"
@@ -97,7 +91,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       setupMockHttpGet(getLatestCalculationTestUrl)(successResponse)
 
       val result: Future[CalculationResponseModel] = getLatestCalculation(testNino, testTaxYear)
-      await(result) shouldBe testCalcModelCrystalised
+      await(result) shouldBe testCalcModelCrystallised
     }
 
     "return a CalculationErrorModel in case of failure" in new Setup {
@@ -165,51 +159,6 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
 
       verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino))
-    }
-  }
-
-  "getLastEstimatedTax" should {
-
-    val successResponse = HttpResponse(Status.OK, Some(Json.toJson(lastTaxCalcSuccess)))
-    val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
-    val noDataFound = HttpResponse(Status.NOT_FOUND)
-    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
-
-    val getEstimatedTaxLiabilityTestUrl = s"http://localhost:9999/income-tax-view-change/estimated-tax-liability/$testNino/$testTaxYear/it"
-
-    "return a EstimatedTaxLiability model when successful JSON is received" in new Setup {
-      setupMockHttpGet(getEstimatedTaxLiabilityTestUrl)(successResponse)
-
-      val result: Future[LastTaxCalculationResponseModel] = getLastEstimatedTax(testNino, testTaxYear)
-      await(result) shouldBe lastTaxCalcSuccess
-    }
-
-    "return EstimatedTaxLiabilityError model in case of bad/malformed JSON response" in new Setup {
-      setupMockHttpGet(getEstimatedTaxLiabilityTestUrl)(successResponseBadJson)
-
-      val result: Future[LastTaxCalculationResponseModel] = getLastEstimatedTax(testNino, testTaxYear)
-      await(result) shouldBe LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Latest Calc Response")
-    }
-
-    "return EstimatedTaxLiabilityError model in case of failure" in new Setup {
-      setupMockHttpGet(getEstimatedTaxLiabilityTestUrl)(badResponse)
-
-      val result: Future[LastTaxCalculationResponseModel] = getLastEstimatedTax(testNino, testTaxYear)
-      await(result) shouldBe LastTaxCalculationError(Status.BAD_REQUEST, "Error Message")
-    }
-
-    "return NoLastTaxCalculation case object in case of No Data Found (NOT_FOUND) scenario" in new Setup {
-      setupMockHttpGet(getEstimatedTaxLiabilityTestUrl)(noDataFound)
-
-      val result: Future[LastTaxCalculationResponseModel] = getLastEstimatedTax(testNino, testTaxYear)
-      await(result) shouldBe NoLastTaxCalculation
-    }
-
-    "return LastTaxCalculationError model in case of future failed scenario" in new Setup {
-      setupMockFailedHttpGet(getEstimatedTaxLiabilityTestUrl)(badResponse)
-
-      val result: Future[LastTaxCalculationResponseModel] = getLastEstimatedTax(testNino, testTaxYear)
-      await(result) shouldBe LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
     }
   }
 

@@ -260,23 +260,23 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
   "The CalculationModel" should {
 
     "be formatted to JSON correctly" in {
-      Json.toJson[CalculationModel](testCalcModelCrystalised) shouldBe testCalculationOutputJson
+      Json.toJson[CalculationModel](testCalcModelCrystallised) shouldBe testCalculationOutputJson
     }
 
     "be able to parse a full JSON string into the Model" in {
-      Json.fromJson[CalculationModel](testCalculationInputJson) shouldBe JsSuccess(testCalcModelCrystalised)
+      Json.fromJson[CalculationModel](testCalculationInputJson) shouldBe JsSuccess(testCalcModelCrystallised)
     }
 
     "return status as Crystallised when json data for attribute crystallised is true" in {
-      testCalcModelCrystalised.status shouldBe Crystallised
+      testCalcModelCrystallised.status shouldBe Crystallised
     }
 
     "return status as Estimate when json data for attribute crystallised is false" in {
-      testCalcModelCrystalised.copy(crystallised = Some(false)).status shouldBe Estimate
+      testCalcModelCrystallised.copy(crystallised = Some(false)).status shouldBe Estimate
     }
 
     "return status as Estimate when json data for attribute crystallised is None" in {
-      testCalcModelCrystalised.copy(crystallised = None).status shouldBe Estimate
+      testCalcModelCrystallised.copy(crystallised = None).status shouldBe Estimate
     }
 
   }
@@ -297,6 +297,37 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
 
     "be able to parse a JSON to string into the Model" in {
       Json.fromJson[CalculationErrorModel](testCalculationErrorJson) shouldBe JsSuccess(testCalculationErrorModel)
+    }
+  }
+
+  "CalculationResponseModelWithYear" should {
+
+    val errorModel = CalculationResponseModelWithYear(CalculationErrorModel(5, "test"), 2020)
+    val calcModelCrystallised = CalculationResponseModelWithYear(CalculationModel("calcId", None, None, Some(true), None, None), 2020)
+    val calcModelEstimate = CalculationResponseModelWithYear(CalculationModel("calcId", None, None, Some(false), None, None), 2020)
+
+    "return true for isError" when {
+      "the model it contains is of type CalculationErrorModel" in {
+        errorModel.isError shouldBe true
+      }
+    }
+    "return false for isError" when {
+      "the model it contains is not of type CalculationErrorModel" in {
+        calcModelCrystallised.isError shouldBe false
+      }
+    }
+    "return true for isCrystallised" when {
+      "the model it contains is a CalculationModel and is Crystallised" in {
+        calcModelCrystallised.isCrystallised shouldBe true
+      }
+    }
+    "return false for isCrystallised" when {
+      "the model it contains is a CalculationModel but is an Estimate" in {
+        calcModelEstimate.isCrystallised shouldBe false
+      }
+      "the model it contains is not a CalculationModel" in {
+        errorModel.isCrystallised shouldBe false
+      }
     }
   }
 }

@@ -140,27 +140,6 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
           }
         }
 
-        "successfully retrieves income sources, but the list returned from the service has a calcNotFound" should {
-          lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
-          lazy val document = result.toHtmlDocument
-
-          "return an OK (200)" in {
-            TestCalculationController.config.features.billsEnabled(true)
-            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
-            mockGetAllLatestCrystallisedCalcWithCalcNotFound()
-            status(result) shouldBe Status.OK
-          }
-
-          "return HTML" in {
-            contentType(result) shouldBe Some("text/html")
-            charset(result) shouldBe Some("utf-8")
-          }
-          "render the Bills page" in {
-            document.title() shouldBe messages.Bills.billsTitle
-          }
-
-        }
-
         "successfully retrieves income sources, but the list returned from the service has an error model" should {
           lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
 

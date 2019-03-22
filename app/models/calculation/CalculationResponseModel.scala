@@ -16,7 +16,7 @@
 
 package models.calculation
 
-import enums.{Crystallised, Estimate}
+import enums.{CalcStatus, Crystallised, Estimate}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -44,7 +44,19 @@ case class CalculationModel(calcID: String,
   }
 
   val isBill: Boolean = crystallised.getOrElse(false)
-  val status = if(isBill) Crystallised else Estimate
+  val status: CalcStatus = if(isBill) Crystallised else Estimate
+}
+
+case class CalculationResponseModelWithYear(model: CalculationResponseModel, year: Int) {
+  val isError: Boolean = model match {
+    case model: CalculationErrorModel => true
+    case _ => false
+  }
+
+  val isCrystallised: Boolean = model match {
+    case model: CalculationModel => model.status == Crystallised
+    case _ => false
+  }
 }
 
 object CalculationModel {
@@ -55,7 +67,7 @@ object CalculationModel {
     (JsPath \\ "calcOutput" \ "calcAmount").readNullable[BigDecimal] and
     (JsPath \\ "calcOutput" \ "calcTimestamp").readNullable[String] and
     (JsPath \\ "calcOutput" \ "crystallised").readNullable[Boolean] and
-    (JsPath \\ "calcOutput" \ "calcResult" \ "incomeTaxNicYtd").readNullable[BigDecimal] and
+    (JsPath \\ "calcOutput" \ "calcResult" \ "incomeTaxNicYtd").readNullable[BigDecimal].orElse(Reads.pure(None))  and
     (JsPath \\ "calcOutput" \ "calcResult" \ "eoyEstimate" \ "incomeTaxNicAmount").readNullable[BigDecimal].orElse(Reads.pure(None)) and
       JsPath.read[CalculationDataModel].map(x => Option(x)).orElse(Reads.pure(None))
   ) (CalculationModel.apply _)

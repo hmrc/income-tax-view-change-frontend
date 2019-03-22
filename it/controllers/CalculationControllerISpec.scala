@@ -16,21 +16,19 @@
 
 package controllers
 
-import assets.messages.{CalculationMessages => messages}
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.LastTaxCalcIntegrationTestConstants._
+import assets.messages.{CalculationMessages => messages}
 import config.FrontendAppConfig
-import helpers.servicemocks._
 import helpers.ComponentSpecBase
+import helpers.servicemocks._
+import implicits.ImplicitCurrencyFormatter._
 import models.calculation.CalculationDataModel
 import models.financialTransactions.FinancialTransactionsModel
 import play.api.http.Status
 import play.api.http.Status._
-import implicits.ImplicitCurrencyFormatter._
-import org.jsoup.Jsoup
 
 class CalculationControllerISpec extends ComponentSpecBase {
 

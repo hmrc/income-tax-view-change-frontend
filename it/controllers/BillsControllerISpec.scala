@@ -17,8 +17,7 @@ package controllers
 
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.LastTaxCalcIntegrationTestConstants._
-import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
+import assets.CalcDataIntegrationTestConstants._
 import assets.messages.{BillsMessages => messages}
 import config.FrontendAppConfig
 import helpers.servicemocks._
@@ -41,13 +40,13 @@ class BillsControllerISpec extends ComponentSpecBase {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLastTaxCalculationCall(testNino, testYear)
+          verifyLatestCalculationCall(testNino, testYear)
 
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
@@ -69,15 +68,15 @@ class BillsControllerISpec extends ComponentSpecBase {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, crystallisedLastTaxCalcResponse2)
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, taxCalculationCrystallisedResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLastTaxCalculationCall(testNino, testYear)
-          verifyLastTaxCalculationCall(testNino, testYearPlusOne)
+          verifyLatestCalculationCall(testNino, testYear)
+          verifyLatestCalculationCall(testNino, testYearPlusOne)
 
           Then("The view should have the correct headings and two tax bill links")
           res should have(
@@ -99,15 +98,15 @@ class BillsControllerISpec extends ComponentSpecBase {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, crystallisedLastTaxCalcResponse)
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYearPlusOne, estimateLastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, taxCalculationResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLastTaxCalculationCall(testNino, testYear)
-          verifyLastTaxCalculationCall(testNino, testYearPlusOne)
+          verifyLatestCalculationCall(testNino, testYear)
+          verifyLatestCalculationCall(testNino, testYearPlusOne)
 
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
@@ -128,13 +127,13 @@ class BillsControllerISpec extends ComponentSpecBase {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLastTaxCalc(testNino, testYear, estimateLastTaxCalcResponse)
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLastTaxCalculationCall(testNino, testYear)
+          verifyLatestCalculationCall(testNino, testYear)
 
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(

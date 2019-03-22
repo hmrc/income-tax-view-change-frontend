@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@import models.calculation.LastTaxCalculationWithYear
+@import models.calculation.CalculationResponseModelWithYear
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import views.html.helpers.breadcrumbHelper
 @import views.html.templates.main_template
 
-@(calcModels: List[LastTaxCalculationWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(calcModels: List[CalculationResponseModelWithYear])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 
 @main_template(
@@ -46,12 +46,12 @@
             <ul class="list list-bullet">
                 @for(calc <- calcModels.reverse){
                     <li>
-                        <a href="@{controllers.routes.CalculationController.renderCalculationPage(calc.taxYear).url}"
+                        <a href="@{controllers.routes.CalculationController.renderCalculationPage(calc.year).url}"
                            class="bills-link"
-                           data-journey-click="BillsPage:ClickLink:@{calc.taxYear}"
-                           aria-label='@messages("bills.billLink.screenReaderPrefix") @messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")'
-                           id="bills-link-@{calc.taxYear}">
-                             @messages("bills.billLink", s"${calc.taxYear - 1}", s"${calc.taxYear}")
+                           data-journey-click="BillsPage:ClickLink:@{calc.year}"
+                           aria-label='@messages("bills.billLink.screenReaderPrefix") @messages("bills.billLink", s"${calc.year - 1}", s"${calc.year}")'
+                           id="bills-link-@{calc.year}">
+                             @messages("bills.billLink", s"${calc.year - 1}", s"${calc.year}")
                         </a>
                     </li>
                 }
