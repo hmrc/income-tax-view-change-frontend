@@ -735,6 +735,30 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             isElementVisibleById("eops-pi-due-date")(expectedValue = false)
           )
         }
+
+        "the user has a eops SE income obligation only" in {
+          appConfig.features.obligationsPageEnabled(true)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, SEIncomeSourceEOPSModel)
+
+          val res= IncomeTaxViewChangeFrontend.getReportDeadlines
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+
+          Then("the view displays the correct title")
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.obligationsTitle)
+          )
+
+          Then("the page displays SE income source obligation dates")
+          res should have(
+            elementTextByID("eops-SEI-dates")("6 April 2017 to 5 April 2018"),
+            elementTextByID("eops-SEI-due-date")("31 January 2018")
+          )
+        }
+
       }
     }
 
