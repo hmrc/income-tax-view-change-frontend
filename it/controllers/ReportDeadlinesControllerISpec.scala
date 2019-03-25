@@ -800,6 +800,37 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             isElementVisibleById("quarterly-bi-business-due")(expectedValue = true)
           )
         }
+
+        "the user has multiple quarterly business income obligations only" in {
+          appConfig.features.obligationsPageEnabled(true)
+
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, testNino, singleObligationQuarterlyModel)
+
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
+
+          Then("the view displays the correct title, username and links")
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.obligationsTitle)
+          )
+
+          Then("the page displays the property obligation dates")
+          res should have(
+            isElementVisibleById("pi-quarterly-return-period")(expectedValue = false),
+            isElementVisibleById("pi-quarterly-return-due-date")(expectedValue = false),
+            isElementVisibleById("eops-pi-dates")(expectedValue = false),
+            isElementVisibleById("eops-pi-due-date")(expectedValue = false),
+            isElementVisibleById("quarterly-bi-business-period")(expectedValue = true),
+            isElementVisibleById("quarterly-bi-business-due")(expectedValue = true),
+            isElementVisibleById("quarterly-bi-secondBusiness-period")(expectedValue = true),
+            isElementVisibleById("quarterly-bi-secondBusiness-due")(expectedValue = true)
+          )
+        }
       }
     }
 
