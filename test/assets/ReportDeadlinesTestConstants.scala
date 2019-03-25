@@ -27,6 +27,12 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     override def currentTime() = "2017-10-31"
   }
 
+  val quarterlyBusinessObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+    start = "2017-7-1",
+    end = "2017-9-30",
+    due = "2019-10-30",
+    periodKey = "#002"
+  ))
 
   val overdueObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-7-1",
@@ -112,6 +118,8 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
       reportDeadlineEOPSOpenJson
     )
   )
+
+
 
   val twoObligationsSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueObligation, openEOPSObligation))
 

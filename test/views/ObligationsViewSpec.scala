@@ -22,15 +22,13 @@ import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
 import assets.PropertyDetailsTestConstants.propertyDetails
-import assets.ReportDeadlinesTestConstants._
+import assets.ReportDeadlinesTestConstants.{twoObligationsSuccessModel, _}
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
 import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel}
-import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import models.reportDeadlines.{QuarterlyObligation, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -72,7 +70,6 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       ))
     )
 
-
     lazy val twoPiQuarterlyReturnSource = IncomeSourcesWithDeadlinesModel(
       List(),
       Some(PropertyIncomeWithDeadlinesModel(
@@ -81,6 +78,16 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       ))
     )
 
+
+    lazy val quarterlyBusinessIncomeSource = IncomeSourcesWithDeadlinesModel(
+      List(
+        BusinessIncomeWithDeadlinesModel(
+          business1,
+          reportDeadlines = ReportDeadlinesModel(List(quarterlyBusinessObligation))
+        )
+      ),
+      None
+    )
 
     lazy val eopsPropertyIncomeSource = IncomeSourcesWithDeadlinesModel(
       List(),
@@ -180,8 +187,29 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       result shouldBe expectedResult
     }
 
- }
+    //Income source quarterly subsection
+    "show the name of the income sources" in new Setup(quarterlyBusinessIncomeSource){
+      quarterlyBusinessIncomeSource.businessIncomeSources.foreach(incomeSource =>
+        pageDocument.getElementById(s"quarterly-bi-${incomeSource.incomeSource.tradingName.get}-heading").text shouldBe incomeSource.incomeSource.tradingName.get)
+    }
 
-  //Income source quarterly subsection
+    "show the period of the income source" in new Setup(quarterlyBusinessIncomeSource) {
+        val result = pageDocument.getElementById(s"quarterly-bi-${quarterlyBusinessIncomeSource.businessIncomeSources(0).incomeSource.tradingName.get}-period").text
+        val expectedResult =
+          quarterlyBusinessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start.toLongDate +
+            " to " +
+            quarterlyBusinessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).end.toLongDate
+
+      result shouldBe  expectedResult
+    }
+
+    "show the due date of the income source" in new Setup(quarterlyBusinessIncomeSource){
+      val result = pageDocument.getElementById(s"quarterly-bi-${quarterlyBusinessIncomeSource.businessIncomeSources(0).incomeSource.tradingName.get}-due").text
+
+      val expectedResult = quarterlyBusinessIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).due.toLongDate
+      result shouldBe  expectedResult
+    }
+
+  }
 }
 
