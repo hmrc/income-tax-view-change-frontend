@@ -146,9 +146,9 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
             messages.InYearEstimate.heading(busPropBRTCalcDataModel.totalIncomeTaxNicYtd.toCurrencyString)
         }
 
-        s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)}'" in {
+        s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.get.toLocalDateTime.toLongDateTime)}'" in {
           inYearSection.getElementById("inYearP1").text shouldBe
-            messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.toLocalDateTime.toLongDateTime)
+            messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.get.toLocalDateTime.toLongDateTime)
         }
 
         "has progressive disclosure for why there estimate might change" which {

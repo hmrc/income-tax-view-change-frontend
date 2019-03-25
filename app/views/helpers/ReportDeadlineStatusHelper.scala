@@ -30,4 +30,11 @@ object ReportDeadlineStatusHelper {
       Html(s"""<span>${overdue.dueDate.toLongDateShort} <strong class="task-overdue">${messages("status.overdue")}</strong></span>""")
   }
 
+  def statusHtmlObligations(status: ReportDeadlineStatus)(implicit messages: Messages): Html = status match {
+    case open: Open =>
+      Html(s"""<span>${open.dueDate.toLongDateShort}</span>""")
+    case overdue: Overdue =>
+      Html(s"""<span>${overdue.dueDate.toLongDateShort}</span>""")
+  }
+
 }

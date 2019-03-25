@@ -24,7 +24,10 @@ import play.api.libs.json._
 
 sealed trait ReportDeadlinesResponseModel
 
-case class ReportDeadlinesModel(obligations: List[ReportDeadlineModel]) extends ReportDeadlinesResponseModel
+case class ReportDeadlinesModel(obligations: List[ReportDeadlineModel]) extends ReportDeadlinesResponseModel {
+  val currentQuarterlyDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == QuarterlyObligation).sortBy(_.start.toEpochDay)
+
+}
 
 case class ReportDeadlineModel(start: LocalDate,
                                end: LocalDate,

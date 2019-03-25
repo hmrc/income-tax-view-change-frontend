@@ -81,8 +81,18 @@ object ReportDeadlinesIntegrationTestConstants {
   ))
 
   val singleObligationStart = "2017-04-06"
+  val singleObligationEndQuarter = "2017-05-05"
   val singleObligationEnd = "2017-07-05"
   val singleObligationDue = "2018-01-01"
+
+  val singleObligationQuarterlyReturnModel = ReportDeadlinesModel(List(
+    ReportDeadlineModel(
+      start = singleObligationStart,
+      end = singleObligationEndQuarter,
+      due = singleObligationDue,
+      periodKey = "periodKey"
+    )
+  ))
 
   val singleObligationOverdueModel = ReportDeadlinesModel(List(
     ReportDeadlineModel(

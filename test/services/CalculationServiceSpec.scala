@@ -19,17 +19,16 @@ package services
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import assets.EstimatesTestConstants._
-import mocks.connectors.{MockCalculationDataConnector, MockIncomeTaxViewChangeConnector}
+import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.MockCalculationService
 import models.calculation._
 import play.api.http.Status
 import testUtils.TestSupport
 
-class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockCalculationDataConnector with MockCalculationService{
+class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockCalculationService {
 
   object TestCalculationService extends CalculationService(
     mockIncomeTaxViewChangeConnector,
-    mockCalculationDataConnector,
     frontendAppConfig
   )
 
@@ -46,14 +45,13 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     "successful responses are returned from the CalculationDataConnector" should {
 
       "return a correctly formatted CalculationData model" in {
-        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelSuccess)
-        setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataSuccessModel)
+        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelSuccess.copy(calculationDataModel = Some(calculationDataSuccessModel)))
 
         await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
       }
     }
 
-    "an Error Response is returned from the CalculationDataConnector" should {
+    "an Error Response is returned from the CalculationConnector" should {
 
       "return none" in {
         setUpLatestCalculationResponse(testNino, testYear)(errorCalculationModel)
@@ -61,11 +59,10 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       }
     }
 
-    "an Error Response is returned from the CalculationDataConnector" should {
+    "no calculation data is returned from the CalculationDataConnector" should {
 
       "return a correctly formatted CalcDisplayModel model with calcDataModel = None" in {
         setUpLatestCalculationResponse(testNino, testYear)(testCalcModelSuccess)
-        setupCalculationDataResponse(testNino, testTaxCalculationId)(calculationDataErrorModel)
 
         await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel
       }
@@ -76,37 +73,8 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
     object TestCalculationService extends CalculationService(
       mockIncomeTaxViewChangeConnector,
-      mockCalculationDataConnector,
       frontendAppConfig
     )
-
-    "when the Calculation Data api feature switch is enabled" should {
-
-      "passed an ordered list of years" should {
-
-        "for a list of Estimates" should {
-
-          "return a list of LastTaxCalculationWithYear estimate models" in new CalculationDataApiEnabled {
-            setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcSuccess)
-            setupLastTaxCalculationResponse(testNino, testYearPlusOne)(lastTaxCalcSuccess)
-            await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
-          }
-        }
-
-        "for a list of Bills" should {
-
-          "return a list of LastTaxCalculationWithYear bills models" in new CalculationDataApiEnabled {
-            setupLastTaxCalculationResponse(testNino, testYear)(lastTaxCalcCrystallisedSuccess)
-            setupLastTaxCalculationResponse(testNino, testYearPlusOne)(lastTaxCalcCrystallisedSuccess)
-            await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearCrystallisedList
-          }
-        }
-      }
-
-      "passed an empty list of Ints" in new CalculationDataApiEnabled {
-        await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
-      }
-    }
 
     "when the  Calculation Data api feature switch is disabled" should {
 
@@ -114,7 +82,7 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
         "for a list of Estimates" should {
 
-          "return a list of LastTaxCalculationWithYear models" in new CalculationDataApiDisabled {
+          "return a list of CalculationResponseModelWithYear models" in new CalculationDataApiDisabled {
             setUpLatestCalculationResponse(testNino, testYear)(testCalcModelEstimate)
             setUpLatestCalculationResponse(testNino, testYearPlusOne)(testCalcModelEstimate)
             await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
@@ -123,9 +91,9 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
         "for a list of Bills" should {
 
-          "return a list of LastTaxCalculationWithYear bills models" in new CalculationDataApiDisabled {
-            setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystalised)
-            setUpLatestCalculationResponse(testNino, testYearPlusOne)(testCalcModelCrystalised)
+          "return a list of CalculationResponseModelWithYear bills models" in new CalculationDataApiDisabled {
+            setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystallised)
+            setUpLatestCalculationResponse(testNino, testYearPlusOne)(testCalcModelCrystallised)
             await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearCrystallisedList
           }
         }
@@ -142,14 +110,23 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     "successful response is returned from the CalculationDataConnector" should {
 
       "return a CalculationModel" in {
-        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystalised)
+        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystallised)
         await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationModel(
           testTaxCalculationId,
           Some(543.21),
           Some(testTimeStampString),
           Some(true),
           Some(123.45),
-          Some(987.65)
+          Some(987.65),
+          Some(CalculationDataModel(
+            None, 0.0, 123.45, 0, 0, 0,
+            IncomeReceivedModel(0, 0, 0, 0),
+            SavingsAndGainsModel(0, List()),
+            DividendsModel(0, List()),
+            GiftAidModel(0, 0, 0),
+            NicModel(0, 0),
+            None, List()
+          ))
         )
 
       }

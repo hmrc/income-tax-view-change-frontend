@@ -17,44 +17,22 @@
 package helpers.servicemocks
 
 import helpers.WiremockHelper
-import models.calculation.{CalculationModel, LastTaxCalculation}
+import models.calculation.CalculationModel
 import models.core.{Nino, NinoResponseError}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ReportDeadlinesModel
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsValue, Json}
 
 object IncomeTaxViewChangeStub {
-
-  // Last Tax Calc Stubs
-  // ===================
-  val lastCalcUrl: (String,String) => String = (nino, year) =>
-    s"/income-tax-view-change/estimated-tax-liability/$nino/$year/it"
-
-  def stubGetLastTaxCalc(nino: String, year: String, lastCalc: LastTaxCalculation): Unit = {
-    WiremockHelper.stubGet(lastCalcUrl(nino, year), Status.OK, Json.toJson(lastCalc).toString())
-  }
-
-  def stubGetLastCalcNoData(nino: String, year: String): Unit = {
-    WiremockHelper.stubGet(lastCalcUrl(nino, year), Status.NOT_FOUND, "")
-  }
-
-  def stubGetLastCalcError(nino: String, year: String): Unit = {
-    WiremockHelper.stubGet(lastCalcUrl(nino, year), Status.INTERNAL_SERVER_ERROR, "Error Message")
-  }
-
-  def verifyGetLastTaxCalc(nino: String, year: String): Unit =
-    WiremockHelper.verifyGet(lastCalcUrl(nino, year))
-
-
 
   // Get Latest Calculation Stubs
   // ===================================
   val latestCalculationUrl: (String, String) => String = (nino, year) =>
     s"/income-tax-view-change/previous-tax-calculation/$nino/$year"
 
-  def stubGetLatestCalculation(nino: String, year: String, latestCalc: CalculationModel): Unit = {
-    WiremockHelper.stubGet(latestCalculationUrl(nino, year), Status.OK, Json.toJson(latestCalc).toString)
+  def stubGetLatestCalculation(nino: String, year: String, latestCalc: JsValue): Unit = {
+    WiremockHelper.stubGet(latestCalculationUrl(nino, year), Status.OK, latestCalc.toString)
   }
 
   def stubGetLatestCalcError(nino: String, year: String): Unit = {

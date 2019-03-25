@@ -55,10 +55,6 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     s"${config.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"
   }
 
-  def getEstimatedTaxLiabilityUrl(nino: String, year: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/estimated-tax-liability/$nino/$year/it"
-  }
-
   def getNinoLookupUrl(mtdRef: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
   }
@@ -136,40 +132,6 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
       case _ =>
         Logger.error("[IncomeSourceDetailsConnector][getIncomeSources] - Unexpected future failed error")
         IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
-    }
-  }
-
-  def getLastEstimatedTax(nino: String, year: Int)(implicit headerCarrier: HeaderCarrier): Future[LastTaxCalculationResponseModel] = {
-
-    val url = getEstimatedTaxLiabilityUrl(nino, year.toString)
-    Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - GET $url")
-
-    http.GET[HttpResponse](url) map { response =>
-      response.status match {
-        case OK =>
-          Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - RESPONSE status: ${response.status}, json: ${response.json}")
-          response.json.validate[LastTaxCalculation].fold(
-            invalid => {
-              Logger.error(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Json Validation Error. Parsing Latest Calc Response")
-              LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Latest Calc Response")
-            },
-            valid => valid
-          )
-        case NOT_FOUND =>
-          Logger.debug(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - No Data Found response")
-          NoLastTaxCalculation
-        case _ =>
-          Logger.error(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - RESPONSE status: ${response.status}, body: ${response.body}")
-          Logger.error(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Response status: [${response.status}] from Latest Calc call")
-          LastTaxCalculationError(response.status, response.body)
-      }
-    } recover {
-      case ex =>
-        Logger.error(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Unexpected future failed error, ${ex.getMessage}")
-        LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-      case _ =>
-        Logger.error(s"[LastEstimatedTaxCalculationConnector][getLastEstimatedTax] - Unexpected future failed error")
-        LastTaxCalculationError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 

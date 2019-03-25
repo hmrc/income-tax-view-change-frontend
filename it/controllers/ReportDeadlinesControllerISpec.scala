@@ -757,6 +757,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             elementTextByID("eops-SEI-dates")("6 April 2017 to 5 April 2018"),
             elementTextByID("eops-SEI-due-date")("31 January 2018")
           )
+
+          Then("the page displays no property obligation dates")
+          res should have(
+            isElementVisibleById("eops-pi-dates")(expectedValue = false),
+            isElementVisibleById("eops-pi-due-date")(expectedValue = false)
+          )
+
         }
 
       }

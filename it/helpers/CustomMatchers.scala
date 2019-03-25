@@ -84,10 +84,10 @@ trait   CustomMatchers extends UnitSpec with GivenWhenThen {
         val body = Jsoup.parse(response.body)
         Then(s"the value of elementId '$id' should be '$expectedValue'")
         HavePropertyMatchResult(
-          body.getElementById(id).`val` == expectedValue,
+          body.select(s"#$id").`val` == expectedValue,
           s"elementByID($id)",
           expectedValue,
-          body.getElementById(id).`val`
+          body.select(s"#$id").`val`
         )
       }
     }

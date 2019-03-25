@@ -21,13 +21,16 @@ import java.time.LocalDate
 import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
-import assets.ReportDeadlinesTestConstants.{openEOPSObligation, twoObligationsSuccessModel}
+import assets.ReportDeadlinesTestConstants._
+import assets.PropertyDetailsTestConstants.propertyDetails
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
 import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
+import models.reportDeadlines.{QuarterlyObligation, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -55,11 +58,29 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       List(
         BusinessIncomeWithDeadlinesModel(
           business1,
-          reportDeadlines = twoObligationsSuccessModel
+          twoObligationsSuccessModel
         )
       ),
-      None
+        None
     )
+
+    lazy val piQuarterlyReturnSource = IncomeSourcesWithDeadlinesModel(
+      List(),
+      Some(PropertyIncomeWithDeadlinesModel(
+        propertyDetails,
+        reportDeadlines  = obligationsDataSuccessModel
+      ))
+    )
+
+
+    lazy val twoPiQuarterlyReturnSource = IncomeSourcesWithDeadlinesModel(
+      List(),
+      Some(PropertyIncomeWithDeadlinesModel(
+        propertyDetails,
+        reportDeadlines  = quarterlyObligationsDataSuccessModel
+      ))
+    )
+
 
     lazy val eopsPropertyIncomeSource = IncomeSourcesWithDeadlinesModel(
       List(),
@@ -126,7 +147,6 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
     "not show the eops property section when there is no property income report" in new Setup(noIncomeSource) {
       Option(pageDocument.getElementById("eopsPropertyTableRow")) shouldBe None
-
     }
 
     //Income source EOPS subsection
@@ -154,12 +174,40 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     //Quarterly returns section
 
     //Heading and dropdown subsection
-    "show the Quarterly heading and drop down section on the page" in{
+    "show the Quarterly heading and drop down section on the page" in {
       document.getElementById("quarterly-dropdown-title").text shouldBe messages.quarterlyDropDown
     }
 
     //Property income quarterly subsection
 
-    //Income source quarterly subsection
-  }
+   "show the property income quarterly return title" in new Setup(piQuarterlyReturnSource) {
+     pageDocument.getElementById("pi-quarterly-return-title").text shouldBe messages.propertyIncome
+   }
+
+   "show the property income quarterly return Due title on the page" in new Setup(piQuarterlyReturnSource) {
+     pageDocument.getElementById("pi-quarterly-due-on-title").text shouldBe messages.dueOn
+   }
+
+   "show the property income quarterly return period on the page" in new Setup(piQuarterlyReturnSource) {
+     val result = pageDocument.getElementById("pi-quarterly-return-period").text
+     val expectedResult = "1 July 2017 to 30 September 2017"
+     result shouldBe expectedResult
+   }
+
+   "show the property income quarterly return due date" in new Setup(piQuarterlyReturnSource) {
+     val result = pageDocument.getElementById("pi-quarterly-return-due-date").text
+     val expectedResult = "30 October 2017"
+     result shouldBe expectedResult
+   }
+
+    "show the property income quarterly return due date most recent when there are more then one" in new Setup(twoPiQuarterlyReturnSource) {
+      val result = pageDocument.getElementById("pi-quarterly-return-period").text
+      val expectedResult = "1 July 2017 to 30 September 2017"
+      result shouldBe expectedResult
+    }
+
+ }
+
+  //Income source quarterly subsection
 }
+
