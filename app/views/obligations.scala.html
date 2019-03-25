@@ -168,44 +168,75 @@ case _ => {}
 <!--
    Property income quarterly subsection
 -->
-@{
 
-incomeSources.propertyIncomeSource match {
-    case Some(propertyIncomeWithDeadlines) => propertyIncomeWithDeadlines.reportDeadlines match {
-        case reportDeadlines: ReportDeadlinesModel => {
-            if(reportDeadlines.currentQuarterlyDeadlines.nonEmpty) {
-                <div id="pi-quarterly-return-section"  class="grid-row divider--bottom">
-                    <div class="row-border">
-                        <div class="column-half">
-                            <p style="font-weight:bold">
-                                <span id="pi-quarterly-return-title">{messages("obligations.propertyIncome")}</span><br/>
-                                <span id="pi-quarterly-return-period" style="font-weight:normal">
-                                    {s"${reportDeadlines.currentQuarterlyDeadlines.head.start.toLongDate} ${messages("obligations.quarterly.to")} ${reportDeadlines.currentQuarterlyDeadlines.head.end.toLongDate}"}
+@incomeSources.propertyIncomeSource match{
+case Some(propertyIncomeWithDeadlines) =>{
+@propertyIncomeWithDeadlines.reportDeadlines match {
+case reportDeadlines: ReportDeadlinesModel => {
+@for(deadline <- reportDeadlines.currentQuarterlyDeadlines) {
+<div id="pi-quarterly-return-section"  class="grid-row divider--bottom">
+    <div class="row-border">
+        <div class="column-half">
+            <p style="font-weight:bold">
+                <span id="pi-quarterly-return-title">@messages("obligations.propertyIncome")</span><br/>
+                <span id="pi-quarterly-return-period" style="font-weight:normal">
+                                    @{s"${deadline.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.end.toLongDate}"}
                                 </span>
-                            </p>
-                        </div>
-
-                        <div class="column-half">
-                            <p>
+            </p>
+        </div>
+        <div class="column-half">
+            <p>
                                 <span id="pi-quarterly-due-on-title">
-                                    {messages("obligations.dueOn")}
+                                    @{messages("obligations.dueOn")}
                                 </span><br/>
-                                <span id="pi-quarterly-return-due-date" style="font-weight:normal">
-                                    {reportDeadlines.obligations.head.due.toLongDate}
+                <span id="pi-quarterly-return-due-date" style="font-weight:normal">
+                                    @{deadline.due.toLongDate}
                                 </span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-        case _ => {}
-        }
+            </p>
+        </div>
+    </div>
+</div>
+}
+}
+case _ => { }
+}
+}
 
-    case _ => {}
+case _ => { }
+
 }
-}
+
+
+
 <!--
     Income source quarterly subsection
 -->
+
+    @for(businessIncomeSource <- incomeSources.businessIncomeSources){
+    <section id="quarterly-business-returns">
+    @businessIncomeSource.reportDeadlines match{
+    case businessDeadlines: ReportDeadlinesModel => {
+    @for(deadline <- businessDeadlines.currentQuarterlyDeadlines) {
+    <div id="quarterlyIncomeTableRow" class="grid-row divider--bottom">
+        <div class="column-half">
+            <p>
+            <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-heading" class="bold">@{businessIncomeSource.incomeSource.tradingName.get}</div>
+            <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-period">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
+            </p>
+        </div>
+        <div class="column-half">
+            <p>
+            <div id="quarterly-bi-due-on">@messages("obligations.dueOn")</div>
+            <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-due">@{deadline.due.toLongDate}</div>
+            </p>
+        </div>
+    </div>
+        }
+        }
+    case _ => {}
+    }
+    }
+
+</section>
+
 }

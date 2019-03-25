@@ -22,6 +22,8 @@ import java.time.temporal.ChronoUnit
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+
+
 sealed trait ReportDeadlinesResponseModel
 
 case class ReportDeadlinesModel(obligations: List[ReportDeadlineModel]) extends ReportDeadlinesResponseModel {
