@@ -28,6 +28,7 @@ import helpers.ComponentSpecBase
 import implicits.ImplicitDateFormatter
 import play.api.http.Status._
 import implicits.ImplicitDateFormatter
+import org.jsoup.Jsoup
 
 class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
@@ -708,7 +709,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the page displays one eops property income obligation")
           res should have(
             elementTextByID("eops-pi-dates")("6 April 2017 to 5 July 2018"),
-            elementTextByID("eops-pi-due-date")("1 January 2018")
+            elementTextByID("eops-pi-due-date")("1 January 2018"),
+            isElementVisibleById("pi-quarterly-return-period")(expectedValue = false),
+            isElementVisibleById("pi-quarterly-return-due-date")(expectedValue = false),
+            isElementVisibleById("quarterly-bi-business-period")(expectedValue = false),
+            isElementVisibleById("quarterly-bi-business-due")(expectedValue = false)
           )
         }
 
@@ -732,26 +737,71 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the page displays no property obligation dates")
           res should have(
             isElementVisibleById("eops-pi-dates")(expectedValue = false),
-            isElementVisibleById("eops-pi-due-date")(expectedValue = false)
+            isElementVisibleById("eops-pi-due-date")(expectedValue = false),
+            isElementVisibleById("pi-quarterly-return-period")(expectedValue = false),
+            isElementVisibleById("pi-quarterly-return-due-date")(expectedValue = false),
+            isElementVisibleById("quarterly-bi-business-period")(expectedValue = false),
+            isElementVisibleById("quarterly-bi-business-due")(expectedValue = false)
           )
         }
-      }
 
         "the user has a quarterly property income obligation only" in {
           appConfig.features.obligationsPageEnabled(true)
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationQuarterlyModel)
+
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
+
+          Then("the view displays the correct title, username and links")
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.obligationsTitle)
+          )
+
+          Then("the page displays the property obligation dates")
+          res should have(
+            isElementVisibleById("pi-quarterly-return-period")(expectedValue = true),
+            isElementVisibleById("pi-quarterly-return-due-date")(expectedValue = true),
+            isElementVisibleById("eops-pi-dates")(expectedValue = false),
+            isElementVisibleById("eops-pi-due-date")(expectedValue = false),
+            isElementVisibleById("quarterly-bi-business-period")(expectedValue = false),
+            isElementVisibleById("quarterly-bi-business-due")(expectedValue = false)
+          )
         }
 
-      "the user has a quarterly business income obligation only" in {
-        appConfig.features.obligationsPageEnabled(true)
+        "the user has a quarterly business income obligation only" in {
+          appConfig.features.obligationsPageEnabled(true)
 
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyModel)
+
+          val res = IncomeTaxViewChangeFrontend.getReportDeadlines
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
+
+          Then("the view displays the correct title, username and links")
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.obligationsTitle)
+          )
+
+          Then("the page displays the property obligation dates")
+          res should have(
+            isElementVisibleById("pi-quarterly-return-period")(expectedValue = false),
+            isElementVisibleById("pi-quarterly-return-due-date")(expectedValue = false),
+            isElementVisibleById("eops-pi-dates")(expectedValue = false),
+            isElementVisibleById("eops-pi-due-date")(expectedValue = false),
+            isElementVisibleById("quarterly-bi-business-period")(expectedValue = true),
+            isElementVisibleById("quarterly-bi-business-due")(expectedValue = true)
+          )
+        }
       }
-
     }
-
-
 
     "the ReportDeadlines Feature is disabled" should {
 
