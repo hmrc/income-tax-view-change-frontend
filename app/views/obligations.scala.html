@@ -168,7 +168,7 @@ incomeSources.propertyIncomeSource match {
                                     {messages("obligations.dueOn")}
                                 </span><br/>
                                 <span id="pi-quarterly-return-due-date" style="font-weight:normal">
-                                    {reportDeadlines.obligations.head.due.toLongDate}
+                                    {reportDeadlines.currentQuarterlyDeadlines.head.due.toLongDate}
                                 </span>
                             </p>
                         </div>
@@ -189,28 +189,26 @@ incomeSources.propertyIncomeSource match {
     @for(businessIncomeSource <- incomeSources.businessIncomeSources){
     <section id="quarterly-business-returns">
     @businessIncomeSource.reportDeadlines match{
-    case businessDeadlines: ReportDeadlinesModel => {
-
-    @for(deadline <- businessDeadlines.obligations.filter(_.obligationType == QuarterlyObligation)) {
-    <div id="quarterlyIncomeTableRow" class="grid-row divider--bottom">
-        <div class="column-half">
-            <p>
-            <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-heading" class="bold">@{businessIncomeSource.incomeSource.tradingName.get}</div>
-            <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-period">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
-            </p>
-        </div>
-        <div class="column-half">
-            <p>
-            <div id="quarterly-bi-due-on">@messages("obligations.dueOn")</div>
-            <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-due">@{deadline.due.toLongDate}</div>
-            </p>
-        </div>
-    </div>
+        case businessDeadlines: ReportDeadlinesModel => {
+            @if(businessDeadlines.currentQuarterlyDeadlines.nonEmpty) {
+                <div id="quarterlyIncomeTableRow" class="grid-row divider--bottom">
+                    <div class="column-half">
+                        <p>
+                        <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-heading" class="bold">@{businessIncomeSource.incomeSource.tradingName.get}</div>
+                        <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-period">
+                            @messages("obligations.dateToDate", businessDeadlines.currentQuarterlyDeadlines.head.start.toLongDate, businessDeadlines.currentQuarterlyDeadlines.head.end.toLongDate)</div>
+                        </p>
+                    </div>
+                    <div class="column-half">
+                        <p>
+                        <div id="quarterly-bi-due-on">@messages("obligations.dueOn")</div>
+                        <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-due">@{businessDeadlines.currentQuarterlyDeadlines.head.due.toLongDate}</div>
+                        </p>
+                    </div>
+                </div>
+            }
         }
-        }
-    case _ => {
-
-
+        case _ => {
         }
     }
     }
