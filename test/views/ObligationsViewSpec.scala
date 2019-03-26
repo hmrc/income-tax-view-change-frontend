@@ -162,7 +162,12 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
 
       "showing heading Whole tax year (final check)" in new Setup(eopsSEIncomeSource) {
-        pageDocument.getElementById("eops-SEI-heading").text shouldBe messages.SEIncomeSource
+        eopsPropertyIncomeSource.businessIncomeSources.foreach(
+          businessIncomeSource => pageDocument.getElementById(s"eops-SEI-${businessIncomeSource.incomeSource.tradingName}-heading").text
+            shouldBe businessIncomeSource.incomeSource.tradingName
+        )
+
+
       }
 
       "showing tax year dates" in new Setup(eopsSEIncomeSource) {

@@ -312,7 +312,6 @@ object Messages {
     val propertyIncome = "Property Income"
     def fromToDates(from: String, to: String) = s"$from to $to"
     val dueOn = "Due on:"
-    val SEIncomeSource = "Whole tax year (final check)"
   }
 
 }

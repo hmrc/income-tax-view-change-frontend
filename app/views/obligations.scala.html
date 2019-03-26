@@ -126,7 +126,7 @@ case _ => {}
                 <div id = "eopsSEIncomeSection"  class="grid-row divider--bottom">
                     <div class="column-half">
                         <p>
-                        <div id="eops-SEI-heading" class="bold">@messages("obligations.SEIncomeSource")</div>
+                        <div id="eops-SEI-@{businessIncomeSource.incomeSource.tradingName.get}-heading" class="bold">@{businessIncomeSource.incomeSource.tradingName.get}</div>
                         <div id="eops-SEI-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
                         </p>
                     </div>
