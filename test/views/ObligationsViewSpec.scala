@@ -108,7 +108,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     lazy val noIncomeSource = IncomeSourcesWithDeadlinesModel(List(), None)
 
     "display all of the correct information for the main elements/sections on the page" when {
-      //Main content section
+
       "showing the breadcrumb trail on the page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         pageDocument.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
@@ -123,25 +123,24 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
         pageDocument.getElementById("page-sub-heading").text shouldBe messages.subTitle
       }
 
-      //Declarations section
+
       "showing the heading for the declarations section" in new Setup(eopsPropertyIncomeSource) {
         pageDocument.getElementById("declarations-heading").text shouldBe messages.declarationsHeading
       }
 
-      //Heading and dropdown subsection
+
       "showing the Declaration heading and drop down section on the page" in new Setup(eopsPropertyIncomeSource) {
         pageDocument.getElementById("declaration-dropdown-title").text shouldBe messages.declerationDropDown
         pageDocument.getElementById("declarations-dropdown-list-one").text shouldBe messages.declarationDropdownListOne
         pageDocument.getElementById("declarations-dropdown-list-two").text shouldBe messages.declarationDropdownListTwo
       }
-      //Heading and dropdown subsection
+
       "showing the Quarterly heading and drop down section on the page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("quarterly-dropdown-title").text shouldBe messages.quarterlyDropDown
       }
     }
 
     "display all of the correct information for the EOPS property section" when {
-      //Property income EOPS subsection
       "showing the eops property income section" in new Setup(eopsPropertyIncomeSource) {
         eopsPropertyIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).obligationType shouldBe EopsObligation
         pageDocument.getElementById("eops-pi-heading").text shouldBe messages.propertyIncome
@@ -158,8 +157,6 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
 
     "display all of the correct information for the EOPS business section" when {
-      //Income source EOPS subsection
-
 
       "showing heading Whole tax year (final check)" in new Setup(eopsSEIncomeSource) {
         eopsPropertyIncomeSource.businessIncomeSources.foreach(
@@ -185,8 +182,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     }
 
     "display all of the correct information for the quarterly property section" when {
-      //Quarterly returns section
-      //Property income quarterly subsection
+
       "showing the property income quarterly return title" in new Setup(piQuarterlyReturnSource) {
         pageDocument.getElementById("pi-quarterly-return-title").text shouldBe messages.propertyIncome
       }
@@ -215,7 +211,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     }
 
     "display all of the correct information for the quarterly business section" when {
-      //Income source quarterly subsection
+
       "showing the name of the income sources" in new Setup(quarterlyBusinessIncomeSource) {
         quarterlyBusinessIncomeSource.businessIncomeSources.foreach(incomeSource =>
           pageDocument.getElementById(s"quarterly-bi-${incomeSource.incomeSource.tradingName.get}-heading").text shouldBe incomeSource.incomeSource.tradingName.get)
