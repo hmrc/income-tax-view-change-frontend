@@ -92,10 +92,10 @@ contentHeader = Some(breadcrumb)
 <!--
     Property income EOPS subsection
 -->
-@for(propertyIncomeSource <- incomeSources.propertyIncomeSource if !incomeSources.hasPropertyReportErrors) {
+@for(propertyIncomeSource <- incomeSources.propertyIncomeSource) {
 @propertyIncomeSource.reportDeadlines match {
 case propertyDeadlines: ReportDeadlinesModel => {
-@for(deadline <- propertyDeadlines.obligations.filter(_.obligationType == EopsObligation)) {
+@for(deadline <- propertyDeadlines.currentEOPsDeadlines) {
 <div id="eopsPropertyTableRow" class="grid-row divider--bottom">
     <div class="column-half">
         <p>
@@ -119,6 +119,29 @@ case _ => {}
 <!--
     Income source EOPS subsection
 -->
+@for(businessIncomeSource <- incomeSources.businessIncomeSources){
+    @businessIncomeSource.reportDeadlines match {
+        case businessIncomeDeadlines: ReportDeadlinesModel => {
+            @for(deadline <- businessIncomeDeadlines.currentEOPsDeadlines){
+                <div id = "eopsSEIncomeSection"  class="grid-row divider--bottom">
+                    <div class="column-half">
+                        <p>
+                        <div id="eops-SEI-@{businessIncomeSource.incomeSource.tradingName.get}-heading" class="bold">@{businessIncomeSource.incomeSource.tradingName.get}</div>
+                        <div id="eops-SEI-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
+                        </p>
+                    </div>
+                    <div class="column-half">
+                        <p>
+                        <div id="eops-SEI-due-on">@messages("obligations.dueOn")</div>
+                        <div id="eops-SEI-due-date">@deadline.due.toLongDate</div>
+                        </p>
+                    </div>
+                </div>
+            }
+        }
+        case _ => {}
+    }
+}
 
 <!--
     Quarterly returns section

@@ -138,5 +138,15 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
+
+  val SEIncomeSourceEOPSModel = ReportDeadlinesModel(List(
+    ReportDeadlineModel(
+      start = "2017-04-06",
+      end = "2018-04-05",
+      due = "2018-01-31",
+      periodKey = "#003"
+    )
+  ))
+
   val emptyModel = ReportDeadlinesModel(List())
 }
