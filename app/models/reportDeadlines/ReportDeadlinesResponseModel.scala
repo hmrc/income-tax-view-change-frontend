@@ -28,6 +28,7 @@ sealed trait ReportDeadlinesResponseModel
 
 case class ReportDeadlinesModel(obligations: List[ReportDeadlineModel]) extends ReportDeadlinesResponseModel {
   val currentQuarterlyDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == QuarterlyObligation).sortBy(_.start.toEpochDay)
+  val currentEOPsDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == EopsObligation).sortBy(_.start.toEpochDay)
 
 }
 

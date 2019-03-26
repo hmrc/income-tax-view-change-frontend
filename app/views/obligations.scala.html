@@ -92,10 +92,10 @@ contentHeader = Some(breadcrumb)
 <!--
     Property income EOPS subsection
 -->
-@for(propertyIncomeSource <- incomeSources.propertyIncomeSource if !incomeSources.hasPropertyReportErrors) {
+@for(propertyIncomeSource <- incomeSources.propertyIncomeSource) {
 @propertyIncomeSource.reportDeadlines match {
 case propertyDeadlines: ReportDeadlinesModel => {
-@for(deadline <- propertyDeadlines.obligations.filter(_.obligationType == EopsObligation)) {
+@for(deadline <- propertyDeadlines.currentEOPsDeadlines) {
 <div id="eopsPropertyTableRow" class="grid-row divider--bottom">
     <div class="column-half">
         <p>
@@ -119,10 +119,10 @@ case _ => {}
 <!--
     Income source EOPS subsection
 -->
-@for(businessIncomeSource <- incomeSources.businessIncomeSources if !incomeSources.hasBusinessReportErrors){
+@for(businessIncomeSource <- incomeSources.businessIncomeSources){
     @businessIncomeSource.reportDeadlines match {
         case businessIncomeDeadlines: ReportDeadlinesModel => {
-            @for(deadline <- businessIncomeDeadlines.obligations.filter(_.obligationType == EopsObligation)){
+            @for(deadline <- businessIncomeDeadlines.currentEOPsDeadlines){
                 <div id = "eopsSEIncomeSection"  class="grid-row divider--bottom">
                     <div class="column-half">
                         <p>
