@@ -199,7 +199,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
         val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
         val document = Jsoup.parse(bodyOf(result))
 
-        document.getElementById("page-heading").text shouldBe "Returns"
+        document.getElementById("page-heading").text shouldBe "Updates"
 
       }
     }
