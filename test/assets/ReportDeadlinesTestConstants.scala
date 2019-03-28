@@ -59,6 +59,13 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     periodKey = "#002"
   ))
 
+  val crystallisedObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+    start = "2017-10-1",
+    end = "2018-10-30",
+    due = "2017-10-31",
+    obligationType = "Crystallised",
+    periodKey = ""
+  ))
 
   val quarterlyObligationsDataSuccessModel : ReportDeadlinesModel = ReportDeadlinesModel(List(secondQuarterlyObligation, openObligation))
 

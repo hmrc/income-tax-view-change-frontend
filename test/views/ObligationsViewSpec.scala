@@ -103,6 +103,14 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       None
     )
 
+    lazy val crystallisedIncomeSource = IncomeSourcesWithDeadlinesModel(
+      List(BusinessIncomeWithDeadlinesModel(
+        business1,
+        crystallisedObligation
+      )),
+      None
+    )
+
     lazy val eopsSEIncomeSource = IncomeSourcesWithDeadlinesModel(businessIncomeSources =
       List(BusinessIncomeWithDeadlinesModel(
         incomeSource = business1,
@@ -240,6 +248,38 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
         result shouldBe expectedResult
       }
     }
+
+
+
+    "display all of the correct information for the crystallised section" when {
+
+      "showing the title of the deadline" in new Setup(crystallisedIncomeSource){
+        val result = pageDocument.getElementById("crystallised-heading").text
+        val expectedResult = messages.crystallisedHeading
+
+        result shouldBe expectedResult
+      }
+
+      "showing the period of the deadline" in new Setup(crystallisedIncomeSource){
+        val result = pageDocument.getElementById("crystallised-period").text
+        val expectedResult = crystallisedIncomeSource.businessIncomeSources.head.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start.toLongDate +
+          " to " +
+          crystallisedIncomeSource.businessIncomeSources.head.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).end.toLongDate
+
+
+        result shouldBe expectedResult
+      }
+
+
+      "showing the due date of the deadline" in new Setup(crystallisedIncomeSource){
+        val result = pageDocument.getElementById("crystallised-due").text
+        val expectedResult = crystallisedIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations.head.due.toLongDate
+
+        result shouldBe expectedResult
+      }
+
+    }
+
 
 
   }
