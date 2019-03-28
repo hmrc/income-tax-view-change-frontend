@@ -18,6 +18,7 @@ feedback.title                                                  = Rhoi adborth
 ## Home Page ##
 home.title                                                      = Eich Treth Incwm
 home.heading                                                    = Treth Incwm
+home.unique.tax.reference                                       = Cyfeirnod Treth Unigryw
 home.bills.heading                                              = Billau
 home.bills.text                                                 = Gweld eich biliau Treth Incwm presennol a blaenorol.
 home.estimates.heading                                          = Amcangyfrifon
