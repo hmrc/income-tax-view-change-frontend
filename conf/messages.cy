@@ -231,7 +231,7 @@ not_enrolled.sign-up.3                                          = cyn i chi allu
 
 ## Breadcrumbs ##
 breadcrumb-bta                                                  = Cyfrif Treth Busnes
-breadcrumb-it                                                   = Treth Incwm
+breadcrumb-it                                                   = Cyfrif Treth Incwm
 breadcrumb-estimates                                            = Amcangyfrifon
 breadcrumb-bills                                                = Billau
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
