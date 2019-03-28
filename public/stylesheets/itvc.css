@@ -57,3 +57,56 @@
   margin-left: 5px;
   padding-top: 3px;
 }
+
+.card {
+    1px solid #dee0e2;
+    width: 100%;
+    border-top-color: rgb(222, 224, 226);
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-right-color: rgb(222, 224, 226);
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-bottom-color: rgb(222, 224, 226);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-color: rgb(222, 224, 226);
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    background-color: #f8f8f8;
+    margin-bottom: 30px;
+}
+
+.divider1 {
+    border-bottom: 1px solid #dee0e2;
+    margin-top:10px;
+    margin-bottom: 10px;
+    width:80%;
+    align: centre;
+}
+
+.card-header {
+    border-bottom: 1px solid #dee0e2;
+    padding-left: 10px;
+    background-color: #f8f8f8;
+    color: #0b0c0c;
+
+
+}
+.card-content {
+
+    padding: 12px;
+    background-color: #fff;
+
+
+}
+
+.income td, .income th {
+    border: none;
+    border-color: none;
+}
