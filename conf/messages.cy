@@ -88,38 +88,11 @@ estimated_tax_liability.calc-breakdown.nationalRegime           = Cyfundrefn Gen
 estimated_tax_liability.calc-breakdown.business-profit-property                = Elw busnes(Am eiddo)
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Elw busnes(Am hunangyflogaeth)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Incwm o gynilion(Am Elw busnes)
-estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
+
 
 ## Obligation Page ##
 # TODO properly translate welsh for message obligations #
-obligations.heading.v2                                                            = Updates
-obligations.sub-heading.v2                                                        = Updates due
-obligations.sub-heading.info.prt1.v2                                              = You must submit these returns on your
-obligations.sub-heading.info.hyperlink.v2                                         = accounting software
-obligations.sub-heading.info.prt2.v2                                              = by the dates listed.
-obligation.dropdown.declarations.info.v2                                          = Information about declarations
-obligation.dropdown.quarterlyReturn.info.v2                                       = What is a quarterly update?
-obligation.dropdown.annualUpdates.info.v2                                         = What is an annual update?
-obligation.dropdown.finalDeclaration.info.v2                                      = what is a final declaration?
-obligations.dropdown.declarations.types.v2                                        = There are two types of declarations.
-obligations.dropdown.declarations.li1.type1.v2                                    = End of accounting period for every entity
-obligations.dropdown.declarations.li2.type2.v2                                    = Final check
-obligations.dropdown.declarations.li1.text.v2                                     = - Depending on the end date of your entity's accounting period, you will need to submit a declaration through your software. This is to confirm all of the returns you submitted during the course of your entity's accounting period were true to your knowledge.
-obligations.dropdown.declarations.li2.text.v2                                     = - This is to confirm that you have disclosed your income from all sources true to your knowledge. You need to do send this declaration using your software.
-obligation.dropdown.quarterlyReturn.text.v2                                       = A quarterly update sets out the income and expenses for each 3-month period.
-obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1                             = Using your
-obligation.dropdown.quarterlyReturn.text.v2.lin2.prt2                             = , you must submit 4 quarterly updates in a year for each source of income.
-obligation.dropdown.annualReturn.text.v2                                          = In the annual update you must declare that the 4 quarterly updates you submitted are correct or amend any errors.
-obligation.dropdown.annualReturn.text.v2.lin2.prt2                                = , you need to submit one annual update for each source of income at the end of its accounting period.
-obligations.quarterlyUpdates                                                      = Quarterly update
-obligations.declarations                                                          = Declarations
 obligations.propertyIncome                                                        = Incwm o eiddo
-obligations.dueOn                                                                 = Due on:
-obligations.dateToDate                                                            = {0} to {1}
-obligations.annualUpdates                                                         = Annual updates
-obligations.finalDeclarationUpdate                                                = Final declaration
-obligation.dropdown.finalDeclaration.text.v2.prt1                                 = Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your
-obligation.dropdown.finalDeclaration.text.v2.prt2                                 =.
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau

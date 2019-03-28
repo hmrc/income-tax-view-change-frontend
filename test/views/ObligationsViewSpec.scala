@@ -17,8 +17,6 @@
 package views
 
 import java.time.LocalDate
-
-import apple.laf.JRSUIConstants.ScrollBarHit
 import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
@@ -27,9 +25,9 @@ import assets.ReportDeadlinesTestConstants.{twoObligationsSuccessModel, _}
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
