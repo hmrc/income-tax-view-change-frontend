@@ -158,6 +158,10 @@ class HomePageViewSpec extends TestSupport {
         document.getElementById("sub-heading").text() shouldBe testUserName
       }
 
+      "have a subheading with the users mtd-it-id" in {
+        document.select("header p").eq(1).text() shouldBe s"Unique Tax Reference-${testMtdItUser.mtditid}"
+      }
+
       s"have a Bills section" which {
 
         lazy val billsSection = document.getElementById("bills-section")

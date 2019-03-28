@@ -40,8 +40,9 @@
     <section id="home-page">
 
         <header class="page-heading">
-            <h1 id="page-heading" class="heading-xlarge">@messages("home.heading")</h1>
             @user.userDetails.map{ details => <p id="sub-heading" class="heading-secondary">@details.name</p>}
+            <h1 id="page-heading" class="heading-xlarge">@messages("home.heading")</h1>
+            <p class="heading-secondary">@messages("home.unique.tax.reference")-@user.mtditid</p>
         </header>
 
         <div class="flex-container grid-row">
