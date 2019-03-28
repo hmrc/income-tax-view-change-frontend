@@ -290,7 +290,7 @@ object Messages {
 
   object Breadcrumbs {
     val bta = "Business tax account"
-    val it = "Income Tax"
+    val it = "Income Tax account"
     val estimates = "Estimates"
     val itEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
     val bills = "Bills"
