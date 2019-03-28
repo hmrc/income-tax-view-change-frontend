@@ -51,31 +51,37 @@ object ReportDeadlinesIntegrationTestConstants {
       start = deadlineStart1,
       end = deadlineEnd1,
       due = LocalDate.now().minusDays(128),
+      obligationType = "Quarterly",
       periodKey = "periodKey"
     ), ReportDeadlineModel(
       start = deadlineStart2,
       end = deadlineEnd2,
       due = LocalDate.now().minusDays(36),
+      obligationType = "Quarterly",
       periodKey = "periodKey"
     ), ReportDeadlineModel(
       start = deadlineStart3,
       end = deadlineEnd3,
       due = LocalDate.now().minusDays(36),
+      obligationType = "EOPS",
       periodKey = "periodKey"
     ), ReportDeadlineModel(
       start = deadlineStart4,
       end = deadlineEnd4,
       due = LocalDate.now().plusDays(30),
+      obligationType = "Quarterly",
       periodKey = "periodKey"
     ),ReportDeadlineModel(
       start = deadlineStart5,
       end = deadlineEnd5,
       due = LocalDate.now().plusDays(146),
+      obligationType = "Quarterly",
       periodKey = "periodKey"
     ), ReportDeadlineModel(
       start = deadlineStart6,
       end = deadlineEnd6,
       due = LocalDate.now().plusDays(174),
+      obligationType = "Quarterly",
       periodKey = "periodKey"
     )
   ))
@@ -90,6 +96,7 @@ object ReportDeadlinesIntegrationTestConstants {
       start = singleObligationStart,
       end = singleObligationEndQuarter,
       due = singleObligationDue,
+      obligationType = "Quarterly",
       periodKey = "periodKey"
     )
   ))
@@ -99,6 +106,7 @@ object ReportDeadlinesIntegrationTestConstants {
       start = singleObligationStart,
       end = singleObligationEnd,
       due = LocalDate.now().minusDays(1),
+      obligationType = "Quarterly",
       periodKey = "periodKey"
     )
   ))
@@ -112,6 +120,7 @@ object ReportDeadlinesIntegrationTestConstants {
       singleObligationStartEOPs,
       singleObligationEndEOPs,
       singleObligationDueEOPs,
+      "EOPS",
       "EOPS"
     )
   ))
@@ -125,6 +134,7 @@ object ReportDeadlinesIntegrationTestConstants {
       singleObligationStart,
       singleObligationEnd,
       singleObligationDue,
+      "Quarterly",
       "#001"
     )
   ))
@@ -134,6 +144,7 @@ object ReportDeadlinesIntegrationTestConstants {
       start = "2017-04-06",
       end = "2017-07-05",
       due = LocalDate.now().plusYears(1),
+      obligationType = "Quarterly",
       periodKey = "periodKey"
     )
   ))
@@ -144,6 +155,7 @@ object ReportDeadlinesIntegrationTestConstants {
       start = "2017-04-06",
       end = "2018-04-05",
       due = "2018-01-31",
+      "EOPS",
       periodKey = "#003"
     )
   ))

@@ -32,7 +32,7 @@
             @reportDeadlines.zipWithIndex.map { case (report: ReportDeadlineModel, index: Int) =>
                 <tr class="obligation no-border-bottom">
                     <td>
-                        @if(report.obligationType == QuarterlyObligation){
+                        @if(report.obligationType == "Quarterly"){
                             <span id="@{id}-ob-@{index + 1}-start">@report.start.toLongDateShort</span> @messages("obligations.quarterly.to") <span id="@{id}-ob-@{index+1}-end">@report.end.toLongDateShort</span>
                         } else {
                             <span id="@{id}-ob-@{index + 1}-eops">@messages("obligations.eops")</span>
