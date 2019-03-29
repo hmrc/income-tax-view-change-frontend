@@ -27,7 +27,7 @@ import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
-import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
+import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, CrystallisedDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
 import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -108,7 +108,8 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
         business1,
         crystallisedObligation
       )),
-      None
+      None,
+      crystallisedDeadlinesModel = Some(CrystallisedDeadlinesModel(ReportDeadlinesModel(List(crystallisedObligation))))
     )
 
     lazy val eopsSEIncomeSource = IncomeSourcesWithDeadlinesModel(businessIncomeSources =
@@ -262,9 +263,9 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
       "showing the period of the deadline" in new Setup(crystallisedIncomeSource){
         val result = pageDocument.getElementById("crystallised-period").text
-        val expectedResult = crystallisedIncomeSource.businessIncomeSources.head.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).start.toLongDate +
+        val expectedResult = crystallisedIncomeSource.crystallisedDeadlinesModel.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations.head.start.toLongDate +
           " to " +
-          crystallisedIncomeSource.businessIncomeSources.head.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).end.toLongDate
+          crystallisedIncomeSource.crystallisedDeadlinesModel.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations.head.end.toLongDate
 
 
         result shouldBe expectedResult
@@ -273,7 +274,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
       "showing the due date of the deadline" in new Setup(crystallisedIncomeSource){
         val result = pageDocument.getElementById("crystallised-due").text
-        val expectedResult = crystallisedIncomeSource.businessIncomeSources(0).reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations.head.due.toLongDate
+        val expectedResult = crystallisedIncomeSource.crystallisedDeadlinesModel.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations.head.due.toLongDate
 
         result shouldBe expectedResult
       }

@@ -242,4 +242,43 @@ case _ => { }
 
 
 
+@incomeSources.crystallisedDeadlinesModel match{
+case Some(crystallisedDeadlinesModel) =>{
+@crystallisedDeadlinesModel.reportDeadlines match {
+case reportDeadlines: ReportDeadlinesModel => {
+@for(deadline <- reportDeadlines.currentCrystDeadlines) {
+<div id="crystallised-section"  class="grid-row divider--bottom">
+    <div class="row-border">
+        <div class="column-half">
+            <p style="font-weight:bold">
+                <span id="crystallised-heading">@messages("obligations.eops")</span><br/>
+                <span id="crystallised-period" style="font-weight:normal">
+                                    @{s"${deadline.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.end.toLongDate}"}
+                                </span>
+            </p>
+        </div>
+        <div class="column-half">
+            <p>
+                                <span id="crystallised-due-on">
+                                    @{messages("obligations.dueOn")}
+                                </span><br/>
+                <span id="crystallised-due" style="font-weight:normal">
+                                    @{deadline.due.toLongDate}
+                                </span>
+            </p>
+        </div>
+    </div>
+</div>
+}
+}
+case _ => { }
+}
+}
+
+case _ => { }
+
+}
+
+
+
 }

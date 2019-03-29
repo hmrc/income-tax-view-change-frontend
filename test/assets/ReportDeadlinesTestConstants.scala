@@ -119,6 +119,7 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     start = "2017-04-06",
     end = "2018-04-05",
     due = "2019-10-31",
+    obligationType = "Crystallised",
     periodKey = ""
   ))
 

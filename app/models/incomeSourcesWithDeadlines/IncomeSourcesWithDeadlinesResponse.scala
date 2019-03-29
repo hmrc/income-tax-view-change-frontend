@@ -64,7 +64,7 @@ case class IncomeSourcesWithDeadlinesModel(
 
 }
 
-case class CrystallisedDeadlinesModel(reportDeadlinesModel: ReportDeadlinesResponseModel)
+case class CrystallisedDeadlinesModel(reportDeadlines: ReportDeadlinesResponseModel)
 
 case class PropertyIncomeWithDeadlinesModel(
                                              incomeSource: PropertyDetailsModel,
