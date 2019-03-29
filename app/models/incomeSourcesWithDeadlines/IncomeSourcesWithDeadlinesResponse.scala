@@ -28,7 +28,8 @@ sealed trait IncomeSourcesWithDeadlinesResponse
 case object IncomeSourcesWithDeadlinesError extends IncomeSourcesWithDeadlinesResponse
 case class IncomeSourcesWithDeadlinesModel(
                                             businessIncomeSources: List[BusinessIncomeWithDeadlinesModel],
-                                            propertyIncomeSource: Option[PropertyIncomeWithDeadlinesModel]) extends IncomeSourcesWithDeadlinesResponse {
+                                            propertyIncomeSource: Option[PropertyIncomeWithDeadlinesModel],
+                                            crystallisedDeadlinesModel: CrystallisedDeadlinesModel) extends IncomeSourcesWithDeadlinesResponse {
 
   val incomeSources: List[IncomeModelWithDeadlines] = businessIncomeSources ++ propertyIncomeSource
 
@@ -63,6 +64,8 @@ case class IncomeSourcesWithDeadlinesModel(
 
 }
 
+case class CrystallisedDeadlinesModel(reportDeadlinesModel: ReportDeadlinesResponseModel)
+
 case class PropertyIncomeWithDeadlinesModel(
                                              incomeSource: PropertyDetailsModel,
                                              reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModelWithDeadlines
@@ -80,6 +83,10 @@ object PropertyIncomeWithDeadlinesModel {
 
 object IncomeSourcesWithDeadlinesModel {
  implicit val format: Format[IncomeSourcesWithDeadlinesModel] = Json.format[IncomeSourcesWithDeadlinesModel]
+}
+
+object CrystallisedDeadlinesModel{
+  implicit val format: Format[CrystallisedDeadlinesModel] = Json.format[CrystallisedDeadlinesModel]
 }
 
 

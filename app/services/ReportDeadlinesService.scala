@@ -58,11 +58,18 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
             }
           })).map(_.headOption)
 
+
+        val crystallisedModelFList: Future[CrystallisedDeadlinesModel] =
+          getReportDeadlines(mtdUser.nino).map{
+            deadlines => CrystallisedDeadlinesModel(deadlines)
+          }
+
         for {
           businessList <- businessIncomeModelFList
           property <- propertyIncomeModelFOpt
+          crystallised <- crystallisedModelFList
         } yield {
-          IncomeSourcesWithDeadlinesModel(businessList, property)
+          IncomeSourcesWithDeadlinesModel(businessList, property, crystallised)
         }
       case _: IncomeSourceDetailsError => Future.successful(IncomeSourcesWithDeadlinesError)
     }
