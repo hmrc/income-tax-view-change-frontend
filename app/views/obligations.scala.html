@@ -211,9 +211,9 @@ case _ => { }
 <!--
     Income source quarterly subsection
 -->
-
-    @for(businessIncomeSource <- incomeSources.businessIncomeSources){
     <section id="quarterly-business-returns">
+    @for(businessIncomeSource <- incomeSources.businessIncomeSources){
+
     @businessIncomeSource.reportDeadlines match{
     case businessDeadlines: ReportDeadlinesModel => {
     @for(deadline <- businessDeadlines.currentQuarterlyDeadlines) {
