@@ -16,14 +16,19 @@
 
 package views
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants._
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, HomePage => messages}
-import auth.MtdItUserWithNino
+import auth.MtdItUser
 import config.FrontendAppConfig
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
+import org.jsoup.nodes.{Document, Element}
 import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
 
@@ -31,13 +36,56 @@ class HomePageViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testMtdItUser: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testUserDetails))(FakeRequest())
+  val testMtdItUser: MtdItUser[_] = MtdItUser(
+    testMtditid,
+    testNino,
+    Some(testUserDetails),
+    IncomeSourceDetailsModel(Nil, None)
+  )(FakeRequest())
+
+  val updateDate: LocalDate = LocalDate.of(2018, 1, 1)
+
+  trait Setup {
+    lazy val page: HtmlFormat.Appendable = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+    lazy val document: Document = Jsoup.parse(contentAsString(page))
+    def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
+    def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
+  }
+
+  "home" should {
+    "have an updates card" which {
+      "has a heading" in new Setup {
+        getTextOfElementById("updates-card-heading") shouldBe Some("Updates")
+      }
+      "has a body" that {
+        "contains the date of the next update due" in new Setup {
+          getTextOfElementById("updates-card-body-date") shouldBe Some("1 January 2018")
+        }
+        "contains a link to the updates page" in new Setup {
+          getTextOfElementById("deadlines-link") shouldBe Some("View details for updates")
+          getElementById("deadlines-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url)
+        }
+        "not contain a link to the updates page if the feature flag is off" in new Setup {
+          mockAppConfig.features.reportDeadlinesEnabled(false)
+          getElementById("deadlines-link") shouldBe None
+        }
+        "contains a link to the estimates page" in new Setup {
+          getTextOfElementById("estimates-link") shouldBe Some("Estimates")
+          getElementById("estimates-link").map(_.attr("href")) shouldBe Some(controllers.routes.EstimatesController.viewEstimateCalculations().url)
+        }
+        "not contain a link to the estimates page if the feature flag is off" in new Setup {
+          mockAppConfig.features.estimatesEnabled(false)
+          getElementById("estimates-link") shouldBe None
+        }
+      }
+    }
+  }
 
   "The HomePage view" when {
 
     "the bills Feature is Disabled" should {
 
-      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the Bills feature" in {
@@ -53,7 +101,7 @@ class HomePageViewSpec extends TestSupport {
 
     "the Report Deadlines Feature is Disabled" should {
 
-      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the Report Deadlines feature" in {
@@ -69,7 +117,7 @@ class HomePageViewSpec extends TestSupport {
 
     "the Estimates feature is disabled" should {
 
-      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the Estimates feature" in {
@@ -84,7 +132,7 @@ class HomePageViewSpec extends TestSupport {
 
     "the statements feature is disabled" should {
 
-      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the statements feature" in {
@@ -100,7 +148,7 @@ class HomePageViewSpec extends TestSupport {
 
     "the account details feature is disabled" should {
 
-      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the account details feature" in {
@@ -116,7 +164,7 @@ class HomePageViewSpec extends TestSupport {
 
     "all features are enabled" should {
 
-      lazy val page = views.html.home()(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
       import messages._
 
@@ -182,54 +230,6 @@ class HomePageViewSpec extends TestSupport {
 
           "links to the bills page" in {
             billsSection.getElementById("bills-link").attr("href") shouldBe controllers.routes.BillsController.viewCrystallisedCalculations().url
-          }
-        }
-      }
-
-      s"have a Estimates section" which {
-
-        lazy val estimatesSection = document.getElementById("estimates-section")
-
-        s"has the heading '${EstimatesSection.heading}'" in {
-          estimatesSection.getElementById("estimates-heading").text shouldBe EstimatesSection.heading
-        }
-
-        s"has the paragraph '${EstimatesSection.paragraph}'" in {
-          estimatesSection.getElementById("estimates-text").text shouldBe EstimatesSection.paragraph
-        }
-
-        "has a link to estimates" which {
-
-          s"has the text '${EstimatesSection.heading}'" in {
-            estimatesSection.getElementById("estimates-link").text shouldBe EstimatesSection.heading
-          }
-
-          "links to the estimates page" in {
-            estimatesSection.getElementById("estimates-link").attr("href") shouldBe controllers.routes.EstimatesController.viewEstimateCalculations().url
-          }
-        }
-      }
-
-      s"have a Report Deadlines section" which {
-
-        lazy val reportDeadlinesSection = document.getElementById("deadlines-section")
-
-        s"has the heading '${ReportDeadlinesSection.heading}'" in {
-          reportDeadlinesSection.getElementById("deadlines-heading").text shouldBe ReportDeadlinesSection.heading
-        }
-
-        s"has the paragraph '${ReportDeadlinesSection.paragraph}'" in {
-          reportDeadlinesSection.getElementById("deadlines-text").text shouldBe ReportDeadlinesSection.paragraph
-        }
-
-        "has a link to deadlines" which {
-
-          s"has the text '${ReportDeadlinesSection.heading}'" in {
-            reportDeadlinesSection.getElementById("deadlines-link").text shouldBe ReportDeadlinesSection.heading
-          }
-
-          "links to the deadlines page" in {
-            reportDeadlinesSection.getElementById("deadlines-link").attr("href") shouldBe controllers.routes.ReportDeadlinesController.getReportDeadlines().url
           }
         }
       }

@@ -16,35 +16,50 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import assets.Messages
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import mocks.controllers.predicates.MockAuthenticationPredicate
+import controllers.predicates.{IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.jsoup.Jsoup
+import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
 import play.api.http.Status
 import play.api.i18n.MessagesApi
+import services.ReportDeadlinesService
 
-class HomeControllerSpec extends MockAuthenticationPredicate {
+import scala.concurrent.Future
+
+class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+
+  val reportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]
 
   object TestHomeController extends HomeController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
+    MockIncomeSourceDetailsPredicate,
+    reportDeadlinesService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi]
   )
 
+  val updateDate: LocalDate = LocalDate.of(2018, 1, 1)
+
   "navigating to the home page" should {
 
-    lazy val result = TestHomeController.home(fakeRequestWithActiveSession)
+    "return OK (200)" when {
+      "there is a update date to display" in {
+        when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+        mockSingleBusinessIncomeSource()
 
-    "return OK (200)" in {
-      status(result) shouldBe Status.OK
-    }
+        val result = TestHomeController.home(fakeRequestWithActiveSession)
 
-    "redirect to the Income Tax Home Page" in {
-      Jsoup.parse(bodyOf(result)).title shouldBe Messages.HomePage.title
+        status(result) shouldBe Status.OK
+        Jsoup.parse(bodyOf(result)).title shouldBe Messages.HomePage.title
+      }
     }
 
   }

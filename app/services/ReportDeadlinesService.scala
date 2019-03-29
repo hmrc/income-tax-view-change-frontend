@@ -16,13 +16,14 @@
 
 package services
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
 import connectors._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.incomeSourcesWithDeadlines._
-import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -30,6 +31,30 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
+
+  def getNextDeadlineDueDate(incomeSourceResponse: IncomeSourceDetailsModel)
+                            (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[LocalDate] = {
+    getAllDeadlines(incomeSourceResponse).map { reportDeadlines =>
+      reportDeadlines.map(_.due).sortWith(_ isBefore _).head
+    }
+  }
+
+  def getAllDeadlines(incomeSourceResponse: IncomeSourceDetailsModel)
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[List[ReportDeadlineModel]] = {
+
+    val allRetrievalIds: List[String] = incomeSourceResponse.businesses.map(_.incomeSourceId) ++
+      incomeSourceResponse.property.map(_.incomeSourceId) :+
+      mtdItUser.nino
+
+    Future.sequence(
+      allRetrievalIds.map { incomeSource =>
+        getReportDeadlines(incomeSource).map {
+          case ReportDeadlinesModel(obligations) => obligations
+          case _: ReportDeadlinesErrorModel => Nil
+        }
+      }
+    ).map(_.flatten)
+  }
 
   def getReportDeadlines(incomeSourceId: String)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
     Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting Report Deadlines for incomeSourceID: $incomeSourceId")
