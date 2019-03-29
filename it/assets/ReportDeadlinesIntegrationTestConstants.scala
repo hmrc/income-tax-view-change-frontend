@@ -91,6 +91,8 @@ object ReportDeadlinesIntegrationTestConstants {
   val singleObligationEnd = "2017-07-05"
   val singleObligationDue = "2018-01-01"
 
+  val overdueDate: LocalDate = LocalDate.now().minusDays(1)
+
   val singleObligationQuarterlyReturnModel = ReportDeadlinesModel(List(
     ReportDeadlineModel(
       start = singleObligationStart,
@@ -101,12 +103,24 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
+  val veryOverdueDate: LocalDate = LocalDate.of(2017, 5, 5)
+
+  val singleObligationCrystallisationModel = ReportDeadlinesModel(List(
+    ReportDeadlineModel(
+      start = singleObligationStart,
+      end = singleObligationEndQuarter,
+      obligationType = "Crystallised",
+      due = veryOverdueDate,
+      periodKey = "periodKey"
+    )
+  ))
+
   val singleObligationOverdueModel = ReportDeadlinesModel(List(
     ReportDeadlineModel(
       start = singleObligationStart,
       end = singleObligationEnd,
-      due = LocalDate.now().minusDays(1),
       obligationType = "Quarterly",
+      due = overdueDate,
       periodKey = "periodKey"
     )
   ))

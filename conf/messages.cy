@@ -21,14 +21,12 @@ home.heading                                                    = Treth Incwm
 home.unique.tax.reference                                       = Cyfeirnod Treth Unigryw
 home.bills.heading                                              = Billau
 home.bills.text                                                 = Gweld eich biliau Treth Incwm presennol a blaenorol.
-home.estimates.heading                                          = Amcangyfrifon
-home.estimates.text                                             = Gwirio''r swm y gallai fod arnoch, yn seiliedig ar y ffigurau rydych wedi''u cyflwyno.
-home.deadlines.heading                                          = Dyddiadau cau ar gyfer adroddiadau
-home.deadlines.text                                             = Gwirio erbyn pryd y dylech gyflwyno''ch adroddiadau.
 home.statements.heading                                         = Datganiadau
 home.statements.text                                            = Bwrw golwg ar eich trafodiadau Treth Incwm, gan gynnwys costau a thaliadau.
 home.accounts.heading                                           = Manylion y cyfrif
 home.accounts.text                                              = Gweld y manylion cyswllt a''r manylion eraill sydd gennym ar gyfer eich busnesau.
+
+home.updates.body.estimatesLink                                 = Amcangyfrifon
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Helpu i wella''r gwasanaeth hwn

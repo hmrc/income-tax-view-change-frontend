@@ -21,14 +21,15 @@ home.heading                                                    = Income Tax
 home.unique.tax.reference                                       = Unique Tax Reference
 home.bills.heading                                              = Bills
 home.bills.text                                                 = View your current and previous Income Tax bills.
-home.estimates.heading                                          = Estimates
-home.estimates.text                                             = Check what you might owe, based on figures you have submitted.
-home.deadlines.heading                                          = Report deadlines
-home.deadlines.text                                             = Check when your reports are due.
 home.statements.heading                                         = Statements
 home.statements.text                                            = View your Income Tax transactions, including charges and payments.
 home.accounts.heading                                           = Account details
 home.accounts.text                                              = See contact information and other details we have for your businesses.
+
+home.updates.heading                                            = Updates
+home.updates.body.heading                                       = Next update due
+home.updates.body.updatesLink                                   = View details for updates
+home.updates.body.estimatesLink                                 = Estimates
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service
