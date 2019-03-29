@@ -25,6 +25,7 @@ object IncomeSourcesWithDeadlinesTestConstants {
   val singleBusinessIncomeWithDeadlines = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel), None, None)
   val businessIncome2018and2019WithDeadlines = IncomeSourcesWithDeadlinesModel(List(business2018IncomeModel, business2019IncomeModel), None, None)
   val propertyIncomeOnlyWithDeadlines = IncomeSourcesWithDeadlinesModel(List.empty, Some(propertyIncomeModel), None)
+  val crystallisedOnlyDeadlines = IncomeSourcesWithDeadlinesModel(List.empty, None, Some(crystallisedDeadlines))
   val businessAndPropertyAlignedWithDeadlines =
     IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel), None)
   val noIncomeDetailsWithNoDeadlines = IncomeSourcesWithDeadlinesModel(List.empty, None, None)

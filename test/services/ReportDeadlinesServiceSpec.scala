@@ -20,10 +20,10 @@ import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _, _}
 import assets.IncomeSourceDetailsTestConstants._
 import assets.IncomeSourcesWithDeadlinesTestConstants._
-import assets.PropertyDetailsTestConstants.propertyDetails
+import assets.PropertyDetailsTestConstants.{propertyDetails, propertyIncomeModel}
 import assets.ReportDeadlinesTestConstants._
 import mocks.connectors.MockIncomeTaxViewChangeConnector
-import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesError, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
+import models.incomeSourcesWithDeadlines._
 import testUtils.TestSupport
 
 class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
@@ -155,6 +155,23 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
       }
     }
 
+
+    "A user has only has crystallised Obligation and both income sources" should {
+      "Return a successful crystallised Obligation" in {
+        setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
+        setupMockReportDeadlines(testSelfEmploymentId2)(obligationsDataSuccessModel)
+        setupMockReportDeadlines(testPropertyIncomeId)(obligationsDataSuccessModel)
+        setupMockReportDeadlines(testNino)(crystallisedDeadlineSuccess)
+        await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(businessesAndPropertyIncome)) shouldBe
+          IncomeSourcesWithDeadlinesModel(
+            List(businessIncomeModel,businessIncomeModel2),
+            Some(propertyIncomeModel),
+            Some(CrystallisedDeadlinesModel(crystallisedDeadlineSuccess))
+          )
+      }
+    }
+
+
     "A user has only has Property Income Source" when {
 
       "A successful set of report deadlines is retrieved for the SE Business" should {
@@ -187,6 +204,8 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         }
       }
     }
+
+
 
     "The Income Source Details are Errored" should {
 

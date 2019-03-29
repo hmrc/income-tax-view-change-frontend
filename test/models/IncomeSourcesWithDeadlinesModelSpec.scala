@@ -22,7 +22,7 @@ import assets.IncomeSourcesWithDeadlinesTestConstants._
 import assets.PropertyDetailsTestConstants._
 import assets.ReportDeadlinesTestConstants.{obligations4xxDataErrorModel, obligationsDataErrorModel}
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, CrystallisedDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import models.reportDeadlines.ReportDeadlineModel
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -83,12 +83,42 @@ class IncomeSourcesWithDeadlinesModelSpec extends UnitSpec with Matchers {
         propertyIncomeOnlyWithDeadlines.businessIncomeSources shouldBe List.empty
       }
     }
+
+    "the user has just a crystallised obligation" should {
+      s"have the crystallised accounting period start date of ${openCrystallised.start}" in {
+        val result = crystallisedOnlyDeadlines.crystallisedDeadlinesModel.get.reportDeadlinesModel.asInstanceOf[ReportDeadlinesModel]
+
+        result.obligations.head.start shouldBe openCrystallised.start
+      }
+
+      s"have the crystallised accounting period end date of ${openCrystallised.end}" in {
+        val result = crystallisedOnlyDeadlines.crystallisedDeadlinesModel.get.reportDeadlinesModel.asInstanceOf[ReportDeadlinesModel]
+
+        result.obligations.head.end shouldBe openCrystallised.end
+      }
+
+      s"have the crystallised accounting period due date of ${openCrystallised.due}" in {
+        val result = crystallisedOnlyDeadlines.crystallisedDeadlinesModel.get.reportDeadlinesModel.asInstanceOf[ReportDeadlinesModel]
+
+        result.obligations.head.due shouldBe openCrystallised.due
+      }
+
+      "should not have business details" in {
+        crystallisedOnlyDeadlines.businessIncomeSources shouldBe List.empty
+      }
+
+      s"should not have property details" in {
+        crystallisedOnlyDeadlines.propertyIncomeSource shouldBe None
+      }
+    }
+
     "the user has no income source" should {
       "return None for both business and property sources" in {
         noIncomeDetailsWithNoDeadlines.propertyIncomeSource shouldBe None
         noIncomeDetailsWithNoDeadlines.businessIncomeSources shouldBe List.empty
       }
     }
+
 
     "the user has an error with a 5xx status in the business income sources" should {
       "return a true for hasAnyServerErrors" in {
