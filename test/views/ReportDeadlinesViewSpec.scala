@@ -51,6 +51,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
           reportDeadlines = twoObligationsSuccessModel
         )
       ),
+      None,
       None
     )
 
@@ -116,7 +117,8 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         Some(PropertyIncomeWithDeadlinesModel(
           propertyDetails,
           reportDeadlines  = obligationsEOPSDataSuccessModel
-        ))
+        )),
+        None
       )
 
       val setup = pageSetup(propertyIncomeModel)
@@ -143,6 +145,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
             reportDeadlines = obligationsEOPSDataSuccessModel
           )
         ),
+        None,
         None
       )
 
@@ -162,7 +165,8 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
             ceasedPropertyDetails,
             reportDeadlines = obligationsEOPSDataSuccessModel
           )
-        )
+        ),
+        None
       )
 
       val setup = pageSetup(ceasedPropertyIncomeModel)
@@ -186,7 +190,8 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         Some(PropertyIncomeWithDeadlinesModel(
           propertyDetails,
           reportDeadlines  = obligationsDataErrorModel
-        ))
+        )),
+        None
       )
 
       val setup = pageSetup(bothIncomeSourcesReportsErrored)
@@ -221,6 +226,7 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
             reportDeadlines = obligationsDataErrorModel
           )
         ),
+        None,
         None
       )
 
@@ -254,7 +260,8 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
         Some(PropertyIncomeWithDeadlinesModel(
           propertyDetails,
           reportDeadlines  = obligationsDataErrorModel
-        ))
+        )),
+        None
       )
 
       val setup = pageSetup(propertyIncomeSourcesReportsErrored)

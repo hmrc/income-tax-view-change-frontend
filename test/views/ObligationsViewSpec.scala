@@ -54,6 +54,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
           twoObligationsSuccessModel
         )
       ),
+      None,
       None
     )
 
@@ -62,7 +63,8 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       Some(PropertyIncomeWithDeadlinesModel(
         propertyDetails,
         reportDeadlines = obligationsDataSuccessModel
-      ))
+      )),
+      None
     )
 
     lazy val twoPiQuarterlyReturnSource = IncomeSourcesWithDeadlinesModel(
@@ -70,7 +72,8 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       Some(PropertyIncomeWithDeadlinesModel(
         propertyDetails,
         reportDeadlines = quarterlyObligationsDataSuccessModel
-      ))
+      )),
+      None
     )
 
 
@@ -81,6 +84,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
           reportDeadlines = ReportDeadlinesModel(List(quarterlyBusinessObligation))
         )
       ),
+      None,
       None
     )
 
@@ -95,7 +99,8 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
             )
           )
         )
-      )
+      ),
+      None
     )
 
     lazy val eopsSEIncomeSource = IncomeSourcesWithDeadlinesModel(businessIncomeSources =
@@ -103,9 +108,10 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
         incomeSource = business1,
         reportDeadlines = ReportDeadlinesModel(List(openEOPSObligation))
       )),
-      propertyIncomeSource = None)
+      propertyIncomeSource = None,
+      None)
 
-    lazy val noIncomeSource = IncomeSourcesWithDeadlinesModel(List(), None)
+    lazy val noIncomeSource = IncomeSourcesWithDeadlinesModel(List(), None, None)
 
     "display all of the correct information for the main elements/sections on the page" when {
 

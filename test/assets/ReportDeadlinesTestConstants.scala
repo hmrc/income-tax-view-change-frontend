@@ -40,6 +40,7 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     due = "2017-10-30",
     periodKey = "#002"
   ))
+
   val openObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-7-1",
     end = "2017-9-30",
@@ -98,6 +99,15 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     due = "2017-10-31",
     periodKey = "#003"
   ))
+
+  val openCrystObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
+    start = "2017-04-06",
+    end = "2018-04-05",
+    due = "2019-10-31",
+    periodKey = ""
+  ))
+
+
   val obligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueEOPSObligation, openEOPSObligation))
 
   val reportDeadlineEOPSOverdueJson: JsValue = Json.obj(
@@ -122,6 +132,8 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
 
 
   val twoObligationsSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueObligation, openEOPSObligation))
+
+  val crystallisedDeadlineSuccess: ReportDeadlinesModel = ReportDeadlinesModel(List(openCrystObligation))
 
   val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
   val obligations4xxDataErrorModel = ReportDeadlinesErrorModel(404, testErrorMessage)

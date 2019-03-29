@@ -22,7 +22,7 @@ import auth.MtdItUser
 import connectors._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.incomeSourcesWithDeadlines._
-import models.reportDeadlines.ReportDeadlinesResponseModel
+import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -58,11 +58,19 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
             }
           })).map(_.headOption)
 
+
+        val crystallisedModelFList: Future[Option[CrystallisedDeadlinesModel]] =
+          getReportDeadlines(mtdUser.nino).map{
+            case deadlines: ReportDeadlinesModel => Some(CrystallisedDeadlinesModel(deadlines))
+            case deadlines: ReportDeadlinesErrorModel => None
+          }
+
         for {
           businessList <- businessIncomeModelFList
           property <- propertyIncomeModelFOpt
+          crystallised <- crystallisedModelFList
         } yield {
-          IncomeSourcesWithDeadlinesModel(businessList, property)
+          IncomeSourcesWithDeadlinesModel(businessList, property, crystallised)
         }
       case _: IncomeSourceDetailsError => Future.successful(IncomeSourcesWithDeadlinesError)
     }
