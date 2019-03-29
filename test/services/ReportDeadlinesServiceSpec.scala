@@ -60,6 +60,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
           setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
           setupMockReportDeadlines(testSelfEmploymentId2)(obligationsDataSuccessModel)
           setupMockReportDeadlines(testPropertyIncomeId)(obligationsDataSuccessModel)
+          setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
           await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(businessesAndPropertyIncome)) shouldBe
             businessAndPropertyIncomeWithDeadlines
         }
@@ -73,13 +74,15 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
           setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
           setupMockReportDeadlines(testSelfEmploymentId2)(obligationsDataSuccessModel)
           setupMockReportDeadlines(testPropertyIncomeId)(obligationsDataErrorModel)
+          setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
           await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(businessesAndPropertyIncome)) shouldBe
             IncomeSourcesWithDeadlinesModel(
               List(businessIncomeModel, businessIncomeModel2),
               Some(PropertyIncomeWithDeadlinesModel(
                 propertyDetails,
                 obligationsDataErrorModel
-              ))
+              )),
+              None
             )
         }
 
@@ -92,6 +95,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
           setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataErrorModel)
           setupMockReportDeadlines(testSelfEmploymentId2)(obligationsDataErrorModel)
           setupMockReportDeadlines(testPropertyIncomeId)(obligationsDataErrorModel)
+          setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
           await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(businessesAndPropertyIncome)) shouldBe
             IncomeSourcesWithDeadlinesModel(
               List(
@@ -107,7 +111,8 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
               Some(PropertyIncomeWithDeadlinesModel(
                 propertyDetails,
                 obligationsDataErrorModel
-              ))
+              )),
+              None
             )
         }
 
@@ -122,6 +127,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         "Return a IncomeSourcesWithDeadlines response which contains the expected report deadlines" in {
 
           setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
+          setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
           await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(singleBusinessIncome)) shouldBe
             singleBusinessIncomeWithDeadlines
         }
@@ -133,6 +139,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         "Return a IncomeSourcesWithDeadlines response with errored report deadlines" in {
 
           setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataErrorModel)
+          setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
           await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(singleBusinessIncome)) shouldBe
             IncomeSourcesWithDeadlinesModel(
               List(
@@ -141,6 +148,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
                   obligationsDataErrorModel
                 )
               ),
+              None,
               None
             )
         }
@@ -154,6 +162,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         "Return a IncomeSourcesWithDeadlines response which contains the expected report deadlines" in {
 
           setupMockReportDeadlines(testPropertyIncomeId)(obligationsDataSuccessModel)
+          setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
           await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(propertyIncomeOnly)) shouldBe
             propertyIncomeOnlyWithDeadlines
         }
@@ -165,13 +174,15 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         "Return a IncomeSourcesWithDeadlines response with errored report deadlines" in {
 
           setupMockReportDeadlines(testPropertyIncomeId)(obligationsDataErrorModel)
+          setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
           await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(propertyIncomeOnly)) shouldBe
             IncomeSourcesWithDeadlinesModel(
               List(),
               Some(PropertyIncomeWithDeadlinesModel(
                 propertyDetails,
                 obligationsDataErrorModel
-              ))
+              )),
+              None
             )
         }
       }

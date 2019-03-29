@@ -29,7 +29,7 @@ case object IncomeSourcesWithDeadlinesError extends IncomeSourcesWithDeadlinesRe
 case class IncomeSourcesWithDeadlinesModel(
                                             businessIncomeSources: List[BusinessIncomeWithDeadlinesModel],
                                             propertyIncomeSource: Option[PropertyIncomeWithDeadlinesModel],
-                                            crystallisedDeadlinesModel: CrystallisedDeadlinesModel) extends IncomeSourcesWithDeadlinesResponse {
+                                            crystallisedDeadlinesModel: Option[CrystallisedDeadlinesModel]) extends IncomeSourcesWithDeadlinesResponse {
 
   val incomeSources: List[IncomeModelWithDeadlines] = businessIncomeSources ++ propertyIncomeSource
 

@@ -21,11 +21,11 @@ import assets.PropertyDetailsTestConstants._
 import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 
 object IncomeSourcesWithDeadlinesTestConstants {
-  val businessAndPropertyIncomeWithDeadlines = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, businessIncomeModel2), Some(propertyIncomeModel))
-  val singleBusinessIncomeWithDeadlines = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel), None)
-  val businessIncome2018and2019WithDeadlines = IncomeSourcesWithDeadlinesModel(List(business2018IncomeModel, business2019IncomeModel), None)
-  val propertyIncomeOnlyWithDeadlines = IncomeSourcesWithDeadlinesModel(List.empty, Some(propertyIncomeModel))
+  val businessAndPropertyIncomeWithDeadlines = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, businessIncomeModel2), Some(propertyIncomeModel), None)
+  val singleBusinessIncomeWithDeadlines = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel), None, None)
+  val businessIncome2018and2019WithDeadlines = IncomeSourcesWithDeadlinesModel(List(business2018IncomeModel, business2019IncomeModel), None, None)
+  val propertyIncomeOnlyWithDeadlines = IncomeSourcesWithDeadlinesModel(List.empty, Some(propertyIncomeModel), None)
   val businessAndPropertyAlignedWithDeadlines =
-    IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel))
-  val noIncomeDetailsWithNoDeadlines = IncomeSourcesWithDeadlinesModel(List.empty, None)
+    IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel), None)
+  val noIncomeDetailsWithNoDeadlines = IncomeSourcesWithDeadlinesModel(List.empty, None, None)
 }
