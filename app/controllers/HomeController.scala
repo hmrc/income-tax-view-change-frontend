@@ -16,14 +16,19 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
+import java.time.LocalDate
 
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import javax.inject.{Inject, Singleton}
+import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import models.financialTransactions.{FinancialTransactionsModel, FinancialTransactionsResponseModel}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import services.ReportDeadlinesService
+import services.{CalculationService, FinancialTransactionsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+
+import scala.concurrent.Future
 
 @Singleton
 class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -31,15 +36,40 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val retrieveNino: NinoPredicate,
                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                val reportDeadlinesService: ReportDeadlinesService,
+                               val calculationService: CalculationService,
+                               val itvcErrorHandler: ItvcErrorHandler,
+                               val financialTransactionsService: FinancialTransactionsService,
                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                implicit val config: FrontendAppConfig,
                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      reportDeadlinesService.getNextDeadlineDueDate(user.incomeSources).map { latestDeadlineDate =>
-        Ok(views.html.home(latestDeadlineDate))
+      calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears) flatMap {
+        case lastTaxCalcs if lastTaxCalcs.nonEmpty => {
+          Future.sequence(lastTaxCalcs.filter(_.isCrystallised).map { crystallisedTaxCalc =>
+            financialTransactionsService.getFinancialTransactions(user.mtditid, crystallisedTaxCalc.year) map { transactions =>
+              (crystallisedTaxCalc, transactions)
+            }
+          }).map { billDetails =>
+            billDetails.filter(_._2 match {
+              case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty => {
+                ftm.financialTransactions.get.exists(!_.isPaid)
+              }
+              case _ => false
+            }).sortBy(_._1.year).headOption match {
+              case Some((bill, transaction: FinancialTransactionsModel)) =>
+                val date = transaction.findChargeForTaxYear(bill.year).get.items.get.head.dueDate
+                Ok(views.html.home(date, date.get))
+              case _ => Ok(views.html.home(None, LocalDate.parse("2019-01-05")))
+            }
+          }
+
+        }
+        case _ => Future.successful(Ok(views.html.home(None, LocalDate.parse("2019-01-01"))))
+          }
       }
+
   }
 
-}
+

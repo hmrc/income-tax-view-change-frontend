@@ -25,6 +25,11 @@ home.statements.heading                                         = Statements
 home.statements.text                                            = View your Income Tax transactions, including charges and payments.
 home.accounts.heading                                           = Account details
 home.accounts.text                                              = See contact information and other details we have for your businesses.
+home.incomeTaxPayment.viewBillAndMakePayment                    = View bill and make payment
+home.incomeTaxPayment.nextPaymentDue                            = Next payment due
+home.incomeTaxPayment.previousBills                             = Previous bills
+home.incomeTaxPayment.paymentHistory                            = Payment history
+home.incomeTaxPayment.incomeTaxPayments                         = Income tax payments
 
 home.updates.heading                                            = Updates
 home.updates.body.heading                                       = Next update due

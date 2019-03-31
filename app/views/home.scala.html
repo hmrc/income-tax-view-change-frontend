@@ -22,8 +22,10 @@
 @import views.html.templates.main_template
 @import views.helpers.EstimatesPage
 @import views.html.helpers.{calcBreakdownHelper, breadcrumbHelper, accordionHelper}
+@import models.calculation.BillsViewModel
+@import models.financialTransactions.TransactionModel
 
-@(nextUpdate: LocalDate)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(
@@ -38,89 +40,101 @@
     contentHeader = Some(breadcrumb)
 ) {
 
-    <section id="home-page">
+<section id="home-page">
 
-        <header class="page-heading">
-            @user.userDetails.map{ details => <p id="sub-heading" class="heading-secondary">@details.name</p>}
-            <h1 id="page-heading" class="heading-xlarge">@messages("home.heading")</h1>
-            <p class="heading-secondary">@messages("home.unique.tax.reference")-@user.mtditid</p>
-        </header>
+    <!--Header
+    -->
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-xlarge">
+                <span class="heading-secondary">@user.userDetails.map{ details => <span id="sub-heading" class="heading-secondary">@details.name</span>}</span>
+                @messages("home.heading")
+                <span class="heading-secondary">@messages("home.unique.tax.reference")-@user.mtditid</span>
+            </h1>
+        </div>
+    <!--Header
+    -->
 
-        <div class="flex-container grid-row">
-            <div class="column-half">
-                <div id="updates-card" class="card">
-                    <div class="card-header">
-                        <h3 id="updates-card-heading" class="heading-small">
-                            @messages("home.updates.heading")
-                        </h3>
+    <!--income tax payment
+    -->
+        <div class="column-half">
+            <div id="income-tax-payment-card" class="card">
+                <div class="card-header">
+                    <h3 id="income-tax-payment-card-heading" class="heading-small">
+                        @messages("home.incomeTaxPayment.incomeTaxPayments")
+                    </h3>
+                </div>
+                <div class="card-content">
+                    <h3 class="heading-large">
+                        <span id="income-tax-payment-card-body-heading" class="heading-secondary">@messages("home.incomeTaxPayment.nextPaymentDue")</span>
+                        <span id="income-tax-payment-card-body-date">
+
+                            @{nextPaymentDueDate.map(_.toLongDate).getOrElse("NO DATE")}</span>
+                    </h3>
+
+
+                    <div class="divider--bottom">
+                    <p>
+                        <a id="bills-link" data-journey-click="HomePage:ClickLink:ViewYourBills" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">
+                            @messages("home.incomeTaxPayment.viewBillAndMakePayment")
+                        </a>
+                    </p>
                     </div>
-                    <div class="card-content">
-                        <h3 class="heading-large">
-                            <span id="updates-card-body-heading" class="heading-secondary">@messages("home.updates.body.heading")</span>
-                            <span id="updates-card-body-date">@{nextUpdate.toLongDate}<span>
-                        </h3>
-                        @if(appConfig.features.reportDeadlinesEnabled()){
-                        <p>
-                            <a id="deadlines-link" data-journey-click="HomePage:ClickLink:ViewYourDeadlines" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">
-                                @messages("home.updates.body.updatesLink")
-                            </a>
-                        </p>
-                        }
-                        <hr>
-                        @if(appConfig.features.estimatesEnabled()){
-                        <p>
-                            <a id="estimates-link" data-journey-click="HomePage:ClickLink:ViewYourEstimates" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">
-                                @messages("home.updates.body.estimatesLink")
-                            </a>
-                        </p>
-                        }
-                    </div>
+
+
+
+                    <p>
+                        <a id="previouse-bill-link" data-journey-click="HomePage:ClickLink:ViewYourBills" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">
+                            @messages("home.incomeTaxPayment.previousBills")
+                        </a>
+                    </p>
+
+
+                    <p><a href="./payment-history.html">@messages("home.incomeTaxPayment.paymentHistory")</a></p>
                 </div>
             </div>
         </div>
 
-        <div class="flex-container grid-row">
+    <!--income tax payment
+    -->
 
-            @if(appConfig.features.billsEnabled()){
-                <div id="bills-section" class="column-one-half">
-                    <h3 id="bills-heading" class="heading-small">
-                        <a id="bills-link"
-                           data-journey-click="HomePage:ClickLink:ViewYourBills"
-                           href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">
-                            @messages("home.bills.heading")
-                        </a>
+    <!--updates
+    -->
+        <div class="column-half">
+            <div id="updates-card" class="card">
+                <div class="card-header">
+                    <h3 id="updates-card-heading" class="heading-small">
+                        @messages("home.updates.heading")
                     </h3>
-                    <p id="bills-text">@messages("home.bills.text")</p>
                 </div>
-            }
-
-            @if(appConfig.features.accountDetailsEnabled()){
-                <div id="accounts-section" class="column-one-half">
-                    <h3 id="accounts-heading" class="heading-small">
-                        <a id="accounts-link"
-                           data-journey-click="HomePage:ClickLink:CheckYourAccountDetails"
-                           href="@{controllers.routes.AccountDetailsController.getAccountDetails().url}">
-                            @messages("home.accounts.heading")
-                        </a>
+                <div class="card-content">
+                    <h3 class="heading-large">
+                        <span id="updates-card-body-heading" class="heading-secondary">@messages("home.updates.body.heading")</span>
+                        <span id="updates-card-body-date">@{nextUpdate.toLongDate}</span>
                     </h3>
-                    <p id="accounts-text">@messages("home.accounts.text")</p>
-                </div>
-            }
-
-            @if(appConfig.features.statementsEnabled()){
-                <div id="statements-section" class="column-one-half">
-                    <h3 id="statements-heading" class="heading-small">
-                        <a id="statements-link"
-                           data-journey-click="HomePage:ClickLink:ViewYourStatement"
-                           href="@{controllers.routes.StatementsController.getStatements().url}">
-                            @messages("home.statements.heading")
+                    @if(appConfig.features.reportDeadlinesEnabled()){
+                    <p>
+                        <a id="deadlines-link" data-journey-click="HomePage:ClickLink:ViewYourDeadlines" href="@{controllers.routes.ReportDeadlinesController.getReportDeadlines().url}">
+                            @messages("home.updates.body.updatesLink")
                         </a>
-                    </h3>
-                    <p id="statements-text">@messages("home.statements.text")</p>
+                    </p>
+                    }
+                    <hr>
+                    @if(appConfig.features.estimatesEnabled()){
+                    <p>
+                        <a id="estimates-link" data-journey-click="HomePage:ClickLink:ViewYourEstimates" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">
+                            @messages("home.updates.body.estimatesLink")
+                        </a>
+                    </p>
+                    }
                 </div>
-            }
-
+            </div>
         </div>
+    <!--updates
+    -->
 
-    </section>
- }
+    </div>
+
+</section>
+}
+
