@@ -127,7 +127,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       "showing the breadcrumb trail on the page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         pageDocument.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        pageDocument.getElementById("breadcrumb-obligations").text shouldBe breadcrumbMessages.obligations
+        pageDocument.getElementById("breadcrumb-updates").text shouldBe breadcrumbMessages.updates
       }
 
       s"showing the title ${messages.title} on the page" in new Setup(businessIncomeSource) {

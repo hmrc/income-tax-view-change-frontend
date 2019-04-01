@@ -298,6 +298,7 @@ object Messages {
     val obligations = "Report deadlines"
     val statement = "Income Tax statement"
     val details = "Account details"
+    val updates = "Updates"
   }
 
   //ReportDeadlines Page Messages

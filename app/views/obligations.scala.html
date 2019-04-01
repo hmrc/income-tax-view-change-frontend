@@ -33,8 +33,8 @@
 @breadcrumb = {
 @breadcrumbHelper(Breadcrumb(Vector(
 BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-BreadcrumbItem("breadcrumb-obligations", None)
-)), "ReportDeadlinesPage")
+BreadcrumbItem("breadcrumb-updates", None)
+)), "Updates")
 }
 
 @main_template(
@@ -54,7 +54,7 @@ contentHeader = Some(breadcrumb)
     <h1 id="page-sub-heading" class="heading large"> @Messages("obligations.sub-heading.v2") </h1>
 
     <p>@Messages("obligations.sub-heading.info.prt1.v2")
-        <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax">
+        <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
             @Messages("obligations.sub-heading.info.hyperlink.v2") </a>
         @Messages("obligations.sub-heading.info.prt2.v2")
     </p>
@@ -78,7 +78,7 @@ contentHeader = Some(breadcrumb)
         <p><span id="quarterly-dropdown-line1">@Messages("obligation.dropdown.quarterlyReturn.text.v2")</span> </p>
 
         <p><span id="quarterly-dropdown-line2">@Messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1")
-            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax">
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
                 @Messages("obligations.sub-heading.info.hyperlink.v2") </a>
             @Messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt2")
         </span>
@@ -185,7 +185,7 @@ case _ => { }
         <p><span id="annual-dropdown-line1"> @Messages("obligation.dropdown.annualReturn.text.v2")</span> </p>
 
         <p><span id="annual-dropdown-line2">@Messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1")
-            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax">
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
                 @Messages("obligations.sub-heading.info.hyperlink.v2") </a>
             @Messages("obligation.dropdown.annualReturn.text.v2.lin2.prt2")
         </span>
@@ -261,7 +261,7 @@ case _ => {}
 
     <div class="panel panel-border-narrow" id="details-content-2" aria-hidden="true">
         <p>@Messages("obligation.dropdown.finalDeclaration.text.v2.prt1")
-            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax">
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
                 @Messages("obligations.sub-heading.info.hyperlink.v2") </a>
             @Messages("obligation.dropdown.finalDeclaration.text.v2.prt2")
         </p>
