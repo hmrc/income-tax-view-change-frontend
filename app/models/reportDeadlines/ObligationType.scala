@@ -20,3 +20,4 @@ sealed trait ObligationType
 case object EopsObligation extends ObligationType
 case object QuarterlyObligation extends ObligationType
 
+

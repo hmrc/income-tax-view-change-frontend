@@ -17,7 +17,6 @@
 package views
 
 import java.time.LocalDate
-
 import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.business1
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
@@ -26,9 +25,9 @@ import assets.ReportDeadlinesTestConstants.{twoObligationsSuccessModel, _}
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, CrystallisedDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import models.reportDeadlines.{EopsObligation, ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -47,6 +46,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
   }
 
   "The Deadline Reports Page" should {
+
     lazy val businessIncomeSource = IncomeSourcesWithDeadlinesModel(
       List(
         BusinessIncomeWithDeadlinesModel(
@@ -139,22 +139,36 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       }
 
 
-      "showing the heading for the declarations section" in new Setup(eopsPropertyIncomeSource) {
+      "showing the heading for the quarterly updates section" in new Setup(businessIncomeSource) {
+        pageDocument.getElementById("quarterlyReturns-heading").text shouldBe messages.quarterlyHeading
+      }
+
+      "showing the heading for the annual updates section" in new Setup(eopsPropertyIncomeSource) {
+        pageDocument.getElementById("annualUpdates-heading").text shouldBe messages.annualHeading
+      }
+
+      "showing the heading for the final declaration section" in new Setup(eopsPropertyIncomeSource) {
         pageDocument.getElementById("declarations-heading").text shouldBe messages.declarationsHeading
       }
 
-
-      "showing the Declaration heading and drop down section on the page" in new Setup(eopsPropertyIncomeSource) {
-        pageDocument.getElementById("declaration-dropdown-title").text shouldBe messages.declerationDropDown
-        pageDocument.getElementById("declarations-dropdown-list-one").text shouldBe messages.declarationDropdownListOne
-        pageDocument.getElementById("declarations-dropdown-list-two").text shouldBe messages.declarationDropdownListTwo
-      }
-
-      "showing the Quarterly heading and drop down section on the page" in new Setup(businessIncomeSource) {
+      "showing the Quarterly update heading and drop down section on the page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("quarterly-dropdown-title").text shouldBe messages.quarterlyDropDown
+        pageDocument.getElementById("quarterly-dropdown-line1") != null
+        pageDocument.getElementById("quarterly-dropdown-line2") != null
       }
-    }
 
+      "showing the Annual update heading and drop down section on the page" in new Setup(businessIncomeSource) {
+        pageDocument.getElementById("annual-dropdown-title").text shouldBe messages.annualDropDown
+        pageDocument.getElementById("annual-dropdown-line1") != null
+        pageDocument.getElementById("annual-dropdown-line2") != null
+      }
+
+          "showing the Final declaration heading and drop down section on the page" in new Setup(businessIncomeSource) {
+            pageDocument.getElementById("declaration-dropdown-title").text shouldBe messages.finalDeclarationDropDown
+            pageDocument.getElementById("details-content-2") != null
+          }
+
+    }
     "display all of the correct information for the EOPS property section" when {
       "showing the eops property income section" in new Setup(eopsPropertyIncomeSource) {
         eopsPropertyIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).obligationType shouldBe "EOPS"
@@ -168,9 +182,6 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
         Option(pageDocument.getElementById("eopsPropertyTableRow")) shouldBe None
       }
 
-    }
-
-
     "display all of the correct information for the EOPS business section" when {
 
       "showing heading Whole tax year (final check)" in new Setup(eopsSEIncomeSource) {
@@ -178,7 +189,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
           businessIncomeSource => pageDocument.getElementById(s"eops-SEI-${businessIncomeSource.incomeSource.tradingName}-heading").text
             shouldBe businessIncomeSource.incomeSource.tradingName
         )
-
+      }
 
       }
 
