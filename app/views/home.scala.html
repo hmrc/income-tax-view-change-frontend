@@ -47,9 +47,9 @@
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-xlarge">
-                <span class="heading-secondary">@user.userDetails.map{ details => <span id="sub-heading" class="heading-secondary">@details.name</span>}</span>
-                @messages("home.heading")
-                <span class="heading-secondary">@messages("home.unique.tax.reference")-@user.mtditid</span>
+                <span id= "sub-heading" class="heading-secondary">@user.userDetails.map{ details => <span class="heading-secondary">@details.name</span>}</span>
+                <span id=income-tax-heading>@messages("home.heading")</span>
+                <span id=utr-reference-heading  class="heading-secondary">@messages("home.unique.tax.reference")-@user.mtditid</span>
             </h1>
         </div>
     <!--Header
@@ -89,8 +89,6 @@
                         </a>
                     </p>
 
-
-                    <p><a href="./payment-history.html">@messages("home.incomeTaxPayment.paymentHistory")</a></p>
                 </div>
             </div>
         </div>

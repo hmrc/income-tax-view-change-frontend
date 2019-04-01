@@ -45,31 +45,34 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
 
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears) flatMap {
-        case lastTaxCalcs if lastTaxCalcs.nonEmpty => {
-          Future.sequence(lastTaxCalcs.filter(_.isCrystallised).map { crystallisedTaxCalc =>
-            financialTransactionsService.getFinancialTransactions(user.mtditid, crystallisedTaxCalc.year) map { transactions =>
-              (crystallisedTaxCalc, transactions)
-            }
-          }).map { billDetails =>
-            billDetails.filter(_._2 match {
-              case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty => {
-                ftm.financialTransactions.get.exists(!_.isPaid)
+
+      reportDeadlinesService.getNextDeadlineDueDate(user.incomeSources).flatMap { latestDeadlineDate =>
+
+        calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears) flatMap {
+          case lastTaxCalcs if lastTaxCalcs.nonEmpty => {
+            Future.sequence(lastTaxCalcs.filter(_.isCrystallised).map { crystallisedTaxCalc =>
+              financialTransactionsService.getFinancialTransactions(user.mtditid, crystallisedTaxCalc.year) map { transactions =>
+                (crystallisedTaxCalc, transactions)
               }
-              case _ => false
-            }).sortBy(_._1.year).headOption match {
-              case Some((bill, transaction: FinancialTransactionsModel)) =>
-                val date = transaction.findChargeForTaxYear(bill.year).get.items.get.head.dueDate
-                Ok(views.html.home(date, date.get))
-              case _ => Ok(views.html.home(None, LocalDate.parse("2019-01-05")))
+            }).map { billDetails =>
+              billDetails.filter(_._2 match {
+                case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty => {
+                  ftm.financialTransactions.get.exists(!_.isPaid)
+                }
+                case _ => false
+              }).sortBy(_._1.year).headOption match {
+                case Some((bill, transaction: FinancialTransactionsModel)) =>
+                  val date = transaction.findChargeForTaxYear(bill.year).get.items.get.head.dueDate
+                  Ok(views.html.home(date, latestDeadlineDate))
+                case _ => Ok(views.html.home(None, latestDeadlineDate))
+              }
             }
-          }
 
+          }
+          case _ => Future.successful(Ok(views.html.home(None, latestDeadlineDate)))
         }
-        case _ => Future.successful(Ok(views.html.home(None, LocalDate.parse("2019-01-01"))))
-          }
       }
-
+  }
   }
 
 

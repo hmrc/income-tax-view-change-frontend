@@ -44,15 +44,42 @@ class HomePageViewSpec extends TestSupport {
   )(FakeRequest())
 
   val updateDate: LocalDate = LocalDate.of(2018, 1, 1)
+  val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
 
-  trait Setup {
-    lazy val page: HtmlFormat.Appendable = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+
+  class Setup(paymentDueDate:Option[LocalDate]=Some(nextPaymentDueDate)) {
+    lazy val page: HtmlFormat.Appendable = views.html.home(paymentDueDate,updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
   }
 
   "home" should {
+
+    "have an incomeTaxPayment card" which {
+      "has a heading" in new Setup {
+        getTextOfElementById("income-tax-payment-card-heading") shouldBe Some("Income tax payments")
+      }
+      "has a body" that {
+        "contains the date of the next payment due" in new Setup {
+          getTextOfElementById("income-tax-payment-card-body-date") shouldBe Some("31 January 2019")
+        }
+        "contains a link to the view bill and make payment page" in new Setup {
+          getTextOfElementById("bills-link") shouldBe Some("View bill and make payment")
+          getElementById("bills-link").map(_.attr("href")) shouldBe Some(controllers.routes.BillsController.viewCrystallisedCalculations().url)
+        }
+
+        "contains a link to the previous bills page" in new Setup {
+          getTextOfElementById("previouse-bill-link") shouldBe Some("Previous bills")
+          getElementById("previouse-bill-link").map(_.attr("href")) shouldBe Some(controllers.routes.BillsController.viewCrystallisedCalculations().url)
+        }
+
+        "contains the content when there is no next payment due to display" in new Setup(None) {
+          getTextOfElementById("income-tax-payment-card-body-date") shouldBe Some("NO DATE")
+        }
+      }
+    }
+
     "have an updates card" which {
       "has a heading" in new Setup {
         getTextOfElementById("updates-card-heading") shouldBe Some("Updates")
@@ -85,7 +112,7 @@ class HomePageViewSpec extends TestSupport {
 
     "the bills Feature is Disabled" should {
 
-      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the Bills feature" in {
@@ -101,7 +128,7 @@ class HomePageViewSpec extends TestSupport {
 
     "the Report Deadlines Feature is Disabled" should {
 
-      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the Report Deadlines feature" in {
@@ -117,7 +144,7 @@ class HomePageViewSpec extends TestSupport {
 
     "the Estimates feature is disabled" should {
 
-      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the Estimates feature" in {
@@ -132,7 +159,7 @@ class HomePageViewSpec extends TestSupport {
 
     "the statements feature is disabled" should {
 
-      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the statements feature" in {
@@ -148,7 +175,7 @@ class HomePageViewSpec extends TestSupport {
 
     "the account details feature is disabled" should {
 
-      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the account details feature" in {
@@ -164,7 +191,7 @@ class HomePageViewSpec extends TestSupport {
 
     "all features are enabled" should {
 
-      lazy val page = views.html.home(updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
       import messages._
 
@@ -199,7 +226,7 @@ class HomePageViewSpec extends TestSupport {
       }
 
       s"have the page heading '$heading'" in {
-        document.getElementById("page-heading").text() shouldBe heading
+        document.getElementById("income-tax-heading").text() shouldBe heading
       }
 
       s"have the subheading with the users name '$testUserName'" in {
@@ -207,82 +234,38 @@ class HomePageViewSpec extends TestSupport {
       }
 
       "have a subheading with the users mtd-it-id" in {
-        document.select("header p").eq(1).text() shouldBe s"Unique Tax Reference-${testMtdItUser.mtditid}"
+        document.getElementById("utr-reference-heading").text() shouldBe s"Unique Tax Reference-${testMtdItUser.mtditid}"
       }
 
-      s"have a Bills section" which {
 
-        lazy val billsSection = document.getElementById("bills-section")
 
-        s"has the heading '${BillsSection.heading}'" in {
-          billsSection.getElementById("bills-heading").text shouldBe BillsSection.heading
-        }
 
-        s"has the paragraph '${BillsSection.paragraph}'" in {
-          billsSection.getElementById("bills-text").text shouldBe BillsSection.paragraph
-        }
 
-        "has a link to bills" which {
-
-          s"has the text '${BillsSection.heading}'" in {
-            billsSection.getElementById("bills-link").text shouldBe BillsSection.heading
-          }
-
-          "links to the bills page" in {
-            billsSection.getElementById("bills-link").attr("href") shouldBe controllers.routes.BillsController.viewCrystallisedCalculations().url
-          }
-        }
-      }
-
-      s"have a Statements section" which {
-
-        lazy val statementsSection = document.getElementById("statements-section")
-
-        s"has the heading '${ReportDeadlinesSection.heading}'" in {
-          statementsSection.getElementById("statements-heading").text shouldBe StatementSection.heading
-        }
-
-        s"has the paragraph '${ReportDeadlinesSection.paragraph}'" in {
-          statementsSection.getElementById("statements-text").text shouldBe StatementSection.paragraph
-        }
-
-        "has a link to statements" which {
-
-          s"has the text '${ReportDeadlinesSection.heading}'" in {
-            statementsSection.getElementById("statements-link").text shouldBe StatementSection.heading
-          }
-
-          "links to the statements page" in {
-            statementsSection.getElementById("statements-link").attr("href") shouldBe controllers.routes.StatementsController.getStatements().url
-          }
-        }
-      }
-
-      s"have an Account Details section" which {
-
-        mockAppConfig.features.accountDetailsEnabled(true)
-        lazy val accountDetailsSection = document.getElementById("accounts-section")
-
-        s"has the heading '${AccountDetailsSection.heading}'" in {
-          accountDetailsSection.getElementById("accounts-heading").text shouldBe AccountDetailsSection.heading
-        }
-
-        s"has the paragraph '${AccountDetailsSection.paragraph}'" in {
-          accountDetailsSection.getElementById("accounts-text").text shouldBe AccountDetailsSection.paragraph
-        }
-
-        "has a link to statements" which {
-
-          s"has the text '${AccountDetailsSection.heading}'" in {
-            accountDetailsSection.getElementById("accounts-link").text shouldBe AccountDetailsSection.heading
-          }
-
-          "links to the statements page" in {
-            accountDetailsSection.getElementById("accounts-link").attr("href") shouldBe controllers.routes.AccountDetailsController.getAccountDetails().url
-          }
-        }
-
-      }
+//      s"have an Account Details section" which {
+//
+//        mockAppConfig.features.accountDetailsEnabled(true)
+//        lazy val accountDetailsSection = document.getElementById("accounts-section")
+//
+//        s"has the heading '${AccountDetailsSection.heading}'" in {
+//          accountDetailsSection.getElementById("accounts-heading").text shouldBe AccountDetailsSection.heading
+//        }
+//
+//        s"has the paragraph '${AccountDetailsSection.paragraph}'" in {
+//          accountDetailsSection.getElementById("accounts-text").text shouldBe AccountDetailsSection.paragraph
+//        }
+//
+//        "has a link to statements" which {
+//
+//          s"has the text '${AccountDetailsSection.heading}'" in {
+//            accountDetailsSection.getElementById("accounts-link").text shouldBe AccountDetailsSection.heading
+//          }
+//
+//          "links to the statements page" in {
+//            accountDetailsSection.getElementById("accounts-link").attr("href") shouldBe controllers.routes.AccountDetailsController.getAccountDetails().url
+//          }
+//        }
+//
+//      }
 
       "have no sidebar section " in {
         document.getElementById("sidebar") shouldBe null
