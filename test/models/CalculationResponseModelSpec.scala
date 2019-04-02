@@ -302,13 +302,19 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
 
   "CalculationResponseModelWithYear" should {
 
-    val errorModel = CalculationResponseModelWithYear(CalculationErrorModel(5, "test"), 2020)
+    val errorModel = CalculationResponseModelWithYear(CalculationErrorModel(500, "test"), 2020)
+    val errorModelNotFound = CalculationResponseModelWithYear(CalculationErrorModel(404, "not found"), 2020)
     val calcModelCrystallised = CalculationResponseModelWithYear(CalculationModel("calcId", None, None, Some(true), None, None), 2020)
     val calcModelEstimate = CalculationResponseModelWithYear(CalculationModel("calcId", None, None, Some(false), None, None), 2020)
 
     "return true for isError" when {
-      "the model it contains is of type CalculationErrorModel" in {
+      "the model it contains is of type CalculationErrorModel and the status is >= 500" in {
         errorModel.isError shouldBe true
+      }
+    }
+    "return false for isError" when {
+      "the model it contains is of type CalculationErrorModel and the status < 500" in {
+        errorModelNotFound.isError shouldBe false
       }
     }
     "return false for isError" when {
@@ -327,6 +333,19 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
       }
       "the model it contains is not a CalculationModel" in {
         errorModel.isCrystallised shouldBe false
+      }
+    }
+    "return true for notCrystallised" when {
+      "the model it contains is a CalculationModel and is an Estimate" in {
+        calcModelEstimate.notCrystallised shouldBe true
+      }
+    }
+    "return false for notCrystallised" when {
+      "the model it contains is a CalculationModel but it is Crystallised" in {
+        calcModelCrystallised.notCrystallised shouldBe false
+      }
+      "the model it contains is a CalculationErrorModel" in {
+        errorModel.notCrystallised shouldBe false
       }
     }
   }

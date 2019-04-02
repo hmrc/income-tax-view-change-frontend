@@ -65,49 +65,44 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   def getLatestCalculation(nino: String, taxYear: Int)(implicit hc: HeaderCarrier): Future[CalculationResponseModel] = {
     val url = getLatestCalculationUrl(nino, taxYear.toString)
-    Logger.debug(s"[CalculationDataConnector][getLatestCalculation] - GET $url")
+    Logger.debug(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, hc.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map { response =>
       response.status match {
         case OK =>
-          Logger.debug(s"[CalculationDataConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.json}")
+          Logger.debug(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.json}")
           response.json.validate[CalculationModel].fold(
             invalid => {
-              Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Json validation error parsing calculation model response. Invalid=$invalid")
+              Logger.error(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Json validation error parsing calculation model response. Invalid=$invalid")
               CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Json validation error parsing calculation model response")
             },
             valid => valid
           )
         case _ =>
-          Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.body}")
-          Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Response status: [${response.status}] returned from Latest Calculation call")
+          Logger.error(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.body}")
           CalculationErrorModel(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Unexpected future failed error, ${ex.getMessage}")
+        Logger.error(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Unexpected future failed error, ${ex.getMessage}")
         CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-      case _ =>
-        Logger.error(s"[CalculationDataConnector][getLatestCalculation] - Unexpected future failed error")
-        CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
     }
   }
 
   def getIncomeSources(mtditid: String, nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
 
     val url = getIncomeSourcesUrl(mtditid)
-    Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - GET $url")
+    Logger.debug(s"[IncomeTaxViewChangeConnector][getIncomeSources] - GET $url")
 
     auditingService.audit(IncomeSourceDetailsRequestAuditModel(mtditid, nino))
 
     http.GET[HttpResponse](url) map { response =>
       response.status match {
         case OK =>
-          Logger.debug(s"[IncomeSourceDetailsConnector][getIncomeSources] - RESPONSE status: ${response.status}, json: ${response.json}")
+          Logger.debug(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[IncomeSourceDetailsModel].fold(
             invalid => {
-              Logger.error(s"[IncomeSourceDetailsConnector][getIncomeSources] - Json Validation Error. Parsing Latest Calc Response")
-              Logger.error(s"[IncomeSourceDetailsConnector][getIncomeSources] $invalid")
+              Logger.error(s"[IncomeTaxViewChangeConnector][getIncomeSources] $invalid")
               IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
             },
             valid => {
@@ -121,87 +116,72 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             }
           )
         case _ =>
-          Logger.error(s"[IncomeSourceDetailsConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
-          Logger.error(s"[IncomeSourceDetailsConnector][getIncomeSources] - Response status: [${response.status}] from Latest Calc call")
+          Logger.error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
           IncomeSourceDetailsError(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger.error(s"[IncomeSourceDetailsConnector][getIncomeSources] - Unexpected future failed error, ${ex.getMessage}")
+        Logger.error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - Unexpected future failed error, ${ex.getMessage}")
         IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-      case _ =>
-        Logger.error("[IncomeSourceDetailsConnector][getIncomeSources] - Unexpected future failed error")
-        IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 
   def getNino(mtdRef: String)(implicit headerCarrier: HeaderCarrier): Future[NinoResponse] = {
 
     val url = getNinoLookupUrl(mtdRef)
-    Logger.debug(s"[NinoLookupConnector][getNino] - GET $url")
+    Logger.debug(s"[IncomeTaxViewChangeConnector][getNino] - GET $url")
 
     http.GET[HttpResponse](url) map { response =>
       response.status match {
         case OK =>
-          Logger.debug(s"[NinoLookupConnector][getNino] - RESPONSE status: ${response.status}, json: ${response.json}")
+          Logger.debug(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[Nino].fold(
             invalid => {
-              Logger.error(s"[NinoLookupConnector][getNino] - Json Validation Error. Parsing Nino Response")
+              Logger.error(s"[IncomeTaxViewChangeConnector][getNino] - Json Validation Error - $invalid")
               NinoResponseError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Nino Response")
             },
             valid => valid
           )
         case _ =>
-          Logger.error(s"[NinoLookupConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
-          Logger.error(s"[NinoLookupConnector][getNino] - Response status: [${response.status}] from Get Nino call")
+          Logger.error(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
           NinoResponseError(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger.error(s"[NinoLookupConnector][getNino] - Unexpected future failed error, ${ex.getMessage}")
+        Logger.error(s"[IncomeTaxViewChangeConnector][getNino] - Unexpected future failed error, ${ex.getMessage}")
         NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-      case _ =>
-        Logger.error(s"[NinoLookupConnector][getNino] - Unexpected future failed error")
-        NinoResponseError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 
   def getReportDeadlines(incomeSourceID: String)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
 
     val url = getReportDeadlinesUrl(incomeSourceID, mtdUser.nino)
-    Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - GET $url")
+    Logger.debug(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - GET $url")
 
-    //Audit Report Deadlines Request
     auditingService.audit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, incomeSourceID))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
         case OK =>
-          Logger.debug(s"[ReportDeadlinesConnector][getReportDeadlines] - RESPONSE status: ${response.status}, json: ${response.json}")
+          Logger.debug(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[ReportDeadlinesModel].fold(
             invalid => {
-              Logger.error("[ReportDeadlinesConnector][getReportDeadlines] - Json Validation Error. Parsing Report Deadlines Data Response")
-              Logger.error(s"[ReportDeadlinesConnector][getReportDeadlines] - Json Validation Error: $invalid")
+              Logger.error(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - Json Validation Error: $invalid")
               ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
             },
             valid => {
-              //Audit Report Deadlines Response
               auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser.mtditid, mtdUser.nino, incomeSourceID, valid.obligations))
               valid
             }
           )
         case _ =>
-          Logger.error(s"[ReportDeadlinesConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
-          Logger.error(s"[ReportDeadlinesConnector][getReportDeadlines] - Status: [${response.status}] Returned from business report deadlines call")
+          Logger.error(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
           ReportDeadlinesErrorModel(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger.error(s"[ReportDeadlinesConnector][getReportDeadlines] - Unexpected future failed error, ${ex.getMessage}")
+        Logger.error(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - Unexpected future failed error, ${ex.getMessage}")
         ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-      case _ =>
-        Logger.error("[ReportDeadlinesConnector][getReportDeadlines] - Unexpected future failed error")
-        ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error")
     }
   }
 

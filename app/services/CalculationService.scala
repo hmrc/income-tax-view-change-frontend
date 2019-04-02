@@ -63,13 +63,6 @@ class CalculationService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
   def getLatestCalculation(nino: String, taxYear: Int)
                           (implicit headerCarrier: HeaderCarrier): Future[CalculationResponseModel] = {
     Logger.debug("[CalculationService][getLatestCalculation] - Requesting latest calc data from the backend")
-    incomeTaxViewChangeConnector.getLatestCalculation(nino, taxYear) map {
-      case success: CalculationModel =>
-        Logger.debug(s"[CalculationService][getLatestCalculation] - Retrieved Calculation data: \n$success")
-        success
-      case error: CalculationErrorModel =>
-        Logger.error(s"[CalculationService][getLatestCalculation] - Error Response Status: ${error.code}, Message: ${error.message}")
-        error
-    }
+    incomeTaxViewChangeConnector.getLatestCalculation(nino, taxYear)
   }
 }

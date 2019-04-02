@@ -92,7 +92,18 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
           }
         }
 
-        "successfully retrieves income sources, but the list returned from the service has an error model" should {
+        "successfully retrieves income sources, but the list returned from the service has a not found error model" should {
+          lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
+
+          "return SEE_OTHER (303)" in {
+            TestCalculationController.config.features.estimatesEnabled(true)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+            mockGetAllLatestCalcSuccessOneNotFound()
+            status(result) shouldBe Status.SEE_OTHER
+          }
+        }
+
+        "successfully retrieves income sources, but the list returned from the service has a internal server error model" should {
 
           lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
 

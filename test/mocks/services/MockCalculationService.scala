@@ -74,10 +74,14 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     setupMockGetCalculation(testNino, testYear)(CalcDisplayNoDataFound)
   def mockGetAllLatestCalcSuccess():Unit =
     setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearList)
+  def mockGetAllLatestCalcSuccessOneNotFound(): Unit =
+    setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListOneNotFound)
   def mockGetAllLatestCrystallisedCalcSuccess():Unit =
     setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearCrystallisedList)
   def mockGetAllLatestCrystallisedCalcWithError():Unit =
     setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListWithError)
+  def mockGetAllLatestCrystallisedCalcWithNotFound():Unit =
+    setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(lastTaxCalcWithYearListWithCalcNotFound)
   def mockGetAllLatestCalcSuccessEmpty():Unit =
     setupMockGetAllLatestCalculations(testNino, List(testYear, testYearPlusOne))(List())
   def mockLatestCalculationSuccess(): Unit =
