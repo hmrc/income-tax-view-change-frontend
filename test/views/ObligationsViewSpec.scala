@@ -112,6 +112,17 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       crystallisedDeadlinesModel = Some(CrystallisedDeadlinesModel(ReportDeadlinesModel(List(crystallisedObligation))))
     )
 
+
+    lazy val multiCrystallisedIncomeSource = IncomeSourcesWithDeadlinesModel(
+      List(BusinessIncomeWithDeadlinesModel(
+        business1,
+        crystallisedObligation
+      )),
+      None,
+      crystallisedDeadlinesModel = Some(CrystallisedDeadlinesModel(ReportDeadlinesModel(List(crystallisedObligationTwo, crystallisedObligation))))
+    )
+
+
     lazy val eopsSEIncomeSource = IncomeSourcesWithDeadlinesModel(businessIncomeSources =
       List(BusinessIncomeWithDeadlinesModel(
         incomeSource = business1,
@@ -153,25 +164,25 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
       "showing the Quarterly update heading and drop down section on the page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("quarterly-dropdown-title").text shouldBe messages.quarterlyDropDown
-        pageDocument.getElementById("quarterly-dropdown-line1") != null
-        pageDocument.getElementById("quarterly-dropdown-line2") != null
+        pageDocument.getElementById("quarterly-dropdown-line1").text == messages.quarterlyDropdownLine1
+        pageDocument.getElementById("quarterly-dropdown-line2").text == messages.quarterlyDropdownLine2
       }
 
       "showing the Annual update heading and drop down section on the page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("annual-dropdown-title").text shouldBe messages.annualDropDown
-        pageDocument.getElementById("annual-dropdown-line1") != null
-        pageDocument.getElementById("annual-dropdown-line2") != null
+        pageDocument.getElementById("annual-dropdown-line1").text == messages.annualDropdownListOne
+        pageDocument.getElementById("annual-dropdown-line2").text == messages.annualDropdownListTwo
       }
 
-          "showing the Final declaration heading and drop down section on the page" in new Setup(businessIncomeSource) {
-            pageDocument.getElementById("declaration-dropdown-title").text shouldBe messages.finalDeclarationDropDown
-            pageDocument.getElementById("details-content-2") != null
-          }
+      "showing the Final declaration heading and drop down section on the page" in new Setup(businessIncomeSource) {
+        pageDocument.getElementById("declaration-dropdown-title").text shouldBe messages.finalDeclarationDropDown
+        pageDocument.getElementById("details-content-2").text == messages.finalDeclerationDetails
+      }
 
     }
     "display all of the correct information for the EOPS property section" when {
       "showing the eops property income section" in new Setup(eopsPropertyIncomeSource) {
-        eopsPropertyIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(0).obligationType shouldBe "EOPS"
+        eopsPropertyIncomeSource.propertyIncomeSource.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations.head.obligationType shouldBe "EOPS"
         pageDocument.getElementById("eops-pi-heading").text shouldBe messages.propertyIncome
         pageDocument.getElementById("eops-pi-dates").text shouldBe messages.fromToDates("1 January 2019", "31 January 2020")
         pageDocument.getElementById("eops-pi-due-on").text shouldBe messages.dueOn
@@ -286,6 +297,35 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       "showing the due date of the deadline" in new Setup(crystallisedIncomeSource){
         val result = pageDocument.getElementById("crystallised-due").text
         val expectedResult = crystallisedIncomeSource.crystallisedDeadlinesModel.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations.head.due.toLongDate
+
+        result shouldBe expectedResult
+      }
+
+    }
+
+    "display all of the correct information for the crystallised section for multiple crystallised obligations" when {
+
+      "showing the title of the deadline" in new Setup(multiCrystallisedIncomeSource){
+        val result = pageDocument.getElementById("crystallised-heading").text
+        val expectedResult = messages.crystallisedHeading
+
+        result shouldBe expectedResult
+      }
+
+      "showing the period of the deadline" in new Setup(multiCrystallisedIncomeSource){
+        val result = pageDocument.getElementById("crystallised-period").text
+        val expectedResult = multiCrystallisedIncomeSource.crystallisedDeadlinesModel.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(1).start.toLongDate +
+          " to " +
+          multiCrystallisedIncomeSource.crystallisedDeadlinesModel.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(1).end.toLongDate
+
+
+        result shouldBe expectedResult
+      }
+
+
+      "showing the due date of the deadline" in new Setup(multiCrystallisedIncomeSource){
+        val result = pageDocument.getElementById("crystallised-due").text
+        val expectedResult = multiCrystallisedIncomeSource.crystallisedDeadlinesModel.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel].obligations(1).due.toLongDate
 
         result shouldBe expectedResult
       }
