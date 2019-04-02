@@ -58,7 +58,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
       "there is just a crystallisation deadline" in new Setup {
         setupMockReportDeadlines(testNino)(obligationsCrystallisedSuccessModel)
 
-        await(getNextDeadlineDueDate(noIncomeDetails)) shouldBe LocalDate.of(2018, 1, 31)
+        await(getNextDeadlineDueDate(noIncomeDetails)) shouldBe LocalDate.of(2017,10,31)
       }
       "one of the report deadlines returned back an error model" in new Setup {
         setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
