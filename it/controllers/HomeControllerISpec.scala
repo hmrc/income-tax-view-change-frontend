@@ -84,7 +84,7 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
           httpStatus(OK),
           pageTitle(title),
           elementTextByID("updates-card-body-date")(veryOverdueDate.toLongDate),
-          elementTextByID("income-tax-payment-card-body-date")("NO DATE")
+          elementTextByID("income-tax-payment-card-body-date")("No payments due.")
         )
       }
     }

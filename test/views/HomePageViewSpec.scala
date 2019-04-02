@@ -75,7 +75,7 @@ class HomePageViewSpec extends TestSupport {
         }
 
         "contains the content when there is no next payment due to display" in new Setup(None) {
-          getTextOfElementById("income-tax-payment-card-body-date") shouldBe Some("NO DATE")
+          getTextOfElementById("income-tax-payment-card-body-date") shouldBe Some("No payments due.")
         }
       }
     }

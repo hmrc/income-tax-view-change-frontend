@@ -109,7 +109,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "NO DATE"
+          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
 
         }
 
@@ -126,7 +126,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "NO DATE"
+          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
         }
 
         "All financial transaction bill are paid" in new Setup {
@@ -142,7 +142,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "NO DATE"
+          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
         }
 
         "There is no calculation data" in new Setup {
@@ -156,7 +156,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "NO DATE"
+          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
         }
 
         "There are no crystallised calculation data" in new Setup {
@@ -172,7 +172,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "NO DATE"
+          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
         }
       }
 
