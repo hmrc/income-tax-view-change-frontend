@@ -86,19 +86,19 @@ class IncomeSourcesWithDeadlinesModelSpec extends UnitSpec with Matchers {
 
     "the user has just a crystallised obligation" should {
       s"have the crystallised accounting period start date of ${openCrystallised.start}" in {
-        val result = crystallisedOnlyDeadlines.crystallisedDeadlinesModel.get.reportDeadlinesModel.asInstanceOf[ReportDeadlinesModel]
+        val result = crystallisedOnlyDeadlines.crystallisedDeadlinesModel.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel]
 
         result.obligations.head.start shouldBe openCrystallised.start
       }
 
       s"have the crystallised accounting period end date of ${openCrystallised.end}" in {
-        val result = crystallisedOnlyDeadlines.crystallisedDeadlinesModel.get.reportDeadlinesModel.asInstanceOf[ReportDeadlinesModel]
+        val result = crystallisedOnlyDeadlines.crystallisedDeadlinesModel.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel]
 
         result.obligations.head.end shouldBe openCrystallised.end
       }
 
       s"have the crystallised accounting period due date of ${openCrystallised.due}" in {
-        val result = crystallisedOnlyDeadlines.crystallisedDeadlinesModel.get.reportDeadlinesModel.asInstanceOf[ReportDeadlinesModel]
+        val result = crystallisedOnlyDeadlines.crystallisedDeadlinesModel.get.reportDeadlines.asInstanceOf[ReportDeadlinesModel]
 
         result.obligations.head.due shouldBe openCrystallised.due
       }

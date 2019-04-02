@@ -27,21 +27,20 @@ import play.api.libs.json._
 sealed trait ReportDeadlinesResponseModel
 
 case class ReportDeadlinesModel(obligations: List[ReportDeadlineModel]) extends ReportDeadlinesResponseModel {
-  val currentQuarterlyDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == QuarterlyObligation).sortBy(_.start.toEpochDay)
-  val currentEOPsDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == EopsObligation).sortBy(_.start.toEpochDay)
-
+  val currentQuarterlyDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == "Quarterly").sortBy(_.start.toEpochDay)
+  val currentEOPsDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == "EOPS").sortBy(_.start.toEpochDay)
+  val currentCrystDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == "Crystallised").sortBy(_.start.toEpochDay)
 }
 
 case class ReportDeadlineModel(start: LocalDate,
                                end: LocalDate,
                                due: LocalDate,
+                               obligationType: String,
                                periodKey: String) extends ReportDeadlinesResponseModel {
 
   def currentTime(): LocalDate = LocalDate.now()
 
   def getReportDeadlineStatus: ReportDeadlineStatus = if (!currentTime().isAfter(due)) Open(due) else Overdue(due)
-
-  def obligationType: ObligationType = if(ChronoUnit.MONTHS.between(start, end).abs > 3) EopsObligation else QuarterlyObligation
 }
 
 case class ReportDeadlinesErrorModel(code: Int, message: String) extends ReportDeadlinesResponseModel
@@ -52,6 +51,7 @@ object ReportDeadlineModel {
     (__ \ "startDate").write[LocalDate] and
       (__ \ "endDate").write[LocalDate] and
       (__ \ "dueDate").write[LocalDate] and
+      (__ \ "obligationType").write[String] and
       (__ \ "periodKey").write[String]
   )(unlift(ReportDeadlineModel.unapply))
 }

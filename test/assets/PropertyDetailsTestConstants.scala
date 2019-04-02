@@ -72,7 +72,8 @@ object PropertyDetailsTestConstants extends ImplicitDateFormatter {
     start = "2017-04-06",
     end = "2018-04-05",
     due = "2017-10-31",
-    periodKey = "#003"
+    periodKey = "#003",
+    obligationType = "Crystallised"
   ))
 
   val crystallisedDeadlines = CrystallisedDeadlinesModel(

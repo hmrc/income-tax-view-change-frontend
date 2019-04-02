@@ -23,7 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 
 object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
 
-  def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start,m.end,m.due,m.periodKey) {
+  def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start,m.end,m.due, m.obligationType, m.periodKey) {
     override def currentTime() = "2017-10-31"
   }
 
@@ -31,6 +31,7 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     start = "2017-7-1",
     end = "2017-9-30",
     due = "2019-10-30",
+    obligationType = "Quarterly",
     periodKey = "#002"
   ))
 
@@ -38,6 +39,7 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     start = "2017-7-1",
     end = "2017-9-30",
     due = "2017-10-30",
+    obligationType = "Quarterly",
     periodKey = "#002"
   ))
 
@@ -45,6 +47,7 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     start = "2017-7-1",
     end = "2017-9-30",
     due = "2017-10-31",
+    obligationType = "Quarterly",
     periodKey = "#003"
   ))
 
@@ -52,7 +55,24 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     start = "2017-10-1",
     end = "2017-12-30",
     due = "2017-10-31",
+    obligationType = "Quarterly",
     periodKey = "#002"
+  ))
+
+  val crystallisedObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
+    start = "2017-10-1",
+    end = "2018-10-30",
+    due = "2017-10-31",
+    obligationType = "Crystallised",
+    periodKey = ""
+  ))
+
+  val crystallisedObligationTwo = fakeReportDeadlinesModel(ReportDeadlineModel(
+    start = "2018-10-1",
+    end = "2019-10-30",
+    due = "2020-10-31",
+    obligationType = "Crystallised",
+    periodKey = ""
   ))
 
 
@@ -64,12 +84,14 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     "start" -> "2017-07-01",
     "end" -> "2017-09-30",
     "due" -> "2017-10-30",
+    "obligationType" -> "Quarterly",
     "periodKey" -> "#002"
   )
   val reportDeadlineOpenJson = Json.obj(
     "start" -> "2017-07-01",
     "end" -> "2017-09-30",
     "due" -> "2017-10-31",
+    "obligationType" -> "Quarterly",
     "periodKey" -> "#003"
   )
   val obligationsDataSuccessJson = Json.obj(
@@ -91,12 +113,14 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     start = "2017-04-06",
     end = "2018-04-05",
     due = "2017-10-01",
+    obligationType = "EOPS",
     periodKey = "#002"
   ))
   val openEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-04-06",
     end = "2018-04-05",
     due = "2017-10-31",
+    obligationType = "EOPS",
     periodKey = "#003"
   ))
 
@@ -104,6 +128,7 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     start = "2017-04-06",
     end = "2018-04-05",
     due = "2019-10-31",
+    obligationType = "Crystallised",
     periodKey = ""
   ))
 

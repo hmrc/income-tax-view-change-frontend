@@ -862,6 +862,44 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
         }
 
+        "the user has a Crystallised obligation only" in {
+          appConfig.features.obligationsPageEnabled(true)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, testNino, crystallisedEOPSModel)
+
+          val res= IncomeTaxViewChangeFrontend.getReportDeadlines
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyReportDeadlinesCall(testNino, testNino)
+
+          Then("the view displays the correct title")
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.obligationsTitle)
+          )
+
+          Then("the page displays crystallised obligation information")
+          res should have(
+            isElementVisibleById("crystallised-heading")(expectedValue = true),
+            isElementVisibleById("crystallised-period")(expectedValue = true),
+            isElementVisibleById("crystallised-due-on")(expectedValue = true),
+            isElementVisibleById("crystallised-due")(expectedValue = true)
+          )
+
+          Then("the page displays no property obligation dates")
+          res should have(
+            isElementVisibleById("eops-pi-dates")(expectedValue = false),
+            isElementVisibleById("eops-pi-due-date")(expectedValue = false)
+          )
+
+          Then("the page displays no income obligation dates")
+          res should have(
+            isElementVisibleById("eops-SEI-dates")(expectedValue = false),
+            isElementVisibleById("eops-SEI-due-date")(expectedValue = false)
+          )
+
+        }
+
       }
     }
 

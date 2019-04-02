@@ -57,24 +57,28 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           start = "2017-04-06",
           end = "2017-07-05",
           due = "2017-08-05",
+          obligationType = "Quarterly",
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2017-07-06",
           end = "2017-10-05",
           due = "2017-11-05",
+          obligationType = "Quarterly",
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2017-10-06",
           end = "2018-01-05",
           due = "2018-02-05",
+          obligationType = "Quarterly",
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2018-01-06",
           end = "2018-04-05",
           due = "2018-05-06",
+          obligationType = "Quarterly",
           periodKey = "periodKey"
         )
       )
@@ -92,24 +96,28 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           start = "2017-04-06",
           end = "2017-07-05",
           due = "2017-08-05",
+          obligationType = "Quarterly",
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2017-07-06",
           end = "2017-10-05",
           due = "2017-11-05",
+          obligationType = "Quarterly",
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2017-10-06",
           end = "2018-01-05",
           due = "2018-02-05",
+          obligationType = "Quarterly",
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
           start = "2018-01-06",
           end = "2018-04-05",
           due = "2018-05-06",
+          obligationType = "Quarterly",
           periodKey = "periodKey"
         )
       )

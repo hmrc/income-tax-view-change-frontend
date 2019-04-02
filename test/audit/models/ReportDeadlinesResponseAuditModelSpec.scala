@@ -57,18 +57,21 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
               "startDate" -> "2017-07-01",
               "endDate" -> "2017-09-30",
               "dueDate" -> "2017-10-31",
+              "obligationType" -> "Quarterly",
               "periodKey" -> "#003"
             ),
             Json.obj(
               "startDate" -> "2017-07-01",
               "endDate" -> "2017-09-30",
               "dueDate" -> "2017-10-31",
+              "obligationType" -> "Quarterly",
               "periodKey" -> "#003"
             ),
             Json.obj(
               "startDate" -> "2017-07-01",
               "endDate" -> "2017-09-30",
               "dueDate" -> "2017-10-30",
+              "obligationType" -> "Quarterly",
               "periodKey" -> "#002"
             )
           )
@@ -103,6 +106,7 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
               "startDate" -> "2017-07-01",
               "endDate" -> "2017-09-30",
               "dueDate" -> "2017-10-31",
+              "obligationType" -> "Quarterly",
               "periodKey" -> "#003"
             )
           )

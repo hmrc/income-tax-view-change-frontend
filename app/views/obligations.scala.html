@@ -33,8 +33,8 @@
 @breadcrumb = {
 @breadcrumbHelper(Breadcrumb(Vector(
 BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-BreadcrumbItem("breadcrumb-obligations", None)
-)), "ReportDeadlinesPage")
+BreadcrumbItem("breadcrumb-updates", None)
+)), "Updates")
 }
 
 @main_template(
@@ -43,9 +43,6 @@ bodyClasses = None,
 contentHeader = Some(breadcrumb)
 ) {
 
-<!--
-    Heading content section
--->
 <header class="page-heading">
     <h1 id="page-heading" class="heading-xlarge"> @Messages("obligations.heading.v2")</h1>
 </header>
@@ -54,120 +51,31 @@ contentHeader = Some(breadcrumb)
     <h1 id="page-sub-heading" class="heading large"> @Messages("obligations.sub-heading.v2") </h1>
 
     <p>@Messages("obligations.sub-heading.info.prt1.v2")
-        <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax">
+        <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
             @Messages("obligations.sub-heading.info.hyperlink.v2") </a>
         @Messages("obligations.sub-heading.info.prt2.v2")
     </p>
 </section>
 
-<!--
-    Declarations section
--->
-<h2 id="declarations-heading" class="heading">@messages("obligations.declarations")</h2>
-
-<!--
-    Heading and dropdown subsection
--->
-<details role="group">
-
-    <summary id="declaration-dropdown-title" role="button" aria-controls="details-content-0" aria-expanded="false">
-        @Messages("obligation.dropdown.declarations.info.v2")
-    </summary>
-
-    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-        <p>@Messages("obligations.dropdown.declarations.types.v2")</p>
-        <ol class="list list-number">
-            <li id="declarations-dropdown-list-one">
-                <span class="bold">@Messages("obligations.dropdown.declarations.li1.type1.v2")</span> @Messages("obligations.dropdown.declarations.li1.text.v2")
-            </li>
-            <li id="declarations-dropdown-list-two">
-                <span class="bold">@Messages("obligations.dropdown.declarations.li2.type2.v2")</span> @Messages("obligations.dropdown.declarations.li2.text.v2")
-            </li>
-        </ol>
-
-    </div>
-
-</details>
-
-<!--
-    Property income EOPS subsection
--->
-@for(propertyIncomeSource <- incomeSources.propertyIncomeSource) {
-@propertyIncomeSource.reportDeadlines match {
-case propertyDeadlines: ReportDeadlinesModel => {
-@for(deadline <- propertyDeadlines.currentEOPsDeadlines) {
-<div id="eopsPropertyTableRow" class="grid-row divider--bottom">
-    <div class="column-half">
-        <p>
-            <div id="eops-pi-heading" class="bold">@messages("obligations.propertyIncome")</div>
-            <div id="eops-pi-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
-        </p>
-    </div>
-    <div class="column-half">
-        <p>
-            <div id="eops-pi-due-on">@messages("obligations.dueOn")</div>
-            <div id="eops-pi-due-date">@deadline.due.toLongDate</div>
-        </p>
-    </div>
-</div>
-}
-}
-case _ => {}
-}
-}
-
-<!--
-    Income source EOPS subsection
--->
-@for(businessIncomeSource <- incomeSources.businessIncomeSources){
-    @businessIncomeSource.reportDeadlines match {
-        case businessIncomeDeadlines: ReportDeadlinesModel => {
-            @for(deadline <- businessIncomeDeadlines.currentEOPsDeadlines){
-                <div id = "eopsSEIncomeSection"  class="grid-row divider--bottom">
-                    <div class="column-half">
-                        <p>
-                        <div id="eops-SEI-@{businessIncomeSource.incomeSource.tradingName.get}-heading" class="bold">@{businessIncomeSource.incomeSource.tradingName.get}</div>
-                        <div id="eops-SEI-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
-                        </p>
-                    </div>
-                    <div class="column-half">
-                        <p>
-                        <div id="eops-SEI-due-on">@messages("obligations.dueOn")</div>
-                        <div id="eops-SEI-due-date">@deadline.due.toLongDate</div>
-                        </p>
-                    </div>
-                </div>
-            }
-        }
-        case _ => {}
-    }
-}
-
-<!--
-    Quarterly returns section
--->
-<h2 id="quarterlyReturns-heading" class="heading">@messages("obligations.quarterlyReturns")</h2>
-<!--
-    Heading and dropdown subsection
--->
-
+<h3 id="quarterlyReturns-heading" class="heading-medium">@messages("obligations.quarterlyUpdates")</h3>
 
 <details role="group">
 
-    <summary id="quarterly-dropdown-title" role="button" aria-controls="details-content-1" aria-expanded="false">
+    <summary id="quarterly-dropdown-title" role="button" aria-controls="details-content-0" aria-expanded="false">
         @Messages("obligation.dropdown.quarterlyReturn.info.v2")
     </summary>
 
-    <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
+    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+        <p><span id="quarterly-dropdown-line1">@Messages("obligation.dropdown.quarterlyReturn.text.v2")</span> </p>
 
-        <p>@Messages("obligation.dropdown.quarterlyReturn.text.v2")</p>
+        <p><span id="quarterly-dropdown-line2">@Messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1")
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
+                @Messages("obligations.sub-heading.info.hyperlink.v2")</a>@Messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt2")
+        </span>
+        </p>
     </div>
 
 </details>
-
-<!--
-   Property income quarterly subsection
--->
 
 @incomeSources.propertyIncomeSource match{
 case Some(propertyIncomeWithDeadlines) =>{
@@ -206,14 +114,8 @@ case _ => { }
 
 }
 
-
-
-<!--
-    Income source quarterly subsection
--->
-
+<section id="quarterly-business-returns">
     @for(businessIncomeSource <- incomeSources.businessIncomeSources){
-    <section id="quarterly-business-returns">
     @businessIncomeSource.reportDeadlines match{
     case businessDeadlines: ReportDeadlinesModel => {
     @for(deadline <- businessDeadlines.currentQuarterlyDeadlines) {
@@ -231,12 +133,135 @@ case _ => { }
             </p>
         </div>
     </div>
-        }
-        }
+    }
+    }
     case _ => {}
     }
     }
 
 </section>
 
+<h3 id="annualUpdates-heading" class="heading-medium">@messages("obligations.annualUpdates")</h3>
+
+<details role="group">
+
+    <summary id="annual-dropdown-title" role="button" aria-controls="details-content-1" aria-expanded="false">
+        @Messages("obligation.dropdown.annualUpdates.info.v2")
+    </summary>
+
+    <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
+        <p><span id="annual-dropdown-line1"> @Messages("obligation.dropdown.annualReturn.text.v2")</span> </p>
+
+        <p><span id="annual-dropdown-line2">@Messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1")
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
+                @Messages("obligations.sub-heading.info.hyperlink.v2")</a>@Messages("obligation.dropdown.annualReturn.text.v2.lin2.prt2")
+        </span>
+        </p>
+    </div>
+
+</details>
+
+@for(propertyIncomeSource <- incomeSources.propertyIncomeSource) {
+@propertyIncomeSource.reportDeadlines match {
+case propertyDeadlines: ReportDeadlinesModel => {
+@for(deadline <- propertyDeadlines.currentEOPsDeadlines) {
+<div id="eopsPropertyTableRow" class="grid-row divider--bottom">
+    <div class="column-half">
+        <p>
+            <div id="eops-pi-heading" class="bold">@messages("obligations.propertyIncome")</div>
+            <div id="eops-pi-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
+        </p>
+    </div>
+    <div class="column-half">
+        <p>
+            <div id="eops-pi-due-on">@messages("obligations.dueOn")</div>
+            <div id="eops-pi-due-date">@deadline.due.toLongDate</div>
+        </p>
+    </div>
+</div>
+}
+}
+case _ => {}
+}
+}
+
+@for(businessIncomeSource <- incomeSources.businessIncomeSources){
+    @businessIncomeSource.reportDeadlines match {
+        case businessIncomeDeadlines: ReportDeadlinesModel => {
+            @for(deadline <- businessIncomeDeadlines.currentEOPsDeadlines){
+                <div id = "eopsSEIncomeSection"  class="grid-row divider--bottom">
+                    <div class="column-half">
+                        <p>
+                        <div id="eops-SEI-@{businessIncomeSource.incomeSource.tradingName.get}-heading" class="bold">@{businessIncomeSource.incomeSource.tradingName.get}</div>
+                        <div id="eops-SEI-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
+                        </p>
+                    </div>
+                    <div class="column-half">
+                        <p>
+                        <div id="eops-SEI-due-on">@messages("obligations.dueOn")</div>
+                        <div id="eops-SEI-due-date">@deadline.due.toLongDate</div>
+                        </p>
+                    </div>
+                </div>
+            }
+        }
+        case _ => {}
+    }
+}
+
+<h3 id="declarations-heading" class="heading-medium">@messages("obligations.finalDeclarationUpdate")</h3>
+
+<details role="group">
+
+    <summary id="declaration-dropdown-title" role="button" aria-controls="details-content-2" aria-expanded="false">
+        @Messages("obligation.dropdown.finalDeclaration.info.v2")
+    </summary>
+
+    <div class="panel panel-border-narrow" id="details-content-2" aria-hidden="true">
+        <p>@Messages("obligation.dropdown.finalDeclaration.text.v2.prt1")
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
+                @Messages("obligations.sub-heading.info.hyperlink.v2")</a>@Messages("obligation.dropdown.finalDeclaration.text.v2.prt2")
+        </p>
+    </div>
+
+</details>
+
+
+
+@incomeSources.crystallisedDeadlinesModel match{
+case Some(crystallisedDeadlinesModel) =>{
+@crystallisedDeadlinesModel.reportDeadlines match {
+case reportDeadlines: ReportDeadlinesModel => {
+@for(deadline <- reportDeadlines.currentCrystDeadlines) {
+<div id="crystallised-section"  class="grid-row divider--bottom">
+    <div class="row-border">
+        <div class="column-half">
+            <p style="font-weight:bold">
+                <span id="crystallised-heading">@messages("obligations.eops")</span><br/>
+                <span id="crystallised-period" style="font-weight:normal">
+                                    @{s"${deadline.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.end.toLongDate}"}
+                                </span>
+            </p>
+        </div>
+        <div class="column-half">
+            <p>
+                                <span id="crystallised-due-on">
+                                    @{messages("obligations.dueOn")}
+                                </span><br/>
+                <span id="crystallised-due" style="font-weight:normal">
+                                    @{deadline.due.toLongDate}
+                                </span>
+            </p>
+        </div>
+    </div>
+</div>
+}
+}
+case _ => { }
+}
+}
+
+case _ => { }
+
+}
 }

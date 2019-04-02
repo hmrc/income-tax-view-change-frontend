@@ -51,8 +51,8 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
         obligation.getReportDeadlineStatus shouldBe Overdue("2017-10-30")
       }
 
-      "have the obligation type 'QuarterlyObligation'" in {
-        obligation.obligationType shouldBe QuarterlyObligation
+      "have the obligation type 'Quarterly'" in {
+        obligation.obligationType shouldBe "Quarterly"
       }
     }
 
@@ -80,8 +80,8 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
         obligation.getReportDeadlineStatus shouldBe Open("2017-10-31")
       }
 
-      "have the obligation type 'QuarterlyObligation'" in {
-        obligation.obligationType shouldBe QuarterlyObligation
+      "have the obligation type 'Quarterly'" in {
+        obligation.obligationType shouldBe "Quarterly"
       }
     }
 
@@ -109,8 +109,8 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
         obligation.getReportDeadlineStatus shouldBe Overdue("2017-10-1")
       }
 
-      "have the obligation type 'EopsObligation'" in {
-        obligation.obligationType shouldBe EopsObligation
+      "have the obligation type 'Eops'" in {
+        obligation.obligationType shouldBe "EOPS"
       }
     }
 
@@ -138,8 +138,8 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
         obligation.getReportDeadlineStatus shouldBe Open("2017-10-31")
       }
 
-      "have the obligation type 'EopsObligation'" in {
-        obligation.obligationType shouldBe EopsObligation
+      "have the obligation type 'Eops'" in {
+        obligation.obligationType shouldBe "EOPS"
       }
     }
 
