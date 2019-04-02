@@ -43,13 +43,14 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                implicit val config: FrontendAppConfig,
                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
+
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
 
       reportDeadlinesService.getNextDeadlineDueDate(user.incomeSources).flatMap { latestDeadlineDate =>
 
         calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears) flatMap {
-          case lastTaxCalcs if lastTaxCalcs.nonEmpty => {
+          case lastTaxCalcs if lastTaxCalcs.nonEmpty =>
             Future.sequence(lastTaxCalcs.filter(_.isCrystallised).map { crystallisedTaxCalc =>
               financialTransactionsService.getFinancialTransactions(user.mtditid, crystallisedTaxCalc.year) map { transactions =>
                 (crystallisedTaxCalc, transactions)
@@ -67,8 +68,6 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                 case _ => Ok(views.html.home(None, latestDeadlineDate))
               }
             }
-
-          }
           case _ => Future.successful(Ok(views.html.home(None, latestDeadlineDate)))
         }
       }
