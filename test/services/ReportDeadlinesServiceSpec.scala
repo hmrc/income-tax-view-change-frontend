@@ -16,12 +16,14 @@
 
 package services
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _, _}
 import assets.IncomeSourceDetailsTestConstants._
 import assets.IncomeSourcesWithDeadlinesTestConstants._
 import assets.PropertyDetailsTestConstants.{propertyDetails, propertyIncomeModel}
-import assets.ReportDeadlinesTestConstants._
+import assets.ReportDeadlinesTestConstants.{obligationsCrystallisedSuccessModel, _}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.incomeSourcesWithDeadlines._
 import testUtils.TestSupport
@@ -29,6 +31,80 @@ import testUtils.TestSupport
 class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
 
   object TestReportDeadlinesService extends ReportDeadlinesService(mockIncomeTaxViewChangeConnector)
+
+  class Setup extends ReportDeadlinesService(mockIncomeTaxViewChangeConnector)
+
+  "getNextDeadlineDueDate" should {
+    "return the next report deadline due date" when {
+      "there are income sources from property, business with crystallisation" in new Setup {
+        setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
+        setupMockReportDeadlines(testPropertyIncomeId)(obligationsEOPSDataSuccessModel)
+        setupMockReportDeadlines(testNino)(obligationsCrystallisedSuccessModel)
+
+        await(getNextDeadlineDueDate(businessAndPropertyAligned)) shouldBe LocalDate.of(2017, 10, 1)
+      }
+      "there is just one report deadline from property" in new Setup {
+        setupMockReportDeadlines(testPropertyIncomeId)(obligationsEOPSDataSuccessModel)
+        setupMockReportDeadlines(testNino)(obligationsCrystallisedEmptySuccessModel)
+
+        await(getNextDeadlineDueDate(propertyIncomeOnly)) shouldBe LocalDate.of(2017, 10, 1)
+      }
+      "there is just one report deadline from business" in new Setup {
+        setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
+        setupMockReportDeadlines(testNino)(obligationsCrystallisedEmptySuccessModel)
+
+        await(getNextDeadlineDueDate(singleBusinessIncome)) shouldBe LocalDate.of(2017, 10, 30)
+      }
+      "there is just a crystallisation deadline" in new Setup {
+        setupMockReportDeadlines(testNino)(obligationsCrystallisedSuccessModel)
+
+        await(getNextDeadlineDueDate(noIncomeDetails)) shouldBe LocalDate.of(2017,10,31)
+      }
+      "one of the report deadlines returned back an error model" in new Setup {
+        setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
+        setupMockReportDeadlines(testSelfEmploymentId2)(obligationsDataSuccessModel)
+        setupMockReportDeadlines(testPropertyIncomeId)(obligationsDataErrorModel)
+        setupMockReportDeadlines(testNino)(obligationsCrystallisedEmptySuccessModel)
+
+        await(getNextDeadlineDueDate(businessesAndPropertyIncome)) shouldBe LocalDate.of(2017, 10, 30)
+      }
+    }
+  }
+
+  "getAllDeadlines" should {
+    "return all the deadlines for any property and business income sources with crystallisation" in new Setup {
+      setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
+      setupMockReportDeadlines(testPropertyIncomeId)(obligationsEOPSDataSuccessModel)
+      setupMockReportDeadlines(testNino)(obligationsCrystallisedSuccessModel)
+
+      await(getAllDeadlines(businessAndPropertyAligned)) shouldBe obligationsDataSuccessModel.obligations ++
+        obligationsEOPSDataSuccessModel.obligations ++
+        obligationsCrystallisedSuccessModel.obligations
+    }
+    "return only the non errored deadlines for any property and business income sources with crystallisation" when {
+      "property is errored" in new Setup {
+        setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
+        setupMockReportDeadlines(testPropertyIncomeId)(obligationsDataErrorModel)
+        setupMockReportDeadlines(testNino)(obligationsCrystallisedSuccessModel)
+
+        await(getAllDeadlines(businessAndPropertyAligned)) shouldBe obligationsDataSuccessModel.obligations ++ obligationsCrystallisedSuccessModel.obligations
+      }
+      "business is errored" in new Setup {
+        setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataErrorModel)
+        setupMockReportDeadlines(testPropertyIncomeId)(obligationsDataSuccessModel)
+        setupMockReportDeadlines(testNino)(obligationsCrystallisedSuccessModel)
+
+        await(getAllDeadlines(businessAndPropertyAligned)) shouldBe obligationsDataSuccessModel.obligations ++ obligationsCrystallisedSuccessModel.obligations
+      }
+      "crystallisation is errored" in new Setup {
+        setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
+        setupMockReportDeadlines(testPropertyIncomeId)(obligationsEOPSDataSuccessModel)
+        setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
+
+        await(getAllDeadlines(businessAndPropertyAligned)) shouldBe obligationsDataSuccessModel.obligations ++ obligationsEOPSDataSuccessModel.obligations
+      }
+    }
+  }
 
   "The ReportDeadlinesService.getReportDeadlines method" when {
 
