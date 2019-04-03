@@ -64,14 +64,24 @@ class HomePageViewSpec extends TestSupport {
         "contains the date of the next payment due" in new Setup {
           getTextOfElementById("income-tax-payment-card-body-date") shouldBe Some("31 January 2019")
         }
-        "contains a link to the view bill and make payment page" in new Setup {
+        "contain a link to the view bill page if the payment feature switch is turned off" in new Setup {
+          mockAppConfig.features.paymentEnabled(false)
+          getTextOfElementById("bills-link") shouldBe Some("View bill")
+          getElementById("bills-link").map(_.attr("href")) shouldBe Some(controllers.routes.BillsController.viewCrystallisedCalculations().url)
+        }
+        "contains a link to the view bill and make payment page if the payment feature switch is turned on" in new Setup {
+          mockAppConfig.features.paymentEnabled(true)
           getTextOfElementById("bills-link") shouldBe Some("View bill and make payment")
           getElementById("bills-link").map(_.attr("href")) shouldBe Some(controllers.routes.BillsController.viewCrystallisedCalculations().url)
         }
-
         "contains a link to the previous bills page" in new Setup {
           getTextOfElementById("previous-bill-link") shouldBe Some("Previous bills")
           getElementById("previous-bill-link").map(_.attr("href")) shouldBe Some(controllers.routes.BillsController.viewCrystallisedCalculations().url)
+        }
+        "not contain a link to the bill page if the feature flag is off" in new Setup {
+          mockAppConfig.features.billsEnabled(false)
+          getElementById("bills-link") shouldBe None
+          getElementById("previous-bill-link") shouldBe None
         }
 
         "contains the content when there is no next payment due to display" in new Setup(None) {

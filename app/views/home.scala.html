@@ -43,8 +43,6 @@
 
 <section id="home-page">
 
-    <!--Header
-    -->
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-xlarge">
@@ -53,11 +51,7 @@
                 <span id=utr-reference-heading  class="heading-secondary">@messages("home.unique.tax.reference")-@user.mtditid</span>
             </h1>
         </div>
-    <!--Header
-    -->
 
-    <!--income tax payment
-    -->
         <div class="column-half">
             <div id="income-tax-payment-card" class="card">
                 <div class="card-header">
@@ -74,10 +68,16 @@
                     </h3>
 
 
+                    @if(appConfig.features.billsEnabled()){
+
                     <div>
                     <p>
                         <a id="bills-link" data-journey-click="HomePage:ClickLink:ViewYourBills" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">
-                            @messages("home.incomeTaxPayment.viewBillAndMakePayment")
+                            @if(appConfig.features.paymentEnabled()) {
+                                @messages("home.incomeTaxPayment.viewBillAndMakePayment")
+                            } else {
+                                @messages("home.incomeTaxPayment.viewBill")
+                            }
                         </a>
                     </p>
                     </div>
@@ -90,15 +90,12 @@
                         </a>
                     </p>
 
+                    }
+
                 </div>
             </div>
         </div>
 
-    <!--income tax payment
-    -->
-
-    <!--updates
-    -->
         <div class="column-half">
             <div id="updates-card" class="card">
                 <div class="card-header">
@@ -118,8 +115,8 @@
                         </a>
                     </p>
                     }
-                    <hr>
                     @if(appConfig.features.estimatesEnabled()){
+                    <hr>
                     <p>
                         <a id="estimates-link" data-journey-click="HomePage:ClickLink:ViewYourEstimates" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">
                             @messages("home.updates.body.estimatesLink")
@@ -129,8 +126,6 @@
                 </div>
             </div>
         </div>
-    <!--updates
-    -->
 
     </div>
 
