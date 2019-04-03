@@ -22,7 +22,7 @@ import assets.Messages
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.calculation.{CalculationModel, CalculationResponseModelWithYear}
+import models.calculation.{CalculationErrorModel, CalculationModel, CalculationResponseModelWithYear}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
 import org.jsoup.Jsoup
 import org.mockito.Mockito.when
@@ -173,6 +173,19 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
           document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
+        }
+      }
+
+      "return ISE (500)" when {
+        "A calculation error model has returned from the service" in new Setup {
+          when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+          mockSingleBusinessIncomeSource()
+          when(calculationService.getAllLatestCalculations(any(), any())(any()))
+            .thenReturn(Future.successful(List(CalculationResponseModelWithYear(CalculationErrorModel(500,"errorMsg"), 2019))))
+
+          val result = controller.home(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
 

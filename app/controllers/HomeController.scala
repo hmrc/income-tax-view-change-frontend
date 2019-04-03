@@ -50,6 +50,7 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
       reportDeadlinesService.getNextDeadlineDueDate(user.incomeSources).flatMap { latestDeadlineDate =>
 
         calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears) flatMap {
+          case lastTaxCalcs if lastTaxCalcs.exists(_.isError) => Future.successful(itvcErrorHandler.showInternalServerError())
           case lastTaxCalcs if lastTaxCalcs.nonEmpty =>
             Future.sequence(lastTaxCalcs.filter(_.isCrystallised).map { crystallisedTaxCalc =>
               financialTransactionsService.getFinancialTransactions(user.mtditid, crystallisedTaxCalc.year) map { transactions =>

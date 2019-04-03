@@ -70,8 +70,8 @@ class HomePageViewSpec extends TestSupport {
         }
 
         "contains a link to the previous bills page" in new Setup {
-          getTextOfElementById("previouse-bill-link") shouldBe Some("Previous bills")
-          getElementById("previouse-bill-link").map(_.attr("href")) shouldBe Some(controllers.routes.BillsController.viewCrystallisedCalculations().url)
+          getTextOfElementById("previous-bill-link") shouldBe Some("Previous bills")
+          getElementById("previous-bill-link").map(_.attr("href")) shouldBe Some(controllers.routes.BillsController.viewCrystallisedCalculations().url)
         }
 
         "contains the content when there is no next payment due to display" in new Setup(None) {
