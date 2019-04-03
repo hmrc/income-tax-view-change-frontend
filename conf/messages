@@ -26,6 +26,7 @@ home.statements.text                                            = View your Inco
 home.accounts.heading                                           = Account details
 home.accounts.text                                              = See contact information and other details we have for your businesses.
 home.incomeTaxPayment.viewBillAndMakePayment                    = View bill and make payment
+home.incomeTaxPayment.viewBill                                  = View bill
 home.incomeTaxPayment.nextPaymentDue                            = Next payment due
 home.incomeTaxPayment.previousBills                             = Previous bills
 home.incomeTaxPayment.paymentHistory                            = Payment history
