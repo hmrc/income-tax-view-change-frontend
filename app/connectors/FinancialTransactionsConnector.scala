@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class FinancialTransactionsConnector @Inject()(val http: HttpClient,
                                                val config: FrontendAppConfig) extends RawResponseReads {
 
-  private[connectors] lazy val getFinancialTransactionsUrl: String => String = mtditid => s"${config.ftUrl}/financial-transactions/it/${mtditid}"
+  private[connectors] lazy val getFinancialTransactionsUrl: String => String = mtditid => s"${config.ftUrl}/financial-transactions/it/$mtditid"
 
   def getFinancialTransactions(mtditid: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier):Future[FinancialTransactionsResponseModel] = {
 
@@ -61,7 +61,6 @@ class FinancialTransactionsConnector @Inject()(val http: HttpClient,
             )
           case _ =>
             Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - Response status: [${response.status}] returned from Financial Transactions call")
             FinancialTransactionsErrorModel(response.status, response.body)
 
         }
@@ -69,9 +68,6 @@ class FinancialTransactionsConnector @Inject()(val http: HttpClient,
       case ex =>
         Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - Unexpected future failed error, ${ex.getMessage}")
         FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed, ${ex.getMessage}")
-      case _ =>
-        Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - Unexpected future failed error")
-        FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error")
     }
   }
 }

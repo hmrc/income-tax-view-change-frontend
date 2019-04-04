@@ -39,6 +39,10 @@ object IncomeTaxViewChangeStub {
     WiremockHelper.stubGet(latestCalculationUrl(nino, year), Status.INTERNAL_SERVER_ERROR, "Error Message")
   }
 
+  def stubGetLatestCalcNotFound(nino: String, year: String): Unit = {
+    WiremockHelper.stubGet(latestCalculationUrl(nino, year), Status.NOT_FOUND, "Not found")
+  }
+
   def verifyGetLatestCalculation(nino: String, year: String): Unit =
     WiremockHelper.verifyGet(latestCalculationUrl(nino, year))
 

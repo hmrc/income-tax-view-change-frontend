@@ -159,6 +159,20 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
         }
 
+        s"All calculation error models from the service have a status of ${Status.NOT_FOUND}" in new Setup {
+          when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+          mockSingleBusinessIncomeSource()
+          when(calculationService.getAllLatestCalculations(any(), any())(any()))
+            .thenReturn(Future.successful(List(CalculationResponseModelWithYear(CalculationErrorModel(Status.NOT_FOUND, "Not Found"), 2019))))
+
+          val result = controller.home(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.OK
+          val document = Jsoup.parse(bodyOf(result))
+          document.title shouldBe Messages.HomePage.title
+          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
+        }
+
         "There are no crystallised calculation data" in new Setup {
           when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
           mockSingleBusinessIncomeSource()

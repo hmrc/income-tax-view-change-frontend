@@ -83,10 +83,34 @@ class EstimatesControllerISpec extends ComponentSpecBase {
             nElementsWithClass("estimates-link")(2)
           )
         }
+
+        "return the correct estimate page when one response received a not found" in {
+
+          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+          And(s"I wiremock stub a successful Get Last Estimated Tax Liability response for year:$testYear")
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, estimateLatestTaxCalcResponseJson)
+
+          And(s"I wiremock stub a not found response for year: $testYearPlusOne")
+          IncomeTaxViewChangeStub.stubGetLatestCalcNotFound(testNino, testYearPlusOne)
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
+          val res = IncomeTaxViewChangeFrontend.getEstimates
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyLatestCalculationCall(testNino, testYear)
+          verifyLatestCalculationCall(testNino, testYearPlusOne)
+
+          res should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.routes.CalculationController.renderCalculationPage(testYearInt).url)
+          )
+        }
       }
 
       "isAuthorisedUser with an active enrolment, with a crystallised calculation and a tax estimate" should {
-        "return the correct estimate page" in {
+        "return the correct estimate page with successful responses" in {
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)

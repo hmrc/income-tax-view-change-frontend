@@ -118,7 +118,6 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
           }
 
         case _: CalculationErrorModel =>
-          Logger.error(s"[CalculationController][showCalculationForYear[$taxYear]] No latest calculation data could be retrieved.")
           Future.successful(Ok(views.html.errorPages.estimatedTaxLiabilityError(taxYear)))
       }
   }

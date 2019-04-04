@@ -79,7 +79,12 @@ object EstimatesTestConstants {
   val lastTaxCalcSuccessWithYear = CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear)
   val lastTaxCalcWithYearList = List(
     CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear),
-    CalculationResponseModelWithYear(lastTaxCalcSuccess, testYearPlusOne))
+    CalculationResponseModelWithYear(lastTaxCalcSuccess, testYearPlusOne)
+  )
+  val lastTaxCalcWithYearListOneNotFound = List(
+    CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear),
+    CalculationResponseModelWithYear(lastTaxCalcNotFound, testYearPlusOne)
+  )
   val lastTaxCalcWithYearCrystallisedList = List(
     CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYear),
     CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYearPlusOne)

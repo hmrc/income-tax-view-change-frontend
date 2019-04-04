@@ -19,12 +19,9 @@ package controllers
 import javax.inject.Inject
 
 import audit.AuditingService
-import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
+import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import enums.{Crystallised, Estimate}
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
-import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.CalculationService
@@ -32,30 +29,29 @@ import services.CalculationService
 import scala.concurrent.Future
 
 class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
-                                implicit val messagesApi: MessagesApi,
-                                val checkSessionTimeout: SessionTimeoutPredicate,
-                                val authenticate: AuthenticationPredicate,
-                                val retrieveNino: NinoPredicate,
-                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                val calculationService: CalculationService,
-                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                val itvcErrorHandler: ItvcErrorHandler,
-                                val auditingService: AuditingService
-                               ) extends BaseController {
+                                    implicit val messagesApi: MessagesApi,
+                                    val checkSessionTimeout: SessionTimeoutPredicate,
+                                    val authenticate: AuthenticationPredicate,
+                                    val retrieveNino: NinoPredicate,
+                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                    val calculationService: CalculationService,
+                                    val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                    val itvcErrorHandler: ItvcErrorHandler,
+                                    val auditingService: AuditingService
+                                   ) extends BaseController {
 
   val viewEstimateCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-    implicit user => if(config.features.estimatesEnabled()) renderView else fRedirectToHome
+    implicit user => if (config.features.estimatesEnabled()) renderView else fRedirectToHome
   }
 
   private[EstimatesController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
-    calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears).map{
+    calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears).map {
       case estimatesResponse if estimatesResponse.exists(_.isError) =>
-        Logger.error(s"[EstimatesController][viewEstimateCalculations] Retrieved at least one Errored Last Tax Calc. Response: $estimatesResponse")
         itvcErrorHandler.showInternalServerError
-      case estimatesResponse if estimatesResponse.count(!_.isCrystallised) == 1 =>
-        Redirect(controllers.routes.CalculationController.renderCalculationPage(estimatesResponse.filter(!_.isCrystallised).head.year))
+      case estimatesResponse if estimatesResponse.count(_.notCrystallised) == 1 =>
+        Redirect(controllers.routes.CalculationController.renderCalculationPage(estimatesResponse.filter(_.notCrystallised).head.year))
           .addingToSession("singleEstimate" -> "true")
-      case estimatesResponse => Ok(views.html.estimates(estimatesResponse.filter(!_.isCrystallised)))
+      case estimatesResponse => Ok(views.html.estimates(estimatesResponse.filter(_.notCrystallised)))
         .addingToSession("singleEstimate" -> "false")
     }
   }

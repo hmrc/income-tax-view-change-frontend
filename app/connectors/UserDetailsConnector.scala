@@ -40,22 +40,18 @@ class UserDetailsConnector @Inject()(val http: HttpClient) extends RawResponseRe
             Logger.debug(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[UserDetailsModel].fold(
               invalid => {
-                Logger.error(s"[UserDetailsConnector][getUserDetails] - Json Validation Error. Parsing User Details Response.")
+                Logger.error(s"[UserDetailsConnector][getUserDetails] - Json Validation Error. Invalid=$invalid")
                 UserDetailsError
               },
               valid => valid
             )
           case _ =>
             Logger.error(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
-            Logger.error(s"[UserDetailsConnector][getUserDetails] - Response status: [${response.status}] returned from User Details call")
             UserDetailsError
         }
     } recover {
       case ex=>
         Logger.error(s"[UserDetailsConnector][getUserDetails] - Unexpected future failed error ${ex.getMessage} when calling $userDetailsUrl.")
-        UserDetailsError
-      case _ =>
-        Logger.error(s"[UserDetailsConnector][getUserDetails] - Unexpected future failed error when calling $userDetailsUrl.")
         UserDetailsError
     }
   }

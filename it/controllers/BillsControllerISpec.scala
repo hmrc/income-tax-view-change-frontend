@@ -62,7 +62,7 @@ class BillsControllerISpec extends ComponentSpecBase {
 
       "isAuthorisedUser with an active enrolment, and multiple valid crystallised estimates" should {
 
-        "return the correct page with tax links" in {
+        "return the correct page with tax links when calls successful" in {
 
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -86,6 +86,33 @@ class BillsControllerISpec extends ComponentSpecBase {
             elementTextByID(s"bills-link-$testYearPlusOne")(messages.taxYearText(testYearPlusOneInt)),
             elementTextByID(s"bills-link-$testYear")(messages.taxYearText(testYearInt)),
             nElementsWithClass("bills-link")(2),
+            elementTextByID("earlier-bills")(messages.earlierBills)
+          )
+        }
+
+        "return the correct page with tax links when one response is not found" in {
+
+          And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
+          IncomeTaxViewChangeStub.stubGetLatestCalcNotFound(testNino, testYearPlusOne)
+
+          When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
+          val res = IncomeTaxViewChangeFrontend.getBills
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          verifyLatestCalculationCall(testNino, testYear)
+          verifyLatestCalculationCall(testNino, testYearPlusOne)
+
+          Then("The view should have the correct headings and two tax bill links")
+          res should have(
+            httpStatus(OK),
+            pageTitle(messages.billsTitle),
+            elementTextByID("finalised-bills")(messages.finalBills),
+            elementTextByID(s"bills-link-$testYear")(messages.taxYearText(testYearInt)),
+            nElementsWithClass("bills-link")(1),
             elementTextByID("earlier-bills")(messages.earlierBills)
           )
         }
@@ -121,27 +148,52 @@ class BillsControllerISpec extends ComponentSpecBase {
       }
 
       "isAuthorisedUser with an active enrolment, and no tax bills" should {
-        "return the correct page with no bills found message" in {
+        "return the correct page with no bills found message" when {
+          "there are no crystallised calculations returned" in {
 
-          And("I wiremock stub a successful Income Source Details response with single Business and Property income")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
+            And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+            IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
 
-          When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
-          val res = IncomeTaxViewChangeFrontend.getBills
+            When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
+            val res = IncomeTaxViewChangeFrontend.getBills
 
-          verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
+            verifyIncomeSourceDetailsCall(testMtditid)
+            verifyLatestCalculationCall(testNino, testYear)
 
-          Then("The view should have the correct headings and a single tax estimate link")
-          res should have(
-            httpStatus(OK),
-            pageTitle(messages.billsTitle),
-            elementTextByID("no-bills")(messages.noBills),
-            nElementsWithClass("bills-link")(0)
-          )
+            Then("The view should have the correct headings and a single tax estimate link")
+            res should have(
+              httpStatus(OK),
+              pageTitle(messages.billsTitle),
+              elementTextByID("no-bills")(messages.noBills),
+              nElementsWithClass("bills-link")(0)
+            )
+          }
+
+          "all calculations returned with not found from the connector" in {
+
+            And("I wiremock stub a successful Income Source Details response with single Business and Property income")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+
+            And("I wiremock stub a successful Get Last Estimated Tax Liability response")
+            IncomeTaxViewChangeStub.stubGetLatestCalcNotFound(testNino, testYear)
+
+            When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
+            val res = IncomeTaxViewChangeFrontend.getBills
+
+            verifyIncomeSourceDetailsCall(testMtditid)
+            verifyLatestCalculationCall(testNino, testYear)
+
+            Then("The view should have the correct headings and a single tax estimate link")
+            res should have(
+              httpStatus(OK),
+              pageTitle(messages.billsTitle),
+              elementTextByID("no-bills")(messages.noBills),
+              nElementsWithClass("bills-link")(0)
+            )
+          }
         }
       }
 

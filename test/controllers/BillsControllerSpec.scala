@@ -140,10 +140,44 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
           }
         }
 
-        "successfully retrieves income sources, but the list returned from the service has an error model" should {
+        "successfully retrieves income sources, but the list returned from the service has a not found model" should {
           lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+          lazy val document = result.toHtmlDocument
 
-          "return an ISE (500)" in {
+          "return OK (200)" in {
+            TestCalculationController.config.features.billsEnabled(true)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+            mockGetAllLatestCrystallisedCalcWithNotFound()
+            status(result) shouldBe Status.OK
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+
+          "render the Bills page" in {
+            document.title shouldBe messages.Bills.billsTitle
+          }
+        }
+
+        "successfully retrieves income sources, but the list returned from the service has a not found error model" should {
+          lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+          lazy val document = result.toHtmlDocument
+
+          "return OK (200)" in {
+            TestCalculationController.config.features.billsEnabled(true)
+            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+            mockGetAllLatestCrystallisedCalcWithNotFound()
+            status(result) shouldBe Status.OK
+          }
+        }
+
+        "successfully retrieves income sources, but the list returned from the service has an internal server error model" should {
+          lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
+          lazy val document = result.toHtmlDocument
+
+          "return ISE (500)" in {
             TestCalculationController.config.features.billsEnabled(true)
             setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCrystallisedCalcWithError()
