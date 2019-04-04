@@ -31,6 +31,7 @@ home.incomeTaxPayment.nextPaymentDue                            = Next payment d
 home.incomeTaxPayment.previousBills                             = Previous bills
 home.incomeTaxPayment.paymentHistory                            = Payment history
 home.incomeTaxPayment.incomeTaxPayments                         = Income tax payments
+home.incomeTaxPayment.noBills                                   = No payments due.
 
 home.updates.heading                                            = Updates
 home.updates.body.heading                                       = Next update due
@@ -226,6 +227,7 @@ breadcrumb-obligations                                          = Report deadlin
 breadcrumb-statement                                            = Income Tax statement
 breadcrumb-account                                              = Account details
 breadcrumb-updates                                              = Updates
+breadcrumb-payments-due                                         = Income Tax payments
 
 ## Standard Error Page ##
 standardError.title                                             = There is a problem with the service - Income Tax reporting through software - GOV.UK
@@ -268,3 +270,12 @@ obligations.annualUpdates                                          = Annual upda
 obligations.finalDeclarationUpdate                                 = Final declaration
 obligation.dropdown.finalDeclaration.text.v2.prt1                  = Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your
 obligation.dropdown.finalDeclaration.text.v2.prt2                  =.
+
+## Payment Due Page ##
+paymentDue.title                                                   = Your Income Tax
+paymentDue.heading                                                 = Income Tax payments
+paymentDue.sub-heading                                             = Payment due
+paymentDue.tax-year                                                = Tax year {0} to {1}
+paymentDue.due                                                     = due
+paymentDue.viewBill                                                = View bill
+paymentDue.payNow                                                  = Pay now

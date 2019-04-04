@@ -22,6 +22,9 @@ GET         /payment                                controllers.PaymentControlle
 #Bills
 GET         /bills                                  controllers.BillsController.viewCrystallisedCalculations
 
+#Payments due
+GET         /payments-due                           controllers.PaymentDueController.viewPaymentsDue
+
 #Statements
 GET         /statements                             controllers.StatementsController.getStatements
 

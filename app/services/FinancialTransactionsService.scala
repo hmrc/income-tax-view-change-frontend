@@ -18,12 +18,14 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
+import auth.MtdItUser
 import connectors.FinancialTransactionsConnector
-import models.financialTransactions.FinancialTransactionsResponseModel
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel, TransactionModel}
 import play.api.Logger
+import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialTransactionsService @Inject()(val financialTransactionsConnector: FinancialTransactionsConnector){
@@ -33,4 +35,34 @@ class FinancialTransactionsService @Inject()(val financialTransactionsConnector:
     financialTransactionsConnector.getFinancialTransactions(mtditid, taxYear)
   }
 
+  def getAllFinancialTransactions(implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialTransactionsResponseModel)]] = {
+    Logger.debug(s"[FinancialTransactionsService][getAllFinancialTransactions] - Requesting Financial Transactions from connector for mtditid: ${user.mtditid}")
+
+
+
+
+    Future.sequence(user.incomeSources.orderedTaxYears.map {
+      taxYear => financialTransactionsConnector.getFinancialTransactions(user.mtditid, taxYear).map {
+        case transaction: FinancialTransactionsModel => Some((taxYear, transaction))
+        case error: FinancialTransactionsErrorModel if error.code >= 500 => Some((taxYear, error))
+        case _ => None
+      }
+    }
+    ).map (_.flatten)
+  }
+
+  def getAllUnpaidFinancialTransactions(implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialTransactionsResponseModel]] = {
+    Logger.debug(s"[FinancialTransactionsService][getAllUnpaidFinancialTransactions] - Requesting Financial Transactions from connector for mtditid: ${user.mtditid}")
+    getAllFinancialTransactions.map { transactionsWithYear =>
+      transactionsWithYear.filter{
+        case (_, transactionModel: FinancialTransactionsErrorModel) => true
+        case (taxYear, transactionModel: FinancialTransactionsModel) => transactionModel.financialTransactions.getOrElse{
+          Logger.info(s"[FinancialTransactionsService][getAllUnpaidFinancialTransactions] - no financial transactions for mtditid: ${user.mtditid} and taxYear: $taxYear")
+          List.empty[TransactionModel]
+        }.exists(!_.isPaid)
+      }.map(_._2)
+    }
+  }
+
 }
+

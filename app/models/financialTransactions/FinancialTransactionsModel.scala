@@ -33,6 +33,7 @@ case class FinancialTransactionsModel(idType: Option[String],
 
   def findChargeForTaxYear(taxYear: Int): Option[TransactionModel] =
     financialTransactions.getOrElse(Seq()).find(_.taxPeriodTo.fold(false)(_ == LocalDate.parse(s"$taxYear-04-05")))
+
 }
 
 
