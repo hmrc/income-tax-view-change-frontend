@@ -126,7 +126,7 @@ object CalcBreakdownTestConstants {
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 1500.00,
       ukProperty = 1500.00,
-      bankBuildingSocietyInterest = 0.00,
+      bankBuildingSocietyInterest = 1000.00,
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(

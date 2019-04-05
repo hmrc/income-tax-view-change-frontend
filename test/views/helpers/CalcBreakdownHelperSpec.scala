@@ -141,7 +141,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
             ).toCurrencyString
 
           s"have a business profit section amount of $total" in {
-            document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
+            document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfitAndSaving
             document.getElementById("business-profit").text shouldBe total
           }
 
@@ -162,6 +162,11 @@ class CalcBreakdownHelperSpec extends TestSupport {
           s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
             document.getElementById("taxable-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableIncome
             document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
+          }
+
+          s"have a savings income amount of ${model.taxableSavingsIncome.toCurrencyString}" in {
+            document.getElementById("taxable-savings-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableSavings
+            document.getElementById("taxable-savings").text shouldBe model.taxableSavingsIncome.toCurrencyString
           }
 
           s"have an Income Tax section" which {
