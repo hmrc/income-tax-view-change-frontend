@@ -128,7 +128,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           isElementVisibleById("gift-aid")(expectedValue = false),
           isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
           isElementVisibleById("business-profit-property-section")(expectedValue = true),
-          isElementVisibleById("business-profit-section-bbs-interest-section")(expectedValue = true)
+          isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
 
         )
       }
@@ -218,7 +218,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("business-profit-bbs-interest")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
             isElementVisibleById("business-profit-property-section")(expectedValue = true),
-            isElementVisibleById("business-profit-section-bbs-interest-section")(expectedValue = true)
+            isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
           )
         }
       }
@@ -303,7 +303,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("business-profit-bbs-interest")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
             isElementVisibleById("business-profit-property-section")(expectedValue = true),
-            isElementVisibleById("business-profit-section-bbs-interest-section")(expectedValue = true)
+            isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
           )
         }
       }
@@ -411,7 +411,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           isElementVisibleById("eoyEstimate")(expectedValue = false),
           isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
           isElementVisibleById("business-profit-property-section")(expectedValue = true),
-          isElementVisibleById("business-profit-section-bbs-interest-section")(expectedValue = true)
+          isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
         )
       }
     }
