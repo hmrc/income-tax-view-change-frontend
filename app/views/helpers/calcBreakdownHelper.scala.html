@@ -74,25 +74,16 @@
 
         </tr>
 
-        <tr id="business-profit-section-bbs-interest-section" >
-            <td id="business-profit-bbs-interest-heading">
-                @messages("estimated_tax_liability.calc-breakdown.business-profit-savings")
-            </td>
+        @if(breakdown.incomeReceived.bankBuildingSocietyInterest > 0){
+                <tr id="business-profit-bbs-interest-section">
+                <td id="business-profit-bbs-interest-heading">
+                @messages("estimated_tax_liability.calc-breakdown.income-savings")
+                </td>
 
-            <td id="business-profit-bbs-interest"  class="summary-data">
-                @{
-                if(calcModel.calcStatus == Estimate){(breakdown.incomeReceived.bankBuildingSocietyInterest).toCurrency}
-                else {(BigDecimal(0).toCurrency)}
-                }
-            </td>
-
-        </tr>
-
-        @if(calcModel.crystallisedWithBBSInterest){
-            <tr id="savings-income-section"  class="no-border-bottom">
-                <td id="savings-income-heading">@messages("estimated_tax_liability.calc-breakdown.income-savings")</td>
-                <td id="savings-income" class="summary-data">@breakdown.incomeReceived.bankBuildingSocietyInterest.toCurrency</td>
-            </tr>
+                <td id="business-profit-bbs-interest" class="summary-data">
+                @{(breakdown.incomeReceived.bankBuildingSocietyInterest).toCurrency}
+                </td>
+                </tr>
         }
 
         @if(breakdown.savingsAllowanceSummaryData == 0 && breakdown.additionalAllowances == 0 && breakdown.giftAid.paymentsMade == 0) {
@@ -154,11 +145,6 @@
         <tr id="taxable-income-section" class="total-section">
             <td id="taxable-income-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-income")</td>
             <td id="taxable-income" class="summary-data">@breakdown.taxableIncomeTaxIncome.toCurrency</td>
-        </tr>
-
-        <tr id="taxable-savings-and-gains-section" class="no-border-bottom">
-        <td id="taxable-savings-and-gains-heading"> @messages("estimated_tax_liability.calc-breakdown.taxable-savings-and-gains")</td>
-            <td id="taxable-savings-and-gains" class="summary-data"> @breakdown.savingsAndGains.total.toCurrency </td>
         </tr>
 
         @if(breakdown.incomeReceived.ukDividends > 0) {

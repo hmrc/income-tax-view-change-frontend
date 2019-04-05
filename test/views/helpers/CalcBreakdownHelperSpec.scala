@@ -506,12 +506,12 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
         "display the total taxable savings and gains" which {
 
-          s"should have the heading ${messages.InYearEstimate.CalculationBreakdown.taxableDividends}" in {
-            document.getElementById("taxable-savings-and-gains-heading").text shouldBe "Income from Saving and Gains"
+          s"should have the heading Income from savings" in {
+            document.getElementById("business-profit-bbs-interest-heading").text shouldBe "Income from savings"
           }
 
           s"should have the amount ${dividendAtBRT.taxableDividendIncome}" in {
-            document.getElementById("taxable-savings-and-gains").text shouldBe dividendAtBRT.savingsAndGains.total.toCurrencyString
+            document.getElementById("business-profit-bbs-interest").text shouldBe dividendAtBRT.incomeReceived.bankBuildingSocietyInterest.toCurrencyString
           }
 
         }
@@ -876,7 +876,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
         }
 
         "display income recieved from property" in {
-          document.getElementById("business-profit-bbs-interest-heading").text    shouldBe "Income from savings(for business profit)"
+          document.getElementById("business-profit-bbs-interest-heading").text    shouldBe "Income from savings"
         }
 
       }

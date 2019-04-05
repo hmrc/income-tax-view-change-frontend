@@ -207,11 +207,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
           }
 
           "display the income from savings heading" in {
-            cDocument.getElementById("savings-income-heading").text shouldBe "Income from savings"
+            cDocument.getElementById("business-profit-bbs-interest-heading").text shouldBe "Income from savings"
           }
 
           "display the income from savings amount" in {
-            cDocument.getElementById("savings-income").text shouldBe model.incomeReceived.bankBuildingSocietyInterest.toCurrencyString
+            cDocument.getElementById("business-profit-bbs-interest").text shouldBe model.incomeReceived.bankBuildingSocietyInterest.toCurrencyString
           }
 
           "display the personal allowances heading" in {
@@ -239,11 +239,11 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
           }
 
           "display the income from savings heading" in {
-            cDocument.getElementById("savings-income-heading").text shouldBe "Income from savings"
+            cDocument.getElementById("business-profit-bbs-interest-heading").text shouldBe "Income from savings"
           }
 
           "display the income from savings amount" in {
-            cDocument.getElementById("savings-income").text shouldBe model.incomeReceived.bankBuildingSocietyInterest.toCurrencyString
+            cDocument.getElementById("business-profit-bbs-interest").text shouldBe model.incomeReceived.bankBuildingSocietyInterest.toCurrencyString
           }
 
           "display the personal allowances heading with income savings" in {
@@ -262,12 +262,12 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
           import setup._
           val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
 
-          "display the income from savings heading" in {
-            cDocument.getElementById("savings-income-heading") shouldBe null
+          "not display the income from savings heading" in {
+            cDocument.getElementById("business-profit-bbs-interest-heading") shouldBe null
           }
 
-          "display the income from savings amount" in {
-            cDocument.getElementById("savings-income") shouldBe null
+          "not display the income from savings amount" in {
+            cDocument.getElementById("business-profit-bbs-interest") shouldBe null
           }
 
           "display the personal allowances heading with income savings" in {

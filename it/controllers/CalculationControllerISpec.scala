@@ -123,12 +123,12 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextByID("nic2-amount")(calculationDataSuccessWithEoYModel.nic.class2.toCurrencyString),
           elementTextByID("nic4-amount")(calculationDataSuccessWithEoYModel.nic.class4.toCurrencyString),
           elementTextByID("total-estimate")(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString),
-          elementTextByID("taxable-savings-and-gains")(calculationDataSuccessWithEoYModel.savingsAndGains.total.toCurrencyString),
+          elementTextByID("business-profit-bbs-interest")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
           isElementVisibleById("eoyEstimate")(expectedValue = true),
           isElementVisibleById("gift-aid")(expectedValue = false),
           isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
           isElementVisibleById("business-profit-property-section")(expectedValue = true),
-          isElementVisibleById("business-profit-section-bbs-interest-section")(expectedValue = true)
+          isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
 
         )
       }
@@ -173,7 +173,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
             isElementVisibleById("calcBreakdown")(expectedValue = true),
             elementTextByID("calcBreakdown")(messages.CrystalisedTaxAmount.calcBreakdown),
             elementTextByID("business-profit")(totalProfit(calculationDataSuccessWithEoYModel, includeInterest = false)),
-            elementTextByID("savings-income")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             elementTextByID("personal-allowance")(s"-${allowance(calculationDataSuccessWithEoYModel)}"),
             elementTextByID("savings-allowance")(s"-${savingsAllowance(calculationDataSuccessWithEoYModel)}"),
             elementTextByID("additional-allowances")("-" + calculationDataSuccessWithEoYModel.additionalAllowances.toCurrencyString),
@@ -216,10 +215,10 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("total-estimate")(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString),
             elementTextByID("payment")("-" + financialTransactions.financialTransactions.get.head.clearedAmount.get.toCurrencyString),
             elementTextByID("owed")(financialTransactions.financialTransactions.get.head.outstandingAmount.get.toCurrencyString),
-            elementTextByID("taxable-savings-and-gains")(calculationDataSuccessWithEoYModel.savingsAndGains.total.toCurrencyString),
+            elementTextByID("business-profit-bbs-interest")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
             isElementVisibleById("business-profit-property-section")(expectedValue = true),
-            isElementVisibleById("business-profit-section-bbs-interest-section")(expectedValue = true)
+            isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
           )
         }
       }
@@ -259,7 +258,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("sub-heading")(messages.CrystalisedTaxAmount.subHeading),
             isElementVisibleById("calcBreakdown")(expectedValue = false),
             elementTextByID("business-profit")(totalProfit(calculationDataSuccessWithEoYModel, includeInterest = false)),
-            elementTextByID("savings-income")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             elementTextByID("personal-allowance")(s"-${allowance(calculationDataSuccessWithEoYModel)}"),
             elementTextByID("additional-allowances")("-" + calculationDataSuccessWithEoYModel.additionalAllowances.toCurrencyString),
             elementTextByID("savings-allowance")(s"-${savingsAllowance(calculationDataSuccessWithEoYModel)}"),
@@ -302,10 +300,10 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("total-estimate")(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString),
             elementTextByID("payment")("-" + financialTransactions.financialTransactions.get.head.clearedAmount.get.toCurrencyString),
             elementTextByID("owed")(financialTransactions.financialTransactions.get.head.outstandingAmount.get.toCurrencyString),
-            elementTextByID("taxable-savings-and-gains")(calculationDataSuccessWithEoYModel.savingsAndGains.total.toCurrencyString),
+            elementTextByID("business-profit-bbs-interest")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
             isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
             isElementVisibleById("business-profit-property-section")(expectedValue = true),
-            isElementVisibleById("business-profit-section-bbs-interest-section")(expectedValue = true)
+            isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
           )
         }
       }
@@ -409,11 +407,11 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextByID("nic2-amount")(calculationDataSuccessModel.nic.class2.toCurrencyString),
           elementTextByID("nic4-amount")(calculationDataSuccessModel.nic.class4.toCurrencyString),
           elementTextByID("total-estimate")(calculationDataSuccessModel.totalIncomeTaxNicYtd.toCurrencyString),
-          elementTextByID("taxable-savings-and-gains")(calculationDataSuccessModel.savingsAndGains.total.toCurrencyString),
+          elementTextByID("business-profit-bbs-interest")(calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
           isElementVisibleById("eoyEstimate")(expectedValue = false),
           isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
           isElementVisibleById("business-profit-property-section")(expectedValue = true),
-          isElementVisibleById("business-profit-section-bbs-interest-section")(expectedValue = true)
+          isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
         )
       }
     }
