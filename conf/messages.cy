@@ -25,7 +25,6 @@ home.statements.heading                                         = Datganiadau
 home.statements.text                                            = Bwrw golwg ar eich trafodiadau Treth Incwm, gan gynnwys costau a thaliadau.
 home.accounts.heading                                           = Manylion y cyfrif
 home.accounts.text                                              = Gweld y manylion cyswllt a''r manylion eraill sydd gennym ar gyfer eich busnesau.
-
 home.updates.body.estimatesLink                                 = Amcangyfrifon
 
 ## Recruitment Banner ##
@@ -56,12 +55,13 @@ estimated_tax_liability.calc-breakdown.pa-estimates-savings     = Lwfans Persono
 estimated_tax_liability.calc-breakdown.pa-bills                 = Lwfans Personol (ar gyfer y cyfnod yr adroddwyd amdano)
 estimated_tax_liability.calc-breakdown.pa-bills-savings         = Lwfans Personol (Treth Incwm a chynilion)
 estimated_tax_liability.calc-breakdown.additional-allowances    = Lwfansau ychwanegol
+estimated_tax_liability.calc-breakdown.gift-aid-payment         = Taliad Rhodd Cymorth
 estimated_tax_liability.calc-breakdown.taxable-income           = Eich incwm trethadwy (Treth Incwm)
 estimated_tax_liability.calc-breakdown.dividend-income          = Incwm o ddifidendau
 estimated_tax_liability.calc-breakdown.dividend-allowance       = Lwfans Personol (difidendau)
 estimated_tax_liability.calc-breakdown.taxable-dividend-income  = Eich incwm trethadwy (difidendau)
 estimated_tax_liability.calc-breakdown.income-tax               = Treth Incwm
-estimated_tax_liability.calc-breakdown.income-tax-band          = Treth Incwn ({0} ar {1})
+estimated_tax_liability.calc-breakdown.payPensionsProfit-income = Cyflog, Pensiynau, Elw Treth Incwm ({0} ar {1}%)
 estimated_tax_liability.calc-breakdown.dividend-tax             = Treth ar Ddifidendau
 estimated_tax_liability.calc-breakdown.at                       = ar
 estimated_tax_liability.calc-breakdown.nic2                     = Yswiriant Gwladol Dosbarth 2
@@ -81,16 +81,14 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = ni fydd cyfrad
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = efallai y byddwch yn ennill mwy o arian
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = efallai bod gennych incwm nac adroddir amdano yn eich meddalwedd cyfrifyddu
 estimated_tax_liability.calc-breakdown.nationalRegime           = Cyfundrefn Genedlaethol
-
-# TODO properly translate welsh for message calc-breakdown #
+estimated_tax_liability.calc-breakdown.savingsInterest-income   = Llog Cynilon
+estimated_tax_liability.calc-breakdown.taxable-payPensionsProfit-income = Eich incwm trethadwy (cyflog, pensiynau, elw)
+estimated_tax_liability.calc-breakdown.taxable-savingsInterest-income          = Eich incwm trethadwy (llog cynilon)
+estimated_tax_liability.calc-breakdown.pa-personalAllowance                    = Lwfans Personol
 estimated_tax_liability.calc-breakdown.business-profit-property                = Elw busnes(Am eiddo)
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Elw busnes(Am hunangyflogaeth)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Incwm o gynilion(Am Elw busnes)
-
-
-## Obligation Page ##
-# TODO properly translate welsh for message obligations #
-obligations.propertyIncome                                                        = Incwm o eiddo
+estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Incwm o gynilion ac enillion
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
@@ -113,7 +111,6 @@ obligations.dropdown.p1                                         = os nad ydych w
 obligations.dropdown.p2                                         = Defnyddiwch eich meddalwedd i gofnodi''ch incwm a''ch treuliau, yna anfonwch ddiweddariad i CThEM o leiaf bob chwarter.
 obligations.dropdown.p3                                         = Anfonwch eich adroddiad terfynol erbyn 31 Ionawr. Yn yr adroddiad hwn, gallwch ychwanegu unrhyw ffynonellau incwm, lwfansau neu ryddhad arall.
 obligations.dropdown.p4                                         = Ar ôl i chi anfon eich adroddiad terfynol, gallwch weld y Dreth Incwm sydd arnoch ar gyfer y flwyddyn dreth.
-
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Eich cyflwyniad terfynol
@@ -181,8 +178,8 @@ business.addressAndContact                                      = Cyfeiriad a ma
 business.tradingName                                            = Enw masnachu
 business.businessAddress                                        = Cyfeiriad y busnes
 business.additionalInfo                                         = Gwybodaeth ychwanegol
-business.cashMethod                                             = Mae'’r busnes hwn yn defnyddio’'r dull cyfrifyddu arian parod.
-business.accrualsMethod                                         = Mae’'r busnes hwn yn defnyddio’'r dull cyfrifyddu croniadau.
+business.cashMethod                                             = Mae''r busnes hwn yn defnyddio''r dull cyfrifyddu arian parod.
+business.accrualsMethod                                         = Mae''r busnes hwn yn defnyddio''r dull cyfrifyddu croniadau.
 business.backToAccount                                          = Yn ôl i fanylion y cyfrif
 
 ## Statuses ##
@@ -230,6 +227,20 @@ betaBanner.newService                                           = Mae hwn yn was
 betaBanner.your                                                 = – bydd eich
 betaBanner.feedback                                             = adborth
 betaBanner.improve                                              = yn ein helpu i''w wella.
+
+## Obligations Page ##
+obligations.sub-heading.info.hyperlink.v2                       = meddalwedd cyfrifyddu
+obligation.dropdown.declarations.info.v2                        = Gwybodaeth ynghylch datganiadau
+obligations.dropdown.declarations.types.v2                      = Mae dau fath o ddatganiadau.
+obligations.dropdown.declarations.li1.type1.v2                  = Diwedd cyfnod cyfrifyddu ar gyfer pob endid
+obligations.dropdown.declarations.li2.type2.v2                  = Gwiriad terfynol
+obligations.dropdown.declarations.li1.text.v2                   = - Yn dibynnu ar ddyddiad dod i ben cyfnod cyfrifyddu''ch endid, bydd angen i chi gyflwyno datganiad drwy''ch meddalwedd. Mae hyn yn cadarnhau bod pob Ffurflen Treth a gyflwynwyd gennych yn ystod cyfnod cyfrifyddu''ch endid yn gywir hyd eithaf eich gwybodaeth.
+obligations.dropdown.declarations.li2.text.v2                   = - Mae hyn yn cadarnhau eich bod wedi datgan eich incwm o bob ffynhonell yn gywir hyd eithaf eich gwybodaeth. Bydd angen i chi anfon y datganiad hwn gan ddefnyddio''ch meddalwedd.
+obligations.declarations                                        = Datganiadau
+obligations.propertyIncome                                      = Incwm o eiddo
+obligations.dueOn                                               = I''w dychwelyd erbyn:
+obligations.dateToDate                                          = {0} i {1}
+obligation.dropdown.finalDeclaration.text.v2.prt2               = .
 
 # calc-breakdown
 calc-breakdown.calculation.gift-aid-extender                    = Cynyddwyd eich terfyn cyfradd sylfaenol gan {0} ar gyfer taliadau Rhodd Cymorth.

@@ -25,6 +25,7 @@ home.statements.heading                                         = Statements
 home.statements.text                                            = View your Income Tax transactions, including charges and payments.
 home.accounts.heading                                           = Account details
 home.accounts.text                                              = See contact information and other details we have for your businesses.
+
 home.incomeTaxPayment.viewBillAndMakePayment                    = View bill and make payment
 home.incomeTaxPayment.viewBill                                  = View bill
 home.incomeTaxPayment.nextPaymentDue                            = Next payment due
@@ -126,7 +127,6 @@ estimated_tax_liability.calc-breakdown.business-profit-property                =
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Business profit(for self-employment)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Income from savings(for business profit)
 estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
-
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Report deadlines
@@ -296,9 +296,7 @@ obligations.dateToDate                                             = {0} to {1}
 obligations.annualUpdates                                          = Annual updates
 obligations.finalDeclarationUpdate                                 = Final declaration
 obligation.dropdown.finalDeclaration.text.v2.prt1                  = Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your
-obligation.dropdown.finalDeclaration.text.v2.prt2                  =.
-
-## Payment Due Page ##
+obligation.dropdown.finalDeclaration.text.v2.prt2                  =.## Payment Due Page ##
 paymentDue.title                                                   = Your Income Tax
 paymentDue.heading                                                 = Income Tax payments
 paymentDue.sub-heading                                             = Payment due
