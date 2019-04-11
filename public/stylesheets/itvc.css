@@ -108,3 +108,10 @@
     border: none;
     border-color: none;
 }
+
+.panel-right::after {
+    content:"";
+    border-right:7px solid #00823B;
+    display: inline;
+    height: 50%;
+}
