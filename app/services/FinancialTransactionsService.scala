@@ -38,9 +38,6 @@ class FinancialTransactionsService @Inject()(val financialTransactionsConnector:
   def getAllFinancialTransactions(implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialTransactionsResponseModel)]] = {
     Logger.debug(s"[FinancialTransactionsService][getAllFinancialTransactions] - Requesting Financial Transactions from connector for mtditid: ${user.mtditid}")
 
-
-
-
     Future.sequence(user.incomeSources.orderedTaxYears.map {
       taxYear => financialTransactionsConnector.getFinancialTransactions(user.mtditid, taxYear).map {
         case transaction: FinancialTransactionsModel => Some((taxYear, transaction))
