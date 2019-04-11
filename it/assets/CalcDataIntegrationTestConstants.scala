@@ -251,6 +251,7 @@ object CalcDataIntegrationTestConstants {
     personalAllowance = 11500.00,
     taxReliefs = 1000,
     totalIncomeAllowancesUsed = 12005.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 200000.00,
       ukProperty = 10000.00,
@@ -345,6 +346,7 @@ object CalcDataIntegrationTestConstants {
     personalAllowance = 11500.00,
     taxReliefs = 1000,
     totalIncomeAllowancesUsed = 12005.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 200000.00,
       ukProperty = 10000.00,
@@ -457,7 +459,6 @@ object CalcDataIntegrationTestConstants {
       "dividendART" -> 38.1,
       "calcOutput" -> Json.obj(
         "calcSummary" -> Json.obj(
-          "nationalRegime" -> "UK",
           "incomeTaxGross" -> 68985412739.5,
           "taxDeducted" -> 33971782272.57,
           "incomeTaxNetOfDeductions" -> 39426248386.69,
@@ -577,10 +578,10 @@ object CalcDataIntegrationTestConstants {
               "totalAmount" -> 5000,
               "band" -> Json.arr(
                 Json.obj(
-                  "name" -> "zero-rate-band",
-                  "rate" -> 0.0,
-                  "income" -> 5000,
-                  "taxAmount" -> 0.0
+                  "name" -> "zero-band",
+                  "rate" -> 0,
+                  "income" -> 500,
+                  "taxAmount" -> 0
                 ),
                 Json.obj(
                   "name" -> "basic-band",
@@ -599,7 +600,9 @@ object CalcDataIntegrationTestConstants {
                   "rate" -> 38.1,
                   "income" -> 3000,
                   "taxAmount" -> 1143
-                )))
+                )
+              )
+            )
           ),
           "taxableIncome" -> Json.obj(
             "totalIncomeAllowancesUsed" -> 12005,
@@ -1006,7 +1009,7 @@ object CalcDataIntegrationTestConstants {
             "rate" -> 1.0,
             "taxableIncome" -> 1.5
           ),
-          "totalAllowancesAndReliefs" -> 0,
+          "totalAllowancesAndReliefs" -> 500,
           "payPensionsProfit" -> Json.obj(
             "band" -> Json.arr(Json.obj(
               "name" -> "BRT",
@@ -1076,10 +1079,10 @@ object CalcDataIntegrationTestConstants {
             "totalAmount" -> 5000,
             "band" -> Json.arr(
               Json.obj(
-                "name" -> "zero-rate-band",
-                "rate" -> 0.0,
-                "income" -> 5000,
-                "taxAmount" -> 0.0
+                "name" -> "zero-band",
+                "rate" -> 0,
+                "income" -> 500,
+                "taxAmount" -> 0
               ),
               Json.obj(
                 "name" -> "basic-band",
@@ -1102,6 +1105,9 @@ object CalcDataIntegrationTestConstants {
         ),
         "taxableIncome" -> Json.obj(
           "totalIncomeAllowancesUsed" -> 12005,
+          "allowancesAndDeductions" -> Json.obj(
+            "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
+          ),
           "incomeReceived" -> Json.obj(
             "employmentIncome" -> 100,
             "selfEmploymentIncome" -> 200000,
@@ -1179,9 +1185,7 @@ object CalcDataIntegrationTestConstants {
       "calcID" -> testCalcId,
       "calcAmount" -> 90500.00,
       "calcTimestamp" -> "2017-07-06T12:34:56.789Z",
-
       "calcSummary" -> Json.obj(
-        "nationalRegime" -> "UK",
         "incomeTaxGross" -> 68985412739.5,
         "taxDeducted" -> 33971782272.57,
         "incomeTaxNetOfDeductions" -> 39426248386.69,
@@ -1231,7 +1235,7 @@ object CalcDataIntegrationTestConstants {
           "personalAllowance" -> 11500
         ),
         "incomeTax" -> Json.obj(
-          "totalAllowancesAndReliefs" -> 0,
+          "totalAllowancesAndReliefs" -> 500,
           "payPensionsProfit" -> Json.obj(
             "band" -> Json.arr(Json.obj(
               "name" -> "BRT",
@@ -1301,10 +1305,10 @@ object CalcDataIntegrationTestConstants {
             "totalAmount" -> 5000,
             "band" -> Json.arr(
               Json.obj(
-                "name" -> "zero-rate-band",
-                "rate" -> 0.0,
-                "income" -> 5000,
-                "taxAmount" -> 0.0
+                "name" -> "zero-band",
+                "rate" -> 0,
+                "income" -> 500,
+                "taxAmount" -> 0
               ),
               Json.obj(
                 "name" -> "basic-band",
@@ -1327,6 +1331,9 @@ object CalcDataIntegrationTestConstants {
         ),
         "taxableIncome" -> Json.obj(
           "totalIncomeAllowancesUsed" -> 12005,
+          "allowancesAndDeductions" -> Json.obj(
+            "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
+          ),
           "incomeReceived" -> Json.obj(
             "employmentIncome" -> 100,
             "selfEmploymentIncome" -> 200000,
@@ -1434,9 +1441,7 @@ object CalcDataIntegrationTestConstants {
       "calcAmount" -> 90500.00,
       "calcTimestamp" -> "2017-07-06T12:34:56.789Z",
       "crystallised" -> true,
-
       "calcSummary" -> Json.obj(
-        "nationalRegime" -> "UK",
         "incomeTaxGross" -> 68985412739.5,
         "taxDeducted" -> 33971782272.57,
         "incomeTaxNetOfDeductions" -> 39426248386.69,
@@ -1486,7 +1491,7 @@ object CalcDataIntegrationTestConstants {
           "personalAllowance" -> 11500
         ),
         "incomeTax" -> Json.obj(
-          "totalAllowancesAndReliefs" -> 0,
+          "totalAllowancesAndReliefs" -> 500,
           "payPensionsProfit" -> Json.obj(
             "band" -> Json.arr(Json.obj(
               "name" -> "BRT",
@@ -1556,10 +1561,10 @@ object CalcDataIntegrationTestConstants {
             "totalAmount" -> 5000,
             "band" -> Json.arr(
               Json.obj(
-                "name" -> "zero-rate-band",
-                "rate" -> 0.0,
-                "income" -> 2500,
-                "taxAmount" -> 0.0
+                "name" -> "zero-band",
+                "rate" -> 0,
+                "income" -> 500,
+                "taxAmount" -> 0
               ),
               Json.obj(
                 "name" -> "basic-band",
@@ -1582,6 +1587,9 @@ object CalcDataIntegrationTestConstants {
         ),
         "taxableIncome" -> Json.obj(
           "totalIncomeAllowancesUsed" -> 12005,
+          "allowancesAndDeductions" -> Json.obj(
+            "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
+          ),
           "incomeReceived" -> Json.obj(
             "employmentIncome" -> 100,
             "selfEmploymentIncome" -> 200000,

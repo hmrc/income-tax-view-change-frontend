@@ -18,7 +18,7 @@ package models
 
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
-import models.calculation.{CalculationDataErrorModel, CalculationDataModel, TaxBandModel}
+import models.calculation.{BandModel, CalculationDataErrorModel, CalculationDataModel, TaxBandModel}
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
@@ -50,25 +50,13 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
           TaxBandModel("ART", 45.0, 50000.00, 22500.00)
         )
 
-        calculationDataSuccessModel.savingsAndGains.startBand.taxableIncome shouldBe 1
-        calculationDataSuccessModel.savingsAndGains.startBand.taxRate shouldBe 0
-        calculationDataSuccessModel.savingsAndGains.startBand.taxAmount shouldBe 0
-
-        calculationDataSuccessModel.savingsAndGains.zeroBand.taxableIncome shouldBe 20
-        calculationDataSuccessModel.savingsAndGains.zeroBand.taxRate shouldBe 0
-        calculationDataSuccessModel.savingsAndGains.zeroBand.taxAmount shouldBe 0
-
-        calculationDataSuccessModel.savingsAndGains.basicBand.taxableIncome shouldBe 0
-        calculationDataSuccessModel.savingsAndGains.basicBand.taxRate shouldBe 20
-        calculationDataSuccessModel.savingsAndGains.basicBand.taxAmount shouldBe 0
-
-        calculationDataSuccessModel.savingsAndGains.higherBand.taxableIncome shouldBe 0
-        calculationDataSuccessModel.savingsAndGains.higherBand.taxRate shouldBe 40
-        calculationDataSuccessModel.savingsAndGains.higherBand.taxAmount shouldBe 0
-
-        calculationDataSuccessModel.savingsAndGains.additionalBand.taxableIncome shouldBe 0
-        calculationDataSuccessModel.savingsAndGains.additionalBand.taxRate shouldBe 45
-        calculationDataSuccessModel.savingsAndGains.additionalBand.taxAmount shouldBe 0
+        calculationDataSuccessModel.savingsAndGains.bands shouldBe Seq(
+          BandModel(1, 0, 0, "SSR"),
+          BandModel(20, 0, 0, "ZRT"),
+          BandModel(0, 20, 0, "BRT"),
+          BandModel(0, 40, 0, "HRT"),
+          BandModel(0, 45, 0, "ART")
+        )
 
         calculationDataSuccessModel.dividends.band(0).income shouldBe 1000
         calculationDataSuccessModel.dividends.band(0).rate shouldBe 7.5

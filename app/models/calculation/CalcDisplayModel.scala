@@ -33,17 +33,7 @@ case class CalcDisplayModel(calcTimestamp: String,
 
   val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
   val hasEoyEstimate: Boolean = calcDataModel.fold(false)(_.eoyEstimate.nonEmpty)
-  val hasSRTSiSection: Boolean = calcDataModel.fold(false)(_.savingsAndGains.startBand.taxableIncome > 0)
-  val hasZRTSiSection: Boolean = calcDataModel.fold(false)(_.savingsAndGains.zeroBand.taxableIncome > 0)
-  val hasBRTSiSection: Boolean = calcDataModel.fold(false)(_.savingsAndGains.basicBand.taxableIncome > 0)
-  val hasHRTSiSection: Boolean = calcDataModel.fold(false)(_.savingsAndGains.higherBand.taxableIncome > 0)
-  val hasARTSiSection: Boolean = calcDataModel.fold(false)(_.savingsAndGains.additionalBand.taxableIncome > 0)
 
-  val hasNic2Amount: Boolean = calcDataModel.fold(false)(_.nic.class2 > 0)
-  val hasNic4Amount: Boolean = calcDataModel.fold(false)(_.nic.class4 > 0)
-  val hasNISection: Boolean = hasNic2Amount || hasNic4Amount
-
-  val hasTaxReliefs: Boolean = calcDataModel.fold(false)(_.taxReliefs > 0)
   val whatYouOwe : String = s"${calcDataModel.fold(calcAmount.toCurrency)(_.totalIncomeTaxNicYtd.toCurrency)}"
 
   def displayCalcBreakdown(appConfig: FrontendAppConfig): Boolean = {
@@ -51,13 +41,6 @@ case class CalcDisplayModel(calcTimestamp: String,
   }
   def crystallisedWithBBSInterest :Boolean = {
     calcStatus == Crystallised && calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0
-  }
-
-  def personalAllowanceHeading: String = {
-    calcStatus match {
-      case Estimate     => ".pa-estimates"
-      case _            => ".pa-bills"
-    }
   }
 
   def savingsAllowanceHeading: String = {
@@ -77,15 +60,4 @@ case object CalcDisplayNoDataFound extends CalcDisplayResponseModel
 
 object CalcDisplayModel {
   implicit val format: Format[CalcDisplayModel] = Json.format[CalcDisplayModel]
-
-  def selfEmployedIncomeOrReceived[A](implicit user: MtdItUser[A], taxYear: Int, breakdown: CalculationDataModel): Boolean = {
-    (user.incomeSources.hasBusinessIncome && user.incomeSources.businesses.exists(_.accountingPeriod.determineTaxYear == taxYear)) || breakdown.incomeReceived.selfEmployment > 0
-  }
-
-  def propertyIncomeOrReceived[A](implicit user: MtdItUser[A], taxYear: Int, breakdown: CalculationDataModel): Boolean = {
-    (user.incomeSources.hasPropertyIncome && user.incomeSources.property.get.accountingPeriod.determineTaxYear == taxYear) || breakdown.incomeReceived.ukProperty > 0
-  }
-
-
-
 }

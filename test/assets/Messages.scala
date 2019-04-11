@@ -18,6 +18,33 @@ package assets
 
 object Messages {
 
+  object CalculationBreakdown {
+    def nationalRegime(regime: String) = s"National Regime: $regime"
+    val incomeHeading = "About your income"
+    val incomeSubheading = "Summary of the income you reported and applicable deductions"
+    val incomeBusinessProfit = "Income from Business Profit"
+    val incomeProperty = "Income from Property"
+    val incomeDividends = "Income from Dividends"
+    val incomeSavings = "Income from Savings"
+    val incomePersonalAllowance = "Deduction - Personal Allowance"
+    val incomeDividendsAllowance = "Deduction - Dividends Allowance"
+    val incomeSavingsAllowance = "Deduction - Savings Allowance"
+    val incomeGiftInvestmentPropertyToCharity = "Deduction - gifts of investments and property to charity"
+    val incomeTotalTaxableIncome = "Your total taxable income"
+    val calculationHeading = "Calculation of tax"
+    def calculationSubheading(income: String): String = s"Your tax calculation breakdown based on your taxable income of $income"
+    def calculationIncomeTax(income: String, rate: String) = s"Income Tax ($income at $rate%)"
+    def calculationDividend(income: String, rate: String) = s"Dividend Tax ($income at $rate%)"
+    def calculationSavings(income: String, rate: String) = s"Savings Tax ($income at $rate%)"
+    val calculationClassTwoNI = "Class 2 National Insurance"
+    val calculationClassFourNI = "Class 4 National Insurance"
+    val calculationTaxRelief = "Deduction - your tax reliefs"
+    val calculationPaymentsToDate = "Deduction - your payments to date"
+    val calculationYourTotalEstimate = "Your total estimate"
+    val calculationYourTotalTax = "Your total tax"
+    def calculationDueDate(year: String) = s"due 31 January $year"
+  }
+
   object Base {
     val backToHome = "Back to Income Tax home"
   }

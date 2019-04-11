@@ -32,6 +32,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 11500.00,
     taxReliefs = 0.00,
     totalIncomeAllowancesUsed = 12005.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 200000.00,
       ukProperty = 10000.00,
@@ -128,6 +129,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs=24.90,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 1500.00,
       ukProperty = 1500.00,
@@ -224,6 +226,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs=24.90,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 1500.00,
       ukProperty = 1500.00,
@@ -319,6 +322,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs=24.90,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 1500.00,
       ukProperty = 1500.00,
@@ -414,6 +418,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 500.00,
       ukProperty = 500.00,
@@ -507,6 +512,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs = 10.05,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 1506.25,
       ukProperty = 0.00,
@@ -601,6 +607,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs = 24.90,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 1500.00,
       ukProperty = 1500.00,
@@ -695,6 +702,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 30000.00,
       ukProperty = 7875.00,
@@ -788,6 +796,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 875.00,
       ukProperty = 40000.00,
@@ -881,6 +890,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 11500.00,
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 11500.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 200000.00,
       ukProperty = 10000.00,
@@ -982,6 +992,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 11500.00,
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 11500.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 200000.00,
       ukProperty = 10000.00,
@@ -1083,6 +1094,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 11500.00,
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 11500.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 200000.00,
       ukProperty = 10000.00,
@@ -1186,6 +1198,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 3000.00,
       ukProperty = 0.00,
@@ -1279,6 +1292,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 0.00,
       ukProperty = 3000.00,
@@ -1372,6 +1386,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 2868.00,
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
+    giftOfInvestmentsAndPropertyToCharity = 1000.25,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 0.00,
       ukProperty = 3000.00,
@@ -1465,6 +1480,7 @@ object CalcBreakdownTestConstants {
     personalAllowance = 0.00,
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 0.00,
+    giftOfInvestmentsAndPropertyToCharity = 0,
     incomeReceived = IncomeReceivedModel(
       selfEmployment = 0.00,
       ukProperty = 0.00,
@@ -1512,6 +1528,7 @@ object CalcBreakdownTestConstants {
     "personalAllowance" -> 11500,
     "taxReliefs" -> 0,
     "totalIncomeAllowancesUsed" -> 12005,
+    "giftOfInvestmentsAndPropertyToCharity" -> 1000.25,
     "incomeReceived" -> Json.obj(
       "selfEmployment" -> 200000,
       "ukProperty" -> 10000,
@@ -1523,7 +1540,7 @@ object CalcBreakdownTestConstants {
       "class4" -> 14000
     ),
     "giftAid" -> Json.obj(
-      "paymentsMade" -> 0 ,
+      "paymentsMade" -> 0,
       "rate" -> 0.0,
       "taxableAmount" -> 0
     ),
@@ -1794,6 +1811,9 @@ object CalcBreakdownTestConstants {
       ),
       "taxableIncome" -> Json.obj(
         "totalIncomeAllowancesUsed" -> 12005,
+        "allowancesAndDeductions" -> Json.obj(
+          "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
+        ),
         "incomeReceived" -> Json.obj(
           "employmentIncome" -> 100,
           "selfEmploymentIncome" -> 200000,
@@ -2002,6 +2022,7 @@ object CalcBreakdownTestConstants {
         "personalAllowance" -> 0,
         "taxReliefs" -> 0,
         "totalIncomeAllowancesUsed" -> 0,
+        "giftOfInvestmentsAndPropertyToCharity" -> 0,
         "incomeReceived" -> Json.obj(
           "selfEmployment" -> 0,
           "ukProperty" -> 0,
@@ -2056,7 +2077,7 @@ object CalcBreakdownTestConstants {
       Some(123.45),
       Some(987.65),
       Some(CalculationDataModel(
-        None, 0.0, 123.45, 0, 0, 0,
+        None, 0.0, 123.45, 0, 0, 0, 0,
         IncomeReceivedModel(0, 0, 0, 0),
         SavingsAndGainsModel(0, 0, List()),
         DividendsModel(0, 0, List()),

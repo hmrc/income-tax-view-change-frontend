@@ -31,6 +31,7 @@ case class CalculationDataModel(
                                  personalAllowance: BigDecimal,
                                  taxReliefs: BigDecimal,
                                  totalIncomeAllowancesUsed: BigDecimal,
+                                 giftOfInvestmentsAndPropertyToCharity: BigDecimal,
                                  incomeReceived: IncomeReceivedModel,
                                  savingsAndGains: SavingsAndGainsModel,
                                  dividends: DividendsModel,
@@ -38,41 +39,13 @@ case class CalculationDataModel(
                                  nic: NicModel,
                                  eoyEstimate: Option[EoyEstimate] = None,
                                  payAndPensionsProfit: PayPensionsProfitModel = PayPensionsProfitModel(0, 0, Seq())
-                               ) extends CalculationDataResponseModel {
-
-  val taxableDividendIncome: BigDecimal = dividends.totalAmount
-  val taxableSavingsIncome: BigDecimal = savingsAndGains.total
-  val taxableIncomeTaxIncome: BigDecimal = totalTaxableIncome - taxableDividendIncome - taxableSavingsIncome
-  val savingsAllowanceSummaryData: BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
-  val additionalAllowances: BigDecimal = totalIncomeAllowancesUsed - personalAllowance - savingsAllowanceSummaryData
-  val taxablePayPensionsProfit: BigDecimal = payAndPensionsProfit.payAndPensionsProfitBands.map(_.income).sum
-  val taxableSavingsInterest : BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome + savingsAndGains.basicBand.taxableIncome + savingsAndGains.higherBand.taxableIncome + savingsAndGains.additionalBand.taxableIncome
-
-  def hasDividendsAtSpecifiedRate(taxAmount: BigDecimal): Boolean = taxAmount > 0
-
-  val dividendsAllowance: BigDecimal = dividends.band.filter(_.rate == 0).map(_.income).sum
-
-  def srtSiITCalc :BigDecimal = savingsAndGains.startBand.taxableIncome
-  def srtSiITAmount : BigDecimal  = savingsAndGains.startBand.taxAmount
-  def zrtSiITCalc :BigDecimal = savingsAndGains.zeroBand.taxableIncome
-  def zrtSiITAmount : BigDecimal  = savingsAndGains.zeroBand.taxAmount
-  def brtSiITCalc :BigDecimal = savingsAndGains.basicBand.taxableIncome
-  def brtSiITAmount : BigDecimal  = savingsAndGains.basicBand.taxAmount
-  def hrtSiITCalc : BigDecimal = savingsAndGains.higherBand.taxableIncome
-  def hrtSiITAmount : BigDecimal = savingsAndGains.higherBand.taxAmount
-  def artSiITCalc : BigDecimal = savingsAndGains.additionalBand.taxableIncome
-  def artSiITAmount : BigDecimal = savingsAndGains.additionalBand.taxAmount
-}
+                               ) extends CalculationDataResponseModel
 
 case class IncomeReceivedModel(selfEmployment: BigDecimal,
                                ukProperty: BigDecimal,
                                bankBuildingSocietyInterest: BigDecimal,
                                ukDividends: BigDecimal
-                              ) {
-  def estimateBuisnessProfit: BigDecimal = selfEmployment + ukProperty + bankBuildingSocietyInterest
-
-  def buisnessProfit: BigDecimal = selfEmployment + ukProperty
-}
+                              )
 
 case class PayPensionsProfitModel(totalAmount: BigDecimal,
                                   taxableIncome: BigDecimal,
@@ -81,19 +54,15 @@ case class PayPensionsProfitModel(totalAmount: BigDecimal,
 case class SavingsAndGainsModel(total: BigDecimal,
                                 taxableIncome: BigDecimal,
                                 bands: Seq[BandModel]) {
-  val defaultBand = BandModel(0, 0, 0)
-
-  val startBand: BandModel = bands.find(_.name == "SSR").getOrElse(defaultBand)
-  val zeroBand: BandModel = bands.find(_.name == "ZRT").getOrElse(defaultBand)
-  val basicBand: BandModel = bands.find(_.name == "BRT").getOrElse(defaultBand)
-  val higherBand: BandModel = bands.find(_.name == "HRT").getOrElse(defaultBand)
-  val additionalBand: BandModel = bands.find(_.name == "ART").getOrElse(defaultBand)
+  val savingsAllowance: BigDecimal = bands.filter(_.taxRate == 0).map(_.taxableIncome).sum
 }
 
 
 case class DividendsModel(totalAmount: BigDecimal,
                           taxableIncome: BigDecimal,
-                          band: Seq[DividendsBandModel])
+                          band: Seq[DividendsBandModel]) {
+  val dividendsAllowance: BigDecimal = band.filter(_.rate == 0).map(_.income).sum
+}
 
 case class DividendsBandModel(name: String,
                               rate: BigDecimal,
@@ -137,6 +106,7 @@ object CalculationDataModel {
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "annualAllowances" \ "personalAllowance") and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "totalAllowancesAndReliefs") and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "totalIncomeAllowancesUsed") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "allowancesAndDeductions" \ "giftOfInvestmentsAndPropertyToCharity") and
       __.read[IncomeReceivedModel] and
       __.read[SavingsAndGainsModel] and
       __.read[DividendsModel] and
@@ -153,6 +123,7 @@ object CalculationDataModel {
       (__ \ "personalAllowance").write[BigDecimal] and
       (__ \ "taxReliefs").write[BigDecimal] and
       (__ \ "totalIncomeAllowancesUsed").write[BigDecimal] and
+      (__ \ "giftOfInvestmentsAndPropertyToCharity").write[BigDecimal] and
       (__ \ "incomeReceived").write[IncomeReceivedModel] and
       (__ \ "incomeTax" \ "savingsAndGains").write[SavingsAndGainsModel] and
       (__ \ "incomeTax" \ "dividends").write[DividendsModel] and

@@ -25,7 +25,8 @@ import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.calculation.{CalcDisplayModel, CalculationDataModel, TaxBandModel}
+import implicits.ImplicitCurrencyFormatter._
+import models.calculation.CalculationDataModel
 import models.financialTransactions.TransactionModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,7 +34,6 @@ import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import implicits.ImplicitCurrencyFormatter._
 import testUtils.TestSupport
 
 class CrystallisedViewSpec extends TestSupport {
@@ -43,7 +43,7 @@ class CrystallisedViewSpec extends TestSupport {
   val bizUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), singleBusinessIncome)(FakeRequest())
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
-  override def beforeEach() : Unit = {
+  override def beforeEach(): Unit = {
     mockAppConfig.features.calcBreakdownEnabled(true)
   }
 
@@ -99,7 +99,7 @@ class CrystallisedViewSpec extends TestSupport {
         }
 
         "have a what you owe heading displayed with the correct value" in {
-           wyoSection.select("div.divider--bottom p.bold-medium").text shouldBe "£149.86"
+          wyoSection.select("div.divider--bottom p.bold-medium").text shouldBe "£149.86"
         }
 
         "have the correct message for the tax year due date" in {
@@ -132,241 +132,49 @@ class CrystallisedViewSpec extends TestSupport {
         mockAppConfig.features.calcBreakdownEnabled(true)
         val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizUser)
         import setup._
-        document.select("details table.itvc-table").size() shouldBe 0
-        document.select("table.itvc-table").size() shouldBe 1
+        document.select("details table.income-table").size() shouldBe 0
+        document.select("table.income-table").size() shouldBe 1
       }
 
       "the bill has not been paid and breakdown is required inside a progressive disclosure element" in {
         mockAppConfig.features.calcBreakdownEnabled(true)
         val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizUser)
         import setup._
-        document.select("details table.itvc-table").size() shouldBe 1
+        document.select("details table.income-table").size() shouldBe 1
       }
     }
 
-    "show a Calculation Breakdown" when {
-
-        "for users with both a property and a business" which {
-          "have just the basic rate of tax" should {
-
-            val total = (model.incomeReceived.ukProperty + model.incomeReceived.selfEmployment).toCurrencyString
-            val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
-
-            s"have a business profit section amount of ${model.incomeReceived.selfEmployment}" in {
-              document.getElementById("business-profit-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.businessProfit
-              document.getElementById("business-profit").text shouldBe total
-            }
-
-            s"have a personal allowance amount of ${model.personalAllowance}" in {
-              document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
-              document.getElementById("personal-allowance").text shouldBe "-" + model.personalAllowance.toCurrencyString
-            }
-
-            s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
-              document.getElementById("taxable-income-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.yourTaxableIncome
-              document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
-            }
-
-            s"have an Income Tax section" which {
-              val brtBand: TaxBandModel = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
-
-              "has the correct amount of income taxed at BRT and the correct BRT rate" in {
-                document.getElementById("BRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate}%)"
-              }
-              "has the correct tax charged at BRT" in {
-                document.getElementById("BRTPpp-amount").text shouldBe brtBand.taxAmount.toCurrencyString
-              }
-            }
-            s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
-              document.getElementById("nic2-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic2
-              document.getElementById("nic2-amount").text shouldBe model.nic.class2.toCurrencyString
-            }
-            s"have a National Insurance Class 4 amount of ${model.nic.class4}" in {
-              document.getElementById("nic4-amount-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.nic4
-              document.getElementById("nic4-amount").text shouldBe model.nic.class4.toCurrencyString
-            }
-            s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
-              document.getElementById("total-estimate-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.total
-              document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
-            }
-          }
-
-          "have the higher rate of tax" should {
-            val setup = pageSetup(busBropHRTCalcDataModel, transactionModel(), bizAndPropertyUser)
-            import setup._
-
-            s"have an Income Tax section" which {
-
-              val hrtBand: TaxBandModel = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
-
-              "has a BRT section" in {
-                document.getElementById("BRTPpp-section") should not be null
-              }
-
-              "has the correct amount of income taxed at HRT and the correct HRT rate" in {
-                document.getElementById("HRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate}%)"
-              }
-              "has the correct tax charged at HRT" in {
-                document.getElementById("HRTPpp-amount").text shouldBe hrtBand.taxAmount.toCurrencyString
-              }
-
-              "does not have an ART section" in {
-                document.getElementById("ART-section") shouldBe null
-              }
-            }
-          }
-
-          "have the additional rate of tax" should {
-            val setup = pageSetup(busPropARTCalcDataModel, transactionModel(), bizAndPropertyUser)
-            import setup._
-
-            s"have an Income Tax section" which {
-
-              val artBand: TaxBandModel = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
-
-              "has a BRT section" in {
-                document.getElementById("BRTPpp-section") should not be null
-              }
-              "has a HRT section" in {
-                document.getElementById("HRTPpp-section") should not be null
-              }
-
-              "has the correct amount of income taxed at ART" in {
-                document.getElementById("ARTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate}%)"
-              }
-              "has the correct tax charged at ART" in {
-                document.getElementById("ARTPpp-amount").text shouldBe artBand.taxAmount.toCurrencyString
-              }
-            }
-          }
-
-          "has no taxable income and no NI contributions" should {
-            val setup = pageSetup(noTaxOrNICalcDataModel, transactionModel(), bizAndPropertyUser)
-            import implicits.ImplicitCurrencyFormatter._
-            import setup._
-            s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
-              document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
-            }
-            s"not have a National Insurance amount" in {
-              document.getElementById("ni-amount") shouldBe null
-            }
-            s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
-              document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
-            }
-          }
-
-          "has no taxable income and some NI contribution" should {
-            val setup = pageSetup(noTaxJustNICalcDataModel, transactionModel(), bizAndPropertyUser)
-            import implicits.ImplicitCurrencyFormatter._
-            import setup._
-            s"have a taxable income amount of ${model.taxableIncomeTaxIncome.toCurrencyString}" in {
-              document.getElementById("taxable-income").text shouldBe model.taxableIncomeTaxIncome.toCurrencyString
-            }
-            s"have a National Insurance Class 2 amount of ${model.nic.class2}" in {
-              document.getElementById("nic2-amount").text shouldBe model.nic.class2.toCurrencyString
-            }
-            s"have a National Insurance Class 4 amount of ${model.nic.class4}" in {
-              document.getElementById("nic4-amount").text shouldBe model.nic.class4.toCurrencyString
-            }
-            s"have a total tax estimate of ${model.totalIncomeTaxNicYtd}" in {
-              document.getElementById("total-estimate").text shouldBe model.totalIncomeTaxNicYtd.toCurrencyString
-            }
-          }
-        }
-
-        "when no breakdown data is retrieved" should {
-          lazy val noBreakdownPage = views.html.estimatedTaxLiability(
-            calculationDisplayNoBreakdownModel, testYear)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
-          lazy val noBreakdownDocument = Jsoup.parse(contentAsString(noBreakdownPage))
-
-          "not display a breakdown section" in {
-            noBreakdownDocument.getElementById("calc-breakdown-inner-link") shouldBe null
-          }
-        }
-
-        "when the user only has businesses registered" should {
-
-          val setup = pageSetup(justBusinessCalcDataModel, transactionModel(), bizUser)
-          import setup._
-
-          "display the business profit amount" in {
-            document.getElementById("business-profit").text shouldBe "£3,000"
-          }
-
-          "not display the property profit section" in {
-            document.getElementById("property-profit-section") shouldBe null
-          }
-        }
-
-        "when the user only has a business registered but has a property profit value" should {
-          val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizUser)
-          import setup._
-          "display the business heading" in {
-            document.getElementById("business-profit-heading").text shouldBe "Business profit"
-          }
-          "display the business profit amount" in {
-            document.getElementById("business-profit").text shouldBe "£3,000"
-          }
-        }
-
-        "when the user only has properties registered" should {
-
-          val setup = pageSetup(justPropertyCalcDataModel, transactionModel(), propertyUser)
-          import setup._
-
-          "display the property heading" in {
-            document.getElementById("business-profit-heading").text shouldBe "Property profit"
-          }
-          "display the property profit section" in {
-            document.getElementById("business-profit").text shouldBe "£3,000"
-          }
-        }
-
-        "when the user only has properties registered but has a business profit value" should {
-          val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), propertyUser)
-          import setup._
-
-          "display the business heading" in {
-            document.getElementById("business-profit-heading").text shouldBe "Business profit"
-          }
-          "display the business profit amount" in {
-            document.getElementById("business-profit").text shouldBe "£3,000"
-          }
-        }
-
-      }
-
-      "NOT have payment related content when the bill has been paid" in {
-        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
-        import setup._
-        Option(document.getElementById("adjustments")) shouldBe None
-        Option(document.getElementById("changes")) shouldBe None
-        document.select("div.divider--bottom p.bold-medium").size() shouldBe 0
-        document.select("div.divider--bottom p.form-hint").size() shouldBe 0
-        document.select("section#inYearCalcBreakdown div.form-group p").size() shouldBe 0
-      }
-
-      "have a couple of sentences about adjustments when the bill has not been paid" in {
-        val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
-        import setup._
-        document.getElementById("adjustments").text shouldBe crysMessages.errors
-        document.getElementById("changes").text shouldBe crysMessages.changes
-      }
-
-      "NOT show a button to go to payments, when not eligible for payments" in {
-        mockAppConfig.features.paymentEnabled(true)
-        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
-        import setup._
-        Option(document.getElementById("payment-button")) shouldBe None
-      }
-
-      "show a button to go to payments, when eligible for payments" in {
-        mockAppConfig.features.paymentEnabled(true)
-        val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
-        import setup._
-        document.getElementById("payment-button").text() shouldBe messages.Crystallised.payNow
-        document.getElementById("payment-button").attr("href") shouldBe
-          controllers.routes.PaymentController.paymentHandoff(calculationDisplaySuccessModel(busPropBRTCalcDataModel).calcAmount.toPence).url
-      }
+    "NOT have payment related content when the bill has been paid" in {
+      val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
+      import setup._
+      Option(document.getElementById("adjustments")) shouldBe None
+      Option(document.getElementById("changes")) shouldBe None
+      document.select("div.divider--bottom p.bold-medium").size() shouldBe 0
+      document.select("div.divider--bottom p.form-hint").size() shouldBe 0
+      document.select("section#inYearCalcBreakdown div.form-group p").size() shouldBe 0
     }
+
+    "have a couple of sentences about adjustments when the bill has not been paid" in {
+      val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
+      import setup._
+      document.getElementById("adjustments").text shouldBe crysMessages.errors
+      document.getElementById("changes").text shouldBe crysMessages.changes
+    }
+
+    "NOT show a button to go to payments, when not eligible for payments" in {
+      mockAppConfig.features.paymentEnabled(true)
+      val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
+      import setup._
+      Option(document.getElementById("payment-button")) shouldBe None
+    }
+
+    "show a button to go to payments, when eligible for payments" in {
+      mockAppConfig.features.paymentEnabled(true)
+      val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
+      import setup._
+      document.getElementById("payment-button").text() shouldBe messages.Crystallised.payNow
+      document.getElementById("payment-button").attr("href") shouldBe
+        controllers.routes.PaymentController.paymentHandoff(calculationDisplaySuccessModel(busPropBRTCalcDataModel).calcAmount.toPence).url
+    }
+  }
 }

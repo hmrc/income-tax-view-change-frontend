@@ -34,17 +34,6 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  def totalProfit(calc: CalculationDataModel, includeInterest: Boolean = true): String = {
-    import calc.incomeReceived._
-    selfEmployment + ukProperty + (if(includeInterest) bankBuildingSocietyInterest else 0)
-  }.toCurrencyString
-
-  def allowance(calc: CalculationDataModel): String = calc.personalAllowance.toCurrencyString
-  def savingsAllowance(calc: CalculationDataModel): String = calc.savingsAllowanceSummaryData.toCurrencyString
-
-  def taxableIncome(calc: CalculationDataModel): String =
-    (calc.totalTaxableIncome - calc.taxableDividendIncome).toCurrencyString
-
   private trait CalculationDataApiDisabled {
     appConfig.features.calcDataApiEnabled(false)
   }
@@ -63,73 +52,61 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Get Last latest Tax calculation response")
         IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponseWithEOY)
 
-        And("I wiremock stub a successful Get CalculationData response")
-        SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
-
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyLatestCalculationCall(testNino, testYear)
 
-        val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
-        val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
-        val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
-
         res should have (
           httpStatus(OK),
           pageTitle(messages.title(testYearInt)),
-          elementTextByID("inYearEstimateHeading")(messages.EstimatedTaxAmount.currentEstimate(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString)),
           elementTextByID("heading")(messages.heading(testYearInt)),
-          elementTextByID("sub-heading")(messages.EstimatedTaxAmount.subHeading),
-          elementTextByID("business-profit")(totalProfit(calculationDataSuccessWithEoYModel)),
-          elementTextByID("personal-allowance")(s"-${allowance(calculationDataSuccessWithEoYModel)}"),
-          elementTextByID("savings-allowance")(s"-${savingsAllowance(calculationDataSuccessWithEoYModel)}"),
-          elementTextByID("additional-allowances")("-" + calculationDataSuccessWithEoYModel.additionalAllowances.toCurrencyString),
-          elementTextByID("taxable-income")(taxableIncome(calculationDataSuccessWithEoYModel)),
-          elementTextByID("BRTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate.toStringNoDecimal}%)"),
-          elementTextByID("BRTPpp-amount")(brtBand.taxAmount.toCurrencyString),
-          elementTextByID("HRTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate.toStringNoDecimal}%)"),
-          elementTextByID("HRTPpp-amount")(hrtBand.taxAmount.toCurrencyString),
-          elementTextByID("ARTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate.toStringNoDecimal}%)"),
-          elementTextByID("ARTPpp-amount")(artBand.taxAmount.toCurrencyString),
-          elementTextByID("dividend-income")(calculationDataSuccessWithEoYModel.incomeReceived.ukDividends.toCurrencyString),
-          elementTextByID("dividend-allowance")(s"-${calculationDataSuccessWithEoYModel.dividends.totalAmount.toCurrencyString}"),
-          elementTextByID("taxable-dividend-income")(calculationDataSuccessWithEoYModel.taxableDividendIncome.toCurrencyString),
-          elementTextByID("srtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxableIncome.toCurrencyString),
-          elementTextByID("srtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxRate.toStringNoDecimal),
-          elementTextByID("srtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxAmount.toCurrencyString),
-          elementTextByID("zrtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxableIncome.toCurrencyString),
-          elementTextByID("zrtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxRate.toStringNoDecimal),
-          elementTextByID("zrtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxAmount.toCurrencyString),
-          elementTextByID("brtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxableIncome.toCurrencyString),
-          elementTextByID("brtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxRate.toStringNoDecimal),
-          elementTextByID("brtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxAmount.toCurrencyString),
-          elementTextByID("hrtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxableIncome.toCurrencyString),
-          elementTextByID("hrtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxRate.toStringNoDecimal),
-          elementTextByID("hrtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxAmount.toCurrencyString),
-          elementTextByID("artSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxableIncome.toCurrencyString),
-          elementTextByID("artSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxRate.toStringNoDecimal),
-          elementTextByID("artSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxAmount.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(0).name}-calc")(calculationDataSuccessWithEoYModel.dividends.band(0).income.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(0).name}-rate")(calculationDataSuccessWithEoYModel.dividends.band(0).rate.toStringNoDecimal),
-          elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(0).name}-amount")(calculationDataSuccessWithEoYModel.dividends.band(0).amount.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(1).name}-calc")(calculationDataSuccessWithEoYModel.dividends.band(1).income.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(1).name}-rate")(calculationDataSuccessWithEoYModel.dividends.band(1).rate.toStringNoDecimal),
-          elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(1).name}-amount")(calculationDataSuccessWithEoYModel.dividends.band(1).amount.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(2).name}-calc")(calculationDataSuccessWithEoYModel.dividends.band(2).income.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(2).name}-rate")(calculationDataSuccessWithEoYModel.dividends.band(2).rate.toStringNoDecimal),
-          elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(2).name}-amount")(calculationDataSuccessWithEoYModel.dividends.band(2).amount.toCurrencyString),
-          elementTextByID("nic2-amount")(calculationDataSuccessWithEoYModel.nic.class2.toCurrencyString),
-          elementTextByID("nic4-amount")(calculationDataSuccessWithEoYModel.nic.class4.toCurrencyString),
-          elementTextByID("total-estimate")(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString),
-          elementTextByID("business-profit-bbs-interest")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
-          isElementVisibleById("eoyEstimate")(expectedValue = true),
-          isElementVisibleById("gift-aid")(expectedValue = false),
-          isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
-          isElementVisibleById("business-profit-property-section")(expectedValue = true),
-          isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
-
+          elementTextByID("eoyEstimateHeading")("Annual estimate: £66,000"),
+          elementTextByID("eoyP1")(s"This is for the ${testYearInt-1} to $testYearInt tax year."),
+          elementTextByID("inYearEstimateHeading")(s"Current estimate: £90,500"),
+          isElementVisibleById("inYearCalcBreakdown")(expectedValue = true),
+          elementTextByID("national-regime")("National Regime: Scotland"),
+          elementTextByID("business-profit-data")("£200,000"),
+          elementTextByID("property-income-data")("£10,000"),
+          elementTextByID("dividend-income-data")("£11,000"),
+          elementTextByID("savings-income-data")("£2,000"),
+          elementTextByID("personal-allowance-data")("£11,500"),
+          elementTextByID("dividends-allowance-data")("£500"),
+          elementTextByID("savings-allowance-data")("£21"),
+          elementTextByID("gift-investment-property-data")("£1,000.25"),
+          elementTextByID("total-taxable-income-data")("£198,500"),
+          elementTextByID("income-tax-band-BRT-label")("Income Tax (£20,000 at 20%)"),
+          elementTextByID("income-tax-band-BRT-data")("£4,000"),
+          elementTextByID("income-tax-band-HRT-label")("Income Tax (£100,000 at 40%)"),
+          elementTextByID("income-tax-band-HRT-data")("£40,000"),
+          elementTextByID("income-tax-band-ART-label")("Income Tax (£50,000 at 45%)"),
+          elementTextByID("income-tax-band-ART-data")("£22,500"),
+          elementTextByID("dividend-tax-band-zero-band-label")("Dividend Tax (£500 at 0%)"),
+          elementTextByID("dividend-tax-band-zero-band-data")("£0"),
+          elementTextByID("dividend-tax-band-basic-band-label")("Dividend Tax (£1,000 at 7.5%)"),
+          elementTextByID("dividend-tax-band-basic-band-data")("£75"),
+          elementTextByID("dividend-tax-band-higher-band-label")("Dividend Tax (£2,000 at 37.5%)"),
+          elementTextByID("dividend-tax-band-higher-band-data")("£750"),
+          elementTextByID("dividend-tax-band-additional-band-label")("Dividend Tax (£3,000 at 38.1%)"),
+          elementTextByID("dividend-tax-band-additional-band-data")("£1,143"),
+          elementTextByID("savings-tax-band-SSR-label")("Savings Tax (£1 at 0%)"),
+          elementTextByID("savings-tax-band-SSR-data")("£0"),
+          elementTextByID("savings-tax-band-ZRT-label")("Savings Tax (£20 at 0%)"),
+          elementTextByID("savings-tax-band-ZRT-data")("£0"),
+          elementTextByID("savings-tax-band-BRT-label")("Savings Tax (£500 at 20%)"),
+          elementTextByID("savings-tax-band-BRT-data")("£100"),
+          elementTextByID("savings-tax-band-HRT-label")("Savings Tax (£1,000 at 40%)"),
+          elementTextByID("savings-tax-band-HRT-data")("£400"),
+          elementTextByID("savings-tax-band-ART-label")("Savings Tax (£479 at 45%)"),
+          elementTextByID("savings-tax-band-ART-data")("£215.55"),
+          elementTextByID("nic-class2-data")("£10,000"),
+          elementTextByID("nic-class4-data")("£14,000"),
+          elementTextByID("tax-reliefs-data")("£500"),
+          elementTextByID("your-total-estimate-data")("£90,500"),
+          isElementVisibleById("payments-to-date-data")(expectedValue = false),
+          isElementVisibleById("your-total-tax-date")(expectedValue = false),
+          isElementVisibleById("your-total-tax-data")(expectedValue = false)
         )
       }
     }
@@ -140,14 +117,13 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
         "return the correct page with a valid total" in {
 
+          appConfig.features.calcBreakdownEnabled(true)
+
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
           And("I wiremock stub a successful Get Latest Tax Calculation response")
           IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
-
-          And("I wiremock stub a successful Get CalculationData response")
-          SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
 
           And("I wiremock stub a successful Unpaid Financial Transactions response")
           val financialTransactions = financialTransactionsJson(1000.0).as[FinancialTransactionsModel]
@@ -160,65 +136,51 @@ class CalculationControllerISpec extends ComponentSpecBase {
           verifyLatestCalculationCall(testNino, testYear)
           verifyFinancialTransactionsCall(testMtditid)
 
-          val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
-          val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
-          val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
-
-          res should have(
+          res should have (
             httpStatus(OK),
             pageTitle(messages.title(testYearInt)),
             elementTextByID("heading")(messages.heading(testYearInt)),
-            elementTextByID("sub-heading")(messages.CrystalisedTaxAmount.subHeading),
-            elementTextByID("whatYouOweHeading")(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString),
-            isElementVisibleById("calcBreakdown")(expectedValue = true),
-            elementTextByID("calcBreakdown")(messages.CrystalisedTaxAmount.calcBreakdown),
-            elementTextByID("business-profit")(totalProfit(calculationDataSuccessWithEoYModel, includeInterest = false)),
-            elementTextByID("personal-allowance")(s"-${allowance(calculationDataSuccessWithEoYModel)}"),
-            elementTextByID("savings-allowance")(s"-${savingsAllowance(calculationDataSuccessWithEoYModel)}"),
-            elementTextByID("additional-allowances")("-" + calculationDataSuccessWithEoYModel.additionalAllowances.toCurrencyString),
-            elementTextByID("taxable-income")(taxableIncome(calculationDataSuccessWithEoYModel)),
-            elementTextByID("BRTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate.toStringNoDecimal}%)"),
-            elementTextByID("BRTPpp-amount")(brtBand.taxAmount.toCurrencyString),
-            elementTextByID("HRTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate.toStringNoDecimal}%)"),
-            elementTextByID("HRTPpp-amount")(hrtBand.taxAmount.toCurrencyString),
-            elementTextByID("ARTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate.toStringNoDecimal}%)"),
-            elementTextByID("ARTPpp-amount")(artBand.taxAmount.toCurrencyString),
-            elementTextByID("srtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxableIncome.toCurrencyString),
-            elementTextByID("srtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxRate.toStringNoDecimal),
-            elementTextByID("srtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxAmount.toCurrencyString),
-            elementTextByID("zrtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxableIncome.toCurrencyString),
-            elementTextByID("zrtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxRate.toStringNoDecimal),
-            elementTextByID("zrtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxAmount.toCurrencyString),
-            elementTextByID("brtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxableIncome.toCurrencyString),
-            elementTextByID("brtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxRate.toStringNoDecimal),
-            elementTextByID("brtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxAmount.toCurrencyString),
-            elementTextByID("hrtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxableIncome.toCurrencyString),
-            elementTextByID("hrtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxRate.toStringNoDecimal),
-            elementTextByID("hrtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxAmount.toCurrencyString),
-            elementTextByID("artSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxableIncome.toCurrencyString),
-            elementTextByID("artSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxRate.toStringNoDecimal),
-            elementTextByID("artSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxAmount.toCurrencyString),
-            elementTextByID("dividend-income")(calculationDataSuccessWithEoYModel.incomeReceived.ukDividends.toCurrencyString),
-            elementTextByID("dividend-allowance")(s"-£2,500"),
-            elementTextByID("taxable-dividend-income")(calculationDataSuccessWithEoYModel.taxableDividendIncome.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(0).name}-calc")(calculationDataSuccessWithEoYModel.dividends.band(0).income.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(0).name}-rate")(calculationDataSuccessWithEoYModel.dividends.band(0).rate.toStringNoDecimal),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(0).name}-amount")(calculationDataSuccessWithEoYModel.dividends.band(0).amount.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(1).name}-calc")(calculationDataSuccessWithEoYModel.dividends.band(1).income.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(1).name}-rate")(calculationDataSuccessWithEoYModel.dividends.band(1).rate.toStringNoDecimal),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(1).name}-amount")(calculationDataSuccessWithEoYModel.dividends.band(1).amount.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(2).name}-calc")(calculationDataSuccessWithEoYModel.dividends.band(2).income.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(2).name}-rate")(calculationDataSuccessWithEoYModel.dividends.band(2).rate.toStringNoDecimal),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(2).name}-amount")(calculationDataSuccessWithEoYModel.dividends.band(2).amount.toCurrencyString),
-            elementTextByID("nic2-amount")(calculationDataSuccessWithEoYModel.nic.class2.toCurrencyString),
-            elementTextByID("nic4-amount")(calculationDataSuccessWithEoYModel.nic.class4.toCurrencyString),
-            elementTextByID("total-estimate")(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString),
-            elementTextByID("payment")("-" + financialTransactions.financialTransactions.get.head.clearedAmount.get.toCurrencyString),
-            elementTextByID("owed")(financialTransactions.financialTransactions.get.head.outstandingAmount.get.toCurrencyString),
-            elementTextByID("business-profit-bbs-interest")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
-            isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
-            isElementVisibleById("business-profit-property-section")(expectedValue = true),
-            isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
+            elementTextByID("national-regime")("National Regime: Scotland"),
+            elementTextByID("business-profit-data")("£200,000"),
+            elementTextByID("property-income-data")("£10,000"),
+            elementTextByID("dividend-income-data")("£11,000"),
+            elementTextByID("savings-income-data")("£2,000"),
+            elementTextByID("personal-allowance-data")("£11,500"),
+            elementTextByID("dividends-allowance-data")("£500"),
+            elementTextByID("savings-allowance-data")("£21"),
+            elementTextByID("gift-investment-property-data")("£1,000.25"),
+            elementTextByID("total-taxable-income-data")("£198,500"),
+            elementTextByID("income-tax-band-BRT-label")("Income Tax (£20,000 at 20%)"),
+            elementTextByID("income-tax-band-BRT-data")("£4,000"),
+            elementTextByID("income-tax-band-HRT-label")("Income Tax (£100,000 at 40%)"),
+            elementTextByID("income-tax-band-HRT-data")("£40,000"),
+            elementTextByID("income-tax-band-ART-label")("Income Tax (£50,000 at 45%)"),
+            elementTextByID("income-tax-band-ART-data")("£22,500"),
+            elementTextByID("dividend-tax-band-zero-band-label")("Dividend Tax (£500 at 0%)"),
+            elementTextByID("dividend-tax-band-zero-band-data")("£0"),
+            elementTextByID("dividend-tax-band-basic-band-label")("Dividend Tax (£1,000 at 7.5%)"),
+            elementTextByID("dividend-tax-band-basic-band-data")("£75"),
+            elementTextByID("dividend-tax-band-higher-band-label")("Dividend Tax (£2,000 at 37.5%)"),
+            elementTextByID("dividend-tax-band-higher-band-data")("£750"),
+            elementTextByID("dividend-tax-band-additional-band-label")("Dividend Tax (£3,000 at 38.1%)"),
+            elementTextByID("dividend-tax-band-additional-band-data")("£1,143"),
+            elementTextByID("savings-tax-band-SSR-label")("Savings Tax (£1 at 0%)"),
+            elementTextByID("savings-tax-band-SSR-data")("£0"),
+            elementTextByID("savings-tax-band-ZRT-label")("Savings Tax (£20 at 0%)"),
+            elementTextByID("savings-tax-band-ZRT-data")("£0"),
+            elementTextByID("savings-tax-band-BRT-label")("Savings Tax (£500 at 20%)"),
+            elementTextByID("savings-tax-band-BRT-data")("£100"),
+            elementTextByID("savings-tax-band-HRT-label")("Savings Tax (£1,000 at 40%)"),
+            elementTextByID("savings-tax-band-HRT-data")("£400"),
+            elementTextByID("savings-tax-band-ART-label")("Savings Tax (£479 at 45%)"),
+            elementTextByID("savings-tax-band-ART-data")("£215.55"),
+            elementTextByID("nic-class2-data")("£10,000"),
+            elementTextByID("nic-class4-data")("£14,000"),
+            elementTextByID("tax-reliefs-data")("£500"),
+            elementTextByID("payments-to-date-data")("£2,000"),
+            elementTextByID("your-total-tax-date")(s"due 31 January $testYearPlusOne"),
+            elementTextByID("your-total-tax-data")("£1,000"),
+            isElementVisibleById("your-total-estimate-data")(expectedValue = false)
           )
         }
       }
@@ -227,14 +189,13 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
         "return the correct page with a valid total" in {
 
+          appConfig.features.calcBreakdownEnabled(true)
+
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
           And("I wiremock stub a successful Get Latest Tax Calculation response")
           IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
-
-          And("I wiremock stub a successful Get CalculationData response")
-          SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
 
           And("I wiremock stub a successful paid Financial Transactions response")
           val financialTransactions = financialTransactionsJson(0.0).as[FinancialTransactionsModel]
@@ -247,63 +208,51 @@ class CalculationControllerISpec extends ComponentSpecBase {
           verifyLatestCalculationCall(testNino, testYear)
           verifyFinancialTransactionsCall(testMtditid)
 
-          val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
-          val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
-          val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
-
-          res should have(
+          res should have (
             httpStatus(OK),
-            pageTitle(messages.heading(testYearInt)),
+            pageTitle(messages.title(testYearInt)),
             elementTextByID("heading")(messages.heading(testYearInt)),
-            elementTextByID("sub-heading")(messages.CrystalisedTaxAmount.subHeading),
-            isElementVisibleById("calcBreakdown")(expectedValue = false),
-            elementTextByID("business-profit")(totalProfit(calculationDataSuccessWithEoYModel, includeInterest = false)),
-            elementTextByID("personal-allowance")(s"-${allowance(calculationDataSuccessWithEoYModel)}"),
-            elementTextByID("additional-allowances")("-" + calculationDataSuccessWithEoYModel.additionalAllowances.toCurrencyString),
-            elementTextByID("savings-allowance")(s"-${savingsAllowance(calculationDataSuccessWithEoYModel)}"),
-            elementTextByID("taxable-income")(taxableIncome(calculationDataSuccessWithEoYModel)),
-            elementTextByID("BRTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate.toStringNoDecimal}%)"),
-            elementTextByID("BRTPpp-amount")(brtBand.taxAmount.toCurrencyString),
-            elementTextByID("HRTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate.toStringNoDecimal}%)"),
-            elementTextByID("HRTPpp-amount")(hrtBand.taxAmount.toCurrencyString),
-            elementTextByID("ARTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate.toStringNoDecimal}%)"),
-            elementTextByID("ARTPpp-amount")(artBand.taxAmount.toCurrencyString),
-            elementTextByID("srtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxableIncome.toCurrencyString),
-            elementTextByID("srtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxRate.toStringNoDecimal),
-            elementTextByID("srtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxAmount.toCurrencyString),
-            elementTextByID("zrtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxableIncome.toCurrencyString),
-            elementTextByID("zrtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxRate.toStringNoDecimal),
-            elementTextByID("zrtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxAmount.toCurrencyString),
-            elementTextByID("brtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxableIncome.toCurrencyString),
-            elementTextByID("brtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxRate.toStringNoDecimal),
-            elementTextByID("brtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxAmount.toCurrencyString),
-            elementTextByID("hrtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxableIncome.toCurrencyString),
-            elementTextByID("hrtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxRate.toStringNoDecimal),
-            elementTextByID("hrtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxAmount.toCurrencyString),
-            elementTextByID("artSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxableIncome.toCurrencyString),
-            elementTextByID("artSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxRate.toStringNoDecimal),
-            elementTextByID("artSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxAmount.toCurrencyString),
-            elementTextByID("dividend-income")(calculationDataSuccessWithEoYModel.incomeReceived.ukDividends.toCurrencyString),
-            elementTextByID("dividend-allowance")(s"-£2,500"),
-            elementTextByID("taxable-dividend-income")(calculationDataSuccessWithEoYModel.taxableDividendIncome.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(0).name}-calc")(calculationDataSuccessWithEoYModel.dividends.band(0).income.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(0).name}-rate")(calculationDataSuccessWithEoYModel.dividends.band(0).rate.toStringNoDecimal),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(0).name}-amount")(calculationDataSuccessWithEoYModel.dividends.band(0).amount.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(1).name}-calc")(calculationDataSuccessWithEoYModel.dividends.band(1).income.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(1).name}-rate")(calculationDataSuccessWithEoYModel.dividends.band(1).rate.toStringNoDecimal),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(1).name}-amount")(calculationDataSuccessWithEoYModel.dividends.band(1).amount.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(2).name}-calc")(calculationDataSuccessWithEoYModel.dividends.band(2).income.toCurrencyString),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(2).name}-rate")(calculationDataSuccessWithEoYModel.dividends.band(2).rate.toStringNoDecimal),
-            elementTextByID(s"dividend-${calculationDataSuccessWithEoYModel.dividends.band(2).name}-amount")(calculationDataSuccessWithEoYModel.dividends.band(2).amount.toCurrencyString),
-            elementTextByID("nic2-amount")(calculationDataSuccessWithEoYModel.nic.class2.toCurrencyString),
-            elementTextByID("nic4-amount")(calculationDataSuccessWithEoYModel.nic.class4.toCurrencyString),
-            elementTextByID("total-estimate")(calculationDataSuccessWithEoYModel.totalIncomeTaxNicYtd.toCurrencyString),
-            elementTextByID("payment")("-" + financialTransactions.financialTransactions.get.head.clearedAmount.get.toCurrencyString),
-            elementTextByID("owed")(financialTransactions.financialTransactions.get.head.outstandingAmount.get.toCurrencyString),
-            elementTextByID("business-profit-bbs-interest")(calculationDataSuccessWithEoYModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
-            isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
-            isElementVisibleById("business-profit-property-section")(expectedValue = true),
-            isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
+            elementTextByID("national-regime")("National Regime: Scotland"),
+            elementTextByID("business-profit-data")("£200,000"),
+            elementTextByID("property-income-data")("£10,000"),
+            elementTextByID("dividend-income-data")("£11,000"),
+            elementTextByID("savings-income-data")("£2,000"),
+            elementTextByID("personal-allowance-data")("£11,500"),
+            elementTextByID("dividends-allowance-data")("£500"),
+            elementTextByID("savings-allowance-data")("£21"),
+            elementTextByID("gift-investment-property-data")("£1,000.25"),
+            elementTextByID("total-taxable-income-data")("£198,500"),
+            elementTextByID("income-tax-band-BRT-label")("Income Tax (£20,000 at 20%)"),
+            elementTextByID("income-tax-band-BRT-data")("£4,000"),
+            elementTextByID("income-tax-band-HRT-label")("Income Tax (£100,000 at 40%)"),
+            elementTextByID("income-tax-band-HRT-data")("£40,000"),
+            elementTextByID("income-tax-band-ART-label")("Income Tax (£50,000 at 45%)"),
+            elementTextByID("income-tax-band-ART-data")("£22,500"),
+            elementTextByID("dividend-tax-band-zero-band-label")("Dividend Tax (£500 at 0%)"),
+            elementTextByID("dividend-tax-band-zero-band-data")("£0"),
+            elementTextByID("dividend-tax-band-basic-band-label")("Dividend Tax (£1,000 at 7.5%)"),
+            elementTextByID("dividend-tax-band-basic-band-data")("£75"),
+            elementTextByID("dividend-tax-band-higher-band-label")("Dividend Tax (£2,000 at 37.5%)"),
+            elementTextByID("dividend-tax-band-higher-band-data")("£750"),
+            elementTextByID("dividend-tax-band-additional-band-label")("Dividend Tax (£3,000 at 38.1%)"),
+            elementTextByID("dividend-tax-band-additional-band-data")("£1,143"),
+            elementTextByID("savings-tax-band-SSR-label")("Savings Tax (£1 at 0%)"),
+            elementTextByID("savings-tax-band-SSR-data")("£0"),
+            elementTextByID("savings-tax-band-ZRT-label")("Savings Tax (£20 at 0%)"),
+            elementTextByID("savings-tax-band-ZRT-data")("£0"),
+            elementTextByID("savings-tax-band-BRT-label")("Savings Tax (£500 at 20%)"),
+            elementTextByID("savings-tax-band-BRT-data")("£100"),
+            elementTextByID("savings-tax-band-HRT-label")("Savings Tax (£1,000 at 40%)"),
+            elementTextByID("savings-tax-band-HRT-data")("£400"),
+            elementTextByID("savings-tax-band-ART-label")("Savings Tax (£479 at 45%)"),
+            elementTextByID("savings-tax-band-ART-data")("£215.55"),
+            elementTextByID("nic-class2-data")("£10,000"),
+            elementTextByID("nic-class4-data")("£14,000"),
+            elementTextByID("tax-reliefs-data")("£500"),
+            elementTextByID("payments-to-date-data")("£2,000"),
+            elementTextByID("your-total-tax-date")(s"due 31 January $testYearPlusOne"),
+            elementTextByID("your-total-tax-data")("£0"),
+            isElementVisibleById("your-total-estimate-data")(expectedValue = false)
           )
         }
       }
@@ -341,14 +290,13 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
       "return the correct page with a valid total" in {
 
+        appConfig.features.calcBreakdownEnabled(true)
+
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub a successful Get Last Estimated Tax Liability response")
         IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
-
-        And("I wiremock stub a successful Get CalculationData response")
-        SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessJson.toString())
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
@@ -356,62 +304,55 @@ class CalculationControllerISpec extends ComponentSpecBase {
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyLatestCalculationCall(testNino, testYear)
 
-        val brtBand = calculationDataSuccessModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
-        val hrtBand = calculationDataSuccessModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
-        val artBand = calculationDataSuccessModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
-
         res should have (
           httpStatus(OK),
           pageTitle(messages.title(testYearInt)),
           elementTextByID("heading")(messages.heading(testYearInt)),
-          elementTextByID("sub-heading")(messages.EstimatedTaxAmount.subHeading),
-          elementTextByID("business-profit")(totalProfit(calculationDataSuccessModel)),
-          elementTextByID("personal-allowance")(s"-${allowance(calculationDataSuccessModel)}"),
-          elementTextByID("savings-allowance")(s"-${savingsAllowance(calculationDataSuccessWithEoYModel)}"),
-          elementTextByID("additional-allowances")("-" + calculationDataSuccessModel.additionalAllowances.toCurrencyString),
-          elementTextByID("taxable-income")(taxableIncome(calculationDataSuccessModel)),
-          elementTextByID("BRTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate.toStringNoDecimal}%)"),
-          elementTextByID("BRTPpp-amount")(brtBand.taxAmount.toCurrencyString),
-          elementTextByID("HRTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${hrtBand.income.toCurrencyString} at ${hrtBand.rate.toStringNoDecimal}%)"),
-          elementTextByID("HRTPpp-amount")(hrtBand.taxAmount.toCurrencyString),
-          elementTextByID("ARTPpp-it-calc-heading")(s"Pay, Pensions, Profit Income Tax (${artBand.income.toCurrencyString} at ${artBand.rate.toStringNoDecimal}%)"),
-          elementTextByID("ARTPpp-amount")(artBand.taxAmount.toCurrencyString),
-          elementTextByID("srtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxableIncome.toCurrencyString),
-          elementTextByID("srtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxRate.toStringNoDecimal),
-          elementTextByID("srtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.startBand.taxAmount.toCurrencyString),
-          elementTextByID("zrtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxableIncome.toCurrencyString),
-          elementTextByID("zrtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxRate.toStringNoDecimal),
-          elementTextByID("zrtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.zeroBand.taxAmount.toCurrencyString),
-          elementTextByID("brtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxableIncome.toCurrencyString),
-          elementTextByID("brtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxRate.toStringNoDecimal),
-          elementTextByID("brtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.basicBand.taxAmount.toCurrencyString),
-          elementTextByID("hrtSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxableIncome.toCurrencyString),
-          elementTextByID("hrtSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxRate.toStringNoDecimal),
-          elementTextByID("hrtSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.higherBand.taxAmount.toCurrencyString),
-          elementTextByID("artSi-it-calc")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxableIncome.toCurrencyString),
-          elementTextByID("artSi-rate")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxRate.toStringNoDecimal),
-          elementTextByID("artSi-amount")(calculationDataSuccessWithEoYModel.savingsAndGains.additionalBand.taxAmount.toCurrencyString),
-          elementTextByID("dividend-income")(calculationDataSuccessModel.incomeReceived.ukDividends.toCurrencyString),
-          elementTextByID("dividend-allowance")(s"-${calculationDataSuccessModel.dividends.totalAmount.toCurrencyString}"),
-          elementTextByID("taxable-dividend-income")(calculationDataSuccessModel.taxableDividendIncome.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(0).name}-calc")(calculationDataSuccessModel.dividends.band(0).income.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(0).name}-rate")(calculationDataSuccessModel.dividends.band(0).rate.toStringNoDecimal),
-          elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(0).name}-amount")(calculationDataSuccessModel.dividends.band(0).amount.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(1).name}-calc")(calculationDataSuccessModel.dividends.band(1).income.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(1).name}-rate")(calculationDataSuccessModel.dividends.band(1).rate.toStringNoDecimal),
-          elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(1).name}-amount")(calculationDataSuccessModel.dividends.band(1).amount.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(2).name}-calc")(calculationDataSuccessModel.dividends.band(2).income.toCurrencyString),
-          elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(2).name}-rate")(calculationDataSuccessModel.dividends.band(2).rate.toStringNoDecimal),
-          elementTextByID(s"dividend-${calculationDataSuccessModel.dividends.band(2).name}-amount")(calculationDataSuccessModel.dividends.band(2).amount.toCurrencyString),
-          elementTextByID("gift-aid")(calculationDataSuccessModel.giftAid.paymentsMade.toCurrencyString),
-          elementTextByID("nic2-amount")(calculationDataSuccessModel.nic.class2.toCurrencyString),
-          elementTextByID("nic4-amount")(calculationDataSuccessModel.nic.class4.toCurrencyString),
-          elementTextByID("total-estimate")(calculationDataSuccessModel.totalIncomeTaxNicYtd.toCurrencyString),
-          elementTextByID("business-profit-bbs-interest")(calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest.toCurrencyString),
-          isElementVisibleById("eoyEstimate")(expectedValue = false),
-          isElementVisibleById("business-profit-self-employed-section")(expectedValue = true),
-          isElementVisibleById("business-profit-property-section")(expectedValue = true),
-          isElementVisibleById("business-profit-bbs-interest-section")(expectedValue = true)
+          isElementVisibleById("eoyEstimateHeading")(expectedValue = false),
+          isElementVisibleById("eoyP1")(expectedValue = false),
+          elementTextByID("inYearEstimateHeading")(s"Current estimate: £90,500"),
+          isElementVisibleById("inYearCalcBreakdown")(expectedValue = true),
+          elementTextByID("national-regime")("National Regime: Scotland"),
+          elementTextByID("business-profit-data")("£200,000"),
+          elementTextByID("property-income-data")("£10,000"),
+          elementTextByID("dividend-income-data")("£11,000"),
+          elementTextByID("savings-income-data")("£2,000"),
+          elementTextByID("personal-allowance-data")("£11,500"),
+          elementTextByID("dividends-allowance-data")("£500"),
+          elementTextByID("savings-allowance-data")("£21"),
+          elementTextByID("gift-investment-property-data")("£1,000.25"),
+          elementTextByID("total-taxable-income-data")("£198,500"),
+          elementTextByID("income-tax-band-BRT-label")("Income Tax (£20,000 at 20%)"),
+          elementTextByID("income-tax-band-BRT-data")("£4,000"),
+          elementTextByID("income-tax-band-HRT-label")("Income Tax (£100,000 at 40%)"),
+          elementTextByID("income-tax-band-HRT-data")("£40,000"),
+          elementTextByID("income-tax-band-ART-label")("Income Tax (£50,000 at 45%)"),
+          elementTextByID("income-tax-band-ART-data")("£22,500"),
+          elementTextByID("dividend-tax-band-zero-band-label")("Dividend Tax (£500 at 0%)"),
+          elementTextByID("dividend-tax-band-zero-band-data")("£0"),
+          elementTextByID("dividend-tax-band-basic-band-label")("Dividend Tax (£1,000 at 7.5%)"),
+          elementTextByID("dividend-tax-band-basic-band-data")("£75"),
+          elementTextByID("dividend-tax-band-higher-band-label")("Dividend Tax (£2,000 at 37.5%)"),
+          elementTextByID("dividend-tax-band-higher-band-data")("£750"),
+          elementTextByID("dividend-tax-band-additional-band-label")("Dividend Tax (£3,000 at 38.1%)"),
+          elementTextByID("dividend-tax-band-additional-band-data")("£1,143"),
+          elementTextByID("savings-tax-band-SSR-label")("Savings Tax (£1 at 0%)"),
+          elementTextByID("savings-tax-band-SSR-data")("£0"),
+          elementTextByID("savings-tax-band-ZRT-label")("Savings Tax (£20 at 0%)"),
+          elementTextByID("savings-tax-band-ZRT-data")("£0"),
+          elementTextByID("savings-tax-band-BRT-label")("Savings Tax (£500 at 20%)"),
+          elementTextByID("savings-tax-band-BRT-data")("£100"),
+          elementTextByID("savings-tax-band-HRT-label")("Savings Tax (£1,000 at 40%)"),
+          elementTextByID("savings-tax-band-HRT-data")("£400"),
+          elementTextByID("savings-tax-band-ART-label")("Savings Tax (£479 at 45%)"),
+          elementTextByID("savings-tax-band-ART-data")("£215.55"),
+          elementTextByID("nic-class2-data")("£10,000"),
+          elementTextByID("nic-class4-data")("£14,000"),
+          elementTextByID("tax-reliefs-data")("£500"),
+          elementTextByID("your-total-estimate-data")("£90,500"),
+          isElementVisibleById("payments-to-date-data")(expectedValue = false),
+          isElementVisibleById("your-total-tax-date")(expectedValue = false),
+          isElementVisibleById("your-total-tax-data")(expectedValue = false)
         )
       }
     }

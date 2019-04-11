@@ -55,6 +55,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calculationDataSuccessModel.personalAllowance: BigDecimal,
         calculationDataSuccessModel.taxReliefs: BigDecimal,
         calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
+        calculationDataSuccessModel.giftOfInvestmentsAndPropertyToCharity,
         incomeReceived: IncomeReceivedModel,
         calculationDataSuccessModel.savingsAndGains,
         calculationDataSuccessModel.dividends,
@@ -82,6 +83,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
        calculationDataSuccessModel.personalAllowance: BigDecimal,
        calculationDataSuccessModel.taxReliefs: BigDecimal,
        calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
+       calculationDataSuccessModel.giftOfInvestmentsAndPropertyToCharity,
        incomeReceived: IncomeReceivedModel,
        calculationDataSuccessModel.savingsAndGains,
        calculationDataSuccessModel.dividends,
@@ -106,6 +108,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calculationDataSuccessModel.personalAllowance: BigDecimal,
         calculationDataSuccessModel.taxReliefs: BigDecimal,
         calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
+        calculationDataSuccessModel.giftOfInvestmentsAndPropertyToCharity,
         incomeReceived: IncomeReceivedModel,
         calculationDataSuccessModel.savingsAndGains,
         calculationDataSuccessModel.dividends,
@@ -175,63 +178,6 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).savingsAllowanceHeading shouldBe ".pa-bills-savings"
       }
 
-    }
-
-    "display selfEmployedIncomeOrReceived as true" should {
-
-      "have a self employed income source and be determined tax year is more then zero " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(10)) shouldBe true
-      }
-       "have a self employed income source and be determined tax year is zero " in {
-         CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(businesses), None), 2019, calcDisplayModelIncomeSourcesSA(0)) shouldBe true
-      }
-
-      "have no self employed income source and be determined tax year is more then zero " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(), None), 2019, calcDisplayModelIncomeSourcesSA(10)) shouldBe true
-      }
-    }
-
-    "display selfEmployedIncomeOrReceived as false" should {
-      "have no self employed income source and be determined tax year is less then zero " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(), None), 2019, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
-      }
-
-      "have a self employed income source and be determined tax year does not match tax year and is less then zero  " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(businesses), None), 2018, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
-      }
-
-      "have a property income source and be determined tax year is less then zero " in {
-        CalcDisplayModel.selfEmployedIncomeOrReceived(mtdUser(List(), Some(properties)), 2019, calcDisplayModelIncomeSourcesSA(-1)) shouldBe false
-      }
-
-    }
-
-    "display propertyIncomeOrReceived as true" should {
-      "have a property source and a property tax year matches current and be more then zero " in {
-        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2018, calcDisplayModelIncomeSourcesProperty(10) ) shouldBe true
-      }
-      "have a property source and a property tax year matches current and be less then zero " in {
-        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2018, calcDisplayModelIncomeSourcesProperty(-1)) shouldBe true
-      }
-      "not have a property source and tax year matches current and be more then zero" in {
-
-        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), None), 2019 , calcDisplayModelIncomeSourcesProperty(10)) shouldBe true
-
-
-      }
-    }
-
-    "display propertyIncomeOrReceived as false" should {
-      "not have a property source and a property tax year matches current and be less than zero " in {
-        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), None), 2019, calcDisplayModelIncomeSourcesProperty(-1) ) shouldBe false
-      }
-
-    "have a property source and a property tax year that does not match current and be equal than zero " in {
-      CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(), Some(properties)), 2019, calcDisplayModelIncomeSourcesProperty(0) ) shouldBe false
-    }
-      "have a business income source and a property tax year that does  match current and be less than zero " in {
-        CalcDisplayModel.propertyIncomeOrReceived(mtdUser(List(businesses), None), 2018, calcDisplayModelIncomeSourcesProperty(0) ) shouldBe false
-      }
     }
 
     "display estimatedBankBuildingSocietyInterest as true" should {

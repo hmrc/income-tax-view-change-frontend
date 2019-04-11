@@ -61,6 +61,12 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
       testYear)(FakeRequest(), applicationMessages, mockAppConfig, user)
     lazy val cDocument: Document = Jsoup.parse(contentAsString(cPage))
 
+    lazy val noBreakdownPage: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
+      calculationDisplayNoBreakdownModel, testYear
+    )(request, applicationMessages, mockAppConfig, user)
+
+    lazy val noBreakdownDocument: Document = Jsoup.parse(contentAsString(noBreakdownPage))
+
     implicit val model: CalculationDataModel = calcDataModel
 
 
@@ -176,104 +182,27 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
       }
     }
 
-    "have the calculation breakdown section hidden" when {
-
-      "the feature switch is set to false" in {
-
-        mockAppConfig.features.calcBreakdownEnabled(false)
+    "have the calculation breakdown section visible" when {
+      "the feature switch is enabled" in {
+        mockAppConfig.features.calcBreakdownEnabled(true)
         val setup = pageSetup(justBusinessCalcDataModel, bizUser)(FakeRequest())
         import setup._
-        document.getElementById("calcBreakdown") shouldBe null
-
+        Option(document.getElementById("inYearCalcBreakdown")).isDefined shouldBe true
       }
     }
 
-    "have a Calculation Breakdown section" that {
-
-      "for users with both a property and a business" which {
-
-        "for users with both property and a business with income from savings on the bills page" should {
-
-          val setup = pageSetup(calculationDataSuccessModel, bizAndPropertyUser)(FakeRequest())
-          import setup._
-          val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
-
-          "display the business profit heading with income from savings included" in {
-            cDocument.getElementById("business-profit-heading").text shouldBe "Business profit"
-          }
-
-          "display the business profit amount including the income from savings" in {
-            cDocument.getElementById("business-profit").text shouldBe totalProfit
-          }
-
-          "display the income from savings heading" in {
-            cDocument.getElementById("business-profit-bbs-interest-heading").text shouldBe "Income from savings"
-          }
-
-          "display the income from savings amount" in {
-            cDocument.getElementById("business-profit-bbs-interest").text shouldBe model.incomeReceived.bankBuildingSocietyInterest.toCurrencyString
-          }
-
-          "display the personal allowances heading" in {
-            cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceBill
-          }
-
-          "display the correct personal allowance amount" in {
-            cDocument.getElementById("personal-allowance").text shouldBe personalAllowance
-          }
-
-        }
-
-        "for users with only property and with income from savings on the bills page" should {
-
-          val setup = pageSetup(justPropertyWithSavingsCalcDataModel, propertyUser)(FakeRequest())
-          import setup._
-          val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
-
-          "display the business profit heading with income from savings included" in {
-            cDocument.getElementById("business-profit-heading").text shouldBe "Property profit"
-          }
-
-          "display the business profit amount including the income from savings" in {
-            cDocument.getElementById("business-profit").text shouldBe totalProfit
-          }
-
-          "display the income from savings heading" in {
-            cDocument.getElementById("business-profit-bbs-interest-heading").text shouldBe "Income from savings"
-          }
-
-          "display the income from savings amount" in {
-            cDocument.getElementById("business-profit-bbs-interest").text shouldBe model.incomeReceived.bankBuildingSocietyInterest.toCurrencyString
-          }
-
-          "display the personal allowances heading with income savings" in {
-            cDocument.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowanceBill
-          }
-
-          "display the correct personal allowance amount" in {
-            cDocument.getElementById("personal-allowance").text shouldBe personalAllowance
-          }
-
-        }
-
-        "for users with income from savings of zero on the bills page" should {
-
-          val setup = pageSetup(justPropertyCalcDataModel, propertyUser)(FakeRequest())
-          import setup._
-          val totalProfit = (model.incomeReceived.selfEmployment + model.incomeReceived.ukProperty).toCurrencyString
-
-          "not display the income from savings heading" in {
-            cDocument.getElementById("business-profit-bbs-interest-heading") shouldBe null
-          }
-
-          "not display the income from savings amount" in {
-            cDocument.getElementById("business-profit-bbs-interest") shouldBe null
-          }
-
-          "display the personal allowances heading with income savings" in {
-            document.getElementById("personal-allowance-heading").text shouldBe messages.InYearEstimate.CalculationBreakdown.personalAllowance
-          }
-        }
+    "have the calculation breakdown section hidden" when {
+      "the feature switch is disabled" in {
+        mockAppConfig.features.calcBreakdownEnabled(false)
+        val setup = pageSetup(justBusinessCalcDataModel, bizUser)(FakeRequest())
+        import setup._
+        Option(document.getElementById("inYearCalcBreakdown")).isDefined shouldBe false
+      }
+      "the breakdown is empty" in {
+        mockAppConfig.features.calcBreakdownEnabled(false)
+        val setup = pageSetup(justBusinessCalcDataModel, bizUser)(FakeRequest())
+        import setup._
+        Option(noBreakdownDocument.getElementById("inYearCalcBreakdown")).isDefined shouldBe false
       }
     }
   }

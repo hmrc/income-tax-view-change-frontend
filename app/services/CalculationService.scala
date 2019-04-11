@@ -43,9 +43,6 @@ class CalculationService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
       case _: CalculationErrorModel =>
         Logger.error("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
-      case _ =>
-        Logger.warn("[CalculationService] Could not retrieve Last Tax Calculation. No data was found.")
-        CalcDisplayNoDataFound
     }
   }
 
