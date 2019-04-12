@@ -36,7 +36,7 @@ class FinancialTransactionsService @Inject()(val financialTransactionsConnector:
   }
 
   def getAllFinancialTransactions(implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialTransactionsResponseModel)]] = {
-    Logger.debug(s"[FinancialTransactionsService][getAllFinancialTransactions] - Requesting Financial Transactions from connector for mtditid: ${user.mtditid}")
+    Logger.debug(s"[FinancialTransactionsService][getAllFinancialTransactions] - Requesting Financial Transactions for all periods for mtditid: ${user.mtditid}")
 
     Future.sequence(user.incomeSources.orderedTaxYears.map {
       taxYear => financialTransactionsConnector.getFinancialTransactions(user.mtditid, taxYear).map {
@@ -49,7 +49,7 @@ class FinancialTransactionsService @Inject()(val financialTransactionsConnector:
   }
 
   def getAllUnpaidFinancialTransactions(implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialTransactionsResponseModel]] = {
-    Logger.debug(s"[FinancialTransactionsService][getAllUnpaidFinancialTransactions] - Requesting Financial Transactions from connector for mtditid: ${user.mtditid}")
+    Logger.debug(s"[FinancialTransactionsService][getAllUnpaidFinancialTransactions] - filtering all Financial Transactions for all periods for mtditid: ${user.mtditid}")
     getAllFinancialTransactions.map { transactionsWithYear =>
       transactionsWithYear.filter{
         case (_, transactionModel: FinancialTransactionsErrorModel) => true

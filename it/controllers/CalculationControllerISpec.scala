@@ -322,7 +322,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
 
           And("I wiremock stub an errored Financial Transactions response")
-          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, financialTransactionsSingleErrorJson)
+          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, financialTransactionsSingleErrorJson())
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)

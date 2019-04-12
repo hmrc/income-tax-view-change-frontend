@@ -16,7 +16,7 @@
 
 package assets
 
-import java.time.ZonedDateTime
+import java.time.{LocalDate, ZonedDateTime}
 
 import assets.BaseIntegrationTestConstants.testMtditid
 import play.api.libs.json.{JsValue, Json}
@@ -29,9 +29,9 @@ object FinancialTransactionsIntegrationTestConstants {
   val testRegimeType: String = "ITSA"
   val testProcessingDate: ZonedDateTime = "2017-03-07T22:55:56.987Z".toZonedDateTime
 
-  val financialTransactionsSingleErrorJson: JsValue =
+  def financialTransactionsSingleErrorJson(status: String = "500"): JsValue =
     Json.obj(
-      "code" -> "500",
+      "code" -> status,
       "message" -> "ERROR MESSAGE"
     )
 
@@ -49,7 +49,7 @@ object FinancialTransactionsIntegrationTestConstants {
       )
     )
 
-  def financialTransactionsJson(outstandingAmount: BigDecimal): JsValue =
+  def financialTransactionsJson(outstandingAmount: BigDecimal, from: LocalDate = "2017-04-06", to: LocalDate ="2018-04-05"): JsValue =
     Json.obj(
       "idType" -> testIdType,
       "idNumber" -> testMtditid,
@@ -61,8 +61,8 @@ object FinancialTransactionsIntegrationTestConstants {
           "mainType" -> "2100",
           "periodKey" -> "13RL",
           "periodKeyDescription" -> "abcde",
-          "taxPeriodFrom" -> "2017-04-06",
-          "taxPeriodTo" -> "2018-04-05",
+          "taxPeriodFrom" -> from,
+          "taxPeriodTo" -> to,
           "businessPartner" -> "6622334455",
           "contractAccountCategory" -> "02",
           "contractAccount" -> "X",
@@ -104,6 +104,7 @@ object FinancialTransactionsIntegrationTestConstants {
         )
       )
     )
+
 
   def financialTransactionWithoutDueDatesJson(outstandingAmount: BigDecimal): JsValue =
     Json.obj(
@@ -159,6 +160,13 @@ object FinancialTransactionsIntegrationTestConstants {
         )
       )
     )
+
+  val emptyFinancialTransaction: JsValue =
+    Json.obj(
+      "idType" -> testIdType,
+      "idNumber" -> testMtditid,
+      "regimeType" -> testRegimeType,
+      "processingDate" -> testProcessingDate)
 
 }
 

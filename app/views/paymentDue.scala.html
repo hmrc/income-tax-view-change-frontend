@@ -40,7 +40,7 @@
 
 <h2 class="heading-large">@messages("paymentDue.sub-heading")</h2>
     @if(financialTransactions.isEmpty) {
-        <h3 id="payments-due-none">@messages("home.incomeTaxPayment.noBills")<h3>
+        <h3 id="payments-due-none">@messages("home.incomeTaxPayment.noBills")</h3>
     } else {
     @for(financialTransaction <- financialTransactions){
         @for(transaction <- financialTransaction.financialTransactions.get){
@@ -57,7 +57,7 @@
                         <a href="@controllers.routes.CalculationController.renderCalculationPage(transaction.taxPeriodTo.get.getYear).url">@messages("paymentDue.viewBill")</a>
                     </div>
                    @if(appConfig.features.paymentEnabled()){
-                       <div class="font-small text--right link-style">
+                       <div id="payment-link-@{transaction.taxPeriodTo.get.getYear}" class="font-small text--right link-style">
                            <a href="#">@messages("paymentDue.payNow")</a>
                        </div>
                    }

@@ -87,6 +87,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getBusinessDetails(id: Int): WSResponse = get(s"/account-details/$id")
     def getBtaPartial: WSResponse = get(s"/partial")
     def getHome: WSResponse = get("/")
+    def getPaymentsDue: WSResponse = get("/payments-due")
   }
 
   def unauthorisedTest(uri: String): Unit = {
