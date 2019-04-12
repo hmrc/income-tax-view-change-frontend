@@ -37,7 +37,7 @@ case class CalculationDataModel(
                                  giftAid : GiftAidModel,
                                  nic: NicModel,
                                  eoyEstimate: Option[EoyEstimate] = None,
-                                 payAndPensionsProfitBands: List[TaxBandModel] = Nil
+                                 payAndPensionsProfit: PayPensionsProfitModel = PayPensionsProfitModel(0, 0, Seq())
                                ) extends CalculationDataResponseModel {
 
   val taxableDividendIncome: BigDecimal = dividends.totalAmount
@@ -45,7 +45,7 @@ case class CalculationDataModel(
   val taxableIncomeTaxIncome: BigDecimal = totalTaxableIncome - taxableDividendIncome - taxableSavingsIncome
   val savingsAllowanceSummaryData: BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome
   val additionalAllowances: BigDecimal = totalIncomeAllowancesUsed - personalAllowance - savingsAllowanceSummaryData
-  val taxablePayPensionsProfit: BigDecimal = payAndPensionsProfitBands.map(_.income).sum
+  val taxablePayPensionsProfit: BigDecimal = payAndPensionsProfit.payAndPensionsProfitBands.map(_.income).sum
   val taxableSavingsInterest : BigDecimal = savingsAndGains.startBand.taxableIncome + savingsAndGains.zeroBand.taxableIncome + savingsAndGains.basicBand.taxableIncome + savingsAndGains.higherBand.taxableIncome + savingsAndGains.additionalBand.taxableIncome
 
   def hasDividensAtSpecfiedRate(taxAmount: BigDecimal): Boolean = taxAmount > 0
@@ -73,17 +73,12 @@ case class IncomeReceivedModel(selfEmployment: BigDecimal,
   def buisnessProfit: BigDecimal = selfEmployment + ukProperty
 }
 
-case class PayPensionsProfitModel(basicBand: BandModel,
-                                  higherBand: BandModel,
-                                  additionalBand: BandModel)
-
-case class OldSavingsAndGainsModel(startBand: BandModel,
-                                zeroBand: BandModel,
-                                basicBand: BandModel,
-                                higherBand: BandModel,
-                                additionalBand: BandModel)
+case class PayPensionsProfitModel(totalAmount: BigDecimal,
+                                  taxableIncome: BigDecimal,
+                                  payAndPensionsProfitBands: Seq[TaxBandModel])
 
 case class SavingsAndGainsModel(total: BigDecimal,
+                                taxableIncome: BigDecimal,
                                 bands: Seq[BandModel]) {
   val defaultBand = BandModel(0, 0, 0)
 
@@ -96,6 +91,7 @@ case class SavingsAndGainsModel(total: BigDecimal,
 
 
 case class DividendsModel(totalAmount: BigDecimal,
+                          taxableIncome: BigDecimal,
                           band: Seq[DividendsBandModel])
 
 case class DividendsBandModel(name: String,
@@ -146,7 +142,7 @@ object CalculationDataModel {
       __.read[GiftAidModel] and
       __.read[NicModel] and
         (__ \ "calcOutput" \ "calcResult" \ "eoyEstimate").readNullable[EoyEstimate].orElse(Reads.pure(None)) and
-        (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "payPensionsProfit" \ "band").read[List[TaxBandModel]].orElse(Reads.pure(Nil))
+      __.read[PayPensionsProfitModel]
     ) (CalculationDataModel.apply _)
 
   implicit val writes: Writes[CalculationDataModel] = (
@@ -157,12 +153,12 @@ object CalculationDataModel {
       (__ \ "taxReliefs").write[BigDecimal] and
       (__ \ "totalIncomeAllowancesUsed").write[BigDecimal] and
       (__ \ "incomeReceived").write[IncomeReceivedModel] and
-      (__ \ "savingsAndGains").write[SavingsAndGainsModel] and
+      (__ \ "incomeTax" \ "savingsAndGains").write[SavingsAndGainsModel] and
       (__ \ "incomeTax" \ "dividends").write[DividendsModel] and
       (__ \ "giftAid").write[GiftAidModel] and
       (__ \ "nic").write[NicModel] and
       (__ \ "eoyEstimate").writeNullable[EoyEstimate] and
-      (__ \ "incomeTax" \ "payPensionsProfit" \ "band").write[List[TaxBandModel]]
+      (__ \ "incomeTax" \ "payPensionsProfit").write[PayPensionsProfitModel]
     )(unlift(CalculationDataModel.unapply))
 }
 
@@ -188,6 +184,7 @@ object IncomeReceivedModel {
 object SavingsAndGainsModel {
   implicit val reads: Reads[SavingsAndGainsModel] = (
   defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "totalAmount") and
+    defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "taxableIncome") and
     (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "band").read[Seq[BandModel]].orElse(Reads.pure(Seq.empty[BandModel]))
     ) (SavingsAndGainsModel.apply _)
   implicit val writes: Writes[SavingsAndGainsModel] = Json.writes[SavingsAndGainsModel]
@@ -195,27 +192,17 @@ object SavingsAndGainsModel {
 
 object PayPensionsProfitModel {
   implicit val reads: Reads[PayPensionsProfitModel] = (
-    __.read[BandModel](BandModel.payPensionsProfitReadsBRT) and
-      __.read[BandModel](BandModel.payPensionsProfitReadsHRT) and
-      __.read[BandModel](BandModel.payPensionsProfitReadsART)
+    defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "payPensionsProfit" \ "totalAmount") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "payPensionsProfit" \ "taxableIncome") and
+      (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "payPensionsProfit" \ "band").read[Seq[TaxBandModel]].orElse(Reads.pure(Seq.empty[TaxBandModel]))
     ) (PayPensionsProfitModel.apply _)
   implicit val writes: Writes[PayPensionsProfitModel] = Json.writes[PayPensionsProfitModel]
-}
-
-object OldSavingsAndGainsModel {
-  implicit val reads: Reads[OldSavingsAndGainsModel] = (
-    __.read[BandModel](BandModel.interestReadsStartingRate) and
-      __.read[BandModel](BandModel.interestReadsZeroRate) and
-      __.read[BandModel](BandModel.interestReadsBRT) and
-      __.read[BandModel](BandModel.interestReadsHRT) and
-      __.read[BandModel](BandModel.interestReadsART)
-    ) (OldSavingsAndGainsModel.apply _)
-  implicit val writes: Writes[OldSavingsAndGainsModel] = Json.writes[OldSavingsAndGainsModel]
 }
 
 object DividendsModel {
   implicit val reads: Reads[DividendsModel] = (
     defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "dividends" \ "totalAmount") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "dividends" \ "taxableIncome") and
       (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "dividends" \ "band").read[Seq[DividendsBandModel]].orElse(Reads.pure(Nil))
     ) (DividendsModel.apply _)
   implicit val writes: Writes[DividendsModel] = Json.writes[DividendsModel]

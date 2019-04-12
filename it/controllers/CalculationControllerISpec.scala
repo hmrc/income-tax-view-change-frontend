@@ -72,9 +72,9 @@ class CalculationControllerISpec extends ComponentSpecBase {
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyLatestCalculationCall(testNino, testYear)
 
-        val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "BRT").get
-        val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "HRT").get
-        val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "ART").get
+        val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
+        val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
+        val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
 
         res should have (
           httpStatus(OK),
@@ -160,9 +160,9 @@ class CalculationControllerISpec extends ComponentSpecBase {
           verifyLatestCalculationCall(testNino, testYear)
           verifyFinancialTransactionsCall(testMtditid)
 
-          val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "BRT").get
-          val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "HRT").get
-          val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "ART").get
+          val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
+          val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
+          val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
 
           res should have(
             httpStatus(OK),
@@ -247,9 +247,9 @@ class CalculationControllerISpec extends ComponentSpecBase {
           verifyLatestCalculationCall(testNino, testYear)
           verifyFinancialTransactionsCall(testMtditid)
 
-          val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "BRT").get
-          val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "HRT").get
-          val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfitBands.find(_.name == "ART").get
+          val brtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
+          val hrtBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
+          val artBand = calculationDataSuccessWithEoYModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
 
           res should have(
             httpStatus(OK),
@@ -356,9 +356,9 @@ class CalculationControllerISpec extends ComponentSpecBase {
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyLatestCalculationCall(testNino, testYear)
 
-        val brtBand = calculationDataSuccessModel.payAndPensionsProfitBands.find(_.name == "BRT").get
-        val hrtBand = calculationDataSuccessModel.payAndPensionsProfitBands.find(_.name == "HRT").get
-        val artBand = calculationDataSuccessModel.payAndPensionsProfitBands.find(_.name == "ART").get
+        val brtBand = calculationDataSuccessModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
+        val hrtBand = calculationDataSuccessModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
+        val artBand = calculationDataSuccessModel.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
 
         res should have (
           httpStatus(OK),

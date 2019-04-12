@@ -168,7 +168,7 @@ class CrystallisedViewSpec extends TestSupport {
             }
 
             s"have an Income Tax section" which {
-              val brtBand: TaxBandModel = model.payAndPensionsProfitBands.find(_.name == "BRT").get
+              val brtBand: TaxBandModel = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
 
               "has the correct amount of income taxed at BRT and the correct BRT rate" in {
                 document.getElementById("BRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate}%)"
@@ -197,7 +197,7 @@ class CrystallisedViewSpec extends TestSupport {
 
             s"have an Income Tax section" which {
 
-              val hrtBand: TaxBandModel = model.payAndPensionsProfitBands.find(_.name == "HRT").get
+              val hrtBand: TaxBandModel = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
 
               "has a BRT section" in {
                 document.getElementById("BRTPpp-section") should not be null
@@ -222,7 +222,7 @@ class CrystallisedViewSpec extends TestSupport {
 
             s"have an Income Tax section" which {
 
-              val artBand: TaxBandModel = model.payAndPensionsProfitBands.find(_.name == "ART").get
+              val artBand: TaxBandModel = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
 
               "has a BRT section" in {
                 document.getElementById("BRTPpp-section") should not be null

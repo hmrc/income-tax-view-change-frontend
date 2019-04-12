@@ -40,6 +40,7 @@ object CalcBreakdownTestConstants {
     ),
     savingsAndGains = SavingsAndGainsModel(
       0,
+      0,
       Seq(BandModel(
         taxableIncome = 1.00,
         taxRate = 0.0,
@@ -73,6 +74,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
+      taxableIncome = 6000,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -103,11 +105,14 @@ object CalcBreakdownTestConstants {
       class4 = 14000.00
     ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      totalAmount = 66500,
+      taxableIncome = 170000,
+      Seq(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
       TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
-    ),
+    )),
     giftAid = GiftAidModel(
     paymentsMade = 0,
     rate = 0.0,
@@ -130,6 +135,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 1000.00,
@@ -164,6 +170,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
+      taxableIncome = 1000,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -199,13 +206,16 @@ object CalcBreakdownTestConstants {
       taxableAmount = 0.0
     ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      750,
+      5000,
+      Seq(
       TaxBandModel("SRT", 15.0, 5000.00, 750.00),
       TaxBandModel("BRT", 20.0, 0.00, 0.00),
       TaxBandModel("IRT", 30.0, 0.00, 0.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
       TaxBandModel("ART", 45.0, 0.00, 0.00)
-    )
+    ))
   )
 
   val scottishBandModelIRT = CalculationDataModel(
@@ -222,95 +232,6 @@ object CalcBreakdownTestConstants {
     ),
     savingsAndGains = SavingsAndGainsModel(
       0,
-      Seq(BandModel(
-        taxableIncome = 0.00,
-        taxRate = 0.0,
-        taxAmount = 0.0,
-        name = "SSR"
-      ),
-      BandModel(
-        taxableIncome = 0.00,
-        taxRate = 0.0,
-        taxAmount = 0.0,
-        name = "ZRT"
-      ),
-      BandModel(
-        taxableIncome = 0.0,
-        taxRate = 20.0,
-        taxAmount = 0.0,
-        name = "BRT"
-      ),
-      BandModel(
-        taxableIncome = 0.0,
-        taxRate = 40.0,
-        taxAmount = 0.0,
-        name = "HRT"
-      ),
-      BandModel(
-        taxableIncome = 0.0,
-        taxRate = 45.0,
-        taxAmount = 0.0,
-        name = "ART"
-      ))
-    ),
-    dividends = DividendsModel(
-      totalAmount = 5000.0,
-      Seq(
-        DividendsBandModel(
-          name = "basic-band",
-          rate = 0, threshold = None,
-          apportionedThreshold = None,
-          income = 1000,
-          amount = 0
-        ),
-        DividendsBandModel(
-          name = "higher-band",
-          rate = 0, threshold = None,
-          apportionedThreshold = None,
-          income = 0,
-          amount = 0
-        ),
-        DividendsBandModel(
-          name = "additional-band",
-          rate = 0,
-          threshold = None,
-          apportionedThreshold = None,
-          income = 0,
-          amount = 0
-        )
-      )
-    ),
-    nic = NicModel(
-      class2 = 110,
-      class4 = 13.86
-    ),
-    giftAid = GiftAidModel(
-      paymentsMade = 200.0,
-      rate = 0.00,
-      taxableAmount = 0.0
-    ),
-    payAndPensionsProfitBands = List(
-      TaxBandModel("SRT", 15.0, 5000.00, 750.00),
-      TaxBandModel("BRT", 20.0, 10000.00, 2000.00),
-      TaxBandModel("IRT", 30.0, 20000.00, 6000.00),
-      TaxBandModel("HRT", 40.0, 0.00, 0.00),
-      TaxBandModel("ART", 45.0, 0.00, 0.00)
-    )
-  )
-
-  val scottishBandModelAllIncomeBands = CalculationDataModel(
-    totalIncomeTaxNicYtd = 149.86,
-    totalTaxableIncome = 132.00,
-    personalAllowance = 2868.00,
-    taxReliefs=24.90,
-    totalIncomeAllowancesUsed = 2868.00,
-    incomeReceived = IncomeReceivedModel(
-      selfEmployment = 1500.00,
-      ukProperty = 1500.00,
-      bankBuildingSocietyInterest = 0.00,
-      ukDividends = 0.0
-    ),
-    savingsAndGains = SavingsAndGainsModel(
       0,
       Seq(BandModel(
         taxableIncome = 0.00,
@@ -345,6 +266,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
+      taxableIncome = 1000,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -379,13 +301,111 @@ object CalcBreakdownTestConstants {
       rate = 0.00,
       taxableAmount = 0.0
     ),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      8750,
+      35000,
+      Seq(
+      TaxBandModel("SRT", 15.0, 5000.00, 750.00),
+      TaxBandModel("BRT", 20.0, 10000.00, 2000.00),
+      TaxBandModel("IRT", 30.0, 20000.00, 6000.00),
+      TaxBandModel("HRT", 40.0, 0.00, 0.00),
+      TaxBandModel("ART", 45.0, 0.00, 0.00)
+    ))
+  )
+
+  val scottishBandModelAllIncomeBands = CalculationDataModel(
+    totalIncomeTaxNicYtd = 149.86,
+    totalTaxableIncome = 132.00,
+    personalAllowance = 2868.00,
+    taxReliefs=24.90,
+    totalIncomeAllowancesUsed = 2868.00,
+    incomeReceived = IncomeReceivedModel(
+      selfEmployment = 1500.00,
+      ukProperty = 1500.00,
+      bankBuildingSocietyInterest = 0.00,
+      ukDividends = 0.0
+    ),
+    savingsAndGains = SavingsAndGainsModel(
+      0,
+      0,
+      Seq(BandModel(
+        taxableIncome = 0.00,
+        taxRate = 0.0,
+        taxAmount = 0.0,
+        name = "SSR"
+      ),
+      BandModel(
+        taxableIncome = 0.00,
+        taxRate = 0.0,
+        taxAmount = 0.0,
+        name = "ZRT"
+      ),
+      BandModel(
+        taxableIncome = 0.0,
+        taxRate = 20.0,
+        taxAmount = 0.0,
+        name = "BRT"
+      ),
+      BandModel(
+        taxableIncome = 0.0,
+        taxRate = 40.0,
+        taxAmount = 0.0,
+        name = "HRT"
+      ),
+      BandModel(
+        taxableIncome = 0.0,
+        taxRate = 45.0,
+        taxAmount = 0.0,
+        name = "ART"
+      ))
+    ),
+    dividends = DividendsModel(
+      totalAmount = 5000.0,
+      taxableIncome = 1000,
+      Seq(
+        DividendsBandModel(
+          name = "basic-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 1000,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "higher-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        ),
+        DividendsBandModel(
+          name = "additional-band",
+          rate = 0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 0,
+          amount = 0
+        )
+      )
+    ),
+    nic = NicModel(
+      class2 = 110,
+      class4 = 13.86
+    ),
+    giftAid = GiftAidModel(
+      paymentsMade = 200.0,
+      rate = 0.00,
+      taxableAmount = 0.0
+    ),
+    payAndPensionsProfit = PayPensionsProfitModel(
+      33250,
+      95000,
+      Seq(
       TaxBandModel("SRT", 15.0, 5000.00, 750.00),
       TaxBandModel("BRT", 20.0, 10000.00, 2000.00),
       TaxBandModel("IRT", 30.0, 20000.00, 6000.00),
       TaxBandModel("HRT", 40.0, 50000.00, 20000.00),
       TaxBandModel("ART", 45.0, 10000.00, 4500.00)
-    )
+    ))
   )
 
   val noTaxOrNICalcDataModel = CalculationDataModel(
@@ -401,6 +421,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 0.00,
@@ -435,6 +456,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 0,
+      taxableIncome = 0,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -469,11 +491,14 @@ object CalcBreakdownTestConstants {
       rate = 0.00,
       taxableAmount = 0.0
     ),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      0,
+      0,
+      Seq(
       TaxBandModel("BRT", 20.0, 0.00, 0.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
       TaxBandModel("ART", 45.0, 0.00, 0.00)
-    )
+    ))
   )
 
   val noTaxJustNICalcDataModel = CalculationDataModel(
@@ -489,6 +514,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 0.00,
@@ -523,6 +549,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 0,
+      taxableIncome = 0,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -552,11 +579,14 @@ object CalcBreakdownTestConstants {
       class2 = 20.05,
       class4 = 17.05
     ),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      0,
+      0,
+      Seq(
       TaxBandModel("BRT", 20.0, 0.00, 0.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
       TaxBandModel("ART", 45.0, 0.00, 0.00)
-    ),
+    )),
     giftAid = GiftAidModel(
       paymentsMade = 200.0,
       rate = 0.00,
@@ -578,6 +608,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 0.00,
@@ -612,6 +643,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 0.0,
+      0,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -647,11 +679,14 @@ object CalcBreakdownTestConstants {
       taxableAmount = 0.0
     ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      26,
+      132,
+      Seq(
       TaxBandModel("BRT", 20.0, 132.00, 26.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
       TaxBandModel("ART", 45.0, 0.00, 0.00)
-    )
+    ))
   )
 
   val busBropHRTCalcDataModel = CalculationDataModel(
@@ -667,6 +702,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 0.00,
@@ -701,6 +737,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 0.0,
+      0,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -730,11 +767,14 @@ object CalcBreakdownTestConstants {
       class2 = 500.71,
       class4 = 896.00
     ),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      12000,
+      34000,
+      Seq(
       TaxBandModel("BRT", 20.0, 8352.00, 1670.00),
       TaxBandModel("HRT", 40.0, 26654.00, 10661.00),
       TaxBandModel("ART", 45.0, 0.00, 0.00)
-    ),
+    )),
     giftAid = GiftAidModel(
       paymentsMade = 400.0,
       rate = 0.00,
@@ -755,6 +795,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 0.00,
@@ -789,6 +830,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 0.0,
+      0,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -818,11 +860,14 @@ object CalcBreakdownTestConstants {
       class2 = 1000,
       class4 = 456.71
     ),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      13000,
+      37000,
+      Seq(
       TaxBandModel("BRT", 20.0, 8352.00, 1670.00),
       TaxBandModel("HRT", 40.0, 29044.00, 11617.00),
       TaxBandModel("ART", 45.0, 609.00, 274.00)
-    ),
+    )),
     giftAid = GiftAidModel(
       paymentsMade = 500.0,
       rate = 0.00,
@@ -843,6 +888,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 1.00,
@@ -877,6 +923,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
+      1000,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -906,11 +953,14 @@ object CalcBreakdownTestConstants {
       class2 = 10000.00,
       class4 = 14000.00
     ),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      66500,
+      170000,
+      Seq(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
       TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
-    ),
+    )),
     giftAid = GiftAidModel(
       paymentsMade = 600.0,
       rate = 0.00,
@@ -932,6 +982,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 1.00,
@@ -966,6 +1017,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
+      3000,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -1001,11 +1053,14 @@ object CalcBreakdownTestConstants {
       taxableAmount = 0.0
     ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      66500,
+      170000,
+      Seq(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
       TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
-    )
+    ))
   )
 
   val dividendAtART = CalculationDataModel(
@@ -1021,6 +1076,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 10000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 1.00,
@@ -1055,6 +1111,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
+      6000,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -1090,10 +1147,14 @@ object CalcBreakdownTestConstants {
       taxableAmount = 0.0
     ),
     eoyEstimate = Some(EoyEstimate(66000.00)),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      66500,
+      170000,
+      Seq(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
       TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
+      )
     )
   )
 
@@ -1110,6 +1171,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 0.00,
@@ -1144,6 +1206,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 0,
+      0,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -1178,11 +1241,14 @@ object CalcBreakdownTestConstants {
       rate = 0.00,
       taxableAmount = 0.0
     ),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      26,
+      132,
+      Seq(
       TaxBandModel("BRT", 20.0, 132.00, 26.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
       TaxBandModel("ART", 45.0, 0.00, 0.00)
-    )
+    ))
   )
 
   val justPropertyCalcDataModel = CalculationDataModel(
@@ -1198,6 +1264,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 0.00,
@@ -1232,6 +1299,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 0,
+      0,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -1266,11 +1334,14 @@ object CalcBreakdownTestConstants {
       rate = 0.00,
       taxableAmount = 5.0
     ),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      132,
+      26,
+      Seq(
       TaxBandModel("BRT", 20.0, 132.00, 26.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
       TaxBandModel("ART", 45.0, 0.00, 0.00)
-    )
+    ))
   )
 
   val justPropertyWithSavingsCalcDataModel = CalculationDataModel(
@@ -1286,6 +1357,7 @@ object CalcBreakdownTestConstants {
       ukDividends = 0.0
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 2500.00,
@@ -1320,6 +1392,7 @@ object CalcBreakdownTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 0,
+      0,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -1354,11 +1427,14 @@ object CalcBreakdownTestConstants {
       rate = 0.00,
       taxableAmount = 0.0
     ),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      26,
+      132,
+      Seq(
       TaxBandModel("BRT", 20.0, 132.00, 26.00),
       TaxBandModel("HRT", 40.0, 0.00, 0.00),
       TaxBandModel("ART", 45.0, 0.00, 0.00)
-    )
+    ))
   )
 
   val mandatoryOnlyDataModel = CalculationDataModel(
@@ -1375,10 +1451,12 @@ object CalcBreakdownTestConstants {
     ),
     savingsAndGains = SavingsAndGainsModel(
       0,
+      0,
       Seq()
     ),
     dividends = DividendsModel(
       totalAmount = 0,
+      0,
       Seq()
     ),
     nic = NicModel(
@@ -1390,7 +1468,11 @@ object CalcBreakdownTestConstants {
       rate = 0.00,
       taxableAmount = 0.0
     ),
-    payAndPensionsProfitBands = Nil
+    payAndPensionsProfit = PayPensionsProfitModel(
+      0,
+      0,
+      Seq()
+    )
   )
 
   val mandatoryCalculationDataSuccessJson: JsValue = Json.obj(
@@ -1414,41 +1496,6 @@ object CalcBreakdownTestConstants {
       "bankBuildingSocietyInterest" -> 1999,
       "ukDividends" -> 10000
     ),
-  "savingsAndGains" -> Json.obj(
-    "bands" -> Json.arr(
-      Json.obj(
-        "name" -> "SSR",
-        "taxableIncome" -> 1,
-        "taxAmount" -> 0,
-        "taxRate" -> 0
-      ),
-      Json.obj(
-        "name" -> "ZRT",
-        "taxableIncome" -> 20,
-        "taxAmount" -> 0,
-        "taxRate" -> 0
-      ),
-      Json.obj(
-        "name" -> "BRT",
-        "taxableIncome" -> 0,
-        "taxAmount" -> 0,
-        "taxRate" -> 20
-      ),
-      Json.obj(
-        "name" -> "HRT",
-        "taxableIncome" -> 0,
-        "taxAmount" -> 0,
-        "taxRate" -> 40
-      ),
-      Json.obj(
-        "name" -> "ART",
-        "taxableIncome" -> 0,
-        "taxAmount" -> 0,
-        "taxRate" -> 45
-      )
-    ),
-    "total" -> 0
-  ),
     "nic" -> Json.obj(
       "class2" -> 10000,
       "class4" -> 14000
@@ -1463,7 +1510,9 @@ object CalcBreakdownTestConstants {
     ),
     "incomeTax" -> Json.obj(
       "payPensionsProfit" -> Json.obj(
-        "band" -> Json.arr(
+        "totalAmount" -> 66500,
+        "taxableIncome" -> 170000,
+        "payAndPensionsProfitBands" -> Json.arr(
           Json.obj(
             "name" -> "BRT",
             "rate" -> 20.0,
@@ -1484,8 +1533,45 @@ object CalcBreakdownTestConstants {
           )
         )
       ),
+      "savingsAndGains" -> Json.obj(
+        "bands" -> Json.arr(
+          Json.obj(
+            "name" -> "SSR",
+            "taxableIncome" -> 1,
+            "taxAmount" -> 0,
+            "taxRate" -> 0
+          ),
+          Json.obj(
+            "name" -> "ZRT",
+            "taxableIncome" -> 20,
+            "taxAmount" -> 0,
+            "taxRate" -> 0
+          ),
+          Json.obj(
+            "name" -> "BRT",
+            "taxableIncome" -> 0,
+            "taxAmount" -> 0,
+            "taxRate" -> 20
+          ),
+          Json.obj(
+            "name" -> "HRT",
+            "taxableIncome" -> 0,
+            "taxAmount" -> 0,
+            "taxRate" -> 40
+          ),
+          Json.obj(
+            "name" -> "ART",
+            "taxableIncome" -> 0,
+            "taxAmount" -> 0,
+            "taxRate" -> 45
+          )
+        ),
+        "total" -> 0,
+        "taxableIncome" -> 0
+      ),
       "dividends" -> Json.obj(
         "totalAmount" -> 5000,
+        "taxableIncome" -> 6000,
         "band" -> Json.arr(
           Json.obj(
             "name" -> "basic-band",
@@ -1594,6 +1680,8 @@ object CalcBreakdownTestConstants {
           "taxableIncome" -> 0
         ),
         "payPensionsProfit" -> Json.obj(
+          "totalAmount" -> 66500,
+          "taxableIncome" -> 170000,
           "band" -> Json.arr(Json.obj(
             "name" -> "BRT",
             "rate" -> 20.0,
@@ -1614,7 +1702,7 @@ object CalcBreakdownTestConstants {
         ),
         "savingsAndGains" -> Json.obj(
           "totalAmount" -> 0,
-          "taxableIncome" -> 60207080823.340004,
+          "taxableIncome" -> 0,
           "band" -> Json.arr(
             Json.obj(
               "name" -> "SSR",
@@ -1661,6 +1749,7 @@ object CalcBreakdownTestConstants {
         ),
         "dividends" -> Json.obj(
           "totalAmount" -> 5000,
+          "taxableIncome" -> 6000,
           "band" -> Json.arr(
             Json.obj(
               "name" -> "basic-band",
@@ -1897,17 +1986,21 @@ object CalcBreakdownTestConstants {
           "bankBuildingSocietyInterest" -> 0,
           "ukDividends" -> 0
         ),
-        "savingsAndGains" -> Json.obj(
-          "total" -> 0,
-          "bands" -> Json.arr()
-        ),
         "incomeTax" -> Json.obj(
           "dividends" -> Json.obj(
             "totalAmount" -> 0,
+            "taxableIncome" -> 0,
             "band" -> Json.arr()
           ),
           "payPensionsProfit" -> Json.obj(
-            "band" -> Json.arr()
+            "totalAmount" -> 0,
+            "taxableIncome" -> 0,
+            "payAndPensionsProfitBands" -> Json.arr()
+          ),
+          "savingsAndGains" -> Json.obj(
+            "total" -> 0,
+            "taxableIncome" -> 0,
+            "bands" -> Json.arr()
           )
         ),
         "giftAid" -> Json.obj(
@@ -1943,11 +2036,11 @@ object CalcBreakdownTestConstants {
       Some(CalculationDataModel(
         None, 0.0, 123.45, 0, 0, 0,
         IncomeReceivedModel(0, 0, 0, 0),
-        SavingsAndGainsModel(0, List()),
-        DividendsModel(0, List()),
+        SavingsAndGainsModel(0, 0, List()),
+        DividendsModel(0, 0, List()),
         GiftAidModel(0, 0, 0),
         NicModel(0, 0),
-        None, List()
+        None
       ))
     )
 

@@ -259,6 +259,7 @@ object CalcDataIntegrationTestConstants {
     ),
     savingsAndGains = SavingsAndGainsModel(
       0,
+      2000,
       Seq(BandModel(
         taxableIncome = 1.00,
         taxRate = 0.0,
@@ -292,6 +293,7 @@ object CalcDataIntegrationTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
+      taxableIncome = 6000,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -327,11 +329,14 @@ object CalcDataIntegrationTestConstants {
       taxableAmount = 0
     ),
     eoyEstimate = Some(EoyEstimate(25000.00)),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      totalAmount = 66500,
+      taxableIncome = 170000,
+      Seq(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
       TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
-    )
+    ))
   )
 
   val calculationDataSuccessModel = CalculationDataModel(
@@ -347,6 +352,7 @@ object CalcDataIntegrationTestConstants {
       ukDividends = 11000.00
     ),
     savingsAndGains = SavingsAndGainsModel(
+      0,
       0,
       Seq(BandModel(
         taxableIncome = 1.00,
@@ -381,6 +387,7 @@ object CalcDataIntegrationTestConstants {
     ),
     dividends = DividendsModel(
       totalAmount = 5000.0,
+      taxableIncome = 6000,
       Seq(
         DividendsBandModel(
           name = "basic-band",
@@ -415,11 +422,14 @@ object CalcDataIntegrationTestConstants {
       rate = 0.0,
       taxableAmount = 1.5
     ),
-    payAndPensionsProfitBands = List(
+    payAndPensionsProfit = PayPensionsProfitModel(
+      66500,
+      170000,
+      Seq(
       TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
       TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
       TaxBandModel("ART", 45.0, 50000.00, 22500.00)
-    )
+    ))
   )
 
   val calculationDataErrorModel = CalculationDataErrorModel(code = 500, message = "Calculation Error Model Response")

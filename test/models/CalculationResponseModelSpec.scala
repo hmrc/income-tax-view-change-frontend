@@ -61,7 +61,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calculationDataSuccessModel.giftAid,
         calculationDataSuccessModel.nic,
         calculationDataSuccessModel.eoyEstimate,
-        calculationDataSuccessModel.payAndPensionsProfitBands
+        calculationDataSuccessModel.payAndPensionsProfit
       )
 
       val calcDataModel: Option[CalculationDataModel] = Some(calculationDataModel)
@@ -88,7 +88,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
        calculationDataSuccessModel.giftAid,
        calculationDataSuccessModel.nic,
        calculationDataSuccessModel.eoyEstimate,
-       calculationDataSuccessModel.payAndPensionsProfitBands
+       calculationDataSuccessModel.payAndPensionsProfit
      )
 
     }
@@ -112,7 +112,7 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
         calculationDataSuccessModel.giftAid,
         calculationDataSuccessModel.nic,
         calculationDataSuccessModel.eoyEstimate,
-        calculationDataSuccessModel.payAndPensionsProfitBands
+        calculationDataSuccessModel.payAndPensionsProfit
       )
 
     }
