@@ -31,19 +31,19 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
-class PaymentDueController @Inject()(implicit val config: FrontendAppConfig,
-                                     implicit val messagesApi: MessagesApi,
-                                     val checkSessionTimeout: SessionTimeoutPredicate,
+class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
                                      val retrieveNino: NinoPredicate,
                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                      val financialTransactionsService: FinancialTransactionsService,
                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                      val itvcErrorHandler: ItvcErrorHandler,
-                                     val auditingService: AuditingService
+                                     val auditingService: AuditingService,
+                                     implicit val config: FrontendAppConfig,
+                                     implicit val messagesApi: MessagesApi
                                     ) extends FrontendController with I18nSupport {
 
-  private def hasFinancialTransactionsError(transactionModels: List[FinancialTransactionsResponseModel]): Boolean = {
+  def hasFinancialTransactionsError(transactionModels: List[FinancialTransactionsResponseModel]): Boolean = {
     transactionModels.exists {
       case (_: FinancialTransactionsErrorModel) => true
       case (_: FinancialTransactionsModel) => false
@@ -54,7 +54,8 @@ class PaymentDueController @Inject()(implicit val config: FrontendAppConfig,
   val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       financialTransactionsService.getAllUnpaidFinancialTransactions.map {
-        case transactions if hasFinancialTransactionsError(transactions) => itvcErrorHandler.showInternalServerError()
+        case transactions if hasFinancialTransactionsError(transactions) =>
+          itvcErrorHandler.showInternalServerError()
         case transactions: List[FinancialTransactionsModel] => Ok(views.html.paymentDue(transactions))
       }
 
