@@ -160,11 +160,11 @@
                 <td id="dividend-income" class="summary-data">@breakdown.incomeReceived.ukDividends.toCurrency</td>
             </tr>
 
-            @if(breakdown.dividends.totalAmount > 0) {
+            @if(breakdown.dividendsAllowance > 0) {
                 <!-- Personal Allowance (Dividends) -->
                 <tr class="no-border-bottom">
                     <td id="dividend-allowance-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-allowance")</td>
-                    <td id="dividend-allowance" class="summary-data">-@breakdown.dividends.totalAmount.toCurrency</td> <!-- TODO: FIGURE OUT WHAT VALUE THIS IS SUPPOSED TO BE! -->
+                    <td id="dividend-allowance" class="summary-data">-@breakdown.dividendsAllowance.toCurrency</td>
                 </tr>
             }
 

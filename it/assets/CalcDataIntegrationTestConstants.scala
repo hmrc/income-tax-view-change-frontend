@@ -577,6 +577,12 @@ object CalcDataIntegrationTestConstants {
               "totalAmount" -> 5000,
               "band" -> Json.arr(
                 Json.obj(
+                  "name" -> "zero-rate-band",
+                  "rate" -> 0.0,
+                  "income" -> 5000,
+                  "taxAmount" -> 0.0
+                ),
+                Json.obj(
                   "name" -> "basic-band",
                   "rate" -> 7.5,
                   "income" -> 1000,
@@ -1070,6 +1076,12 @@ object CalcDataIntegrationTestConstants {
             "totalAmount" -> 5000,
             "band" -> Json.arr(
               Json.obj(
+                "name" -> "zero-rate-band",
+                "rate" -> 0.0,
+                "income" -> 5000,
+                "taxAmount" -> 0.0
+              ),
+              Json.obj(
                 "name" -> "basic-band",
                 "rate" -> 7.5,
                 "income" -> 1000,
@@ -1288,6 +1300,12 @@ object CalcDataIntegrationTestConstants {
           "dividends" -> Json.obj(
             "totalAmount" -> 5000,
             "band" -> Json.arr(
+              Json.obj(
+                "name" -> "zero-rate-band",
+                "rate" -> 0.0,
+                "income" -> 5000,
+                "taxAmount" -> 0.0
+              ),
               Json.obj(
                 "name" -> "basic-band",
                 "rate" -> 7.5,
@@ -1537,6 +1555,12 @@ object CalcDataIntegrationTestConstants {
           "dividends" -> Json.obj(
             "totalAmount" -> 5000,
             "band" -> Json.arr(
+              Json.obj(
+                "name" -> "zero-rate-band",
+                "rate" -> 0.0,
+                "income" -> 2500,
+                "taxAmount" -> 0.0
+              ),
               Json.obj(
                 "name" -> "basic-band",
                 "rate" -> 7.5,
