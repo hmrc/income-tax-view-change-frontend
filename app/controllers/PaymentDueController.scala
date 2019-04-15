@@ -44,10 +44,7 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                     ) extends FrontendController with I18nSupport {
 
   def hasFinancialTransactionsError(transactionModels: List[FinancialTransactionsResponseModel]): Boolean = {
-    transactionModels.exists {
-      case (_: FinancialTransactionsErrorModel) => true
-      case (_: FinancialTransactionsModel) => false
-    }
+    transactionModels.exists(_.isInstanceOf[FinancialTransactionsErrorModel])
   }
 
 
