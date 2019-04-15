@@ -879,6 +879,13 @@ object CalcBreakdownTestConstants {
       totalAmount = 5000.0,
       Seq(
         DividendsBandModel(
+          name = "zero-rate-band",
+          rate = 0, threshold = None,
+          apportionedThreshold = None,
+          income = 5000.0,
+          amount = 0.0
+        ),
+        DividendsBandModel(
           name = "basic-band",
           rate = 7.5, threshold = None,
           apportionedThreshold = None,
@@ -968,6 +975,13 @@ object CalcBreakdownTestConstants {
       totalAmount = 5000.0,
       Seq(
         DividendsBandModel(
+          name = "zero-rate-band",
+          rate = 0.0, threshold = None,
+          apportionedThreshold = None,
+          income = 5000.0,
+          amount = 0.0
+        ),
+        DividendsBandModel(
           name = "basic-band",
           rate = 7.5, threshold = None,
           apportionedThreshold = None,
@@ -1056,6 +1070,14 @@ object CalcBreakdownTestConstants {
     dividends = DividendsModel(
       totalAmount = 5000.0,
       Seq(
+        DividendsBandModel(
+          name = "zero-rate-band",
+          rate = 0.0,
+          threshold = None,
+          apportionedThreshold = None,
+          income = 5000.0,
+          amount = 0
+        ),
         DividendsBandModel(
           name = "basic-band",
           rate = 7.5, threshold = None,
