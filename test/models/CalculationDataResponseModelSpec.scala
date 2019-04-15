@@ -42,7 +42,9 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
 
         calculationDataSuccessModel.taxReliefs shouldBe 0
 
-        calculationDataSuccessModel.payAndPensionsProfitBands shouldBe List(
+        calculationDataSuccessModel.payAndPensionsProfit.totalAmount shouldBe 66500
+        calculationDataSuccessModel.payAndPensionsProfit.taxableIncome shouldBe 170000
+        calculationDataSuccessModel.payAndPensionsProfit.payAndPensionsProfitBands shouldBe Seq(
           TaxBandModel("BRT", 20.0, 20000.00, 4000.00),
           TaxBandModel("HRT", 40.0, 100000.00, 40000.00),
           TaxBandModel("ART", 45.0, 50000.00, 22500.00)

@@ -175,7 +175,7 @@
             </tr>
         }
 
-        @for(band <- breakdown.payAndPensionsProfitBands if band.income > 0) {
+        @for(band <- breakdown.payAndPensionsProfit.payAndPensionsProfitBands if band.income > 0) {
             <!-- Pay Pension Profit tax bands -->
             <tr id="@{band.name}Ppp-section" class="no-border-bottom">
                 <td id="@{band.name}Ppp-it-calc-heading">

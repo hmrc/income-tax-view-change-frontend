@@ -63,8 +63,8 @@ class CalcBreakdownHelperSpec extends TestSupport {
   val basicModel = CalculationDataModel(
     None,0, 0, 0, 0, 0,
     IncomeReceivedModel(0, 0, 0, 0),
-    SavingsAndGainsModel(0, Seq(BandModel(0, 0, 0, "SSR"),BandModel(0, 0, 0, "ZRT"),BandModel(0, 0, 0, "BRT"),BandModel(0, 0, 0, "HRT"),BandModel(0, 0, 0, "ART"))),
-    DividendsModel(0, Seq(DividendsBandModel("basic band",0, None, None, 0,0))),
+    SavingsAndGainsModel(0, 0, Seq(BandModel(0, 0, 0, "SSR"),BandModel(0, 0, 0, "ZRT"),BandModel(0, 0, 0, "BRT"),BandModel(0, 0, 0, "HRT"),BandModel(0, 0, 0, "ART"))),
+    DividendsModel(0, 0, Seq(DividendsBandModel("basic band",0, None, None, 0,0))),
     GiftAidModel(0,0,0),
     NicModel(0, 0),
     None
@@ -72,7 +72,8 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
   val allSavingInterestModel: CalculationDataModel = basicModel.copy(
     savingsAndGains = SavingsAndGainsModel(
-      0,
+      10850,
+      15000,
       Seq(
         BandModel(5000, 0.0, 5000, "SSR"),
         BandModel(4000, 0.0, 4000, "ZRT"),
@@ -170,7 +171,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
           }
 
           s"have an Income Tax section" which {
-            val srtBand = model.payAndPensionsProfitBands.find(_.name == "SRT").get
+            val srtBand = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "SRT").get
 
             "has the correct amount of income taxed from payPensionsProfit at SRT" in {
               document.getElementById("SRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${srtBand.income.toCurrencyString} at ${srtBand.rate}%)"
@@ -233,7 +234,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
           }
 
           s"have an Income Tax from payPensionsProfit section" which {
-            val brtBand = model.payAndPensionsProfitBands.find(_.name == "BRT").get
+            val brtBand = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "BRT").get
 
             "has the correct amount of income taxed at BRT" in {
               document.getElementById("BRTPpp-it-calc-heading").text shouldBe s"Pay, Pensions, Profit Income Tax (${brtBand.income.toCurrencyString} at ${brtBand.rate}%)"
@@ -292,7 +293,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
           }
 
           s"have an Income Tax from payPensionsProfit section" which {
-            val irtBand = model.payAndPensionsProfitBands.find(_.name == "IRT").get
+            val irtBand = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "IRT").get
 
             "has a SRT section" in {
               document.getElementById("SRTPpp-section") should not be null
@@ -334,7 +335,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"have an Income Tax from payPensionsProfit section" which {
 
-            val hrtBand = model.payAndPensionsProfitBands.find(_.name == "HRT").get
+            val hrtBand = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "HRT").get
 
             "has a SRT section" in {
               document.getElementById("BRTPpp-section") should not be null
@@ -389,7 +390,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
           s"have an Income Tax from payPensionsProfit section" which {
 
-            val artBand = model.payAndPensionsProfitBands.find(_.name == "ART").get
+            val artBand = model.payAndPensionsProfit.payAndPensionsProfitBands.find(_.name == "ART").get
 
             "has a BRT section" in {
               document.getElementById("BRTPpp-section") should not be null
