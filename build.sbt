@@ -11,19 +11,19 @@ import sbt.Tests.{Group, SubProcess}
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion      = "4.7.0"
+val bootstrapPlayVersion      = "4.10.0"
 val govTemplateVersion        = "5.23.0"
-val playPartialsVersion       = "6.3.0"
-val authClientVersion         = "2.18.0-play-25"
-val playUiVersion             = "7.27.0-play-25"
+val playPartialsVersion       = "6.5.0"
+val authClientVersion         = "2.20.0-play-25"
+val playUiVersion             = "7.39.0-play-25"
 val playLanguageVersion       = "3.4.0"
 
-val scalaTestPlusVersion      = "2.0.0"
-val hmrcTestVersion           = "3.4.0-play-25"
-val scalatestVersion          = "3.0.0"
+val scalaTestPlusVersion      = "2.0.1"
+val hmrcTestVersion           = "3.7.0-play-25"
+val scalatestVersion          = "3.0.7"
 val pegdownVersion            = "1.6.0"
-val jsoupVersion              = "1.10.2"
-val mockitoVersion            = "2.7.17"
+val jsoupVersion              = "1.11.3"
+val mockitoVersion            = "2.27.0"
 val scalaMockVersion          = "3.5.0"
 val wiremockVersion           = "2.5.1"
 
@@ -35,7 +35,7 @@ val compile = Seq(
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "uk.gov.hmrc" %% "auth-client" % authClientVersion,
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
-  "uk.gov.hmrc" %% "logback-json-logger" % "4.0.0"
+  "uk.gov.hmrc" %% "logback-json-logger" % "4.5.0"
 
 )
 
@@ -85,7 +85,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     Keys.fork in Test := true,
     javaOptions in Test += "-Dlogger.resource=logback-test.xml",
-    scalaVersion := "2.11.11"
+    scalaVersion := "2.11.12"
   )
   .settings(
     libraryDependencies ++= appDependencies,

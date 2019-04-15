@@ -77,7 +77,7 @@ class PaymentsDueViewSpec extends TestSupport {
       }
 
       s"have the sub heading  ${messages.subTitle}" in new Setup(unpaidFinancialTransactions) {
-        pageDocument.getElementsByTag("h2").text shouldBe messages.subTitle
+        pageDocument.select("article h2").text shouldBe messages.subTitle
       }
 
       "display current unpaid bills" in new Setup(unpaidFinancialTransactions) {

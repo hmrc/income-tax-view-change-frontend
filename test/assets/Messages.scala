@@ -329,7 +329,7 @@ object Messages {
   object PaymentDue {
     val title = "Your Income Tax"
     val heading = "Income Tax payments"
-    val subTitle = "Payment due "
+    val subTitle = "Payment due"
     val due = "due"
     def taxYearPeriod(from: String, to:String) = s"Tax year $from to $to"
     val noBills = "No payments due."
