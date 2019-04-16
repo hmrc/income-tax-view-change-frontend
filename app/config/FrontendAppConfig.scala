@@ -90,7 +90,7 @@ class FrontendAppConfig @Inject()(val environment: Environment,
 
   lazy val ftUrl: String = baseUrl("financial-transactions")
 
-  lazy val paymentsUrl: String = loadConfig("payments-frontend.url")
+  lazy val paymentsUrl: String = loadConfig("pay-api.url")
 
   lazy val enterSurveyUrl: String = loadConfig("enter-survey.url")
 

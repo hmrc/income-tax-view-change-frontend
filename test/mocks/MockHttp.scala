@@ -21,6 +21,7 @@ import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
+import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials.HtmlPartial
@@ -37,6 +38,10 @@ trait MockHttp extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
     super.beforeEach()
     reset(mockHttpGet)
   }
+
+  def setupMockHttpPost(url: String, body: JsValue)(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
+    when(mockHttpGet.POST[JsValue, HttpResponse](ArgumentMatchers.eq(url), ArgumentMatchers.eq(body), ArgumentMatchers.any())
+    (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
   def setupMockHttpGet(url: String)(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
     when(mockHttpGet.GET[HttpResponse](ArgumentMatchers.eq(url))
