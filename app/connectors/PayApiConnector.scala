@@ -53,7 +53,9 @@ class PayApiConnector @Inject()(val http: HttpClient,
         },
         valid => valid
       )
-      case response => PaymentJourneyErrorResponse(response.status, response.body)
+      case response =>
+        Logger.error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+        PaymentJourneyErrorResponse(response.status, response.body)
     }
   }
 }

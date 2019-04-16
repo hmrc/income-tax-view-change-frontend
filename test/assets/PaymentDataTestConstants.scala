@@ -23,7 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 object PaymentDataTestConstants {
 
   val testTaxType = "mtdfb-itsa"
-  val testAmountInPence = 10000000
+  val testAmountInPence = 10000
 
   val testPaymentDataModel: PaymentDataModel = PaymentDataModel(testTaxType, testMtditid, testAmountInPence, testPaymentRedirectUrl)
 

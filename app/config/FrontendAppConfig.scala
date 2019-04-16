@@ -78,6 +78,10 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val ninoEnrolmentKey: String = loadConfig("enrolments.nino.key")
   lazy val ninoIdentifierKey: String = loadConfig("enrolments.nino.identifier")
 
+  //SA Enrolment
+  lazy val saEnrolmentKey: String = loadConfig("enrolments.sa.key")
+  lazy val saIdentifierKey: String = loadConfig("enrolments.sa.identifier")
+
   //Business Tax Account
   lazy val btaService: String = baseUrl("business-account")
   lazy val businessTaxAccount: String = loadConfig("business-tax-account.url")
