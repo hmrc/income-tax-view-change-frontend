@@ -301,6 +301,7 @@ object Messages {
     val statement = "Income Tax statement"
     val details = "Account details"
     val updates = "Updates"
+    val payementsDue = "Income Tax payments"
   }
 
   //ReportDeadlines Page Messages
@@ -323,6 +324,16 @@ object Messages {
     def fromToDates(from: String, to: String) = s"$from to $to"
     val dueOn = "Due on:"
     val crystallisedHeading = "Whole tax year (final check)"
+  }
+
+  object PaymentDue {
+    val title = "Your Income Tax"
+    val heading = "Income Tax payments"
+    val subTitle = "Payment due"
+    val due = "due"
+    def taxYearPeriod(from: String, to:String) = s"Tax year $from to $to"
+    val noBills = "No payments due."
+    val billLink = "View bill"
   }
 
 }

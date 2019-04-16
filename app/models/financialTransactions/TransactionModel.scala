@@ -53,6 +53,7 @@ case class TransactionModel(chargeType: Option[String] = None,
     !isPaid && appConfig.features.paymentEnabled()
   }
 
+  val due: Option[LocalDate] = charges().headOption.flatMap(_.dueDate)
 }
 
 object TransactionModel {

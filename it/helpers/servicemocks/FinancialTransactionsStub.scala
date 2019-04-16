@@ -21,13 +21,13 @@ import play.api.libs.json.JsValue
 
 object FinancialTransactionsStub {
 
-  val financialTransactionsUrl: String => String = mtditid => s"/financial-transactions/it/${mtditid}?dateFrom=2017-4-6&dateTo=2018-4-5"
+  def financialTransactionsUrl(mtditid: String, from: String, to: String): String = s"/financial-transactions/it/${mtditid}?dateFrom=$from&dateTo=$to"
 
   //Financial Transactions
-  def stubGetFinancialTransactions(mtditid: String)(status: Int, response: JsValue): Unit =
-    WiremockHelper.stubGet(financialTransactionsUrl(mtditid), status, response.toString())
+  def stubGetFinancialTransactions(mtditid: String, from: String  =  "2017-4-6" , to: String =  "2018-4-5")(status: Int, response: JsValue): Unit =
+    WiremockHelper.stubGet(financialTransactionsUrl(mtditid, from, to), status, response.toString())
 
   //Verifications
-  def verifyGetFinancialTransactions(mtditid: String): Unit =
-    WiremockHelper.verifyGet(financialTransactionsUrl(mtditid))
+  def verifyGetFinancialTransactions(mtditid: String, from: String, to: String): Unit =
+    WiremockHelper.verifyGet(financialTransactionsUrl(mtditid, from, to))
 }

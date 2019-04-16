@@ -67,12 +67,12 @@ class HomePageViewSpec extends TestSupport {
         "contain a link to the view bill page if the payment feature switch is turned off" in new Setup {
           mockAppConfig.features.paymentEnabled(false)
           getTextOfElementById("bills-link") shouldBe Some("View bill")
-          getElementById("bills-link").map(_.attr("href")) shouldBe Some(controllers.routes.BillsController.viewCrystallisedCalculations().url)
+          getElementById("bills-link").map(_.attr("href")) shouldBe Some(controllers.routes.PaymentDueController.viewPaymentsDue().url)
         }
         "contains a link to the view bill and make payment page if the payment feature switch is turned on" in new Setup {
           mockAppConfig.features.paymentEnabled(true)
           getTextOfElementById("bills-link") shouldBe Some("View bill and make payment")
-          getElementById("bills-link").map(_.attr("href")) shouldBe Some(controllers.routes.BillsController.viewCrystallisedCalculations().url)
+          getElementById("bills-link").map(_.attr("href")) shouldBe Some(controllers.routes.PaymentDueController.viewPaymentsDue().url)
         }
         "contains a link to the previous bills page" in new Setup {
           getTextOfElementById("previous-bill-link") shouldBe Some("Previous bills")

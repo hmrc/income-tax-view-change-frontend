@@ -64,7 +64,7 @@
                         <span id="income-tax-payment-card-body-heading" class="heading-secondary">@messages("home.incomeTaxPayment.nextPaymentDue")</span>
                         <span id="income-tax-payment-card-body-date">
 
-                            @{nextPaymentDueDate.map(_.toLongDate).getOrElse("No payments due.")}</span>
+                            @{nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.incomeTaxPayment.noBills"))}</span>
                     </h3>
 
 
@@ -72,7 +72,7 @@
 
                     <div>
                     <p>
-                        <a id="bills-link" data-journey-click="HomePage:ClickLink:ViewYourBills" href="@{controllers.routes.BillsController.viewCrystallisedCalculations().url}">
+                        <a id="bills-link" data-journey-click="HomePage:ClickLink:ViewYourBills" href="@{controllers.routes.PaymentDueController.viewPaymentsDue.url}">
                             @if(appConfig.features.paymentEnabled()) {
                                 @messages("home.incomeTaxPayment.viewBillAndMakePayment")
                             } else {
