@@ -69,7 +69,7 @@
             @if(!transactionModel.isPaid) {
                 <div class="form-group divider--bottom">
                     <p id="whatYouOweHeading" class="bold-medium">
-                        @Html(calcModel.whatYouOwe)
+                        @transactionModel.outstandingAmount.get.toCurrency
                     </p>
                     <p class="form-hint">
                         @messages("crystalisation.dueBy", s"${taxYear+1}")

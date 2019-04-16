@@ -99,7 +99,7 @@ class CrystallisedViewSpec extends TestSupport {
         }
 
         "have a what you owe heading displayed with the correct value" in {
-          wyoSection.select("div.divider--bottom p.bold-medium").text shouldBe "£149.86"
+          wyoSection.select("div.divider--bottom p.bold-medium").text shouldBe "£1,400"
         }
 
         "have the correct message for the tax year due date" in {
