@@ -22,294 +22,172 @@
 @(calcModel: CalcDisplayModel, transactionModel: Option[TransactionModel], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @defining(calcModel.calcDataModel.get) { breakdown =>
-    <table class="itvc-table">
+
+
+    @breakdown.nationalRegime.map { regime =>
+        <div id="national-regime">@messages("calc-breakdown.national-regime", regime)</div>
+    }
+
+    <h3 id="income-heading" class="heading-small">@messages("calc-breakdown.income.heading")</h3>
+    <div id="income-subheading" class="form-hint">@messages("calc-breakdown.income.sub-heading")</div>
+
+    <table class="income-table">
         <tbody>
 
-        @if(breakdown.nationalRegime.nonEmpty){
-            <!-- National Regime -->
-            <tr id="national-regime-section"  class="no-border-bottom">
-                <td id="national-regime-heading">@messages("estimated_tax_liability.calc-breakdown.nationalRegime")</td>
-                <td id="national-regime" class="summary-data">@breakdown.nationalRegime</td>
-            </tr>
-        }
+            @if(breakdown.incomeReceived.selfEmployment > 0) {
+                <!-- Income from Business Profit -->
+                <tr id="business-profit-section" class="no-border-bottom">
+                    <td id="business-profit-label">@messages("calc-breakdown.income.business-profit")</td>
+                    <td id="business-profit-data" class="summary-data">@breakdown.incomeReceived.selfEmployment.toCurrency</td>
+                </tr>
+            }
 
-        <!-- Business profit and income from savings -->
-        <tr id="business-profit-section" class="total-section">
-            <td id="business-profit-heading">
-                @{
-                    if(CalcDisplayModel.selfEmployedIncomeOrReceived(user, taxYear, breakdown)) {
-                        messages("estimated_tax_liability.calc-breakdown.business-profit")
-                    } else if(CalcDisplayModel.propertyIncomeOrReceived(user, taxYear, breakdown)) {
-                        messages("estimated_tax_liability.calc-breakdown.property-profit")
-                    }
-                }
-                @if(calcModel.estimatedWithBBSInterest) {@messages("estimated_tax_liability.calc-breakdown.and-savings")}
-            </td>
+            @if(breakdown.incomeReceived.ukProperty > 0) {
+                <!-- Income from Property -->
+                <tr id="property-income-section" class="no-border-bottom">
+                    <td id="property-income-label">@messages("calc-breakdown.income.property")</td>
+                    <td id="property-income-data" class="summary-data">@breakdown.incomeReceived.ukProperty.toCurrency</td>
+                </tr>
+            }
+            
+            @if(breakdown.incomeReceived.ukDividends > 0) {
+                <!-- Income from dividends -->
+                <tr id="dividend-income-section" class="no-border-bottom">
+                    <td id="dividend-income-label">@messages("calc-breakdown.income.dividends")</td>
+                    <td id="dividend-income-data" class="summary-data">@breakdown.incomeReceived.ukDividends.toCurrency</td>
+                </tr>
+            }
 
-            <td id="business-profit"  class="summary-data">
-                @{
-                    if(calcModel.calcStatus == Estimate){(breakdown.incomeReceived.estimateBuisnessProfit).toCurrency}
-                    else { (breakdown.incomeReceived.buisnessProfit).toCurrency}
-                }
+            @if(breakdown.incomeReceived.bankBuildingSocietyInterest > 0) {
+                <!-- Income from Savings -->
+                <tr id="savings-income-section" class="no-border-bottom">
+                    <td id="savings-income-label">@messages("calc-breakdown.income.savings")</td>
+                    <td id="savings-income-data" class="summary-data">@breakdown.incomeReceived.bankBuildingSocietyInterest.toCurrency</td>
+                </tr>
+            }
 
-            </td>
-        </tr>
+            @if(breakdown.personalAllowance > 0) {
+                <!-- Deduction - Personal Allowance -->
+                <tr id="personal-allowance-section" class="no-border-bottom">
+                    <td id="personal-allowance-label">@messages("calc-breakdown.income.personal-allowance")</td>
+                    <td id="personal-allowance-data" class="summary-data panel-right">@breakdown.personalAllowance.toCurrency</td>
+                </tr>
+            }
 
-        @if(breakdown.incomeReceived.selfEmployment > 0) {
-            <!-- Business profit (for self-employment) -->
-            <tr id="business-profit-self-employed-section" class="no-border-bottom">
-                <td id="business-profit-self-employed-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.business-profit-self-employment")
-                </td>
+            @if(breakdown.dividends.dividendsAllowance > 0) {
+                <!-- Deduction - Dividends Allowance -->
+                <tr id="dividends-allowance-section" class="no-border-bottom">
+                    <td id="dividends-allowance-label">@messages("calc-breakdown.income.dividends-allowance")</td>
+                    <td id="dividends-allowance-data" class="summary-data panel-right">@breakdown.dividends.dividendsAllowance.toCurrency</td>
+                </tr>
+            }
 
-                <td id="business-profit-self-employed"  class="summary-data">
-                    @{(breakdown.incomeReceived.selfEmployment).toCurrency}
-                </td>
-            </tr>
-        }
-
-        @if(breakdown.incomeReceived.ukProperty > 0) {
-            <!-- Business profit (for property) -->
-            <tr id="business-profit-property-section" class="no-border-bottom">
-                <td id="business-profit-property-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.business-profit-property")
-                </td>
-
-                <td id="business-profit-property"  class="summary-data">
-                    @{(breakdown.incomeReceived.ukProperty).toCurrency}
-                </td>
-            </tr>
-        }
-
-        @if(breakdown.giftAid.paymentsMade > 0) {
-            <!-- Gift Aid payment -->
-            <tr id="gift-aid-section" class="no-border-bottom">
-                <td id="gift-aid-heading" >
-                    @messages("estimated_tax_liability.calc-breakdown.gift-aid-payment")
-                </td>
-                <td id="gift-aid" class="summary-data">
-                    @{(breakdown.giftAid.paymentsMade).toCurrency}
-                </td>
-            </tr>
-        }
-
-        @if(breakdown.additionalAllowances > 0) {
-            <!-- Additional Allowances -->
-            <tr id="additional-allowances-section" class="no-border-bottom">
-                <td id="additional-allowances-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.additional-allowances")
-                </td>
-                <td id="additional-allowances" class="summary-data">
-                    -@{(breakdown.additionalAllowances).toCurrency}
-                </td>
-            </tr>
-        }
-
-        @if(breakdown.personalAllowance > 0) {
-            <!-- Personal allowance (for period reported) -->
-            <tr id="personal-allowance-section" class="no-border-bottom">
-                <td id="personal-allowance-heading">
-                    @{messages("estimated_tax_liability.calc-breakdown" + calcModel.personalAllowanceHeading)}
-                </td>
-                <td id="personal-allowance" class="summary-data">
-                    -@{breakdown.personalAllowance.toCurrency}
-                </td>
-            </tr>
-        }
-
-        <!-- Your taxable income (Pay, Pension, Profit) -->
-        <tr id="taxable-income-section" class="total-section">
-            <td id="taxable-income-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-payPensionsProfit-income")</td>
-            <td id="taxable-income" class="summary-data">@breakdown.taxableIncomeTaxIncome.toCurrency</td>
-        </tr>
-
-        @if(breakdown.incomeReceived.bankBuildingSocietyInterest > 0) {
-            <!-- Income from Saving and Gains -->
-            <tr id="business-profit-bbs-interest-section" class="no-border-bottom">
-                <td id="business-profit-bbs-interest-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.income-savings")
-                </td>
-                <td id="business-profit-bbs-interest" class="summary-data">
-                    @{(breakdown.incomeReceived.bankBuildingSocietyInterest).toCurrency}
-                </td>
-            </tr>
-
-            @if(breakdown.savingsAllowanceSummaryData > 0) {
-                <!-- Savings Allowance (for period reported) -->
+            @if(breakdown.savingsAndGains.savingsAllowance > 0) {
+                <!-- Deduction - Savings Allowance -->
                 <tr id="savings-allowance-section" class="no-border-bottom">
-                    <td id="savings-allowance-heading">
-                        @{messages("estimated_tax_liability.calc-breakdown" + calcModel.savingsAllowanceHeading)}
-                    </td>
-                    <td id="savings-allowance" class="summary-data">
-                        -@{breakdown.savingsAllowanceSummaryData.toCurrency}
-                    </td>
+                    <td id="savings-allowance-label">@messages("calc-breakdown.income.savings-allowance")</td>
+                    <td id="savings-allowance-data" class="summary-data panel-right">@breakdown.savingsAndGains.savingsAllowance.toCurrency</td>
                 </tr>
             }
 
-            <!-- Your taxable income (savings interest) -->
-            <tr id="taxable-savings-section" class="total-section">
-                <td id="taxable-savings-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-savingsInterest-income")</td>
-                <td id="taxable-savings" class="summary-data">@breakdown.taxableSavingsIncome.toCurrency</td>
-            </tr>
-        }
-
-        @if(breakdown.incomeReceived.ukDividends > 0) {
-            <!-- Income from dividends -->
-            <tr class="no-border-bottom">
-                <td id="dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-income")</td>
-                <td id="dividend-income" class="summary-data">@breakdown.incomeReceived.ukDividends.toCurrency</td>
-            </tr>
-
-            @if(breakdown.dividendsAllowance > 0) {
-                <!-- Personal Allowance (Dividends) -->
-                <tr class="no-border-bottom">
-                    <td id="dividend-allowance-heading">@messages("estimated_tax_liability.calc-breakdown.dividend-allowance")</td>
-                    <td id="dividend-allowance" class="summary-data">-@breakdown.dividendsAllowance.toCurrency</td>
+            @if(breakdown.giftOfInvestmentsAndPropertyToCharity > 0) {
+                <!-- Deduction - gifts to investments and property to charity -->
+                <tr id="gift-investment-property-section">
+                    <td id="gift-investment-property-label">@messages("calc-breakdown.income.gift-investment-property-to-charity")</td>
+                    <td id="gift-investment-property-data" class="summary-data panel-right">@breakdown.giftOfInvestmentsAndPropertyToCharity.toCurrency</td>
                 </tr>
             }
 
-            <!-- Your taxable income (Dividends) -->
-            <tr class="total-section">
-                <td id="taxable-dividend-income-heading">@messages("estimated_tax_liability.calc-breakdown.taxable-dividend-income")</td>
-                <td id="taxable-dividend-income" class="summary-data">@breakdown.taxableDividendIncome.toCurrency</td>
+            <!-- Your total taxable income -->
+            <tr id="total-taxable-income-section" class="total-section no-border-bottom">
+                <td id="total-taxable-income-label">@messages("calc-breakdown.income.total-taxable-income")</td>
+                <td id="total-taxable-income-data" class="summary-data">@breakdown.totalTaxableIncome.toCurrency</td>
             </tr>
-        }
+        </tbody>
+    </table>
 
-        @for(band <- breakdown.payAndPensionsProfit.payAndPensionsProfitBands if band.income > 0) {
-            <!-- Pay Pension Profit tax bands -->
-            <tr id="@{band.name}Ppp-section" class="no-border-bottom">
-                <td id="@{band.name}Ppp-it-calc-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.payPensionsProfit-income", band.income.toCurrencyString, band.rate.toString)
-                </td>
-                <td id="@{band.name}Ppp-amount" class="summary-data">
-                    @band.taxAmount.toCurrency
-                </td>
+    <br>
+    <br>
+
+    <h3 id="calculation-heading" class="heading-small">@messages("calc-breakdown.calculation.heading")</h3>
+    <div id="calculation-subheading" class="form-hint">@messages("calc-breakdown.calculation.subheading", breakdown.totalTaxableIncome.toCurrencyString)</div>
+
+    <table class="calculation-table">
+        <tbody>
+
+            @for(band <- breakdown.payAndPensionsProfit.payAndPensionsProfitBands if band.income > 0) {
+                <!-- Income tax band -->
+                <tr id="income-tax-band-@{band.name}-section" class="no-border-bottom">
+                    <td id="income-tax-band-@{band.name}-label">@messages("calc-breakdown.calculation.income-tax", band.income.toCurrencyString, band.rate.toString)</td>
+                    <td id="income-tax-band-@{band.name}-data" class="summary-data">@band.taxAmount.toCurrency</td>
+                </tr>
+            }
+
+            @for(band <- breakdown.dividends.band if band.income > 0) {
+                <!-- Dividend band -->
+                <tr id="dividend-tax-band-@{band.name}-section" class="no-border-bottom">
+                    <td id="dividend-tax-band-@{band.name}-label">@messages("calc-breakdown.calculation.dividend", band.income.toCurrencyString, band.rate.toString)</td>
+                    <td id="dividend-tax-band-@{band.name}-data" class="summary-data">@band.amount.toCurrency</td>
+                </tr>
+            }
+
+            @for(band <- breakdown.savingsAndGains.bands if band.taxableIncome > 0) {
+                <!-- Savings and Gains band -->
+                <tr id="savings-tax-band-@{band.name}-section" class="no-border-bottom">
+                    <td id="savings-tax-band-@{band.name}-label">@messages("calc-breakdown.calculation.savings", band.taxableIncome.toCurrencyString, band.taxRate.toString)</td>
+                    <td id="savings-tax-band-@{band.name}-data" class="summary-data">@band.taxAmount.toCurrency</td>
+                </tr>
+            }
+
+            @if(breakdown.nic.class2 > 0) {
+                <!-- Class 2 National Insurance -->
+                <tr id="nic-class2-section" class="no-border-bottom">
+                    <td id="nic-class2-label">@messages("calc-breakdown.calculation.class-two-ni")</td>
+                    <td id="nic-class2-data" class="summary-data">@breakdown.nic.class2.toCurrency</td>
+                </tr>
+            }
+
+            @if(breakdown.nic.class4 > 0) {
+                <!-- Class 4 National Insurance -->
+                <tr id="nic-class4-section" class="no-border-bottom">
+                    <td id="nic-class4-label">@messages("calc-breakdown.calculation.class-four-ni")</td>
+                    <td id="nic-class4-data" class="summary-data">@breakdown.nic.class4.toCurrency</td>
+                </tr>
+            }
+
+            @if(breakdown.taxReliefs > 0) {
+                <!-- Tax Reliefs -->
+                <tr id="tax-reliefs-section" class="no-border-bottom">
+                    <td id="tax-reliefs-label">@messages("calc-breakdown.calculation.tax-relief")</td>
+                    <td id="tax-reliefs-data" class="summary-data panel-right">@breakdown.taxReliefs.toCurrency</td>
+                </tr>
+            }
+
+            @transactionModel.map { model =>
+                <tr id="payments-to-date-section">
+                    <td id="payments-to-date-label">@messages("calc-breakdown.calculation.payments-to-date")</td>
+                    <td id="payments-to-date-data" class="summary-data panel-right">@model.clearedAmount.getOrElse[BigDecimal](0).toCurrency</td>
+                </tr>
+            }
+
+            <tr id="your-total-section" class="total-section no-border-bottom">
+                @if(calcModel.calcStatus == Estimate) {
+                    <td id="your-total-estimate-label">@messages("calc-breakdown.calculation.your-total-estimate")</td>
+                    <td id="your-total-estimate-data" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
+                } else {
+                    <td>
+                        <div id="your-total-tax-label">@messages("calc-breakdown.calculation.your-total-tax")</div>
+                        <div id="your-total-tax-date" class="form-hint">@messages("calc-breakdown.calculation.due-date", (taxYear+1).toString)</div>
+                    </td>
+                    <td id="your-total-tax-data" class="summary-data">
+                        @transactionModel.map { model =>
+                            @model.outstandingAmount.getOrElse[BigDecimal](0).toCurrency
+                        }
+                    </td>
+                }
             </tr>
-        }
-
-        @if(calcModel.hasSRTSiSection) {
-            <!-- Savings interest tax bands -->
-            <tr id="srtSi-section" class="no-border-bottom">
-                <td id="srtSi-it-calc-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.savingsInterest-income")
-                    (<span id="srtSi-it-calc">@{breakdown.srtSiITCalc.toCurrencyString}</span>
-                    @messages("estimated_tax_liability.calc-breakdown.at")
-                    <span id="srtSi-rate">@breakdown.savingsAndGains.startBand.taxRate</span>%)
-                </td>
-                <td id="srtSi-amount" class="summary-data">@{(breakdown.srtSiITAmount).toCurrency}</td>
-            </tr>
-        }
-
-        @if(calcModel.hasZRTSiSection) {
-            <!-- Savings interest tax bands -->
-            <tr id="zrtSi-section" class="no-border-bottom">
-                <td id="zrtSi-it-calc-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.savingsInterest-income")
-                    (<span id="zrtSi-it-calc">@{breakdown.zrtSiITCalc.toCurrencyString}</span>
-                    @messages("estimated_tax_liability.calc-breakdown.at")
-                    <span id="zrtSi-rate">@breakdown.savingsAndGains.zeroBand.taxRate</span>%)
-                </td>
-                <td id="zrtSi-amount" class="summary-data">@{(breakdown.zrtSiITAmount).toCurrency}</td>
-            </tr>
-        }
-
-        @if(calcModel.hasBRTSiSection) {
-            <!-- Savings interest tax bands -->
-            <tr id="brtSi-section" class="no-border-bottom">
-                <td id="brtSi-it-calc-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.savingsInterest-income")
-                    (<span id="brtSi-it-calc">@{breakdown.brtSiITCalc.toCurrencyString}</span>
-                    @messages("estimated_tax_liability.calc-breakdown.at")
-                    <span id="brtSi-rate">@breakdown.savingsAndGains.basicBand.taxRate</span>%)
-                </td>
-                <td id="brtSi-amount" class="summary-data">@{(breakdown.brtSiITAmount).toCurrency}</td>
-            </tr>
-        }
-
-        @if(calcModel.hasHRTSiSection){
-            <!-- Savings interest tax bands -->
-            <tr id="hrtSi-section" class="no-border-bottom">
-                <td id="hrtSi-it-calc-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.savingsInterest-income")
-                    (<span id="hrtSi-it-calc">@{breakdown.hrtSiITCalc.toCurrencyString}</span>
-                    @messages("estimated_tax_liability.calc-breakdown.at")
-                    <span id="hrtSi-rate">@breakdown.savingsAndGains.higherBand.taxRate</span>%)
-                </td>
-                <td id="hrtSi-amount" class="summary-data">@{breakdown.hrtSiITAmount.toCurrency}</td>
-            </tr>
-        }
-
-        @if(calcModel.hasARTSiSection){
-            <!-- Savings interest tax bands -->
-            <tr id="artSi-section" class="no-border-bottom">
-                <td id="artSi-it-calc-heading">
-                    @messages("estimated_tax_liability.calc-breakdown.savingsInterest-income")
-                    (<span id="artSi-it-calc">@{breakdown.artSiITCalc.toCurrencyString}</span>
-                    @messages("estimated_tax_liability.calc-breakdown.at")
-                    <span id="artSi-rate">@breakdown.savingsAndGains.additionalBand.taxRate</span>%)
-                </td>
-                <td id="artSi-amount" class="summary-data">@{breakdown.artSiITAmount.toCurrency}</td>
-            </tr>
-        }
-
-        @for(band <- breakdown.dividends.band if band.amount > 0){
-            <!-- Dividend tax bands -->
-            <tr id=@(s"dividend-${band.name}-section") class="no-border-bottom">
-                <td id=@(s"dividend-${band.name}-calc-heading")>
-                    @{messages("estimated_tax_liability.calc-breakdown.dividend-tax")}
-                    (<span id=@(s"dividend-${band.name}-calc")>@band.income.toCurrencyString</span>
-                    @messages("estimated_tax_liability.calc-breakdown.at")
-                    <span id=@(s"dividend-${band.name}-rate")>@band.rate</span>%)
-                </td>
-                <td id=@(s"dividend-${band.name}-amount") class="summary-data">@band.amount.toCurrency</td>
-            </tr>
-        }
-
-        @if(calcModel.hasNic2Amount) {
-            <!-- Class 2 National Insurance -->
-            <tr @if(calcModel.hasNic4Amount || calcModel.hasTaxReliefs){class="no-border-bottom"}>
-                <td id="nic2-amount-heading">@messages("estimated_tax_liability.calc-breakdown.nic2")</td>
-                <td id="nic2-amount" class="summary-data">@breakdown.nic.class2.toCurrency</td>
-            </tr>
-        }
-
-        @if(calcModel.hasNic4Amount) {
-            <!-- Class 4 National Insurance -->
-            <tr @if(calcModel.hasTaxReliefs){class="no-border-bottom"}>
-                <td id="nic4-amount-heading">@messages("estimated_tax_liability.calc-breakdown.nic4")</td>
-                <td id="nic4-amount" class="summary-data">@breakdown.nic.class4.toCurrency</td>
-            </tr>
-        }
-
-        @if(calcModel.hasTaxReliefs) {
-            <!-- Your tax reliefs -->
-            <tr class="no-border-bottom">
-                <td id="tax-relief-heading">@messages("estimated_tax_liability.calc-breakdown.reliefs")</td>
-                <td id="tax-relief" class="summary-data">-@breakdown.taxReliefs.toCurrency</td>
-            </tr>
-        }
-
-        <!-- Your Income Tax and National Insurance estimate -->
-        @if(calcModel.calcStatus == Estimate) {
-        <tr class="total-section">
-            <td id="total-estimate-heading">@messages("estimated_tax_liability.calc-breakdown.total-estimate")</td>
-            <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
-        </tr>
-        }else{
-        <tr class="total-section">
-            <td id="total-estimate-heading">@messages("crystalisation.calc-breakdown.subtotal")</td>
-            <td id="total-estimate" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
-        </tr>
-        <tr>
-            <td id="payment-heading">@messages("crystalisation.calc-breakdown.payment")</td>
-            <td id="payment" class="summary-data">-@transactionModel.get.clearedAmount.getOrElse[BigDecimal](0).toCurrency</td>
-        </tr>
-        <tr class="total-section">
-            <td id="owed-heading">@messages("crystalisation.calc-breakdown.owed", s"${taxYear+1}")</td>
-            <td id="owed" class="summary-data">@transactionModel.get.outstandingAmount.getOrElse[BigDecimal](0).toCurrency</td>
-        </tr>
-        }
 
         </tbody>
     </table>
+
 }

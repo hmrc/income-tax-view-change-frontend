@@ -44,7 +44,7 @@ object EstimatesTestConstants {
     Some(123.45),
     Some(987.65),
     Some(CalculationDataModel(
-      None, 0.0, 123.45, 0, 0, 0,
+      None, 0.0, 123.45, 0, 0, 0, 0,
       IncomeReceivedModel(0, 0, 0, 0),
       SavingsAndGainsModel(0, 0, List()),
       DividendsModel(0, 0, List()),
