@@ -71,7 +71,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
 
     def personalAllowance: String = "-" + (
-      model.personalAllowance
+      model.annualAllowances.personalAllowance
       ).toCurrencyString
   }
 

@@ -29,7 +29,7 @@ object CalcBreakdownTestConstants {
     nationalRegime = Some("Scotland"),
     totalIncomeTaxNicYtd = 90500.00,
     totalTaxableIncome = 198500.00,
-    personalAllowance = 11500.00,
+    annualAllowances = AnnualAllowances(11500, 0),
     taxReliefs = 0.00,
     totalIncomeAllowancesUsed = 12005.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -126,7 +126,7 @@ object CalcBreakdownTestConstants {
   val scottishBandModelJustSRT = CalculationDataModel(
     totalIncomeTaxNicYtd = 149.86,
     totalTaxableIncome = 132.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs=24.90,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -223,7 +223,7 @@ object CalcBreakdownTestConstants {
   val scottishBandModelIRT = CalculationDataModel(
     totalIncomeTaxNicYtd = 149.86,
     totalTaxableIncome = 132.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs=24.90,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -319,7 +319,7 @@ object CalcBreakdownTestConstants {
   val scottishBandModelAllIncomeBands = CalculationDataModel(
     totalIncomeTaxNicYtd = 149.86,
     totalTaxableIncome = 132.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs=24.90,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -415,7 +415,7 @@ object CalcBreakdownTestConstants {
   val noTaxOrNICalcDataModel = CalculationDataModel(
     totalIncomeTaxNicYtd = 0.00,
     totalTaxableIncome = 0.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -509,7 +509,7 @@ object CalcBreakdownTestConstants {
   val noTaxJustNICalcDataModel = CalculationDataModel(
     totalIncomeTaxNicYtd = 37.05,
     totalTaxableIncome = 0.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 10.05,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -604,7 +604,7 @@ object CalcBreakdownTestConstants {
     nationalRegime = Some("Scotland"),
     totalIncomeTaxNicYtd = 149.86,
     totalTaxableIncome = 132.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 24.90,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -699,7 +699,7 @@ object CalcBreakdownTestConstants {
   val busBropHRTCalcDataModel = CalculationDataModel(
     totalIncomeTaxNicYtd = 13727.71,
     totalTaxableIncome = 35007.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -793,7 +793,7 @@ object CalcBreakdownTestConstants {
   val busPropARTCalcDataModel = CalculationDataModel(
     totalIncomeTaxNicYtd = 15017.71,
     totalTaxableIncome = 38007.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -887,7 +887,7 @@ object CalcBreakdownTestConstants {
   val dividendAtBRT = CalculationDataModel(
     totalIncomeTaxNicYtd = 90500.00,
     totalTaxableIncome = 198500.00,
-    personalAllowance = 11500.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 11500.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -989,7 +989,7 @@ object CalcBreakdownTestConstants {
   val dividendAtHRT = CalculationDataModel(
     totalIncomeTaxNicYtd = 90500.00,
     totalTaxableIncome = 198500.00,
-    personalAllowance = 11500.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 11500.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -1091,7 +1091,7 @@ object CalcBreakdownTestConstants {
   val dividendAtART = CalculationDataModel(
     totalIncomeTaxNicYtd = 90500.00,
     totalTaxableIncome = 198500.00,
-    personalAllowance = 11500.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 11500.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -1195,7 +1195,7 @@ object CalcBreakdownTestConstants {
   val justBusinessCalcDataModel = CalculationDataModel(
     totalIncomeTaxNicYtd = 149.86,
     totalTaxableIncome = 132.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -1289,7 +1289,7 @@ object CalcBreakdownTestConstants {
   val justPropertyCalcDataModel = CalculationDataModel(
     totalIncomeTaxNicYtd = 149.86,
     totalTaxableIncome = 132.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -1383,7 +1383,7 @@ object CalcBreakdownTestConstants {
   val justPropertyWithSavingsCalcDataModel = CalculationDataModel(
     totalIncomeTaxNicYtd = 149.86,
     totalTaxableIncome = 132.00,
-    personalAllowance = 2868.00,
+    annualAllowances = AnnualAllowances(2868.00, 0),
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 2868.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -1477,7 +1477,7 @@ object CalcBreakdownTestConstants {
   val mandatoryOnlyDataModel = CalculationDataModel(
     totalIncomeTaxNicYtd = 90500.0,
     totalTaxableIncome = 0.00,
-    personalAllowance = 0.00,
+    annualAllowances = AnnualAllowances(0.00, 0),
     taxReliefs = 0,
     totalIncomeAllowancesUsed = 0.00,
     giftOfInvestmentsAndPropertyToCharity = 0,
@@ -1525,7 +1525,10 @@ object CalcBreakdownTestConstants {
     "nationalRegime" -> "Scotland",
     "totalTaxableIncome" -> 198500,
     "totalIncomeTaxNicYtd" -> 90500,
-    "personalAllowance" -> 11500,
+    "annualAllowances" -> Json.obj(
+      "personalAllowance"-> 11500,
+      "giftAidExtender" -> 0
+    ),
     "taxReliefs" -> 0,
     "totalIncomeAllowancesUsed" -> 12005,
     "giftOfInvestmentsAndPropertyToCharity" -> 1000.25,
@@ -2019,7 +2022,10 @@ object CalcBreakdownTestConstants {
       "calculationDataModel" -> Json.obj(
         "totalTaxableIncome" -> 0,
         "totalIncomeTaxNicYtd" -> 123.45,
-        "personalAllowance" -> 0,
+        "annualAllowances" -> Json.obj(
+          "personalAllowance"-> 0,
+          "giftAidExtender" -> 0
+        ),
         "taxReliefs" -> 0,
         "totalIncomeAllowancesUsed" -> 0,
         "giftOfInvestmentsAndPropertyToCharity" -> 0,
@@ -2077,7 +2083,9 @@ object CalcBreakdownTestConstants {
       Some(123.45),
       Some(987.65),
       Some(CalculationDataModel(
-        None, 0.0, 123.45, 0, 0, 0, 0,
+        None, 0.0, 123.45,
+        AnnualAllowances(0,0),
+        0, 0, 0,
         IncomeReceivedModel(0, 0, 0, 0),
         SavingsAndGainsModel(0, 0, List()),
         DividendsModel(0, 0, List()),

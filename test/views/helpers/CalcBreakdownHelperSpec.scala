@@ -48,7 +48,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
     nationalRegime = Some("UK"),
     totalTaxableIncome = 100000,
     totalIncomeTaxNicYtd = 50000,
-    personalAllowance = 5000,
+    annualAllowances = AnnualAllowances(5000, 0),
     taxReliefs = 4000,
     totalIncomeAllowancesUsed = 7000,
     giftOfInvestmentsAndPropertyToCharity = 1234,
@@ -91,7 +91,9 @@ class CalcBreakdownHelperSpec extends TestSupport {
   )
 
   val emptyCalculationDataModel = CalculationDataModel(
-    None, 0, 0, 0, 0, 0, 0,
+    None, 0, 0,
+    annualAllowances = AnnualAllowances(0, 0),
+    0, 0, 0,
     IncomeReceivedModel(0, 0, 0, 0),
     SavingsAndGainsModel(0, 0, Nil),
     DividendsModel(0, 0, Nil),

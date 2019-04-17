@@ -28,7 +28,7 @@ case class CalculationDataModel(
                                  nationalRegime: Option[String] = None,
                                  totalTaxableIncome: BigDecimal,
                                  totalIncomeTaxNicYtd: BigDecimal,
-                                 personalAllowance: BigDecimal,
+                                 annualAllowances: AnnualAllowances,
                                  taxReliefs: BigDecimal,
                                  totalIncomeAllowancesUsed: BigDecimal,
                                  giftOfInvestmentsAndPropertyToCharity: BigDecimal,
@@ -86,6 +86,8 @@ object TaxBandModel {
   implicit val format: Format[TaxBandModel] = Json.format[TaxBandModel]
 }
 
+case class AnnualAllowances(personalAllowance: BigDecimal, giftAidExtender: BigDecimal)
+
 case class NicModel(class2: BigDecimal,
                     class4: BigDecimal)
 
@@ -103,7 +105,7 @@ object CalculationDataModel {
       logFieldError(__ \ "calcOutput" \ "calcResult" \ "nationalRegime") and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "totalTaxableIncome") and
       (__ \ "calcOutput" \ "calcResult" \ "incomeTaxNicYtd").read[BigDecimal] and
-      defaultZero(__ \ "calcOutput" \ "calcResult" \ "annualAllowances" \ "personalAllowance") and
+        __.read[AnnualAllowances] and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "totalAllowancesAndReliefs") and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "totalIncomeAllowancesUsed") and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "allowancesAndDeductions" \ "giftOfInvestmentsAndPropertyToCharity") and
@@ -120,7 +122,7 @@ object CalculationDataModel {
     (__ \ "nationalRegime").writeNullable[String] and
     (__ \ "totalTaxableIncome").write[BigDecimal] and
       (__ \ "totalIncomeTaxNicYtd").write[BigDecimal] and
-      (__ \ "personalAllowance").write[BigDecimal] and
+      (__ \ "annualAllowances").write[AnnualAllowances] and
       (__ \ "taxReliefs").write[BigDecimal] and
       (__ \ "totalIncomeAllowancesUsed").write[BigDecimal] and
       (__ \ "giftOfInvestmentsAndPropertyToCharity").write[BigDecimal] and
@@ -133,6 +135,15 @@ object CalculationDataModel {
       (__ \ "incomeTax" \ "payPensionsProfit").write[PayPensionsProfitModel]
     )(unlift(CalculationDataModel.unapply))
 }
+
+object AnnualAllowances {
+  implicit val reads: Reads[AnnualAllowances] = (
+    defaultZero(__ \  "calcOutput" \ "calcResult" \ "annualAllowances" \ "personalAllowance") and
+      defaultZero(__ \  "calcOutput" \ "calcResult" \ "annualAllowances" \ "giftAidExtender")
+    )(AnnualAllowances.apply _)
+  implicit val writes: Writes[AnnualAllowances] = Json.writes[AnnualAllowances]
+}
+
 
 object GiftAidModel {
   implicit val reads: Reads[GiftAidModel] = (
