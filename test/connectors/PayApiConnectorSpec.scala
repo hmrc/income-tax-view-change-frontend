@@ -39,8 +39,8 @@ class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingSer
         |{
         | "utr": "saUtr",
         | "amountInPence": 10000,
-        | "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view",
-        | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view"
+        | "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/payments-due",
+        | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/payments-due"
         |}
       """.stripMargin
     )

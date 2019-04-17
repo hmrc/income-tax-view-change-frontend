@@ -99,7 +99,7 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val enterSurveyUrl: String = loadConfig("enter-survey.url")
 
   //Payment Redirect route
-  lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl"
+  lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/payments-due"
 
   //Accounting software guidance
   lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
