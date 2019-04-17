@@ -298,6 +298,8 @@ obligations.finalDeclarationUpdate                                 = Final decla
 obligation.dropdown.finalDeclaration.text.v2.prt1                  = Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your
 obligation.dropdown.finalDeclaration.text.v2.prt2                  =.
 
+previous-obligations.title                                      = Your Income Tax
+
 ## Payment Due Page ##
 paymentDue.title                                                   = Your Income Tax
 paymentDue.heading                                                 = Income Tax payments
