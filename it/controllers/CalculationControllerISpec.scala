@@ -106,7 +106,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextByID("your-total-estimate-data")("£90,500"),
           isElementVisibleById("payments-to-date-data")(expectedValue = false),
           isElementVisibleById("your-total-tax-date")(expectedValue = false),
-          isElementVisibleById("your-total-tax-data")(expectedValue = false)
+          isElementVisibleById("your-total-tax-data")(expectedValue = false),
+          elementTextByID("gift-aid-extender")("Your basic rate limit has been increased by £2,000 for Gift Aid payments.")
         )
       }
     }
@@ -181,7 +182,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("payments-to-date-data")("£2,000"),
             elementTextByID("your-total-tax-date")(s"due 31 January $testYearPlusOne"),
             elementTextByID("your-total-tax-data")("£1,000"),
-            isElementVisibleById("your-total-estimate-data")(expectedValue = false)
+            isElementVisibleById("your-total-estimate-data")(expectedValue = false),
+            isElementVisibleById("gift-aid-extender")(expectedValue = false)
           )
         }
       }
@@ -254,7 +256,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("payments-to-date-data")("£2,000"),
             elementTextByID("your-total-tax-date")(s"due 31 January $testYearPlusOne"),
             elementTextByID("your-total-tax-data")("£0"),
-            isElementVisibleById("your-total-estimate-data")(expectedValue = false)
+            isElementVisibleById("your-total-estimate-data")(expectedValue = false),
+              isElementVisibleById("gift-aid-extender")(expectedValue = false)
           )
         }
       }
@@ -354,7 +357,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextByID("your-total-estimate-data")("£90,500"),
           isElementVisibleById("payments-to-date-data")(expectedValue = false),
           isElementVisibleById("your-total-tax-date")(expectedValue = false),
-          isElementVisibleById("your-total-tax-data")(expectedValue = false)
+          isElementVisibleById("your-total-tax-data")(expectedValue = false),
+          isElementVisibleById("gift-aid-extender")(expectedValue = false)
         )
       }
     }

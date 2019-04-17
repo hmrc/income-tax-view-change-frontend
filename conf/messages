@@ -75,6 +75,7 @@ calc-breakdown.calculation.payments-to-date                     = Deduction - yo
 calc-breakdown.calculation.your-total-estimate                  = Your total estimate
 calc-breakdown.calculation.your-total-tax                       = Your total tax
 calc-breakdown.calculation.due-date                             = due 31 January {0}
+calc-breakdown.calculation.gift-aid-extender                    = Your basic rate limit has been increased by {0} for Gift Aid payments.
 
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = {0} to {1} tax year

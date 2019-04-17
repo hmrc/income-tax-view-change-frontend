@@ -1232,7 +1232,8 @@ object CalcDataIntegrationTestConstants {
         "totalBeforeTaxDeducted" -> 100,
         "totalTaxDeducted" -> 200,
         "annualAllowances" -> Json.obj(
-          "personalAllowance" -> 11500
+          "personalAllowance" -> 11500,
+          "giftAidExtender" -> 2000
         ),
         "incomeTax" -> Json.obj(
           "totalAllowancesAndReliefs" -> 500,

@@ -19,6 +19,7 @@ package assets
 object Messages {
 
   object CalculationBreakdown {
+    def giftAidExtender(amount: String) = s"Your basic rate limit has been increased by £$amount for Gift Aid payments."
     def nationalRegime(regime: String) = s"National Regime: $regime"
     val incomeHeading = "About your income"
     val incomeSubheading = "Summary of the income you reported and applicable deductions"

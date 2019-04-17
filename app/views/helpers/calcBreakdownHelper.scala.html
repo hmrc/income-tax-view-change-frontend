@@ -190,4 +190,9 @@
         </tbody>
     </table>
 
+    @if(breakdown.annualAllowances.giftAidExtender > 0) {
+    <p id="gift-aid-extender">@messages("calc-breakdown.calculation.gift-aid-extender", breakdown.annualAllowances.giftAidExtender.toCurrencyString)</p>
+    }
+
+
 }
