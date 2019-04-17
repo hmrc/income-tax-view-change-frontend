@@ -353,6 +353,10 @@ object Messages {
     val crystallisedHeading = "Whole tax year (final check)"
   }
 
+  object PreviousObligations {
+    val title = "Your Income Tax"
+  }
+
   object PaymentDue {
     val title = "Your Income Tax"
     val heading = "Income Tax payments"
