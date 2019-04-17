@@ -111,7 +111,9 @@
 
     <h3 id="calculation-heading" class="heading-small">@messages("calc-breakdown.calculation.heading")</h3>
     <div id="calculation-subheading" class="form-hint">@messages("calc-breakdown.calculation.subheading", breakdown.totalTaxableIncome.toCurrencyString)</div>
-
+    @if(breakdown.annualAllowances.giftAidExtender > 0) {
+    <div id="gift-aid-extender" class="form-hint">@messages("calc-breakdown.calculation.gift-aid-extender", breakdown.annualAllowances.giftAidExtender.toCurrencyString)</div>
+    }
     <table class="calculation-table">
         <tbody>
 
@@ -190,9 +192,7 @@
         </tbody>
     </table>
 
-    @if(breakdown.annualAllowances.giftAidExtender > 0) {
-    <p id="gift-aid-extender">@messages("calc-breakdown.calculation.gift-aid-extender", breakdown.annualAllowances.giftAidExtender.toCurrencyString)</p>
-    }
+
 
 
 }
