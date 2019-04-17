@@ -16,6 +16,7 @@
 
 package helpers.servicemocks
 
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
 import models.calculation.CalculationModel
 import models.core.{Nino, NinoResponseError}
@@ -91,4 +92,12 @@ object IncomeTaxViewChangeStub {
   def verifyGetReportDeadlines(incomeSourceId: String, nino: String): Unit =
     WiremockHelper.verifyGet(reportDeadlinesUrl(incomeSourceId, nino))
 
+  //PayApi Stubs
+  def stubPayApiResponse(url: String, status: Int, response: JsValue): StubMapping = {
+    WiremockHelper.stubPost(url, status, response.toString())
+  }
+
+  def verifyStubPayApi(url: String, requestBody: JsValue): Unit = {
+    WiremockHelper.verifyPost(url, requestBody.toString())
+  }
 }

@@ -33,6 +33,8 @@ class PayApiConnector @Inject()(val http: HttpClient,
                                 val auditingService: AuditingService,
                                 val config: FrontendAppConfig) {
 
+  val url: String = config.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
+
   def startPaymentJourney(saUtr: String, amountInPence: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[PaymentJourneyResponse] = {
     val body = Json.parse(
       s"""
@@ -44,7 +46,7 @@ class PayApiConnector @Inject()(val http: HttpClient,
          |}
       """.stripMargin
     )
-    http.POST(config.paymentsUrl, body).map {
+    http.POST(url, body).map {
       case response if response.status == OK => response.json.validate[PaymentJourneyModel].fold(
         invalid => {
           val errors = invalid.foldRight[String]("")((x, y) => y + s", path: ${x._1} and errors: ${x._2.mkString(",")}")
