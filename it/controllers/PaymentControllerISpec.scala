@@ -44,7 +44,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
     "redirect the user correctly" when {
 
       "the payments api responds with a 200 and valid json" in {
-        IncomeTaxViewChangeStub.stubPayApiResponse(url, 200, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
+        IncomeTaxViewChangeStub.stubPayApiResponse(url, 201, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
         val res = IncomeTaxViewChangeFrontend.getPay(10000)
         IncomeTaxViewChangeStub.verifyStubPayApi(url, submissionJson)
         res.status shouldBe 303

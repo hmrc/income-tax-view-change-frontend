@@ -47,7 +47,7 @@ class PayApiConnector @Inject()(val http: HttpClient,
       """.stripMargin
     )
     http.POST(url, body).map {
-      case response if response.status == OK => response.json.validate[PaymentJourneyModel].fold(
+      case response if response.status == CREATED => response.json.validate[PaymentJourneyModel].fold(
         invalid => {
           val errors = invalid.foldRight[String]("")((x, y) => y + s", path: ${x._1} and errors: ${x._2.mkString(",")}")
           Logger.error(s"Invalid Json with $errors")

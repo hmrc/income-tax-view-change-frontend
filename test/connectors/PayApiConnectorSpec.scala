@@ -26,8 +26,8 @@ import uk.gov.hmrc.http.HttpResponse
 
 class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
-  val successResponse = HttpResponse(Status.OK, Some(Json.toJson(PaymentJourneyModel("journeyId", "http://www.redirect-url.com"))))
-  val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
+  val successResponse = HttpResponse(Status.CREATED, Some(Json.toJson(PaymentJourneyModel("journeyId", "http://www.redirect-url.com"))))
+  val successResponseBadJson = HttpResponse(Status.CREATED, Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
   object TestPayApiConnector extends PayApiConnector(mockHttpGet, mockAuditingService, frontendAppConfig)
@@ -47,7 +47,7 @@ class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingSer
 
     "return a PaymentJourneyModel" when {
 
-      "a 200 response is received with valid json" in {
+      "a 201 response is received with valid json" in {
         setupMockHttpPost(testUrl, testBody)(successResponse)
         val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000)
         await(result) shouldBe PaymentJourneyModel("journeyId", "http://www.redirect-url.com")
@@ -62,10 +62,10 @@ class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingSer
         await(result) shouldBe PaymentJourneyErrorResponse(400, "Error Message")
       }
 
-      "a 200 response with invalid json is received" in {
+      "a 201 response with invalid json is received" in {
         setupMockHttpPost(testUrl, testBody)(successResponseBadJson)
         val result = TestPayApiConnector.startPaymentJourney("saUtr", 10000)
-        await(result) shouldBe PaymentJourneyErrorResponse(200, "Invalid Json")
+        await(result) shouldBe PaymentJourneyErrorResponse(201, "Invalid Json")
       }
     }
   }
