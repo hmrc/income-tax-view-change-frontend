@@ -161,11 +161,20 @@ class CrystallisedViewSpec extends TestSupport {
       document.getElementById("changes").text shouldBe crysMessages.changes
     }
 
-    "NOT show a button to go to payments, when not eligible for payments" in {
-      mockAppConfig.features.paymentEnabled(true)
-      val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
-      import setup._
-      Option(document.getElementById("payment-button")) shouldBe None
+    "NOT show a button to go to payments" when {
+      "not eligible for payments" in {
+        mockAppConfig.features.paymentEnabled(true)
+        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
+        import setup._
+        Option(document.getElementById("payment-button")) shouldBe None
+      }
+
+      "the bill has no outstanding amount" in {
+        mockAppConfig.features.paymentEnabled(true)
+        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel().copy(outstandingAmount = None), bizAndPropertyUser)
+        import setup._
+        Option(document.getElementById("payment-button")) shouldBe None
+      }
     }
 
     "show a button to go to payments, when eligible for payments" in {
@@ -174,7 +183,7 @@ class CrystallisedViewSpec extends TestSupport {
       import setup._
       document.getElementById("payment-button").text() shouldBe messages.Crystallised.payNow
       document.getElementById("payment-button").attr("href") shouldBe
-        controllers.routes.PaymentController.paymentHandoff(calculationDisplaySuccessModel(busPropBRTCalcDataModel).calcAmount.toPence).url
+        controllers.routes.PaymentController.paymentHandoff(transactionModel().outstandingAmount.get.toPence).url
     }
   }
 }
