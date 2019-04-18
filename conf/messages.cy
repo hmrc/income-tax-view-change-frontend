@@ -25,8 +25,17 @@ home.statements.heading                                         = Datganiadau
 home.statements.text                                            = Bwrw golwg ar eich trafodiadau Treth Incwm, gan gynnwys costau a thaliadau.
 home.accounts.heading                                           = Manylion y cyfrif
 home.accounts.text                                              = Gweld y manylion cyswllt a''r manylion eraill sydd gennym ar gyfer eich busnesau.
+home.incomeTaxPayment.nextPaymentDue                            = Taliad nesaf yn ddyledus
+home.incomeTaxPayment.viewBill                                  = Bwrw golwg dros y bil
+home.incomeTaxPayment.viewBillAndMakePayment                    = Bwrw golwg dros y bil a gwneud taliad
+home.incomeTaxPayment.incomeTaxPayments                         = Taliadau treth incwm
+home.incomeTaxPayment.previousBills                             = Biliau blaenorol
 
+home.updates.heading                                            = Diweddariadau
+home.updates.body.heading                                       = Diweddariad nesaf i’w ddychwelyd erbyn
 home.updates.body.estimatesLink                                 = Amcangyfrifon
+home.updates.body.updatesLink                                   = Gweld manylion ar gyfer diweddariadau
+home.updates.body.previousLink                                  = Diweddariadau a gyflwynwyd yn flaenorol
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Helpu i wella''r gwasanaeth hwn
