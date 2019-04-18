@@ -18,9 +18,9 @@ package connectors
 
 import assets.BaseTestConstants.{testMtditid, testNino, testReferrerUrl, testSelfEmploymentId, testTaxYear}
 import assets.CalcBreakdownTestConstants._
-import assets.EstimatesTestConstants.{lastTaxCalcSuccess, testYear}
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
-import assets.NinoLookupTestConstants.testNinoModelJson
+import assets.NinoLookupTestConstants.{testNinoModelJson, _}
+import assets.ReportDeadlinesTestConstants.{obligationsDataFromJson, obligationsDataSuccessModel}
 import audit.AuditingService
 import audit.mocks.MockAuditingService
 import audit.models.{IncomeSourceDetailsRequestAuditModel, IncomeSourceDetailsResponseAuditModel, ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
@@ -29,15 +29,13 @@ import mocks.MockHttp
 import models.calculation._
 import models.core.{NinoResponse, NinoResponseError}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
+import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import assets.NinoLookupTestConstants._
-import assets.ReportDeadlinesTestConstants.{obligationsDataFromJson, obligationsDataSuccessModel}
-import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 
 import scala.concurrent.Future
 
@@ -76,6 +74,12 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
   "getReportDeadlinesUrl" should {
     "return the correct url" in new Setup {
       getReportDeadlinesUrl(testSelfEmploymentId, testNino) shouldBe s"$baseUrl/income-tax-view-change/$testNino/income-source/$testSelfEmploymentId/report-deadlines"
+    }
+  }
+
+  "getPreviousObligationsUrl" should {
+    "return the correct url" in new Setup {
+      getPreviousObligationsUrl(testSelfEmploymentId, testNino) shouldBe s"$baseUrl/income-tax-view-change/$testNino/income-source/$testSelfEmploymentId/previous-report-deadlines"
     }
   }
   
@@ -241,6 +245,53 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
       val result: Future[ReportDeadlinesResponseModel] = getReportDeadlines(testSelfEmploymentId)
       await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
+
+      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId))
+    }
+
+  }
+
+  "getPreviousObligations" should {
+
+    val successResponse = HttpResponse(Status.OK, responseJson = Some(obligationsDataFromJson))
+    val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
+    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+
+    val getPreviousObligationsTestUrl = s"http://localhost:9999/income-tax-view-change/$testNino/income-source/$testSelfEmploymentId/previous-report-deadlines"
+
+    s"return a report deadlines model on a successful response with valid json" in new Setup {
+      setupMockHttpGet(getPreviousObligationsTestUrl)(successResponse)
+
+      val result: Future[ReportDeadlinesResponseModel] = getPreviousObligations(testSelfEmploymentId)
+      await(result) shouldBe obligationsDataSuccessModel
+
+      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId), Some(testReferrerUrl))
+      verifyExtendedAudit(ReportDeadlinesResponseAuditModel(testMtditid, testNino, testSelfEmploymentId, obligationsDataSuccessModel.obligations))
+    }
+
+    "return an error model in case of failure" in new Setup {
+      setupMockHttpGet(getPreviousObligationsTestUrl)(badResponse)
+
+      val result: Future[ReportDeadlinesResponseModel] = getPreviousObligations(testSelfEmploymentId)
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.BAD_REQUEST, "Error Message")
+
+      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId))
+    }
+
+    "return BusinessListError model when bad JSON is received" in new Setup {
+      setupMockHttpGet(getPreviousObligationsTestUrl)(successResponseBadJson)
+
+      val result: Future[ReportDeadlinesResponseModel] = getPreviousObligations(testSelfEmploymentId)
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
+
+      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId))
+    }
+
+    "return ReportDeadlinesErrorModel model in case of future failed scenario" in new Setup {
+      setupMockFailedHttpGet(getPreviousObligationsTestUrl)(badResponse)
+
+      val result: Future[ReportDeadlinesResponseModel] = getPreviousObligations(testSelfEmploymentId)
+      await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
 
       verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId))
     }
