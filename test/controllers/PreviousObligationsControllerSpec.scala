@@ -16,29 +16,40 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import config.ItvcErrorHandler
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlineModelWithIncomeType}
 import play.api.mvc.Result
 import play.api.test.Helpers._
+import services.ReportDeadlinesService
+import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{any, eq => matches}
 
 import scala.concurrent.Future
 
 class PreviousObligationsControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
   class Setup(featureSwitchToggle: Boolean = true) {
+    val reportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]
+
     val controller = new PreviousObligationsController(
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       app.injector.instanceOf[ItvcErrorHandler],
+      reportDeadlinesService,
       frontendAppConfig,
       messagesApi
     )
 
     frontendAppConfig.features.obligationsPageEnabled(featureSwitchToggle)
   }
+
+  val date: LocalDate = LocalDate.now
 
   "getPreviousObligations" should {
     s"redirect ($SEE_OTHER) to the home page when the feature switch is off" in new Setup(false) {
@@ -51,7 +62,12 @@ class PreviousObligationsControllerSpec extends MockAuthenticationPredicate with
     }
 
     s"return $OK with html" in new Setup {
-      mockSingleBusinessIncomeSource()
+      mockBothIncomeSourcesBusinessAligned()
+      when(reportDeadlinesService.previousObligationsWithIncomeType(matches(user.incomeSources))(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          ReportDeadlineModelWithIncomeType("Business", ReportDeadlineModel(date, date, date, "Quarterly", Some(date), "#001")),
+          ReportDeadlineModelWithIncomeType("Property", ReportDeadlineModel(date, date, date, "EOPS", Some(date), "EOPS"))
+        )))
 
       val result: Result = await(controller.getPreviousObligations(fakeRequestWithActiveSession))
       

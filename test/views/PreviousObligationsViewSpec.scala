@@ -33,7 +33,7 @@ class PreviousObligationsViewSpec extends TestSupport with ImplicitDateFormatter
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   class Setup {
-    val html: HtmlFormat.Appendable = views.html.previousObligations()(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
+    val html: HtmlFormat.Appendable = views.html.previousObligations(Nil)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def getElementById(id: String): Option[Element] = Option(pageDocument.getElementById(id))
