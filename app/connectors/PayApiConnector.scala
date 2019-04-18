@@ -18,6 +18,7 @@ package connectors
 
 import audit.AuditingService
 import config.FrontendAppConfig
+import implicits.ImplicitJsonValidationFormatter._
 import javax.inject.Inject
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
@@ -49,8 +50,7 @@ class PayApiConnector @Inject()(val http: HttpClient,
     http.POST(url, body).map {
       case response if response.status == CREATED => response.json.validate[PaymentJourneyModel].fold(
         invalid => {
-          val errors = invalid.foldRight[String]("")((x, y) => y + s", path: ${x._1} and errors: ${x._2.mkString(",")}")
-          Logger.error(s"Invalid Json with $errors")
+          Logger.error(s"Invalid Json with ${invalid.asString}")
           PaymentJourneyErrorResponse(response.status, "Invalid Json")
         },
         valid => valid
