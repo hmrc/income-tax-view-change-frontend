@@ -106,6 +106,15 @@ class HomePageViewSpec extends TestSupport {
           mockAppConfig.features.reportDeadlinesEnabled(false)
           getElementById("deadlines-link") shouldBe None
         }
+        "contains a link to the previous updates page" in new Setup {
+          mockAppConfig.features.obligationsPageEnabled(true)
+          getTextOfElementById("previous-deadlines-link") shouldBe Some("Previously submitted updates")
+          getElementById("previous-deadlines-link").map(_.attr("href")) shouldBe Some(controllers.routes.PreviousObligationsController.getPreviousObligations().url)
+        }
+        "not contain a link to the previous updates page if the feature flag is off" in new Setup {
+          mockAppConfig.features.obligationsPageEnabled(false)
+          getElementById("previous-deadlines-link") shouldBe None
+        }
         "contains a link to the estimates page" in new Setup {
           getTextOfElementById("estimates-link") shouldBe Some("Estimates")
           getElementById("estimates-link").map(_.attr("href")) shouldBe Some(controllers.routes.EstimatesController.viewEstimateCalculations().url)
