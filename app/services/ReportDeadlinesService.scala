@@ -23,7 +23,7 @@ import auth.MtdItUser
 import connectors._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.incomeSourcesWithDeadlines._
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import models.reportDeadlines._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -49,6 +49,38 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
     Future.sequence(
       allRetrievalIds.map { incomeSource =>
         getReportDeadlines(incomeSource).map {
+          case ReportDeadlinesModel(obligations) => obligations
+          case _: ReportDeadlinesErrorModel => Nil
+        }
+      }
+    ).map(_.flatten)
+  }
+
+  def previousObligationsWithIncomeType(incomeSourceResponse: IncomeSourceDetailsModel)
+                                       (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[List[ReportDeadlineModelWithIncomeType]] = {
+
+    val businessPreviousObligations = getPreviousObligationsFromIds(incomeSourceResponse.businesses.map(_.incomeSourceId))
+    val propertyPreviousObligations = getPreviousObligationsFromIds(incomeSourceResponse.property.map(_.incomeSourceId).toList)
+    val crystallisationPreviousObligations = getPreviousObligationsFromIds(List(mtdItUser.nino))
+
+    for {
+      business <- businessPreviousObligations
+      property <- propertyPreviousObligations
+      crystallisation <- crystallisationPreviousObligations
+    } yield {
+      (
+        business.map(obligation => ReportDeadlineModelWithIncomeType("Business", obligation)) ++
+        property.map(obligation => ReportDeadlineModelWithIncomeType("Property", obligation)) ++
+        crystallisation.map(obligation => ReportDeadlineModelWithIncomeType("Crystallisation", obligation))
+      ).sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse
+    }
+  }
+
+  private def getPreviousObligationsFromIds(incomeSourceIds: List[String])
+                                           (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[List[ReportDeadlineModel]] = {
+    Future.sequence(
+      incomeSourceIds.map { id =>
+        incomeTaxViewChangeConnector.getPreviousObligations(id).map {
           case ReportDeadlinesModel(obligations) => obligations
           case _: ReportDeadlinesErrorModel => Nil
         }

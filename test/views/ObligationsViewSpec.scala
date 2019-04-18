@@ -95,7 +95,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
           PropertyDetailsModel("testIncomeSource", AccountingPeriodModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 1)), None, None, None, None),
           ReportDeadlinesModel(
             List(
-              ReportDeadlineModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 31), LocalDate.of(2020, 1, 1), "EOPS", "EOPS")
+              ReportDeadlineModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 31), LocalDate.of(2020, 1, 1), "EOPS", None, "EOPS")
             )
           )
         )
