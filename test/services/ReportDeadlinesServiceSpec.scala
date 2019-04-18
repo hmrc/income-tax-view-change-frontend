@@ -26,6 +26,7 @@ import assets.PropertyDetailsTestConstants.{propertyDetails, propertyIncomeModel
 import assets.ReportDeadlinesTestConstants.{obligationsCrystallisedSuccessModel, _}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.incomeSourcesWithDeadlines._
+import models.reportDeadlines.ReportDeadlineModelWithIncomeType
 import testUtils.TestSupport
 
 class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
@@ -102,6 +103,59 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
 
         await(getAllDeadlines(businessAndPropertyAligned)) shouldBe obligationsDataSuccessModel.obligations ++ obligationsEOPSDataSuccessModel.obligations
+      }
+    }
+  }
+
+  "previousObligations" should {
+    "return all the deadlines for any property and business income sources with crystallisation ordered by date submitted (latest first)" in new Setup {
+      setupMockPreviousObligations(testSelfEmploymentId)(previousObligationsDataSuccessModel)
+      setupMockPreviousObligations(testPropertyIncomeId)(previousObligationsEOPSDataSuccessModel)
+      setupMockPreviousObligations(testNino)(previousObligationsCrystallisedSuccessModel)
+
+      await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
+        ReportDeadlineModelWithIncomeType("Property", previousObligationFour),
+        ReportDeadlineModelWithIncomeType("Crystallisation", previousObligationFive),
+        ReportDeadlineModelWithIncomeType("Property", previousObligationThree),
+        ReportDeadlineModelWithIncomeType("Business", previousObligationTwo),
+        ReportDeadlineModelWithIncomeType("Business", previousObligationOne)
+      )
+    }
+
+    "return only the non errored deadlines for any property and business income sources with crystallisation" when {
+      "property is errored" in new Setup {
+        setupMockPreviousObligations(testSelfEmploymentId)(obligationsDataErrorModel)
+        setupMockPreviousObligations(testPropertyIncomeId)(previousObligationsEOPSDataSuccessModel)
+        setupMockPreviousObligations(testNino)(previousObligationsCrystallisedSuccessModel)
+
+        await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
+          ReportDeadlineModelWithIncomeType("Property", previousObligationFour),
+          ReportDeadlineModelWithIncomeType("Crystallisation", previousObligationFive),
+          ReportDeadlineModelWithIncomeType("Property", previousObligationThree)
+        )
+      }
+      "business is errored" in new Setup {
+        setupMockPreviousObligations(testSelfEmploymentId)(previousObligationsDataSuccessModel)
+        setupMockPreviousObligations(testPropertyIncomeId)(obligationsDataErrorModel)
+        setupMockPreviousObligations(testNino)(previousObligationsCrystallisedSuccessModel)
+
+        await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
+          ReportDeadlineModelWithIncomeType("Crystallisation", previousObligationFive),
+          ReportDeadlineModelWithIncomeType("Business", previousObligationTwo),
+          ReportDeadlineModelWithIncomeType("Business", previousObligationOne)
+        )
+      }
+      "crystallisation is errored" in new Setup {
+        setupMockPreviousObligations(testSelfEmploymentId)(previousObligationsDataSuccessModel)
+        setupMockPreviousObligations(testPropertyIncomeId)(previousObligationsEOPSDataSuccessModel)
+        setupMockPreviousObligations(testNino)(obligationsDataErrorModel)
+
+        await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
+          ReportDeadlineModelWithIncomeType("Property", previousObligationFour),
+          ReportDeadlineModelWithIncomeType("Property", previousObligationThree),
+          ReportDeadlineModelWithIncomeType("Business", previousObligationTwo),
+          ReportDeadlineModelWithIncomeType("Business", previousObligationOne)
+        )
       }
     }
   }

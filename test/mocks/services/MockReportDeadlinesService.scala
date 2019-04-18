@@ -58,6 +58,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           end = "2017-07-05",
           due = "2017-08-05",
           obligationType = "Quarterly",
+          dateReceived = None,
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
@@ -65,6 +66,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           end = "2017-10-05",
           due = "2017-11-05",
           obligationType = "Quarterly",
+          dateReceived = None,
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
@@ -72,6 +74,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           end = "2018-01-05",
           due = "2018-02-05",
           obligationType = "Quarterly",
+          dateReceived = None,
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
@@ -79,6 +82,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           end = "2018-04-05",
           due = "2018-05-06",
           obligationType = "Quarterly",
+          dateReceived = None,
           periodKey = "periodKey"
         )
       )
@@ -97,6 +101,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           end = "2017-07-05",
           due = "2017-08-05",
           obligationType = "Quarterly",
+          dateReceived = None,
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
@@ -104,6 +109,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           end = "2017-10-05",
           due = "2017-11-05",
           obligationType = "Quarterly",
+          dateReceived = None,
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
@@ -111,6 +117,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           end = "2018-01-05",
           due = "2018-02-05",
           obligationType = "Quarterly",
+          dateReceived = None,
           periodKey = "periodKey"
         ),
         ReportDeadlineModel(
@@ -118,6 +125,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
           end = "2018-04-05",
           due = "2018-05-06",
           obligationType = "Quarterly",
+          dateReceived = None,
           periodKey = "periodKey"
         )
       )
