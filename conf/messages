@@ -36,6 +36,7 @@ home.incomeTaxPayment.noBills                                   = No payments du
 home.updates.heading                                            = Updates
 home.updates.body.heading                                       = Next update due
 home.updates.body.updatesLink                                   = View details for updates
+home.updates.body.previousLink                                  = Previously submitted updates
 home.updates.body.estimatesLink                                 = Estimates
 
 ## Recruitment Banner ##
