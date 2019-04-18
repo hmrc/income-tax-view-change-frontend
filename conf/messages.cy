@@ -25,6 +25,14 @@ home.statements.heading                                         = Datganiadau
 home.statements.text                                            = Bwrw golwg ar eich trafodiadau Treth Incwm, gan gynnwys costau a thaliadau.
 home.accounts.heading                                           = Manylion y cyfrif
 home.accounts.text                                              = Gweld y manylion cyswllt a''r manylion eraill sydd gennym ar gyfer eich busnesau.
+home.incomeTaxPayment.nextPaymentDue                            = Taliad nesaf yn ddyledus
+home.updates.body.heading                                       = Diweddariad nesaf i’w ddychwelyd erbyn
+home.updates.heading                                            = Diweddariadau
+home.incomeTaxPayment.incomeTaxPayments                         = Taliadau treth incwm
+home.incomeTaxPayment.viewBillAndMakePayment                    = Bwrw golwg dros y bil a gwneud taliad
+home.updates.body.updatesLink                                   = Bwrw golwg dros y manylion ar gyfer diweddariadau
+home.incomeTaxPayment.previousBills                             = Biliau blaenorol
+
 
 home.updates.body.estimatesLink                                 = Amcangyfrifon
 
@@ -81,10 +89,13 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = ni fydd cyfrad
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = efallai y byddwch yn ennill mwy o arian
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = efallai bod gennych incwm nac adroddir amdano yn eich meddalwedd cyfrifyddu
 estimated_tax_liability.calc-breakdown.nationalRegime           = Cyfundrefn Genedlaethol
+estimated_tax_liability.calc-breakdown.business-profit-property                = Elw busnes(ar gyfer eiddo)
+estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Elw busnes(ar gyfer hunangyflogaeth)
+
+
 
 # TODO properly translate welsh for message calc-breakdown #
-estimated_tax_liability.calc-breakdown.business-profit-property                = Elw busnes(Am eiddo)
-estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Elw busnes(Am hunangyflogaeth)
+
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Incwm o gynilion(Am Elw busnes)
 
 
@@ -113,12 +124,12 @@ obligations.dropdown.p1                                         = os nad ydych w
 obligations.dropdown.p2                                         = Defnyddiwch eich meddalwedd i gofnodi''ch incwm a''ch treuliau, yna anfonwch ddiweddariad i CThEM o leiaf bob chwarter.
 obligations.dropdown.p3                                         = Anfonwch eich adroddiad terfynol erbyn 31 Ionawr. Yn yr adroddiad hwn, gallwch ychwanegu unrhyw ffynonellau incwm, lwfansau neu ryddhad arall.
 obligations.dropdown.p4                                         = Ar ôl i chi anfon eich adroddiad terfynol, gallwch weld y Dreth Incwm sydd arnoch ar gyfer y flwyddyn dreth.
-
+obligations.dueOn                                               = I''w ddychwelyd erbyn:
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Eich cyflwyniad terfynol
 crystalisation.heading                                          = Blwyddyn dreth {0} i {1}
-crystalisation.subheading                                       = Billau
+crystalisation.subheading                                       = Biliau
 crystalisation.dueBy                                            = erbyn 31 Ionawr {0}
 crystalisation.whatYouOwe.para                                  = Mae''r ffigur hwn yn seiliedig ar yr wybodaeth rydych wedi''i darparu yn eich adroddiadau chwarterol a''ch adroddiad terfynol.
 crystalisation.warning                                          = Gallai eich taliad gymryd hyd at 5 diwrnod i''w brosesu. Gallwn godi dirwy arnoch os yw''n hwyr.
@@ -135,8 +146,8 @@ crystalisation.additionalPayment.heading                        = Taliad ychwane
 crystalisation.payNow                                           = Yn eich blaen i dalu
 
 ## Bills Page ##
-bills.title                                                     = Billau
-bills.heading                                                   = Billau
+bills.title                                                     = Bilau
+bills.heading                                                   = Bilau
 bills.viewBills                                                 = Bwrw golwg ar eich biliau terfynol:
 bills.billLink.screenReaderPrefix                               = gweld bil ar gyfer
 bills.billLink                                                  = Blwyddyn dreth {0} i {1}
@@ -214,7 +225,7 @@ not_enrolled.sign-up.3                                          = cyn i chi allu
 breadcrumb-bta                                                  = Cyfrif Treth Busnes
 breadcrumb-it                                                   = Cyfrif Treth Incwm
 breadcrumb-estimates                                            = Amcangyfrifon
-breadcrumb-bills                                                = Billau
+breadcrumb-bills                                                = Biliau
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
 breadcrumb-statement                                            = Datganiad Treth Incwm
 breadcrumb-account                                              = Manylion y cyfrif
@@ -230,3 +241,8 @@ betaBanner.newService                                           = Mae hwn yn was
 betaBanner.your                                                 = – bydd eich
 betaBanner.feedback                                             = adborth
 betaBanner.improve                                              = yn ein helpu i''w wella.
+
+## Regimes
+UK = Y DU
+Scotland = Yr Alban
+Wales = Cymru

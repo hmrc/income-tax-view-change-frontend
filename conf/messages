@@ -305,3 +305,9 @@ paymentDue.tax-year                                                = Tax year {0
 paymentDue.due                                                     = due
 paymentDue.viewBill                                                = View bill
 paymentDue.payNow                                                  = Pay now
+
+
+## Regimes
+UK = UK
+Scotland = Scotland
+Wales = Wales
