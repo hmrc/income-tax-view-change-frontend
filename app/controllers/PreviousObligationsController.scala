@@ -22,6 +22,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
+import services.ReportDeadlinesService
 
 import scala.concurrent.Future
 
@@ -31,6 +32,7 @@ class PreviousObligationsController @Inject()(val checkSessionTimeout: SessionTi
                                               val retrieveNino: NinoPredicate,
                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                               val itvcErrorHandler: ItvcErrorHandler,
+                                              val reportDeadlinesService: ReportDeadlinesService,
                                               implicit val config: FrontendAppConfig,
                                               implicit val messagesApi: MessagesApi
                                      ) extends BaseController {
@@ -38,7 +40,9 @@ class PreviousObligationsController @Inject()(val checkSessionTimeout: SessionTi
   val getPreviousObligations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       if(config.features.obligationsPageEnabled()) {
-        Future.successful(Ok(views.html.previousObligations()))
+        reportDeadlinesService.previousObligationsWithIncomeType(user.incomeSources).map { previousObligations =>
+          Ok(views.html.previousObligations(previousObligations))
+        }
       } else {
         Future.successful(Redirect(controllers.routes.HomeController.home()))
       }

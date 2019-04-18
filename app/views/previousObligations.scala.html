@@ -27,8 +27,9 @@
 @import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesResponse, PropertyIncomeWithDeadlinesModel}
 @import models.reportDeadlines.EopsObligation
 @import models.reportDeadlines.QuarterlyObligation
+@import models.reportDeadlines.ReportDeadlineModelWithIncomeType
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(previousObligations: List[ReportDeadlineModelWithIncomeType])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(
