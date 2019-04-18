@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package assets
+package models.core
 
-import assets.BaseTestConstants.{testMtditid, testPaymentRedirectUrl}
-import models.core.PaymentDataModel
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, OFormat}
 
-object PaymentDataTestConstants {
+trait PaymentJourneyResponse
 
-  val testTaxType = "mtdfb-itsa"
-  val testAmountInPence = 10000
+case class PaymentJourneyModel(journeyId: String, nextUrl: String) extends PaymentJourneyResponse
 
-  val testPaymentDataModel: PaymentDataModel = PaymentDataModel(testTaxType, testMtditid, testAmountInPence, testPaymentRedirectUrl)
-
-  val testPaymentDataJson: JsValue =
-    Json.obj(
-      "taxType" -> testTaxType,
-      "taxReference" -> testMtditid,
-      "amountInPence" -> testAmountInPence,
-      "returnUrl" -> testPaymentRedirectUrl
-    )
-
+object PaymentJourneyModel {
+  implicit val formats: OFormat[PaymentJourneyModel] = Json.format[PaymentJourneyModel]
 }
+
+case class PaymentJourneyErrorResponse(status: Int, message: String) extends PaymentJourneyResponse

@@ -22,7 +22,8 @@ import play.api.mvc.{Request, WrappedRequest}
 
 case class MtdItUserOptionNino[A](mtditid: String,
                                   nino: Option[String],
-                                  userDetails: Option[UserDetailsModel])(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                  userDetails: Option[UserDetailsModel],
+                                  saUtr: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
 
 case class MtdItUserWithNino[A](mtditid: String,
                                 nino: String,

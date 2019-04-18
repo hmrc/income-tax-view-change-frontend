@@ -15,35 +15,36 @@
  */
 
 package controllers
-import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
-import play.api.libs.json.Json
-import javax.inject.{Inject, Singleton}
 
 import config.FrontendAppConfig
-import models.core.PaymentDataModel
+import connectors.PayApiConnector
+import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
+import javax.inject.{Inject, Singleton}
+import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
+import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-
-import scala.concurrent.Future
-
-
 
 @Singleton
 class PaymentController @Inject()(implicit val config: FrontendAppConfig,
                                   implicit val messagesApi: MessagesApi,
                                   val checkSessionTimeout: SessionTimeoutPredicate,
-                                  val authenticate: AuthenticationPredicate) extends BaseController {
+                                  val authenticate: AuthenticationPredicate,
+                                  payApiConnector: PayApiConnector) extends BaseController {
 
   val action = checkSessionTimeout andThen authenticate
 
-  val paymentHandoff:Long => Action[AnyContent] = paymentAmountInPence => action.async {
+  val paymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => action.async {
     implicit user =>
-      Future.successful(Redirect(config.paymentsUrl).addingToSession(
-        "payment-data" -> payment(user.mtditid, paymentAmountInPence).toString())
-      )
+      user.saUtr match {
+        case Some(utr) =>
+          payApiConnector.startPaymentJourney(utr, paymentAmountInPence).map {
+          case model: PaymentJourneyModel => Redirect(model.nextUrl)
+          case _: PaymentJourneyErrorResponse => throw new Exception("Failed to start payments journey due to downstream response")
+        }
+        case _ =>
+          Logger.error("Failed to start payments journey due to missing UTR")
+          throw new Exception("Failed to start payments journey due to missing UTR")
+      }
   }
-
-  private def payment(mtditid: String, paymentAmountInPence: Long) = Json.toJson[PaymentDataModel](
-    PaymentDataModel("mtdfb-itsa",mtditid,paymentAmountInPence,config.paymentRedirectUrl))
-
 }

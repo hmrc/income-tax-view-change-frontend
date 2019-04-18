@@ -17,7 +17,6 @@
 package controllers.predicates
 
 import javax.inject.{Inject, Singleton}
-
 import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.UserDetailsConnector
@@ -29,6 +28,7 @@ import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
@@ -46,10 +46,10 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
   extends BaseController with AuthRedirects with ActionBuilder[MtdItUserOptionNino]
     with ActionFunction[Request, MtdItUserOptionNino] {
 
-  override def invokeBlock[A](request: Request[A], f: (MtdItUserOptionNino[A]) => Future[Result]): Future[Result] = {
+  override def invokeBlock[A](request: Request[A], f: MtdItUserOptionNino[A] => Future[Result]): Future[Result] = {
 
-    implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    implicit val req = request
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val req: Request[A] = request
 
     authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and userDetailsUri) {
       case enrolments ~ userDetailsUrl => {
@@ -81,7 +81,8 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
     MtdItUserOptionNino(
       mtditid = enrolments.getEnrolment(appConfig.mtdItEnrolmentKey).flatMap(_.getIdentifier(appConfig.mtdItIdentifierKey)).map(_.value).get,
       nino = enrolments.getEnrolment(appConfig.ninoEnrolmentKey).flatMap(_.getIdentifier(appConfig.ninoIdentifierKey)).map(_.value),
-      userDetails
+      userDetails,
+      saUtr = enrolments.getEnrolment(appConfig.saEnrolmentKey).flatMap(_.getIdentifier(appConfig.saIdentifierKey)).map(_.value)
     )
   }
 }

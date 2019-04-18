@@ -92,9 +92,9 @@
 
         </section>
 
-        @if(transactionModel.eligibleToPay(appConfig)){
+        @if(transactionModel.eligibleToPay(appConfig) && transactionModel.outstandingAmount.isDefined){
             <div class="form-group">
-                <a id="payment-button" data-journey-click="BillFor@{taxYear}Page:ClickLink:Pay" href="@controllers.routes.PaymentController.paymentHandoff(calcModel.calcAmount.toPence).url" class="button">@messages("crystalisation.payNow")</a>
+                <a id="payment-button" data-journey-click="BillFor@{taxYear}Page:ClickLink:Pay" href="@controllers.routes.PaymentController.paymentHandoff(transactionModel.outstandingAmount.get.toPence).url" class="button">@messages("crystalisation.payNow")</a>
             </div>
         }
 

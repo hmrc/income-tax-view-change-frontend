@@ -34,7 +34,7 @@ object BaseTestConstants {
   val testUserDetailsError = UserDetailsError
   val testUserDetailsUrl = "/user/oid/potato"
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
-  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None)(FakeRequest())
+  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some("saUtr"))(FakeRequest())
   lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None)(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessesAndPropertyIncome)(FakeRequest())
   lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, businessesAndPropertyIncome)(FakeRequest())
@@ -48,6 +48,11 @@ object BaseTestConstants {
   val testAuthSuccessResponse = new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
+  )),Option(testUserDetailsUrl))
+  val testAuthSuccessWithSaUtrResponse = new ~(Enrolments(Set(
+    Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
+    Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
+    Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "saUtr")), "activated")
   )),Option(testUserDetailsUrl))
   val testReferrerUrl = "/test/url"
 

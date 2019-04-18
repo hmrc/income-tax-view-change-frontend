@@ -56,9 +56,9 @@
                     <div class="font-small text--right link-style form-group" id="bills-link-@{transaction.taxPeriodTo.get.getYear}">
                         <a href="@controllers.routes.CalculationController.renderCalculationPage(transaction.taxPeriodTo.get.getYear).url">@messages("paymentDue.viewBill")</a>
                     </div>
-                   @if(appConfig.features.paymentEnabled()){
+                   @if(appConfig.features.paymentEnabled() && transaction.outstandingAmount.isDefined){
                        <div id="payment-link-@{transaction.taxPeriodTo.get.getYear}" class="font-small text--right link-style">
-                           <a href="#">@messages("paymentDue.payNow")</a>
+                           <a href="@controllers.routes.PaymentController.paymentHandoff(transaction.outstandingAmount.get.toPence)">@messages("paymentDue.payNow")</a>
                        </div>
                    }
                 </div>

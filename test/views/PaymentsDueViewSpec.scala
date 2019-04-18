@@ -107,6 +107,14 @@ class PaymentsDueViewSpec extends TestSupport {
         pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("href") shouldBe expectedUrl
       }
 
+      "have a link to payments" in new Setup(unpaidFinancialTransactions) {
+        val testTaxYearTo = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodTo.get.getYear
+
+        pageDocument.getElementById(s"payment-link-$testTaxYearTo").text shouldBe messages.payNow
+        pageDocument.select(s"#payment-link-$testTaxYearTo a")
+          .attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(unpaidFinancialTransactions.head.financialTransactions.get.head.outstandingAmount.get.toPence).url
+      }
+
     }
 
     "without any bills" should {

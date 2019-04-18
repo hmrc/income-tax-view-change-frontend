@@ -36,6 +36,10 @@ object AuthStub extends ComponentSpecBase {
           | {
           | "key":"$testNinoEnrolmentKey",
           | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
+          | },
+          | {
+          | "key":"$testSaUtrEnrolmentKey",
+          | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
           | }
           | ],
           | "userDetailsUri":"$testUserDetailsWiremockUrl"

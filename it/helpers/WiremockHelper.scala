@@ -30,8 +30,8 @@ object WiremockHelper extends Eventually with IntegrationPatience {
   val wiremockHost = "localhost"
   val url = s"http://$wiremockHost:$wiremockPort"
 
-  def verifyPost(uri: String, xmlBody: String): Unit = {
-      verify(postRequestedFor(urlEqualTo(uri)).withRequestBody(equalToXml(xmlBody)))
+  def verifyPost(uri: String, jsonBody: String): Unit = {
+      verify(postRequestedFor(urlEqualTo(uri)).withRequestBody(equalToJson(jsonBody)))
   }
 
   def verifyGet(uri: String): Unit = {

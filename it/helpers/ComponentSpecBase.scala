@@ -25,6 +25,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import implicits.ImplicitDateFormatter
+import play.api.libs.json.Json
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
@@ -46,7 +47,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.business-account.host" -> mockHost,
     "microservice.services.business-account.port" -> mockPort,
     "microservice.services.financial-transactions.host" -> mockHost,
-    "microservice.services.financial-transactions.port" -> mockPort
+    "microservice.services.financial-transactions.port" -> mockPort,
+    "microservice.services.pay-api.host" -> mockHost,
+    "microservice.services.pay-api.port" -> mockPort
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -88,6 +91,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getBtaPartial: WSResponse = get(s"/partial")
     def getHome: WSResponse = get("/")
     def getPaymentsDue: WSResponse = get("/payments-due")
+    def getPay(amountInPence: BigDecimal): WSResponse = get(s"/payment?amountInPence=$amountInPence")
   }
 
   def unauthorisedTest(uri: String): Unit = {

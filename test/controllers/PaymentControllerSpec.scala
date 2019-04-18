@@ -17,56 +17,81 @@
 package controllers
 
 
+import assets.BaseTestConstants
 import assets.PaymentDataTestConstants._
+import connectors.PayApiConnector
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.MockAuthenticationPredicate
+import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito._
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
 class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate {
 
 
+  class SetupTestPaymentController(response: Future[PaymentJourneyResponse]) {
 
-  object TestPaymentController extends PaymentController()(
-    frontendAppConfig,
-    app.injector.instanceOf[MessagesApi],
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate
-  )
+    val mockPayApiConnector: PayApiConnector = mock[PayApiConnector]
 
-  "The PaymentController.paymentHandoff is action" when {
+    when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq("saUtr"), ArgumentMatchers.eq(BigDecimal(10000)))
+    (ArgumentMatchers.any[HeaderCarrier])).thenReturn(response)
 
-    s"Called with $testAmountInPence" should {
+    val testController = new PaymentController()(
+      frontendAppConfig,
+      app.injector.instanceOf[MessagesApi],
+      app.injector.instanceOf[SessionTimeoutPredicate],
+      MockAuthenticationPredicate,
+      mockPayApiConnector
+    )
+  }
 
-      lazy val result: Future[Result] = TestPaymentController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
+  "The PaymentController.paymentHandoff action" should {
 
-      "return status SEE_OTHER (303)" in {
+    "redirect the user to the login page" when {
+
+      "called with an unauthenticated user" in new SetupTestPaymentController(Future.successful(PaymentJourneyModel("id", "redirect-url"))) {
+        setupMockAuthorisationException()
+        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
-
-      s"check redirect location is'${frontendAppConfig.paymentsUrl}'" in {
-        redirectLocation(result) shouldBe Some(frontendAppConfig.paymentsUrl)
-      }
-
-      s"check payment data is '$testPaymentDataJson'" in {
-        await(result).session.get("payment-data") shouldBe Some(testPaymentDataJson.toString())
-      }
-
     }
 
-    "Called with an Unauthenticated User" should {
+    "redirect the user to the payments page" when {
 
-      "return redirect SEE_OTHER (303)" in {
-        setupMockAuthorisationException()
-        val result: Future[Result] = TestPaymentController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
+      "a successful payments journey is started" in new SetupTestPaymentController(Future.successful(PaymentJourneyModel("id", "redirect-url"))){
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse)
+        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("redirect-url")
+      }
+    }
+
+    "return an internal server error" when {
+
+      "an SA UTR is missing from the user" in new SetupTestPaymentController(Future.successful(PaymentJourneyModel("id", "redirect-url"))) {
+        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
+      "an error response is returned by the connector" in new SetupTestPaymentController(Future.successful(PaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message"))) {
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse)
+        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+
+      "an exception is returned by the connector" in new SetupTestPaymentController(Future.failed(new Exception("Exception Message"))) {
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse)
+        val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
     }
   }
 }
