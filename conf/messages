@@ -128,7 +128,6 @@ estimated_tax_liability.calc-breakdown.business-profit-self-employment         =
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Income from savings(for business profit)
 estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
 
-
 ## ReportDeadlines Page ##
 obligations.title                                               = Report deadlines
 obligations.heading                                             = Report deadlines
@@ -154,6 +153,7 @@ obligations.dropdown.p4                                         = After you send
 ## Previous Obligations ##
 previous-obligations.heading                                    = Updates
 previous-obligations.sub-heading                                = Previously submitted updates
+previous-obligations.no-previous-obligations                    = No previously submitted updates
 previous-obligations.income-source.property-income              = Property Income
 previous-obligations.income-source.final-income                 = Tax year - Final check
 previous-obligations.obligation-type.quarterly                  = Quarterly update
@@ -162,6 +162,8 @@ previous-obligations.obligation-type.crystallised               = Declaration
 previous-obligations.obligation-type.start-to-end               = {0} to {1}
 previous-obligation.obligation-type.was-due-on                  = Was due on {0}
 previous-obligations.submitted-on                               = Submitted on
+previous-obligations.updates-tab                                = Updates due
+previous-obligations.previous-updates-tab                       = Previously submitted updates
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission
