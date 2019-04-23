@@ -64,7 +64,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
   }
 
   def getPreviousObligationsUrl(incomeSourceID: String, nino: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/$nino/income-source/$incomeSourceID/previous-report-deadlines"
+    s"${config.itvcProtectedService}/income-tax-view-change/$nino/income-source/$incomeSourceID/fulfilled-report-deadlines"
   }
 
   def getLatestCalculation(nino: String, taxYear: Int)(implicit hc: HeaderCarrier): Future[CalculationResponseModel] = {

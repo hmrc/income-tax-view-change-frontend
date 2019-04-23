@@ -132,7 +132,7 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     "2019-1-31",
     "Crystallised",
     Some("2018-1-31"),
-    "Crystallised"
+    "Crystallised "
   )
 
 

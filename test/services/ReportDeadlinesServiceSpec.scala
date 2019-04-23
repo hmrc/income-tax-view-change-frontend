@@ -107,7 +107,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
     }
   }
 
-  "previousObligations" should {
+  "previousObligationsWithIncomeType" should {
     "return all the deadlines for any property and business income sources with crystallisation ordered by date submitted (latest first)" in new Setup {
       setupMockPreviousObligations(testSelfEmploymentId)(previousObligationsDataSuccessModel)
       setupMockPreviousObligations(testPropertyIncomeId)(previousObligationsEOPSDataSuccessModel)
@@ -115,10 +115,10 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
 
       await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
         ReportDeadlineModelWithIncomeType("Property", previousObligationFour),
-        ReportDeadlineModelWithIncomeType("Crystallisation", previousObligationFive),
+        ReportDeadlineModelWithIncomeType("Crystallised", previousObligationFive),
         ReportDeadlineModelWithIncomeType("Property", previousObligationThree),
-        ReportDeadlineModelWithIncomeType("Business", previousObligationTwo),
-        ReportDeadlineModelWithIncomeType("Business", previousObligationOne)
+        ReportDeadlineModelWithIncomeType(testTradeName, previousObligationTwo),
+        ReportDeadlineModelWithIncomeType(testTradeName, previousObligationOne)
       )
     }
 
@@ -130,7 +130,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
 
         await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
           ReportDeadlineModelWithIncomeType("Property", previousObligationFour),
-          ReportDeadlineModelWithIncomeType("Crystallisation", previousObligationFive),
+          ReportDeadlineModelWithIncomeType("Crystallised", previousObligationFive),
           ReportDeadlineModelWithIncomeType("Property", previousObligationThree)
         )
       }
@@ -140,9 +140,9 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         setupMockPreviousObligations(testNino)(previousObligationsCrystallisedSuccessModel)
 
         await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
-          ReportDeadlineModelWithIncomeType("Crystallisation", previousObligationFive),
-          ReportDeadlineModelWithIncomeType("Business", previousObligationTwo),
-          ReportDeadlineModelWithIncomeType("Business", previousObligationOne)
+          ReportDeadlineModelWithIncomeType("Crystallised", previousObligationFive),
+          ReportDeadlineModelWithIncomeType(testTradeName, previousObligationTwo),
+          ReportDeadlineModelWithIncomeType(testTradeName, previousObligationOne)
         )
       }
       "crystallisation is errored" in new Setup {
@@ -153,8 +153,8 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
           ReportDeadlineModelWithIncomeType("Property", previousObligationFour),
           ReportDeadlineModelWithIncomeType("Property", previousObligationThree),
-          ReportDeadlineModelWithIncomeType("Business", previousObligationTwo),
-          ReportDeadlineModelWithIncomeType("Business", previousObligationOne)
+          ReportDeadlineModelWithIncomeType(testTradeName, previousObligationTwo),
+          ReportDeadlineModelWithIncomeType(testTradeName, previousObligationOne)
         )
       }
     }

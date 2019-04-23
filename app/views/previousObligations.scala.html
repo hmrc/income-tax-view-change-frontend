@@ -44,4 +44,46 @@
     contentHeader = Some(breadcrumb)
 ) {
 
+    <header>
+        <h1 id="heading" class="heading-xlarge">@messages("previous-obligations.heading")</h1>
+    </header>
+
+    <!-- TODO: Add tabbing here :) -->
+
+    <h1 class="heading-large" id="sub-heading">@messages("previous-obligations.sub-heading")</h1>
+
+    @previousObligations.map { obligationWithType =>
+        <div class="grid-row divider--bottom">
+            <p></p>
+            <div class="column-half">
+                <span id="income-source" class="bold">
+                    @{obligationWithType.incomeType match {
+                        case "Property" => messages("previous-obligations.income-source.property-income")
+                        case "Crystallised" => messages("previous-obligations.income-source.final-income")
+                        case _ => obligationWithType.incomeType
+                    }}
+                </span>
+                <div id="obligation-type">
+                    @{obligationWithType.obligation.obligationType match {
+                        case "Quarterly" => messages("previous-obligations.obligation-type.quarterly")
+                        case "EOPS" => messages("previous-obligations.obligation-type.eops")
+                        case "Crystallised" => messages("previous-obligations.obligation-type.crystallised")
+                    }}
+                </div>
+                <div id="date-from-to">
+                    @messages("previous-obligations.obligation-type.start-to-end", obligationWithType.obligation.start.toLongDate, obligationWithType.obligation.end.toLongDate)
+                </div>
+                <div>
+                    @messages("previous-obligation.obligation-type.was-due-on", obligationWithType.obligation.due.toLongDate)
+                </div>
+                <br>
+            </div>
+            <div class="column-half">
+                <div>@messages("previous-obligations.submitted-on")</div>
+                <div>@obligationWithType.obligation.dateReceived.map(_.toLongDate)</div>
+            </div>
+            <p></p>
+        </div>
+    }
+
 }
