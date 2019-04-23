@@ -66,11 +66,11 @@
                 </tr>
             }
 
-            @if(breakdown.personalAllowance > 0) {
+            @if(breakdown.annualAllowances.personalAllowance > 0) {
                 <!-- Deduction - Personal Allowance -->
                 <tr id="personal-allowance-section" class="no-border-bottom">
                     <td id="personal-allowance-label">@messages("calc-breakdown.income.personal-allowance")</td>
-                    <td id="personal-allowance-data" class="summary-data panel-right">@breakdown.personalAllowance.toCurrency</td>
+                    <td id="personal-allowance-data" class="summary-data panel-right">@breakdown.annualAllowances.personalAllowance.toCurrency</td>
                 </tr>
             }
 
@@ -111,7 +111,9 @@
 
     <h3 id="calculation-heading" class="heading-small">@messages("calc-breakdown.calculation.heading")</h3>
     <div id="calculation-subheading" class="form-hint">@messages("calc-breakdown.calculation.subheading", breakdown.totalTaxableIncome.toCurrencyString)</div>
-
+    @if(breakdown.annualAllowances.giftAidExtender > 0) {
+    <div id="gift-aid-extender" class="form-hint">@messages("calc-breakdown.calculation.gift-aid-extender", breakdown.annualAllowances.giftAidExtender.toCurrencyString)</div>
+    }
     <table class="calculation-table">
         <tbody>
 
@@ -189,5 +191,8 @@
 
         </tbody>
     </table>
+
+
+
 
 }

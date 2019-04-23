@@ -33,7 +33,7 @@ class CalculationDataResponseModelSpec extends UnitSpec with Matchers {
 
         calculationDataSuccessModel.totalIncomeTaxNicYtd shouldBe 90500
         calculationDataSuccessModel.totalTaxableIncome shouldBe 198500
-        calculationDataSuccessModel.personalAllowance shouldBe 11500
+        calculationDataSuccessModel.annualAllowances.personalAllowance shouldBe 11500
 
         calculationDataSuccessModel.incomeReceived.selfEmployment shouldBe 200000
         calculationDataSuccessModel.incomeReceived.ukProperty shouldBe 10000

@@ -230,3 +230,6 @@ betaBanner.newService                                           = Mae hwn yn was
 betaBanner.your                                                 = – bydd eich
 betaBanner.feedback                                             = adborth
 betaBanner.improve                                              = yn ein helpu i''w wella.
+
+# calc-breakdown
+calc-breakdown.calculation.gift-aid-extender                    = Cynyddwyd eich terfyn cyfradd sylfaenol gan {0} ar gyfer taliadau Rhodd Cymorth.

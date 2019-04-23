@@ -248,7 +248,7 @@ object CalcDataIntegrationTestConstants {
   val calculationDataSuccessWithEoYModel = CalculationDataModel(
     totalIncomeTaxNicYtd = 90500.00,
     totalTaxableIncome = 198500.00,
-    personalAllowance = 11500.00,
+    annualAllowances = AnnualAllowances(11500.00, 0.00),
     taxReliefs = 1000,
     totalIncomeAllowancesUsed = 12005.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -343,7 +343,7 @@ object CalcDataIntegrationTestConstants {
   val calculationDataSuccessModel = CalculationDataModel(
     totalIncomeTaxNicYtd = 90500.00,
     totalTaxableIncome = 198500.00,
-    personalAllowance = 11500.00,
+    annualAllowances = AnnualAllowances(11500.00, 0.00),
     taxReliefs = 1000,
     totalIncomeAllowancesUsed = 12005.00,
     giftOfInvestmentsAndPropertyToCharity = 1000.25,
@@ -1232,7 +1232,8 @@ object CalcDataIntegrationTestConstants {
         "totalBeforeTaxDeducted" -> 100,
         "totalTaxDeducted" -> 200,
         "annualAllowances" -> Json.obj(
-          "personalAllowance" -> 11500
+          "personalAllowance" -> 11500,
+          "giftAidExtender" -> 2000
         ),
         "incomeTax" -> Json.obj(
           "totalAllowancesAndReliefs" -> 500,

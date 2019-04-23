@@ -48,7 +48,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
     nationalRegime = Some("UK"),
     totalTaxableIncome = 100000,
     totalIncomeTaxNicYtd = 50000,
-    personalAllowance = 5000,
+    annualAllowances = AnnualAllowances(5000.00, 2000.25),
     taxReliefs = 4000,
     totalIncomeAllowancesUsed = 7000,
     giftOfInvestmentsAndPropertyToCharity = 1234,
@@ -91,7 +91,9 @@ class CalcBreakdownHelperSpec extends TestSupport {
   )
 
   val emptyCalculationDataModel = CalculationDataModel(
-    None, 0, 0, 0, 0, 0, 0,
+    None, 0, 0,
+    annualAllowances = AnnualAllowances(0, 0),
+    0, 0, 0,
     IncomeReceivedModel(0, 0, 0, 0),
     SavingsAndGainsModel(0, 0, Nil),
     DividendsModel(0, 0, Nil),
@@ -223,6 +225,17 @@ class CalcBreakdownHelperSpec extends TestSupport {
         getElementById("your-total-estimate-label") shouldBe None
         getElementById("your-total-estimate-data") shouldBe None
       }
+
+      "display the gift aid extender message when it is present in the data" in new Setup(fullDataEstimate) {
+
+        getTextOfElementById("gift-aid-extender") shouldBe
+          Some(Messages.CalculationBreakdown.giftAidExtender("2,000.25"))
+      }
+
+      "not display the gift aid extender message when it is not present in the data" in new Setup(emptyDataEstimate) {
+        getElementById("gift-aid-extender") shouldBe None
+      }
+
     }
 
   }
