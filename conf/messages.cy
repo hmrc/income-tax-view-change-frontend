@@ -126,6 +126,7 @@ obligations.tab.one                                             = Diweddariadau 
 obligations.tab.two                                             = Diweddariadau a gyflwynwyd yn flaenorol
 
 ## Previous Obligations ##
+previous-obligations.title                                      = Eich Treth Incwm
 previous-obligations.heading                                    = Diweddariadau
 previous-obligations.sub-heading                                = Diweddariadau a gyflwynwyd yn flaenorol
 

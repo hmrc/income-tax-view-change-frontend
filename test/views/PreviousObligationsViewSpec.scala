@@ -75,12 +75,12 @@ class PreviousObligationsViewSpec extends TestSupport with ImplicitDateFormatter
 
     "display the no previous updates message when there are none" in new Setup {
       getTextOfElementById("no-previous-obligations") shouldBe Some(previousObligations.noPreviousObligations)
-      getElementById("income-source") shouldBe None
-      getElementById("obligation-type") shouldBe None
-      getElementById("date-from-to") shouldBe None
-      getElementById("was-due-on") shouldBe None
-      getElementById("submitted-on-label") shouldBe None
-      getElementById("submitted-on-date") shouldBe None
+      getElementById("income-source-0") shouldBe None
+      getElementById("obligation-type-0") shouldBe None
+      getElementById("date-from-to-0") shouldBe None
+      getElementById("was-due-on-0") shouldBe None
+      getElementById("submitted-on-label-0") shouldBe None
+      getElementById("submitted-on-date-0") shouldBe None
     }
 
     "not display the no previous updates message when there are previous updates to display" in new Setup(List(basicDeadline)) {
@@ -95,42 +95,42 @@ class PreviousObligationsViewSpec extends TestSupport with ImplicitDateFormatter
 
       "displays the correct income source" when {
         "it is from property" in new Setup(List(propertyObligation)) {
-          getTextOfElementById("income-source") shouldBe Some(previousObligations.propertyIncomeSource)
+          getTextOfElementById("income-source-0") shouldBe Some(previousObligations.propertyIncomeSource)
         }
         "it is from business" in new Setup(List(businessObligation)) {
-          getTextOfElementById("income-source") shouldBe Some("Obligations Ltd.")
+          getTextOfElementById("income-source-0") shouldBe Some("Obligations Ltd.")
         }
         "it is from a crystallisation" in new Setup(List(crystallisationObligation)) {
-          getTextOfElementById("income-source") shouldBe Some(previousObligations.crystallisationIncomeSource)
+          getTextOfElementById("income-source-0") shouldBe Some(previousObligations.crystallisationIncomeSource)
         }
       }
 
       "displays the correct obligation type" when {
         "it is quarterly" in new Setup(List(basicDeadline.copy(obligation = reportDeadline.copy(obligationType = "Quarterly")))) {
-          getTextOfElementById("obligation-type") shouldBe Some(previousObligations.quarterly)
+          getTextOfElementById("obligation-type-0") shouldBe Some(previousObligations.quarterly)
         }
         "it is eops" in new Setup(List(basicDeadline.copy(obligation = reportDeadline.copy(obligationType = "EOPS")))) {
-          getTextOfElementById("obligation-type") shouldBe Some(previousObligations.eops)
+          getTextOfElementById("obligation-type-0") shouldBe Some(previousObligations.eops)
         }
         "it is crystallisation" in new Setup(List(basicDeadline.copy(obligation = reportDeadline.copy(obligationType = "Crystallised")))) {
-          getTextOfElementById("obligation-type") shouldBe Some(previousObligations.crystallised)
+          getTextOfElementById("obligation-type-0") shouldBe Some(previousObligations.crystallised)
         }
       }
 
       "displays the from and to dates of the obligation" in new Setup(List(basicDeadline)) {
-        getTextOfElementById("date-from-to") shouldBe Some(previousObligations.dateToDate(date.toLongDate, date.plusMonths(1).toLongDate))
+        getTextOfElementById("date-from-to-0") shouldBe Some(previousObligations.dateToDate(date.toLongDate, date.plusMonths(1).toLongDate))
       }
 
       "displays the date the obligation was due on" in new Setup(List(basicDeadline)) {
-        getTextOfElementById("was-due-on") shouldBe Some(previousObligations.wasDueOn(date.plusMonths(2).toLongDate))
+        getTextOfElementById("was-due-on-0") shouldBe Some(previousObligations.wasDueOn(date.plusMonths(2).toLongDate))
       }
 
       "displays the submitted on label" in new Setup(List(basicDeadline)) {
-        getTextOfElementById("submitted-on-label") shouldBe Some(previousObligations.submittedOn)
+        getTextOfElementById("submitted-on-label-0") shouldBe Some(previousObligations.submittedOn)
       }
 
       "displays the date the obligation was submitted" in new Setup(List(basicDeadline)) {
-        getTextOfElementById("submitted-on-date") shouldBe Some(date.plusMonths(1).toLongDate)
+        getTextOfElementById("submitted-on-date-0") shouldBe Some(date.plusMonths(1).toLongDate)
       }
 
     }

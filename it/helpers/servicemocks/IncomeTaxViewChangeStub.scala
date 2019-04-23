@@ -75,6 +75,20 @@ object IncomeTaxViewChangeStub {
     WiremockHelper.verifyGet(incomeSourceDetailsUrl(mtditid))
 
 
+  //PreviousObligations Stubs
+  def previousObligationsUrl(incomeSourceId: String, nino: String): String = {
+    s"/income-tax-view-change/$nino/income-source/$incomeSourceId/fulfilled-report-deadlines"
+  }
+
+  def stubGetPreviousObligations(incomeSourceId: String, nino: String, deadlines: ReportDeadlinesModel): Unit =
+    WiremockHelper.stubGet(previousObligationsUrl(incomeSourceId, nino), Status.OK, Json.toJson(deadlines).toString())
+
+  def stubGetPreviousObligationsNotFound(incomeSourceId: String, nino: String): Unit =
+    WiremockHelper.stubGet(previousObligationsUrl(incomeSourceId, nino), Status.NOT_FOUND, "")
+
+  def verifyGetPreviousObligations(incomeSourceId: String, nino: String): Unit =
+    WiremockHelper.verifyGet(previousObligationsUrl(incomeSourceId, nino))
+
 
   //ReportDeadlines Stubs
   //=====================
