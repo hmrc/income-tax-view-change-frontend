@@ -79,7 +79,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getPreviousObligationsUrl" should {
     "return the correct url" in new Setup {
-      getPreviousObligationsUrl(testSelfEmploymentId, testNino) shouldBe s"$baseUrl/income-tax-view-change/$testNino/income-source/$testSelfEmploymentId/previous-report-deadlines"
+      getPreviousObligationsUrl(testSelfEmploymentId, testNino) shouldBe s"$baseUrl/income-tax-view-change/$testNino/income-source/$testSelfEmploymentId/fulfilled-report-deadlines"
     }
   }
   
@@ -257,7 +257,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     val successResponseBadJson = HttpResponse(Status.OK, responseJson = Some(Json.parse("{}")))
     val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-    val getPreviousObligationsTestUrl = s"http://localhost:9999/income-tax-view-change/$testNino/income-source/$testSelfEmploymentId/previous-report-deadlines"
+    val getPreviousObligationsTestUrl = s"http://localhost:9999/income-tax-view-change/$testNino/income-source/$testSelfEmploymentId/fulfilled-report-deadlines"
 
     s"return a report deadlines model on a successful response with valid json" in new Setup {
       setupMockHttpGet(getPreviousObligationsTestUrl)(successResponse)

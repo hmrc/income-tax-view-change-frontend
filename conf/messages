@@ -153,6 +153,18 @@ obligations.dropdown.p2                                         = Use your softw
 obligations.dropdown.p3                                         = Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs.
 obligations.dropdown.p4                                         = After you send your final report, you can see the Income Tax you owe for the tax year.
 
+## Previous Obligations ##
+previous-obligations.heading                                    = Updates
+previous-obligations.sub-heading                                = Previously submitted updates
+previous-obligations.income-source.property-income              = Property Income
+previous-obligations.income-source.final-income                 = Tax year - Final check
+previous-obligations.obligation-type.quarterly                  = Quarterly update
+previous-obligations.obligation-type.eops                       = Annual update
+previous-obligations.obligation-type.crystallised               = Declaration
+previous-obligations.obligation-type.start-to-end               = {0} to {1}
+previous-obligation.obligation-type.was-due-on                  = Was due on {0}
+previous-obligations.submitted-on                               = Submitted on
+
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission
 crystalisation.heading                                          = {0} to {1} tax year
