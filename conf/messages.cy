@@ -122,7 +122,8 @@ obligations.dropdown.p1                                         = os nad ydych w
 obligations.dropdown.p2                                         = Defnyddiwch eich meddalwedd i gofnodi''ch incwm a''ch treuliau, yna anfonwch ddiweddariad i CThEM o leiaf bob chwarter.
 obligations.dropdown.p3                                         = Anfonwch eich adroddiad terfynol erbyn 31 Ionawr. Yn yr adroddiad hwn, gallwch ychwanegu unrhyw ffynonellau incwm, lwfansau neu ryddhad arall.
 obligations.dropdown.p4                                         = Ar ôl i chi anfon eich adroddiad terfynol, gallwch weld y Dreth Incwm sydd arnoch ar gyfer y flwyddyn dreth.
-
+obligations.tab.one                                             = Diweddariadau i ddod
+obligations.tab.two                                             = Diweddariadau a gyflwynwyd yn flaenorol
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Eich cyflwyniad terfynol

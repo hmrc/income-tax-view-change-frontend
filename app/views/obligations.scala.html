@@ -49,10 +49,10 @@ contentHeader = Some(breadcrumb)
 
     <ul class="tabs-nav" role="tablist">
         <li role="tab" data-tab-link="tab1" aria-selected="true">
-            <span class="tabs-nav__tab tabs-nav__tab--active">TEST</span>
+            <span class="tabs-nav__tab tabs-nav__tab--active">@Messages("obligations.tab.one")</span>
         </li>
         <li id="tab2" role="tab" data-tab-link="tab2" aria-selected="false">
-            <a class="tabs-nav__tab" href="@controllers.routes.PreviousObligationsController.getPreviousObligations().url">TEST2</a>
+            <a class="tabs-nav__tab" href="@controllers.routes.PreviousObligationsController.getPreviousObligations().url">@Messages("obligations.tab.two")</a>
         </li>
     </ul>
 
