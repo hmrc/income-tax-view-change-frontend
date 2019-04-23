@@ -136,6 +136,8 @@ previous-obligations.obligation-type.crystallised               = Datganiad
 previous-obligations.obligation-type.start-to-end               = {0} i {1}
 previous-obligation.obligation-type.was-due-on                  = Roedd yn ddyledus ar {0}
 previous-obligations.submitted-on                               = Cyflwynwyd ar
+previous-obligations.updates-tab                                = Diweddariadau i ddod
+previous-obligations.previous-updates-tab                       = Diweddariadau a gyflwynwyd yn flaenorol
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Eich cyflwyniad terfynol
