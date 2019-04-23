@@ -335,6 +335,8 @@ object Messages {
   //ReportDeadlines Page Messages
   object Obligations {
     val title = "Updates"
+    val tabOne = "Updates due"
+    val tabTwo = "Previously submitted updates"
     val subTitle = "Updates due"
     val annualDropdownListOne = "In the annual update you must declare that the 4 quarterly updates you submitted are correct or amend any errors."
     val annualDropdownListTwo = "Using your accounting software , you need to submit one annual update for each source of income at the end of its accounting period."
