@@ -27,6 +27,15 @@ home.accounts.heading                                           = Manylion y cyf
 home.accounts.text                                              = Gweld y manylion cyswllt a''r manylion eraill sydd gennym ar gyfer eich busnesau.
 home.updates.body.estimatesLink                                 = Amcangyfrifon
 
+
+home.incomeTaxPayment.nextPaymentDue                            = Taliad nesaf yn ddyledus
+home.updates.body.heading                                       = Diweddariad nesaf i’w ddychwelyd erbyn
+home.updates.heading                                            = Diweddariadau
+home.incomeTaxPayment.incomeTaxPayments                         = Taliadau treth incwm
+home.incomeTaxPayment.viewBillAndMakePayment                    = Bwrw golwg dros y bil a gwneud taliad
+home.updates.body.updatesLink                                   = Bwrw golwg dros y manylion ar gyfer diweddariadau
+home.incomeTaxPayment.previousBills                             = Biliau blaenorol
+
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Helpu i wella''r gwasanaeth hwn
 banner.recruitment.link                                         = Ymuno â''n panel ymchwil drwy ateb ambell gwestiwn.
@@ -112,10 +121,11 @@ obligations.dropdown.p2                                         = Defnyddiwch ei
 obligations.dropdown.p3                                         = Anfonwch eich adroddiad terfynol erbyn 31 Ionawr. Yn yr adroddiad hwn, gallwch ychwanegu unrhyw ffynonellau incwm, lwfansau neu ryddhad arall.
 obligations.dropdown.p4                                         = Ar ôl i chi anfon eich adroddiad terfynol, gallwch weld y Dreth Incwm sydd arnoch ar gyfer y flwyddyn dreth.
 
+
 ## Crystalisation Page ##
 crystalisation.title                                            = Eich cyflwyniad terfynol
 crystalisation.heading                                          = Blwyddyn dreth {0} i {1}
-crystalisation.subheading                                       = Billau
+crystalisation.subheading                                       = Biliau
 crystalisation.dueBy                                            = erbyn 31 Ionawr {0}
 crystalisation.whatYouOwe.para                                  = Mae''r ffigur hwn yn seiliedig ar yr wybodaeth rydych wedi''i darparu yn eich adroddiadau chwarterol a''ch adroddiad terfynol.
 crystalisation.warning                                          = Gallai eich taliad gymryd hyd at 5 diwrnod i''w brosesu. Gallwn godi dirwy arnoch os yw''n hwyr.
@@ -132,8 +142,8 @@ crystalisation.additionalPayment.heading                        = Taliad ychwane
 crystalisation.payNow                                           = Yn eich blaen i dalu
 
 ## Bills Page ##
-bills.title                                                     = Billau
-bills.heading                                                   = Billau
+bills.title                                                     = Biliau
+bills.heading                                                   = Biliau
 bills.viewBills                                                 = Bwrw golwg ar eich biliau terfynol:
 bills.billLink.screenReaderPrefix                               = gweld bil ar gyfer
 bills.billLink                                                  = Blwyddyn dreth {0} i {1}
@@ -211,7 +221,7 @@ not_enrolled.sign-up.3                                          = cyn i chi allu
 breadcrumb-bta                                                  = Cyfrif Treth Busnes
 breadcrumb-it                                                   = Cyfrif Treth Incwm
 breadcrumb-estimates                                            = Amcangyfrifon
-breadcrumb-bills                                                = Billau
+breadcrumb-bills                                                = Biliau
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
 breadcrumb-statement                                            = Datganiad Treth Incwm
 breadcrumb-account                                              = Manylion y cyfrif
@@ -238,9 +248,15 @@ obligations.dropdown.declarations.li1.text.v2                   = - Yn dibynnu a
 obligations.dropdown.declarations.li2.text.v2                   = - Mae hyn yn cadarnhau eich bod wedi datgan eich incwm o bob ffynhonell yn gywir hyd eithaf eich gwybodaeth. Bydd angen i chi anfon y datganiad hwn gan ddefnyddio''ch meddalwedd.
 obligations.declarations                                        = Datganiadau
 obligations.propertyIncome                                      = Incwm o eiddo
-obligations.dueOn                                               = I''w dychwelyd erbyn:
+obligations.dueOn                                               = I''w ddychwelyd erbyn:
 obligations.dateToDate                                          = {0} i {1}
 obligation.dropdown.finalDeclaration.text.v2.prt2               = .
 
+
+
+## Regimes
+UK = Y DU
+Scotland = Yr Alban
+Wales = Cymru
 # calc-breakdown
 calc-breakdown.calculation.gift-aid-extender                    = Cynyddwyd eich terfyn cyfradd sylfaenol gan {0} ar gyfer taliadau Rhodd Cymorth.

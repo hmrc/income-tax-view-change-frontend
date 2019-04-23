@@ -39,6 +39,8 @@ home.updates.body.heading                                       = Next update du
 home.updates.body.updatesLink                                   = View details for updates
 home.updates.body.estimatesLink                                 = Estimates
 
+
+
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service
 banner.recruitment.link                                         = Join our research panel by answering a few questions.
@@ -304,3 +306,9 @@ paymentDue.tax-year                                                = Tax year {0
 paymentDue.due                                                     = due
 paymentDue.viewBill                                                = View bill
 paymentDue.payNow                                                  = Pay now
+
+
+## Regimes
+UK = UK
+Scotland = Scotland
+Wales = Wales
