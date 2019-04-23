@@ -154,6 +154,7 @@ obligations.dropdown.p3                                         = Send your fina
 obligations.dropdown.p4                                         = After you send your final report, you can see the Income Tax you owe for the tax year.
 
 ## Previous Obligations ##
+previous-obligations.title                                      = Your Income Tax
 previous-obligations.heading                                    = Updates
 previous-obligations.sub-heading                                = Previously submitted updates
 previous-obligations.no-previous-obligations                    = No previously submitted updates
@@ -317,8 +318,6 @@ obligation.dropdown.finalDeclaration.text.v2.prt1                  = Your final 
 obligation.dropdown.finalDeclaration.text.v2.prt2                  =.
 obligations.tab.one                                                = Updates due
 obligations.tab.two                                                = Previously submitted updates
-
-previous-obligations.title                                      = Your Income Tax
 
 ## Payment Due Page ##
 paymentDue.title                                                   = Your Income Tax

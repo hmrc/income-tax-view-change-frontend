@@ -64,35 +64,35 @@
     @if(previousObligations.isEmpty) {
         <div id="no-previous-obligations">@messages("previous-obligations.no-previous-obligations")</div>
     } else {
-        @previousObligations.map { obligationWithType =>
-            <div class="grid-row divider--bottom">
+        @previousObligations.zipWithIndex.map { case (obligationWithType, index) =>
+            <div id="row-@index" class="grid-row divider--bottom">
                 <p></p>
                 <div class="column-half">
-                    <span id="income-source" class="bold">
+                    <span id="income-source-@index" class="bold">
                         @{obligationWithType.incomeType match {
                             case "Property" => messages("previous-obligations.income-source.property-income")
                             case "Crystallised" => messages("previous-obligations.income-source.final-income")
                             case _ => obligationWithType.incomeType
                             }}
                     </span>
-                    <div id="obligation-type">
+                    <div id="obligation-type-@index">
                         @{obligationWithType.obligation.obligationType match {
                             case "Quarterly" => messages("previous-obligations.obligation-type.quarterly")
                             case "EOPS" => messages("previous-obligations.obligation-type.eops")
                             case "Crystallised" => messages("previous-obligations.obligation-type.crystallised")
                         }}
                     </div>
-                    <div id="date-from-to">
+                    <div id="date-from-to-@index">
                         @messages("previous-obligations.obligation-type.start-to-end", obligationWithType.obligation.start.toLongDate, obligationWithType.obligation.end.toLongDate)
                     </div>
-                    <div id="was-due-on">
+                    <div id="was-due-on-@index">
                         @messages("previous-obligation.obligation-type.was-due-on", obligationWithType.obligation.due.toLongDate)
                     </div>
                     <br>
                 </div>
                 <div class="column-half">
-                    <div id="submitted-on-label">@messages("previous-obligations.submitted-on")</div>
-                    <div id="submitted-on-date">@obligationWithType.obligation.dateReceived.map(_.toLongDate)</div>
+                    <div id="submitted-on-label-@index">@messages("previous-obligations.submitted-on")</div>
+                    <div id="submitted-on-date-@index">@obligationWithType.obligation.dateReceived.map(_.toLongDate)</div>
                 </div>
                 <p></p>
             </div>
