@@ -298,7 +298,10 @@ obligations.dateToDate                                             = {0} to {1}
 obligations.annualUpdates                                          = Annual updates
 obligations.finalDeclarationUpdate                                 = Final declaration
 obligation.dropdown.finalDeclaration.text.v2.prt1                  = Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your
-obligation.dropdown.finalDeclaration.text.v2.prt2                  =.## Payment Due Page ##
+obligation.dropdown.finalDeclaration.text.v2.prt2                  =.
+
+
+## Payment Due Page ##
 paymentDue.title                                                   = Your Income Tax
 paymentDue.heading                                                 = Income Tax payments
 paymentDue.sub-heading                                             = Payment due
