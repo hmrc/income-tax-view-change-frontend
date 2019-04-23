@@ -47,16 +47,12 @@ contentHeader = Some(breadcrumb)
     <h1 id="page-heading" class="heading-xlarge"> @Messages("obligations.heading.v2")</h1>
 </header>
 
-    <ul class="tabs-nav">
-        <li class="tabs-nav__tab tabs-nav__tab--active">
-            <div>
-                <a class="tabs-nav__tab--active" href="#">TEST</a>
-            </div>
+    <ul class="tabs-nav" role="tablist">
+        <li role="tab" data-tab-link="tab1" aria-selected="true">
+            <span class="tabs-nav__tab tabs-nav__tab--active">TEST</span>
         </li>
-        <li class="tabs-nav__tab">
-            <div class="">
-                <a href="@controllers.routes.PreviousObligationsController.getPreviousObligations().url">TEST2</a>
-            </div>
+        <li id="tab2" role="tab" data-tab-link="tab2" aria-selected="false">
+            <a class="tabs-nav__tab" href="@controllers.routes.PreviousObligationsController.getPreviousObligations().url">TEST2</a>
         </li>
     </ul>
 
