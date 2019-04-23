@@ -41,7 +41,6 @@ class PreviousObligationsController @Inject()(val checkSessionTimeout: SessionTi
     implicit user =>
       if(config.features.obligationsPageEnabled()) {
         reportDeadlinesService.previousObligationsWithIncomeType(user.incomeSources).map { previousObligations =>
-          println(previousObligations)
           Ok(views.html.previousObligations(previousObligations))
         }
       } else {
