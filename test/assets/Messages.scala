@@ -358,6 +358,19 @@ object Messages {
 
   object PreviousObligations {
     val title = "Your Income Tax"
+    val heading = "Updates"
+    val subHeading = "Previously submitted updates"
+    val noPreviousObligations = "No previously submitted updates"
+    val propertyIncomeSource = "Property Income"
+    val crystallisationIncomeSource = "Tax year - Final check"
+    val quarterly = "Quarterly update"
+    val eops = "Annual update"
+    val crystallised = "Declaration"
+    def dateToDate(from: String, to: String) = s"$from to $to"
+    def wasDueOn(date: String) = s"Was due on $date"
+    val submittedOn = "Submitted on"
+    val updatesLink = "Updates due"
+    val previousUpdatesTab = "Previously submitted updates"
   }
 
   object PaymentDue {
