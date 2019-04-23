@@ -25,6 +25,7 @@ home.statements.heading                                         = Statements
 home.statements.text                                            = View your Income Tax transactions, including charges and payments.
 home.accounts.heading                                           = Account details
 home.accounts.text                                              = See contact information and other details we have for your businesses.
+
 home.incomeTaxPayment.viewBillAndMakePayment                    = View bill and make payment
 home.incomeTaxPayment.viewBill                                  = View bill
 home.incomeTaxPayment.nextPaymentDue                            = Next payment due
@@ -37,6 +38,8 @@ home.updates.heading                                            = Updates
 home.updates.body.heading                                       = Next update due
 home.updates.body.updatesLink                                   = View details for updates
 home.updates.body.estimatesLink                                 = Estimates
+
+
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service
@@ -126,7 +129,6 @@ estimated_tax_liability.calc-breakdown.business-profit-property                =
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Business profit(for self-employment)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Income from savings(for business profit)
 estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
-
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Report deadlines
@@ -298,6 +300,7 @@ obligations.finalDeclarationUpdate                                 = Final decla
 obligation.dropdown.finalDeclaration.text.v2.prt1                  = Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your
 obligation.dropdown.finalDeclaration.text.v2.prt2                  =.
 
+
 ## Payment Due Page ##
 paymentDue.title                                                   = Your Income Tax
 paymentDue.heading                                                 = Income Tax payments
@@ -306,3 +309,9 @@ paymentDue.tax-year                                                = Tax year {0
 paymentDue.due                                                     = due
 paymentDue.viewBill                                                = View bill
 paymentDue.payNow                                                  = Pay now
+
+
+## Regimes
+UK = UK
+Scotland = Scotland
+Wales = Wales
