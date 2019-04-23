@@ -33,7 +33,7 @@ home.incomeTaxPayment.incomeTaxPayments                         = Taliadau treth
 home.incomeTaxPayment.previousBills                             = Biliau blaenorol
 
 home.updates.heading                                            = Diweddariadau
-home.updates.body.heading                                       = Diweddariad nesaf i’w ddychwelyd erbyn
+home.updates.body.heading                                       = Diweddariad nesaf i’’w ddychwelyd erbyn
 home.updates.body.estimatesLink                                 = Amcangyfrifon
 home.updates.body.updatesLink                                   = Gweld manylion ar gyfer diweddariadau
 home.updates.body.previousLink                                  = Diweddariadau a gyflwynwyd yn flaenorol
