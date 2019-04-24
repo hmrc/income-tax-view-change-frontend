@@ -1,0 +1,105 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import implicits.ImplicitDateFormatter._
+@import views.html.templates.main_template
+@import views.html.helpers.breadcrumbHelper
+@import views.helpers.{ReportDeadlinesPage, ReportDeadlineStatusHelper}
+@import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
+@import views.html.helpers.backToHomeHelper
+@import views.html.helpers.accordionHelper
+@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
+@import models.reportDeadlines.ReportDeadlinesModel
+@import models.reportDeadlines.QuarterlyObligation
+@import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesResponse, PropertyIncomeWithDeadlinesModel}
+@import models.reportDeadlines.EopsObligation
+@import models.reportDeadlines.QuarterlyObligation
+@import models.reportDeadlines.ReportDeadlineModelWithIncomeType
+
+@(previousObligations: List[ReportDeadlineModelWithIncomeType])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+
+@breadcrumb = {
+    @breadcrumbHelper(Breadcrumb(Vector(
+    BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+    BreadcrumbItem("breadcrumb-updates", None)
+    )), "Updates")
+}
+
+@main_template(
+    title = messages("previous-obligations.title"),
+    bodyClasses = None,
+    contentHeader = Some(breadcrumb)
+) {
+
+    <header class="page-heading">
+        <h1 id="heading" class="heading-xlarge">@messages("previous-obligations.heading")</h1>
+    </header>
+
+    <div>
+        <ul class="tabs-nav" role="tablist">
+            <li id="updates-tab" role="tab" data-tab-link="updates-tab" aria-selected="false">
+                <a id="updates-link" class="tabs-nav__tab" href="@controllers.routes.ReportDeadlinesController.getReportDeadlines().url">@messages("previous-obligations.updates-tab")</a>
+            </li>
+            <li id="previous-updates-tab" role="tab" data-tab-link="previous-updates-tab" aria-selected="true">
+                <span class="tabs-nav__tab tabs-nav__tab--active">@messages("previous-obligations.previous-updates-tab")</span>
+            </li>
+        </ul>
+    </div>
+
+    <h1 id="sub-heading" class="heading-large">@messages("previous-obligations.sub-heading")</h1>
+
+    @if(previousObligations.isEmpty) {
+        <div id="no-previous-obligations">@messages("previous-obligations.no-previous-obligations")</div>
+    } else {
+        @previousObligations.zipWithIndex.map { case (obligationWithType, index) =>
+            <div id="row-@index" class="grid-row divider--bottom">
+                <p></p>
+                <div class="column-half">
+                    <span id="income-source-@index" class="bold">
+                        @{obligationWithType.incomeType match {
+                            case "Property" => messages("previous-obligations.income-source.property-income")
+                            case "Crystallised" => messages("previous-obligations.income-source.final-income")
+                            case _ => obligationWithType.incomeType
+                            }}
+                    </span>
+                    <div id="obligation-type-@index">
+                        @{obligationWithType.obligation.obligationType match {
+                            case "Quarterly" => messages("previous-obligations.obligation-type.quarterly")
+                            case "EOPS" => messages("previous-obligations.obligation-type.eops")
+                            case "Crystallised" => messages("previous-obligations.obligation-type.crystallised")
+                        }}
+                    </div>
+                    <div id="date-from-to-@index">
+                        @messages("previous-obligations.obligation-type.start-to-end", obligationWithType.obligation.start.toLongDate, obligationWithType.obligation.end.toLongDate)
+                    </div>
+                    <div id="was-due-on-@index">
+                        @messages("previous-obligation.obligation-type.was-due-on", obligationWithType.obligation.due.toLongDate)
+                    </div>
+                    <br>
+                </div>
+                <div class="column-half">
+                    <div id="submitted-on-label-@index">@messages("previous-obligations.submitted-on")</div>
+                    <div id="submitted-on-date-@index">@obligationWithType.obligation.dateReceived.map(_.toLongDate)</div>
+                </div>
+                <p></p>
+            </div>
+        }
+    }
+
+
+
+
+}

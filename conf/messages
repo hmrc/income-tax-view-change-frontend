@@ -37,6 +37,7 @@ home.incomeTaxPayment.noBills                                   = No payments du
 home.updates.heading                                            = Updates
 home.updates.body.heading                                       = Next update due
 home.updates.body.updatesLink                                   = View details for updates
+home.updates.body.previousLink                                  = Previously submitted updates
 home.updates.body.estimatesLink                                 = Estimates
 
 
@@ -151,6 +152,22 @@ obligations.dropdown.p1                                         = if you have no
 obligations.dropdown.p2                                         = Use your software to record your income and expenses, then send an update to HMRC at least every quarter.
 obligations.dropdown.p3                                         = Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs.
 obligations.dropdown.p4                                         = After you send your final report, you can see the Income Tax you owe for the tax year.
+
+## Previous Obligations ##
+previous-obligations.title                                      = Your Income Tax
+previous-obligations.heading                                    = Updates
+previous-obligations.sub-heading                                = Previously submitted updates
+previous-obligations.no-previous-obligations                    = No previously submitted updates
+previous-obligations.income-source.property-income              = Property Income
+previous-obligations.income-source.final-income                 = Tax year - Final check
+previous-obligations.obligation-type.quarterly                  = Quarterly update
+previous-obligations.obligation-type.eops                       = Annual update
+previous-obligations.obligation-type.crystallised               = Declaration
+previous-obligations.obligation-type.start-to-end               = {0} to {1}
+previous-obligation.obligation-type.was-due-on                  = Was due on {0}
+previous-obligations.submitted-on                               = Submitted on
+previous-obligations.updates-tab                                = Updates due
+previous-obligations.previous-updates-tab                       = Previously submitted updates
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission
@@ -299,7 +316,8 @@ obligations.annualUpdates                                          = Annual upda
 obligations.finalDeclarationUpdate                                 = Final declaration
 obligation.dropdown.finalDeclaration.text.v2.prt1                  = Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your
 obligation.dropdown.finalDeclaration.text.v2.prt2                  =.
-
+obligations.tab.one                                                = Updates due
+obligations.tab.two                                                = Previously submitted updates
 
 ## Payment Due Page ##
 paymentDue.title                                                   = Your Income Tax

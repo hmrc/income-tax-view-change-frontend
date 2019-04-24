@@ -26,6 +26,7 @@ import assets.PropertyDetailsTestConstants.{propertyDetails, propertyIncomeModel
 import assets.ReportDeadlinesTestConstants.{obligationsCrystallisedSuccessModel, _}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.incomeSourcesWithDeadlines._
+import models.reportDeadlines.ReportDeadlineModelWithIncomeType
 import testUtils.TestSupport
 
 class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
@@ -102,6 +103,59 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
 
         await(getAllDeadlines(businessAndPropertyAligned)) shouldBe obligationsDataSuccessModel.obligations ++ obligationsEOPSDataSuccessModel.obligations
+      }
+    }
+  }
+
+  "previousObligationsWithIncomeType" should {
+    "return all the deadlines for any property and business income sources with crystallisation ordered by date submitted (latest first)" in new Setup {
+      setupMockPreviousObligations(testSelfEmploymentId)(previousObligationsDataSuccessModel)
+      setupMockPreviousObligations(testPropertyIncomeId)(previousObligationsEOPSDataSuccessModel)
+      setupMockPreviousObligations(testNino)(previousObligationsCrystallisedSuccessModel)
+
+      await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
+        ReportDeadlineModelWithIncomeType("Property", previousObligationFour),
+        ReportDeadlineModelWithIncomeType("Crystallised", previousObligationFive),
+        ReportDeadlineModelWithIncomeType("Property", previousObligationThree),
+        ReportDeadlineModelWithIncomeType(testTradeName, previousObligationTwo),
+        ReportDeadlineModelWithIncomeType(testTradeName, previousObligationOne)
+      )
+    }
+
+    "return only the non errored deadlines for any property and business income sources with crystallisation" when {
+      "property is errored" in new Setup {
+        setupMockPreviousObligations(testSelfEmploymentId)(obligationsDataErrorModel)
+        setupMockPreviousObligations(testPropertyIncomeId)(previousObligationsEOPSDataSuccessModel)
+        setupMockPreviousObligations(testNino)(previousObligationsCrystallisedSuccessModel)
+
+        await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
+          ReportDeadlineModelWithIncomeType("Property", previousObligationFour),
+          ReportDeadlineModelWithIncomeType("Crystallised", previousObligationFive),
+          ReportDeadlineModelWithIncomeType("Property", previousObligationThree)
+        )
+      }
+      "business is errored" in new Setup {
+        setupMockPreviousObligations(testSelfEmploymentId)(previousObligationsDataSuccessModel)
+        setupMockPreviousObligations(testPropertyIncomeId)(obligationsDataErrorModel)
+        setupMockPreviousObligations(testNino)(previousObligationsCrystallisedSuccessModel)
+
+        await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
+          ReportDeadlineModelWithIncomeType("Crystallised", previousObligationFive),
+          ReportDeadlineModelWithIncomeType(testTradeName, previousObligationTwo),
+          ReportDeadlineModelWithIncomeType(testTradeName, previousObligationOne)
+        )
+      }
+      "crystallisation is errored" in new Setup {
+        setupMockPreviousObligations(testSelfEmploymentId)(previousObligationsDataSuccessModel)
+        setupMockPreviousObligations(testPropertyIncomeId)(previousObligationsEOPSDataSuccessModel)
+        setupMockPreviousObligations(testNino)(obligationsDataErrorModel)
+
+        await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
+          ReportDeadlineModelWithIncomeType("Property", previousObligationFour),
+          ReportDeadlineModelWithIncomeType("Property", previousObligationThree),
+          ReportDeadlineModelWithIncomeType(testTradeName, previousObligationTwo),
+          ReportDeadlineModelWithIncomeType(testTradeName, previousObligationOne)
+        )
       }
     }
   }

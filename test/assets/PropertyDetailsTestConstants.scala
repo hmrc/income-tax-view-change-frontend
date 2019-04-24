@@ -73,6 +73,7 @@ object PropertyDetailsTestConstants extends ImplicitDateFormatter {
     end = "2018-04-05",
     due = "2017-10-31",
     periodKey = "#003",
+    dateReceived = None,
     obligationType = "Crystallised"
   ))
 

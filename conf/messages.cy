@@ -25,7 +25,18 @@ home.statements.heading                                         = Datganiadau
 home.statements.text                                            = Bwrw golwg ar eich trafodiadau Treth Incwm, gan gynnwys costau a thaliadau.
 home.accounts.heading                                           = Manylion y cyfrif
 home.accounts.text                                              = Gweld y manylion cyswllt a''r manylion eraill sydd gennym ar gyfer eich busnesau.
+
+home.incomeTaxPayment.nextPaymentDue                            = Taliad nesaf yn ddyledus
+home.incomeTaxPayment.viewBill                                  = Bwrw golwg dros y bil
+home.incomeTaxPayment.viewBillAndMakePayment                    = Bwrw golwg dros y bil a gwneud taliad
+home.incomeTaxPayment.incomeTaxPayments                         = Taliadau treth incwm
+home.incomeTaxPayment.previousBills                             = Biliau blaenorol
+
+home.updates.heading                                            = Diweddariadau
+home.updates.body.heading                                       = Diweddariad nesaf i''w ddychwelyd erbyn
 home.updates.body.estimatesLink                                 = Amcangyfrifon
+home.updates.body.updatesLink                                   = Gweld manylion ar gyfer diweddariadau
+home.updates.body.previousLink                                  = Diweddariadau a gyflwynwyd yn flaenorol
 
 
 home.incomeTaxPayment.nextPaymentDue                            = Taliad nesaf yn ddyledus
@@ -120,7 +131,23 @@ obligations.dropdown.p1                                         = os nad ydych w
 obligations.dropdown.p2                                         = Defnyddiwch eich meddalwedd i gofnodi''ch incwm a''ch treuliau, yna anfonwch ddiweddariad i CThEM o leiaf bob chwarter.
 obligations.dropdown.p3                                         = Anfonwch eich adroddiad terfynol erbyn 31 Ionawr. Yn yr adroddiad hwn, gallwch ychwanegu unrhyw ffynonellau incwm, lwfansau neu ryddhad arall.
 obligations.dropdown.p4                                         = Ar ôl i chi anfon eich adroddiad terfynol, gallwch weld y Dreth Incwm sydd arnoch ar gyfer y flwyddyn dreth.
+obligations.tab.one                                             = Diweddariadau i ddod
+obligations.tab.two                                             = Diweddariadau a gyflwynwyd yn flaenorol
 
+## Previous Obligations ##
+previous-obligations.title                                      = Eich Treth Incwm
+previous-obligations.heading                                    = Diweddariadau
+previous-obligations.sub-heading                                = Diweddariadau a gyflwynwyd yn flaenorol
+
+previous-obligations.income-source.property-income              = Incwm o eiddo
+previous-obligations.income-source.final-income                 = Blwyddyn dreth – Gwiriad olaf
+previous-obligations.obligation-type.quarterly                  = Diweddariad chwarterol
+previous-obligations.obligation-type.crystallised               = Datganiad
+previous-obligations.obligation-type.start-to-end               = {0} i {1}
+previous-obligation.obligation-type.was-due-on                  = Roedd yn ddyledus ar {0}
+previous-obligations.submitted-on                               = Cyflwynwyd ar
+previous-obligations.updates-tab                                = Diweddariadau i ddod
+previous-obligations.previous-updates-tab                       = Diweddariadau a gyflwynwyd yn flaenorol
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Eich cyflwyniad terfynol

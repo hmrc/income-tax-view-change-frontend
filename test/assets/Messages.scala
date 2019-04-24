@@ -335,6 +335,8 @@ object Messages {
   //ReportDeadlines Page Messages
   object Obligations {
     val title = "Updates"
+    val tabOne = "Updates due"
+    val tabTwo = "Previously submitted updates"
     val subTitle = "Updates due"
     val annualDropdownListOne = "In the annual update you must declare that the 4 quarterly updates you submitted are correct or amend any errors."
     val annualDropdownListTwo = "Using your accounting software , you need to submit one annual update for each source of income at the end of its accounting period."
@@ -352,6 +354,23 @@ object Messages {
     def fromToDates(from: String, to: String) = s"$from to $to"
     val dueOn = "Due on:"
     val crystallisedHeading = "Whole tax year (final check)"
+  }
+
+  object PreviousObligations {
+    val title = "Your Income Tax"
+    val heading = "Updates"
+    val subHeading = "Previously submitted updates"
+    val noPreviousObligations = "No previously submitted updates"
+    val propertyIncomeSource = "Property Income"
+    val crystallisationIncomeSource = "Tax year - Final check"
+    val quarterly = "Quarterly update"
+    val eops = "Annual update"
+    val crystallised = "Declaration"
+    def dateToDate(from: String, to: String) = s"$from to $to"
+    def wasDueOn(date: String) = s"Was due on $date"
+    val submittedOn = "Submitted on"
+    val updatesLink = "Updates due"
+    val previousUpdatesTab = "Previously submitted updates"
   }
 
   object PaymentDue {

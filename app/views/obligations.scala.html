@@ -47,6 +47,15 @@ contentHeader = Some(breadcrumb)
     <h1 id="page-heading" class="heading-xlarge"> @Messages("obligations.heading.v2")</h1>
 </header>
 
+    <ul class="tabs-nav" role="tablist">
+        <li id="tab1" role="tab" data-tab-link="tab1" aria-selected="true">
+            <span class="tabs-nav__tab tabs-nav__tab--active">@Messages("obligations.tab.one")</span>
+        </li>
+        <li id="tab2" role="tab" data-tab-link="tab2" aria-selected="false">
+            <a class="tabs-nav__tab" href="@controllers.routes.PreviousObligationsController.getPreviousObligations().url">@Messages("obligations.tab.two")</a>
+        </li>
+    </ul>
+
 <section id="sub-heading-section">
     <h1 id="page-sub-heading" class="heading large"> @Messages("obligations.sub-heading.v2") </h1>
 

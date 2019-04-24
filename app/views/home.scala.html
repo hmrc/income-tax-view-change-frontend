@@ -115,8 +115,15 @@
                         </a>
                     </p>
                     }
-                    @if(appConfig.features.estimatesEnabled()){
                     <hr>
+                    @if(appConfig.features.obligationsPageEnabled()){
+                    <p>
+                        <a id="previous-deadlines-link" data-journey-click="HomePage:ClickLink:ViewYourPreviousDeadlines" href="@{controllers.routes.PreviousObligationsController.getPreviousObligations().url}">
+                            @messages("home.updates.body.previousLink")
+                        </a>
+                    </p>
+                    }
+                    @if(appConfig.features.estimatesEnabled()){
                     <p>
                         <a id="estimates-link" data-journey-click="HomePage:ClickLink:ViewYourEstimates" href="@{controllers.routes.EstimatesController.viewEstimateCalculations().url}">
                             @messages("home.updates.body.estimatesLink")

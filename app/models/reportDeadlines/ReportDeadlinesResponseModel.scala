@@ -36,12 +36,15 @@ case class ReportDeadlineModel(start: LocalDate,
                                end: LocalDate,
                                due: LocalDate,
                                obligationType: String,
+                               dateReceived: Option[LocalDate],
                                periodKey: String) extends ReportDeadlinesResponseModel {
 
   def currentTime(): LocalDate = LocalDate.now()
 
   def getReportDeadlineStatus: ReportDeadlineStatus = if (!currentTime().isAfter(due)) Open(due) else Overdue(due)
 }
+
+case class ReportDeadlineModelWithIncomeType(incomeType: String, obligation: ReportDeadlineModel)
 
 case class ReportDeadlinesErrorModel(code: Int, message: String) extends ReportDeadlinesResponseModel
 
@@ -52,6 +55,7 @@ object ReportDeadlineModel {
       (__ \ "endDate").write[LocalDate] and
       (__ \ "dueDate").write[LocalDate] and
       (__ \ "obligationType").write[String] and
+      (__ \ "dateReceived").writeNullable[LocalDate] and
       (__ \ "periodKey").write[String]
   )(unlift(ReportDeadlineModel.unapply))
 }

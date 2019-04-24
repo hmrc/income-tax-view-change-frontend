@@ -95,7 +95,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
           PropertyDetailsModel("testIncomeSource", AccountingPeriodModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 1)), None, None, None, None),
           ReportDeadlinesModel(
             List(
-              ReportDeadlineModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 31), LocalDate.of(2020, 1, 1), "EOPS", "EOPS")
+              ReportDeadlineModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 31), LocalDate.of(2020, 1, 1), "EOPS", None, "EOPS")
             )
           )
         )
@@ -144,6 +144,16 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       s"showing the title ${messages.title} on the page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("page-heading").text shouldBe messages.title
       }
+
+      "showing the inactive tab for the current page" in new Setup(businessIncomeSource) {
+        pageDocument.select("ul.tabs-nav span").text shouldBe messages.tabOne
+      }
+
+      "showing the active tab for the previously submitted updates page" in new Setup(businessIncomeSource) {
+        pageDocument.select("ul.tabs-nav a").text shouldBe messages.tabTwo
+        pageDocument.select("ul.tabs-nav a").attr("href") shouldBe controllers.routes.PreviousObligationsController.getPreviousObligations().url
+      }
+
 
       s"showing the Sub heading ${messages.subTitle} on page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("page-sub-heading").text shouldBe messages.subTitle

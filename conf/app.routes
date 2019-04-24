@@ -10,6 +10,8 @@ GET         /                                       controllers.HomeController.h
 #ReportDeadlines
 GET         /obligations                            controllers.ReportDeadlinesController.getReportDeadlines
 
+GET         /previous-obligations                   controllers.PreviousObligationsController.getPreviousObligations
+
 #Calculation
 GET         /calculation/:taxYear                   controllers.CalculationController.renderCalculationPage(taxYear: Int)
 
