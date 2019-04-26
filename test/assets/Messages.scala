@@ -19,8 +19,10 @@ package assets
 object Messages {
 
   object CalculationBreakdown {
+    def estimateSubHeading(taxAmount: String) = s"How your estimate of $taxAmount was calculated"
+    val billSubHeading = "How your tax was calculated"
     def giftAidExtender(amount: String) = s"Your basic rate limit has been increased by £$amount for Gift Aid payments."
-    def nationalRegime(regime: String) = s"National Regime: $regime"
+    def nationalRegime(regime: String) = s"(National Regime: $regime)"
     val incomeHeading = "About your income"
     val incomeSubheading = "Summary of the income you reported and applicable deductions"
     val incomeBusinessProfit = "Income from Business Profit"
@@ -31,6 +33,7 @@ object Messages {
     val incomeDividendsAllowance = "Deduction - Dividends Allowance"
     val incomeSavingsAllowance = "Deduction - Savings Allowance"
     val incomeGiftInvestmentPropertyToCharity = "Deduction - gifts of investments and property to charity"
+    val incomeEstimatedTotalTaxableIncome = "Your estimated total taxable income"
     val incomeTotalTaxableIncome = "Your total taxable income"
     val calculationHeading = "Calculation of tax"
     def calculationSubheading(income: String): String = s"Your tax calculation breakdown based on your taxable income of $income"
@@ -41,8 +44,8 @@ object Messages {
     val calculationClassFourNI = "Class 4 National Insurance"
     val calculationTaxRelief = "Deduction - your tax reliefs"
     val calculationPaymentsToDate = "Deduction - your payments to date"
-    val calculationYourTotalEstimate = "Your total estimate"
-    val calculationYourTotalTax = "Your total tax"
+    val calculationYourTotalEstimate = "Your total estimated tax"
+    val calculationTotalOutstanding = "Total outstanding tax"
     def calculationDueDate(year: String) = s"due 31 January $year"
   }
 

@@ -23,10 +23,18 @@
 
 @defining(calcModel.calcDataModel.get) { breakdown =>
 
-
-    @breakdown.nationalRegime.map { regime =>
-<div id="national-regime">@messages("calc-breakdown.national-regime", messages(regime))</div>
-    }
+    <div class="form-group">
+        <h2 id="how-calculated" class="heading">
+            @if(calcModel.calcStatus == Estimate) {
+                <span id="how-estimate-calculated">@messages("calc-breakdown.how-estimate-calculated", breakdown.totalIncomeTaxNicYtd.toCurrencyString)</span>
+            } else {
+                <span id="how-bill-calculated">@messages("calc-breakdown.how-bill-calculated")</span>
+            }
+            @breakdown.nationalRegime.map { regime =>
+                <span id="national-regime" class="form-hint">@messages("calc-breakdown.national-regime", messages(regime))</span>
+            }
+        </h2>
+    </div>
 
     <h3 id="income-heading" class="heading-small">@messages("calc-breakdown.income.heading")</h3>
     <div id="income-subheading" class="form-hint">@messages("calc-breakdown.income.sub-heading")</div>
@@ -100,8 +108,13 @@
 
             <!-- Your total taxable income -->
             <tr id="total-taxable-income-section" class="total-section no-border-bottom">
-                <td id="total-taxable-income-label">@messages("calc-breakdown.income.total-taxable-income")</td>
-                <td id="total-taxable-income-data" class="summary-data">@breakdown.totalTaxableIncome.toCurrency</td>
+                @if(calcModel.calcStatus == Estimate) {
+                    <td id="estimate-total-taxable-income-label">@messages("calc-breakdown.income.estimated-total-taxable-income")</td>
+                    <td id="estimate-total-taxable-income-data" class="summary-data">@breakdown.totalTaxableIncome.toCurrency</td>
+                } else {
+                    <td id="total-taxable-income-label">@messages("calc-breakdown.income.total-taxable-income")</td>
+                    <td id="total-taxable-income-data" class="summary-data">@breakdown.totalTaxableIncome.toCurrency</td>
+                }
             </tr>
         </tbody>
     </table>
@@ -110,10 +123,13 @@
     <br>
 
     <h3 id="calculation-heading" class="heading-small">@messages("calc-breakdown.calculation.heading")</h3>
+
     <div id="calculation-subheading" class="form-hint">@messages("calc-breakdown.calculation.subheading", breakdown.totalTaxableIncome.toCurrencyString)</div>
+
     @if(breakdown.annualAllowances.giftAidExtender > 0) {
-    <div id="gift-aid-extender" class="form-hint">@messages("calc-breakdown.calculation.gift-aid-extender", breakdown.annualAllowances.giftAidExtender.toCurrencyString)</div>
+        <div id="gift-aid-extender" class="form-hint">@messages("calc-breakdown.calculation.gift-aid-extender", breakdown.annualAllowances.giftAidExtender.toCurrencyString)</div>
     }
+
     <table class="calculation-table">
         <tbody>
 
@@ -166,6 +182,11 @@
             }
 
             @transactionModel.map { model =>
+                <tr id="total-tax-bill-section" class="total-section no-border-bottom">
+                    <td id="total-tax-bill-label">@messages("calc-breakdown.calculation.total-bill-amount")</td>
+                    <td id="total-tax-bill-data" class="summary-data">@model.originalAmount.getOrElse[BigDecimal](0).toCurrency</td>
+                </tr>
+
                 <tr id="payments-to-date-section">
                     <td id="payments-to-date-label">@messages("calc-breakdown.calculation.payments-to-date")</td>
                     <td id="payments-to-date-data" class="summary-data panel-right">@model.clearedAmount.getOrElse[BigDecimal](0).toCurrency</td>
@@ -174,14 +195,14 @@
 
             <tr id="your-total-section" class="total-section no-border-bottom">
                 @if(calcModel.calcStatus == Estimate) {
-                    <td id="your-total-estimate-label">@messages("calc-breakdown.calculation.your-total-estimate")</td>
+                    <td id="your-total-estimate-label">@messages("calc-breakdown.calculation.total-estimated-tax")</td>
                     <td id="your-total-estimate-data" class="summary-data">@breakdown.totalIncomeTaxNicYtd.toCurrency</td>
                 } else {
                     <td>
-                        <div id="your-total-tax-label">@messages("calc-breakdown.calculation.your-total-tax")</div>
-                        <div id="your-total-tax-date" class="form-hint">@messages("calc-breakdown.calculation.due-date", (taxYear+1).toString)</div>
+                        <div id="total-outstanding-label">@messages("calc-breakdown.calculation.total-outstanding-tax")</div>
+                        <div id="total-outstanding-date" class="form-hint">@messages("calc-breakdown.calculation.due-date", (taxYear+1).toString)</div>
                     </td>
-                    <td id="your-total-tax-data" class="summary-data">
+                    <td id="total-outstanding-data" class="summary-data">
                         @transactionModel.map { model =>
                             @model.outstandingAmount.getOrElse[BigDecimal](0).toCurrency
                         }
