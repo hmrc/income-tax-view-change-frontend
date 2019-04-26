@@ -127,13 +127,15 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = you may earn m
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that is not reported in your accounting software
 estimated_tax_liability.calc-breakdown.nationalRegime           = National Regime
 estimated_tax_liability.calc-breakdown.savingsInterest-income   = Savings Interest
-estimated_tax_liability.calc-breakdown.taxable-payPensionsProfit-income = Your taxable income (pay, pensions, profit)
+estimated_tax_liability.calc-breakdown.taxable-payPensionsProfit-income        = Your taxable income (pay, pensions, profit)
 estimated_tax_liability.calc-breakdown.taxable-savingsInterest-income          = Your taxable income (savings interest)
 estimated_tax_liability.calc-breakdown.pa-personalAllowance                    = Personal Allowance
 estimated_tax_liability.calc-breakdown.business-profit-property                = Business profit(for property)
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Business profit(for self-employment)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Income from savings(for business profit)
 estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
+estimated_tax_liability.heading                                                = Tax estimate for {0} - {1}
+estimated_tax_liability.sub-heading                                            = How your estimate of {0} was calculated
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Report deadlines
@@ -281,6 +283,7 @@ breadcrumb-statement                                            = Income Tax sta
 breadcrumb-account                                              = Account details
 breadcrumb-updates                                              = Updates
 breadcrumb-payments-due                                         = Income Tax payments
+breadcrumb-estimated_tax_liability                              = {0} to {1} tax year
 
 ## Standard Error Page ##
 standardError.title                                             = There is a problem with the service - Income Tax reporting through software - GOV.UK
