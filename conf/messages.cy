@@ -35,17 +35,8 @@ home.incomeTaxPayment.previousBills                             = Biliau blaenor
 home.updates.heading                                            = Diweddariadau
 home.updates.body.heading                                       = Diweddariad nesaf i''w ddychwelyd erbyn
 home.updates.body.estimatesLink                                 = Amcangyfrifon
-home.updates.body.updatesLink                                   = Gweld manylion ar gyfer diweddariadau
 home.updates.body.previousLink                                  = Diweddariadau a gyflwynwyd yn flaenorol
-
-
-home.incomeTaxPayment.nextPaymentDue                            = Taliad nesaf yn ddyledus
-home.updates.body.heading                                       = Diweddariad nesaf i''w ddychwelyd erbyn
-home.updates.heading                                            = Diweddariadau
-home.incomeTaxPayment.incomeTaxPayments                         = Taliadau treth incwm
-home.incomeTaxPayment.viewBillAndMakePayment                    = Bwrw golwg dros y bil a gwneud taliad
 home.updates.body.updatesLink                                   = Bwrw golwg dros y manylion ar gyfer diweddariadau
-home.incomeTaxPayment.previousBills                             = Biliau blaenorol
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Helpu i wella''r gwasanaeth hwn
@@ -58,6 +49,14 @@ estimates.heading                                               = Amcangyfrifon
 estimates.viewEstimates                                         = Gweld eich amcangyfrifon cyfredol:
 estimates.estimatesLink                                         = Blwyddyn dreth {0} i {1}
 estimates.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
+
+# Calc Breakdown
+calc-breakdown.national-regime                                  = Cyfundrefn Genedlaethol: {0}
+calc-breakdown.calculation.income-tax                           = Treth Incwm ({0} ar {1}%)
+calc-breakdown.calculation.dividend                             = Treth ar Ddifidendau ({0} ar {1}%)
+calc-breakdown.calculation.class-two-ni                         = Yswiriant Gwladol Dosbarth 2
+calc-breakdown.calculation.class-four-ni                        = Yswiriant Gwladol Dosbarth 4
+calc-breakdown.calculation.gift-aid-extender                    = Cynyddwyd eich terfyn cyfradd sylfaenol gan {0} ar gyfer taliadau Rhodd Cymorth.
 
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = Blwyddyn dreth {0} i {1}
@@ -253,6 +252,7 @@ breadcrumb-obligations                                          = Dyddiadau cau 
 breadcrumb-statement                                            = Datganiad Treth Incwm
 breadcrumb-account                                              = Manylion y cyfrif
 breadcrumb-updates                                              = Diweddariadau
+breadcrumb-payments-due                                         = Taliadau treth incwm
 
 ## Standard Error Page ##
 standardError.title                                             = Mae problem gyda''r gwasanaeth – Rhoi gwybod am eich Treth Incwm drwy feddalwedd – GOV.UK
@@ -298,9 +298,13 @@ obligation.dropdown.finalDeclaration.info.v2                    = Beth yw datgan
 obligation.dropdown.finalDeclaration.text.v2.prt1               = Mae eich datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu cyflwyno yn gywir ac eich bod wedi cyflwyno pob ffynhonnell incwm, hyd eithaf eich gwybodaeth, gan ddefnyddio eich
 obligation.dropdown.finalDeclaration.text.v2.prt2               = .
 
+## Payment Due Page ##
+paymentDue.title                                                = Eich Treth Incwm
+paymentDue.heading                                              = Taliadau treth incwm
+paymentDue.viewBill                                             = Bwrw golwg dros y bil
+
+
 ## Regimes
 UK = Y DU
 Scotland = Yr Alban
 Wales = Cymru
-# calc-breakdown
-calc-breakdown.calculation.gift-aid-extender                    = Cynyddwyd eich terfyn cyfradd sylfaenol gan {0} ar gyfer taliadau Rhodd Cymorth.
