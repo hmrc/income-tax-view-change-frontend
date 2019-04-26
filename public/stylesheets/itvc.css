@@ -10,6 +10,7 @@
 
 .summary-data {
     text-align: right !important;
+    vertical-align: top;
  }
 
 .total-section td {

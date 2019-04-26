@@ -51,7 +51,7 @@ estimates.estimatesLink                                         = Blwyddyn dreth
 estimates.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 
 # Calc Breakdown
-calc-breakdown.national-regime                                  = Cyfundrefn Genedlaethol: {0}
+calc-breakdown.national-regime                                  = (Cyfundrefn Genedlaethol: {0})
 calc-breakdown.calculation.income-tax                           = Treth Incwm ({0} ar {1}%)
 calc-breakdown.calculation.dividend                             = Treth ar Ddifidendau ({0} ar {1}%)
 calc-breakdown.calculation.class-two-ni                         = Yswiriant Gwladol Dosbarth 2

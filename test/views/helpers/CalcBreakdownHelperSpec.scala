@@ -161,6 +161,16 @@ class CalcBreakdownHelperSpec extends TestSupport {
       }
     }
 
+    "display the how estimate calculated sub heading when the calculation breakdown is for an estimate" in new Setup(fullDataEstimate) {
+      getTextOfElementById("how-estimate-calculated") shouldBe Some(Messages.CalculationBreakdown.estimateSubHeading("£50,000"))
+      getElementById("how-bill-calculated") shouldBe None
+    }
+
+    "display the how bill calculated sub heading when the calculation breakdown is for a bill" in new Setup(fullDataBill) {
+      getTextOfElementById("how-bill-calculated") shouldBe Some(Messages.CalculationBreakdown.billSubHeading)
+      getElementById("how-estimate-calculated") shouldBe None
+    }
+
     "display the national regime section when it is present in the data" in new Setup(fullDataEstimate) {
       getTextOfElementById("national-regime") shouldBe Some(Messages.CalculationBreakdown.nationalRegime("UK"))
     }
@@ -183,6 +193,20 @@ class CalcBreakdownHelperSpec extends TestSupport {
 
     "display the sub heading for the calculation table" in new Setup(fullDataEstimate) {
       getTextOfElementById("calculation-subheading") shouldBe Some(Messages.CalculationBreakdown.calculationSubheading("£100,000"))
+    }
+
+    "display the estimated total taxable income when the calculation breakdown is for a estimate" in new Setup(fullDataEstimate) {
+      getTextOfElementById("estimate-total-taxable-income-label") shouldBe Some(Messages.CalculationBreakdown.incomeEstimatedTotalTaxableIncome)
+      getTextOfElementById("estimate-total-taxable-income-data") shouldBe Some("£100,000")
+      getElementById("total-taxable-income-label") shouldBe None
+      getElementById("total-taxable-income-data") shouldBe None
+    }
+
+    "display the total taxable income when the calculation breakdown is for a bill" in new Setup(fullDataBill) {
+      getTextOfElementById("total-taxable-income-label") shouldBe Some(Messages.CalculationBreakdown.incomeTotalTaxableIncome)
+      getTextOfElementById("total-taxable-income-data") shouldBe Some("£100,000")
+      getElementById("estimate-total-taxable-income-label") shouldBe None
+      getElementById("estimate-total-taxable-income-data") shouldBe None
     }
 
     "display the payments to date section" when {
@@ -212,16 +236,16 @@ class CalcBreakdownHelperSpec extends TestSupport {
         getElementById("your-total-section").isDefined shouldBe true
         getTextOfElementById("your-total-estimate-label") shouldBe Some(Messages.CalculationBreakdown.calculationYourTotalEstimate)
         getTextOfElementById("your-total-estimate-data") shouldBe Some("£50,000")
-        getElementById("your-total-tax-label") shouldBe None
-        getElementById("your-total-tax-data") shouldBe None
-        getElementById("your-total-tax-date") shouldBe None
+        getElementById("total-outstanding-label") shouldBe None
+        getElementById("total-outstanding-data") shouldBe None
+        getElementById("total-outstanding-date") shouldBe None
       }
 
       "the breakdown is a bill" in new Setup(fullDataBill, Some(emptyTransactionModel.copy(outstandingAmount = Some(100000.00)))) {
         getElementById("your-total-section").isDefined shouldBe true
-        getTextOfElementById("your-total-tax-label") shouldBe Some(Messages.CalculationBreakdown.calculationYourTotalTax)
-        getTextOfElementById("your-total-tax-data") shouldBe Some("£100,000")
-        getTextOfElementById("your-total-tax-date") shouldBe Some("due 31 January 2019")
+        getTextOfElementById("total-outstanding-label") shouldBe Some(Messages.CalculationBreakdown.calculationTotalOutstanding)
+        getTextOfElementById("total-outstanding-data") shouldBe Some("£100,000")
+        getTextOfElementById("total-outstanding-date") shouldBe Some("due 31 January 2019")
         getElementById("your-total-estimate-label") shouldBe None
         getElementById("your-total-estimate-data") shouldBe None
       }

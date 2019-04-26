@@ -55,7 +55,9 @@ estimates.estimatesLink                                         = {0} to {1} tax
 estimates.noEstimates                                           = You don''t have an estimate right now. We''ll show your next Income Tax estimate when you submit a report using software.
 
 ## Calculation Breakdown ##
-calc-breakdown.national-regime                                  = National Regime: {0}
+calc-breakdown.how-estimate-calculated                          = How your estimate of {0} was calculated
+calc-breakdown.how-bill-calculated                              = How your tax was calculated
+calc-breakdown.national-regime                                  = (National Regime: {0})
 calc-breakdown.income.heading                                   = About your income
 calc-breakdown.income.sub-heading                               = Summary of the income you reported and applicable deductions
 calc-breakdown.income.business-profit                           = Income from Business Profit
@@ -66,6 +68,7 @@ calc-breakdown.income.personal-allowance                        = Deduction - Pe
 calc-breakdown.income.dividends-allowance                       = Deduction - Dividends Allowance
 calc-breakdown.income.savings-allowance                         = Deduction - Savings Allowance
 calc-breakdown.income.gift-investment-property-to-charity       = Deduction - gifts of investments and property to charity
+calc-breakdown.income.estimated-total-taxable-income            = Your estimated total taxable income
 calc-breakdown.income.total-taxable-income                      = Your total taxable income
 calc-breakdown.calculation.heading                              = Calculation of tax
 calc-breakdown.calculation.subheading                           = Your tax calculation breakdown based on your taxable income of {0}
@@ -76,8 +79,9 @@ calc-breakdown.calculation.class-two-ni                         = Class 2 Nation
 calc-breakdown.calculation.class-four-ni                        = Class 4 National Insurance
 calc-breakdown.calculation.tax-relief                           = Deduction - your tax reliefs
 calc-breakdown.calculation.payments-to-date                     = Deduction - your payments to date
-calc-breakdown.calculation.your-total-estimate                  = Your total estimate
-calc-breakdown.calculation.your-total-tax                       = Your total tax
+calc-breakdown.calculation.total-estimated-tax                  = Your total estimated tax
+calc-breakdown.calculation.total-bill-amount                    = Your total tax bill amount
+calc-breakdown.calculation.total-outstanding-tax                = Total outstanding tax
 calc-breakdown.calculation.due-date                             = due 31 January {0}
 calc-breakdown.calculation.gift-aid-extender                    = Your basic rate limit has been increased by {0} for Gift Aid payments.
 
