@@ -59,10 +59,13 @@ class FinancialTransactionsConnector @Inject()(val http: HttpClient,
               },
               valid => valid
             )
-          case _ =>
-            Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - RESPONSE status: ${response.status}, body: ${response.body}")
+          case status =>
+            if(status >= 500) {
+              Logger.error(s"[FinancialTransactionsConnector][getFinancialTransactions] - RESPONSE status: ${response.status}, body: ${response.body}")
+            } else {
+              Logger.warn(s"[FinancialTransactionsConnector][getFinancialTransactions] - RESPONSE status: ${response.status}, body: ${response.body}")
+            }
             FinancialTransactionsErrorModel(response.status, response.body)
-
         }
     } recover {
       case ex =>

@@ -37,6 +37,7 @@ class PayApiConnector @Inject()(val http: HttpClient,
   val url: String = config.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
 
   def startPaymentJourney(saUtr: String, amountInPence: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[PaymentJourneyResponse] = {
+
     val body = Json.parse(
       s"""
          |{
@@ -47,16 +48,22 @@ class PayApiConnector @Inject()(val http: HttpClient,
          |}
       """.stripMargin
     )
+
     http.POST(url, body).map {
-      case response if response.status == CREATED => response.json.validate[PaymentJourneyModel].fold(
-        invalid => {
-          Logger.error(s"Invalid Json with ${invalid.asString}")
-          PaymentJourneyErrorResponse(response.status, "Invalid Json")
-        },
-        valid => valid
-      )
+      case response if response.status == CREATED =>
+        response.json.validate[PaymentJourneyModel].fold(
+          invalid => {
+            Logger.error(s"Invalid Json with ${invalid.asString}")
+            PaymentJourneyErrorResponse(response.status, "Invalid Json")
+          },
+          valid => valid
+        )
       case response =>
-        Logger.error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+        if(response.status >= 500) {
+          Logger.error(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+        } else {
+          Logger.warn(s"Payment journey start error with response code: ${response.status} and body: ${response.body}")
+        }
         PaymentJourneyErrorResponse(response.status, response.body)
     }
   }

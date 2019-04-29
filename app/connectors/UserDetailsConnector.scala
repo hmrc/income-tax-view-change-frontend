@@ -45,8 +45,12 @@ class UserDetailsConnector @Inject()(val http: HttpClient) extends RawResponseRe
               },
               valid => valid
             )
-          case _ =>
-            Logger.error(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+          case status =>
+            if(status >= 500) {
+              Logger.error(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            } else {
+              Logger.warn(s"[UserDetailsConnector][getUserDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+            }
             UserDetailsError
         }
     } recover {
