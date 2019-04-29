@@ -97,7 +97,7 @@ object Messages {
 
   // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {
-    val heading = s"${taxYear-1} to $taxYear tax year"
+    val heading = s"Tax estimate for ${taxYear-1} - $taxYear"
     val subheading = s"Estimates"
     val title = heading
     val reportedFigures = "These estimates are based on the figures you already submitted for this tax year."
@@ -172,7 +172,7 @@ object Messages {
   // No Estimated Tax Liability Page Messages
   object NoEstimatedTaxLiability {
     val subHeading = "Estimates"
-    val heading = "2017 to 2018 tax year"
+    val heading = "Tax estimate for 2017 - 2018"
     val title = heading
     val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
   }
@@ -180,7 +180,7 @@ object Messages {
   // Estimated Tax Liability Error Page Messages
   object EstimatedTaxLiabilityError {
     val subHeading = "Estimates"
-    val heading = "2017 to 2018 tax year"
+    val heading = "Tax estimate for 2017 - 2018"
     val title = heading
     val p1 = "We can't display your estimated tax amount at the moment."
     val p2 = "Try refreshing the page in a few minutes."
@@ -327,7 +327,8 @@ object Messages {
     val bta = "Business tax account"
     val it = "Income Tax account"
     val estimates = "Estimates"
-    val itEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
+    val basicItEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
+    val itEstimate: Int => String = taxYear => s"Tax estimate for ${taxYear-1} - $taxYear"
     val bills = "Bills"
     val finalisedBill: Int => String = taxYear => s"Income tax bill for ${taxYear-1} to $taxYear"
     val obligations = "Report deadlines"

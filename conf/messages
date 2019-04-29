@@ -86,9 +86,10 @@ calc-breakdown.calculation.due-date                             = due 31 January
 calc-breakdown.calculation.gift-aid-extender                    = Your basic rate limit has been increased by {0} for Gift Aid payments.
 
 ## Estimated Tax Liability Page ##
-estimated_tax_liability.title                                   = {0} to {1} tax year
-estimated_tax_liability.heading                                 = {0} to {1} tax year
-estimated_tax_liability.subheading                              = Estimates
+estimated_tax_liability.title                                   = Tax estimate for {0} - {1}
+estimated_tax_liability.heading                                 = Tax estimate for {0} - {1}
+estimated_tax_liability.no-estimate-sub-heading                 = Estimates
+estimated_tax_liability.sub-heading                             = How your estimate of {0} was calculated
 estimated_tax_liability.reported-figures                        = These estimates are based on the figures you already submitted for this tax year.
 estimated_tax_liability.estimated-tax.payment                   = You don''t need to pay anything yet, but you must pay what you owe for the whole tax year by
 estimated_tax_liability.calc-breakdown.heading                  = How we calculated this estimate
@@ -134,8 +135,6 @@ estimated_tax_liability.calc-breakdown.business-profit-property                =
 estimated_tax_liability.calc-breakdown.business-profit-self-employment         = Business profit(for self-employment)
 estimated_tax_liability.calc-breakdown.business-profit-savings                 = Income from savings(for business profit)
 estimated_tax_liability.calc-breakdown.taxable-savings-and-gains               = Income from Saving and Gains
-estimated_tax_liability.heading                                                = Tax estimate for {0} - {1}
-estimated_tax_liability.sub-heading                                            = How your estimate of {0} was calculated
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Report deadlines

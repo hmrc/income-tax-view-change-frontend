@@ -39,7 +39,7 @@
 }
 
 @main_template(
-    title = messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear"),
+    title = messages("estimated_tax_liability.title", s"${taxYear-1}", s"$taxYear"),
     bodyClasses = None,
     scriptElem = None,
     contentHeader = if(request.session.get("singleEstimate").getOrElse("false").toBoolean){
@@ -78,10 +78,16 @@
         }
 
         <section id="inYearEstimate">
+
             @if(calcModel.breakdownNonEmpty && appConfig.features.calcBreakdownEnabled()){
                 <section id="inYearCalcBreakdown">
                     @calcBreakdownHelper(calcModel, None, taxYear)
                 </section>
+            } else {
+                <h2 id="inYearEstimateHeading" class="heading-large">
+                    @messages("estimated_tax_liability.inYearEstimate.heading", calcModel.calcAmount.toCurrencyString)
+                </h2>
+                <p id="inYearP1">@messages("estimated_tax_liability.inYearEstimate.p1", s"${taxYear - 1}", s"${calcModel.calcTimestamp.toLocalDateTime.toLongDateTime}")</p>
             }
 
 

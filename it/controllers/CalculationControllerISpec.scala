@@ -60,11 +60,10 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
         res should have (
           httpStatus(OK),
-          pageTitle(messages.title(testYearInt)),
-          elementTextByID("heading")(messages.title(testYearInt)),
+          pageTitle(messages.estimateTitle(testYearInt)),
+          elementTextByID("heading")(messages.estimateHeading(testYearInt)),
           elementTextByID("eoyEstimateHeading")("Annual estimate: £66,000"),
           elementTextByID("eoyP1")(s"This is for the ${testYearInt-1} to $testYearInt tax year."),
-          elementTextByID("inYearEstimateHeading")(s"Current estimate: £90,500"),
           isElementVisibleById("inYearCalcBreakdown")(expectedValue = true),
           elementTextByID("national-regime")("(National Regime: Scotland)"),
           elementTextByID("business-profit-data")("£200,000"),
@@ -314,11 +313,10 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
         res should have (
           httpStatus(OK),
-          pageTitle(messages.title(testYearInt)),
-          elementTextByID("heading")(messages.title(testYearInt)),
+          pageTitle(messages.estimateTitle(testYearInt)),
+          elementTextByID("heading")(messages.estimateHeading(testYearInt)),
           isElementVisibleById("eoyEstimateHeading")(expectedValue = false),
           isElementVisibleById("eoyP1")(expectedValue = false),
-          elementTextByID("inYearEstimateHeading")(s"Current estimate: £90,500"),
           isElementVisibleById("inYearCalcBreakdown")(expectedValue = true),
           elementTextByID("national-regime")("(National Regime: Scotland)"),
           elementTextByID("business-profit-data")("£200,000"),
@@ -386,7 +384,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         Then("an Internal Server Error response is returned and correct view rendered")
         res should have(
           httpStatus(OK),
-          pageTitle(messages.title(testYearInt)),
+          pageTitle(messages.estimateTitle(testYearInt)),
           elementTextByID("p1")(messages.internalServerErrorp1),
           elementTextByID("p2")(messages.internalServerErrorp2)
         )
@@ -411,8 +409,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
         res should have (
           httpStatus(OK),
-          pageTitle(messages.title(testYearInt)),
-          elementTextByID("heading")(messages.title(testYearInt)),
+          pageTitle(messages.estimateTitle(testYearInt)),
+          elementTextByID("heading")(messages.estimateHeading(testYearInt)),
           isElementVisibleById("eoyEstimate")(expectedValue = false)
         )
       }

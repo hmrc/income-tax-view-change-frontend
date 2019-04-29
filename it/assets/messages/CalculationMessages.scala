@@ -21,6 +21,8 @@ object CalculationMessages {
   val billsTitle: Int => String = year => s"Income tax bill for ${year - 1} to $year"
   val title: Int => String = year => s"${year - 1} to $year tax year"
   val heading: Int => String = billsTitle(_)
+  val estimateTitle: Int => String = year => s"Tax estimate for ${year - 1} - $year"
+  val estimateHeading: Int => String = estimateTitle(_)
 
   object EstimatedTaxAmount {
     val subHeading = "Estimates"
