@@ -62,19 +62,13 @@ class BillViewSpec extends TestSupport {
     }
 
     s"have the sub-heading '${crysMessages.subHeading}'" in {
-      document.getElementById("sub-heading").text() shouldBe crysMessages.subHeading
+      document.getElementById("sub-heading").text() shouldBe "Bills"
     }
 
     s"have the page heading '${crysMessages.heading}'" in {
       document.getElementById("heading").text() shouldBe crysMessages.heading
     }
 
-    s"have an Owed Tax section" which {
-
-      s"has the correct 'warning' text '${crysMessages.warning}'" in {
-        document.getElementById("warning").text shouldBe messages.Crystallised.warning
-      }
-    }
 
     "NOT show a button to go to payments, when the the eligibility is false" in {
       frontendAppConfig.features.paymentEnabled(false)

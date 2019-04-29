@@ -102,16 +102,18 @@ object Messages {
     val title = heading
     val reportedFigures = "These estimates are based on the figures you already submitted for this tax year."
     object Crystallised {
-      val heading = s"${taxYear-1} to $taxYear tax year"
+      val heading = s"Income tax bill for ${taxYear-1} to $taxYear"
       val tabTitle = heading
-      val subHeading = s"Bills"
+      val subHeading = s"Albert Einstein"
+      val utrHeading = "Unique Tax Reference-XAIT0000123456"
+      def noBreakdownContent(amount: String): String = s"Your total tax bill amount: $amount"
       val p1 = "This figure is based on the information you provided in your quarterly reports and final report."
-      val warning = s"Your payment could take up to 5 days to process. You may be fined if it is late."
       val breakdownHeading = "How this figure was calculated"
       val errors = "If there are any errors, you can make adjustments through your software."
       val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
-      val payNow = "Continue to payment"
-      val payDeadline = s"due by 31 January ${taxYear + 1}"
+      val payNow = "Pay now"
+      val payDeadline = s"You must pay by 31 January ${taxYear + 1} to avoid penalties."
+      def owed(amount: String): String = s"Tax left to pay: $amount"
     }
     object EoyEstimate {
       val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
@@ -327,7 +329,7 @@ object Messages {
     val estimates = "Estimates"
     val itEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
     val bills = "Bills"
-    val finalisedBill: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
+    val finalisedBill: Int => String = taxYear => s"Income tax bill for ${taxYear-1} to $taxYear"
     val obligations = "Report deadlines"
     val statement = "Income Tax statement"
     val details = "Account details"

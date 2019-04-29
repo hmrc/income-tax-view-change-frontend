@@ -84,6 +84,10 @@ class CrystallisedViewSpec extends TestSupport {
       document.getElementById("heading").text() shouldBe crysMessages.heading
     }
 
+    s"have the UTR reference '${crysMessages.utrHeading}'" in {
+      document.select("#utr-reference-heading").text() shouldBe crysMessages.utrHeading
+    }
+
     s"have an Owed Tax section" which {
 
       lazy val owedTaxSection = document.getElementById("owed-tax")
@@ -92,28 +96,14 @@ class CrystallisedViewSpec extends TestSupport {
 
         lazy val wyoSection = owedTaxSection.getElementById("whatYouOwe")
 
-        s"has the correct 'whatYouOwe' p1 paragraph '${crysMessages.p1}'" in {
-
-          wyoSection.getElementById("inYearP1").text shouldBe crysMessages.p1
-
-        }
-
         "have a what you owe heading displayed with the correct value" in {
-          wyoSection.select("div.divider--bottom p.bold-medium").text shouldBe "£1,400"
+          wyoSection.select("div.bordered-box p.bold-medium").text shouldBe crysMessages.owed("£1,400")
         }
 
         "have the correct message for the tax year due date" in {
-          wyoSection.select("div.divider--bottom p.form-hint").text shouldBe crysMessages.payDeadline
+          wyoSection.select("div.bordered-box p:not(.bold-medium)").text shouldBe crysMessages.payDeadline
         }
 
-      }
-
-      s"has the correct 'p1' text '${crysMessages.p1}'" in {
-        document.getElementById("inYearP1").text shouldBe messages.Crystallised.p1
-      }
-
-      s"has the correct 'warning' text '${crysMessages.warning}'" in {
-        document.getElementById("warning").text shouldBe messages.Crystallised.warning
       }
     }
 
@@ -124,6 +114,14 @@ class CrystallisedViewSpec extends TestSupport {
         import setup._
         document.getElementById("inYearCalcBreakdown") shouldBe null
       }
+
+      "when the breakdown is not required and the bill has been paid off" in {
+        mockAppConfig.features.calcBreakdownEnabled(false)
+        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizUser)
+        import setup._
+        document.getElementById("inYearCalcBreakdown") shouldBe null
+        document.select("section h2").text() shouldBe messages.Crystallised.noBreakdownContent("£3,400")
+      }
     }
 
     "have the calculation breakdown section visible" when {
@@ -132,7 +130,6 @@ class CrystallisedViewSpec extends TestSupport {
         mockAppConfig.features.calcBreakdownEnabled(true)
         val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizUser)
         import setup._
-        document.select("details table.income-table").size() shouldBe 0
         document.select("table.income-table").size() shouldBe 1
       }
 
@@ -140,7 +137,7 @@ class CrystallisedViewSpec extends TestSupport {
         mockAppConfig.features.calcBreakdownEnabled(true)
         val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizUser)
         import setup._
-        document.select("details table.income-table").size() shouldBe 1
+        document.select("table.income-table").size() shouldBe 1
       }
     }
 

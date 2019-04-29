@@ -175,9 +175,10 @@ previous-obligations.previous-updates-tab                       = Previously sub
 
 ## Crystalisation Page ##
 crystalisation.title                                            = Your final submission
-crystalisation.heading                                          = {0} to {1} tax year
+crystalisation.heading                                          = Income tax bill for {0} to {1}
 crystalisation.subheading                                       = Bills
-crystalisation.dueBy                                            = due by 31 January {0}
+crystalisation.paidOffBill                                      = Your total tax bill amount: {0}
+crystalisation.dueBy                                            = You must pay by 31 January {0} to avoid penalties.
 crystalisation.whatYouOwe.para                                  = This figure is based on the information you provided in your quarterly reports and final report.
 crystalisation.warning                                          = Your payment could take up to 5 days to process. You may be fined if it is late.
 crystalisation.calc-breakdown.heading                           = How this figure was calculated
@@ -186,11 +187,13 @@ crystalisation.calc-breakdown.subtotal                          = Sub-total (exc
 crystalisation.calc-breakdown.payment                           = Your payments to date
 crystalisation.calc-breakdown.owed                              = Total owed, due 31 January {0}
 
-crystalisation.incorrect                                        = Incorrect figures
+crystalisation.incorrect                                        = Report incorrect figures
 crystalisation.adjustments                                      = If there are any errors, you can make adjustments through your software.
+crystalisation.amountOutstanding                                = Tax left to pay: {0}
 crystalisation.changes                                          = If you make these changes before 31 January {0} you will not be penalised.
 crystalisation.additionalPayment.heading                        = Additional payment
-crystalisation.payNow                                           = Continue to payment
+crystalisation.incorrect.heading                                = How to report incorrect figures
+crystalisation.payNow                                           = Pay now
 
 ## Bills Page ##
 bills.title                                                     = Bills

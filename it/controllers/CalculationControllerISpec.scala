@@ -61,7 +61,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         res should have (
           httpStatus(OK),
           pageTitle(messages.title(testYearInt)),
-          elementTextByID("heading")(messages.heading(testYearInt)),
+          elementTextByID("heading")(messages.title(testYearInt)),
           elementTextByID("eoyEstimateHeading")("Annual estimate: £66,000"),
           elementTextByID("eoyP1")(s"This is for the ${testYearInt-1} to $testYearInt tax year."),
           elementTextByID("inYearEstimateHeading")(s"Current estimate: £90,500"),
@@ -140,9 +140,9 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
           res should have (
             httpStatus(OK),
-            pageTitle(messages.title(testYearInt)),
+            pageTitle(messages.billsTitle(testYearInt)),
             elementTextByID("heading")(messages.heading(testYearInt)),
-            elementTextByID("whatYouOweHeading")("£1,000"),
+            elementTextByID("whatYouOweHeading")("Tax left to pay: £1,000"),
             elementTextByID("national-regime")("(National Regime: Scotland)"),
             elementTextByID("business-profit-data")("£200,000"),
             elementTextByID("property-income-data")("£10,000"),
@@ -215,7 +215,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
           res should have (
             httpStatus(OK),
-            pageTitle(messages.title(testYearInt)),
+            pageTitle(messages.billsTitle(testYearInt)),
             elementTextByID("heading")(messages.heading(testYearInt)),
             isElementVisibleById("whatYouOweHeading")(expectedValue = false),
             elementTextByID("national-regime")("(National Regime: Scotland)"),
@@ -315,7 +315,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         res should have (
           httpStatus(OK),
           pageTitle(messages.title(testYearInt)),
-          elementTextByID("heading")(messages.heading(testYearInt)),
+          elementTextByID("heading")(messages.title(testYearInt)),
           isElementVisibleById("eoyEstimateHeading")(expectedValue = false),
           isElementVisibleById("eoyP1")(expectedValue = false),
           elementTextByID("inYearEstimateHeading")(s"Current estimate: £90,500"),
@@ -412,7 +412,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         res should have (
           httpStatus(OK),
           pageTitle(messages.title(testYearInt)),
-          elementTextByID("heading")(messages.heading(testYearInt)),
+          elementTextByID("heading")(messages.title(testYearInt)),
           isElementVisibleById("eoyEstimate")(expectedValue = false)
         )
       }
