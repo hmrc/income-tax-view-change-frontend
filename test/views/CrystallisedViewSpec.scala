@@ -96,24 +96,14 @@ class CrystallisedViewSpec extends TestSupport {
 
         lazy val wyoSection = owedTaxSection.getElementById("whatYouOwe")
 
-        s"has the correct 'whatYouOwe' p1 paragraph '${crysMessages.p1}'" in {
-
-          wyoSection.getElementById("inYearP1").text shouldBe crysMessages.p1
-
-        }
-
         "have a what you owe heading displayed with the correct value" in {
           wyoSection.select("div.bordered-box p.bold-medium").text shouldBe crysMessages.owed("£1,400")
         }
 
         "have the correct message for the tax year due date" in {
-          wyoSection.select("p.form-hint").text shouldBe crysMessages.payDeadline
+          wyoSection.select("div.bordered-box p:not(.bold-medium)").text shouldBe crysMessages.payDeadline
         }
 
-      }
-
-      s"has the correct 'p1' text '${crysMessages.p1}'" in {
-        document.getElementById("inYearP1").text shouldBe messages.Crystallised.p1
       }
     }
 

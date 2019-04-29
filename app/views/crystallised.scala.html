@@ -31,14 +31,7 @@
 
 @calcBreakdown = {
     <section id="inYearCalcBreakdown">
-        @if(!transactionModel.isPaid){
-            <div class="form-group">
-                <p id="inYearP1">@messages("crystalisation.whatYouOwe.para")</p>
-            </div>
-        }
-
         @calcBreakdownHelper(calcModel, Some(transactionModel), taxYear)
-
     </section>
 }
 
@@ -67,7 +60,7 @@
                     <p id="whatYouOweHeading" class="bold-medium">
                         @messages("crystalisation.amountOutstanding", transactionModel.outstandingAmount.get.toCurrencyString)
                     </p>
-                    <p class="form-hint">
+                    <p>
                         @messages("crystalisation.dueBy", s"${taxYear+1}")
                     </p>
                 </div>
