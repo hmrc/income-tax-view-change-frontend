@@ -18,8 +18,9 @@ package assets.messages
 
 object CalculationMessages {
 
+  val billsTitle: Int => String = year => s"Income tax bill for ${year - 1} to $year"
   val title: Int => String = year => s"${year - 1} to $year tax year"
-  val heading: Int => String = title(_)
+  val heading: Int => String = billsTitle(_)
 
   object EstimatedTaxAmount {
     val subHeading = "Estimates"
