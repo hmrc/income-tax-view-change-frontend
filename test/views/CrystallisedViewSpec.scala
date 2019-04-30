@@ -124,23 +124,6 @@ class CrystallisedViewSpec extends TestSupport {
       }
     }
 
-    "have the calculation breakdown section visible" when {
-
-      "the bill has been paid and breakdown is required without a progressive disclosure element" in {
-        mockAppConfig.features.calcBreakdownEnabled(true)
-        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizUser)
-        import setup._
-        document.select("table.income-table").size() shouldBe 1
-      }
-
-      "the bill has not been paid and breakdown is required inside a progressive disclosure element" in {
-        mockAppConfig.features.calcBreakdownEnabled(true)
-        val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizUser)
-        import setup._
-        document.select("table.income-table").size() shouldBe 1
-      }
-    }
-
     "NOT have payment related content when the bill has been paid" in {
       val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
       import setup._
