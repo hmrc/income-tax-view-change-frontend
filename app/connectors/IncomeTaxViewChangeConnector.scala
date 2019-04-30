@@ -82,8 +82,12 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             },
             valid => valid
           )
-        case _ =>
-          Logger.error(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.body}")
+        case status =>
+          if(status >= 500) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.body}")
+          } else {
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.body}")
+          }
           CalculationErrorModel(response.status, response.body)
       }
     } recover {
@@ -119,8 +123,12 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
               valid
             }
           )
-        case _ =>
-          Logger.error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
+        case status =>
+          if(status >= 500) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
+          }
           IncomeSourceDetailsError(response.status, response.body)
       }
     } recover {
@@ -146,8 +154,12 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             },
             valid => valid
           )
-        case _ =>
-          Logger.error(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
+        case status =>
+          if(status >= 500) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
+          }
           NinoResponseError(response.status, response.body)
       }
     } recover {
@@ -178,8 +190,12 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
               valid
             }
           )
-        case _ =>
-          Logger.error(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
+        case status =>
+          if(status >= 500) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
+          }
           ReportDeadlinesErrorModel(response.status, response.body)
       }
     } recover {
@@ -210,8 +226,12 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
               valid
             }
           )
-        case _ =>
-          Logger.error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
+        case status =>
+          if(status >= 500) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
+          }
           ReportDeadlinesErrorModel(response.status, response.body)
       }
     } recover {
