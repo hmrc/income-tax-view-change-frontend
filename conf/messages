@@ -86,9 +86,10 @@ calc-breakdown.calculation.due-date                             = due 31 January
 calc-breakdown.calculation.gift-aid-extender                    = Your basic rate limit has been increased by {0} for Gift Aid payments.
 
 ## Estimated Tax Liability Page ##
-estimated_tax_liability.title                                   = {0} to {1} tax year
-estimated_tax_liability.heading                                 = {0} to {1} tax year
-estimated_tax_liability.subheading                              = Estimates
+estimated_tax_liability.title                                   = Tax estimate for {0} - {1}
+estimated_tax_liability.heading                                 = Tax estimate for {0} - {1}
+estimated_tax_liability.no-estimate-sub-heading                 = Estimates
+estimated_tax_liability.sub-heading                             = How your estimate of {0} was calculated
 estimated_tax_liability.reported-figures                        = These estimates are based on the figures you already submitted for this tax year.
 estimated_tax_liability.estimated-tax.payment                   = You don''t need to pay anything yet, but you must pay what you owe for the whole tax year by
 estimated_tax_liability.calc-breakdown.heading                  = How we calculated this estimate
@@ -127,7 +128,7 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = you may earn m
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that is not reported in your accounting software
 estimated_tax_liability.calc-breakdown.nationalRegime           = National Regime
 estimated_tax_liability.calc-breakdown.savingsInterest-income   = Savings Interest
-estimated_tax_liability.calc-breakdown.taxable-payPensionsProfit-income = Your taxable income (pay, pensions, profit)
+estimated_tax_liability.calc-breakdown.taxable-payPensionsProfit-income        = Your taxable income (pay, pensions, profit)
 estimated_tax_liability.calc-breakdown.taxable-savingsInterest-income          = Your taxable income (savings interest)
 estimated_tax_liability.calc-breakdown.pa-personalAllowance                    = Personal Allowance
 estimated_tax_liability.calc-breakdown.business-profit-property                = Business profit(for property)
@@ -281,6 +282,7 @@ breadcrumb-statement                                            = Income Tax sta
 breadcrumb-account                                              = Account details
 breadcrumb-updates                                              = Updates
 breadcrumb-payments-due                                         = Income Tax payments
+breadcrumb-estimated_tax_liability                              = {0} to {1} tax year
 
 ## Standard Error Page ##
 standardError.title                                             = There is a problem with the service - Income Tax reporting through software - GOV.UK

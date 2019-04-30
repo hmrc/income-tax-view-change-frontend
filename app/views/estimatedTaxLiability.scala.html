@@ -39,31 +39,36 @@
 }
 
 @main_template(
-    title = messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear"),
+    title = messages("estimated_tax_liability.title", s"${taxYear-1}", s"$taxYear"),
     bodyClasses = None,
     scriptElem = None,
     contentHeader = if(request.session.get("singleEstimate").getOrElse("false").toBoolean){
                         Some(breadcrumbHelper(Breadcrumb(Vector(
                         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-                        BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear")))
+                        BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("breadcrumb-estimated_tax_liability", s"${taxYear-1}", s"$taxYear")))
                         )), s"EstimateFor${taxYear}Page"))
                     }else{
                         Some(breadcrumbHelper(Breadcrumb(Vector(
                         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
                         BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
-                        BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear")))
+                        BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("breadcrumb-estimated_tax_liability", s"${taxYear-1}", s"$taxYear")))
                         )), s"EstimateFor${taxYear}Page"))
                     }
 ) {
 
     <section id="estimated-tax">
 
-        <header class="page-heading">
-            <h1 class="heading-xlarge" id="heading">@messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear")</h1>
-            <p class="heading-secondary" id="sub-heading">@messages("estimated_tax_liability.subheading")</p>
-        </header>
 
-        <p id="reported-figures">@messages("estimated_tax_liability.reported-figures")</p>
+
+        <div class="grid-row">
+            <div class="column-full">
+                <h1 class="heading-xlarge">
+                    <span id="user-name-heading" class="heading-secondary">@user.userDetails.map{ details => <span class="heading-secondary">@details.name</span>}</span>
+                    <span id=heading>@messages("estimated_tax_liability.heading", s"${taxYear - 1}", s"$taxYear")</span>
+                    <span id=utr-reference-heading  class="heading-secondary">@messages("home.unique.tax.reference") - @user.mtditid</span>
+                </h1>
+            </div>
+        </div>
 
         @if(calcModel.hasEoyEstimate) {
             <section id="eoyEstimate" class="form-group">
@@ -73,20 +78,18 @@
         }
 
         <section id="inYearEstimate">
-            <h2 id="inYearEstimateHeading" class="heading-large">
-                @Html(messages("estimated_tax_liability.inYearEstimate.heading", s"${calcModel.calcDataModel.fold(calcModel.calcAmount.toCurrency)(_.totalIncomeTaxNicYtd.toCurrency)}"))
-            </h2>
-            <p id="inYearP1">@messages("estimated_tax_liability.inYearEstimate.p1", s"${taxYear - 1}", s"${calcModel.calcTimestamp.toLocalDateTime.toLongDateTime}")</p>
 
             @if(calcModel.breakdownNonEmpty && appConfig.features.calcBreakdownEnabled()){
                 <section id="inYearCalcBreakdown">
                     @calcBreakdownHelper(calcModel, None, taxYear)
                 </section>
+            } else {
+                <h2 id="inYearEstimateHeading" class="heading-large">
+                    @messages("estimated_tax_liability.inYearEstimate.heading", calcModel.calcAmount.toCurrencyString)
+                </h2>
+                <p id="inYearP1">@messages("estimated_tax_liability.inYearEstimate.p1", s"${taxYear - 1}", s"${calcModel.calcTimestamp.toLocalDateTime.toLongDateTime}")</p>
             }
 
-            <p id="changes">
-                @accordionHelper("whyEstimateMayChange", s"EstimateFor${taxYear}Page", messages("estimated_tax_liability.inYearEstimate.whyThisMayChange"), whyThisMayChange)
-            </p>
 
         </section>
 

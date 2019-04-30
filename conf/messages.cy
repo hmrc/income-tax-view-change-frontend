@@ -69,7 +69,7 @@ estimated_tax_liability.calc-breakdown.business-profit          = Elw busnes
 estimated_tax_liability.calc-breakdown.property-profit          = Elw eiddo
 estimated_tax_liability.calc-breakdown.and-savings              = ac incwm o gynilion
 estimated_tax_liability.calc-breakdown.income-savings           = Incwm o gynilion
-estimated_tax_liability.calc-breakdown.pa-estimates             = Lwfans Personol (ar gyfer y cyfnod yr adroddwyd amdano)
+
 estimated_tax_liability.calc-breakdown.pa-estimates-savings     = Lwfans Personol, gan gynnwys cynilion (ar gyfer y cyfnod yr adroddwyd amdano)
 estimated_tax_liability.calc-breakdown.pa-bills                 = Lwfans Personol (ar gyfer y cyfnod yr adroddwyd amdano)
 estimated_tax_liability.calc-breakdown.pa-bills-savings         = Lwfans Personol (Treth Incwm a chynilion)
@@ -253,6 +253,8 @@ breadcrumb-statement                                            = Datganiad Tret
 breadcrumb-account                                              = Manylion y cyfrif
 breadcrumb-updates                                              = Diweddariadau
 breadcrumb-payments-due                                         = Taliadau treth incwm
+breadcrumb-estimated_tax_liability                              = Blwyddyn dreth {0} i {1}
+
 
 ## Standard Error Page ##
 standardError.title                                             = Mae problem gyda''r gwasanaeth – Rhoi gwybod am eich Treth Incwm drwy feddalwedd – GOV.UK

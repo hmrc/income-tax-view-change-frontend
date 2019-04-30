@@ -19,22 +19,19 @@ package views
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import assets.EstimatesTestConstants._
-import assets.FinancialTransactionsTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
-import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
+import implicits.ImplicitDateFormatter
 import models.calculation.CalculationDataModel
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import play.api.i18n.Messages.Implicits._
+import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import implicits.ImplicitCurrencyFormatter._
-import implicits.ImplicitDateFormatter
-import play.api.mvc.Request
 import testUtils.TestSupport
 
 
@@ -46,164 +43,112 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
   val bizUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), singleBusinessIncome)(FakeRequest())
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
-  override def beforeEach(): Unit = {
-    mockAppConfig.features.calcBreakdownEnabled(true)
+  def multipleEstimateRequest: Request[_] = FakeRequest().withSession("singleEstimate" -> "false")
+  def singleEstimateRequest: Request[_] = FakeRequest().withSession("singleEstimate" -> "true")
+
+  class BreakdownSetup(request: Request[_] = multipleEstimateRequest, featureSwitch: Boolean = true) {
+
+    mockAppConfig.features.calcBreakdownEnabled(featureSwitch)
+
+    val calcDataModel: CalculationDataModel = busPropBRTCalcDataModel
+
+    val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
+      calculationDisplaySuccessModel(calcDataModel), testYear
+    )(request, applicationMessages, mockAppConfig, bizAndPropertyUser)
+
+    val document: Document = Jsoup.parse(contentAsString(page))
+
+    def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
+    def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
+    def getLinkOfElementById(id: String): Option[String] = getElementById(id).map(_.attr("href"))
   }
 
-  private def pageSetup(calcDataModel: CalculationDataModel, user: MtdItUser[_])(implicit request: Request[_] = FakeRequest()) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
-      calculationDisplaySuccessModel(calcDataModel),
-      testYear)(request, applicationMessages, mockAppConfig, user)
-    lazy val document: Document = Jsoup.parse(contentAsString(page))
+  class NoBreakdownSetup(request: Request[_] = multipleEstimateRequest, featureSwitch: Boolean = false) {
 
-    lazy val cPage: HtmlFormat.Appendable = views.html.crystallised(
-      calculationDisplaySuccessCrystalisationModel(calcDataModel), transactionModel(),
-      testYear)(FakeRequest(), applicationMessages, mockAppConfig, user)
-    lazy val cDocument: Document = Jsoup.parse(contentAsString(cPage))
+    mockAppConfig.features.calcBreakdownEnabled(featureSwitch)
 
-    lazy val noBreakdownPage: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
+    val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
       calculationDisplayNoBreakdownModel, testYear
-    )(request, applicationMessages, mockAppConfig, user)
+    )(request, applicationMessages, mockAppConfig, bizAndPropertyUser)
 
-    lazy val noBreakdownDocument: Document = Jsoup.parse(contentAsString(noBreakdownPage))
+    val document: Document = Jsoup.parse(contentAsString(page))
 
-    implicit val model: CalculationDataModel = calcDataModel
-
-
-    def personalAllowance: String = "-" + (
-      model.annualAllowances.personalAllowance
-      ).toCurrencyString
+    def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
+    def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
+    def getLinkOfElementById(id: String): Option[String] = getElementById(id).map(_.attr("href"))
   }
 
-  "breadcrumb trail" should {
+  "estimatedTaxLiability" should {
 
-    "have a breadcrumb trail with estimate when there is more than one estimate tax year" in {
-      implicit val request : Request[_] = FakeRequest().withSession("singleEstimate"->"false")
-      val setup = pageSetup(busPropBRTCalcDataModel, bizAndPropertyUser)(request)
-      import setup._
-      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-      document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
-      document.getElementById("breadcrumb-it-estimate").text shouldBe breadcrumbMessages.itEstimate(testYear)
+    "have a title" in new BreakdownSetup() {
+      document.title shouldBe s"Tax estimate for ${testYear - 1} - $testYear"
     }
 
-    "have a breadcrumb trail without estimate when there is only one estimate tax year" in {
-      implicit val request : Request[_] = FakeRequest().withSession("singleEstimate"->"true")
-      val setup = pageSetup(busPropBRTCalcDataModel, bizAndPropertyUser)(request)
-      import setup._
-      document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-      document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-      Option(document.getElementById("breadcrumb-estimates")) shouldBe None
-      document.getElementById("breadcrumb-it-estimate").text shouldBe breadcrumbMessages.itEstimate(testYear)
-    }
-  }
+    "have a breadcrumb trail" that {
+      "includes the estimates page when the header indicates more than one estimate" in new BreakdownSetup(multipleEstimateRequest) {
+        getTextOfElementById("breadcrumb-bta") shouldBe Some(breadcrumbMessages.bta)
+        getLinkOfElementById("breadcrumb-bta") shouldBe Some(mockAppConfig.businessTaxAccount)
 
-  "The EstimatedTaxLiability view" should {
+        getTextOfElementById("breadcrumb-it") shouldBe Some(breadcrumbMessages.it)
+        getLinkOfElementById("breadcrumb-it") shouldBe Some(controllers.routes.HomeController.home().url)
 
-    val setup = pageSetup(busPropBRTCalcDataModel, bizAndPropertyUser)(FakeRequest())
-    import setup._
-    val messages = new Messages.Calculation(testYear)
+        getTextOfElementById("breadcrumb-estimates") shouldBe Some(breadcrumbMessages.estimates)
+        getLinkOfElementById("breadcrumb-estimates") shouldBe Some(controllers.routes.EstimatesController.viewEstimateCalculations().url)
 
-    s"have the title '${messages.title}'" in {
-      document.title() shouldBe messages.title
-    }
-
-
-
-    s"have the tax year '${messages.subheading}'" in {
-      document.getElementById("sub-heading").text() shouldBe messages.subheading
-    }
-
-    s"have the page heading '${messages.heading}'" in {
-      document.getElementById("heading").text() shouldBe messages.heading
-    }
-
-    s"has a paragraph to explain the reported figures '${messages.reportedFigures}'" in {
-      document.getElementById("reported-figures").text() shouldBe messages.reportedFigures
-    }
-
-    s"have an Estimated Tax Liability section" which {
-
-      lazy val estimateSection = document.getElementById("estimated-tax")
-
-      "has a section for EoY Estimate" which {
-
-        lazy val eoySection = estimateSection.getElementById("eoyEstimate")
-
-        s"has the correct Annual Tax Amount Estimate Heading of '${
-          messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.totalNicAmount.toCurrencyString)
-        }" in {
-          eoySection.getElementById("eoyEstimateHeading").text shouldBe
-            messages.EoyEstimate.heading(busPropBRTCalcDataModel.eoyEstimate.get.totalNicAmount.toCurrencyString)
-        }
-
-        s"has the correct estimate p1 paragraph '${messages.EoyEstimate.p1}'" in {
-          eoySection.getElementById("eoyP1").text shouldBe messages.EoyEstimate.p1
-        }
+        getTextOfElementById("breadcrumb-it-estimate") shouldBe Some(breadcrumbMessages.basicItEstimate(testYear))
+        getLinkOfElementById("breadcrumb-it-estimate") shouldBe Some("")
       }
 
-      "has a section for In Year (Current) Estimate" which {
+      "excludes the estimates page when the header indicates only one estimate" in new BreakdownSetup(singleEstimateRequest) {
+        getTextOfElementById("breadcrumb-bta") shouldBe Some(breadcrumbMessages.bta)
+        getLinkOfElementById("breadcrumb-bta") shouldBe Some(mockAppConfig.businessTaxAccount)
 
-        lazy val inYearSection = estimateSection.getElementById("inYearEstimate")
+        getTextOfElementById("breadcrumb-it") shouldBe Some(breadcrumbMessages.it)
+        getLinkOfElementById("breadcrumb-it") shouldBe Some(controllers.routes.HomeController.home().url)
 
-        s"has the correct Annual Tax Amount Estimate Heading of" +
-          s" '${messages.InYearEstimate.heading(busPropBRTCalcDataModel.totalIncomeTaxNicYtd.toCurrencyString)}" in {
-          inYearSection.getElementById("inYearEstimateHeading").text shouldBe
-            messages.InYearEstimate.heading(busPropBRTCalcDataModel.totalIncomeTaxNicYtd.toCurrencyString)
-        }
+        getTextOfElementById("breadcrumb-estimates") shouldBe None
+        getLinkOfElementById("breadcrumb-estimates") shouldBe None
 
-        s"has the correct estimate p1 paragraph '${messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.get.toLocalDateTime.toLongDateTime)}'" in {
-          inYearSection.getElementById("inYearP1").text shouldBe
-            messages.InYearEstimate.p1(lastTaxCalcSuccess.calcTimestamp.get.toLocalDateTime.toLongDateTime)
-        }
-
-        "has progressive disclosure for why there estimate might change" which {
-
-          s"has the heading '${messages.InYearEstimate.WhyThisMayChange.heading}'" in {
-            inYearSection.getElementById("whyEstimateMayChange").text shouldBe messages.InYearEstimate.WhyThisMayChange.heading
-          }
-
-          s"has the p1 heading '${messages.InYearEstimate.WhyThisMayChange.p1}'" in {
-            inYearSection.getElementById("whyMayChangeP1").text shouldBe messages.InYearEstimate.WhyThisMayChange.p1
-          }
-
-          s"has the 1st bullet '${messages.InYearEstimate.WhyThisMayChange.bullet1}'" in {
-            inYearSection.select("#whyMayChange ul li:nth-child(1)").text shouldBe messages.InYearEstimate.WhyThisMayChange.bullet1
-          }
-
-          s"has the 2nd bullet '${messages.InYearEstimate.WhyThisMayChange.bullet2}'" in {
-            inYearSection.select("#whyMayChange ul li:nth-child(2)").text shouldBe messages.InYearEstimate.WhyThisMayChange.bullet2
-          }
-
-          s"has the 2nd bullet '${messages.InYearEstimate.WhyThisMayChange.bullet3}'" in {
-            inYearSection.select("#whyMayChange ul li:nth-child(3)").text shouldBe messages.InYearEstimate.WhyThisMayChange.bullet3
-          }
-        }
+        getTextOfElementById("breadcrumb-it-estimate") shouldBe Some(breadcrumbMessages.basicItEstimate(testYear))
+        getLinkOfElementById("breadcrumb-it-estimate") shouldBe Some("")
       }
     }
 
-    "have the calculation breakdown section visible" when {
-      "the feature switch is enabled" in {
-        mockAppConfig.features.calcBreakdownEnabled(true)
-        val setup = pageSetup(justBusinessCalcDataModel, bizUser)(FakeRequest())
-        import setup._
-        Option(document.getElementById("inYearCalcBreakdown")).isDefined shouldBe true
+    "have a heading" which {
+      "has a name of the user" in new BreakdownSetup() {
+        getTextOfElementById("user-name-heading") shouldBe Some("Albert Einstein")
+      }
+      "has the main heading for the page" in new BreakdownSetup() {
+        getTextOfElementById("heading") shouldBe Some(s"Tax estimate for ${testYear-1} - $testYear")
+      }
+      "has the utr reference" in new BreakdownSetup() {
+        getTextOfElementById("utr-reference-heading") shouldBe Some(s"Unique Tax Reference - ${user.mtditid}")
       }
     }
 
-    "have the calculation breakdown section hidden" when {
-      "the feature switch is disabled" in {
-        mockAppConfig.features.calcBreakdownEnabled(false)
-        val setup = pageSetup(justBusinessCalcDataModel, bizUser)(FakeRequest())
-        import setup._
-        Option(document.getElementById("inYearCalcBreakdown")).isDefined shouldBe false
+    "have a subheading with information when there is no breakdown" in new NoBreakdownSetup() {
+      getTextOfElementById("inYearEstimateHeading") shouldBe Some("Current estimate: £543.21")
+      getTextOfElementById("inYearP1") shouldBe Some("This is for 6 April 2017 to 6 July 2017.")
+    }
+
+    "not display the subheading with information when there is a breakdown" in new BreakdownSetup() {
+      getElementById("inYearEstimateHeading") shouldBe None
+      getElementById("inYearP1") shouldBe None
+    }
+
+    "have a calculation breakdown when it is present and the feature switch is on" in new BreakdownSetup(featureSwitch = true) {
+      getElementById("inYearCalcBreakdown").isDefined shouldBe true
+    }
+
+    "not have a calculation breakdown" when {
+      "there is no calculation data" in new NoBreakdownSetup(featureSwitch = true) {
+        getElementById("inYearCalcBreakdown").isDefined shouldBe false
       }
-      "the breakdown is empty" in {
-        mockAppConfig.features.calcBreakdownEnabled(false)
-        val setup = pageSetup(justBusinessCalcDataModel, bizUser)(FakeRequest())
-        import setup._
-        Option(noBreakdownDocument.getElementById("inYearCalcBreakdown")).isDefined shouldBe false
+      "the calculation breakdown feature switch is disabled" in new BreakdownSetup(featureSwitch = false) {
+        getElementById("inYearCalcBreakdown").isDefined shouldBe false
       }
     }
   }
+
+
 }
