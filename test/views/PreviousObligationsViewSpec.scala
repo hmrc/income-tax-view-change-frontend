@@ -63,16 +63,6 @@ class PreviousObligationsViewSpec extends TestSupport with ImplicitDateFormatter
       getTextOfElementById("sub-heading") shouldBe Some(previousObligations.subHeading)
     }
 
-    "have a updates link to the updates page in a tab" in new Setup {
-      getElementById("updates-tab").isDefined shouldBe true
-      getTextOfElementById("updates-link") shouldBe Some(previousObligations.updatesLink)
-      getElementById("updates-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url)
-    }
-
-    "have a previous updates tab" in new Setup {
-      getElementById("previous-updates-tab").isDefined shouldBe true
-    }
-
     "display the no previous updates message when there are none" in new Setup {
       getTextOfElementById("no-previous-obligations") shouldBe Some(previousObligations.noPreviousObligations)
       getElementById("income-source-0") shouldBe None
