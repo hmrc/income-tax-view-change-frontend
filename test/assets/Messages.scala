@@ -188,7 +188,8 @@ object Messages {
 
   //ReportDeadlines Page Messages
   object ReportDeadlines {
-    val title = "Report deadlines"
+    val disabledTitle = "Report deadlines"
+    val enabledTitle = "Current Updates"
     val propertyHeading = "Property income"
     val periodHeading = "Report period"
     val statusHeading = "Report due date"
@@ -340,7 +341,8 @@ object Messages {
 
   //ReportDeadlines Page Messages
   object Obligations {
-    val title = "Updates"
+    val title = "Current Updates"
+    val heading = "Updates"
     val tabOne = "Updates due"
     val tabTwo = "Previously submitted updates"
     val subTitle = "Updates due"
@@ -363,7 +365,7 @@ object Messages {
   }
 
   object PreviousObligations {
-    val title = "Your Income Tax"
+    val title = "Previous Submitted Updates"
     val heading = "Updates"
     val subHeading = "Previously submitted updates"
     val noPreviousObligations = "No previously submitted updates"
@@ -380,7 +382,7 @@ object Messages {
   }
 
   object PaymentDue {
-    val title = "Your Income Tax"
+    val title = "Payments Due"
     val heading = "Income Tax payments"
     val subTitle = "Payment due"
     val due = "due"

@@ -159,7 +159,7 @@ obligations.dropdown.p3                                         = Send your fina
 obligations.dropdown.p4                                         = After you send your final report, you can see the Income Tax you owe for the tax year.
 
 ## Previous Obligations ##
-previous-obligations.title                                      = Your Income Tax
+previous-obligations.title                                      = Previous Submitted Updates
 previous-obligations.heading                                    = Updates
 previous-obligations.sub-heading                                = Previously submitted updates
 previous-obligations.no-previous-obligations                    = No previously submitted updates
@@ -297,6 +297,7 @@ betaBanner.feedback                                             = feedback
 betaBanner.improve                                              = will help us to improve it.
 
 ## Obligations Page ##
+obligations.title.v2                                               = Current Updates
 obligations.heading.v2                                             = Updates
 obligations.sub-heading.v2                                         = Updates due
 obligations.sub-heading.info.prt1.v2                               = You must submit these returns on your
@@ -329,7 +330,7 @@ obligations.tab.one                                                = Updates due
 obligations.tab.two                                                = Previously submitted updates
 
 ## Payment Due Page ##
-paymentDue.title                                                   = Your Income Tax
+paymentDue.title                                                   = Payments Due
 paymentDue.heading                                                 = Income Tax payments
 paymentDue.sub-heading                                             = Payment due
 paymentDue.tax-year                                                = Tax year {0} to {1}

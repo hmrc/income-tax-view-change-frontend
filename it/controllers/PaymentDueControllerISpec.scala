@@ -53,7 +53,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
           httpStatus(OK),
-          pageTitle("Your Income Tax"),
+          pageTitle("Payments Due"),
           isElementVisibleById(s"payments-due-$testTaxYear")(true),
           isElementVisibleById(s"payments-due-outstanding-$testTaxYear")(true),
           isElementVisibleById(s"payments-due-on-$testTaxYear")(true),
@@ -88,7 +88,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
           httpStatus(OK),
-          pageTitle("Your Income Tax"),
+          pageTitle("Payments Due"),
           isElementVisibleById(s"payments-due-$testTaxYear1")(true),
           isElementVisibleById(s"payments-due-outstanding-$testTaxYear1")(true),
           isElementVisibleById(s"payments-due-on-$testTaxYear1")(true),
@@ -128,7 +128,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
           httpStatus(OK),
-          pageTitle("Your Income Tax"),
+          pageTitle("Payments Due"),
           isElementVisibleById(s"payments-due-$testTaxYear2")(true),
           isElementVisibleById(s"payments-due-outstanding-$testTaxYear2")(true),
           isElementVisibleById(s"payments-due-on-$testTaxYear2")(true),
@@ -159,7 +159,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
           httpStatus(OK),
-          pageTitle("Your Income Tax"),
+          pageTitle("Payments Due"),
           isElementVisibleById(s"payments-due-$testTaxYear1")(false),
           isElementVisibleById(s"payments-due-outstanding-$testTaxYear1")(false),
           isElementVisibleById(s"payments-due-on-$testTaxYear1")(false),
