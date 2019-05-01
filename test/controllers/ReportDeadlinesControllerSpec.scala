@@ -66,6 +66,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
       "set Report Deadlines enabled" in {
         TestReportDeadlinesController.config.features.reportDeadlinesEnabled(true)
+        TestReportDeadlinesController.config.features.obligationsPageEnabled(false)
         TestReportDeadlinesController.config.features.reportDeadlinesEnabled() shouldBe true
       }
 
