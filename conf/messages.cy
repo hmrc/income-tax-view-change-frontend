@@ -294,6 +294,7 @@ obligations.annualUpdates                                       = Diweddariadau 
 obligation.dropdown.annualUpdates.info.v2                       = Beth yw diweddariad blynyddol?
 obligation.dropdown.annualReturn.text.v2                        = Yn y diweddariad blynyddol, mae''n rhaid i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu cyflwyno yn gywir, neu mae''n rhaid i chi gywiro unrhyw gamgymeriadau
 obligation.dropdown.annualReturn.text.v2.lin2.prt2              = , mae''n rhaid i chi gyflwyno un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd y cyfnod cyfrifyddu.
+obligations.opens-in-new-tab                                    = (yn agor mewn tab newydd)
 
 obligations.finalDeclarationUpdate                              = Datganiad terfynol
 obligation.dropdown.finalDeclaration.info.v2                    = Beth yw datganiad terfynol?
