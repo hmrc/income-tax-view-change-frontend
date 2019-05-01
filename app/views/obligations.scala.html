@@ -44,25 +44,16 @@ contentHeader = Some(breadcrumb)
 ) {
 
 <header class="page-heading">
-    <h1 id="page-heading" class="heading-xlarge"> @Messages("obligations.heading.v2")</h1>
+    <h1 id="page-heading" class="heading-xlarge"> @messages("obligations.heading.v2")</h1>
 </header>
 
-    <ul class="tabs-nav" role="tablist">
-        <li id="tab1" role="tab" data-tab-link="tab1" aria-selected="true">
-            <span class="tabs-nav__tab tabs-nav__tab--active">@Messages("obligations.tab.one")</span>
-        </li>
-        <li id="tab2" role="tab" data-tab-link="tab2" aria-selected="false">
-            <a class="tabs-nav__tab" href="@controllers.routes.PreviousObligationsController.getPreviousObligations().url">@Messages("obligations.tab.two")</a>
-        </li>
-    </ul>
-
 <section id="sub-heading-section">
-    <h1 id="page-sub-heading" class="heading large"> @Messages("obligations.sub-heading.v2") </h1>
+    <h1 id="page-sub-heading" class="heading large"> @messages("obligations.sub-heading.v2") </h1>
 
-    <p>@Messages("obligations.sub-heading.info.prt1.v2")
+    <p>@messages("obligations.sub-heading.info.prt1.v2")
         <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
-            @Messages("obligations.sub-heading.info.hyperlink.v2") </a>
-        @Messages("obligations.sub-heading.info.prt2.v2")
+            @messages("obligations.sub-heading.info.hyperlink.v2") </a>
+        @messages("obligations.sub-heading.info.prt2.v2")
     </p>
 </section>
 
@@ -71,15 +62,15 @@ contentHeader = Some(breadcrumb)
 <details role="group">
 
     <summary id="quarterly-dropdown-title" role="button" aria-controls="details-content-0" aria-expanded="false">
-        @Messages("obligation.dropdown.quarterlyReturn.info.v2")
+        @messages("obligation.dropdown.quarterlyReturn.info.v2")
     </summary>
 
     <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-        <p><span id="quarterly-dropdown-line1">@Messages("obligation.dropdown.quarterlyReturn.text.v2")</span> </p>
+        <p><span id="quarterly-dropdown-line1">@messages("obligation.dropdown.quarterlyReturn.text.v2")</span> </p>
 
-        <p><span id="quarterly-dropdown-line2">@Messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1")
+        <p><span id="quarterly-dropdown-line2">@messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1")
             <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
-                @Messages("obligations.sub-heading.info.hyperlink.v2")</a>@Messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt2")
+                @messages("obligations.sub-heading.info.hyperlink.v2")</a>@messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt2")
         </span>
         </p>
     </div>
@@ -155,15 +146,15 @@ case _ => { }
 <details role="group">
 
     <summary id="annual-dropdown-title" role="button" aria-controls="details-content-1" aria-expanded="false">
-        @Messages("obligation.dropdown.annualUpdates.info.v2")
+        @messages("obligation.dropdown.annualUpdates.info.v2")
     </summary>
 
     <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
-        <p><span id="annual-dropdown-line1"> @Messages("obligation.dropdown.annualReturn.text.v2")</span> </p>
+        <p><span id="annual-dropdown-line1"> @messages("obligation.dropdown.annualReturn.text.v2")</span> </p>
 
-        <p><span id="annual-dropdown-line2">@Messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1")
+        <p><span id="annual-dropdown-line2">@messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1")
             <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
-                @Messages("obligations.sub-heading.info.hyperlink.v2")</a>@Messages("obligation.dropdown.annualReturn.text.v2.lin2.prt2")
+                @messages("obligations.sub-heading.info.hyperlink.v2")</a>@messages("obligation.dropdown.annualReturn.text.v2.lin2.prt2")
         </span>
         </p>
     </div>
@@ -223,13 +214,13 @@ case _ => {}
 <details role="group">
 
     <summary id="declaration-dropdown-title" role="button" aria-controls="details-content-2" aria-expanded="false">
-        @Messages("obligation.dropdown.finalDeclaration.info.v2")
+        @messages("obligation.dropdown.finalDeclaration.info.v2")
     </summary>
 
     <div class="panel panel-border-narrow" id="details-content-2" aria-hidden="true">
-        <p>@Messages("obligation.dropdown.finalDeclaration.text.v2.prt1")
+        <p>@messages("obligation.dropdown.finalDeclaration.text.v2.prt1")
             <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
-                @Messages("obligations.sub-heading.info.hyperlink.v2")</a>@Messages("obligation.dropdown.finalDeclaration.text.v2.prt2")
+                @messages("obligations.sub-heading.info.hyperlink.v2")</a>@messages("obligation.dropdown.finalDeclaration.text.v2.prt2")
         </p>
     </div>
 
