@@ -85,7 +85,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.title
+            document.title shouldBe messages.disabledTitle
           }
         }
 
@@ -106,7 +106,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.title
+            document.title shouldBe messages.disabledTitle
           }
         }
 
@@ -127,7 +127,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.title
+            document.title shouldBe messages.disabledTitle
           }
         }
 

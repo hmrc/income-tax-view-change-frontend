@@ -142,7 +142,11 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       }
 
       s"showing the title ${messages.title} on the page" in new Setup(businessIncomeSource) {
-        pageDocument.getElementById("page-heading").text shouldBe messages.title
+        pageDocument.title() shouldBe messages.title
+      }
+
+      s"showing the heading ${messages.heading} on the page" in new Setup(businessIncomeSource) {
+        pageDocument.getElementById("page-heading").text shouldBe messages.heading
       }
 
       "showing the inactive tab for the current page" in new Setup(businessIncomeSource) {

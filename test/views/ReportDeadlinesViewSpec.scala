@@ -58,8 +58,8 @@ class ReportDeadlinesViewSpec extends TestSupport with ImplicitDateFormatter {
     val setup = pageSetup(businessIncomeSource)
     import setup._
 
-    s"have the title '${messages.title}'" in {
-      document.title() shouldBe messages.title
+    s"have the title '${messages.disabledTitle}'" in {
+      document.title() shouldBe messages.disabledTitle
     }
 
     "have a breadcrumb trail" in {

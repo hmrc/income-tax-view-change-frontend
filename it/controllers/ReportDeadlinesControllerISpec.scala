@@ -731,7 +731,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           Then("the view displays the correct title, username and links")
           res should have(
             httpStatus(OK),
-            pageTitle(messages.obligationsTitle)
+            pageTitle(messages.title)
           )
 
           Then("the page displays no property obligation dates")

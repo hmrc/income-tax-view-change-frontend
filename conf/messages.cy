@@ -101,7 +101,7 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = efallai y bydd
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = efallai bod gennych incwm nac adroddir amdano yn eich meddalwedd cyfrifyddu
 estimated_tax_liability.calc-breakdown.nationalRegime           = Cyfundrefn Genedlaethol
 estimated_tax_liability.calc-breakdown.savingsInterest-income   = Llog Cynilon
-estimated_tax_liability.calc-breakdown.taxable-payPensionsProfit-income = Eich incwm trethadwy (cyflog, pensiynau, elw)
+estimated_tax_liability.calc-breakdown.taxable-payPensionsProfit-income        = Eich incwm trethadwy (cyflog, pensiynau, elw)
 estimated_tax_liability.calc-breakdown.taxable-savingsInterest-income          = Eich incwm trethadwy (llog cynilon)
 estimated_tax_liability.calc-breakdown.pa-personalAllowance                    = Lwfans Personol
 estimated_tax_liability.calc-breakdown.business-profit-property                = Elw busnes(Am eiddo)
@@ -134,7 +134,7 @@ obligations.tab.one                                             = Diweddariadau 
 obligations.tab.two                                             = Diweddariadau a gyflwynwyd yn flaenorol
 
 ## Previous Obligations ##
-previous-obligations.title                                      = Eich Treth Incwm
+
 previous-obligations.heading                                    = Diweddariadau
 previous-obligations.sub-heading                                = Diweddariadau a gyflwynwyd yn flaenorol
 

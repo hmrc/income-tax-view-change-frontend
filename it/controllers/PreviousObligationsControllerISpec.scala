@@ -48,7 +48,7 @@ class PreviousObligationsControllerISpec extends ComponentSpecBase with Implicit
 
       result should have(
         httpStatus(OK),
-        pageTitle("Your Income Tax"),
+        pageTitle("Previous Submitted Updates"),
         elementTextByID("no-previous-obligations")("No previously submitted updates"),
         isElementVisibleById("income-source-1")(expectedValue = false),
         isElementVisibleById("obligation-type-1")(expectedValue = false),
@@ -75,7 +75,7 @@ class PreviousObligationsControllerISpec extends ComponentSpecBase with Implicit
 
       result should have(
         httpStatus(OK),
-        pageTitle("Your Income Tax"),
+        pageTitle("Previous Submitted Updates"),
         isElementVisibleById("no-previous-obligations")(expectedValue = false),
         elementTextByID("income-source-0")("Tax year - Final check"),
         elementTextByID("obligation-type-0")("Declaration"),
