@@ -310,3 +310,12 @@ paymentDue.viewBill                                             = Bwrw golwg dro
 UK = Y DU
 Scotland = Yr Alban
 Wales = Cymru
+
+## Timeout
+timeoutDialog.minute                                            = munud
+timeoutDialog.minutes                                           = munud
+timeoutDialog.minutes.two                                       = funud
+timeoutDialog.message                                           = Er eich diogelwch, cewch eich allgofnodi mewn:
+timeoutDialog.seconds                                           = eiliad
+timeoutDialog.title                                             = Rydych ar fin cael eich allgofnodi
+button.continue                                                 = Yn eich blaen
