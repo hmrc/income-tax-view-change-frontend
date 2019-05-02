@@ -389,7 +389,9 @@ object Messages {
     def taxYearPeriod(from: String, to:String) = s"Tax year $from to $to"
     val noBills = "No payments due."
     val billLink = "View bill"
+    def billLinkAria(fromYear: String, toYear: String) = s"View bill for Tax year $fromYear to $toYear"
     val payNow = "Pay now"
+    def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
   }
 
 }
