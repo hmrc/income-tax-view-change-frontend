@@ -343,3 +343,12 @@ paymentDue.payNow                                                  = Pay now
 UK = UK
 Scotland = Scotland
 Wales = Wales
+
+## Timeout
+timeoutDialog.title                                             = You are about to be signed out
+timeoutDialog.seconds                                           = seconds
+timeoutDialog.minutes                                           = minutes
+timeoutDialog.minutes.two                                       = minutes
+timeoutDialog.minute                                            = minute
+timeoutDialog.message                                           = For your security, you will be signed out in:
+button.continue                                                 = Continue
