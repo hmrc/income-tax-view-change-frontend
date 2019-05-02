@@ -100,8 +100,10 @@ class PaymentsDueViewSpec extends TestSupport {
 
       "have a link to the bill" in new Setup(unpaidFinancialTransactions) {
         val testTaxYearTo = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodTo.get.getYear
+        val testTaxYearFrom = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodFrom.get.getYear
 
         pageDocument.getElementById(s"bills-link-$testTaxYearTo").text shouldBe messages.billLink
+        pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("aria-label") shouldBe messages.billLinkAria(testTaxYearFrom.toString, testTaxYearTo.toString)
 
         val expectedUrl = controllers.routes.CalculationController.renderCalculationPage(testTaxYearTo).url
         pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("href") shouldBe expectedUrl
@@ -109,8 +111,11 @@ class PaymentsDueViewSpec extends TestSupport {
 
       "have a link to payments" in new Setup(unpaidFinancialTransactions) {
         val testTaxYearTo = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodTo.get.getYear
+        val testTaxYearFrom = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodFrom.get.getYear
 
         pageDocument.getElementById(s"payment-link-$testTaxYearTo").text shouldBe messages.payNow
+        pageDocument.select(s"#payment-link-$testTaxYearTo a").attr("aria-label") shouldBe messages.payNowAria(testTaxYearFrom.toString, testTaxYearTo.toString)
+
         pageDocument.select(s"#payment-link-$testTaxYearTo a")
           .attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(unpaidFinancialTransactions.head.financialTransactions.get.head.outstandingAmount.get.toPence).url
       }

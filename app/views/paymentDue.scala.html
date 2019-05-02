@@ -54,11 +54,11 @@
                </div>
                <div class="column-half heading-large">
                     <div class="font-small text--right link-style form-group" id="bills-link-@{transaction.taxPeriodTo.get.getYear}">
-                        <a href="@controllers.routes.CalculationController.renderCalculationPage(transaction.taxPeriodTo.get.getYear).url">@messages("paymentDue.viewBill")</a>
+                        <a href="@controllers.routes.CalculationController.renderCalculationPage(transaction.taxPeriodTo.get.getYear).url" aria-label='@messages("paymentDue.view-bill-aria", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)'>@messages("paymentDue.viewBill")</a>
                     </div>
                    @if(appConfig.features.paymentEnabled() && transaction.outstandingAmount.isDefined){
                        <div id="payment-link-@{transaction.taxPeriodTo.get.getYear}" class="font-small text--right link-style">
-                           <a href="@controllers.routes.PaymentController.paymentHandoff(transaction.outstandingAmount.get.toPence)">@messages("paymentDue.payNow")</a>
+                           <a href="@controllers.routes.PaymentController.paymentHandoff(transaction.outstandingAmount.get.toPence)" aria-label='@messages("paymentDue.pay-now-aria", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)'>@messages("paymentDue.payNow")</a>
                        </div>
                    }
                 </div>

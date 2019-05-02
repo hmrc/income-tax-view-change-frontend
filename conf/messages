@@ -338,6 +338,8 @@ paymentDue.tax-year                                                = Tax year {0
 paymentDue.due                                                     = due
 paymentDue.viewBill                                                = View bill
 paymentDue.payNow                                                  = Pay now
+paymentDue.view-bill-aria                                          = View bill for Tax year {0} to {1}
+paymentDue.pay-now-aria                                            = Pay now for Tax year {0} to {1}
 
 
 ## Regimes
