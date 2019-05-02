@@ -328,6 +328,7 @@ obligation.dropdown.finalDeclaration.text.v2.prt1                  = Your final 
 obligation.dropdown.finalDeclaration.text.v2.prt2                  =.
 obligations.tab.one                                                = Updates due
 obligations.tab.two                                                = Previously submitted updates
+obligations.opens-in-new-tab                                       = (opens in a new tab)
 
 ## Payment Due Page ##
 paymentDue.title                                                   = Payments Due
