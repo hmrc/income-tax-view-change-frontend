@@ -38,7 +38,7 @@ class SessionTimeoutPredicate @Inject()(implicit val messagesApi: MessagesApi)
     (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {
       case (Some(_), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
-        Logger.error("[AuthenticationPredicate][handleSessionTimeout] Session Time Out.")
+        Logger.warn("[AuthenticationPredicate][handleSessionTimeout] Session Time Out.")
         Future.successful(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout()))
       case (_, _) => f(request)
     }
