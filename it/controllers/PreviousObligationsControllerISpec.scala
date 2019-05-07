@@ -42,7 +42,7 @@ class PreviousObligationsControllerISpec extends ComponentSpecBase with Implicit
 
       IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testSelfEmploymentId, testNino)
       IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testPropertyIncomeId, testNino)
-      IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino, testNino)
+      IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testMtditid, testNino)
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getPreviousObligations
 
@@ -65,13 +65,13 @@ class PreviousObligationsControllerISpec extends ComponentSpecBase with Implicit
 
       IncomeTaxViewChangeStub.stubGetPreviousObligations(testSelfEmploymentId, testNino, previousQuarterlyObligation)
       IncomeTaxViewChangeStub.stubGetPreviousObligations(testPropertyIncomeId, testNino, previousEOPSObligation)
-      IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino, testNino, previousCrystallisationObligation)
+      IncomeTaxViewChangeStub.stubGetPreviousObligations(testMtditid, testNino, previousCrystallisationObligation)
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getPreviousObligations
 
       IncomeTaxViewChangeStub.verifyGetPreviousObligations(testSelfEmploymentId, testNino)
       IncomeTaxViewChangeStub.verifyGetPreviousObligations(testPropertyIncomeId, testNino)
-      IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino, testNino)
+      IncomeTaxViewChangeStub.verifyGetPreviousObligations(testMtditid, testNino)
 
       result should have(
         httpStatus(OK),

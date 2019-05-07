@@ -865,12 +865,12 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "the user has a Crystallised obligation only" in {
           appConfig.features.obligationsPageEnabled(true)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, testNino, crystallisedEOPSModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, crystallisedEOPSModel)
 
           val res= IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testNino, testNino)
+          verifyReportDeadlinesCall(testNino, testMtditid)
 
           Then("the view displays the correct title")
           res should have(
