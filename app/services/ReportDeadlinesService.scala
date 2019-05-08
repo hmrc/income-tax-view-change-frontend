@@ -44,7 +44,7 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
 
     val allRetrievalIds: List[String] = incomeSourceResponse.businesses.map(_.incomeSourceId) ++
       incomeSourceResponse.property.map(_.incomeSourceId) :+
-      mtdItUser.nino
+      mtdItUser.mtditid
 
     Future.sequence(
       allRetrievalIds.map { incomeSource =>
@@ -62,7 +62,7 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
     val businessIdsWithName = incomeSourceResponse.businesses.map(_.incomeSourceId) zip incomeSourceResponse.businesses.map(_.tradingName.getOrElse("Business"))
     val businessPreviousObligations = getBusinessObligationsFromIds(businessIdsWithName)
     val propertyPreviousObligations = getPreviousObligationsFromIds(incomeSourceResponse.property.map(_.incomeSourceId).toList)
-    val crystallisationPreviousObligations = getPreviousObligationsFromIds(List(mtdItUser.nino))
+    val crystallisationPreviousObligations = getPreviousObligationsFromIds(List(mtdItUser.mtditid))
 
     for {
       business <- businessPreviousObligations
@@ -130,7 +130,7 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
 
 
         val crystallisedModelFList: Future[Option[CrystallisedDeadlinesModel]] =
-          getReportDeadlines(mtdUser.nino).map{
+          getReportDeadlines(mtdUser.mtditid).map {
             case deadlines: ReportDeadlinesModel => Some(CrystallisedDeadlinesModel(deadlines))
             case deadlines: ReportDeadlinesErrorModel => None
           }
