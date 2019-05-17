@@ -24,7 +24,7 @@ object FinancialTransactionsStub {
   def financialTransactionsUrl(mtditid: String, from: String, to: String): String = s"/financial-transactions/it/${mtditid}?dateFrom=$from&dateTo=$to"
 
   //Financial Transactions
-  def stubGetFinancialTransactions(mtditid: String, from: String  =  "2017-4-6" , to: String =  "2018-4-5")(status: Int, response: JsValue): Unit =
+  def stubGetFinancialTransactions(mtditid: String, from: String  =  "2017-04-06" , to: String =  "2018-04-05")(status: Int, response: JsValue): Unit =
     WiremockHelper.stubGet(financialTransactionsUrl(mtditid, from, to), status, response.toString())
 
   //Verifications

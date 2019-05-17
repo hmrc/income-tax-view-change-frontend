@@ -39,7 +39,7 @@ class FinancialTransactionsConnectorSpec extends TestSupport with MockHttp{
   "FinancialTransactionsConnector.getFinancialTransactions" should {
 
     lazy val testUrl = TestFinancialTransactionsConnector.getFinancialTransactionsUrl(testMtditid)
-    lazy val testParams = Seq("dateFrom" -> "2017-4-6", "dateTo" -> "2018-4-5")
+    lazy val testParams = Seq("dateFrom" -> "2017-04-06", "dateTo" -> "2018-04-05")
     def result: Future[FinancialTransactionsResponseModel] = TestFinancialTransactionsConnector.getFinancialTransactions(testMtditid, testTaxYear)
 
     "return a FinancialTransactionsModel with JSON in case of success" in {
