@@ -72,8 +72,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
 
         And("I wiremock stub a single financial transaction response")
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-4-6", "2018-4-5")(OK, financialTransactionsJson(2000,"2017-4-6", "2018-4-5"))
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-4-6", "2019-4-5")(OK, financialTransactionsJson(3000,"2018-4-6", "2019-4-5"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, financialTransactionsJson(2000,"2017-04-06", "2018-04-05"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000,"2018-04-06", "2019-04-05"))
 
         And("the payment feature switch is set to false")
         appConfig.features.paymentEnabled(false)
@@ -82,8 +82,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyFinancialTransactionsCall(testMtditid, "2017-4-6", "2018-4-5")
-        verifyFinancialTransactionsCall(testMtditid, "2018-4-6", "2019-4-5")
+        verifyFinancialTransactionsCall(testMtditid, "2017-04-06", "2018-04-05")
+        verifyFinancialTransactionsCall(testMtditid, "2018-04-06", "2019-04-05")
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
@@ -112,8 +112,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
 
         And("I wiremock stub a single financial transaction response")
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-4-6", "2018-4-5")(BAD_REQUEST, financialTransactionsSingleErrorJson("400"))
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-4-6", "2019-4-5")(OK, financialTransactionsJson(3000,"2018-4-6", "2019-4-5"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(BAD_REQUEST, financialTransactionsSingleErrorJson("400"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000,"2018-04-06", "2019-04-05"))
 
         And("the payment feature switch is set to false")
         appConfig.features.paymentEnabled(false)
@@ -122,8 +122,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyFinancialTransactionsCall(testMtditid, "2017-4-6", "2018-4-5")
-        verifyFinancialTransactionsCall(testMtditid, "2018-4-6", "2019-4-5")
+        verifyFinancialTransactionsCall(testMtditid, "2017-04-06", "2018-04-05")
+        verifyFinancialTransactionsCall(testMtditid, "2018-04-06", "2019-04-05")
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
@@ -145,7 +145,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
 
         And("I wiremock stub a single financial transaction response")
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-4-6", "2018-4-5")(OK, emptyFinancialTransaction)
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, emptyFinancialTransaction)
 
         And("the payment feature switch is set to false")
         appConfig.features.paymentEnabled(false)
@@ -154,7 +154,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyFinancialTransactionsCall(testMtditid, "2017-4-6", "2018-4-5")
+        verifyFinancialTransactionsCall(testMtditid, "2017-04-06", "2018-04-05")
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
@@ -177,8 +177,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
 
         And("I wiremock stub a single financial transaction response")
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-4-6", "2018-4-5")(OK, financialTransactionsSingleErrorJson("400"))
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-4-6", "2019-4-5")(OK, financialTransactionsJson(3000,"2018-4-6", "2019-4-5"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, financialTransactionsSingleErrorJson("400"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000,"2018-04-06", "2019-04-05"))
 
         And("the payment feature switch is set to false")
         appConfig.features.paymentEnabled(false)
@@ -187,8 +187,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyFinancialTransactionsCall(testMtditid, "2017-4-6", "2018-4-5")
-        verifyFinancialTransactionsCall(testMtditid, "2018-4-6", "2019-4-5")
+        verifyFinancialTransactionsCall(testMtditid, "2017-04-06", "2018-04-05")
+        verifyFinancialTransactionsCall(testMtditid, "2018-04-06", "2019-04-05")
 
         Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
         res should have(
