@@ -83,8 +83,12 @@ class HomePageViewSpec extends TestSupport {
           getElementById("bills-link") shouldBe None
           getElementById("previous-bill-link") shouldBe None
         }
-
-        "contains the content when there is no next payment due to display" in new Setup(None) {
+        "not contain an income tax payments column when the feature flag is off" in new Setup {
+          mockAppConfig.features.billsEnabled(false)
+          getElementById("income-tax-payment-card") shouldBe None
+        }
+        "contains the content when there is no next payment due to display and the feature switch is on" in new Setup(None) {
+          mockAppConfig.features.billsEnabled(true)
           getTextOfElementById("income-tax-payment-card-body-date") shouldBe Some("No payments due.")
         }
       }

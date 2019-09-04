@@ -52,6 +52,8 @@
             </h1>
         </div>
 
+        @if(appConfig.features.billsEnabled()){
+
         <div class="column-half">
             <div id="income-tax-payment-card" class="card">
                 <div class="card-header">
@@ -66,9 +68,6 @@
 
                             @{nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.incomeTaxPayment.noBills"))}</span>
                     </h3>
-
-
-                    @if(appConfig.features.billsEnabled()){
 
                     <div>
                     <p>
@@ -90,11 +89,11 @@
                         </a>
                     </p>
 
-                    }
-
                 </div>
             </div>
         </div>
+
+        }
 
         <div class="column-half">
             <div id="updates-card" class="card">
