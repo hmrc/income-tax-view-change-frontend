@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ object EstimatesAuditing {
     override val auditType: String = "estimatesPageView"
     override val transactionName: String = "estimates-page-view"
 
-    //TODO: Auditing needs to be revisited for multiple businesses scenario - speak to Kris McLackland
     val business: Option[BusinessDetailsModel] = user.incomeSources.businesses.headOption
     override val detail: Seq[(String, String)] = Seq(
       "mtditid" -> user.mtditid,
@@ -75,3 +74,4 @@ object EstimatesAuditing {
     ) ++ estimateDetails
   }
 }
+
