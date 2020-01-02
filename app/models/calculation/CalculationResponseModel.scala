@@ -17,7 +17,6 @@
 package models.calculation
 
 import enums.{CalcStatus, Crystallised, Estimate}
-import play.api.http.Status
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -29,27 +28,27 @@ object CalculationErrorModel {
   implicit val format: Format[CalculationErrorModel] = Json.format[CalculationErrorModel]
 }
 
-case class CalculationModel(calcID: String,
-                            calcAmount: Option[BigDecimal],
-                            calcTimestamp: Option[String],
-                            crystallised: Option[Boolean],
-                            incomeTaxNicYtd: Option[BigDecimal],
-                            incomeTaxNicAmount: Option[BigDecimal],
-                            calculationDataModel: Option[CalculationDataModel] = None
+case class CalculationModel(calcID: String, // not in new model
+                            calcAmount: Option[BigDecimal], // calculation.totalIncomeTaxAndNicsDue
+                            calcTimestamp: Option[String], // calculation.timestamp
+                            crystallised: Option[Boolean], // calculation.crystallised
+                            incomeTaxNicYtd: Option[BigDecimal], // calculation.totalIncomeTaxNicsCharged
+                            incomeTaxNicAmount: Option[BigDecimal], // calculation.eoyEstimate.incomeTaxNicAmount
+                            calculationDataModel: Option[CalculationDataModel] = None // see within
                            ) extends CalculationResponseModel with CrystallisedViewModel {
 
   val displayAmount: Option[BigDecimal] = (calcAmount, incomeTaxNicYtd) match {
-    case (_, Some(result))    => Some(result)
+    case (_, Some(result)) => Some(result)
     case (Some(result), None) => Some(result)
-    case (None, None)         => None
+    case (None, None) => None
   }
 
   val isBill: Boolean = crystallised.getOrElse(false)
-  val status: CalcStatus = if(isBill) Crystallised else Estimate
+  val status: CalcStatus = if (isBill) Crystallised else Estimate
 }
 
 case class CalculationResponseModelWithYear(model: CalculationResponseModel, year: Int) {
-  
+
   val isError: Boolean = model match {
     case CalculationErrorModel(status, _) if status >= 500 => true
     case _ => false
@@ -71,11 +70,11 @@ object CalculationModel {
 
   implicit val reads: Reads[CalculationModel] = (
     (JsPath \\ "calcOutput" \ "calcID").read[String] and
-    (JsPath \\ "calcOutput" \ "calcAmount").readNullable[BigDecimal] and
-    (JsPath \\ "calcOutput" \ "calcTimestamp").readNullable[String] and
-    (JsPath \\ "calcOutput" \ "crystallised").readNullable[Boolean] and
-    (JsPath \\ "calcOutput" \ "calcResult" \ "incomeTaxNicYtd").readNullable[BigDecimal].orElse(Reads.pure(None))  and
-    (JsPath \\ "calcOutput" \ "calcResult" \ "eoyEstimate" \ "incomeTaxNicAmount").readNullable[BigDecimal].orElse(Reads.pure(None)) and
+      (JsPath \\ "calcOutput" \ "calcAmount").readNullable[BigDecimal] and
+      (JsPath \\ "calcOutput" \ "calcTimestamp").readNullable[String] and
+      (JsPath \\ "calcOutput" \ "crystallised").readNullable[Boolean] and
+      (JsPath \\ "calcOutput" \ "calcResult" \ "incomeTaxNicYtd").readNullable[BigDecimal].orElse(Reads.pure(None)) and
+      (JsPath \\ "calcOutput" \ "calcResult" \ "eoyEstimate" \ "incomeTaxNicAmount").readNullable[BigDecimal].orElse(Reads.pure(None)) and
       JsPath.read[CalculationDataModel].map(x => Option(x)).orElse(Reads.pure(None))
-  ) (CalculationModel.apply _)
+    ) (CalculationModel.apply _)
 }

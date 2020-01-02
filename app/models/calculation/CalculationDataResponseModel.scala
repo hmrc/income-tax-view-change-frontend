@@ -25,87 +25,103 @@ import play.api.libs.json.{Json, _}
 sealed trait CalculationDataResponseModel
 
 case class CalculationDataModel(
-                                 nationalRegime: Option[String] = None,
-                                 totalTaxableIncome: BigDecimal,
-                                 totalIncomeTaxNicYtd: BigDecimal,
-                                 annualAllowances: AnnualAllowances,
-                                 taxReliefs: BigDecimal,
-                                 totalIncomeAllowancesUsed: BigDecimal,
-                                 giftOfInvestmentsAndPropertyToCharity: BigDecimal,
-                                 incomeReceived: IncomeReceivedModel,
-                                 savingsAndGains: SavingsAndGainsModel,
-                                 dividends: DividendsModel,
-                                 giftAid : GiftAidModel,
-                                 nic: NicModel,
-                                 eoyEstimate: Option[EoyEstimate] = None,
-                                 payAndPensionsProfit: PayPensionsProfitModel = PayPensionsProfitModel(0, 0, Seq())
+                                 nationalRegime: Option[String] = None, // calculation.nationalRegime
+                                 totalTaxableIncome: BigDecimal, // calculation.totalTaxableIncome
+                                 totalIncomeTaxNicYtd: BigDecimal, // calculation.totalIncomeTaxNicsCharged
+                                 annualAllowances: AnnualAllowances, // see within
+                                 taxReliefs: BigDecimal, // calculation.allowancesAndDeductions.totalAllowancesDeductionsReliefs
+                                 totalIncomeAllowancesUsed: BigDecimal, // not used anymore
+                                 giftOfInvestmentsAndPropertyToCharity: BigDecimal, // calculation.allowancesAndDeductions.giftOfInvestmentsAndPropertyToCharity
+                                 incomeReceived: IncomeReceivedModel, // see within
+                                 savingsAndGains: SavingsAndGainsModel, // see within
+                                 dividends: DividendsModel, // see within
+                                 giftAid: GiftAidModel, // see within
+                                 nic: NicModel, // see within
+                                 eoyEstimate: Option[EoyEstimate] = None, // see within
+                                 payAndPensionsProfit: PayPensionsProfitModel = PayPensionsProfitModel(0, 0, Seq()) // see within
                                ) extends CalculationDataResponseModel
 
-case class IncomeReceivedModel(selfEmployment: BigDecimal,
-                               ukProperty: BigDecimal,
-                               bankBuildingSocietyInterest: BigDecimal,
-                               ukDividends: BigDecimal
+case class IncomeReceivedModel(selfEmployment: BigDecimal, // calculation.payPensionsProfit.totalSelfEmploymentProfit
+                               ukProperty: BigDecimal, // calculation.payPensionsProfit.totalPropertyProfit
+                               bankBuildingSocietyInterest: BigDecimal, // calculation.savingsAndGains.taxableIncome
+                               ukDividends: BigDecimal // calculation.dividends.taxableIncome
                               )
 
-case class PayPensionsProfitModel(totalAmount: BigDecimal,
-                                  taxableIncome: BigDecimal,
-                                  payAndPensionsProfitBands: Seq[TaxBandModel])
+case class PayPensionsProfitModel(
+                                   totalAmount: BigDecimal, // calculation.payPensionsProfit.incomeTaxAmount
+                                   taxableIncome: BigDecimal, // calculation.payPensionsProfit.taxableIncome
+                                   payAndPensionsProfitBands: Seq[TaxBandModel] // calculation.payPensionsProfit.bands
+                                 )
 
-case class SavingsAndGainsModel(total: BigDecimal,
-                                taxableIncome: BigDecimal,
-                                bands: Seq[BandModel]) {
+case class SavingsAndGainsModel(
+                                 total: BigDecimal, // calculation.savingsAndGains.incomeTaxAmount
+                                 taxableIncome: BigDecimal, // calculation.savingsAndGains.taxableIncome
+                                 bands: Seq[BandModel] // calculation.savingsAndGains.bands
+                               ) {
   val savingsAllowance: BigDecimal = bands.filter(_.taxRate == 0).map(_.taxableIncome).sum
 }
 
 
-case class DividendsModel(totalAmount: BigDecimal,
-                          taxableIncome: BigDecimal,
-                          band: Seq[DividendsBandModel]) {
+case class DividendsModel(
+                           totalAmount: BigDecimal, // calculation.dividends.incomeTaxAmount
+                           taxableIncome: BigDecimal, // calculation.dividends.taxableIncome
+                           band: Seq[DividendsBandModel] // calculation.dividends.bands
+                         ) {
   val dividendsAllowance: BigDecimal = band.filter(_.rate == 0).map(_.income).sum
 }
 
+// TaxBand model
 case class DividendsBandModel(name: String,
                               rate: BigDecimal,
-                              threshold: Option[Int],
-                              apportionedThreshold: Option[Int],
+                              threshold: Option[Int], // not required
+                              apportionedThreshold: Option[Int], // not required
                               income: BigDecimal,
-                              amount : BigDecimal)
+                              amount: BigDecimal)
 
-case class GiftAidModel (paymentsMade: BigDecimal,
-                         rate: BigDecimal,
-                         taxableAmount: BigDecimal)
+case class GiftAidModel(paymentsMade: BigDecimal, // calculation.giftAid.payments
+                        rate: BigDecimal, // calculation.giftAid.rate
+                        taxableAmount: BigDecimal) // calculation.giftAid.giftAidTax
 
+
+// TaxBand model
 case class BandModel(taxableIncome: BigDecimal,
                      taxRate: BigDecimal,
                      taxAmount: BigDecimal,
                      name: String = "")
 
+
+// TaxBand model
 case class TaxBandModel(name: String, rate: BigDecimal, income: BigDecimal, taxAmount: BigDecimal)
 
 object TaxBandModel {
   implicit val format: Format[TaxBandModel] = Json.format[TaxBandModel]
 }
 
-case class AnnualAllowances(personalAllowance: BigDecimal, giftAidExtender: BigDecimal)
+case class AnnualAllowances(
+                             personalAllowance: BigDecimal, // calculation.allowancesAndDeductions.personalAllowance
+                             giftAidExtender: BigDecimal // no longer exists, TODO: WHAT DO?
+                           )
 
-case class NicModel(class2: BigDecimal,
-                    class4: BigDecimal)
 
-case class EoyEstimate(totalNicAmount: BigDecimal)
+case class NicModel(class2: BigDecimal, // calculation.nic.class2
+                    class4: BigDecimal) // calculation.nic.class4
+
+
+case class EoyEstimate(totalNicAmount: BigDecimal) // calculation.nic.totalNic
 
 
 object CalculationDataModel {
   val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](0.00))
   val logFieldError: JsPath => Reads[Option[String]] = _.readNullable[String] map {
-    case None => Logger.error(s"[CalculationDataResponseModel][CalculationDataModel] - National Regime field is missing from json");None
+    case None => Logger.error(s"[CalculationDataResponseModel][CalculationDataModel] - National Regime field is missing from json"); None
     case data => data
   }
 
   implicit val reads: Reads[CalculationDataModel] = (
-      logFieldError(__ \ "calcOutput" \ "calcResult" \ "nationalRegime") and
+    logFieldError(__ \ "calcOutput" \ "calcResult" \ "nationalRegime") and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "totalTaxableIncome") and
       (__ \ "calcOutput" \ "calcResult" \ "incomeTaxNicYtd").read[BigDecimal] and
-        __.read[AnnualAllowances] and
+      __.read[AnnualAllowances] and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "totalAllowancesAndReliefs") and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "totalIncomeAllowancesUsed") and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "taxableIncome" \ "allowancesAndDeductions" \ "giftOfInvestmentsAndPropertyToCharity") and
@@ -114,13 +130,13 @@ object CalculationDataModel {
       __.read[DividendsModel] and
       __.read[GiftAidModel] and
       __.read[NicModel] and
-        (__ \ "calcOutput" \ "calcResult" \ "eoyEstimate").readNullable[EoyEstimate].orElse(Reads.pure(None)) and
+      (__ \ "calcOutput" \ "calcResult" \ "eoyEstimate").readNullable[EoyEstimate].orElse(Reads.pure(None)) and
       __.read[PayPensionsProfitModel]
     ) (CalculationDataModel.apply _)
 
   implicit val writes: Writes[CalculationDataModel] = (
     (__ \ "nationalRegime").writeNullable[String] and
-    (__ \ "totalTaxableIncome").write[BigDecimal] and
+      (__ \ "totalTaxableIncome").write[BigDecimal] and
       (__ \ "totalIncomeTaxNicYtd").write[BigDecimal] and
       (__ \ "annualAllowances").write[AnnualAllowances] and
       (__ \ "taxReliefs").write[BigDecimal] and
@@ -133,21 +149,21 @@ object CalculationDataModel {
       (__ \ "nic").write[NicModel] and
       (__ \ "eoyEstimate").writeNullable[EoyEstimate] and
       (__ \ "incomeTax" \ "payPensionsProfit").write[PayPensionsProfitModel]
-    )(unlift(CalculationDataModel.unapply))
+    ) (unlift(CalculationDataModel.unapply))
 }
 
 object AnnualAllowances {
   implicit val reads: Reads[AnnualAllowances] = (
-    defaultZero(__ \  "calcOutput" \ "calcResult" \ "annualAllowances" \ "personalAllowance") and
-      defaultZero(__ \  "calcOutput" \ "calcResult" \ "annualAllowances" \ "giftAidExtender")
-    )(AnnualAllowances.apply _)
+    defaultZero(__ \ "calcOutput" \ "calcResult" \ "annualAllowances" \ "personalAllowance") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "annualAllowances" \ "giftAidExtender")
+    ) (AnnualAllowances.apply _)
   implicit val writes: Writes[AnnualAllowances] = Json.writes[AnnualAllowances]
 }
 
 
 object GiftAidModel {
   implicit val reads: Reads[GiftAidModel] = (
-    defaultZero(__ \  "calcOutput" \ "calcResult" \ "incomeTax" \ "giftAid" \ "paymentsMade") and
+    defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "giftAid" \ "paymentsMade") and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "giftAid" \ "rate") and
       defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "giftAid" \ "taxableIncome")
     ) (GiftAidModel.apply _)
@@ -166,9 +182,9 @@ object IncomeReceivedModel {
 
 object SavingsAndGainsModel {
   implicit val reads: Reads[SavingsAndGainsModel] = (
-  defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "totalAmount") and
-    defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "taxableIncome") and
-    (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "band").read[Seq[BandModel]].orElse(Reads.pure(Seq.empty[BandModel]))
+    defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "totalAmount") and
+      defaultZero(__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "taxableIncome") and
+      (__ \ "calcOutput" \ "calcResult" \ "incomeTax" \ "savingsAndGains" \ "band").read[Seq[BandModel]].orElse(Reads.pure(Seq.empty[BandModel]))
     ) (SavingsAndGainsModel.apply _)
   implicit val writes: Writes[SavingsAndGainsModel] = Json.writes[SavingsAndGainsModel]
 }
