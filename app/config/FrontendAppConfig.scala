@@ -54,6 +54,9 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   //ITVC Protected Service
   lazy val itvcProtectedService: String = baseUrl("income-tax-view-change")
 
+  //Individual Calculation Service
+  lazy val individualCalculationsService: String = baseUrl("individual-calculations")
+
   //GA
   lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
