@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
-import models.calculation.{CalculationErrorModel, CalculationResponseModel, ListCalculationItems}
+import models.calculation.{Calculation, CalculationErrorModel, CalculationResponseModel, ListCalculationItems}
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -30,11 +30,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class IndividualCalculationsConnector @Inject()(val http: HttpClient,
                                                 val config: FrontendAppConfig) extends RawResponseReads {
   val baseUrl: String = config.individualCalculationsService
-  def url(nino: String): String = s"$baseUrl/$nino/self-assessment"
+
+  def listCalculationsUrl(nino: String): String = s"$baseUrl/$nino/self-assessment"
 
   def getLatestCalculationId(nino: String, taxYear: String)(implicit headerCarrier: HeaderCarrier,
                                                             ec: ExecutionContext): Future[Either[CalculationResponseModel, String]] = {
-    http.GET[HttpResponse](url(nino), Seq(("taxYear", taxYear)))(httpReads,
+    http.GET[HttpResponse](listCalculationsUrl(nino), Seq(("taxYear", taxYear)))(httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), ec) map {
       response =>
         response.status match {
@@ -61,4 +62,33 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
         }
     }
   }
+
+  def getCalculationUrl(nino: String, calculationId: String) = s"$baseUrl/$nino/self-assessment/$calculationId"
+
+  def getCalculation(nino: String, calculationId: String)(implicit headerCarrier: HeaderCarrier,
+                                                          ec: ExecutionContext): Future[Either[CalculationErrorModel, Calculation]] = {
+    http.GET[HttpResponse](getCalculationUrl(nino, calculationId))(
+      httpReads,
+      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"),
+      ec
+    ) map { response =>
+      response.status match {
+        case OK => response.json.validate[Calculation].fold(
+          invalid => {
+            Logger.error(s"[IndividualCalculationsConnector][getCalculation] - Json validation error parsing calculation response, error $invalid")
+            Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response"))
+          },
+          valid => Right(valid)
+        )
+        case status =>
+          if (status >= INTERNAL_SERVER_ERROR) {
+            Logger.error(s"[IndividualCalculationsConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[IndividualCalculationsConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
+          }
+          Left(CalculationErrorModel(response.status, response.body))
+      }
+    }
+  }
+
 }
