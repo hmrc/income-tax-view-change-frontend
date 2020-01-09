@@ -34,6 +34,9 @@ DELETE      /report-quarterly/income-and-expenses/view/test-only/all-data/proxy 
 GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       @testOnly.controllers.FeatureSwitchController.featureSwitch
 POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       @testOnly.controllers.FeatureSwitchController.submitFeatureSwitch
 
+GET         /report-quarterly/income-and-expenses/view/test-only/test-headers                         @testOnly.controllers.TestHeadersController.showTestHeaders
+POST        /report-quarterly/income-and-expenses/view/test-only/test-headers                         @testOnly.controllers.TestHeadersController.submitTestHeaders
+
 GET         /report-quarterly/income-and-expenses/view/test-only/bta-partial                          @testOnly.controllers.TestBTAPartialController.viewBTAPartial
 
 GET         /report-quarterly/income-and-expenses/view/test-only/financial-transactions/:regime/:mtditid   @testOnly.controllers.FinancialTransactionsProxyController.getFinancialData(regime: String, mtditid: String, onlyOpenItems: Option[String], dateFrom: Option[String], dateTo: Option[String], includeLocks: Option[String], calculateAccruedInterest: Option[String], customerPaymentInfo: Option[String])
