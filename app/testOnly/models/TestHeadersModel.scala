@@ -32,8 +32,9 @@ object TestHeadersModel {
     "SCOT_SE_DIVIDENDS_EXAMPLE" -> "Scottish Self Employed with Dividends",
     "UK_SE_GIFTAID_EXAMPLE" -> "Self-Employed with Giftaid",
     "UK_SE_SAVINGS_EXAMPLE" -> "Self Employed with Savings",
-    "ERROR_MESSAGES_EXIST" -> "Errored Calculation",
-    "NOT_FOUND" -> "Calculation Not Found"
+    "ERROR_MESSAGES_EXIST" -> "Failed Calculation",
+    "NOT_FOUND" -> "Calculation Not Found",
+    "CRYSTALLISATION_METADATA" -> "Crystallised Calculation"
   )
 
 }
