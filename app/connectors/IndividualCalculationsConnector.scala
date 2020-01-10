@@ -21,6 +21,7 @@ import javax.inject.{Inject, Singleton}
 import models.calculation.{Calculation, CalculationErrorModel, CalculationResponseModel, ListCalculationItems}
 import play.api.Logger
 import play.api.http.Status._
+import testOnly.models.TestHeadersModel
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -35,8 +36,15 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
 
   def getLatestCalculationId(nino: String, taxYear: String)(implicit headerCarrier: HeaderCarrier,
                                                             ec: ExecutionContext): Future[Either[CalculationResponseModel, String]] = {
+
+    val headerCarrierVal = {
+      if (headerCarrier.headers.exists(header => header._1 == "Gov-Test-Scenario" && !TestHeadersModel.validCalcIdHeaders.contains(header._2)))
+        headerCarrier.withExtraHeaders("Gov-Test-Scenario" -> "DEFAULT")
+      else headerCarrier
+    }
+
     http.GET[HttpResponse](listCalculationsUrl(nino), Seq(("taxYear", taxYear)))(httpReads,
-      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), ec) map {
+      headerCarrierVal.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), ec) map {
       response =>
         response.status match {
           case OK => response.json.validate[ListCalculationItems].fold(

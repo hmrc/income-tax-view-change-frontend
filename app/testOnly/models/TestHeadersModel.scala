@@ -37,4 +37,5 @@ object TestHeadersModel {
     "CRYSTALLISATION_METADATA" -> "Crystallised Calculation"
   )
 
+  val validCalcIdHeaders: Seq[String] = Seq("DEFAULT", "NOT_FOUND")
 }
