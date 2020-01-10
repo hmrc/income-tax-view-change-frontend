@@ -17,7 +17,8 @@
 package services
 
 import config.FrontendAppConfig
-import connectors.IncomeTaxViewChangeConnector
+import connectors.{IncomeTaxViewChangeConnector, IndividualCalculationsConnector}
+import enums.{Crystallised, Estimate}
 import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
@@ -27,19 +28,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class CalculationService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+class CalculationService @Inject()(val individualCalculationsConnector: IndividualCalculationsConnector,
                                    val frontendAppConfig: FrontendAppConfig) {
 
   def getCalculationDetail(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
     for {
-      lastCalc <- getLatestCalculation(nino, taxYear)
+      calcIdOrError <- getCalculationId(nino, taxYear)
+      lastCalc <- getLatestCalculation(nino, calcIdOrError)
     } yield lastCalc match {
-      case calc: CalculationModel if calc.calculationDataModel.isDefined =>
+      case calc: Calculation =>
         Logger.debug("[CalculationService] Retrieved all Financial Data")
-        CalcDisplayModel(calc.calcTimestamp.getOrElse(""), calc.calcAmount.getOrElse(0.0), calc.calculationDataModel, calc.status)
-      case calc: CalculationModel =>
-        Logger.warn("[CalculationService] Could not retrieve Calculation Breakdown. Returning partial Calc Display Model")
-        CalcDisplayModel(calc.calcTimestamp.getOrElse(""), calc.calcAmount.getOrElse(0.0), None, calc.status)
+        CalcDisplayModel(calc.timestamp.getOrElse(""), calc.totalIncomeTaxAndNicsDue.getOrElse(0.0), calc, if (calc.crystallised) Crystallised else Estimate)
       case _: CalculationErrorModel =>
         Logger.error("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
@@ -50,16 +49,33 @@ class CalculationService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
                               (implicit headerCarrier: HeaderCarrier): Future[List[CalculationResponseModelWithYear]] = {
     Future.sequence(
       orderedYears.map { year =>
-        getLatestCalculation(nino, year).map {
-          model => CalculationResponseModelWithYear(model, year)
-        }
+        for {
+          calcIdOrError <- getCalculationId(nino, year)
+          lastCalc <- getLatestCalculation(nino, calcIdOrError)
+        } yield CalculationResponseModelWithYear(lastCalc, year)
       }
     )
   }
 
-  def getLatestCalculation(nino: String, taxYear: Int)
+  def getLatestCalculation(nino: String, calcIdOrResponse: Either[CalculationResponseModel, String])
                           (implicit headerCarrier: HeaderCarrier): Future[CalculationResponseModel] = {
-    Logger.debug("[CalculationService][getLatestCalculation] - Requesting latest calc data from the backend")
-    incomeTaxViewChangeConnector.getLatestCalculation(nino, taxYear)
+    calcIdOrResponse match {
+      case Left(error) => Future.successful(error)
+      case Right(calcId) =>
+        Logger.debug("[CalculationService][getLatestCalculation] - Requesting calc data from the backend")
+        individualCalculationsConnector.getCalculation(nino, calcId)
+    }
+  }
+
+  def getCalculationId(nino: String, taxYear: Int)
+                      (implicit headerCarrier: HeaderCarrier): Future[Either[CalculationResponseModel, String]] = {
+    Logger.debug("[CalculationService][getCalculationId] - Requesting latest calc id from the backend")
+    individualCalculationsConnector.getLatestCalculationId(nino, taxYearIntToString(taxYear))
+  }
+
+  private def taxYearIntToString(taxYear: Int): String = {
+    val endYear = taxYear.toString
+    val startYear = (taxYear - 1).toString
+    s"$startYear-${endYear.takeRight(2)}"
   }
 }

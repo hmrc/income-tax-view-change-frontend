@@ -74,7 +74,7 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
   def getCalculationUrl(nino: String, calculationId: String) = s"$baseUrl/$nino/self-assessment/$calculationId"
 
   def getCalculation(nino: String, calculationId: String)(implicit headerCarrier: HeaderCarrier,
-                                                          ec: ExecutionContext): Future[Either[CalculationErrorModel, Calculation]] = {
+                                                          ec: ExecutionContext): Future[CalculationResponseModel] = {
     http.GET[HttpResponse](getCalculationUrl(nino, calculationId))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"),
@@ -84,9 +84,9 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
         case OK => response.json.validate[Calculation].fold(
           invalid => {
             Logger.error(s"[IndividualCalculationsConnector][getCalculation] - Json validation error parsing calculation response, error $invalid")
-            Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response"))
+            CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
           },
-          valid => Right(valid)
+          valid => valid
         )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
@@ -94,7 +94,7 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
           } else {
             Logger.warn(s"[IndividualCalculationsConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")
           }
-          Left(CalculationErrorModel(response.status, response.body))
+          CalculationErrorModel(response.status, response.body)
       }
     }
   }

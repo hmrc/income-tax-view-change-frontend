@@ -17,7 +17,7 @@
 package audit.models
 
 import auth.MtdItUser
-import models.calculation.{CalcDisplayModel, CalculationModel}
+import models.calculation.{CalcDisplayModel, Calculation}
 import models.incomeSourceDetails.BusinessDetailsModel
 
 object BillsAuditing {
@@ -37,16 +37,16 @@ object BillsAuditing {
       "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.end}"),
       "propAccPeriodStart" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.start}"),
       "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}"),
-      "currentBill" -> dataModel.calcDataModel.fold(dataModel.calcAmount)(_.totalIncomeTaxNicYtd).toString
+      "currentBill" -> dataModel.calcAmount.toString()
     )
   }
 
-  case class BasicBillsAuditModel[A](user: MtdItUser[A], dataModel: CalculationModel) extends AuditModel {
+  case class BasicBillsAuditModel[A](user: MtdItUser[A], dataModel: Calculation) extends AuditModel {
 
     override val auditType: String = "billsPageView"
     override val transactionName: String = "view-bills-page"
 
-    val billAmount: Seq[(String, String)] = dataModel.displayAmount match {
+    val billAmount: Seq[(String, String)] = dataModel.totalIncomeTaxAndNicsDue match {
       case Some(amount) => Seq("currentBill" -> amount.toString)
       case None => Seq.empty
     }

@@ -21,16 +21,14 @@
 
 @(calcModel: CalcDisplayModel, transactionModel: Option[TransactionModel], taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
-@defining(calcModel.calcDataModel.get) { breakdown =>
-
     <div class="form-group">
         <h2 id="how-calculated" class="heading">
             @if(calcModel.calcStatus == Estimate) {
-                <span id="how-estimate-calculated">@messages("calc-breakdown.how-estimate-calculated", breakdown.totalIncomeTaxNicYtd.toCurrencyString)</span>
+                <span id="how-estimate-calculated">@messages("calc-breakdown.how-estimate-calculated",calcModel.calcAmount.toCurrencyString)</span>
             } else {
                 <span id="how-bill-calculated">@messages("calc-breakdown.how-bill-calculated")</span>
             }
-            @breakdown.nationalRegime.map { regime =>
+            @calcModel.calcDataModel.nationalRegime.map { regime =>
                 <span id="national-regime" class="form-hint">@messages("calc-breakdown.national-regime", messages(regime))</span>
             }
         </h2>
@@ -41,97 +39,97 @@
         <div id="income-subheading" class="form-hint">@messages("calc-breakdown.income.sub-heading")</div>
     </div>
 
-    @if(breakdown.incomeReceived.selfEmployment > 0) {
+    @if(calcModel.calcDataModel.payPensionsProfit.totalSelfEmploymentProfit.exists(_ > 0)) {
         <div id="business-profit-section" class="grid-row">
             <div class="column-half">
                 <p id="business-profit-label">@messages("calc-breakdown.income.business-profit")</p>
             </div>
             <div class="column-half">
-                <p id="business-profit-data" class="summary-data">@breakdown.incomeReceived.selfEmployment.toCurrency</p>
+                <p id="business-profit-data" class="summary-data">@calcModel.calcDataModel.payPensionsProfit.totalSelfEmploymentProfit.get.toCurrency</p>
             </div>
         </div>
     }
 
-    @if(breakdown.incomeReceived.ukProperty > 0) {
+    @if(calcModel.calcDataModel.payPensionsProfit.totalPropertyProfit.exists(_ > 0)) {
         <!-- Income from Property -->
         <div id="property-income-section" class="grid-row">
             <div class="column-half">
                 <p id="property-income-label">@messages("calc-breakdown.income.property")</p>
             </div>
             <div class="column-half">
-                <p id="property-income-data" class="summary-data">@breakdown.incomeReceived.ukProperty.toCurrency</p>
+                <p id="property-income-data" class="summary-data">@calcModel.calcDataModel.payPensionsProfit.totalPropertyProfit.get.toCurrency</p>
             </div>
         </div>
     }
 
-    @if(breakdown.incomeReceived.ukDividends > 0) {
+    @if(calcModel.calcDataModel.dividends.taxableIncome.exists(_ > 0)) {
         <!-- Income from dividends -->
         <div id="dividend-income-section" class="grid-row">
             <div class="column-half">
                 <p id="dividend-income-label">@messages("calc-breakdown.income.dividends")</p>
             </div>
             <div class="column-half">
-                <p id="dividend-income-data" class="summary-data">@breakdown.incomeReceived.ukDividends.toCurrency</p>
+                <p id="dividend-income-data" class="summary-data">@calcModel.calcDataModel.dividends.taxableIncome.get.toCurrency</p>
             </div>
         </div>
     }
 
-    @if(breakdown.incomeReceived.bankBuildingSocietyInterest > 0) {
+    @if(calcModel.calcDataModel.savingsAndGains.taxableIncome.exists(_ > 0)) {
         <!-- Income from Savings -->
         <div id="savings-income-section" class="grid-row">
             <div class="column-half">
                 <p id="savings-income-label">@messages("calc-breakdown.income.savings")</p>
             </div>
             <div class="column-half">
-                <p id="savings-income-data" class="summary-data">@breakdown.incomeReceived.bankBuildingSocietyInterest.toCurrency</p>
+                <p id="savings-income-data" class="summary-data">@calcModel.calcDataModel.savingsAndGains.taxableIncome.get.toCurrency</p>
             </div>
         </div>
     }
 
-    @if(breakdown.annualAllowances.personalAllowance > 0) {
+    @if(calcModel.calcDataModel.allowancesAndDeductions.personalAllowance.exists(_ > 0)) {
         <!-- Deduction - Personal Allowance -->
         <div id="personal-allowance-section" class="grid-row">
             <div class="column-half">
                 <p id="personal-allowance-label">@messages("calc-breakdown.income.personal-allowance")</p>
             </div>
             <div class="column-half">
-                <p id="personal-allowance-data" class="summary-data panel-right">@breakdown.annualAllowances.personalAllowance.toCurrency</p>
+                <p id="personal-allowance-data" class="summary-data panel-right">@calcModel.calcDataModel.allowancesAndDeductions.personalAllowance.get.toCurrency</p>
             </div>
         </div>
     }
 
-    @if(breakdown.dividends.dividendsAllowance > 0) {
+    @if(calcModel.calcDataModel.dividends.dividendsAllowance > 0) {
         <!-- Deduction - Dividends Allowance -->
         <div id="dividends-allowance-section" class="grid-row">
             <div class="column-half">
                 <p id="dividends-allowance-label">@messages("calc-breakdown.income.dividends-allowance")</p>
             </div>
             <div class="column-half">
-                <p id="dividends-allowance-data" class="summary-data panel-right">@breakdown.dividends.dividendsAllowance.toCurrency</p>
+                <p id="dividends-allowance-data" class="summary-data panel-right">@calcModel.calcDataModel.dividends.dividendsAllowance.toCurrency</p>
             </div>
         </div>
     }
 
-    @if(breakdown.savingsAndGains.savingsAllowance > 0) {
+    @if(calcModel.calcDataModel.savingsAndGains.savingsAllowance > 0) {
         <!-- Deduction - Savings Allowance -->
         <div id="savings-allowance-section" class="grid-row">
             <div class="column-half">
                 <p id="savings-allowance-label">@messages("calc-breakdown.income.savings-allowance")</p>
             </div>
             <div class="column-half">
-                <p id="savings-allowance-data" class="summary-data panel-right">@breakdown.savingsAndGains.savingsAllowance.toCurrency</p>
+                <p id="savings-allowance-data" class="summary-data panel-right">@calcModel.calcDataModel.savingsAndGains.savingsAllowance.toCurrency</p>
             </div>
         </div>
     }
 
-    @if(breakdown.giftOfInvestmentsAndPropertyToCharity > 0) {
+    @if(calcModel.calcDataModel.allowancesAndDeductions.giftOfInvestmentsAndPropertyToCharity.exists(_ > 0)) {
         <!-- Deduction - gifts to investments and property to charity -->
         <div id="gift-investment-property-section" class="grid-row">
             <div class="column-half">
                 <p id="gift-investment-property-label">@messages("calc-breakdown.income.gift-investment-property-to-charity")</p>
             </div>
             <div class="column-half">
-                <p id="gift-investment-property-data" class="summary-data panel-right">@breakdown.giftOfInvestmentsAndPropertyToCharity.toCurrency</p>
+                <p id="gift-investment-property-data" class="summary-data panel-right">@calcModel.calcDataModel.allowancesAndDeductions.giftOfInvestmentsAndPropertyToCharity.get.toCurrency</p>
             </div>
         </div>
     }
@@ -142,14 +140,14 @@
                 <p id="estimate-total-taxable-income-label" class="bold">@messages("calc-breakdown.income.estimated-total-taxable-income")</p>
             </div>
             <div class="column-half">
-                <p id="estimate-total-taxable-income-data" class="summary-data bold">@breakdown.totalTaxableIncome.toCurrency</p>
+                <p id="estimate-total-taxable-income-data" class="summary-data bold">@calcModel.calcDataModel.totalTaxableIncome.getOrElse(BigDecimal(0)).toCurrency</p>
             </div>
         } else {
             <div class="column-half">
                 <p id="total-taxable-income-label" class="bold">@messages("calc-breakdown.income.total-taxable-income")</p>
             </div>
             <div class="column-half">
-                <p id="total-taxable-income-data" class="summary-data bold">@breakdown.totalTaxableIncome.toCurrency</p>
+                <p id="total-taxable-income-data" class="summary-data bold">@calcModel.calcDataModel.totalTaxableIncome.getOrElse(BigDecimal(0)).toCurrency</p>
             </div>
         }
     </div>
@@ -159,13 +157,13 @@
 
     <div class="form-group">
         <h3 id="calculation-heading" class="heading-small">@messages("calc-breakdown.calculation.heading")</h3>
-        <div id="calculation-subheading" class="form-hint">@messages("calc-breakdown.calculation.subheading", breakdown.totalTaxableIncome.toCurrencyString)</div>
-        @if(breakdown.annualAllowances.giftAidExtender > 0) {
-            <div id="gift-aid-extender" class="form-hint">@messages("calc-breakdown.calculation.gift-aid-extender", breakdown.annualAllowances.giftAidExtender.toCurrencyString)</div>
+        <div id="calculation-subheading" class="form-hint">@messages("calc-breakdown.calculation.subheading",calcModel.calcDataModel.totalTaxableIncome.getOrElse(BigDecimal(0)).toCurrencyString)</div>
+        @if(calcModel.calcDataModel.giftAid.giftAidTax.exists(_ > 0)) {
+            <div id="gift-aid-extender" class="form-hint">@messages("calc-breakdown.calculation.gift-aid-extender",calcModel.calcDataModel.giftAid.giftAidTax.get.toCurrencyString)</div>
         }
     </div>
 
-    @for(band <- breakdown.payAndPensionsProfit.payAndPensionsProfitBands if band.income > 0) {
+    @for(band <-calcModel.calcDataModel.payPensionsProfit.bands if band.income > 0) {
         <!-- Income tax band -->
         <div id="income-tax-band-@{band.name}-section" class="grid-row">
             <div class="column-half">
@@ -177,23 +175,23 @@
         </div>
     }
 
-    @for(band <- breakdown.dividends.band if band.income > 0) {
+    @for(band <-calcModel.calcDataModel.dividends.bands if band.income > 0) {
         <!-- Dividend band -->
         <div id="dividend-tax-band-@{band.name}-section" class="grid-row">
             <div class="column-half">
                 <p id="dividend-tax-band-@{band.name}-label">@messages("calc-breakdown.calculation.dividend", band.income.toCurrencyString, band.rate.toString)</p>
             </div>
             <div class="column-half">
-                <p id="dividend-tax-band-@{band.name}-data" class="summary-data">@band.amount.toCurrency</p>
+                <p id="dividend-tax-band-@{band.name}-data" class="summary-data">@band.taxAmount.toCurrency</p>
             </div>
         </div>
     }
 
-    @for(band <- breakdown.savingsAndGains.bands if band.taxableIncome > 0) {
+    @for(band <-calcModel.calcDataModel.savingsAndGains.bands if band.income > 0) {
         <!-- Savings and Gains band -->
         <div id="savings-tax-band-@{band.name}-section" class="grid-row">
             <div class="column-half">
-                <p id="savings-tax-band-@{band.name}-label">@messages("calc-breakdown.calculation.savings", band.taxableIncome.toCurrencyString, band.taxRate.toString)</p>
+                <p id="savings-tax-band-@{band.name}-label">@messages("calc-breakdown.calculation.savings", band.income.toCurrencyString, band.rate.toString)</p>
             </div>
             <div class="column-half">
                 <p id="savings-tax-band-@{band.name}-data" class="summary-data">@band.taxAmount.toCurrency</p>
@@ -201,38 +199,38 @@
         </div>
     }
 
-    @if(breakdown.nic.class2 > 0) {
+    @if(calcModel.calcDataModel.nic.class2.exists(_ > 0)) {
         <!-- Class 2 National Insurance -->
         <div id="nic-class2-section" class="grid-row">
             <div class="column-half">
                 <p id="nic-class2-label">@messages("calc-breakdown.calculation.class-two-ni")</p>
             </div>
             <div class="column-half">
-                <p id="nic-class2-data" class="summary-data">@breakdown.nic.class2.toCurrency</p>
+                <p id="nic-class2-data" class="summary-data">@calcModel.calcDataModel.nic.class2.get.toCurrency</p>
             </div>
         </div>
     }
 
-    @if(breakdown.nic.class4 > 0) {
+    @if(calcModel.calcDataModel.nic.class4.exists(_ > 0)) {
         <!-- Class 4 National Insurance -->
         <div id="nic-class4-section" class="grid-row">
             <div class="column-half">
                 <p id="nic-class4-label">@messages("calc-breakdown.calculation.class-four-ni")</p>
             </div>
             <div class="column-half">
-                <p id="nic-class4-data" class="summary-data">@breakdown.nic.class4.toCurrency</p>
+                <p id="nic-class4-data" class="summary-data">@calcModel.calcDataModel.nic.class4.get.toCurrency</p>
             </div>
         </div>
     }
 
-    @if(breakdown.taxReliefs > 0) {
+    @if(calcModel.calcDataModel.allowancesAndDeductions.totalAllowancesDeductionsReliefs.exists(_ > 0)) {
         <!-- Tax Reliefs -->
         <div id="tax-reliefs-section" class="grid-row">
             <div class="column-half">
                 <p id="tax-reliefs-label">@messages("calc-breakdown.calculation.tax-relief")</p>
             </div>
             <div class="column-half">
-                <p id="tax-reliefs-data" class="summary-data panel-right">@breakdown.taxReliefs.toCurrency</p>
+                <p id="tax-reliefs-data" class="summary-data panel-right">@calcModel.calcDataModel.allowancesAndDeductions.totalAllowancesDeductionsReliefs.get.toCurrency</p>
             </div>
         </div>
     }
@@ -263,7 +261,7 @@
                 <p id="your-total-estimate-label" class="bold">@messages("calc-breakdown.calculation.total-estimated-tax")</p>
             </div>
             <div class="column-half">
-                <p id="your-total-estimate-data" class="summary-data bold">@breakdown.totalIncomeTaxNicYtd.toCurrency</p>
+                <p id="your-total-estimate-data" class="summary-data bold">@calcModel.calcAmount.toCurrency</p>
             </div>
         } else {
             <div class="column-half">
@@ -277,5 +275,3 @@
             </div>
         }
     </div>
-
-}
