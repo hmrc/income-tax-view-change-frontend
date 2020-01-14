@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package testOnly
+package testOnly.forms
 
-import javax.inject.{Inject, Singleton}
+import play.api.data.Form
+import play.api.data.Forms._
+import testOnly.models.UserModel
+import testOnly.forms.validation.Constraints._
 
-import config.FrontendAppConfig
-import play.api.{Configuration, Environment}
+object UserModelForm {
 
-@Singleton
-class TestOnlyAppConfig @Inject()(env: Environment, config: Configuration) extends FrontendAppConfig(env, config) {
-
-  lazy val dynamicStubUrl: String = baseUrl("itvc-dynamic-stub")
-  lazy val desSimulatorUrl: String = baseUrl("des-simulator")
-
+  val userModelForm: Form[UserModel] = Form(
+    mapping(
+      "mtdItId" -> text.verifying(nonEmpty("Must have an MTDID")),
+      "nino" -> text.verifying(nonEmpty("Must have a NINO"))
+    )(UserModel.apply)(UserModel.unapply)
+  )
 }

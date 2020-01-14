@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package testOnly
+package testOnly.models
 
-import javax.inject.{Inject, Singleton}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, OFormat}
 
-import config.FrontendAppConfig
-import play.api.{Configuration, Environment}
+case class UserModel(mtdItId: String, nino: String)
 
-@Singleton
-class TestOnlyAppConfig @Inject()(env: Environment, config: Configuration) extends FrontendAppConfig(env, config) {
-
-  lazy val dynamicStubUrl: String = baseUrl("itvc-dynamic-stub")
-  lazy val desSimulatorUrl: String = baseUrl("des-simulator")
-
+object UserModel {
+  implicit val formats: OFormat[UserModel] = (
+    (JsPath \ "mtdItId" \ "mtdItId").format[String] and
+      (JsPath \ "nino" \ "nino").format[String]
+    ) (UserModel.apply, unlift(UserModel.unapply))
 }
