@@ -31,6 +31,12 @@ POST        /report-quarterly/income-and-expenses/view/test-only/stub-data/proxy
 # NOCSRF
 DELETE      /report-quarterly/income-and-expenses/view/test-only/all-data/proxy                       @testOnly.controllers.StubDataController.deleteAllProxy
 
+GET         /report-quarterly/income-and-expenses/view/test-only/add-user                             @testOnly.controllers.StubUsersController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/add-user                             @testOnly.controllers.StubUsersController.submit
+
+# NOCSRF
+POST        /report-quarterly/income-and-expenses/view/test-only/add-user/proxy                       @testOnly.controllers.StubUsersController.stubUsers
+
 GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       @testOnly.controllers.FeatureSwitchController.featureSwitch
 POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       @testOnly.controllers.FeatureSwitchController.submitFeatureSwitch
 
