@@ -17,7 +17,7 @@
 package services
 
 import config.FrontendAppConfig
-import connectors.{IncomeTaxViewChangeConnector, IndividualCalculationsConnector}
+import connectors.IndividualCalculationsConnector
 import enums.{Crystallised, Estimate}
 import javax.inject.{Inject, Singleton}
 import models.calculation._

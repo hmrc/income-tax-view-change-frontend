@@ -15,17 +15,19 @@
  */
 package controllers
 
+import java.time.LocalDateTime
+
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse , singleBusinessResponse}
+import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse}
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{IncomeTaxViewChangeStub,FinancialTransactionsStub}
+import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
 import implicits.ImplicitDateFormatter
+import models.calculation.{CalculationItem, ListCalculationItems}
 import play.api.http.Status._
-import play.api.libs.json.JsValue
 
 class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
@@ -42,8 +44,24 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
-        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponseCrystallised)
-        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, taxCalculationResponseCrystallised)
+        And("I stub a successful calculation response for 2017-18")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = crystallisedCalculationFullJson
+        )
+        And("I stub a successful calculation response for 2018-19")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
+          status = OK,
+          body = crystallisedCalculationFullJson
+        )
         FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionsJson(2000))
 
         When("I call GET /report-quarterly/income-and-expenses/view")
@@ -51,6 +69,10 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
@@ -71,8 +93,24 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, taxCalculationResponse)
+          And("I stub a successful estimated calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
+          And("I stub a successful estimated calculation response for 2018-19")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionsJson(2000))
 
           When("I call GET /report-quarterly/income-and-expenses/view")
@@ -80,6 +118,10 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
           verifyIncomeSourceDetailsCall(testMtditid)
           verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
           Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
           res should have(
@@ -98,8 +140,18 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
-          IncomeTaxViewChangeStub.stubGetLatestCalcNotFound(testNino, testYear)
-          IncomeTaxViewChangeStub.stubGetLatestCalcNotFound(testNino, testYearPlusOne)
+          And("I stub a not found calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculationNotFound(testNino, "idOne")
+          And("I stub a not found calculation response for 2018-19")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculationNotFound(testNino, "idTwo")
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionWithoutDueDatesJson(0))
 
           When("I call GET /report-quarterly/income-and-expenses/view")
@@ -107,6 +159,10 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
           verifyIncomeSourceDetailsCall(testMtditid)
           verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
           Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
           res should have(
@@ -126,8 +182,18 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
-        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponseCrystallised)
-        IncomeTaxViewChangeStub.stubGetLatestCalcError(testNino, testYearPlusOne)
+        And("I stub an error calculation response for 2017-18")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculationError(testNino, "idOne")
+        And("I stub an error calculation response for 2018-19")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculationError(testNino, "idTwo")
         FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionWithoutDueDatesJson(0))
 
         When("I call GET /report-quarterly/income-and-expenses/view")
@@ -135,6 +201,10 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
         Then("the result should have a HTTP status of ISE (500) and the Income Tax home page")
         res should have(

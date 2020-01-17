@@ -48,7 +48,7 @@ class BillsAuditModelSpec extends TestSupport {
         "bizAccPeriodEnd" -> "2018-05-30",
         "propAccPeriodStart" -> "2017-04-06",
         "propAccPeriodEnd" -> "2018-04-05",
-        "currentBill" -> "90500.0"
+        "currentBill" -> "123.45"
       )
     }
   }

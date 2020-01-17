@@ -23,8 +23,9 @@ import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
+import enums.Estimate
 import implicits.ImplicitDateFormatter
-import models.calculation.CalculationDataModel
+import models.calculation.{CalcDisplayModel, Calculation}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.i18n.Messages.Implicits._
@@ -44,13 +45,14 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
   def multipleEstimateRequest: Request[_] = FakeRequest().withSession("singleEstimate" -> "false")
+
   def singleEstimateRequest: Request[_] = FakeRequest().withSession("singleEstimate" -> "true")
 
   class BreakdownSetup(request: Request[_] = multipleEstimateRequest, featureSwitch: Boolean = true) {
 
     mockAppConfig.features.calcBreakdownEnabled(featureSwitch)
 
-    val calcDataModel: CalculationDataModel = busPropBRTCalcDataModel
+    val calcDataModel: Calculation = busPropBRTCalcDataModel
 
     val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
       calculationDisplaySuccessModel(calcDataModel), testYear
@@ -59,7 +61,9 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
     val document: Document = Jsoup.parse(contentAsString(page))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
+
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
+
     def getLinkOfElementById(id: String): Option[String] = getElementById(id).map(_.attr("href"))
   }
 
@@ -67,14 +71,23 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
     mockAppConfig.features.calcBreakdownEnabled(featureSwitch)
 
+    val calcDisplayModel = CalcDisplayModel(
+      testTimeStampString,
+      1010.00,
+      Calculation(crystallised = false),
+      Estimate
+    )
+
     val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
-      calculationDisplayNoBreakdownModel, testYear
+      calcDisplayModel, testYear
     )(request, applicationMessages, mockAppConfig, bizAndPropertyUser)
 
     val document: Document = Jsoup.parse(contentAsString(page))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
+
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
+
     def getLinkOfElementById(id: String): Option[String] = getElementById(id).map(_.attr("href"))
   }
 
@@ -119,7 +132,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         getTextOfElementById("user-name-heading") shouldBe Some("Albert Einstein")
       }
       "has the main heading for the page" in new BreakdownSetup() {
-        getTextOfElementById("heading") shouldBe Some(s"Tax estimate for ${testYear-1} - $testYear")
+        getTextOfElementById("heading") shouldBe Some(s"Tax estimate for ${testYear - 1} - $testYear")
       }
       "has the utr reference" in new BreakdownSetup() {
         getTextOfElementById("utr-reference-heading") shouldBe Some(s"Unique Tax Reference - ${user.mtditid}")
@@ -127,7 +140,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
     }
 
     "have a subheading with information when there is no breakdown" in new NoBreakdownSetup() {
-      getTextOfElementById("inYearEstimateHeading") shouldBe Some("Current estimate: £543.21")
+      getTextOfElementById("inYearEstimateHeading") shouldBe Some("Current estimate: £1,010")
       getTextOfElementById("inYearP1") shouldBe Some("This is for 6 April 2017 to 6 July 2017.")
     }
 
@@ -141,9 +154,6 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
     }
 
     "not have a calculation breakdown" when {
-      "there is no calculation data" in new NoBreakdownSetup(featureSwitch = true) {
-        getElementById("inYearCalcBreakdown").isDefined shouldBe false
-      }
       "the calculation breakdown feature switch is disabled" in new BreakdownSetup(featureSwitch = false) {
         getElementById("inYearCalcBreakdown").isDefined shouldBe false
       }

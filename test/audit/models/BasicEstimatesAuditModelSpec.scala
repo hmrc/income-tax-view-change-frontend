@@ -46,32 +46,38 @@ class BasicEstimatesAuditModelSpec extends TestSupport {
           "mtditid" -> testMtditid,
           "nino" -> testNino,
           "annualEstimate" -> "987.65",
-          "currentEstimate" -> "123.45"
+          "currentEstimate" -> "543.21"
         )
       }
 
       "the annual estimate is unavailable" in {
-        val estimatesAuditModel = BasicEstimatesAuditModel(testMtdItUser, testCalcModelNoAnnualEstimate)
+        val estimatesAuditModel = BasicEstimatesAuditModel(testMtdItUser, calculationDataSuccessModel)
 
         estimatesAuditModel.detail shouldBe Seq(
           "mtditid" -> testMtditid,
           "nino" -> testNino,
-          "currentEstimate" -> "123.45"
+          "currentEstimate" -> "0"
         )
       }
 
       "the current estimate is unavailable" in {
-        val estimatesAuditModel = BasicEstimatesAuditModel(testMtdItUser, testCalcModelNoDisplayAmount)
+        val estimatesAuditModel = BasicEstimatesAuditModel(testMtdItUser, calculationDataSuccessModel.copy(
+          incomeTaxNicAmount = Some(1010.00),
+          totalIncomeTaxAndNicsDue = None
+        ))
 
         estimatesAuditModel.detail shouldBe Seq(
           "mtditid" -> testMtditid,
           "nino" -> testNino,
-          "annualEstimate" -> "987.65"
+          "annualEstimate" -> "1010.0"
         )
       }
 
       "no estimates are available" in {
-        val estimatesAuditModel = BasicEstimatesAuditModel(testMtdItUser, testCalcModelEmpty)
+        val estimatesAuditModel = BasicEstimatesAuditModel(testMtdItUser, calculationDataSuccessModel.copy(
+          incomeTaxNicAmount = None,
+          totalIncomeTaxAndNicsDue = None
+        ))
 
         estimatesAuditModel.detail shouldBe Seq(
           "mtditid" -> testMtditid,

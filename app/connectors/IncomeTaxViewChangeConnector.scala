@@ -47,10 +47,6 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
   val auditingService: AuditingService
   val config: FrontendAppConfig
 
-  def getLatestCalculationUrl(nino: String, taxYear: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/previous-tax-calculation/$nino/$taxYear"
-  }
-
   def getIncomeSourcesUrl(mtditid: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"
   }
@@ -65,36 +61,6 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   def getPreviousObligationsUrl(incomeSourceID: String, nino: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/$nino/income-source/$incomeSourceID/fulfilled-report-deadlines"
-  }
-
-  def getLatestCalculation(nino: String, taxYear: Int)(implicit hc: HeaderCarrier): Future[CalculationResponseModel] = {
-    val url = getLatestCalculationUrl(nino, taxYear.toString)
-    Logger.debug(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - GET $url")
-
-    http.GET[HttpResponse](url)(httpReads, hc.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), implicitly) map { response =>
-      response.status match {
-        case OK =>
-          Logger.debug(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.json}")
-          response.json.validate[CalculationModel].fold(
-            invalid => {
-              Logger.error(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Json validation error parsing calculation model response. Invalid=$invalid")
-              CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Json validation error parsing calculation model response")
-            },
-            valid => valid
-          )
-        case status =>
-          if(status >= 500) {
-            Logger.error(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.body}")
-          } else {
-            Logger.warn(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Response status: ${response.status}, json: ${response.body}")
-          }
-          CalculationErrorModel(response.status, response.body)
-      }
-    } recover {
-      case ex =>
-        Logger.error(s"[IncomeTaxViewChangeConnector][getLatestCalculation] - Unexpected future failed error, ${ex.getMessage}")
-        CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-    }
   }
 
   def getIncomeSources(mtditid: String, nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {

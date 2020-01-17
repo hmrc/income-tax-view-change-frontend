@@ -18,25 +18,27 @@ package models
 
 import assets.CalcBreakdownTestConstants
 import enums.Estimate
-import models.calculation.CalcDisplayModel
+import models.calculation.{CalcDisplayModel, Calculation}
 import org.scalatest.Matchers
 import testUtils.TestSupport
 
 class CalcDisplayModelSpec extends TestSupport with Matchers {
+
+  val calculation = Calculation(crystallised = false)
 
   "whatYouOwe" should {
 
     "display the income tax total" when {
 
       "calculation data exists" in {
-        CalcDisplayModel("", 2, Some(CalcBreakdownTestConstants.justBusinessCalcDataModel), Estimate).whatYouOwe shouldBe "&pound;149.86"
+        CalcDisplayModel("", 149.86, CalcBreakdownTestConstants.justBusinessCalcDataModel, Estimate).whatYouOwe shouldBe "&pound;149.86"
       }
     }
 
     "display the calculation amount" when {
 
       "calculation data does not exist" in {
-        CalcDisplayModel("", 2, None, Estimate).whatYouOwe shouldBe "&pound;2"
+        CalcDisplayModel("", 2, calculation, Estimate).whatYouOwe shouldBe "&pound;2"
       }
     }
   }
@@ -47,7 +49,7 @@ class CalcDisplayModelSpec extends TestSupport with Matchers {
 
       "breakdown is enabled and is not empty" in {
         frontendAppConfig.features.calcBreakdownEnabled(true)
-        CalcDisplayModel("",2, Some(CalcBreakdownTestConstants.justBusinessCalcDataModel), Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe true
+        CalcDisplayModel("", 2, CalcBreakdownTestConstants.justBusinessCalcDataModel, Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe true
       }
     }
 
@@ -55,13 +57,13 @@ class CalcDisplayModelSpec extends TestSupport with Matchers {
 
       "breakdown is disabled" in {
         frontendAppConfig.features.calcBreakdownEnabled(false)
-        CalcDisplayModel("",2, Some(CalcBreakdownTestConstants.justBusinessCalcDataModel), Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe false
+        CalcDisplayModel("", 2, calculation, Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe false
       }
 
 
       "breakdown is empty " in {
         frontendAppConfig.features.calcBreakdownEnabled(true)
-        CalcDisplayModel("",2, None, Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe false
+        CalcDisplayModel("", 2, calculation, Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe true
       }
     }
   }

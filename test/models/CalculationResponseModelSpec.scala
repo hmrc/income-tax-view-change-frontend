@@ -35,194 +35,77 @@ import play.api.libs.json.{JsSuccess, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.UnitSpec
 
-class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitDateFormatter{
+class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitDateFormatter {
+
+  def calcDisplayModel(status: CalcStatus, interestTaxableIncome: BigDecimal): CalcDisplayModel = {
+    val crystallised: Boolean = status match {
+      case Estimate => false
+      case Crystallised => true
+    }
+
+    CalcDisplayModel(
+      testTimeStampString,
+      1010.00,
+      Calculation(crystallised = crystallised, savingsAndGains = SavingsAndGains(taxableIncome = Some(interestTaxableIncome))),
+      status
+    )
+  }
 
   "The CalcDisplayModel" when {
 
-    val calcDisplayModelTimestamp: String = LocalDateTime.now().toString
-    val calcAmount: BigDecimal = 1
-
-    def calcDisplayModelBBSInterestCalcStatus(calcStatus: CalcStatus, bankBuildingSocietyInterest: BigDecimal): CalcDisplayModel = {
-
-      val incomeReceived: IncomeReceivedModel = IncomeReceivedModel(calculationDataSuccessModel.incomeReceived.selfEmployment,
-        calculationDataSuccessModel.incomeReceived.ukProperty,
-        bankBuildingSocietyInterest,
-        calculationDataSuccessModel.incomeReceived.ukDividends)
-
-      val calculationDataModel = CalculationDataModel(calculationDataSuccessModel.nationalRegime,
-        calculationDataSuccessModel.totalIncomeTaxNicYtd,
-        calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
-        calculationDataSuccessModel.annualAllowances: AnnualAllowances,
-        calculationDataSuccessModel.taxReliefs: BigDecimal,
-        calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
-        calculationDataSuccessModel.giftOfInvestmentsAndPropertyToCharity,
-        incomeReceived: IncomeReceivedModel,
-        calculationDataSuccessModel.savingsAndGains,
-        calculationDataSuccessModel.dividends,
-        calculationDataSuccessModel.giftAid,
-        calculationDataSuccessModel.nic,
-        calculationDataSuccessModel.eoyEstimate,
-        calculationDataSuccessModel.payAndPensionsProfit
-      )
-
-      val calcDataModel: Option[CalculationDataModel] = Some(calculationDataModel)
-
-      CalcDisplayModel(calcDisplayModelTimestamp, calcAmount, calcDataModel, calcStatus)
-    }
-
-    def calcDisplayModelIncomeSourcesSA(selfEmployed: BigDecimal): CalculationDataModel = {
-
-      val incomeReceived: IncomeReceivedModel = IncomeReceivedModel(selfEmployed,
-        calculationDataSuccessModel.incomeReceived.ukProperty,
-        calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest,
-        calculationDataSuccessModel.incomeReceived.ukDividends)
-
-     CalculationDataModel(calculationDataSuccessModel.nationalRegime,
-       calculationDataSuccessModel.totalIncomeTaxNicYtd,
-       calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
-       calculationDataSuccessModel.annualAllowances: AnnualAllowances,
-       calculationDataSuccessModel.taxReliefs: BigDecimal,
-       calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
-       calculationDataSuccessModel.giftOfInvestmentsAndPropertyToCharity,
-       incomeReceived: IncomeReceivedModel,
-       calculationDataSuccessModel.savingsAndGains,
-       calculationDataSuccessModel.dividends,
-       calculationDataSuccessModel.giftAid,
-       calculationDataSuccessModel.nic,
-       calculationDataSuccessModel.eoyEstimate,
-       calculationDataSuccessModel.payAndPensionsProfit
-     )
-
-    }
-
-    def calcDisplayModelIncomeSourcesProperty(property: BigDecimal): CalculationDataModel = {
-
-      val incomeReceived: IncomeReceivedModel = IncomeReceivedModel(calculationDataSuccessModel.incomeReceived.selfEmployment,
-        property,
-        calculationDataSuccessModel.incomeReceived.bankBuildingSocietyInterest,
-        calculationDataSuccessModel.incomeReceived.ukDividends)
-
-      CalculationDataModel(calculationDataSuccessModel.nationalRegime,
-        calculationDataSuccessModel.totalIncomeTaxNicYtd,
-        calculationDataSuccessModel.totalTaxableIncome: BigDecimal,
-        calculationDataSuccessModel.annualAllowances: AnnualAllowances,
-        calculationDataSuccessModel.taxReliefs: BigDecimal,
-        calculationDataSuccessModel.totalIncomeAllowancesUsed: BigDecimal,
-        calculationDataSuccessModel.giftOfInvestmentsAndPropertyToCharity,
-        incomeReceived: IncomeReceivedModel,
-        calculationDataSuccessModel.savingsAndGains,
-        calculationDataSuccessModel.dividends,
-        calculationDataSuccessModel.giftAid,
-        calculationDataSuccessModel.nic,
-        calculationDataSuccessModel.eoyEstimate,
-        calculationDataSuccessModel.payAndPensionsProfit
-      )
-
-    }
-
-
-    val mockAccountingPeriod = AccountingPeriodModel(start = ("2017-6-1".toLocalDate), end = ("2018-5-30".toLocalDate))
-
-    val businesses: BusinessDetailsModel = BusinessDetailsModel(
-      incomeSourceId = testSelfEmploymentId,
-      accountingPeriod = mockAccountingPeriod,
-      cashOrAccruals = Some("CASH"),
-      tradingStartDate = Some("2017-1-1"),
-      cessation = None,
-      tradingName = Some(testTradeName2),
-      address = Some(testBizAddress),
-      contactDetails = None,
-      seasonal = None,
-      paperless = None)
-
-    val properties: PropertyDetailsModel = propertyDetails
-
-    def mtdUser(businessIncome: List[BusinessDetailsModel], propertyIncome: Option[PropertyDetailsModel]): MtdItUser[_] = {
-
-      val businessesAndPropertyIncome: IncomeSourceDetailsModel  = IncomeSourceDetailsModel(businessIncome, propertyIncome)
-
-      MtdItUser(testMtditid, testNino, Some(testUserDetails), businessesAndPropertyIncome)(FakeRequest())
-    }
-
-
-
     "displaying crystallisedWithBBSInterest as true" should  {
-    "be crystallised and greater then zero" in {
-      calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).crystallisedWithBBSInterest shouldBe true
+      "be crystallised and greater then zero" in {
+        calcDisplayModel(Crystallised, 1010.00).crystallisedWithBBSInterest shouldBe true
+      }
     }
-  }
 
     "displaying crystallisedWithBBSInterest as false" should {
       "be estimate and greater then zero" in {
-        calcDisplayModelBBSInterestCalcStatus(Estimate, 10).crystallisedWithBBSInterest shouldBe false
+        calcDisplayModel(Estimate, 10).crystallisedWithBBSInterest shouldBe false
       }
 
       "be estimate and zero" in {
-        calcDisplayModelBBSInterestCalcStatus(Estimate, 0).crystallisedWithBBSInterest shouldBe false
+        calcDisplayModel(Estimate, 0).crystallisedWithBBSInterest shouldBe false
       }
 
       "be Crystallised and less then zero" in {
-        calcDisplayModelBBSInterestCalcStatus(Crystallised, -1).crystallisedWithBBSInterest shouldBe false
+        calcDisplayModel(Crystallised, -1).crystallisedWithBBSInterest shouldBe false
       }
 
       "be crystallised and zero" in {
-        calcDisplayModelBBSInterestCalcStatus(Crystallised, 0).crystallisedWithBBSInterest shouldBe false
+        calcDisplayModel(Crystallised, 0).crystallisedWithBBSInterest shouldBe false
       }
     }
 
     "displaying savingsAllowanceHeading" should {
       "show pa-estimates savings message" in{
-        calcDisplayModelBBSInterestCalcStatus(Estimate, 10).savingsAllowanceHeading shouldBe ".pa-estimates-savings"
+        calcDisplayModel(Estimate, 10).savingsAllowanceHeading shouldBe ".pa-estimates-savings"
       }
       "show pa-bills saving message" in{
-        calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).savingsAllowanceHeading shouldBe ".pa-bills-savings"
+        calcDisplayModel(Crystallised, 10).savingsAllowanceHeading shouldBe ".pa-bills-savings"
       }
 
     }
 
     "display estimatedBankBuildingSocietyInterest as true" should {
       "have bank building society interest more then zero and calculation status is estimate" in {
-        calcDisplayModelBBSInterestCalcStatus(Estimate, 10).estimatedWithBBSInterest shouldBe true
+        calcDisplayModel(Estimate, 10).estimatedWithBBSInterest shouldBe true
       }
 
     }
 
     "display estimatedBankBuildingSociety Interest as false" should {
       "have bank building society interest is zero and calculation status is estimate" in {
-        calcDisplayModelBBSInterestCalcStatus(Estimate, 0).estimatedWithBBSInterest shouldBe false
+        calcDisplayModel(Estimate, 0).estimatedWithBBSInterest shouldBe false
       }
       "have bank building society interest more than zero and calculation status is not estimate" in {
-        calcDisplayModelBBSInterestCalcStatus(Crystallised, 10).estimatedWithBBSInterest shouldBe false
+        calcDisplayModel(Crystallised, 10).estimatedWithBBSInterest shouldBe false
       }
       "have bank building society interest less than zero and calculation status is not estimate" in {
-        calcDisplayModelBBSInterestCalcStatus(Crystallised, -1).estimatedWithBBSInterest shouldBe false
+        calcDisplayModel(Crystallised, -1).estimatedWithBBSInterest shouldBe false
       }
 
 
-    }
-
-  }
-
-  "The CalculationModel" should {
-
-    "be formatted to JSON correctly" in {
-      Json.toJson[CalculationModel](testCalcModelCrystallised) shouldBe testCalculationOutputJson
-    }
-
-    "be able to parse a full JSON string into the Model" in {
-      Json.fromJson[CalculationModel](testCalculationInputJson) shouldBe JsSuccess(testCalcModelCrystallised)
-    }
-
-    "return status as Crystallised when json data for attribute crystallised is true" in {
-      testCalcModelCrystallised.status shouldBe Crystallised
-    }
-
-    "return status as Estimate when json data for attribute crystallised is false" in {
-      testCalcModelCrystallised.copy(crystallised = Some(false)).status shouldBe Estimate
-    }
-
-    "return status as Estimate when json data for attribute crystallised is None" in {
-      testCalcModelCrystallised.copy(crystallised = None).status shouldBe Estimate
     }
 
   }
@@ -248,10 +131,11 @@ class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitD
 
   "CalculationResponseModelWithYear" should {
 
+    val calculation = Calculation(crystallised = true)
     val errorModel = CalculationResponseModelWithYear(CalculationErrorModel(500, "test"), 2020)
     val errorModelNotFound = CalculationResponseModelWithYear(CalculationErrorModel(404, "not found"), 2020)
-    val calcModelCrystallised = CalculationResponseModelWithYear(CalculationModel("calcId", None, None, Some(true), None, None), 2020)
-    val calcModelEstimate = CalculationResponseModelWithYear(CalculationModel("calcId", None, None, Some(false), None, None), 2020)
+    val calcModelCrystallised = CalculationResponseModelWithYear(calculation.copy(crystallised = true), 2020)
+    val calcModelEstimate = CalculationResponseModelWithYear(calculation.copy(crystallised = false), 2020)
 
     "return true for isError" when {
       "the model it contains is of type CalculationErrorModel and the status is >= 500" in {

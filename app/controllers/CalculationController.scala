@@ -172,3 +172,4 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       Some(controllers.routes.CalculationController.renderCalculationPage(user.incomeSources.earliestTaxYear.get).url)
     )
 }
+

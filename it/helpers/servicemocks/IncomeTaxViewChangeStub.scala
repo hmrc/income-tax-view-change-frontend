@@ -18,36 +18,13 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
-import models.calculation.CalculationModel
 import models.core.{Nino, NinoResponseError}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ReportDeadlinesModel
 import play.api.http.Status
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 
 object IncomeTaxViewChangeStub {
-
-  // Get Latest Calculation Stubs
-  // ===================================
-  val latestCalculationUrl: (String, String) => String = (nino, year) =>
-    s"/income-tax-view-change/previous-tax-calculation/$nino/$year"
-
-  def stubGetLatestCalculation(nino: String, year: String, latestCalc: JsValue): Unit = {
-    WiremockHelper.stubGet(latestCalculationUrl(nino, year), Status.OK, latestCalc.toString)
-  }
-
-  def stubGetLatestCalcError(nino: String, year: String): Unit = {
-    WiremockHelper.stubGet(latestCalculationUrl(nino, year), Status.INTERNAL_SERVER_ERROR, "Error Message")
-  }
-
-  def stubGetLatestCalcNotFound(nino: String, year: String): Unit = {
-    WiremockHelper.stubGet(latestCalculationUrl(nino, year), Status.NOT_FOUND, "Not found")
-  }
-
-  def verifyGetLatestCalculation(nino: String, year: String): Unit =
-    WiremockHelper.verifyGet(latestCalculationUrl(nino, year))
-
-
 
   // NINO Lookup Stubs
   // =================

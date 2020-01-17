@@ -47,9 +47,7 @@ class EstimatesAuditModelSpec extends TestSupport {
         "bizAccPeriodStart" -> "2017-06-01",
         "bizAccPeriodEnd" -> "2018-05-30",
         "propAccPeriodStart" -> "2017-04-06",
-        "propAccPeriodEnd" -> "2018-04-05",
-        "annualEstimate" -> "66000.0",
-        "currentEstimate" -> "90500.0"
+        "propAccPeriodEnd" -> "2018-04-05"
       )
     }
   }

@@ -59,7 +59,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
       "there is just a crystallisation deadline" in new Setup {
         setupMockReportDeadlines(testMtditid)(obligationsCrystallisedSuccessModel)
 
-        await(getNextDeadlineDueDate(noIncomeDetails)) shouldBe LocalDate.of(2017,10,31)
+        await(getNextDeadlineDueDate(noIncomeDetails)) shouldBe LocalDate.of(2017, 10, 31)
       }
       "one of the report deadlines returned back an error model" in new Setup {
         setupMockReportDeadlines(testSelfEmploymentId)(obligationsDataSuccessModel)
@@ -294,7 +294,7 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         setupMockReportDeadlines(testMtditid)(crystallisedDeadlineSuccess)
         await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(businessesAndPropertyIncome)) shouldBe
           IncomeSourcesWithDeadlinesModel(
-            List(businessIncomeModel,businessIncomeModel2),
+            List(businessIncomeModel, businessIncomeModel2),
             Some(propertyIncomeModel),
             Some(CrystallisedDeadlinesModel(crystallisedDeadlineSuccess))
           )
@@ -334,7 +334,6 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
         }
       }
     }
-
 
 
     "The Income Source Details are Errored" should {

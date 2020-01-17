@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.LocalDateTime
+
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
@@ -24,8 +26,7 @@ import assets.messages.{CalculationMessages => messages}
 import config.FrontendAppConfig
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
-import implicits.ImplicitCurrencyFormatter._
-import models.calculation.CalculationDataModel
+import models.calculation.{CalculationItem, ListCalculationItems}
 import models.financialTransactions.FinancialTransactionsModel
 import play.api.http.Status
 import play.api.http.Status._
@@ -34,36 +35,42 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
   lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  private trait CalculationDataApiDisabled {
-    appConfig.features.calcDataApiEnabled(false)
-  }
+  "Calling the CalculationController.renderCalculationPage(year)" when {
 
-  "Calling the CalculationController.getEstimatedTaxLiability(year)" when {
-
-    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response, an EoY Estimate and feature switch is enabled" should {
+    "isAuthorisedUser with an active enrolment, valid last calc estimate, valid breakdown response, " +
+      "an EoY Estimate and feature switch is enabled" should {
 
       "return the correct page with a valid total" in {
 
         appConfig.features.calcBreakdownEnabled(true)
+        appConfig.features.calcDataApiEnabled(true)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("I wiremock stub a successful Get Last latest Tax calculation response")
-        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponseWithEOY)
+        And("I stub a successful calculation response for 2017-18")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = estimatedCalculationFullJson
+        )
+
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionsJson(2000))
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyLatestCalculationCall(testNino, testYear)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
-        res should have (
+        res should have(
           httpStatus(OK),
           pageTitle(messages.estimateTitle(testYearInt)),
           elementTextByID("heading")(messages.estimateHeading(testYearInt)),
-          elementTextByID("eoyEstimateHeading")("Annual estimate: £66,000"),
-          elementTextByID("eoyP1")(s"This is for the ${testYearInt-1} to $testYearInt tax year."),
           isElementVisibleById("inYearCalcBreakdown")(expectedValue = true),
           elementTextByID("national-regime")("(National Regime: Scotland)"),
           elementTextByID("business-profit-data")("£200,000"),
@@ -81,14 +88,14 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextByID("income-tax-band-HRT-data")("£40,000"),
           elementTextByID("income-tax-band-ART-label")("Income Tax (£50,000 at 45%)"),
           elementTextByID("income-tax-band-ART-data")("£22,500"),
-          elementTextByID("dividend-tax-band-zero-band-label")("Dividend Tax (£500 at 0%)"),
-          elementTextByID("dividend-tax-band-zero-band-data")("£0"),
-          elementTextByID("dividend-tax-band-basic-band-label")("Dividend Tax (£1,000 at 7.5%)"),
-          elementTextByID("dividend-tax-band-basic-band-data")("£75"),
-          elementTextByID("dividend-tax-band-higher-band-label")("Dividend Tax (£2,000 at 37.5%)"),
-          elementTextByID("dividend-tax-band-higher-band-data")("£750"),
-          elementTextByID("dividend-tax-band-additional-band-label")("Dividend Tax (£3,000 at 38.1%)"),
-          elementTextByID("dividend-tax-band-additional-band-data")("£1,143"),
+          elementTextByID("dividend-tax-band-zero-label")("Dividend Tax (£500 at 0%)"),
+          elementTextByID("dividend-tax-band-zero-data")("£0"),
+          elementTextByID("dividend-tax-band-basic-label")("Dividend Tax (£1,000 at 7.5%)"),
+          elementTextByID("dividend-tax-band-basic-data")("£75"),
+          elementTextByID("dividend-tax-band-higher-label")("Dividend Tax (£2,000 at 37.5%)"),
+          elementTextByID("dividend-tax-band-higher-data")("£750"),
+          elementTextByID("dividend-tax-band-additional-label")("Dividend Tax (£3,000 at 38.1%)"),
+          elementTextByID("dividend-tax-band-additional-data")("£1,143"),
           elementTextByID("savings-tax-band-SSR-label")("Savings Tax (£1 at 0%)"),
           elementTextByID("savings-tax-band-SSR-data")("£0"),
           elementTextByID("savings-tax-band-ZRT-label")("Savings Tax (£20 at 0%)"),
@@ -123,8 +130,15 @@ class CalculationControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Latest Tax Calculation response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
+          And("I stub a successful calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = crystallisedCalculationFullJson
+          )
 
           And("I wiremock stub a successful Unpaid Financial Transactions response")
           val financialTransactions = financialTransactionsJson(1000.0).as[FinancialTransactionsModel]
@@ -134,10 +148,11 @@ class CalculationControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
           verifyFinancialTransactionsCall(testMtditid)
 
-          res should have (
+          res should have(
             httpStatus(OK),
             pageTitle(messages.billsTitle(testYearInt)),
             elementTextByID("heading")(messages.heading(testYearInt)),
@@ -158,14 +173,14 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("income-tax-band-HRT-data")("£40,000"),
             elementTextByID("income-tax-band-ART-label")("Income Tax (£50,000 at 45%)"),
             elementTextByID("income-tax-band-ART-data")("£22,500"),
-            elementTextByID("dividend-tax-band-zero-band-label")("Dividend Tax (£500 at 0%)"),
-            elementTextByID("dividend-tax-band-zero-band-data")("£0"),
-            elementTextByID("dividend-tax-band-basic-band-label")("Dividend Tax (£1,000 at 7.5%)"),
-            elementTextByID("dividend-tax-band-basic-band-data")("£75"),
-            elementTextByID("dividend-tax-band-higher-band-label")("Dividend Tax (£2,000 at 37.5%)"),
-            elementTextByID("dividend-tax-band-higher-band-data")("£750"),
-            elementTextByID("dividend-tax-band-additional-band-label")("Dividend Tax (£3,000 at 38.1%)"),
-            elementTextByID("dividend-tax-band-additional-band-data")("£1,143"),
+            elementTextByID("dividend-tax-band-zero-label")("Dividend Tax (£500 at 0%)"),
+            elementTextByID("dividend-tax-band-zero-data")("£0"),
+            elementTextByID("dividend-tax-band-basic-label")("Dividend Tax (£1,000 at 7.5%)"),
+            elementTextByID("dividend-tax-band-basic-data")("£75"),
+            elementTextByID("dividend-tax-band-higher-label")("Dividend Tax (£2,000 at 37.5%)"),
+            elementTextByID("dividend-tax-band-higher-data")("£750"),
+            elementTextByID("dividend-tax-band-additional-label")("Dividend Tax (£3,000 at 38.1%)"),
+            elementTextByID("dividend-tax-band-additional-data")("£1,143"),
             elementTextByID("savings-tax-band-SSR-label")("Savings Tax (£1 at 0%)"),
             elementTextByID("savings-tax-band-SSR-data")("£0"),
             elementTextByID("savings-tax-band-ZRT-label")("Savings Tax (£20 at 0%)"),
@@ -188,6 +203,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           )
         }
       }
+    }
 
       "a successful response is retrieved for the financial transactions and there is no outstanding amount (paid)" should {
 
@@ -198,8 +214,15 @@ class CalculationControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Latest Tax Calculation response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
+          And("I stub a successful calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = crystallisedCalculationFullJson
+          )
 
           And("I wiremock stub a successful paid Financial Transactions response")
           val financialTransactions = financialTransactionsJson(0.0).as[FinancialTransactionsModel]
@@ -209,10 +232,11 @@ class CalculationControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
           verifyFinancialTransactionsCall(testMtditid)
 
-          res should have (
+          res should have(
             httpStatus(OK),
             pageTitle(messages.billsTitle(testYearInt)),
             elementTextByID("heading")(messages.heading(testYearInt)),
@@ -233,14 +257,14 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("income-tax-band-HRT-data")("£40,000"),
             elementTextByID("income-tax-band-ART-label")("Income Tax (£50,000 at 45%)"),
             elementTextByID("income-tax-band-ART-data")("£22,500"),
-            elementTextByID("dividend-tax-band-zero-band-label")("Dividend Tax (£500 at 0%)"),
-            elementTextByID("dividend-tax-band-zero-band-data")("£0"),
-            elementTextByID("dividend-tax-band-basic-band-label")("Dividend Tax (£1,000 at 7.5%)"),
-            elementTextByID("dividend-tax-band-basic-band-data")("£75"),
-            elementTextByID("dividend-tax-band-higher-band-label")("Dividend Tax (£2,000 at 37.5%)"),
-            elementTextByID("dividend-tax-band-higher-band-data")("£750"),
-            elementTextByID("dividend-tax-band-additional-band-label")("Dividend Tax (£3,000 at 38.1%)"),
-            elementTextByID("dividend-tax-band-additional-band-data")("£1,143"),
+            elementTextByID("dividend-tax-band-zero-label")("Dividend Tax (£500 at 0%)"),
+            elementTextByID("dividend-tax-band-zero-data")("£0"),
+            elementTextByID("dividend-tax-band-basic-label")("Dividend Tax (£1,000 at 7.5%)"),
+            elementTextByID("dividend-tax-band-basic-data")("£75"),
+            elementTextByID("dividend-tax-band-higher-label")("Dividend Tax (£2,000 at 37.5%)"),
+            elementTextByID("dividend-tax-band-higher-data")("£750"),
+            elementTextByID("dividend-tax-band-additional-label")("Dividend Tax (£3,000 at 38.1%)"),
+            elementTextByID("dividend-tax-band-additional-data")("£1,143"),
             elementTextByID("savings-tax-band-SSR-label")("Savings Tax (£1 at 0%)"),
             elementTextByID("savings-tax-band-SSR-data")("£0"),
             elementTextByID("savings-tax-band-ZRT-label")("Savings Tax (£20 at 0%)"),
@@ -259,7 +283,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
             elementTextByID("total-outstanding-date")(s"due 31 January $testYearPlusOne"),
             elementTextByID("total-outstanding-data")("£0"),
             isElementVisibleById("your-total-estimate-data")(expectedValue = false),
-              isElementVisibleById("gift-aid-extender")(expectedValue = false)
+            isElementVisibleById("gift-aid-extender")(expectedValue = false)
           )
         }
       }
@@ -271,11 +295,15 @@ class CalculationControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Latest Tax Calculation response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
-
-          And("I wiremock stub a successful Get CalculationData response")
-          SelfAssessmentStub.stubGetCalcData(testNino, testCalcId, calculationDataSuccessWithEoyJson.toString())
+          And("I stub a successful calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = crystallisedCalculationFullJson
+          )
 
           And("I wiremock stub an errored Financial Transactions response")
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, financialTransactionsSingleErrorJson())
@@ -284,7 +312,8 @@ class CalculationControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
           verifyFinancialTransactionsCall(testMtditid)
 
           res should have(httpStatus(INTERNAL_SERVER_ERROR))
@@ -299,19 +328,28 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
         appConfig.features.calcBreakdownEnabled(true)
 
+
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
+        And("I stub a no EOY estimate calculation response for 2017-18")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = estimatedNoEOYEstimateCalculationFullJson
+        )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyLatestCalculationCall(testNino, testYear)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
-        res should have (
+        res should have(
           httpStatus(OK),
           pageTitle(messages.estimateTitle(testYearInt)),
           elementTextByID("heading")(messages.estimateHeading(testYearInt)),
@@ -334,14 +372,14 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextByID("income-tax-band-HRT-data")("£40,000"),
           elementTextByID("income-tax-band-ART-label")("Income Tax (£50,000 at 45%)"),
           elementTextByID("income-tax-band-ART-data")("£22,500"),
-          elementTextByID("dividend-tax-band-zero-band-label")("Dividend Tax (£500 at 0%)"),
-          elementTextByID("dividend-tax-band-zero-band-data")("£0"),
-          elementTextByID("dividend-tax-band-basic-band-label")("Dividend Tax (£1,000 at 7.5%)"),
-          elementTextByID("dividend-tax-band-basic-band-data")("£75"),
-          elementTextByID("dividend-tax-band-higher-band-label")("Dividend Tax (£2,000 at 37.5%)"),
-          elementTextByID("dividend-tax-band-higher-band-data")("£750"),
-          elementTextByID("dividend-tax-band-additional-band-label")("Dividend Tax (£3,000 at 38.1%)"),
-          elementTextByID("dividend-tax-band-additional-band-data")("£1,143"),
+          elementTextByID("dividend-tax-band-zero-label")("Dividend Tax (£500 at 0%)"),
+          elementTextByID("dividend-tax-band-zero-data")("£0"),
+          elementTextByID("dividend-tax-band-basic-label")("Dividend Tax (£1,000 at 7.5%)"),
+          elementTextByID("dividend-tax-band-basic-data")("£75"),
+          elementTextByID("dividend-tax-band-higher-label")("Dividend Tax (£2,000 at 37.5%)"),
+          elementTextByID("dividend-tax-band-higher-data")("£750"),
+          elementTextByID("dividend-tax-band-additional-label")("Dividend Tax (£3,000 at 38.1%)"),
+          elementTextByID("dividend-tax-band-additional-data")("£1,143"),
           elementTextByID("savings-tax-band-SSR-label")("Savings Tax (£1 at 0%)"),
           elementTextByID("savings-tax-band-SSR-data")("£0"),
           elementTextByID("savings-tax-band-ZRT-label")("Savings Tax (£20 at 0%)"),
@@ -372,14 +410,19 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("an Error Response response from Get Latest Calculation via wiremock stub")
-        IncomeTaxViewChangeStub.stubGetLatestCalcError(testNino, testYear)
+        And("I stub an error calculation response for 2017-18")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculationError(testNino, "idOne")
 
         When(s"I make a call to GET /report-quarterly/income-and-expenses/view/calculation/$testYear ")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyLatestCalculationCall(testNino, testYear)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
         Then("an Internal Server Error response is returned and correct view rendered")
         res should have(
@@ -393,21 +436,32 @@ class CalculationControllerISpec extends ComponentSpecBase {
 
     "isAuthorisedUser with an active enrolment and the Get Calculation Data API feature is disabled" should {
 
-      "return the correct page with a valid total" in new CalculationDataApiDisabled {
+      "return the correct page with a valid total" in {
+
+        appConfig.features.calcBreakdownEnabled(true)
+        appConfig.features.calcDataApiEnabled(false)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-        IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, latestCalcModelJson)
+        And("I stub a successful calculation response for 2017-18")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = estimatedNoEOYEstimateCalculationFullJson
+        )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyLatestCalculationCall(testNino, testYear)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
-        res should have (
+        res should have(
           httpStatus(OK),
           pageTitle(messages.estimateTitle(testYearInt)),
           elementTextByID("heading")(messages.estimateHeading(testYearInt)),
@@ -417,5 +471,5 @@ class CalculationControllerISpec extends ComponentSpecBase {
     }
 
     unauthorisedTest("/calculation/" + testYear)
-  }
+
 }

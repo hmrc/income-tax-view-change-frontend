@@ -17,26 +17,17 @@
 package helpers.servicemocks
 
 import helpers.WiremockHelper
-import models.calculation.CalculationDataErrorModel
-import models.reportDeadlines.ReportDeadlinesModel
 import play.api.http.Status
-import play.api.libs.json.Json
 
 object SelfAssessmentStub {
 
   // Calculation Breakdown Stubs
   // ===========================
-  val calcUrl: (String,String) => String = (nino, taxCalculationId) => s"/ni/$nino/calculations/$taxCalculationId"
+  val calcUrl: (String, String) => String = (nino, taxCalculationId) => s"/ni/$nino/calculations/$taxCalculationId"
 
   def stubGetCalcData(nino: String, year: String, calc: String): Unit = {
     WiremockHelper.stubGet(calcUrl(nino, year), Status.OK, calc)
   }
-
-  def stubGetCalcDataError(nino: String, year: String, error: CalculationDataErrorModel): Unit = {
-    WiremockHelper.stubGet(calcUrl(nino, year), Status.INTERNAL_SERVER_ERROR, Json.toJson(error).toString())
-  }
-
-  def verifyGetCalcData(nino: String, taxCalculationId: String): Unit =
-    WiremockHelper.verifyGet(calcUrl(nino, taxCalculationId))
 }
+
 

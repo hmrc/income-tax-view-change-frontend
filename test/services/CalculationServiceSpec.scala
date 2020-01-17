@@ -19,16 +19,15 @@ package services
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import assets.EstimatesTestConstants._
-import mocks.connectors.MockIncomeTaxViewChangeConnector
-import mocks.services.MockCalculationService
+import mocks.connectors.MockIndividualCalculationsConnector
 import models.calculation._
 import play.api.http.Status
 import testUtils.TestSupport
 
-class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockCalculationService {
+class CalculationServiceSpec extends TestSupport with MockIndividualCalculationsConnector {
 
   object TestCalculationService extends CalculationService(
-    mockIncomeTaxViewChangeConnector,
+    mockIndividualCalculationsConnector,
     frontendAppConfig
   )
 
@@ -40,41 +39,7 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     frontendAppConfig.features.calcDataApiEnabled(false)
   }
 
-  "The CalculationService.getCalculationData method" when {
-
-    "successful responses are returned from the CalculationDataConnector" should {
-
-      "return a correctly formatted CalculationData model" in {
-        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelSuccess.copy(calculationDataModel = Some(calculationDataSuccessModel)))
-
-        await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
-      }
-    }
-
-    "an Error Response is returned from the CalculationConnector" should {
-
-      "return none" in {
-        setUpLatestCalculationResponse(testNino, testYear)(errorCalculationModel)
-        await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe CalcDisplayError
-      }
-    }
-
-    "no calculation data is returned from the CalculationDataConnector" should {
-
-      "return a correctly formatted CalcDisplayModel model with calcDataModel = None" in {
-        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelSuccess)
-
-        await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplayNoBreakdownModel
-      }
-    }
-  }
-
   "The CalculationService.getAllLatestCalculations method" when {
-
-    object TestCalculationService extends CalculationService(
-      mockIncomeTaxViewChangeConnector,
-      frontendAppConfig
-    )
 
     "when the  Calculation Data api feature switch is disabled" should {
 
@@ -83,8 +48,11 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         "for a list of Estimates" should {
 
           "return a list of CalculationResponseModelWithYear models" in new CalculationDataApiDisabled {
-            setUpLatestCalculationResponse(testNino, testYear)(testCalcModelEstimate)
-            setUpLatestCalculationResponse(testNino, testYearPlusOne)(testCalcModelEstimate)
+            mockGetLatestCalculationId(testNino, "2017-18")(Right("testIdOne"))
+            mockGetCalculation(testNino, "testIdOne")(lastTaxCalcSuccess)
+            mockGetLatestCalculationId(testNino, "2018-19")(Right("testIdTwo"))
+            mockGetCalculation(testNino, "testIdTwo")(lastTaxCalcSuccess)
+
             await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearList
           }
         }
@@ -92,8 +60,11 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         "for a list of Bills" should {
 
           "return a list of CalculationResponseModelWithYear bills models" in new CalculationDataApiDisabled {
-            setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystallised)
-            setUpLatestCalculationResponse(testNino, testYearPlusOne)(testCalcModelCrystallised)
+            mockGetLatestCalculationId(testNino, "2017-18")(Right("testIdOne"))
+            mockGetCalculation(testNino, "testIdOne")(lastTaxCalcCrystallisedSuccess)
+            mockGetLatestCalculationId(testNino, "2018-19")(Right("testIdTwo"))
+            mockGetCalculation(testNino, "testIdTwo")(lastTaxCalcCrystallisedSuccess)
+
             await(TestCalculationService.getAllLatestCalculations(testNino, List(testYear, testYearPlusOne))) shouldBe lastTaxCalcWithYearCrystallisedList
           }
         }
@@ -105,39 +76,28 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     }
   }
 
-  "The CalculationService.getLatestCalculation method" when {
+  "The CalculationService.getCalculationDetail method" when {
 
-    "successful response is returned from the CalculationDataConnector" should {
+    "when the  Calculation Data api feature switch is enabled" should {
 
-      "return a CalculationModel" in {
-        setUpLatestCalculationResponse(testNino, testYear)(testCalcModelCrystallised)
-        await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationModel(
-          testTaxCalculationId,
-          Some(543.21),
-          Some(testTimeStampString),
-          Some(true),
-          Some(123.45),
-          Some(987.65),
-          Some(CalculationDataModel(
-            None, 0.0, 123.45,
-            AnnualAllowances(0,0),
-            0, 0, 0,
-            IncomeReceivedModel(0, 0, 0, 0),
-            SavingsAndGainsModel(0, 0, List()),
-            DividendsModel(0, 0, List()),
-            GiftAidModel(0, 0, 0),
-            NicModel(0, 0),
-            None
-          ))
-        )
+      "successful response is returned from the IndividualCalculationConnector" should {
 
-      }
+        "return a CalculationModel" in new CalculationDataApiEnabled{
+          mockGetLatestCalculationId(testNino, "2017-18")(Right("testIdOne"))
+          mockGetCalculation(testNino, "testIdOne")(calculationDataSuccessModel)
 
-      "error response is returned from the CalculationDataConnector" should {
-        "return a CalculationErrorModel" in {
-          setUpLatestCalculationResponse(testNino, testYear)(errorCalculationModel)
-          await(TestCalculationService.getLatestCalculation(testNino, testYear)) shouldBe CalculationErrorModel(
-            Status.INTERNAL_SERVER_ERROR, "Internal server error")
+          await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel)
+
+        }
+
+        "error response is returned from the IndividualCalculationConnector" should {
+          "return a CalculationErrorModel" in new CalculationDataApiEnabled {
+            mockGetLatestCalculationId(testNino, "2017-18")(
+              Left(CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Internal server error"))
+            )
+
+            await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe CalcDisplayError
+          }
         }
       }
     }

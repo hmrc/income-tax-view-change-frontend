@@ -49,12 +49,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.financial-transactions.host" -> mockHost,
     "microservice.services.financial-transactions.port" -> mockPort,
     "microservice.services.pay-api.host" -> mockHost,
-    "microservice.services.pay-api.port" -> mockPort
+    "microservice.services.pay-api.port" -> mockPort,
+    "microservice.services.individual-calculations.host" -> mockHost,
+    "microservice.services.individual-calculations.port" -> mockPort
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
   val btaPartialUrl = "/business-account/partial/service-info"
-  val testUserDetailsWiremockUrl:String = mockUrl + userDetailsUrl
+  val testUserDetailsWiremockUrl: String = mockUrl + userDetailsUrl
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
@@ -82,16 +84,27 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String): WSResponse = await(buildClient(uri).get())
 
     def getEstimates: WSResponse = get("/estimates")
+
     def getStatements: WSResponse = get("/statements")
+
     def getBills: WSResponse = get("/bills")
+
     def getCalculation(year: String): WSResponse = get(s"/calculation/$year")
+
     def getReportDeadlines: WSResponse = get(s"/obligations")
+
     def getPreviousObligations: WSResponse = get(s"/previous-obligations")
+
     def getAccountDetails: WSResponse = get(s"/account-details")
+
     def getBusinessDetails(id: Int): WSResponse = get(s"/account-details/$id")
+
     def getBtaPartial: WSResponse = get(s"/partial")
+
     def getHome: WSResponse = get("/")
+
     def getPaymentsDue: WSResponse = get("/payments-due")
+
     def getPay(amountInPence: BigDecimal): WSResponse = get(s"/payment?amountInPence=$amountInPence")
   }
 
