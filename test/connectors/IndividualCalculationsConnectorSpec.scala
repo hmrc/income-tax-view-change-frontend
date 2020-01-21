@@ -104,26 +104,26 @@ class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
   "IndividualCalculationsConnector .getCalculation" should {
     "return a calculation" when {
       "receiving an OK with valid Calculation json" in new GetCalculationTest(nino, calculationId, HttpResponse(OK, Some(calculationJson))) {
-        val result: Future[Either[CalculationErrorModel, Calculation]] = connector.getCalculation(nino, calculationId)
+        val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
-        await(result) shouldBe Right(calculation)
+        await(result) shouldBe calculation
       }
     }
     "return an error" when {
       "receiving a 500+ response" in new GetCalculationTest(nino, calculationId, HttpResponse(INTERNAL_SERVER_ERROR, Some(Json.toJson("Error message")))) {
-        val result: Future[Either[CalculationErrorModel, Calculation]] = connector.getCalculation(nino, calculationId)
+        val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
-        await(result) shouldBe Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, """"Error message""""))
+        await(result) shouldBe CalculationErrorModel(INTERNAL_SERVER_ERROR, """"Error message"""")
       }
       "receiving a 499- response" in new GetCalculationTest(nino, calculationId, HttpResponse(499, Some(Json.toJson("Error message")))) {
-        val result: Future[Either[CalculationErrorModel, Calculation]] = connector.getCalculation(nino, calculationId)
+        val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
-        await(result) shouldBe Left(CalculationErrorModel(499, """"Error message""""))
+        await(result) shouldBe CalculationErrorModel(499, """"Error message"""")
       }
       "receiving OK with invalid json" in new GetCalculationTest(nino, calculationId, HttpResponse(OK, Some(Json.toJson("")))) {
-        val result: Future[Either[CalculationErrorModel, Calculation]] = connector.getCalculation(nino, calculationId)
+        val result: Future[CalculationResponseModel] = connector.getCalculation(nino, calculationId)
 
-        await(result) shouldBe Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response"))
+        await(result) shouldBe CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
       }
     }
   }

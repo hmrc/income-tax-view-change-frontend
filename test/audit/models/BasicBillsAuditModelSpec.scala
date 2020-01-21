@@ -45,12 +45,12 @@ class BasicBillsAuditModelSpec extends TestSupport {
         fullBillsAuditModel.detail shouldBe Seq(
           "mtditid" -> testMtditid,
           "nino" -> testNino,
-          "currentBill" -> "123.45"
+          "currentBill" -> "543.21"
         )
       }
 
       "the current bill is not available" in {
-        val billsAuditModel = BasicBillsAuditModel(testMtdItUser, testCalcModelNoDisplayAmount)
+        val billsAuditModel = BasicBillsAuditModel(testMtdItUser, calculationNoBillModel)
 
         billsAuditModel.detail shouldBe Seq(
           "mtditid" -> testMtditid,

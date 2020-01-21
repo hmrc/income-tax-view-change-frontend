@@ -28,19 +28,16 @@ sealed trait CalcDisplayResponseModel extends CrystallisedViewModel
 
 case class CalcDisplayModel(calcTimestamp: String,
                             calcAmount: BigDecimal,
-                            calcDataModel: Option[CalculationDataModel],
+                            calcDataModel: Calculation,
                             calcStatus: CalcStatus) extends CalcDisplayResponseModel with CrystallisedViewModel {
 
-  val breakdownNonEmpty: Boolean = calcDataModel.nonEmpty
-  val hasEoyEstimate: Boolean = calcDataModel.fold(false)(_.eoyEstimate.nonEmpty)
-
-  val whatYouOwe : String = s"${calcDataModel.fold(calcAmount.toCurrency)(_.totalIncomeTaxNicYtd.toCurrency)}"
+  val whatYouOwe : String = s"${calcAmount.toCurrency}"
 
   def displayCalcBreakdown(appConfig: FrontendAppConfig): Boolean = {
-    breakdownNonEmpty && appConfig.features.calcBreakdownEnabled()
+    appConfig.features.calcBreakdownEnabled()
   }
   def crystallisedWithBBSInterest :Boolean = {
-    calcStatus == Crystallised && calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0
+    calcStatus == Crystallised && calcDataModel.savingsAndGains.taxableIncome.exists(_ > 0)
   }
 
   def savingsAllowanceHeading: String = {
@@ -51,7 +48,7 @@ case class CalcDisplayModel(calcTimestamp: String,
   }
 
   def estimatedWithBBSInterest : Boolean = {
-    if(calcDataModel.get.incomeReceived.bankBuildingSocietyInterest > 0 && calcStatus == Estimate) true else false
+    calcDataModel.savingsAndGains.taxableIncome.exists(_ > 0) && calcStatus == Estimate
   }
 }
 

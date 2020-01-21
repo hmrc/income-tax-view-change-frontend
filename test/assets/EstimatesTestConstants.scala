@@ -17,6 +17,7 @@
 package assets
 
 import assets.BaseTestConstants._
+import enums.Estimate
 import models.calculation._
 import play.api.http.Status
 
@@ -27,52 +28,12 @@ object EstimatesTestConstants {
   val testYearPlusTwo = 2020
 
   //Last Tax Calculations
-  val lastTaxCalcSuccess = CalculationModel(
-    testTaxCalculationId,
-    Some(543.21),
-    Some(testTimeStampString),
-    Some(false),
-    Some(123.45),
-    Some(987.65)
-  )
 
-  val lastTaxCalcCrystallisedSuccess = CalculationModel(
-    testTaxCalculationId,
-    Some(543.21),
-    Some(testTimeStampString),
-    Some(true),
-    Some(123.45),
-    Some(987.65),
-    Some(CalculationDataModel(
-      None, 0.0, 123.45,
-      AnnualAllowances(0,0),
-      0, 0, 0,
-      IncomeReceivedModel(0, 0, 0, 0),
-      SavingsAndGainsModel(0, 0, List()),
-      DividendsModel(0, 0, List()),
-      GiftAidModel(0, 0, 0),
-      NicModel(0, 0),
-      None
-    ))
-  )
+  val lastTaxCalcSuccess = Calculation(crystallised = false, timestamp = Some(testTimeStampString), totalIncomeTaxAndNicsDue = Some(123) )
 
-  val lastCalcSuccessEstimate = CalculationModel(
-    calcID = testTaxCalculationId,
-    calcAmount = Some(543.21),
-    calcTimestamp = Some(testTimeStampString),
-    crystallised = None,
-    incomeTaxNicYtd = None,
-    incomeTaxNicAmount = None
-  )
+  val responseModel = CalcDisplayModel(testTimeStampString, 10.00, lastTaxCalcSuccess, Estimate)
 
-  val lastCalcSuccessBill = CalculationModel(
-    calcID = testTaxCalculationId,
-    calcAmount = Some(543.21),
-    calcTimestamp = Some(testTimeStampString),
-    crystallised = Some(true),
-    incomeTaxNicYtd = None,
-    incomeTaxNicAmount = None
-  )
+  val lastTaxCalcCrystallisedSuccess = Calculation(crystallised = true, totalIncomeTaxAndNicsDue = Some(123))
 
   val lastTaxCalcError = CalculationErrorModel(testErrorStatus, testErrorMessage)
   val lastTaxCalcNotFound: CalculationResponseModel = CalculationErrorModel(Status.NOT_FOUND, "Not found")

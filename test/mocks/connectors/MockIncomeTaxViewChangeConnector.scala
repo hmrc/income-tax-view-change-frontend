@@ -38,13 +38,6 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
     reset(mockIncomeTaxViewChangeConnector)
   }
 
-  def setUpLatestCalculationResponse(nino: String, taxYear: Int)(response: CalculationResponseModel): Unit =
-    when(mockIncomeTaxViewChangeConnector
-      .getLatestCalculation(
-        ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(taxYear))(ArgumentMatchers.any()))
-    .thenReturn(Future.successful(response))
-
   def setupMockIncomeSourceDetailsResponse(mtditid: String, nino: String)(response: IncomeSourceDetailsResponse): Unit =
     when(mockIncomeTaxViewChangeConnector.getIncomeSources(
       ArgumentMatchers.eq(mtditid),

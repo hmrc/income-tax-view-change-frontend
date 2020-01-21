@@ -19,7 +19,7 @@ package services
 import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import audit.mocks.MockAuditingService
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.connectors.{MockIncomeTaxViewChangeConnector, MockIndividualCalculationsConnector}
 import mocks.services.MockReportDeadlinesService
 import testUtils.TestSupport
 

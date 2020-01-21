@@ -17,28 +17,12 @@
 package audit.models
 
 import auth.MtdItUser
-import models.calculation.{CalcDisplayModel, CalculationModel}
+import models.calculation.{CalcDisplayModel, Calculation}
 import models.incomeSourceDetails.BusinessDetailsModel
 
 object EstimatesAuditing {
 
   case class EstimatesAuditModel[A](user: MtdItUser[A], dataModel: CalcDisplayModel) extends AuditModel {
-
-    val estimate: Option[BigDecimal] = dataModel.calcDataModel.flatMap { model =>
-      model.eoyEstimate.flatMap { estimate =>
-        Some(estimate.totalNicAmount)
-      }
-    }
-
-    val estimateDetails: Seq[(String, String)] = estimate match {
-      case Some(amount) => Seq(
-        "annualEstimate" -> amount.toString,
-        "currentEstimate" -> dataModel.calcDataModel.fold(dataModel.calcAmount)(_.totalIncomeTaxNicYtd).toString
-      )
-      case None => Seq(
-        "currentEstimate" -> dataModel.calcDataModel.fold(dataModel.calcAmount)(_.totalIncomeTaxNicYtd).toString
-      )
-    }
 
     override val auditType: String = "estimatesPageView"
     override val transactionName: String = "estimates-page-view"
@@ -53,15 +37,15 @@ object EstimatesAuditing {
       "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.end}"),
       "propAccPeriodStart" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.start}"),
       "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}")
-    ) ++ estimateDetails
+    )
   }
 
-  case class BasicEstimatesAuditModel[A](user: MtdItUser[A], dataModel: CalculationModel) extends AuditModel {
+  case class BasicEstimatesAuditModel[A](user: MtdItUser[A], dataModel: Calculation) extends AuditModel {
 
     override val auditType: String = "estimatesPageView"
     override val transactionName: String = "view-estimates-page"
 
-    val estimateDetails: Seq[(String, String)] = (dataModel.incomeTaxNicAmount, dataModel.displayAmount) match {
+    val estimateDetails: Seq[(String, String)] = (dataModel.incomeTaxNicAmount, dataModel.totalIncomeTaxAndNicsDue) match {
       case (Some(annual), Some(current)) => Seq("annualEstimate" -> annual.toString, "currentEstimate" -> current.toString)
       case (Some(annual), None) => Seq("annualEstimate" -> annual.toString)
       case (None, Some(current)) => Seq("currentEstimate" -> current.toString)

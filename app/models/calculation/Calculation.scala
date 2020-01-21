@@ -45,7 +45,9 @@ object PayPensionsProfit {
 
 case class Dividends(incomeTaxAmount: Option[BigDecimal] = None,
                      taxableIncome: Option[BigDecimal] = None,
-                     bands: List[TaxBand] = Nil)
+                     bands: List[TaxBand] = Nil) {
+  val dividendsAllowance: BigDecimal = bands.filter(_.rate == 0).map(_.income).sum
+}
 
 object Dividends {
   implicit val reads: Reads[Dividends] = (
@@ -58,7 +60,9 @@ object Dividends {
 
 case class SavingsAndGains(incomeTaxAmount: Option[BigDecimal] = None,
                            taxableIncome: Option[BigDecimal] = None,
-                           bands: List[TaxBand] = Nil)
+                           bands: List[TaxBand] = Nil) {
+  val savingsAllowance: BigDecimal = bands.filter(_.rate == 0).map(_.income).sum
+}
 
 object SavingsAndGains {
   implicit val reads: Reads[SavingsAndGains] = (
@@ -112,37 +116,4 @@ object Nic {
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "nics" \ "totalNic")
     ) (Nic.apply _)
   implicit val writes: OWrites[Nic] = Json.writes[Nic]
-}
-
-case class Calculation(totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
-                       totalIncomeTaxNicsCharged: Option[BigDecimal] = None,
-                       totalTaxableIncome: Option[BigDecimal] = None,
-                       incomeTaxNicAmount: Option[BigDecimal] = None,
-                       timestamp: Option[String] = None,
-                       crystallised: Boolean,
-                       nationalRegime: Option[String] = None,
-                       payPensionsProfit: PayPensionsProfit = PayPensionsProfit(),
-                       savingsAndGains: SavingsAndGains = SavingsAndGains(),
-                       dividends: Dividends = Dividends(),
-                       allowancesAndDeductions: AllowancesAndDeductions = AllowancesAndDeductions(),
-                       nic: Nic = Nic(),
-                       giftAid: GiftAid = GiftAid())
-
-object Calculation {
-  implicit val reads: Reads[Calculation] = (
-    readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalIncomeTaxAndNicsDue") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalIncomeTaxNicsCharged") and
-      readNullable[BigDecimal](__ \ "taxableIncome" \ "summary" \ "totalTaxableIncome") and
-      readNullable[BigDecimal](__ \ "endOfYearEstimate" \ "summary" \ "incomeTaxNicAmount") and
-      readNullable[String](__ \ "metadata" \ "calculationTimestamp") and
-      (__ \ "metadata" \ "crystallised").read[Boolean] and
-      readNullable[String](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "taxRegime") and
-      __.read[PayPensionsProfit] and
-      __.read[SavingsAndGains] and
-      __.read[Dividends] and
-      __.read[AllowancesAndDeductions] and
-      __.read[Nic] and
-      __.read[GiftAid]
-    ) (Calculation.apply _)
-  implicit val writes: OWrites[Calculation] = Json.writes[Calculation]
 }

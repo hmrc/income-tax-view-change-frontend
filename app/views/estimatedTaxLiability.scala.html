@@ -28,70 +28,63 @@
 @(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @whyThisMayChange = {
-    <div id="whyMayChange">
-        <p id="whyMayChangeP1">@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.p1")</p>
-        <ul class="list list-bullet">
-            <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1")</li>
-            <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2")</li>
-            <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3")</li>
-        </ul>
-    </div>
+<div id="whyMayChange">
+    <p id="whyMayChangeP1">@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.p1")</p>
+    <ul class="list list-bullet">
+        <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1")</li>
+        <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2")</li>
+        <li>@messages("estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3")</li>
+    </ul>
+</div>
 }
 
 @main_template(
-    title = messages("estimated_tax_liability.title", s"${taxYear-1}", s"$taxYear"),
-    bodyClasses = None,
-    scriptElem = None,
-    contentHeader = if(request.session.get("singleEstimate").getOrElse("false").toBoolean){
-                        Some(breadcrumbHelper(Breadcrumb(Vector(
-                        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-                        BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("breadcrumb-estimated_tax_liability", s"${taxYear-1}", s"$taxYear")))
-                        )), s"EstimateFor${taxYear}Page"))
-                    }else{
-                        Some(breadcrumbHelper(Breadcrumb(Vector(
-                        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-                        BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
-                        BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("breadcrumb-estimated_tax_liability", s"${taxYear-1}", s"$taxYear")))
-                        )), s"EstimateFor${taxYear}Page"))
-                    }
+title = messages("estimated_tax_liability.title", s"${taxYear-1}", s"$taxYear"),
+bodyClasses = None,
+scriptElem = None,
+contentHeader = if(request.session.get("singleEstimate").getOrElse("false").toBoolean){
+Some(breadcrumbHelper(Breadcrumb(Vector(
+BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("breadcrumb-estimated_tax_liability", s"${taxYear-1}", s"$taxYear")))
+)), s"EstimateFor${taxYear}Page"))
+}else{
+Some(breadcrumbHelper(Breadcrumb(Vector(
+BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
+BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("breadcrumb-estimated_tax_liability", s"${taxYear-1}", s"$taxYear")))
+)), s"EstimateFor${taxYear}Page"))
+}
 ) {
 
-    <section id="estimated-tax">
+<section id="estimated-tax">
 
 
-
-        <div class="grid-row">
-            <div class="column-full">
-                <h1 class="heading-xlarge">
-                    <span id="user-name-heading" class="heading-secondary">@user.userDetails.map{ details => <span class="heading-secondary">@details.name</span>}</span>
-                    <span id=heading>@messages("estimated_tax_liability.heading", s"${taxYear - 1}", s"$taxYear")</span>
-                    <span id=utr-reference-heading  class="heading-secondary">@messages("home.unique.tax.reference") - @user.mtditid</span>
-                </h1>
-            </div>
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-xlarge">
+                <span id="user-name-heading" class="heading-secondary">@user.userDetails.map{ details => <span
+                        class="heading-secondary">@details.name</span>}</span>
+                <span id=heading>@messages("estimated_tax_liability.heading", s"${taxYear - 1}", s"$taxYear")</span>
+                <span id=utr-reference-heading class="heading-secondary">@messages("home.unique.tax.reference") - @user.mtditid</span>
+            </h1>
         </div>
+    </div>
 
-        @if(calcModel.hasEoyEstimate) {
-            <section id="eoyEstimate" class="form-group">
-                <h2 id="eoyEstimateHeading" class="heading-large">@Html(messages("estimated_tax_liability.eoyEstimate.heading", s"${calcModel.calcDataModel.get.eoyEstimate.get.totalNicAmount.toCurrency}"))</h2>
-                <p id="eoyP1">@messages("estimated_tax_liability.eoyEstimate.p1", s"${taxYear - 1}", s"$taxYear")</p>
-            </section>
+    <section id="inYearEstimate">
+
+        @if(appConfig.features.calcBreakdownEnabled()){
+        <section id="inYearCalcBreakdown">
+            @calcBreakdownHelper(calcModel, None, taxYear)
+        </section>
+        } else {
+        <h2 id="inYearEstimateHeading" class="heading-large">
+            @messages("estimated_tax_liability.inYearEstimate.heading", calcModel.calcAmount.toCurrencyString)
+        </h2>
+        <p id="inYearP1">@messages("estimated_tax_liability.inYearEstimate.p1", s"${taxYear - 1}",
+            s"${calcModel.calcTimestamp.toLocalDateTime.toLongDateTime}")</p>
         }
 
-        <section id="inYearEstimate">
-
-            @if(calcModel.breakdownNonEmpty && appConfig.features.calcBreakdownEnabled()){
-                <section id="inYearCalcBreakdown">
-                    @calcBreakdownHelper(calcModel, None, taxYear)
-                </section>
-            } else {
-                <h2 id="inYearEstimateHeading" class="heading-large">
-                    @messages("estimated_tax_liability.inYearEstimate.heading", calcModel.calcAmount.toCurrencyString)
-                </h2>
-                <p id="inYearP1">@messages("estimated_tax_liability.inYearEstimate.p1", s"${taxYear - 1}", s"${calcModel.calcTimestamp.toLocalDateTime.toLongDateTime}")</p>
-            }
-
-
-        </section>
-
     </section>
- }
+
+</section>
+}

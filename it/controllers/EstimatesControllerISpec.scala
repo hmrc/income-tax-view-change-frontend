@@ -15,6 +15,8 @@
  */
 package controllers
 
+import java.time.LocalDateTime
+
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
@@ -22,6 +24,7 @@ import assets.messages.{EstimatesMessages => messages}
 import config.FrontendAppConfig
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
+import models.calculation.{CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 
 class EstimatesControllerISpec extends ComponentSpecBase {
@@ -39,14 +42,22 @@ class EstimatesControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Latest Tax Calculation response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
+          And("I stub a successful calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
           val res = IncomeTaxViewChangeFrontend.getEstimates
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
@@ -63,15 +74,33 @@ class EstimatesControllerISpec extends ComponentSpecBase {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
           And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, estimateLatestTaxCalcResponseJson)
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, estimateLatestTaxCalcResponseJson2)
+          And("I stub a successful calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
+          And("I stub a successful calculation response for 2018-19")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
           val res = IncomeTaxViewChangeFrontend.getEstimates
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
-          verifyLatestCalculationCall(testNino, testYearPlusOne)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
           Then("The view should have the correct headings and two tax estimate links")
           res should have(
@@ -89,18 +118,31 @@ class EstimatesControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-          And(s"I wiremock stub a successful Get Last Estimated Tax Liability response for year:$testYear")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, estimateLatestTaxCalcResponseJson)
+          And("I stub a successful calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
 
-          And(s"I wiremock stub a not found response for year: $testYearPlusOne")
-          IncomeTaxViewChangeStub.stubGetLatestCalcNotFound(testNino, testYearPlusOne)
+          And("I stub a not found calculation response for 2018-19")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculationNotFound(testNino, "idTwo")
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
           val res = IncomeTaxViewChangeFrontend.getEstimates
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
-          verifyLatestCalculationCall(testNino, testYearPlusOne)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
           res should have(
             httpStatus(SEE_OTHER),
@@ -115,16 +157,33 @@ class EstimatesControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, estimateLatestTaxCalcResponseJson)
+          And("I stub a successful crystallised calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = crystallisedCalculationFullJson
+          )
+          And("I stub a successful estimated calculation response for 2018-19")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
+            status = OK,
+            body = estimatedCalculationFullJson
+          )
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
           val res = IncomeTaxViewChangeFrontend.getEstimates
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
-          verifyLatestCalculationCall(testNino, testYearPlusOne)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(
@@ -140,14 +199,21 @@ class EstimatesControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
-
+          And("I stub a successful crystallised calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = crystallisedCalculationFullJson
+          )
           When(s"I call GET /report-quarterly/income-and-expenses/view/estimates")
           val res = IncomeTaxViewChangeFrontend.getEstimates
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
           Then("The view should have the correct headings and a single tax estimate link")
           res should have(

@@ -18,7 +18,7 @@ package controllers
 
 import assets.BaseTestConstants._
 import assets.EstimatesTestConstants._
-import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import assets.IncomeSourceDetailsTestConstants.{businessIncome2018and2019, propertyIncomeOnly}
 import assets.Messages
 import assets.Messages.EstimatedTaxLiabilityError
 import audit.AuditingService
@@ -26,6 +26,7 @@ import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
+import models.calculation.CalcDisplayError
 import play.api.http.Status
 import play.api.test.Helpers._
 import testUtils.TestSupport
@@ -166,7 +167,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           "return Status OK (200)" in new CalculationDataApiEnabled {
             mockFinancialTransactionSuccess()
             setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
-            mockCalculationNoBreakdown()
+            setupMockGetCalculation(testMtdUserNino.nino, testYear)(CalcDisplayError)
             status(result) shouldBe Status.OK
           }
 
@@ -257,8 +258,9 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
           "return Status OK (200)" in new CalculationDataApiDisabled {
             mockFinancialTransactionFailed()
-            mockLatestCalculationSuccess()
-            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+            mockSingleBusinessIncomeSource()
+            setupMockGetCalculationId(testMtdUserNino.nino, testYear)(Right("testId"))
+            setupMockGetLatestCalculation(testMtdUserNino.nino, Right("testId"))(lastTaxCalcSuccess)
             status(result) shouldBe Status.OK
           }
 
@@ -281,7 +283,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           "return Status OK (200)" in new CalculationDataApiDisabled {
             mockFinancialTransactionFailed()
             mockPropertyIncomeSource()
-            mockLatestCalculationSuccess()
+            setupMockGetCalculationId(testMtdUserNino.nino, testYear)(Right("testId"))
+            setupMockGetLatestCalculation(testMtdUserNino.nino, Right("testId"))(lastTaxCalcSuccess)
             status(result) shouldBe Status.OK
           }
 
@@ -304,7 +307,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           "return Status Internal Server Error (500)" in new CalculationDataApiDisabled {
             mockFinancialTransactionFailed()
             mockPropertyIncomeSource()
-            mockLatestCalculationInvalidData()
+            setupMockGetCalculationId(testMtdUserNino.nino, testYear)(Right("testId"))
+            setupMockGetLatestCalculation(testMtdUserNino.nino, Right("testId"))(lastTaxCalcSuccess.copy(timestamp = None))
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }
@@ -318,7 +322,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           "return Status OK (200)" in new CalculationDataApiDisabled {
             mockFinancialTransactionSuccess()
             mockPropertyIncomeSource()
-            mockLatestCalculationCrystallisationSuccess()
+            setupMockGetCalculationId(testMtdUserNino.nino, testYear)(Right("testId"))
+            setupMockGetLatestCalculation(testMtdUserNino.nino, Right("testId"))(lastTaxCalcCrystallisedSuccess)
             status(result) shouldBe Status.OK
           }
 
@@ -341,7 +346,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           "return Status Internal Server Error (500)" in new CalculationDataApiDisabled {
             mockFinancialTransactionSuccess()
             mockPropertyIncomeSource()
-            mockLatestCalculationCrystallisationInvalidData()
+            setupMockGetCalculationId(testMtdUserNino.nino, testYear)(Right("testId"))
+            setupMockGetLatestCalculation(testMtdUserNino.nino, Right("testId"))(lastTaxCalcCrystallisedSuccess.copy(totalIncomeTaxAndNicsDue = None))
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }
@@ -354,7 +360,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           "return Status Internal Server Error (500)" in new CalculationDataApiDisabled {
             mockFinancialTransactionFailed()
             mockPropertyIncomeSource()
-            mockLatestCalculationCrystallisationSuccess()
+            setupMockGetCalculationId(testMtdUserNino.nino, testYear)(Right("testId"))
+            setupMockGetLatestCalculation(testMtdUserNino.nino, Right("testId"))(lastTaxCalcCrystallisedSuccess)
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }
@@ -367,7 +374,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           "return Status Internal Server Error (500)" in new CalculationDataApiDisabled {
             mockFinancialTransactionSuccess("2020-04-05")
             mockPropertyIncomeSource()
-            mockLatestCalculationCrystallisationSuccess()
+            setupMockGetCalculationId(testMtdUserNino.nino, testYear)(Right("testId"))
+            setupMockGetLatestCalculation(testMtdUserNino.nino, Right("testId"))(lastTaxCalcCrystallisedSuccess)
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }
@@ -380,8 +388,9 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
           "return Status OK (200)" in new CalculationDataApiDisabled {
             mockFinancialTransactionSuccess()
-            mockLatestCalculationError()
             mockSingleBusinessIncomeSource()
+            setupMockGetCalculationId(testMtdUserNino.nino, testYear)(Right("testId"))
+            setupMockGetLatestCalculation(testMtdUserNino.nino, Right("testId"))(lastTaxCalcError)
             status(result) shouldBe Status.OK
           }
 

@@ -26,7 +26,7 @@ import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter._
-import models.calculation.CalculationDataModel
+import models.calculation.Calculation
 import models.financialTransactions.TransactionModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -47,7 +47,7 @@ class CrystallisedViewSpec extends TestSupport {
     mockAppConfig.features.calcBreakdownEnabled(true)
   }
 
-  private def pageSetup(calcDataModel: CalculationDataModel, transactions: TransactionModel, user: MtdItUser[_]) = new {
+  private def pageSetup(calcDataModel: Calculation, transactions: TransactionModel, user: MtdItUser[_]) = new {
     lazy val page: HtmlFormat.Appendable = views.html.crystallised(
       calculationDisplaySuccessModel(calcDataModel),
       transactions,
@@ -56,7 +56,7 @@ class CrystallisedViewSpec extends TestSupport {
 
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
-    implicit val model: CalculationDataModel = calcDataModel
+    implicit val model: Calculation = calcDataModel
   }
 
   "The Crystallised view" should {

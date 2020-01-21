@@ -15,6 +15,8 @@
  */
 package controllers
 
+import java.time.LocalDateTime
+
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
@@ -22,6 +24,7 @@ import assets.messages.{BillsMessages => messages}
 import config.FrontendAppConfig
 import helpers.servicemocks._
 import helpers.ComponentSpecBase
+import models.calculation.{Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 
 class BillsControllerISpec extends ComponentSpecBase {
@@ -32,21 +35,29 @@ class BillsControllerISpec extends ComponentSpecBase {
 
     "the Bill Feature is enabled" when {
 
-      "isAuthorisedUser with an active enrolment, and a single, valid crystallised estimate" should {
+      "isAuthorisedUser with an active enrolment, and a single, valid crystallised bill" should {
 
         "return the correct page with bills links" in {
 
           And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
+          And("I stub a successful calculation response")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = crystallisedCalculationEmptyJson
+          )
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
@@ -60,23 +71,40 @@ class BillsControllerISpec extends ComponentSpecBase {
         }
       }
 
-      "isAuthorisedUser with an active enrolment, and multiple valid crystallised estimates" should {
+      "isAuthorisedUser with an active enrolment, and multiple valid crystallised bills" should {
 
-        "return the correct page with tax links when calls successful" in {
+        "return the correct page with bills links when calls successful" in {
 
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, taxCalculationCrystallisedResponse)
+          And("I stub a successful calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = crystallisedCalculationEmptyJson
+          )
+
+          And("I stub a successful calculation response for 2018-19")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
+            status = OK,
+            body = crystallisedCalculationEmptyJson
+          )
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
-
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
-          verifyLatestCalculationCall(testNino, testYearPlusOne)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
           Then("The view should have the correct headings and two tax bill links")
           res should have(
@@ -90,21 +118,36 @@ class BillsControllerISpec extends ComponentSpecBase {
           )
         }
 
-        "return the correct page with tax links when one response is not found" in {
+        "return the correct page with bill links when one response is not found" in {
 
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
-          IncomeTaxViewChangeStub.stubGetLatestCalcNotFound(testNino, testYearPlusOne)
+          And("I stub a successful calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = crystallisedCalculationEmptyJson
+          )
+
+          And("I stub a not found calculation response for 2018-19")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculationNotFound(testNino, "idTwo")
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
-          verifyLatestCalculationCall(testNino, testYearPlusOne)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
           Then("The view should have the correct headings and two tax bill links")
           res should have(
@@ -124,16 +167,35 @@ class BillsControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-          And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationCrystallisedResponse)
-          IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYearPlusOne, taxCalculationResponse)
+          And("I stub a successful calculation response for 2017-18")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+            status = OK,
+            body = crystallisedCalculationEmptyJson
+          )
+
+          And("I stub a successful calculation response for 2018-19 and it is not crystallised")
+          IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+            status = OK,
+            body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+          )
+          IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
+            status = OK,
+            body = estimateCalculationEmptyJson
+          )
 
           When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
           val res = IncomeTaxViewChangeFrontend.getBills
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyLatestCalculationCall(testNino, testYear)
-          verifyLatestCalculationCall(testNino, testYearPlusOne)
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+          IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
+
 
           Then("The view should have the correct headings and a single tax bill link")
           res should have(
@@ -147,23 +209,31 @@ class BillsControllerISpec extends ComponentSpecBase {
         }
       }
 
-      "isAuthorisedUser with an active enrolment, and no tax bills" should {
+      "isAuthorisedUser with an active enrolment, and no bills" should {
         "return the correct page with no bills found message" when {
           "there are no crystallised calculations returned" in {
 
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-            And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-            IncomeTaxViewChangeStub.stubGetLatestCalculation(testNino, testYear, taxCalculationResponse)
+            And("I stub a successful calculation response and it is not crystallised")
+            IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+              status = OK,
+              body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+            )
+            IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+              status = OK,
+              body = estimateCalculationEmptyJson
+            )
 
             When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
             val res = IncomeTaxViewChangeFrontend.getBills
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            verifyLatestCalculationCall(testNino, testYear)
+            IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+            IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
-            Then("The view should have the correct headings and a single tax estimate link")
+            Then("The view should have the correct headings")
             res should have(
               httpStatus(OK),
               pageTitle(messages.billsTitle),
@@ -177,16 +247,30 @@ class BillsControllerISpec extends ComponentSpecBase {
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-            And("I wiremock stub a successful Get Last Estimated Tax Liability response")
-            IncomeTaxViewChangeStub.stubGetLatestCalcNotFound(testNino, testYear)
+            And("I stub a not found calculation response for 2017-18")
+            IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+              status = OK,
+              body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+            )
+            IndividualCalculationStub.stubGetCalculationNotFound(testNino, "idOne")
+
+            And("I stub a not found calculation response for 2018-19")
+            IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+              status = OK,
+              body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+            )
+            IndividualCalculationStub.stubGetCalculationNotFound(testNino, "idTwo")
 
             When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
             val res = IncomeTaxViewChangeFrontend.getBills
 
             verifyIncomeSourceDetailsCall(testMtditid)
-            verifyLatestCalculationCall(testNino, testYear)
+            IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+            IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+            IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+            IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
-            Then("The view should have the correct headings and a single tax estimate link")
+            Then("The view should have the correct heading")
             res should have(
               httpStatus(OK),
               pageTitle(messages.billsTitle),

@@ -44,78 +44,123 @@ class CalcBreakdownHelperSpec extends TestSupport {
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
   }
   
-  val fullCalculationDataModel = CalculationDataModel(
+  val fullCalculationDataModel = Calculation(
+    totalIncomeTaxAndNicsDue = Some(0),
+    totalIncomeTaxNicsCharged = Some(50000),
+    totalTaxableIncome = Some(100000),
+    incomeTaxNicAmount = None,
+    timestamp = None,
+    crystallised = true,
     nationalRegime = Some("UK"),
-    totalTaxableIncome = 100000,
-    totalIncomeTaxNicYtd = 50000,
-    annualAllowances = AnnualAllowances(5000.00, 2000.25),
-    taxReliefs = 4000,
-    totalIncomeAllowancesUsed = 7000,
-    giftOfInvestmentsAndPropertyToCharity = 1234,
-    incomeReceived = IncomeReceivedModel(
-      selfEmployment = 50000,
-      ukProperty = 40000,
-      bankBuildingSocietyInterest = 30000,
-      ukDividends = 20000
-    ),
-    payAndPensionsProfit = PayPensionsProfitModel(
-      totalAmount = 90000,
-      taxableIncome = 75000,
-      payAndPensionsProfitBands = List(
-        TaxBandModel("first", 10, 1000, 100),
-        TaxBandModel("second", 20, 2000, 400),
-        TaxBandModel("third", 30, 3000, 900)
-      )
-    ),
-    savingsAndGains = SavingsAndGainsModel(
-      total = 30000,
-      taxableIncome = 25000,
-      bands = Seq(
-        BandModel(1000, 0, 0, "first"),
-        BandModel(2000, 10, 200, "second"),
-        BandModel(3000, 20, 600, "third")
-      )
-    ),
-    dividends = DividendsModel(
-      totalAmount = 20000,
-      taxableIncome = 15000,
-      band = Seq(
-        DividendsBandModel("first", 0, None, None, 1000, 0),
-        DividendsBandModel("second", 10, None, None, 2000, 200),
-        DividendsBandModel("third", 20, None, None, 3000, 600)
-      )
-    ),
-    giftAid = GiftAidModel(5000, 10, 500),
-    nic = NicModel(class2 = 5000, class4 = 10000),
-    eoyEstimate = Some(EoyEstimate(15000))
-  )
 
-  val emptyCalculationDataModel = CalculationDataModel(
-    None, 0, 0,
-    annualAllowances = AnnualAllowances(0, 0),
-    0, 0, 0,
-    IncomeReceivedModel(0, 0, 0, 0),
-    SavingsAndGainsModel(0, 0, Nil),
-    DividendsModel(0, 0, Nil),
-    GiftAidModel(0, 0, 0),
-    NicModel(0, 0),
-    None,
-    PayPensionsProfitModel(0, 0, Nil)
-  )
+    payPensionsProfit = PayPensionsProfit(
+      totalSelfEmploymentProfit = Some(50000),
+      totalPropertyProfit = Some(40000),
+      incomeTaxAmount = Some(90000),
+      taxableIncome = Some(75000),
+      List(TaxBand(
+        name = "first",
+        rate = 10,
+        income = 1000,
+        taxAmount = 100.00
+
+      ),
+        TaxBand(
+          name = "second",
+          rate = 20,
+          income = 2000.00,
+          taxAmount = 400.00
+
+        ),
+        TaxBand(
+          name = "third",
+          rate = 30,
+          income = 3000.00,
+          taxAmount = 900.00
+
+        ))
+    ),
+
+    savingsAndGains = SavingsAndGains(
+      Some(30000),
+      Some(25000),
+      List(TaxBand(
+        name = "first",
+        rate = 0,
+        income = 1000,
+        taxAmount = 0.0
+
+      ),
+        TaxBand(
+          name = "second",
+          rate = 10,
+          income = 2000,
+          taxAmount = 200
+
+        ),
+        TaxBand(
+          name = "third",
+          rate = 20,
+          income = 3000,
+          taxAmount = 600
+        )
+    )),
+
+    dividends = Dividends(
+      incomeTaxAmount = Some(20000),
+      taxableIncome = Some(20000),
+      List(TaxBand(
+        name = "first",
+        rate = 0,
+        income = 1000,
+        taxAmount = 0
+      ),
+        TaxBand(
+          name = "second",
+          rate = 10,
+          income = 2000,
+          taxAmount = 200
+        ),
+        TaxBand(
+          name = "third",
+          rate = 20,
+          income = 3000,
+          taxAmount = 600
+        ))
+      ),
+
+    allowancesAndDeductions = AllowancesAndDeductions(
+      personalAllowance = Some(5000),
+    giftOfInvestmentsAndPropertyToCharity = Some(1234),
+  totalAllowancesAndDeductions = None,
+  totalReliefs = Some(4000)
+    ),
+    nic = Nic(
+      class2 = Some(5000),
+      class4 = Some(10000),
+      totalNic = Some(15000)
+    ),
+    giftAid = GiftAid(
+      payments = Some(5000),
+      rate = Some(10),
+      giftAidTax = Some(500)
+    ))
 
   val fullDataEstimate: CalcDisplayModel = CalcDisplayModel(
     "",
     10000.00,
-    Some(fullCalculationDataModel),
+    fullCalculationDataModel,
     Estimate
   )
 
   val fullDataBill: CalcDisplayModel = fullDataEstimate.copy(calcStatus = Crystallised)
 
+  val emptyCalculation: Calculation = Calculation(crystallised = false)
+
   val emptyDataEstimate: CalcDisplayModel = CalcDisplayModel(
     "",
     10000.00,
-    Some(emptyCalculationDataModel),
+    emptyCalculation,
     Estimate
   )
 
@@ -127,7 +172,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
     ("business-profit", Messages.CalculationBreakdown.incomeBusinessProfit, "£50,000"),
     ("property-income", Messages.CalculationBreakdown.incomeProperty, "£40,000"),
     ("dividend-income", Messages.CalculationBreakdown.incomeDividends, "£20,000"),
-    ("savings-income", Messages.CalculationBreakdown.incomeSavings, "£30,000"),
+    ("savings-income", Messages.CalculationBreakdown.incomeSavings, "£25,000"),
     ("personal-allowance", Messages.CalculationBreakdown.incomePersonalAllowance, "£5,000"),
     ("dividends-allowance", Messages.CalculationBreakdown.incomeDividendsAllowance, "£1,000"),
     ("savings-allowance", Messages.CalculationBreakdown.incomeSavingsAllowance, "£1,000"),
@@ -162,7 +207,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
     }
 
     "display the how estimate calculated sub heading when the calculation breakdown is for an estimate" in new Setup(fullDataEstimate) {
-      getTextOfElementById("how-estimate-calculated") shouldBe Some(Messages.CalculationBreakdown.estimateSubHeading("£50,000"))
+      getTextOfElementById("how-estimate-calculated") shouldBe Some(Messages.CalculationBreakdown.estimateSubHeading("£10,000"))
       getElementById("how-bill-calculated") shouldBe None
     }
 
@@ -235,7 +280,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
       "the breakdown is an estimate" in new Setup(fullDataEstimate) {
         getElementById("your-total-section").isDefined shouldBe true
         getTextOfElementById("your-total-estimate-label") shouldBe Some(Messages.CalculationBreakdown.calculationYourTotalEstimate)
-        getTextOfElementById("your-total-estimate-data") shouldBe Some("£50,000")
+        getTextOfElementById("your-total-estimate-data") shouldBe Some("£10,000")
         getElementById("total-outstanding-label") shouldBe None
         getElementById("total-outstanding-data") shouldBe None
         getElementById("total-outstanding-date") shouldBe None
@@ -253,7 +298,7 @@ class CalcBreakdownHelperSpec extends TestSupport {
       "display the gift aid extender message when it is present in the data" in new Setup(fullDataEstimate) {
 
         getTextOfElementById("gift-aid-extender") shouldBe
-          Some(Messages.CalculationBreakdown.giftAidExtender("2,000.25"))
+          Some(Messages.CalculationBreakdown.giftAidExtender("500"))
       }
 
       "not display the gift aid extender message when it is not present in the data" in new Setup(emptyDataEstimate) {
