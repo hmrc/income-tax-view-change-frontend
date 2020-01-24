@@ -130,11 +130,6 @@ object CalcDataIntegrationTestConstants {
               "taxAmount" -> 1143
             )
           )
-        ),
-        "giftAid" -> Json.obj(
-          "grossGiftAidPayments" -> 1.0,
-          "rate" -> 2.0,
-          "giftAidTax" -> false
         )
       )
     )
@@ -283,11 +278,6 @@ object CalcDataIntegrationTestConstants {
                 "taxAmount" -> 1143
               )
             )
-          ),
-          "giftAid" -> Json.obj(
-            "grossGiftAidPayments" -> 1.0,
-            "rate" -> 2.0,
-            "giftAidTax" -> 2000
           )
         )
       )
@@ -433,11 +423,6 @@ object CalcDataIntegrationTestConstants {
                 "taxAmount" -> 1143
               )
             )
-          ),
-          "giftAid" -> Json.obj(
-            "grossGiftAidPayments" -> 1.0,
-            "rate" -> 2.0,
-            "giftAidTax" -> false
           )
         )
       )

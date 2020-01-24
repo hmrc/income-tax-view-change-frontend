@@ -56,7 +56,6 @@ calc-breakdown.calculation.income-tax                           = Treth Incwm ({
 calc-breakdown.calculation.dividend                             = Treth ar Ddifidendau ({0} ar {1}%)
 calc-breakdown.calculation.class-two-ni                         = Yswiriant Gwladol Dosbarth 2
 calc-breakdown.calculation.class-four-ni                        = Yswiriant Gwladol Dosbarth 4
-calc-breakdown.calculation.gift-aid-extender                    = Cynyddwyd eich terfyn cyfradd sylfaenol gan {0} ar gyfer taliadau Rhodd Cymorth.
 
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = Blwyddyn dreth {0} i {1}
@@ -74,7 +73,6 @@ estimated_tax_liability.calc-breakdown.pa-estimates-savings     = Lwfans Persono
 estimated_tax_liability.calc-breakdown.pa-bills                 = Lwfans Personol (ar gyfer y cyfnod yr adroddwyd amdano)
 estimated_tax_liability.calc-breakdown.pa-bills-savings         = Lwfans Personol (Treth Incwm a chynilion)
 estimated_tax_liability.calc-breakdown.additional-allowances    = Lwfansau ychwanegol
-estimated_tax_liability.calc-breakdown.gift-aid-payment         = Taliad Rhodd Cymorth
 estimated_tax_liability.calc-breakdown.taxable-income           = Eich incwm trethadwy (Treth Incwm)
 estimated_tax_liability.calc-breakdown.dividend-income          = Incwm o ddifidendau
 estimated_tax_liability.calc-breakdown.dividend-allowance       = Lwfans Personol (difidendau)

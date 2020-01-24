@@ -139,11 +139,6 @@ class CalcBreakdownHelperSpec extends TestSupport {
       class2 = Some(5000),
       class4 = Some(10000),
       totalNic = Some(15000)
-    ),
-    giftAid = GiftAid(
-      payments = Some(5000),
-      rate = Some(10),
-      giftAidTax = Some(500)
     ))
 
   val fullDataEstimate: CalcDisplayModel = CalcDisplayModel(
@@ -293,16 +288,6 @@ class CalcBreakdownHelperSpec extends TestSupport {
         getTextOfElementById("total-outstanding-date") shouldBe Some("due 31 January 2019")
         getElementById("your-total-estimate-label") shouldBe None
         getElementById("your-total-estimate-data") shouldBe None
-      }
-
-      "display the gift aid extender message when it is present in the data" in new Setup(fullDataEstimate) {
-
-        getTextOfElementById("gift-aid-extender") shouldBe
-          Some(Messages.CalculationBreakdown.giftAidExtender("500"))
-      }
-
-      "not display the gift aid extender message when it is not present in the data" in new Setup(emptyDataEstimate) {
-        getElementById("gift-aid-extender") shouldBe None
       }
 
     }

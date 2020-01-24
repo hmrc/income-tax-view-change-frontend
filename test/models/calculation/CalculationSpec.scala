@@ -62,11 +62,6 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       class2 = Some(1.0),
       class4 = Some(2.0),
       totalNic = Some(3.0)
-    ),
-    giftAid = GiftAid(
-      payments = Some(1.0),
-      rate = Some(2.0),
-      giftAidTax = Some(3.0)
     )
   )
   val minimalModel: Calculation = Calculation(
@@ -119,11 +114,6 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
                 "taxAmount" -> 3.0
               )
             )
-          ),
-          "giftAid" -> Json.obj(
-            "grossGiftAidPayments" -> 1.0,
-            "rate" -> 2.0,
-            "giftAidTax" -> 3.0
           )
         )
       )
@@ -230,11 +220,6 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "class2" -> 1.0,
       "class4" -> 2.0,
       "totalNic" -> 3.0
-    ),
-    "giftAid" -> Json.obj(
-      "payments" -> 1.0,
-      "rate" -> 2.0,
-      "giftAidTax" -> 3.0
     )
   )
   val minimalWriteJson: JsObject = Json.obj(
@@ -249,8 +234,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "bands" -> Json.arr()
     ),
     "allowancesAndDeductions" -> Json.obj(),
-    "nic" -> Json.obj(),
-    "giftAid" -> Json.obj()
+    "nic" -> Json.obj()
   )
 
   "Calculation" must {

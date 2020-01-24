@@ -21,7 +21,6 @@ object Messages {
   object CalculationBreakdown {
     def estimateSubHeading(taxAmount: String) = s"How your estimate of $taxAmount was calculated"
     val billSubHeading = "How your tax was calculated"
-    def giftAidExtender(amount: String) = s"Your basic rate limit has been increased by £$amount for Gift Aid payments."
     def nationalRegime(regime: String) = s"(National Regime: $regime)"
     val incomeHeading = "About your income"
     val incomeSubheading = "Summary of the income you reported and applicable deductions"
@@ -146,7 +145,6 @@ object Messages {
         val nic4 = "Class 4 National Insurance"
         val reliefs = "Your tax reliefs"
         val total = "Your Income Tax and National Insurance estimate"
-        val giftAid = "Gift Aid payment"
       }
       val accuracy = "Although more accurate than your annual estimate, your current estimate may not be a true reflection of the tax you owe."
       object WhyThisMayChange {
@@ -165,7 +163,6 @@ object Messages {
       val billsLinkAriaLabel = s"view bill for $billLink"
       val noBills = "You've had no bills since you started reporting through software."
       val earlierBills = "For earlier bills, view your Self Assessment calculations (opens in a new tab)."
-      val giftAid = "Gift Aid payment"
     }
   }
 

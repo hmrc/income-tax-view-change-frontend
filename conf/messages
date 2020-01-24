@@ -83,7 +83,6 @@ calc-breakdown.calculation.total-estimated-tax                  = Your total est
 calc-breakdown.calculation.total-bill-amount                    = Your total tax bill amount
 calc-breakdown.calculation.total-outstanding-tax                = Total outstanding tax
 calc-breakdown.calculation.due-date                             = due 31 January {0}
-calc-breakdown.calculation.gift-aid-extender                    = Your basic rate limit has been increased by {0} for Gift Aid payments.
 
 ## Estimated Tax Liability Page ##
 estimated_tax_liability.title                                   = Tax estimate for {0} - {1}
@@ -102,7 +101,6 @@ estimated_tax_liability.calc-breakdown.pa-estimates-savings     = Savings Allowa
 estimated_tax_liability.calc-breakdown.pa-bills                 = Personal Allowance
 estimated_tax_liability.calc-breakdown.pa-bills-savings         = Savings Allowance
 estimated_tax_liability.calc-breakdown.additional-allowances    = Additional allowances
-estimated_tax_liability.calc-breakdown.gift-aid-payment         = Gift Aid payment
 estimated_tax_liability.calc-breakdown.dividend-income          = Income from dividends
 estimated_tax_liability.calc-breakdown.dividend-allowance       = Personal Allowance (dividends)
 estimated_tax_liability.calc-breakdown.taxable-dividend-income  = Your taxable income (dividends)
