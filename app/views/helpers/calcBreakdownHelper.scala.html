@@ -158,9 +158,6 @@
     <div class="form-group">
         <h3 id="calculation-heading" class="heading-small">@messages("calc-breakdown.calculation.heading")</h3>
         <div id="calculation-subheading" class="form-hint">@messages("calc-breakdown.calculation.subheading",calcModel.calcDataModel.totalTaxableIncome.getOrElse(BigDecimal(0)).toCurrencyString)</div>
-        @if(calcModel.calcDataModel.giftAid.giftAidTax.exists(_ > 0)) {
-            <div id="gift-aid-extender" class="form-hint">@messages("calc-breakdown.calculation.gift-aid-extender",calcModel.calcDataModel.giftAid.giftAidTax.get.toCurrencyString)</div>
-        }
     </div>
 
     @for(band <-calcModel.calcDataModel.payPensionsProfit.bands if band.income > 0) {

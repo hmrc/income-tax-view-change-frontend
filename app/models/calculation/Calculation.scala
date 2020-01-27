@@ -92,19 +92,6 @@ object AllowancesAndDeductions {
   implicit val writes: OWrites[AllowancesAndDeductions] = Json.writes[AllowancesAndDeductions]
 }
 
-case class GiftAid(payments: Option[BigDecimal] = None,
-                   rate: Option[BigDecimal] = None,
-                   giftAidTax: Option[BigDecimal] = None)
-
-object GiftAid {
-  implicit val reads: Reads[GiftAid] = (
-    readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "giftAid" \ "grossGiftAidPayments") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "giftAid" \ "rate") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "giftAid" \ "giftAidTax")
-    ) (GiftAid.apply _)
-  implicit val writes: OWrites[GiftAid] = Json.writes[GiftAid]
-}
-
 case class Nic(class2: Option[BigDecimal] = None,
                class4: Option[BigDecimal] = None,
                totalNic: Option[BigDecimal] = None)

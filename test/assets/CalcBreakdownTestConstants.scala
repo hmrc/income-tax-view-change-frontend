@@ -136,11 +136,6 @@ object CalcBreakdownTestConstants {
       class2 = Some(10000.00),
       class4 = Some(14000.00),
       totalNic = Some(66000.00)
-    ),
-    giftAid = GiftAid(
-      payments = Some(0),
-      rate = Some(0),
-      giftAidTax = Some(0)
     )
   )
 
@@ -255,11 +250,6 @@ object CalcBreakdownTestConstants {
       class2 = Some(10000.00),
       class4 = Some(14000.00),
       totalNic = Some(66000.00)
-    ),
-    giftAid = GiftAid(
-      payments = Some(0),
-      rate = Some(0),
-      giftAidTax = Some(0)
     )
   )
 
@@ -370,11 +360,6 @@ object CalcBreakdownTestConstants {
       class2 = Some(110),
       class4 = Some(13.86),
       totalNic = Some(66000.00)
-    ),
-    giftAid = GiftAid(
-      payments = Some(0),
-      rate = Some(0),
-      giftAidTax = Some(0)
     )
   )
 
@@ -486,11 +471,6 @@ object CalcBreakdownTestConstants {
       class2 = Some(110),
       class4 = Some(13.86),
       totalNic = Some(66000.00)
-    ),
-    giftAid = GiftAid(
-      payments = Some(900),
-      rate = Some(0),
-      giftAidTax = Some(0)
     )
   )
 
@@ -560,8 +540,7 @@ object CalcBreakdownTestConstants {
         "totalTaxableIncome" -> 0,
         "totalIncomeTaxNicYtd" -> 123.45,
         "annualAllowances" -> Json.obj(
-          "personalAllowance" -> 0,
-          "giftAidExtender" -> 0
+          "personalAllowance" -> 0
         ),
         "taxReliefs" -> 0,
         "totalIncomeAllowancesUsed" -> 0,
@@ -588,11 +567,6 @@ object CalcBreakdownTestConstants {
             "taxableIncome" -> 0,
             "bands" -> Json.arr()
           )
-        ),
-        "giftAid" -> Json.obj(
-          "paymentsMade" -> 0,
-          "rate" -> 0,
-          "taxableAmount" -> 0
         ),
         "nic" -> Json.obj(
           "class2" -> 0,
@@ -706,11 +680,6 @@ object CalcBreakdownTestConstants {
         class2 = Some(10000.00),
         class4 = Some(14000.00),
         totalNic = Some(66000.00)
-      ),
-      giftAid = GiftAid(
-        payments = Some(0),
-        rate = Some(0),
-        giftAidTax = Some(0)
       )
     )
   val errorCalculationModel: CalculationErrorModel =
