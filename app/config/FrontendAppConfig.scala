@@ -66,8 +66,8 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val signInUrl: String = loadConfig("base.sign-in")
 
   //Exit Survey
-  lazy val exitSurveyBaseUrl:String = loadConfig("feedback-survey-frontend.host") + loadConfig("feedback-survey-frontend.url")
-  lazy val exitSurveyUrl = s"$exitSurveyBaseUrl/?origin=$contactFormServiceIdentifier"
+  lazy val exitSurveyBaseUrl:String = loadConfig("feedback-frontend.host") + loadConfig("feedback-frontend.url")
+  lazy val exitSurveyUrl = s"$exitSurveyBaseUrl/$contactFormServiceIdentifier"
 
   //Sign out
   lazy val ggUrl: String = loadConfig(s"government-gateway.url")
