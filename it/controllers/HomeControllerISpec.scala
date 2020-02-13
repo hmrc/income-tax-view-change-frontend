@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse}
+import assets.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
 import helpers.ComponentSpecBase
@@ -40,10 +40,12 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-        And("I wiremock stub a single business obligation response")
+        And("I wiremock stub obligation responses")
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
+
         And("I stub a successful calculation response for 2017-18")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
           status = OK,
@@ -53,6 +55,7 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
           status = OK,
           body = crystallisedCalculationFullJson
         )
+
         And("I stub a successful calculation response for 2018-19")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
           status = OK,
@@ -62,13 +65,21 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
           status = OK,
           body = crystallisedCalculationFullJson
         )
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionsJson(2000))
+
+        And("I stub a successful financial transactions response")
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, financialTransactionsJson(2000.0))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(1000.0))
 
         When("I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.getHome
 
         verifyIncomeSourceDetailsCall(testMtditid)
+
         verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+        verifyReportDeadlinesCall(testNino, otherTestSelfEmploymentId)
+        verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
+        verifyReportDeadlinesCall(testNino, testMtditid)
+
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
@@ -89,10 +100,12 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-          And("I wiremock stub a single business obligation response")
+          And("I wiremock stub obligation responses")
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
+
           And("I stub a successful estimated calculation response for 2017-18")
           IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
             status = OK,
@@ -102,6 +115,7 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
             status = OK,
             body = estimatedCalculationFullJson
           )
+
           And("I stub a successful estimated calculation response for 2018-19")
           IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
             status = OK,
@@ -111,13 +125,17 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
             status = OK,
             body = estimatedCalculationFullJson
           )
-          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionsJson(2000))
 
           When("I call GET /report-quarterly/income-and-expenses/view")
           val res = IncomeTaxViewChangeFrontend.getHome
 
           verifyIncomeSourceDetailsCall(testMtditid)
+
           verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+          verifyReportDeadlinesCall(testNino, otherTestSelfEmploymentId)
+          verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
+          verifyReportDeadlinesCall(testNino, testMtditid)
+
           IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
           IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
           IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
@@ -138,27 +156,34 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
           And("I wiremock stub a single business obligation response")
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
+
           And("I stub a not found calculation response for 2017-18")
           IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
             status = OK,
             body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
           )
           IndividualCalculationStub.stubGetCalculationNotFound(testNino, "idOne")
+
           And("I stub a not found calculation response for 2018-19")
           IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
             status = OK,
             body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
           )
           IndividualCalculationStub.stubGetCalculationNotFound(testNino, "idTwo")
-          FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionWithoutDueDatesJson(0))
 
           When("I call GET /report-quarterly/income-and-expenses/view")
           val res = IncomeTaxViewChangeFrontend.getHome
 
           verifyIncomeSourceDetailsCall(testMtditid)
+
           verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+          verifyReportDeadlinesCall(testNino, otherTestSelfEmploymentId)
+          verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
+          verifyReportDeadlinesCall(testNino, testMtditid)
+
           IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
           IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
           IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
@@ -180,27 +205,34 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
         And("I wiremock stub a single business obligation response")
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
         IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
+
         And("I stub an error calculation response for 2017-18")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
           status = OK,
           body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
         )
         IndividualCalculationStub.stubGetCalculationError(testNino, "idOne")
+
         And("I stub an error calculation response for 2018-19")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
           status = OK,
           body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
         )
         IndividualCalculationStub.stubGetCalculationError(testNino, "idTwo")
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionWithoutDueDatesJson(0))
 
         When("I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.getHome
 
         verifyIncomeSourceDetailsCall(testMtditid)
+
         verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+        verifyReportDeadlinesCall(testNino, otherTestSelfEmploymentId)
+        verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
+        verifyReportDeadlinesCall(testNino, testMtditid)
+
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")

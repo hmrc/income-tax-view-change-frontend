@@ -143,9 +143,9 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
-
         And("I wiremock stub a single financial transaction response")
         FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, emptyFinancialTransaction)
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, emptyFinancialTransaction)
 
         And("the payment feature switch is set to false")
         appConfig.features.paymentEnabled(false)
