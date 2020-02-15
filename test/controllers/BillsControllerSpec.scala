@@ -22,6 +22,7 @@ import assets.EstimatesTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages
 import audit.AuditingService
+import config.featureswitch.{Bills, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -33,7 +34,7 @@ import play.api.test.Helpers._
 import testUtils.TestSupport
 
 class BillsControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   object TestCalculationController extends BillsController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -57,7 +58,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
       lazy val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
 
       "return redirect SEE_OTHER (303)" in {
-        TestCalculationController.config.features.billsEnabled(false)
+        disable(Bills)
         setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -79,7 +80,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
           lazy val document = result.toHtmlDocument
 
           "return status OK (200)" in {
-            TestCalculationController.config.features.billsEnabled(true)
+            enable(Bills)
             setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))
             mockGetAllLatestCalcSuccess()
             status(result) shouldBe Status.OK
@@ -102,7 +103,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
           lazy val document = result.toHtmlDocument
 
           "return Status OK (200)" in {
-            TestCalculationController.config.features.billsEnabled(true)
+            enable(Bills)
             setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCrystallisedCalcSuccess()
             status(result) shouldBe Status.OK
@@ -124,7 +125,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
           lazy val document = result.toHtmlDocument
 
           "return Status OK (200)" in {
-            TestCalculationController.config.features.billsEnabled(true)
+            enable(Bills)
             setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCalcSuccessEmpty()
             status(result) shouldBe Status.OK
@@ -145,7 +146,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
           lazy val document = result.toHtmlDocument
 
           "return OK (200)" in {
-            TestCalculationController.config.features.billsEnabled(true)
+            enable(Bills)
             setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCrystallisedCalcWithNotFound()
             status(result) shouldBe Status.OK
@@ -166,7 +167,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
           lazy val document = result.toHtmlDocument
 
           "return OK (200)" in {
-            TestCalculationController.config.features.billsEnabled(true)
+            enable(Bills)
             setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCrystallisedCalcWithNotFound()
             status(result) shouldBe Status.OK
@@ -178,7 +179,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
           lazy val document = result.toHtmlDocument
 
           "return ISE (500)" in {
-            TestCalculationController.config.features.billsEnabled(true)
+            enable(Bills)
             setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCrystallisedCalcWithError()
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -189,7 +190,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
       "Called with an Unauthenticated User" should {
 
         "return redirect SEE_OTHER (303)" in {
-          TestCalculationController.config.features.billsEnabled(true)
+          enable(Bills)
           setupMockAuthorisationException()
           val result = TestCalculationController.viewCrystallisedCalculations(fakeRequestWithActiveSession)
           status(result) shouldBe Status.SEE_OTHER

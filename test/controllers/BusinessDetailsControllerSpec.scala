@@ -16,18 +16,17 @@
 
 package controllers
 
-import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants._
+import config.featureswitch.{AccountDetails, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.core.ErrorModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
-class BusinessDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class BusinessDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   object TestBusinessDetailsController extends BusinessDetailsController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -49,7 +48,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockAuthenticationP
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          TestBusinessDetailsController.config.features.accountDetailsEnabled(true)
+          enable(AccountDetails)
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.OK
         }
@@ -70,7 +69,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockAuthenticationP
         lazy val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
 
         "return Status (500)" in {
-          TestBusinessDetailsController.config.features.accountDetailsEnabled(true)
+          enable(AccountDetails)
           mockNoIncomeSources()
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -104,7 +103,7 @@ class BusinessDetailsControllerSpec extends TestSupport with MockAuthenticationP
       lazy val result = TestBusinessDetailsController.getBusinessDetails(0)(fakeRequestWithActiveSession)
 
       "return Redirect (303)" in {
-        TestBusinessDetailsController.config.features.accountDetailsEnabled(false)
+        disable(AccountDetails)
         mockSingleBusinessIncomeSource()
         status(result) shouldBe Status.SEE_OTHER
       }

@@ -22,6 +22,7 @@ import assets.EstimatesTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages
 import audit.AuditingService
+import config.featureswitch.{Estimates, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -33,7 +34,7 @@ import play.api.test.Helpers._
 import testUtils.TestSupport
 
 class EstimatesControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate  with FeatureSwitching{
 
   object TestCalculationController extends EstimatesController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -58,7 +59,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
       lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
 
       "return redirect SEE_OTHER (303)" in {
-        TestCalculationController.config.features.estimatesEnabled(false)
+        disable(Estimates)
         setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -78,7 +79,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
           lazy val messages = new Messages.Estimates
 
           "return status OK (200)" in {
-            TestCalculationController.config.features.estimatesEnabled(true)
+            enable(Estimates)
             setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))
             mockGetAllLatestCalcSuccess()
             status(result) shouldBe Status.OK
@@ -96,7 +97,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
           lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
 
           "return SEE_OTHER (303)" in {
-            TestCalculationController.config.features.estimatesEnabled(true)
+            enable(Estimates)
             setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCalcSuccessOneNotFound()
             status(result) shouldBe Status.SEE_OTHER
@@ -108,7 +109,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
           lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
 
           "return an ISE (500)" in {
-            TestCalculationController.config.features.estimatesEnabled(true)
+            enable(Estimates)
             setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
             mockGetAllLatestCrystallisedCalcWithError()
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -122,7 +123,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
         "return redirect SEE_OTHER (303)" in {
           setupMockAuthorisationException()
           val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
-          TestCalculationController.config.features.estimatesEnabled(true)
+          enable(Estimates)
           status(result) shouldBe Status.SEE_OTHER
         }
       }

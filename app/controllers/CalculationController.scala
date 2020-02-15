@@ -21,6 +21,7 @@ import audit.AuditingService
 import audit.models.EstimatesAuditing.{BasicEstimatesAuditModel, EstimatesAuditModel}
 import audit.models.BillsAuditing.{BasicBillsAuditModel, BillsAuditModel}
 import auth.MtdItUser
+import config.featureswitch.{CalcDataApi, FeatureSwitching, Payment, CalcBreakdown}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import enums.{Crystallised, Estimate}
@@ -37,7 +38,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.Future
 
 @Singleton
-class CalculationController @Inject()(implicit val config: FrontendAppConfig,
+class CalculationController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       implicit val messagesApi: MessagesApi,
                                       val checkSessionTimeout: SessionTimeoutPredicate,
                                       val authenticate: AuthenticationPredicate,
@@ -48,13 +49,13 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                                       val auditingService: AuditingService,
                                       val financialTransactionsService: FinancialTransactionsService,
                                       val itvcErrorHandler: ItvcErrorHandler
-                                     ) extends BaseController with ImplicitDateFormatter {
+                                     ) extends BaseController with ImplicitDateFormatter with FeatureSwitching {
 
   val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
   def renderCalculationPage(taxYear: Int): Action[AnyContent] = {
     if(taxYear > 0) {
-      if (config.features.calcDataApiEnabled()) {
+      if (isEnabled(CalcDataApi)) {
         showCalculationForYear(taxYear)
       } else {
         basicShowCalculationForYear(taxYear)
@@ -79,7 +80,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
               renderCrystallisedView(calcDisplayModel, taxYear)
             case Estimate =>
               auditCalcDisplayModel(user, calcDisplayModel, isEstimate = true)
-              Future.successful(Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear)))
+              Future.successful(Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear, isEnabled(CalcBreakdown))))
           }
 
         case CalcDisplayNoDataFound =>
@@ -134,7 +135,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
       case transactions: FinancialTransactionsModel =>
         (transactions.findChargeForTaxYear(taxYear), model) match {
           case (Some(charge), calcDisplayModel: CalcDisplayModel) =>
-            Ok(views.html.crystallised(calcDisplayModel, charge, taxYear))
+            Ok(views.html.crystallised(calcDisplayModel, charge, taxYear, isEnabled(CalcBreakdown), isEnabled(Payment)))
           case (Some(charge), calculationModel: Calculation) =>
             calculationModel.totalIncomeTaxAndNicsDue match {
               case Some(currentBill) =>
@@ -143,7 +144,7 @@ class CalculationController @Inject()(implicit val config: FrontendAppConfig,
                   charge.isPaid,
                   taxYear
                 )
-                Ok(views.html.getLatestCalculation.bill(viewModel))
+                Ok(views.html.getLatestCalculation.bill(viewModel, isEnabled(Payment)))
               case None =>
                 Logger.error(s"[CalculationController][renderCrystallisedView[$taxYear]] No current bill amount could be retrieved.")
                 itvcErrorHandler.showInternalServerError

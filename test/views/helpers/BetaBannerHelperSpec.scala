@@ -24,7 +24,7 @@ class BetaBannerHelperSpec extends TestSupport {
 
   "The beta banner" should {
 
-    lazy val view = views.html.helpers.betaBanner()(applicationMessages, frontendAppConfig)
+    lazy val view = views.html.helpers.betaBanner()(applicationMessages, appConfig)
     lazy val document = Jsoup.parse(view.body)
 
     "have the BETA label" in {
@@ -41,7 +41,7 @@ class BetaBannerHelperSpec extends TestSupport {
     }
 
     "have the correct link location" in {
-      document.getElementById("feedback-link").attr("href") shouldBe frontendAppConfig.betaFeedbackUrl
+      document.getElementById("feedback-link").attr("href") shouldBe appConfig.betaFeedbackUrl
     }
   }
 }

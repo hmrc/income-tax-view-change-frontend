@@ -22,6 +22,7 @@ import assets.BaseTestConstants._
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, HomePage => messages}
 import auth.MtdItUser
 import config.FrontendAppConfig
+import config.featureswitch.{AccountDetails, CalcBreakdown, CalcDataApi, FeatureSwitching, Statements}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -32,7 +33,7 @@ import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
 
-class HomePageViewSpec extends TestSupport {
+class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -46,9 +47,12 @@ class HomePageViewSpec extends TestSupport {
   val updateDate: LocalDate = LocalDate.of(2018, 1, 1)
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
 
-
-  class Setup(paymentDueDate:Option[LocalDate]=Some(nextPaymentDueDate)) {
-    lazy val page: HtmlFormat.Appendable = views.html.home(paymentDueDate,updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+  class Setup(paymentDueDate:Option[LocalDate] = Some(nextPaymentDueDate), billsEnabled: Boolean = false,
+              paymentEnabled: Boolean = false, reportDeadlinesEnabled: Boolean = false,
+              obligationsPageEnabled: Boolean = false, estimatesEnabled: Boolean = false) {
+    lazy val page: HtmlFormat.Appendable = views.html.home(paymentDueDate, updateDate, billsEnabled,
+      paymentEnabled, reportDeadlinesEnabled, obligationsPageEnabled, estimatesEnabled)(FakeRequest(),
+      applicationMessages, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
@@ -57,38 +61,33 @@ class HomePageViewSpec extends TestSupport {
   "home" should {
 
     "have an incomeTaxPayment card" which {
-      "has a heading" in new Setup {
+      "has a heading" in new Setup (billsEnabled = true) {
         getTextOfElementById("income-tax-payment-card-heading") shouldBe Some("Income tax payments")
       }
       "has a body" that {
-        "contains the date of the next payment due" in new Setup {
+        "contains the date of the next payment due" in new Setup (billsEnabled = true) {
           getTextOfElementById("income-tax-payment-card-body-date") shouldBe Some("31 January 2019")
         }
-        "contain a link to the view bill page if the payment feature switch is turned off" in new Setup {
-          mockAppConfig.features.paymentEnabled(false)
+        "contain a link to the view bill page if the payment feature switch is turned off" in new Setup (billsEnabled = true) {
           getTextOfElementById("bills-link") shouldBe Some("View bill")
           getElementById("bills-link").map(_.attr("href")) shouldBe Some(controllers.routes.PaymentDueController.viewPaymentsDue().url)
         }
-        "contains a link to the view bill and make payment page if the payment feature switch is turned on" in new Setup {
-          mockAppConfig.features.paymentEnabled(true)
+        "contains a link to the view bill and make payment page if the payment feature switch is turned on" in new Setup(billsEnabled = true, paymentEnabled= true){
           getTextOfElementById("bills-link") shouldBe Some("View bill and make payment")
           getElementById("bills-link").map(_.attr("href")) shouldBe Some(controllers.routes.PaymentDueController.viewPaymentsDue().url)
         }
-        "contains a link to the previous bills page" in new Setup {
+        "contains a link to the previous bills page" in new Setup (billsEnabled = true) {
           getTextOfElementById("previous-bill-link") shouldBe Some("Previous bills")
           getElementById("previous-bill-link").map(_.attr("href")) shouldBe Some(controllers.routes.BillsController.viewCrystallisedCalculations().url)
         }
         "not contain a link to the bill page if the feature flag is off" in new Setup {
-          mockAppConfig.features.billsEnabled(false)
           getElementById("bills-link") shouldBe None
           getElementById("previous-bill-link") shouldBe None
         }
         "not contain an income tax payments column when the feature flag is off" in new Setup {
-          mockAppConfig.features.billsEnabled(false)
           getElementById("income-tax-payment-card") shouldBe None
         }
-        "contains the content when there is no next payment due to display and the feature switch is on" in new Setup(None) {
-          mockAppConfig.features.billsEnabled(true)
+        "contains the content when there is no next payment due to display and the feature switch is on" in new Setup(None, billsEnabled = true) {
           getTextOfElementById("income-tax-payment-card-body-date") shouldBe Some("No payments due.")
         }
       }
@@ -102,29 +101,25 @@ class HomePageViewSpec extends TestSupport {
         "contains the date of the next update due" in new Setup {
           getTextOfElementById("updates-card-body-date") shouldBe Some("1 January 2018")
         }
-        "contains a link to the updates page" in new Setup {
+        "contains a link to the updates page" in new Setup (reportDeadlinesEnabled = true) {
           getTextOfElementById("deadlines-link") shouldBe Some("View details for updates")
           getElementById("deadlines-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url)
         }
         "not contain a link to the updates page if the feature flag is off" in new Setup {
-          mockAppConfig.features.reportDeadlinesEnabled(false)
           getElementById("deadlines-link") shouldBe None
         }
-        "contains a link to the previous updates page" in new Setup {
-          mockAppConfig.features.obligationsPageEnabled(true)
+        "contains a link to the previous updates page" in new Setup (obligationsPageEnabled = true) {
           getTextOfElementById("previous-deadlines-link") shouldBe Some("Previously submitted updates")
           getElementById("previous-deadlines-link").map(_.attr("href")) shouldBe Some(controllers.routes.PreviousObligationsController.getPreviousObligations().url)
         }
         "not contain a link to the previous updates page if the feature flag is off" in new Setup {
-          mockAppConfig.features.obligationsPageEnabled(false)
           getElementById("previous-deadlines-link") shouldBe None
         }
-        "contains a link to the estimates page" in new Setup {
+        "contains a link to the estimates page" in new Setup (estimatesEnabled = true) {
           getTextOfElementById("estimates-link") shouldBe Some("Estimates")
           getElementById("estimates-link").map(_.attr("href")) shouldBe Some(controllers.routes.EstimatesController.viewEstimateCalculations().url)
         }
         "not contain a link to the estimates page if the feature flag is off" in new Setup {
-          mockAppConfig.features.estimatesEnabled(false)
           getElementById("estimates-link") shouldBe None
         }
       }
@@ -135,13 +130,9 @@ class HomePageViewSpec extends TestSupport {
 
     "the bills Feature is Disabled" should {
 
-      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate, billsEnabled = false,
+        paymentEnabled = false, reportDeadlinesEnabled = false, obligationsPageEnabled = false, estimatesEnabled = false)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
-
-      "Disable the Bills feature" in {
-        mockAppConfig.features.billsEnabled(false)
-        mockAppConfig.features.billsEnabled() shouldBe false
-      }
 
       "Not show the Bills section" in {
         Option(document.getElementById("bills-section")) shouldBe None
@@ -151,13 +142,9 @@ class HomePageViewSpec extends TestSupport {
 
     "the Report Deadlines Feature is Disabled" should {
 
-      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate, billsEnabled = false,
+        paymentEnabled = false, reportDeadlinesEnabled = false, obligationsPageEnabled = false, estimatesEnabled = false)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
-
-      "Disable the Report Deadlines feature" in {
-        mockAppConfig.features.reportDeadlinesEnabled(false)
-        mockAppConfig.features.reportDeadlinesEnabled() shouldBe false
-      }
 
       "Not show the Report Deadlines section" in {
         Option(document.getElementById("deadlines-section")) shouldBe None
@@ -167,13 +154,9 @@ class HomePageViewSpec extends TestSupport {
 
     "the Estimates feature is disabled" should {
 
-      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate, billsEnabled = false,
+        paymentEnabled = false, reportDeadlinesEnabled = false, obligationsPageEnabled = false, estimatesEnabled = false)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
-
-      "Disable the Estimates feature" in {
-        mockAppConfig.features.estimatesEnabled(false)
-        mockAppConfig.features.estimatesEnabled() shouldBe false
-      }
 
       "not show the Estimates section" in {
         Option(document.getElementById("estimates-section")) shouldBe None
@@ -182,12 +165,12 @@ class HomePageViewSpec extends TestSupport {
 
     "the statements feature is disabled" should {
 
-      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate, billsEnabled = false,
+        paymentEnabled = false, reportDeadlinesEnabled = false, obligationsPageEnabled = false, estimatesEnabled = false)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the statements feature" in {
-        mockAppConfig.features.statementsEnabled(false)
-        mockAppConfig.features.statementsEnabled() shouldBe false
+        disable(Statements)
       }
 
       "not show the statements section" in {
@@ -198,12 +181,12 @@ class HomePageViewSpec extends TestSupport {
 
     "the account details feature is disabled" should {
 
-      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate,billsEnabled = false,
+        paymentEnabled = false, reportDeadlinesEnabled = false, obligationsPageEnabled = false, estimatesEnabled = false)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
 
       "Disable the account details feature" in {
-        mockAppConfig.features.accountDetailsEnabled(false)
-        mockAppConfig.features.accountDetailsEnabled() shouldBe false
+        disable(AccountDetails)
       }
 
       "not show the account details section" in {
@@ -214,25 +197,17 @@ class HomePageViewSpec extends TestSupport {
 
     "all features are enabled" should {
 
-      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      lazy val page = views.html.home(Some(nextPaymentDueDate),updateDate, billsEnabled = true,
+        paymentEnabled = true, reportDeadlinesEnabled = true, obligationsPageEnabled = true, estimatesEnabled = true)(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
       lazy val document = Jsoup.parse(contentAsString(page))
       import messages._
 
       "Enable all features" in {
-        mockAppConfig.features.reportDeadlinesEnabled(true)
-        mockAppConfig.features.reportDeadlinesEnabled() shouldBe true
-        mockAppConfig.features.billsEnabled(true)
-        mockAppConfig.features.billsEnabled() shouldBe true
-        mockAppConfig.features.estimatesEnabled(true)
-        mockAppConfig.features.estimatesEnabled() shouldBe true
-        mockAppConfig.features.statementsEnabled(true)
-        mockAppConfig.features.statementsEnabled() shouldBe true
-        mockAppConfig.features.accountDetailsEnabled(true)
-        mockAppConfig.features.accountDetailsEnabled() shouldBe true
-        mockAppConfig.features.calcBreakdownEnabled(true)
-        mockAppConfig.features.calcBreakdownEnabled() shouldBe true
-        mockAppConfig.features.calcDataApiEnabled(true)
-        mockAppConfig.features.calcDataApiEnabled() shouldBe true
+
+        enable(Statements)
+        enable(AccountDetails)
+        enable(CalcBreakdown)
+        enable(CalcDataApi)
       }
 
       s"have the title '$title'" in {

@@ -24,8 +24,9 @@
 @import views.helpers.EstimatesPage
 @import views.html.helpers.calcBreakdownHelper
 @import views.html.helpers.backToHomeHelper
+@import config.featureswitch.{CalcBreakdown, FeatureSwitching}
 
-@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(calcModel: CalcDisplayModel, taxYear: Int, calcBreakdownEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @whyThisMayChange = {
 <div id="whyMayChange">
@@ -72,7 +73,7 @@ BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("breadcrumb-estimat
 
     <section id="inYearEstimate">
 
-        @if(appConfig.features.calcBreakdownEnabled()){
+        @if(calcBreakdownEnabled){
         <section id="inYearCalcBreakdown">
             @calcBreakdownHelper(calcModel, None, taxYear)
         </section>

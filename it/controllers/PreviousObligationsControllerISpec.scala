@@ -15,28 +15,22 @@
  */
 package controllers
 
-import java.time.LocalDate
-
-import assets.BaseIntegrationTestConstants._
-import assets.BusinessDetailsIntegrationTestConstants.b1TradingName
+  import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.PreviousObligationsIntegrationTestConstants._
-import assets.messages.{ReportDeadlinesMessages => messages}
-import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, ObligationsPage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.ImplicitDateFormatter
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 
-class PreviousObligationsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
+class PreviousObligationsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
 
-  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   s"${controllers.routes.PreviousObligationsController.getPreviousObligations().url}" should {
     "display no previous obligations when there are none" in {
-      appConfig.features.obligationsPageEnabled(true)
+      enable(ObligationsPage)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
@@ -59,7 +53,7 @@ class PreviousObligationsControllerISpec extends ComponentSpecBase with Implicit
     }
 
     "display the previous obligations returned from the backend" in {
-      appConfig.features.obligationsPageEnabled(true)
+      enable(ObligationsPage)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
@@ -96,7 +90,7 @@ class PreviousObligationsControllerISpec extends ComponentSpecBase with Implicit
     }
 
     "redirect back to the home page if the feature switch is disabled" in {
-      appConfig.features.obligationsPageEnabled(false)
+      disable(ObligationsPage)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 

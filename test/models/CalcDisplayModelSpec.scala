@@ -42,29 +42,4 @@ class CalcDisplayModelSpec extends TestSupport with Matchers {
       }
     }
   }
-
-  "displayCalcBreakdown" should {
-
-    "return a true " when {
-
-      "breakdown is enabled and is not empty" in {
-        frontendAppConfig.features.calcBreakdownEnabled(true)
-        CalcDisplayModel("", 2, CalcBreakdownTestConstants.justBusinessCalcDataModel, Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe true
-      }
-    }
-
-    "return a false" when {
-
-      "breakdown is disabled" in {
-        frontendAppConfig.features.calcBreakdownEnabled(false)
-        CalcDisplayModel("", 2, calculation, Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe false
-      }
-
-
-      "breakdown is empty " in {
-        frontendAppConfig.features.calcBreakdownEnabled(true)
-        CalcDisplayModel("", 2, calculation, Estimate).displayCalcBreakdown(frontendAppConfig) shouldBe true
-      }
-    }
-  }
 }

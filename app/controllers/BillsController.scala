@@ -17,19 +17,18 @@
 package controllers
 
 import javax.inject.Inject
-
 import audit.AuditingService
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import play.api.Logger
+import config.featureswitch.{Bills, FeatureSwitching}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.CalculationService
 
 import scala.concurrent.Future
 
-class BillsController @Inject()(implicit val config: FrontendAppConfig,
+class BillsController @Inject()(implicit val appConfig: FrontendAppConfig,
                                 implicit val messagesApi: MessagesApi,
                                 val checkSessionTimeout: SessionTimeoutPredicate,
                                 val authenticate: AuthenticationPredicate,
@@ -39,10 +38,10 @@ class BillsController @Inject()(implicit val config: FrontendAppConfig,
                                 val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                 val itvcErrorHandler: ItvcErrorHandler,
                                 val auditingService: AuditingService
-                               ) extends BaseController {
+                               ) extends BaseController with FeatureSwitching {
 
   val viewCrystallisedCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-    implicit user => if(config.features.billsEnabled()) renderView else fRedirectToHome
+    implicit user => if(isEnabled(Bills)) renderView else fRedirectToHome
   }
 
   private[BillsController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {

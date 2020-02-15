@@ -26,7 +26,7 @@ import testUtils.TestSupport
 class ItvcLanguageControllerSpec extends TestSupport {
 
   object TestItvcLanguageController extends ItvcLanguageController(
-    frontendAppConfig,
+    appConfig,
     messagesApi
   )
 

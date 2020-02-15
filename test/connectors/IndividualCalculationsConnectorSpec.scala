@@ -30,13 +30,13 @@ import scala.concurrent.Future
 class IndividualCalculationsConnectorSpec extends TestSupport with MockHttp {
 
   class LatestCalculationIdTest(nino: String, taxYear: String, response: HttpResponse) {
-    val connector = new IndividualCalculationsConnector(mockHttpGet, frontendAppConfig)
+    val connector = new IndividualCalculationsConnector(mockHttpGet, appConfig)
 
     setupMockHttpGetWithParams(connector.listCalculationsUrl(nino), Seq(("taxYear", taxYear)))(response)
   }
 
   class GetCalculationTest(nino: String, calculationId: String, response: HttpResponse) {
-    val connector = new IndividualCalculationsConnector(mockHttpGet, frontendAppConfig)
+    val connector = new IndividualCalculationsConnector(mockHttpGet, appConfig)
 
     setupMockHttpGet(connector.getCalculationUrl(nino, calculationId))(response)
   }

@@ -18,6 +18,7 @@ package controllers
 
 import assets.Messages
 import config.FrontendAppConfig
+import config.featureswitch.{AccountDetails, FeatureSwitching}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import play.api.http.Status
@@ -25,7 +26,7 @@ import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
-class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   object TestAccountDetailsController extends AccountDetailsController()(
     app.injector.instanceOf[FrontendAppConfig],
@@ -48,7 +49,7 @@ class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPr
         lazy val document = result.toHtmlDocument
 
         "return Status OK (200)" in {
-          TestAccountDetailsController.config.features.accountDetailsEnabled(true)
+          enable(AccountDetails)
           mockSingleBusinessIncomeSource()
           status(result) shouldBe Status.OK
         }
@@ -70,7 +71,7 @@ class AccountDetailsControllerSpec extends TestSupport with MockAuthenticationPr
       lazy val result = TestAccountDetailsController.getAccountDetails()(fakeRequestWithActiveSession)
 
       "return Redirect (303)" in {
-        TestAccountDetailsController.config.features.accountDetailsEnabled(false)
+        disable(AccountDetails)
         mockSingleBusinessIncomeSource()
         status(result) shouldBe Status.SEE_OTHER
       }

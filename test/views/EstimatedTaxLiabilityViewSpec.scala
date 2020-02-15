@@ -23,6 +23,7 @@ import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
+import config.featureswitch.{CalcBreakdown, FeatureSwitching}
 import enums.Estimate
 import implicits.ImplicitDateFormatter
 import models.calculation.{CalcDisplayModel, Calculation}
@@ -36,7 +37,7 @@ import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
 
-class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatter {
+class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatter with FeatureSwitching{
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -50,12 +51,10 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
   class BreakdownSetup(request: Request[_] = multipleEstimateRequest, featureSwitch: Boolean = true) {
 
-    mockAppConfig.features.calcBreakdownEnabled(featureSwitch)
-
     val calcDataModel: Calculation = busPropBRTCalcDataModel
 
     val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
-      calculationDisplaySuccessModel(calcDataModel), testYear
+      calculationDisplaySuccessModel(calcDataModel), testYear, featureSwitch
     )(request, applicationMessages, mockAppConfig, bizAndPropertyUser)
 
     val document: Document = Jsoup.parse(contentAsString(page))
@@ -69,8 +68,6 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
 
   class NoBreakdownSetup(request: Request[_] = multipleEstimateRequest, featureSwitch: Boolean = false) {
 
-    mockAppConfig.features.calcBreakdownEnabled(featureSwitch)
-
     val calcDisplayModel = CalcDisplayModel(
       testTimeStampString,
       1010.00,
@@ -79,7 +76,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
     )
 
     val page: HtmlFormat.Appendable = views.html.estimatedTaxLiability(
-      calcDisplayModel, testYear
+      calcDisplayModel, testYear, featureSwitch
     )(request, applicationMessages, mockAppConfig, bizAndPropertyUser)
 
     val document: Document = Jsoup.parse(contentAsString(page))
@@ -149,7 +146,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
       getElementById("inYearP1") shouldBe None
     }
 
-    "have a calculation breakdown when it is present and the feature switch is on" in new BreakdownSetup(featureSwitch = true) {
+    "have a calculation breakdown when it is present and the feature switch is on" in new BreakdownSetup() {
       getElementById("inYearCalcBreakdown").isDefined shouldBe true
     }
 

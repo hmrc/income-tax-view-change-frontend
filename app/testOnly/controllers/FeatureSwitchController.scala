@@ -16,57 +16,49 @@
 
 package testOnly.controllers
 
-import javax.inject.{Inject, Singleton}
-
 import config.FrontendAppConfig
-import controllers.BaseController
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
-import testOnly.forms.FeatureSwitchForm
-import testOnly.models.FeatureSwitchModel
+import config.featureswitch.{FeatureSwitch, FeatureSwitching}
+import javax.inject.Inject
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Request}
+import play.twirl.api.Html
+import testOnly.views.html.featureSwitch
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.featureswitch.FeatureSwitch.switches
 
-@Singleton
-class FeatureSwitchController @Inject()(val messagesApi: MessagesApi, implicit val appConfig: FrontendAppConfig) extends BaseController {
+import scala.collection.immutable.ListMap
 
-  def featureSwitch: Action[AnyContent] = Action { implicit request =>
-    Ok(testOnly.views.html.featureSwitch(FeatureSwitchForm.form.fill(
-      FeatureSwitchModel(
-        propertyDetailsEnabled = appConfig.features.propertyDetailsEnabled(),
-        propertyEopsEnabled = appConfig.features.propertyEopsEnabled(),
-        businessEopsEnabled = appConfig.features.businessEopsEnabled(),
-        paymentEnabled = appConfig.features.paymentEnabled(),
-        statementsEnabled = appConfig.features.statementsEnabled(),
-        estimatesEnabled = appConfig.features.estimatesEnabled(),
-        billsEnabled = appConfig.features.billsEnabled(),
-        reportDeadlinesEnabled = appConfig.features.reportDeadlinesEnabled(),
-        accountDetailsEnabled = appConfig.features.accountDetailsEnabled(),
-        calcBreakdownEnabled = appConfig.features.calcBreakdownEnabled(),
-        calcDataApiEnabled = appConfig.features.calcDataApiEnabled(),
-        obligationPageEnabled = appConfig.features.obligationsPageEnabled()
-      )
-    )))
-  }
+class FeatureSwitchController @Inject()(implicit val messagesApi: MessagesApi,
+                                        val appConfig: FrontendAppConfig)
+  extends FrontendController with FeatureSwitching with I18nSupport {
 
-  def submitFeatureSwitch: Action[AnyContent] = Action { implicit request =>
-    FeatureSwitchForm.form.bindFromRequest().fold(
-      _ => Redirect(routes.FeatureSwitchController.featureSwitch()),
-      success = handleSuccess
+  private def view(switchNames: Map[FeatureSwitch, Boolean])(implicit request: Request[_]): Html = {
+    featureSwitch(
+      switchNames = switchNames,
+      testOnly.controllers.routes.FeatureSwitchController.submit()
     )
   }
 
-  def handleSuccess(model: FeatureSwitchModel): Result = {
-    appConfig.features.propertyDetailsEnabled(model.propertyDetailsEnabled)
-    appConfig.features.propertyEopsEnabled(model.propertyEopsEnabled)
-    appConfig.features.businessEopsEnabled(model.businessEopsEnabled)
-    appConfig.features.paymentEnabled(model.paymentEnabled)
-    appConfig.features.statementsEnabled(model.statementsEnabled)
-    appConfig.features.estimatesEnabled(model.estimatesEnabled)
-    appConfig.features.billsEnabled(model.billsEnabled)
-    appConfig.features.reportDeadlinesEnabled(model.reportDeadlinesEnabled)
-    appConfig.features.accountDetailsEnabled(model.accountDetailsEnabled)
-    appConfig.features.calcBreakdownEnabled(model.calcBreakdownEnabled)
-    appConfig.features.calcDataApiEnabled(model.calcDataApiEnabled)
-    appConfig.features.obligationsPageEnabled(model.obligationPageEnabled)
-    Redirect(routes.FeatureSwitchController.featureSwitch())
+  lazy val show: Action[AnyContent] = Action { implicit req =>
+    val featureSwitches = ListMap(switches.toSeq sortBy(_.displayText) map (switch => switch -> isEnabled(switch)):_*)
+    Ok(view(featureSwitches))
   }
+
+  lazy val submit: Action[AnyContent] = Action { implicit req =>
+
+    val submittedData: Set[String] = req.body.asFormUrlEncoded match {
+      case None => Set.empty
+      case Some(data) => data.keySet
+    }
+
+    val featureSwitches = submittedData flatMap FeatureSwitch.get
+
+    switches.foreach(fs =>
+      if (featureSwitches.contains(fs)) enable(fs)
+      else disable(fs)
+    )
+
+    Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
+  }
+
 }

@@ -18,6 +18,7 @@ package controllers
 
 import assets.Messages
 import config.FrontendAppConfig
+import config.featureswitch.{Estimates, FeatureSwitching, Statements}
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockFinancialTransactionsService
@@ -27,7 +28,7 @@ import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
-class StatementsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockFinancialTransactionsService {
+class StatementsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockFinancialTransactionsService with FeatureSwitching {
 
   object TestStatementsController extends StatementsController()(
     fakeApplication.injector.instanceOf[FrontendAppConfig],
@@ -44,7 +45,7 @@ class StatementsControllerSpec extends TestSupport with MockAuthenticationPredic
       lazy val result = TestStatementsController.getStatements(fakeRequestWithActiveSession)
 
       "return redirect SEE_OTHER (303)" in {
-        TestStatementsController.config.features.statementsEnabled(false)
+        disable(Statements)
         status(result) shouldBe Status.SEE_OTHER
       }
 
@@ -62,7 +63,7 @@ class StatementsControllerSpec extends TestSupport with MockAuthenticationPredic
         lazy val document = Jsoup.parse(contentAsString(result))
 
         "return OK (200)" in {
-          TestStatementsController.config.features.statementsEnabled(true)
+          enable(Statements)
           mockFinancialTransactionSuccess()
           status(result) shouldBe Status.OK
         }
@@ -80,11 +81,11 @@ class StatementsControllerSpec extends TestSupport with MockAuthenticationPredic
       "returns an error response forFinancial Transactions when statements feature is enabled" should {
 
         lazy val result = TestStatementsController.getStatements(fakeRequestWithActiveSession)
-        TestStatementsController.config.features.statementsEnabled(true)
+        enable(Statements)
         lazy val document = Jsoup.parse(contentAsString(result))
 
         "return OK (200)" in {
-          TestStatementsController.config.features.statementsEnabled(true)
+          enable(Statements)
           mockFinancialTransactionFailed()
           status(result) shouldBe Status.OK
         }
@@ -108,7 +109,7 @@ class StatementsControllerSpec extends TestSupport with MockAuthenticationPredic
     "called with an Unauthenticated user" should {
 
       "return redirect SEE_OTHER (303)" in {
-        TestStatementsController.config.features.statementsEnabled(true)
+        enable(Statements)
         setupMockAuthorisationException()
         val result = TestStatementsController.getStatements(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER

@@ -16,12 +16,13 @@
 
 package models
 
+import config.featureswitch.{FeatureSwitching, Payment}
 import models.financialTransactions.{SubItemModel, TransactionModel}
 import org.scalatest.Matchers
 import implicits.ImplicitDateFormatter._
 import testUtils.TestSupport
 
-class TransactionModelSpec extends TestSupport with Matchers {
+class TransactionModelSpec extends TestSupport with Matchers with FeatureSwitching {
 
   lazy val charge = SubItemModel(dueDate = Some("2018-07-01"))
   lazy val payment = SubItemModel(paymentReference = Some("XYZ"))
@@ -90,21 +91,21 @@ class TransactionModelSpec extends TestSupport with Matchers {
     "return a true" when {
 
       "payment is enabled and has not been made" in {
-        frontendAppConfig.features.paymentEnabled(true)
-        TransactionModel(outstandingAmount = Some(1)).eligibleToPay(frontendAppConfig) shouldBe true
+        enable(Payment)
+        TransactionModel(outstandingAmount = Some(1)).eligibleToPay(true) shouldBe true
       }
     }
 
     "return a false" when {
 
       "payment is disabled" in {
-        frontendAppConfig.features.paymentEnabled(false)
-        TransactionModel(outstandingAmount = Some(1)).eligibleToPay(frontendAppConfig) shouldBe false
+        disable(Payment)
+        TransactionModel(outstandingAmount = Some(1)).eligibleToPay(false) shouldBe false
       }
 
       "payment has been made" in {
-        frontendAppConfig.features.paymentEnabled(true)
-        TransactionModel(outstandingAmount = Some(0)).eligibleToPay(frontendAppConfig) shouldBe false
+        enable(Payment)
+        TransactionModel(outstandingAmount = Some(0)).eligibleToPay(true) shouldBe false
 
       }
     }

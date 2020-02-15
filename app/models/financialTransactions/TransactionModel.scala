@@ -49,8 +49,8 @@ case class TransactionModel(chargeType: Option[String] = None,
 
   def payments(): Seq[SubItemModel] = items.getOrElse(Seq()).filter(_.paymentReference.isDefined)
 
-  def eligibleToPay(appConfig: FrontendAppConfig) :Boolean = {
-    !isPaid && appConfig.features.paymentEnabled()
+  def eligibleToPay(paymentEnabled: Boolean) :Boolean = {
+    !isPaid && paymentEnabled
   }
 
   val due: Option[LocalDate] = charges().headOption.flatMap(_.dueDate)

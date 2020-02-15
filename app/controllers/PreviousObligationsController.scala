@@ -16,8 +16,8 @@
 
 package controllers
 
+import config.featureswitch.{FeatureSwitching, ObligationsPage}
 import javax.inject.{Inject, Singleton}
-
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.MessagesApi
@@ -33,13 +33,13 @@ class PreviousObligationsController @Inject()(val checkSessionTimeout: SessionTi
                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                               val itvcErrorHandler: ItvcErrorHandler,
                                               val reportDeadlinesService: ReportDeadlinesService,
-                                              implicit val config: FrontendAppConfig,
+                                              implicit val appConfig: FrontendAppConfig,
                                               implicit val messagesApi: MessagesApi
-                                     ) extends BaseController {
+                                     ) extends BaseController with FeatureSwitching {
 
   val getPreviousObligations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      if(config.features.obligationsPageEnabled()) {
+      if(isEnabled(ObligationsPage)) {
         reportDeadlinesService.previousObligationsWithIncomeType(user.incomeSources).map { previousObligations =>
           Ok(views.html.previousObligations(previousObligations))
         }

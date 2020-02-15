@@ -36,7 +36,7 @@ class SignOutControllerSpec extends TestSupport {
       status(result) shouldBe Status.SEE_OTHER
     }
     "redirect to the exitSurvey page" in {
-      redirectLocation(await(result)).head endsWith frontendAppConfig.exitSurveyUrl
+      redirectLocation(await(result)).head endsWith appConfig.exitSurveyUrl
     }
 
   }

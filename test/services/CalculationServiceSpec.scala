@@ -19,25 +19,18 @@ package services
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import assets.EstimatesTestConstants._
+import config.featureswitch.{CalcDataApi, FeatureSwitching}
 import mocks.connectors.MockIndividualCalculationsConnector
 import models.calculation._
 import play.api.http.Status
 import testUtils.TestSupport
 
-class CalculationServiceSpec extends TestSupport with MockIndividualCalculationsConnector {
+class CalculationServiceSpec extends TestSupport with MockIndividualCalculationsConnector with FeatureSwitching {
 
   object TestCalculationService extends CalculationService(
     mockIndividualCalculationsConnector,
-    frontendAppConfig
+    appConfig
   )
-
-  private trait CalculationDataApiEnabled {
-    frontendAppConfig.features.calcDataApiEnabled(true)
-  }
-
-  private trait CalculationDataApiDisabled {
-    frontendAppConfig.features.calcDataApiEnabled(false)
-  }
 
   "The CalculationService.getAllLatestCalculations method" when {
 
@@ -47,7 +40,8 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
 
         "for a list of Estimates" should {
 
-          "return a list of CalculationResponseModelWithYear models" in new CalculationDataApiDisabled {
+          "return a list of CalculationResponseModelWithYear models" in {
+            enable(CalcDataApi)
             mockGetLatestCalculationId(testNino, "2017-18")(Right("testIdOne"))
             mockGetCalculation(testNino, "testIdOne")(lastTaxCalcSuccess)
             mockGetLatestCalculationId(testNino, "2018-19")(Right("testIdTwo"))
@@ -59,7 +53,8 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
 
         "for a list of Bills" should {
 
-          "return a list of CalculationResponseModelWithYear bills models" in new CalculationDataApiDisabled {
+          "return a list of CalculationResponseModelWithYear bills models" in {
+            disable(CalcDataApi)
             mockGetLatestCalculationId(testNino, "2017-18")(Right("testIdOne"))
             mockGetCalculation(testNino, "testIdOne")(lastTaxCalcCrystallisedSuccess)
             mockGetLatestCalculationId(testNino, "2018-19")(Right("testIdTwo"))
@@ -70,7 +65,8 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
         }
       }
 
-      "passed an empty list of Ints" in new CalculationDataApiDisabled {
+      "passed an empty list of Ints" in {
+        disable(CalcDataApi)
         await(TestCalculationService.getAllLatestCalculations(testNino, List())) shouldBe List()
       }
     }
@@ -82,7 +78,8 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
 
       "successful response is returned from the IndividualCalculationConnector" should {
 
-        "return a CalculationModel" in new CalculationDataApiEnabled{
+        "return a CalculationModel" in {
+          enable(CalcDataApi)
           mockGetLatestCalculationId(testNino, "2017-18")(Right("testIdOne"))
           mockGetCalculation(testNino, "testIdOne")(calculationDataSuccessModel)
 
@@ -91,7 +88,8 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
         }
 
         "error response is returned from the IndividualCalculationConnector" should {
-          "return a CalculationErrorModel" in new CalculationDataApiEnabled {
+          "return a CalculationErrorModel" in {
+            enable(CalcDataApi)
             mockGetLatestCalculationId(testNino, "2017-18")(
               Left(CalculationErrorModel(Status.INTERNAL_SERVER_ERROR, "Internal server error"))
             )

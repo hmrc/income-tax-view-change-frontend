@@ -22,15 +22,14 @@ import assets.BusinessDetailsIntegrationTestConstants.b1TradingName
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.{ReportDeadlinesMessages => messages}
-import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.ImplicitDateFormatter
 import play.api.http.Status._
 
-class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
+class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
 
-  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "Calling the ReportDeadlinesController" when {
 
@@ -41,7 +40,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "has a single business obligation" should {
 
           "display a single obligation with the correct dates and status" in {
-
+            enable(ReportDeadlines)
             And("I wiremock stub a successful Income Source Details response with single Business")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
@@ -366,7 +365,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           "display the obligation of each business" in {
 
-            appConfig.features.reportDeadlinesEnabled(true)
+            enable(ReportDeadlines)
 
             And("I wiremock stub a successful Income Source Details responsewith multiple Business income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -705,7 +704,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
       "the obligations feature switch is enabled" when {
 
         "the user has a eops property income obligation only" in {
-          appConfig.features.obligationsPageEnabled(true)
+          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -736,7 +735,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
 
         "the user has no obligations" in {
-          appConfig.features.obligationsPageEnabled(true)
+          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
@@ -767,7 +766,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
 
         "the user has a quarterly property income obligation only" in {
-          appConfig.features.obligationsPageEnabled(true)
+          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -797,7 +796,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
 
         "the user has a quarterly business income obligation only" in {
-          appConfig.features.obligationsPageEnabled(true)
+          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
@@ -828,7 +827,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
 
         "the user has multiple quarterly business income obligations only" in {
-          appConfig.features.obligationsPageEnabled(true)
+          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyModel)
@@ -860,7 +859,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
 
         "the user has a eops SE income obligation only" in {
-          appConfig.features.obligationsPageEnabled(true)
+          enable(ObligationsPage)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, SEIncomeSourceEOPSModel)
           IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testMtditid, testNino)
@@ -891,7 +890,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         }
 
         "the user has a Crystallised obligation only" in {
-          appConfig.features.obligationsPageEnabled(true)
+          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
@@ -939,7 +938,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
       "Redirect to the Income Tax View Change Home Page" in {
 
-        appConfig.features.reportDeadlinesEnabled(false)
+
+        disable(ReportDeadlines)
 
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)

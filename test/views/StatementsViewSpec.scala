@@ -19,6 +19,7 @@ package views
 import assets.BaseTestConstants._
 import assets.Messages.{Statements => messages}
 import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, Payment}
 import models.financialTransactions.{FinancialTransactionsErrorModel, SubItemModel, TransactionModel, TransactionModelWithYear}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -31,7 +32,7 @@ import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter._
 import testUtils.TestSupport
 
-class StatementsViewSpec extends TestSupport {
+class StatementsViewSpec extends TestSupport with FeatureSwitching{
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -142,8 +143,8 @@ class StatementsViewSpec extends TestSupport {
 
   val errorModel: FinancialTransactionsErrorModel = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR,"ISE")
 
-  private def pageSetup(model: Seq[TransactionModelWithYear]) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.statements(model)(FakeRequest(), applicationMessages, mockAppConfig, testMtdUserNoNino)
+  private def pageSetup(model: Seq[TransactionModelWithYear], paymentEnabled: Boolean = false) = new {
+    lazy val page: HtmlFormat.Appendable = views.html.statements(model, paymentEnabled)(FakeRequest(), applicationMessages, mockAppConfig, testMtdUserNoNino)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
@@ -152,7 +153,7 @@ class StatementsViewSpec extends TestSupport {
     "a 'Seq' of 2 transaction models are passed through" should {
       lazy val statementsModel = Seq(transactionModel2018, transactionModel2019)
 
-      val setup = pageSetup(statementsModel)
+      val setup = pageSetup(statementsModel, paymentEnabled = true)
       import setup._
 
       s"have the title '${messages.title}'" in {
@@ -188,7 +189,6 @@ class StatementsViewSpec extends TestSupport {
       }
 
       "state the due date for each tax year that has not been fully paid" in {
-        mockAppConfig.features.paymentEnabled(false)
         val setup = pageSetup(statementsModel)
         import setup._
         document.getElementById(s"$testYear2-paid-bill") should be(null)
@@ -196,8 +196,7 @@ class StatementsViewSpec extends TestSupport {
       }
 
       "feature enabled state the due date for each tax year that has not been fully paid" in {
-        mockAppConfig.features.paymentEnabled(true)
-        val setup = pageSetup(statementsModel)
+        val setup = pageSetup(statementsModel, paymentEnabled = true)
         import setup._
         document.getElementById(s"$testYear2-paid-bill") should be(null)
         document.getElementById(s"$testYear2-due-by").text() shouldBe messages.dueByWithLink("31 January " + (testYear2 + 1))
