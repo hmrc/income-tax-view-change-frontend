@@ -19,6 +19,7 @@ package controllers
 import java.time.{LocalDate, ZonedDateTime}
 
 import assets.Messages
+import config.featureswitch.{Bills, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -33,7 +34,7 @@ import services.{CalculationService, FinancialTransactionsService, ReportDeadlin
 
 import scala.concurrent.Future
 
-class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching{
 
 
   trait Setup {
@@ -64,6 +65,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
   "navigating to the home page" should {
     "return ok (200)" which {
       "there is a next payment due date to display" in new Setup {
+        enable(Bills)
         when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
         mockSingleBusinessIncomeSource()
         when(calculationService.getAllLatestCalculations(any(), any())(any()))

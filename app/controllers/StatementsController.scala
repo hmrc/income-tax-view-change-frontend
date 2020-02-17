@@ -17,9 +17,9 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import auth.MtdItUserOptionNino
 import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, Statements, Payment}
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
 import play.api.Logger
@@ -30,15 +30,15 @@ import services.FinancialTransactionsService
 import scala.concurrent.Future
 
 @Singleton
-class StatementsController @Inject()(implicit val config: FrontendAppConfig,
+class StatementsController @Inject()(implicit val appConfig: FrontendAppConfig,
                                      implicit val messagesApi: MessagesApi,
                                      val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
                                      val financialTransactionsService: FinancialTransactionsService
-                                    ) extends BaseController {
+                                    ) extends BaseController with FeatureSwitching{
 
   val getStatements: Action[AnyContent] = (checkSessionTimeout andThen authenticate).async {
-    implicit user => if(config.features.statementsEnabled()) renderView else fRedirectToHome
+    implicit user => if(isEnabled(Statements)) renderView else fRedirectToHome
   }
 
   private[StatementsController] def renderView[A](implicit user: MtdItUserOptionNino[A]): Future[Result] = {
@@ -48,7 +48,7 @@ class StatementsController @Inject()(implicit val config: FrontendAppConfig,
     financialTransactionsService.getFinancialTransactions(user.mtditid, earliestYear).map{
       case model: FinancialTransactionsModel =>
         Logger.debug("[StatementsController][getStatements] Success Response received from financialTransactionsService")
-        Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear)))
+        Ok(views.html.statements(model.withYears().sortWith(_.taxYear > _.taxYear), isEnabled(Payment)))
       case _: FinancialTransactionsErrorModel =>
         Logger.error("[StatementsController][getStatements] Error Response received from financialTransactionsService")
         Ok(views.html.errorPages.statementsError())

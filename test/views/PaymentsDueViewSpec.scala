@@ -15,33 +15,32 @@
  */
 
 package views
-import implicits.ImplicitCurrencyFormatter._
-import java.time.ZonedDateTime
-import assets.BaseTestConstants.{testMtdItUser, testMtditid, testNino, testTimeStampString, testUserDetails}
-import assets.EstimatesTestConstants.{testYear, testYearPlusOne}
-import assets.Messages
+
+import assets.BaseTestConstants.{testMtditid, testNino, testTimeStampString, testUserDetails}
+import assets.FinancialTransactionsTestConstants._
+import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
+import assets.Messages.{Breadcrumbs => breadcrumbMessages, PaymentDue => messages}
+import auth.MtdItUser
 import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, Payment}
+import implicits.ImplicitCurrencyFormatter._
+import models.financialTransactions.FinancialTransactionsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import assets.Messages.{Breadcrumbs => breadcrumbMessages, PaymentDue => messages}
-import assets.FinancialTransactionsTestConstants._
-import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
-import auth.MtdItUser
-import models.financialTransactions.{FinancialTransactionsModel, TransactionModel}
-import play.api.i18n.Messages.Implicits._
 
-class PaymentsDueViewSpec extends TestSupport {
+class PaymentsDueViewSpec extends TestSupport with FeatureSwitching {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessAndPropertyAligned)(FakeRequest())
 
-  class Setup(model: List[FinancialTransactionsModel]) {
-    val html: HtmlFormat.Appendable = views.html.paymentDue(model)(FakeRequest(), applicationMessages, mockAppConfig)
+  class Setup(model: List[FinancialTransactionsModel], paymentEnabled: Boolean = false) {
+    val html: HtmlFormat.Appendable = views.html.paymentDue(model, paymentEnabled)(FakeRequest(), applicationMessages, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
@@ -60,7 +59,6 @@ class PaymentsDueViewSpec extends TestSupport {
     testTimeStampString.toZonedDateTime,
     None
   ))
-
 
 
   "The Payments due view" should {
@@ -83,7 +81,7 @@ class PaymentsDueViewSpec extends TestSupport {
       "display current unpaid bills" in new Setup(unpaidFinancialTransactions) {
         val testTaxYearTo = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodTo.get.getYear
         val testTaxYearFrom = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodFrom.get.getYear
-        pageDocument.getElementById(s"payments-due-$testTaxYearTo").text shouldBe messages.taxYearPeriod(testTaxYearFrom.toString,testTaxYearTo.toString)
+        pageDocument.getElementById(s"payments-due-$testTaxYearTo").text shouldBe messages.taxYearPeriod(testTaxYearFrom.toString, testTaxYearTo.toString)
 
         pageDocument.getElementById(s"payments-due-outstanding-$testTaxYearTo").text shouldBe unpaidFinancialTransactions.head.financialTransactions.get.head.outstandingAmount.get.toCurrencyString
 
@@ -109,7 +107,7 @@ class PaymentsDueViewSpec extends TestSupport {
         pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("href") shouldBe expectedUrl
       }
 
-      "have a link to payments" in new Setup(unpaidFinancialTransactions) {
+      "have a link to payments" in new Setup(unpaidFinancialTransactions, paymentEnabled = true) {
         val testTaxYearTo = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodTo.get.getYear
         val testTaxYearFrom = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodFrom.get.getYear
 

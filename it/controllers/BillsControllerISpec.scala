@@ -18,18 +18,16 @@ package controllers
 import java.time.LocalDateTime
 
 import assets.BaseIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
+import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{BillsMessages => messages}
-import config.FrontendAppConfig
-import helpers.servicemocks._
+import config.featureswitch.{Bills, FeatureSwitching}
 import helpers.ComponentSpecBase
-import models.calculation.{Calculation, CalculationItem, ListCalculationItems}
+import helpers.servicemocks._
+import models.calculation.{CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 
-class BillsControllerISpec extends ComponentSpecBase {
-
-  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+class BillsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   "Calling the BillsController" when {
 
@@ -38,6 +36,8 @@ class BillsControllerISpec extends ComponentSpecBase {
       "isAuthorisedUser with an active enrolment, and a single, valid crystallised bill" should {
 
         "return the correct page with bills links" in {
+
+          enable(Bills)
 
           And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -74,6 +74,8 @@ class BillsControllerISpec extends ComponentSpecBase {
       "isAuthorisedUser with an active enrolment, and multiple valid crystallised bills" should {
 
         "return the correct page with bills links when calls successful" in {
+
+          enable(Bills)
 
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -120,6 +122,8 @@ class BillsControllerISpec extends ComponentSpecBase {
 
         "return the correct page with bill links when one response is not found" in {
 
+          enable(Bills)
+
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -164,6 +168,7 @@ class BillsControllerISpec extends ComponentSpecBase {
       "isAuthorisedUser with an active enrolment, with a crystallised calculation and a tax estimate" should {
         "return the correct page with just the tax bill link" in {
 
+          enable(Bills)
           And("I wiremock stub a successful Income Source Details response with Multiple Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -244,6 +249,7 @@ class BillsControllerISpec extends ComponentSpecBase {
 
           "all calculations returned with not found from the connector" in {
 
+            enable(Bills)
             And("I wiremock stub a successful Income Source Details response with single Business and Property income")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
@@ -288,10 +294,10 @@ class BillsControllerISpec extends ComponentSpecBase {
 
       "redirect to home page" in {
 
+        disable(Bills)
+
         When("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-
-        appConfig.features.billsEnabled(false)
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/bills")
         val res = IncomeTaxViewChangeFrontend.getBills

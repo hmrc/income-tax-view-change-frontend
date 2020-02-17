@@ -37,8 +37,8 @@ POST        /report-quarterly/income-and-expenses/view/test-only/add-user       
 # NOCSRF
 POST        /report-quarterly/income-and-expenses/view/test-only/add-user/proxy                       @testOnly.controllers.StubUsersController.stubUsers
 
-GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       @testOnly.controllers.FeatureSwitchController.featureSwitch
-POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       @testOnly.controllers.FeatureSwitchController.submitFeatureSwitch
+GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       @testOnly.controllers.FeatureSwitchController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       @testOnly.controllers.FeatureSwitchController.submit
 
 GET         /report-quarterly/income-and-expenses/view/test-only/test-headers                         @testOnly.controllers.TestHeadersController.showTestHeaders
 POST        /report-quarterly/income-and-expenses/view/test-only/test-headers                         @testOnly.controllers.TestHeadersController.submitTestHeaders

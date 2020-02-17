@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.PaymentJourneyModel
@@ -24,18 +23,16 @@ import play.api.libs.json.{JsValue, Json}
 
 class PaymentControllerISpec extends ComponentSpecBase {
 
-  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-
   val url: String = "/pay-api/mtd-income-tax/sa/journey/start"
 
   val submissionJson: JsValue = Json.parse(
     s"""
-      |{
-      | "utr": "saUtr",
-      | "amountInPence": 10000,
-      | "returnUrl": "${appConfig.paymentRedirectUrl}",
-      | "backUrl": "${appConfig.paymentRedirectUrl}"
-      |}
+       |{
+       | "utr": "saUtr",
+       | "amountInPence": 10000,
+       | "returnUrl": "${appConfig.paymentRedirectUrl}",
+       | "backUrl": "${appConfig.paymentRedirectUrl}"
+       |}
     """.stripMargin
   )
 

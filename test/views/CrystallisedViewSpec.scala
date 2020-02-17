@@ -25,6 +25,7 @@ import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitCurrencyFormatter._
 import models.calculation.Calculation
 import models.financialTransactions.TransactionModel
@@ -36,22 +37,21 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
-class CrystallisedViewSpec extends TestSupport {
+class CrystallisedViewSpec extends TestSupport with FeatureSwitching {
 
   val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val bizAndPropertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessAndPropertyAligned)(FakeRequest())
   val bizUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), singleBusinessIncome)(FakeRequest())
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
-  override def beforeEach(): Unit = {
-    mockAppConfig.features.calcBreakdownEnabled(true)
-  }
 
-  private def pageSetup(calcDataModel: Calculation, transactions: TransactionModel, user: MtdItUser[_]) = new {
+  private def pageSetup(calcDataModel: Calculation, transactions: TransactionModel, calcBreakdownEnabled: Boolean, paymentEnabled: Boolean, user: MtdItUser[_]) = new {
     lazy val page: HtmlFormat.Appendable = views.html.crystallised(
       calculationDisplaySuccessModel(calcDataModel),
       transactions,
-      testYear
+      testYear,
+      calcBreakdownEnabled,
+      paymentEnabled
     )(FakeRequest(), applicationMessages, mockAppConfig, user)
 
     lazy val document: Document = Jsoup.parse(contentAsString(page))
@@ -60,7 +60,7 @@ class CrystallisedViewSpec extends TestSupport {
   }
 
   "The Crystallised view" should {
-    val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
+    val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), true, true, bizAndPropertyUser)
     import setup._
     val messages = new Messages.Calculation(testYear)
     val crysMessages = new Messages.Calculation(testYear).Crystallised
@@ -109,15 +109,13 @@ class CrystallisedViewSpec extends TestSupport {
 
     "have the calculation breakdown section and link hidden" when {
       "when the breakdown is not required" in {
-        mockAppConfig.features.calcBreakdownEnabled(false)
-        val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizUser)
+        val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), false, true, bizUser)
         import setup._
         document.getElementById("inYearCalcBreakdown") shouldBe null
       }
 
       "when the breakdown is not required and the bill has been paid off" in {
-        mockAppConfig.features.calcBreakdownEnabled(false)
-        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizUser)
+        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), false, true, bizUser)
         import setup._
         document.getElementById("inYearCalcBreakdown") shouldBe null
         document.select("section h2").text() shouldBe messages.Crystallised.noBreakdownContent("£3,400")
@@ -125,7 +123,7 @@ class CrystallisedViewSpec extends TestSupport {
     }
 
     "NOT have payment related content when the bill has been paid" in {
-      val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
+      val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), true, true, bizAndPropertyUser)
       import setup._
       Option(document.getElementById("adjustments")) shouldBe None
       Option(document.getElementById("changes")) shouldBe None
@@ -135,7 +133,7 @@ class CrystallisedViewSpec extends TestSupport {
     }
 
     "have a couple of sentences about adjustments when the bill has not been paid" in {
-      val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
+      val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), true, true, bizAndPropertyUser)
       import setup._
       document.getElementById("adjustments").text shouldBe crysMessages.errors
       document.getElementById("changes").text shouldBe crysMessages.changes
@@ -143,23 +141,20 @@ class CrystallisedViewSpec extends TestSupport {
 
     "NOT show a button to go to payments" when {
       "not eligible for payments" in {
-        mockAppConfig.features.paymentEnabled(true)
-        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), bizAndPropertyUser)
+        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), true, true, bizAndPropertyUser)
         import setup._
         Option(document.getElementById("payment-button")) shouldBe None
       }
 
       "the bill has no outstanding amount" in {
-        mockAppConfig.features.paymentEnabled(true)
-        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel().copy(outstandingAmount = None), bizAndPropertyUser)
+        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel().copy(outstandingAmount = None), true, true, bizAndPropertyUser)
         import setup._
         Option(document.getElementById("payment-button")) shouldBe None
       }
     }
 
     "show a button to go to payments, when eligible for payments" in {
-      mockAppConfig.features.paymentEnabled(true)
-      val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), bizAndPropertyUser)
+      val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), true, true, bizAndPropertyUser)
       import setup._
       document.getElementById("payment-button").text() shouldBe messages.Crystallised.payNow
       document.getElementById("payment-button").attr("href") shouldBe

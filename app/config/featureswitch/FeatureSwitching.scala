@@ -14,13 +14,23 @@
  * limitations under the License.
  */
 
-package config.features
+package config.featureswitch
 
-import play.api.Configuration
+import config.FrontendAppConfig
 
-import scala.sys.SystemProperties
+trait FeatureSwitching {
 
-class Feature(val key: String, config: Configuration) {
-  def apply(value: Boolean): Unit = sys.props.update(key, value.toString)
-  def apply(): Boolean = sys.props.get(key).fold(config.getBoolean(key).getOrElse(false))(_.toBoolean)
+  val appConfig: FrontendAppConfig
+
+  val FEATURE_SWITCH_ON = "true"
+  val FEATURE_SWITCH_OFF = "false"
+
+  def isEnabled(featureSwitch: FeatureSwitch): Boolean =
+    (sys.props.get(featureSwitch.name) orElse appConfig.conf.getString(featureSwitch.name)) contains FEATURE_SWITCH_ON
+
+  def enable(featureSwitch: FeatureSwitch): Unit =
+    sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
+
+  def disable(featureSwitch: FeatureSwitch): Unit =
+    sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
 }

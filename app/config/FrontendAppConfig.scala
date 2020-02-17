@@ -20,7 +20,6 @@ import javax.inject.Singleton
 
 import play.api.i18n.Lang
 import com.google.inject.Inject
-import config.features.Features
 import play.api.Mode.Mode
 import play.api.mvc.Call
 import play.api.{Configuration, Environment}
@@ -115,5 +114,4 @@ class FrontendAppConfig @Inject()(val environment: Environment,
 
   def routeToSwitchLanguage: String => Call = (lang: String) => controllers.routes.ItvcLanguageController.switchToLanguage(lang)
 
-  val features = new Features(runModeConfiguration)
 }

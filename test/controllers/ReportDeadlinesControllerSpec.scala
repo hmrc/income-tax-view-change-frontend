@@ -16,9 +16,9 @@
 
 package controllers
 
-import assets.BaseTestConstants.testUserDetails
 import assets.Messages.{NoReportDeadlines, ReportDeadlines => messages}
 import audit.AuditingService
+import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -28,7 +28,7 @@ import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 
-class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService {
+class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService with FeatureSwitching{
 
   object TestReportDeadlinesController extends ReportDeadlinesController(
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -50,7 +50,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
       "return Redirect (303)" in {
         mockSingleBusinessIncomeSource()
-        TestReportDeadlinesController.config.features.reportDeadlinesEnabled(false)
+        disable(ReportDeadlines)
         status(result) shouldBe Status.SEE_OTHER
       }
 
@@ -65,9 +65,8 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
       lazy val document = Jsoup.parse(bodyOf(result))
 
       "set Report Deadlines enabled" in {
-        TestReportDeadlinesController.config.features.reportDeadlinesEnabled(true)
-        TestReportDeadlinesController.config.features.obligationsPageEnabled(false)
-        TestReportDeadlinesController.config.features.reportDeadlinesEnabled() shouldBe true
+        enable(ReportDeadlines)
+        disable(ObligationsPage)
       }
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
@@ -193,9 +192,9 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
         mockBothIncomeSourcesBusinessAligned()
         mockBothIncomeSourcesBusinessAlignedWithDeadlines()
 
-        TestReportDeadlinesController.config.features.reportDeadlinesEnabled(true)
+        enable(ReportDeadlines)
 
-        TestReportDeadlinesController.config.features.obligationsPageEnabled(true)
+        enable(ObligationsPage)
 
         val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
         val document = Jsoup.parse(bodyOf(result))
@@ -209,9 +208,9 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
         mockBothIncomeSourcesBusinessAligned()
         mockBothIncomeSourcesBusinessAlignedWithDeadlines()
 
-        TestReportDeadlinesController.config.features.reportDeadlinesEnabled(true)
+        enable(ReportDeadlines)
 
-        TestReportDeadlinesController.config.features.obligationsPageEnabled(false)
+        disable(ObligationsPage)
         val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
         val document = Jsoup.parse(bodyOf(result))
 

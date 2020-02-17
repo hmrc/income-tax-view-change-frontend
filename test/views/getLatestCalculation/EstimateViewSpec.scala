@@ -39,7 +39,7 @@ class EstimateViewSpec extends TestSupport with ImplicitDateFormatter {
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
   private def pageSetup(model: EstimatesViewModel, user: MtdItUser[_]) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.getLatestCalculation.estimate(model)(FakeRequest(),applicationMessages, frontendAppConfig, user)
+    lazy val page: HtmlFormat.Appendable = views.html.getLatestCalculation.estimate(model)(FakeRequest(),applicationMessages, appConfig, user)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 

@@ -18,13 +18,15 @@ package controllers
 
 import java.time.LocalDate
 
-import javax.inject.{Inject, Singleton}
+import auth.MtdItUser
+import config.featureswitch.{Bills, Estimates, FeatureSwitching, ObligationsPage, Payment, ReportDeadlines}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.financialTransactions.{FinancialTransactionsModel, FinancialTransactionsResponseModel}
-import play.api.Logger
+import javax.inject.{Inject, Singleton}
+import models.financialTransactions.FinancialTransactionsModel
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import play.twirl.api.Html
 import services.{CalculationService, FinancialTransactionsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
@@ -40,9 +42,20 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val itvcErrorHandler: ItvcErrorHandler,
                                val financialTransactionsService: FinancialTransactionsService,
                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                               implicit val config: FrontendAppConfig,
-                               val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+                               implicit val appConfig: FrontendAppConfig,
+                               val messagesApi: MessagesApi) extends FrontendController with I18nSupport with FeatureSwitching {
 
+  private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate)(implicit request: Request[_], user: MtdItUser[_]): Html = {
+    views.html.home(
+      nextPaymentDueDate = nextPaymentDueDate,
+      nextUpdate = nextUpdate,
+      billsEnabled = isEnabled(Bills),
+      paymentEnabled = isEnabled(Payment),
+      reportDeadlinesEnabled = isEnabled(ReportDeadlines),
+      obligationsPageEnabled = isEnabled(ObligationsPage),
+      estimatesEnabled = isEnabled(Estimates)
+    )
+  }
 
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
@@ -65,14 +78,14 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
               }).sortBy(_._1.year).headOption match {
                 case Some((bill, transaction: FinancialTransactionsModel)) =>
                   val date = transaction.findChargeForTaxYear(bill.year).get.items.get.head.dueDate
-                  Ok(views.html.home(date, latestDeadlineDate))
-                case _ => Ok(views.html.home(None, latestDeadlineDate))
+                  Ok(view(date, latestDeadlineDate))
+                case _ => Ok(view(None, latestDeadlineDate))
               }
             }
-          case _ => Future.successful(Ok(views.html.home(None, latestDeadlineDate)))
+          case _ => Future.successful(Ok(view(None, latestDeadlineDate)))
         }
       }
   }
-  }
+}
 
 

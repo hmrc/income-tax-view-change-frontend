@@ -17,8 +17,8 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import auth.MtdItUser
+import config.featureswitch.{AccountDetails, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.Logger
@@ -28,19 +28,19 @@ import play.api.mvc.{Action, AnyContent, Result}
 import scala.concurrent.Future
 
 @Singleton
-class BusinessDetailsController @Inject()(implicit val config: FrontendAppConfig,
+class BusinessDetailsController @Inject()(implicit val appConfig: FrontendAppConfig,
                                           implicit val messagesApi: MessagesApi,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val authenticate: AuthenticationPredicate,
                                           val retrieveNino: NinoPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler
-                                        ) extends BaseController {
+                                        ) extends BaseController with FeatureSwitching{
 
   val getBusinessDetails: Int => Action[AnyContent] = id =>
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
       implicit user =>
-        if (config.features.accountDetailsEnabled()) renderView(id) else fRedirectToHome
+        if (isEnabled(AccountDetails)) renderView(id) else fRedirectToHome
     }
 
   private def renderView[A](id: Int)(implicit user: MtdItUser[A]): Future[Result] = {

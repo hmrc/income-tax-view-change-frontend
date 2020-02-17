@@ -17,9 +17,9 @@
 package controllers
 
 import javax.inject.Inject
-
 import audit.AuditingService
 import auth.MtdItUser
+import config.featureswitch.{Estimates, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.MessagesApi
@@ -28,7 +28,7 @@ import services.CalculationService
 
 import scala.concurrent.Future
 
-class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
+class EstimatesController @Inject()(implicit val appConfig: FrontendAppConfig,
                                     implicit val messagesApi: MessagesApi,
                                     val checkSessionTimeout: SessionTimeoutPredicate,
                                     val authenticate: AuthenticationPredicate,
@@ -38,10 +38,10 @@ class EstimatesController @Inject()(implicit val config: FrontendAppConfig,
                                     val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                     val itvcErrorHandler: ItvcErrorHandler,
                                     val auditingService: AuditingService
-                                   ) extends BaseController {
+                                   ) extends BaseController with FeatureSwitching{
 
   val viewEstimateCalculations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-    implicit user => if (config.features.estimatesEnabled()) renderView else fRedirectToHome
+    implicit user => if (isEnabled(Estimates)) renderView else fRedirectToHome
   }
 
   private[EstimatesController] def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {

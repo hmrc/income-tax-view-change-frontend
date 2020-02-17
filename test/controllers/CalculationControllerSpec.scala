@@ -18,10 +18,11 @@ package controllers
 
 import assets.BaseTestConstants._
 import assets.EstimatesTestConstants._
-import assets.IncomeSourceDetailsTestConstants.{businessIncome2018and2019, propertyIncomeOnly}
+import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import assets.Messages
 import assets.Messages.EstimatedTaxLiabilityError
 import audit.AuditingService
+import config.featureswitch.{CalcDataApi, FeatureSwitching}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -32,10 +33,10 @@ import play.api.test.Helpers._
 import testUtils.TestSupport
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService with FeatureSwitching {
 
   object TestCalculationController extends CalculationController()(
-    frontendAppConfig,
+    appConfig,
     messagesApi,
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
@@ -49,11 +50,11 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
   )
 
   private trait CalculationDataApiEnabled {
-    frontendAppConfig.features.calcDataApiEnabled(true)
+    enable(CalcDataApi)
   }
 
   private trait CalculationDataApiDisabled {
-    frontendAppConfig.features.calcDataApiEnabled(false)
+    disable(CalcDataApi)
   }
 
   lazy val messages = new Messages.Calculation(testYear)

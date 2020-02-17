@@ -31,9 +31,9 @@ class RecruitmentBannerHelperSpec extends TestSupport{
     s"have the correct header message '${Messages.RecruitmentBanner.text}'" in {
       document.getElementById("recruitment-banner-text").text shouldBe Messages.RecruitmentBanner.text
     }
-    s"have the correct link text '${Messages.RecruitmentBanner.link}' and url ${frontendAppConfig.enterSurveyUrl}" in {
+    s"have the correct link text '${Messages.RecruitmentBanner.link}' and url ${appConfig.enterSurveyUrl}" in {
       document.getElementById("recruitment-banner-link").text shouldBe Messages.RecruitmentBanner.link
-      document.getElementById("recruitment-banner-link").attr("href") shouldBe frontendAppConfig.enterSurveyUrl
+      document.getElementById("recruitment-banner-link").attr("href") shouldBe appConfig.enterSurveyUrl
     }
     s"have the correct dismiss text '${Messages.RecruitmentBanner.dismiss}'" in {
       document.getElementById("recruitment-banner-dismiss").text shouldBe Messages.RecruitmentBanner.dismiss

@@ -25,7 +25,7 @@ import testUtils.TestSupport
 
 class BtaPartialViewSpec extends TestSupport {
 
-  lazy val page: HtmlFormat.Appendable = views.html.btaPartial()(FakeRequest(), applicationMessages, frontendAppConfig)
+  lazy val page: HtmlFormat.Appendable = views.html.btaPartial()(FakeRequest(), applicationMessages, appConfig)
   lazy val document = Jsoup.parse(page.body)
 
   "The BtaPartial view" should {
@@ -47,7 +47,7 @@ class BtaPartialViewSpec extends TestSupport {
       lazy val homeButton = document.getElementById("it-quarterly-reporting-home-button")
 
       s"has the correct link to '${controllers.routes.HomeController.home().url}'" in {
-        homeButton.attr("href") shouldBe frontendAppConfig.itvcFrontendEnvironment + controllers.routes.HomeController.home().url
+        homeButton.attr("href") shouldBe appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.home().url
       }
 
       s"has the correct button text of '${messages.button}'" in {

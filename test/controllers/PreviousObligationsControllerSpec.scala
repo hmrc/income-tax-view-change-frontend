@@ -19,6 +19,7 @@ package controllers
 import java.time.LocalDate
 
 import config.ItvcErrorHandler
+import config.featureswitch.{FeatureSwitching, ObligationsPage}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlineModelWithIncomeType}
@@ -30,9 +31,9 @@ import org.mockito.ArgumentMatchers.{any, eq => matches}
 
 import scala.concurrent.Future
 
-class PreviousObligationsControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class PreviousObligationsControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching{
 
-  class Setup(featureSwitchToggle: Boolean = true) {
+  class Setup(featureSwitchEnabled: Boolean = true) {
     val reportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]
 
     val controller = new PreviousObligationsController(
@@ -42,11 +43,15 @@ class PreviousObligationsControllerSpec extends MockAuthenticationPredicate with
       MockIncomeSourceDetailsPredicate,
       app.injector.instanceOf[ItvcErrorHandler],
       reportDeadlinesService,
-      frontendAppConfig,
+      appConfig,
       messagesApi
     )
 
-    frontendAppConfig.features.obligationsPageEnabled(featureSwitchToggle)
+    if(featureSwitchEnabled) {
+      enable(ObligationsPage)
+    } else {
+      disable(ObligationsPage)
+    }
   }
 
   val date: LocalDate = LocalDate.now

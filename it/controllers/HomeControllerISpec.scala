@@ -23,13 +23,14 @@ import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
+import config.featureswitch.{Bills, FeatureSwitching}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
 import implicits.ImplicitDateFormatter
 import models.calculation.{CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 
-class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
+class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
 
@@ -37,6 +38,7 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 
       "render the home page with the payment due date" in {
 
+        enable(Bills)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 

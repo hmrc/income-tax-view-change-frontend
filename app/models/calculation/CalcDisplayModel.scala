@@ -16,11 +16,10 @@
 
 package models.calculation
 
-import config.FrontendAppConfig
-import enums.CalcStatus
-import auth.MtdItUser
 import enums.{CalcStatus, Crystallised, Estimate}
 import play.api.libs.json.{Format, Json}
+
+
 
 import implicits.ImplicitCurrencyFormatter._
 
@@ -33,9 +32,6 @@ case class CalcDisplayModel(calcTimestamp: String,
 
   val whatYouOwe : String = s"${calcAmount.toCurrency}"
 
-  def displayCalcBreakdown(appConfig: FrontendAppConfig): Boolean = {
-    appConfig.features.calcBreakdownEnabled()
-  }
   def crystallisedWithBBSInterest :Boolean = {
     calcStatus == Crystallised && calcDataModel.savingsAndGains.taxableIncome.exists(_ > 0)
   }

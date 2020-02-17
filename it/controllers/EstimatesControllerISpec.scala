@@ -21,15 +21,13 @@ import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{EstimatesMessages => messages}
-import config.FrontendAppConfig
+import config.featureswitch.{Estimates, FeatureSwitching}
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 
-class EstimatesControllerISpec extends ComponentSpecBase {
-
-  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+class EstimatesControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   "Calling the EstimatesController.viewEstimatedCalculations" when {
 
@@ -39,6 +37,7 @@ class EstimatesControllerISpec extends ComponentSpecBase {
 
         "return the correct page with tax links" in {
 
+          enable(Estimates)
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
@@ -70,6 +69,7 @@ class EstimatesControllerISpec extends ComponentSpecBase {
       "isAuthorisedUser with an active enrolment, and multiple valid tax estimates" should {
         "return the correct page with tax links" in {
 
+          enable(Estimates)
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -115,6 +115,8 @@ class EstimatesControllerISpec extends ComponentSpecBase {
 
         "return the correct estimate page when one response received a not found" in {
 
+          enable(Estimates)
+
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -153,6 +155,8 @@ class EstimatesControllerISpec extends ComponentSpecBase {
 
       "isAuthorisedUser with an active enrolment, with a crystallised calculation and a tax estimate" should {
         "return the correct estimate page with successful responses" in {
+
+          enable(Estimates)
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -196,6 +200,8 @@ class EstimatesControllerISpec extends ComponentSpecBase {
       "isAuthorisedUser with an active enrolment, and no tax estimates" should {
         "return the correct page with no estimates found message" in {
 
+          enable(Estimates)
+
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
@@ -232,7 +238,7 @@ class EstimatesControllerISpec extends ComponentSpecBase {
 
       "redirect to home page" in {
 
-        appConfig.features.estimatesEnabled(false)
+        disable(Estimates)
 
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)

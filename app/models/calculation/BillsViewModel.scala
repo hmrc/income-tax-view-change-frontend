@@ -16,13 +16,11 @@
 
 package models.calculation
 
-import config.FrontendAppConfig
-
 case class BillsViewModel(currentBill: BigDecimal,
                           isPaid: Boolean,
                           taxYear: Int) {
 
-  def eligibleForPayment(appConfig: FrontendAppConfig): Boolean = {
-    appConfig.features.paymentEnabled() && !isPaid
+  def eligibleForPayment(paymentEnabled: Boolean): Boolean = {
+    paymentEnabled && !isPaid
   }
 }

@@ -30,7 +30,7 @@ class PayApiConnectorSpec extends TestSupport with MockHttp with MockAuditingSer
   val successResponseBadJson = HttpResponse(Status.CREATED, Some(Json.parse("{}")))
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
-  object TestPayApiConnector extends PayApiConnector(mockHttpGet, mockAuditingService, frontendAppConfig)
+  object TestPayApiConnector extends PayApiConnector(mockHttpGet, mockAuditingService, appConfig)
 
   "Calling .startPaymentJourney" should {
     val testUrl = "http://localhost:9057/pay-api/mtd-income-tax/sa/journey/start"

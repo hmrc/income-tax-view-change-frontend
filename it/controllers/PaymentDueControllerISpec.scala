@@ -20,12 +20,13 @@ import assets.BaseIntegrationTestConstants.{testMtditid, testNino, testSelfEmplo
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, Payment}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub}
 import implicits.ImplicitDateFormatter
 import play.api.http.Status._
 
-class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
+class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-due" when {
 
@@ -42,7 +43,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionsJson(2000))
 
         And("the payment feature switch is set to false")
-        appConfig.features.paymentEnabled(false)
+        disable(Payment)
 
         When("I call GET /report-quarterly/income-and-expenses/view/payments-due")
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -76,7 +77,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000,"2018-04-06", "2019-04-05"))
 
         And("the payment feature switch is set to false")
-        appConfig.features.paymentEnabled(false)
+        disable(Payment)
 
         When("I call GET /report-quarterly/income-and-expenses/view/payments-due")
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -116,7 +117,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000,"2018-04-06", "2019-04-05"))
 
         And("the payment feature switch is set to false")
-        appConfig.features.paymentEnabled(false)
+        disable(Payment)
 
         When("I call GET /report-quarterly/income-and-expenses/view/payments-due")
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -148,7 +149,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, emptyFinancialTransaction)
 
         And("the payment feature switch is set to false")
-        appConfig.features.paymentEnabled(false)
+        disable(Payment)
 
         When("I call GET /report-quarterly/income-and-expenses/view/payments-due")
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -181,7 +182,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateForma
         FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000,"2018-04-06", "2019-04-05"))
 
         And("the payment feature switch is set to false")
-        appConfig.features.paymentEnabled(false)
+        disable(Payment)
 
         When("I call GET /report-quarterly/income-and-expenses/view/payments-due")
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue

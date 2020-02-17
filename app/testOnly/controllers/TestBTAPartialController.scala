@@ -21,9 +21,7 @@ import javax.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import controllers.BaseController
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
-import testOnly.forms.FeatureSwitchForm
-import testOnly.models.FeatureSwitchModel
+import play.api.mvc.{Action, AnyContent}
 
 @Singleton
 class TestBTAPartialController @Inject()(val messagesApi: MessagesApi, implicit val appConfig: FrontendAppConfig) extends BaseController {

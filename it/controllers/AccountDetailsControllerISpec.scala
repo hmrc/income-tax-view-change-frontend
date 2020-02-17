@@ -16,22 +16,18 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import assets.BaseIntegrationTestConstants.testMtditid
 import assets.BusinessDetailsIntegrationTestConstants.b1TradingName
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.PropertyDetailsIntegrationTestConstants._
-import assets.ReportDeadlinesIntegrationTestConstants.multipleReportDeadlinesDataSuccessModel
 import assets.messages.{AccountDetailsMessages => messages}
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.ComponentSpecBase
-
 import config.FrontendAppConfig
+import config.featureswitch.{AccountDetails, FeatureSwitching}
+import helpers.ComponentSpecBase
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
-import implicits.ImplicitDateFormatter._
 
-class AccountDetailsControllerISpec extends ComponentSpecBase {
-
-  lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
+class AccountDetailsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   "Calling the AccountDetailsController.getAccountDetails" when {
 
@@ -40,6 +36,8 @@ class AccountDetailsControllerISpec extends ComponentSpecBase {
       "isAuthorisedUser with an active enrolment and has at least 1 business and property" should {
 
         "return the correct page with a valid total" in {
+
+          enable(AccountDetails)
 
           And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -57,7 +55,7 @@ class AccountDetailsControllerISpec extends ComponentSpecBase {
             elementTextByID(id = "your-businesses")(messages.businessHeading),
             elementTextByID(id = "business-link-1")(b1TradingName),
             elementTextByID(id = "your-properties")(messages.propertyHeading),
-            elementTextByID(id = "reporting-period")(messages.reportingPeriod(propertyAccountingStart,propertyAccountingEnd))
+            elementTextByID(id = "reporting-period")(messages.reportingPeriod(propertyAccountingStart, propertyAccountingEnd))
           )
         }
       }
@@ -72,10 +70,10 @@ class AccountDetailsControllerISpec extends ComponentSpecBase {
 
       "Redirect to Home Page" in {
 
+        disable(AccountDetails)
+
         When("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-
-        appConfig.features.accountDetailsEnabled(false)
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/account-details")
         val res = IncomeTaxViewChangeFrontend.getAccountDetails

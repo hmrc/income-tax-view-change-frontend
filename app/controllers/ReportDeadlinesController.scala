@@ -17,10 +17,10 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import audit.AuditingService
 import audit.models.ReportDeadlinesAuditing.ReportDeadlinesAuditModel
 import auth.MtdItUser
+import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
@@ -40,13 +40,13 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
                                           val auditingService: AuditingService,
                                           val reportDeadlinesService: ReportDeadlinesService,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          implicit val config: FrontendAppConfig,
+                                          implicit val appConfig: FrontendAppConfig,
                                           implicit val messagesApi: MessagesApi
-                                     ) extends BaseController {
+                                     ) extends BaseController with FeatureSwitching{
 
   val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      if (config.features.reportDeadlinesEnabled()) renderView else fRedirectToHome
+      if (isEnabled(ReportDeadlines)) renderView else fRedirectToHome
   }
 
   private def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
@@ -54,7 +54,7 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
       auditReportDeadlines(user)
       reportDeadlinesService.createIncomeSourcesWithDeadlinesModel(user.incomeSources).map {
         case withDeadlines: IncomeSourcesWithDeadlinesModel if !withDeadlines.hasAnyServerErrors =>
-          if(config.features.obligationsPageEnabled()) {
+          if(isEnabled(ObligationsPage)) {
             Ok(views.html.obligations(withDeadlines))
           } else {
             Ok(views.html.report_deadlines(withDeadlines))

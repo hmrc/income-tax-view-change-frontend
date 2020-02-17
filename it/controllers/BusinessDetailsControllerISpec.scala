@@ -20,11 +20,12 @@ import assets.BaseIntegrationTestConstants.testMtditid
 import assets.BusinessDetailsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{BusinessDetailsMessages => messages}
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import config.featureswitch.{AccountDetails, FeatureSwitching}
 import helpers.ComponentSpecBase
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 
-class BusinessDetailsControllerISpec extends ComponentSpecBase {
+class BusinessDetailsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   "Calling the BusinessDetailsController.getBusinessDetails" when {
 
@@ -32,6 +33,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase {
 
       "return the correct page with a valid total" in {
 
+        enable(AccountDetails)
         And("I wiremock stub a successful Income Source Details response with Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
@@ -44,7 +46,7 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitle("business"),
-          elementTextByID(id = "reporting-period")(messages.reportingPeriod(b1AccountingStart,b1AccountingEnd)),
+          elementTextByID(id = "reporting-period")(messages.reportingPeriod(b1AccountingStart, b1AccountingEnd)),
           elementTextByID(id = "cessation-date")(messages.cessationDate(b1CessationDate)),
           elementTextByID(id = "address-details")(messages.addressDetails),
           elementTextByID(id = "trading-name")(messages.tradingName),
@@ -64,6 +66,8 @@ class BusinessDetailsControllerISpec extends ComponentSpecBase {
     "isAuthorisedUser with an active enrolment, but has no business" should {
 
       "return an internal server error" in {
+
+        enable(AccountDetails)
 
         And("I wiremock stub a successful Income Source Details response with Property Only income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)

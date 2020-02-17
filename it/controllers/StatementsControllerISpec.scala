@@ -19,19 +19,16 @@ package controllers
 import assets.BaseIntegrationTestConstants._
 import assets.StatementsIntegrationTestConstants._
 import assets.messages.{StatementsMessages => messages}
-import config.FrontendAppConfig
-import helpers.servicemocks._
+import config.featureswitch.{FeatureSwitching, Statements}
 import helpers.ComponentSpecBase
+import helpers.servicemocks._
+import implicits.{ImplicitCurrencyFormatter, ImplicitDateFormatter}
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
-import implicits.ImplicitDateFormatter
-import implicits.ImplicitCurrencyFormatter
 
-class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with ImplicitCurrencyFormatter {
+class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with ImplicitCurrencyFormatter with FeatureSwitching {
 
-
-  lazy val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "Calling the StatementsController" when {
 
@@ -42,6 +39,8 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
         "has a single statement with a single charge" should {
 
           "display the tax year for the statement and the associated charge" in {
+
+            enable(Statements)
 
             And("I wiremock stub a successful Get Financial Transactions response")
             FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, singleChargeStatementResponse)
@@ -94,8 +93,8 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
               elementTextByID(s"$testYearPlusOne-tax-year")(messages.taxYear(testYearPlusOneInt)),
               elementTextByID(s"$testYearPlusOne-still-to-pay")(messages.stillToPay(statement2Model.outstandingAmount.get.toCurrencyString)),
               elementTextByID(s"$testYearPlusOne-charge")(charge2019.amount.get.toCurrencyString),
-              elementTextByID(s"$testYearPlusOne-paid-0")(messages.paid(payment.paymentAmount.get.toCurrencyString,payment.clearingDate.get.toShortDate)),
-              elementTextByID(s"$testYearPlusOne-paid-1")(messages.paid(payment2.paymentAmount.get.toCurrencyString,payment2.clearingDate.get.toShortDate)),
+              elementTextByID(s"$testYearPlusOne-paid-0")(messages.paid(payment.paymentAmount.get.toCurrencyString, payment.clearingDate.get.toShortDate)),
+              elementTextByID(s"$testYearPlusOne-paid-1")(messages.paid(payment2.paymentAmount.get.toCurrencyString, payment2.clearingDate.get.toShortDate)),
               isElementVisibleById("earlier-statements")(true)
             )
 
@@ -160,7 +159,7 @@ class StatementsControllerISpec extends ComponentSpecBase with ImplicitDateForma
 
         "redirect to the home page" in {
 
-          appConfig.features.statementsEnabled(false)
+          disable(Statements)
 
           And("I wiremock stub a successful Get Financial Transactions response")
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(Status.OK, singleChargeStatementResponse)

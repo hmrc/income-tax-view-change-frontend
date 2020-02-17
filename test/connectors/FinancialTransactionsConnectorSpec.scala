@@ -34,7 +34,7 @@ class FinancialTransactionsConnectorSpec extends TestSupport with MockHttp{
   val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
 
-  object TestFinancialTransactionsConnector extends FinancialTransactionsConnector(mockHttpGet, frontendAppConfig)
+  object TestFinancialTransactionsConnector extends FinancialTransactionsConnector(mockHttpGet, appConfig)
 
   "FinancialTransactionsConnector.getFinancialTransactions" should {
 

@@ -16,32 +16,30 @@
 
 package models
 
+import config.featureswitch.FeatureSwitching
 import models.calculation.BillsViewModel
 import org.scalatest.Matchers
 import testUtils.TestSupport
 
-class BillsViewModelSpec extends TestSupport with Matchers {
+class BillsViewModelSpec extends TestSupport with Matchers with FeatureSwitching {
 
   "eligibleForPayment" should {
 
     "return a false" when {
 
       "payments are not enabled" in {
-        frontendAppConfig.features.paymentEnabled(false)
-        BillsViewModel(10000, isPaid = false, 2019).eligibleForPayment(frontendAppConfig) shouldBe false
+        BillsViewModel(10000, isPaid = false, 2019).eligibleForPayment(false) shouldBe false
       }
 
       "bill is paid" in {
-        frontendAppConfig.features.paymentEnabled(true)
-        BillsViewModel(10000, isPaid = true, 2019).eligibleForPayment(frontendAppConfig) shouldBe false
+        BillsViewModel(10000, isPaid = true, 2019).eligibleForPayment(true) shouldBe false
       }
     }
 
     "return a true" when {
 
       "payments are enabled and the bill is not paid" in {
-        frontendAppConfig.features.paymentEnabled(true)
-        BillsViewModel(10000, isPaid = false, 2019).eligibleForPayment(frontendAppConfig) shouldBe true
+        BillsViewModel(10000, isPaid = false, 2019).eligibleForPayment(true) shouldBe true
       }
     }
   }
