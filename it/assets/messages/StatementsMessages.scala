@@ -22,6 +22,6 @@ object StatementsMessages {
   val taxYear: Int => String = year => s"Tax year: ${year - 1}-$year"
   val stillToPay: String => String = amount => s"Still to pay: $amount"
   val paid: (String,String) => String = (amount, date) => s"You paid " + amount + " on " + date
-  val noTransactions = "You've had no transactions since you started reporting through accounting software."
-  val error = "We can't show your statement right now"
+  val noTransactions = "You’ve had no transactions since you started reporting through accounting software."
+  val error = "We can’t show your statement right now"
 }

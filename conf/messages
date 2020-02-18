@@ -4,7 +4,7 @@ base.service_name                                               = Business tax a
 base.phase                                                      = BETA
 base.sign-out                                                   = Sign out
 base.submit                                                     = Submit
-base.error_heading                                              = There''s a problem
+base.error_heading                                              = There’s a problem
 base.backToHome                                                 = Back to Income Tax home
 
 ## BTA Links ##
@@ -52,7 +52,7 @@ estimates.title                                                 = Estimates
 estimates.heading                                               = Estimates
 estimates.viewEstimates                                         = View your current estimates:
 estimates.estimatesLink                                         = {0} to {1} tax year
-estimates.noEstimates                                           = You don''t have an estimate right now. We''ll show your next Income Tax estimate when you submit a report using software.
+estimates.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 
 ## Calculation Breakdown ##
 calc-breakdown.how-estimate-calculated                          = How your estimate of {0} was calculated
@@ -90,7 +90,7 @@ estimated_tax_liability.heading                                 = Tax estimate f
 estimated_tax_liability.no-estimate-sub-heading                 = Estimates
 estimated_tax_liability.sub-heading                             = How your estimate of {0} was calculated
 estimated_tax_liability.reported-figures                        = These estimates are based on the figures you already submitted for this tax year.
-estimated_tax_liability.estimated-tax.payment                   = You don''t need to pay anything yet, but you must pay what you owe for the whole tax year by
+estimated_tax_liability.estimated-tax.payment                   = You don’t need to pay anything yet, but you must pay what you owe for the whole tax year by
 estimated_tax_liability.calc-breakdown.heading                  = How we calculated this estimate
 estimated_tax_liability.calc-breakdown.business-profit          = Business profit
 estimated_tax_liability.calc-breakdown.property-profit          = Property profit
@@ -112,8 +112,8 @@ estimated_tax_liability.calc-breakdown.nic2                     = Class 2 Nation
 estimated_tax_liability.calc-breakdown.nic4                     = Class 4 National Insurance
 estimated_tax_liability.calc-breakdown.reliefs                  = Your tax reliefs
 estimated_tax_liability.calc-breakdown.total-estimate           = Your Income Tax and National Insurance estimate
-estimated_tax_liability.no-data                                 = Once you''ve submitted a report using your accounting software, you can view your tax estimate here.
-estimated_tax_liability.error.p1                                = We can''t display your estimated tax amount at the moment.
+estimated_tax_liability.no-data                                 = Once you’ve submitted a report using your accounting software, you can view your tax estimate here.
+estimated_tax_liability.error.p1                                = We can’t display your estimated tax amount at the moment.
 estimated_tax_liability.error.p2                                = Try refreshing the page in a few minutes.
 estimated_tax_liability.eoyEstimate.heading                     = Annual estimate: {0}
 estimated_tax_liability.eoyEstimate.p1                          = This is for the {0} to {1} tax year.
@@ -142,13 +142,13 @@ obligations.reportDueDate                                       = Report due dat
 obligations.bi.subheading                                       = Business income
 obligations.pi.subheading                                       = Property income
 obligations.pi.portfolio                                        = This covers all properties that you earn income from.
-obligations.error.p1                                            = We can''t display your next report due date at the moment.
+obligations.error.p1                                            = We can’t display your next report due date at the moment.
 obligations.error.p2                                            = Try refreshing the page in a few minutes.
 obligations.ceased                                              = This business ceased trading on {0}.
 obligations.ceasedProperties                                    = Ceased trading on {0}.
 obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
-obligations.noReports                                           = You don''t have any reports due right now. Your next deadline will show here on the first Monday of next month.
+obligations.noReports                                           = You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month.
 obligations.dropdown.text                                       = How to submit a report
 obligations.dropdown.link                                       = Choose accounting software that supports this service (opens in a new tab)
 obligations.dropdown.p1                                         = if you have not already.
@@ -200,7 +200,7 @@ bills.heading                                                   = Bills
 bills.viewBills                                                 = View your finalised bills:
 bills.billLink.screenReaderPrefix                               = view bill for
 bills.billLink                                                  = {0} to {1} tax year
-bills.noBills                                                   = You''ve had no bills since you started reporting through software.
+bills.noBills                                                   = You’ve had no bills since you started reporting through software.
 bills.earlierBills                                              = For earlier bills,
 bills.earlierBillsLink                                          = view your Self Assessment calculations (opens in a new tab)
 
@@ -215,15 +215,15 @@ statements.dueBy.youCan                                         = You can
 statements.dueBy.link                                           = pay this now
 statements.dueBy.screenReaderLink                               = pay your {0}-{1} bill now
 statements.nothingToPay                                         = Nothing left to pay
-statements.paidBill                                             = You''ve paid this bill.
+statements.paidBill                                             = You’ve paid this bill.
 statements.transactions                                         = Your transactions
 statements.charge                                               = You had a charge of
 statements.youPaid                                              = You paid {0} on {1}
 statements.earlierTransactions                                  = For earlier transactions,
 statements.earlierTransactionsLink                              = view your Self Assessment
-statements.noTransactions                                       = You''ve had no transactions since you started reporting through accounting software.
+statements.noTransactions                                       = You’ve had no transactions since you started reporting through accounting software.
 
-statements.error.heading                                        = We can''t show your statement right now
+statements.error.heading                                        = We can’t show your statement right now
 statements.error.p1                                             = Try reloading the page or coming back later.
 
 ## Account Details Page ##
@@ -252,20 +252,20 @@ status.overdue                                                  = Overdue
 ## Timeout page ##
 timeout.title                                                   = Your session has timed out
 timeout.heading                                                 = Your session has timed out
-timeout.signIn.1                                                = To view your quarterly reporting details, you''ll have to
+timeout.signIn.1                                                = To view your quarterly reporting details, you’ll have to
 timeout.signIn.2                                                = sign in
 timeout.signIn.3                                                = using your Government Gateway ID.
 
 
 ## BTA Partial ##
 bta_partial.heading                                             = Income Tax reporting through software
-bta_partial.p1                                                  = You''ve signed up to report your Income Tax through software. This will replace your Self Assessment tax return.
+bta_partial.p1                                                  = You’ve signed up to report your Income Tax through software. This will replace your Self Assessment tax return.
 bta_partial.p2                                                  = You can view your report deadlines, bills and an estimate for the next tax year.
 bta_partial.home_button                                         = View your Income Tax details
 
 ## Not Enrolled
-not_enrolled.heading                                            = You can''t view this page
-not_enrolled.title                                              = You can''t view this page
+not_enrolled.heading                                            = You can’t view this page
+not_enrolled.title                                              = You can’t view this page
 not_enrolled.sign-up.1                                          = You need to
 not_enrolled.sign-up.2                                          = sign up for quarterly reporting
 not_enrolled.sign-up.3                                          = before you can view this page.
@@ -308,7 +308,7 @@ obligation.dropdown.finalDeclaration.info.v2                       = What is a f
 obligations.dropdown.declarations.types.v2                         = There are two types of declarations.
 obligations.dropdown.declarations.li1.type1.v2                     = End of accounting period for every entity
 obligations.dropdown.declarations.li2.type2.v2                     = Final check
-obligations.dropdown.declarations.li1.text.v2                      = - Depending on the end date of your entity''s accounting period, you will need to submit a declaration through your software. This is to confirm all of the returns you submitted during the course of your entity''s accounting period were true to your knowledge.
+obligations.dropdown.declarations.li1.text.v2                      = - Depending on the end date of your entity’s accounting period, you will need to submit a declaration through your software. This is to confirm all of the returns you submitted during the course of your entity’s accounting period were true to your knowledge.
 obligations.dropdown.declarations.li2.text.v2                      = - This is to confirm that you have disclosed your income from all sources true to your knowledge. You need to do send this declaration using your software.
 obligation.dropdown.quarterlyReturn.text.v2                        = A quarterly update sets out the income and expenses for each 3-month period.
 obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1              = Using your

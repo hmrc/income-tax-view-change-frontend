@@ -23,6 +23,6 @@ object BillsMessages {
   val finalBills = "View your finalised bills:"
   val taxYearText: Int => String = testYear => s"${testYear-1} to $testYear tax year"
   val earlierBills = "For earlier bills, view your Self Assessment calculations (opens in a new tab)."
-  val noBills = "You've had no bills since you started reporting through software."
+  val noBills = "You’ve had no bills since you started reporting through software."
 
 }

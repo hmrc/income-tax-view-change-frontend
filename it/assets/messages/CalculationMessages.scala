@@ -35,6 +35,6 @@ object CalculationMessages {
     val calcBreakdown = "How this figure was calculated"
   }
 
-  val internalServerErrorp1 = "We can't display your estimated tax amount at the moment."
+  val internalServerErrorp1 = "We can’t display your estimated tax amount at the moment."
   val internalServerErrorp2 = "Try refreshing the page in a few minutes."
 }
