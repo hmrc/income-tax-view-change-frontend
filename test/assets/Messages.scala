@@ -62,7 +62,7 @@ object Messages {
   class Estimates {
     val title = "Estimates"
     val heading = "Estimates"
-    val noEstimates = "You don't have an estimate right now. We'll show your next Income Tax estimate when you submit a report using software."
+    val noEstimates = "You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software."
     val p1 = "View your current estimates:"
     val taxYearLink: (String, String) => String = (year, yearPlusOne) => s"$year to $yearPlusOne tax year"
   }
@@ -161,7 +161,7 @@ object Messages {
       val viewBills = "View your finalised bills:"
       val billLink = s"${taxYear-1} to $taxYear tax year"
       val billsLinkAriaLabel = s"view bill for $billLink"
-      val noBills = "You've had no bills since you started reporting through software."
+      val noBills = "You’ve had no bills since you started reporting through software."
       val earlierBills = "For earlier bills, view your Self Assessment calculations (opens in a new tab)."
     }
   }
@@ -171,7 +171,7 @@ object Messages {
     val subHeading = "Estimates"
     val heading = "Tax estimate for 2017 - 2018"
     val title = heading
-    val p1 = "Once you've submitted a report using your accounting software, you can view your tax estimate here."
+    val p1 = "Once you’ve submitted a report using your accounting software, you can view your tax estimate here."
   }
 
   // Estimated Tax Liability Error Page Messages
@@ -179,7 +179,7 @@ object Messages {
     val subHeading = "Estimates"
     val heading = "Tax estimate for 2017 - 2018"
     val title = heading
-    val p1 = "We can't display your estimated tax amount at the moment."
+    val p1 = "We can’t display your estimated tax amount at the moment."
     val p2 = "Try refreshing the page in a few minutes."
   }
 
@@ -204,7 +204,7 @@ object Messages {
       val dropdown4 = "After you send your final report, you can see the Income Tax you owe for the tax year."
     }
     object Errors {
-      val p1 = "We can't display your next report due date at the moment."
+      val p1 = "We can’t display your next report due date at the moment."
       val p2 = "Try refreshing the page in a few minutes."
     }
   }
@@ -212,7 +212,7 @@ object Messages {
   object NoReportDeadlines {
     val title = "Report deadlines"
     val heading = "Report deadlines"
-    val noReports = "You don't have any reports due right now. Your next deadline will show here on the first Monday of next month."
+    val noReports = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
   }
 
   // Statements Page Messages
@@ -227,14 +227,14 @@ object Messages {
     val dueByWithLink: String => String = date => s"This is due by $date. You can pay this now."
     val paymentAriaLabel: Int => String = taxYear => s"pay your ${taxYear-1}-$taxYear bill now"
     val nothingToPay = "Nothing left to pay"
-    val paidBill = "You've paid this bill."
+    val paidBill = "You’ve paid this bill."
     val transactions = "Your transactions"
     val charge: String => String = amount => s"You had a charge of $amount."
     val youPaid: (String, String) => String = (amount, date) => s"You paid $amount on $date"
     val earlierTransactions = "For earlier transactions, view your Self Assessment."
-    val noTransactions = "You've had no transactions since you started reporting through accounting software."
+    val noTransactions = "You’ve had no transactions since you started reporting through accounting software."
     object Error {
-      val pageHeading = "We can't show your statement right now"
+      val pageHeading = "We can’t show your statement right now"
       val p1 = "Try reloading the page or coming back later."
     }
   }
@@ -265,7 +265,7 @@ object Messages {
   object Timeout {
     val title = "Your session has timed out"
     val heading = "Your session has timed out"
-    val signIn = "To view your quarterly reporting details, you'll have to sign in using your Government Gateway ID."
+    val signIn = "To view your quarterly reporting details, you’ll have to sign in using your Government Gateway ID."
   }
 
   object Helpers {
@@ -286,13 +286,13 @@ object Messages {
 
   object BtaPartial {
     val heading = "Income Tax reporting through software"
-    val p1 = "You've signed up to report your Income Tax through software. This will replace your Self Assessment tax return."
+    val p1 = "You’ve signed up to report your Income Tax through software. This will replace your Self Assessment tax return."
     val p2 = "You can view your report deadlines, bills and an estimate for the next tax year."
     val button = "View your Income Tax details"
   }
 
   object NotEnrolled {
-    val title = "You can't view this page"
+    val title = "You can’t view this page"
     val heading = title
     val signUp = "You need to sign up for quarterly reporting before you can view this page."
   }
@@ -308,9 +308,9 @@ object Messages {
       val option5 = "Very dissatisfied"
     }
     val q2 = "How could we improve this service?"
-    val p1 = "Please don't include any personal or financial information, for example your National Insurance or credit card numbers."
+    val p1 = "Please don’t include any personal or financial information, for example your National Insurance or credit card numbers."
     object Errors {
-      val maxImprovementsError = "You can't enter more than 1200 characters for your feedback"
+      val maxImprovementsError = "You can’t enter more than 1200 characters for your feedback"
     }
   }
 
