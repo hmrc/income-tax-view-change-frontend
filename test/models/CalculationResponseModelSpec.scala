@@ -16,23 +16,13 @@
 
 package models
 
-import java.time.LocalDateTime
-
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
-import assets.BusinessDetailsTestConstants._
-import assets.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import assets.PropertyDetailsTestConstants.propertyDetails
-import auth.MtdItUser
 import enums.{CalcStatus, Crystallised, Estimate}
 import implicits.ImplicitDateFormatter
 import models.calculation._
-import models.core.AccountingPeriodModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
-import org.eclipse.jetty.server.Authentication.User
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.UnitSpec
 
 class CalculationResponseModelSpec extends UnitSpec with Matchers with ImplicitDateFormatter {

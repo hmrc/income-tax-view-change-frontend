@@ -17,12 +17,11 @@
 package controllers.predicates
 
 
-import javax.inject.{Inject, Singleton}
-
 import audit.AuditingService
 import audit.models.NinoLookupAuditing.{NinoLookupAuditModel, NinoLookupErrorAuditModel}
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
+import javax.inject.{Inject, Singleton}
 import models.core.{Nino, NinoResponseError}
 import play.api.Logger
 import play.api.mvc.Results.Redirect
@@ -30,14 +29,14 @@ import play.api.mvc.{ActionRefiner, Result}
 import services.NinoLookupService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
 class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
                               val itvcErrorHandler: ItvcErrorHandler,
-                              val auditingService: AuditingService) extends ActionRefiner[MtdItUserOptionNino, MtdItUserWithNino] {
+                              val auditingService: AuditingService)(
+                              implicit ec: ExecutionContext) extends ActionRefiner[MtdItUserOptionNino, MtdItUserWithNino] {
 
   override def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
 

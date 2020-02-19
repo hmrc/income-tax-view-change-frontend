@@ -16,10 +16,9 @@
 
 package testOnly.controllers
 
-import javax.inject.{Inject, Singleton}
-
 import config.FrontendAppConfig
 import controllers.BaseController
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 

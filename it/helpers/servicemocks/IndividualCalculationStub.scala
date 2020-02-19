@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import helpers.WiremockHelper
-import models.calculation.{Calculation, ListCalculationItems}
+import models.calculation.ListCalculationItems
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 

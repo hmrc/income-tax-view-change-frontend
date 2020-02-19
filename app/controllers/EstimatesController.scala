@@ -16,20 +16,21 @@
 
 package controllers
 
-import javax.inject.Inject
 import audit.AuditingService
 import auth.MtdItUser
 import config.featureswitch.{Estimates, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import javax.inject.Inject
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.CalculationService
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class EstimatesController @Inject()(implicit val appConfig: FrontendAppConfig,
                                     implicit val messagesApi: MessagesApi,
+                                    implicit val ec: ExecutionContext,
                                     val checkSessionTimeout: SessionTimeoutPredicate,
                                     val authenticate: AuthenticationPredicate,
                                     val retrieveNino: NinoPredicate,

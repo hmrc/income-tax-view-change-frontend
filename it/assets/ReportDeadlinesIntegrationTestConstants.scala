@@ -17,9 +17,9 @@ package assets
 
 import java.time.LocalDate
 
+import implicits.ImplicitDateFormatter._
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
-import implicits.ImplicitDateFormatter._
 
 object ReportDeadlinesIntegrationTestConstants {
   def successResponse(obligationsModel: ReportDeadlinesModel): JsValue = {

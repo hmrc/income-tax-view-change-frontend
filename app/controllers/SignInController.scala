@@ -16,9 +16,8 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-
 import config.FrontendAppConfig
+import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects

@@ -16,11 +16,9 @@
 
 package assets
 
-import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import assets.BaseIntegrationTestConstants._
 import assets.BusinessDetailsIntegrationTestConstants._
 import assets.PropertyDetailsIntegrationTestConstants._
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 
 object IncomeSourceIntegrationTestConstants {
 

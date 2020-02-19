@@ -17,6 +17,7 @@
 package testOnly.controllers
 
 import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -24,7 +25,6 @@ import play.api.mvc.{Action, AnyContent, Request}
 import play.twirl.api.Html
 import testOnly.views.html.featureSwitch
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import config.featureswitch.FeatureSwitch.switches
 
 import scala.collection.immutable.ListMap
 

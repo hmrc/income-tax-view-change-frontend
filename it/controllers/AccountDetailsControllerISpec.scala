@@ -21,7 +21,6 @@ import assets.BusinessDetailsIntegrationTestConstants.b1TradingName
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.PropertyDetailsIntegrationTestConstants._
 import assets.messages.{AccountDetailsMessages => messages}
-import config.FrontendAppConfig
 import config.featureswitch.{AccountDetails, FeatureSwitching}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub

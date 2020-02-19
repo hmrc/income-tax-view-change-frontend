@@ -16,20 +16,19 @@
 
 package testOnly.connectors
 
-import javax.inject.{Inject, Singleton}
-
 import connectors.RawResponseReads
+import javax.inject.{Inject, Singleton}
 import testOnly.TestOnlyAppConfig
 import testOnly.models.{DataModel, SchemaModel}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
-                                     val http: HttpClient) extends RawResponseReads {
+                                     val http: HttpClient
+                                    )(implicit ec: ExecutionContext)extends RawResponseReads {
 
   def addSchema(schemaModel: SchemaModel)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/schema"

@@ -18,7 +18,7 @@ package controllers
 
 import assets.Messages
 import config.FrontendAppConfig
-import config.featureswitch.{Estimates, FeatureSwitching, Statements}
+import config.featureswitch.{FeatureSwitching, Statements}
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockFinancialTransactionsService
@@ -33,6 +33,7 @@ class StatementsControllerSpec extends TestSupport with MockAuthenticationPredic
   object TestStatementsController extends StatementsController()(
     fakeApplication.injector.instanceOf[FrontendAppConfig],
     fakeApplication.injector.instanceOf[MessagesApi],
+    ec,
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     mockFinancialTransactionsService

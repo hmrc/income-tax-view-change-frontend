@@ -17,14 +17,14 @@
 package controllers
 
 import config.featureswitch.{FeatureSwitching, ObligationsPage}
-import javax.inject.{Inject, Singleton}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.ReportDeadlinesService
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PreviousObligationsController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -34,6 +34,7 @@ class PreviousObligationsController @Inject()(val checkSessionTimeout: SessionTi
                                               val itvcErrorHandler: ItvcErrorHandler,
                                               val reportDeadlinesService: ReportDeadlinesService,
                                               implicit val appConfig: FrontendAppConfig,
+                                              implicit val ec: ExecutionContext,
                                               implicit val messagesApi: MessagesApi
                                      ) extends BaseController with FeatureSwitching {
 

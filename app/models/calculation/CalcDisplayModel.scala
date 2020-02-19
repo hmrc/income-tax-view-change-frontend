@@ -17,11 +17,8 @@
 package models.calculation
 
 import enums.{CalcStatus, Crystallised, Estimate}
-import play.api.libs.json.{Format, Json}
-
-
-
 import implicits.ImplicitCurrencyFormatter._
+import play.api.libs.json.{Format, Json}
 
 sealed trait CalcDisplayResponseModel extends CrystallisedViewModel
 

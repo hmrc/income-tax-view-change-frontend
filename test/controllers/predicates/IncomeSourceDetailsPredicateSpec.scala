@@ -30,6 +30,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
 
   object IncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate()(
     app.injector.instanceOf[MessagesApi],
+    ec,
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[ItvcErrorHandler]
   )

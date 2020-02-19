@@ -15,9 +15,7 @@
  */
 package helpers
 
-import assets.BaseIntegrationTestConstants.{testNino,testMtditid}
 import helpers.servicemocks._
-import play.api.libs.json.{JsNull, JsValue}
 
 trait GenericStubMethods extends CustomMatchers {
 

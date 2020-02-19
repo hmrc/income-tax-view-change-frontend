@@ -17,6 +17,7 @@
 package controllers
 
 import audit.AuditingService
+import config.featureswitch.{FeatureSwitching, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.Inject
@@ -25,7 +26,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import services.FinancialTransactionsService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import config.featureswitch.{Payment, FeatureSwitching}
+
+import scala.concurrent.ExecutionContext
 
 class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
@@ -36,7 +38,8 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val auditingService: AuditingService,
                                      implicit val appConfig: FrontendAppConfig,
-                                     implicit val messagesApi: MessagesApi
+                                     implicit val messagesApi: MessagesApi,
+                                     implicit val ec: ExecutionContext
                                     ) extends FrontendController with I18nSupport with FeatureSwitching {
 
   def hasFinancialTransactionsError(transactionModels: List[FinancialTransactionsResponseModel]): Boolean = {

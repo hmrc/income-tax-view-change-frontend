@@ -17,10 +17,10 @@
 package services
 
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
 
 import auth.MtdItUser
 import connectors._
+import javax.inject.{Inject, Singleton}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.incomeSourcesWithDeadlines._
 import models.reportDeadlines._
@@ -51,13 +51,15 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
         getReportDeadlines(incomeSource).map {
           case ReportDeadlinesModel(obligations) => obligations
           case _: ReportDeadlinesErrorModel => Nil
+          case _ => Nil
         }
       }
     ).map(_.flatten)
   }
 
   def previousObligationsWithIncomeType(incomeSourceResponse: IncomeSourceDetailsModel)
-                                       (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[List[ReportDeadlineModelWithIncomeType]] = {
+                                       (implicit hc: HeaderCarrier, ec: ExecutionContext,
+                                        mtdItUser: MtdItUser[_]): Future[List[ReportDeadlineModelWithIncomeType]] = {
 
     val businessIdsWithName = incomeSourceResponse.businesses.map(_.incomeSourceId) zip incomeSourceResponse.businesses.map(_.tradingName.getOrElse("Business"))
     val businessPreviousObligations = getBusinessObligationsFromIds(businessIdsWithName)
@@ -84,6 +86,7 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
         incomeTaxViewChangeConnector.getPreviousObligations(id).map {
           case ReportDeadlinesModel(obligations) => obligations
           case _: ReportDeadlinesErrorModel => Nil
+          case _ => Nil
         }
       }
     ).map(_.flatten)
@@ -96,6 +99,7 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
         incomeTaxViewChangeConnector.getPreviousObligations(incomeId).map {
           case ReportDeadlinesModel(obligations) => obligations.map(obligation => ReportDeadlineModelWithIncomeType(name, obligation))
           case _: ReportDeadlinesErrorModel => Nil
+          case _ => Nil
         }
       }
     ).map(_.flatten)
@@ -133,6 +137,7 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
           getReportDeadlines(mtdUser.mtditid).map {
             case deadlines: ReportDeadlinesModel => Some(CrystallisedDeadlinesModel(deadlines))
             case deadlines: ReportDeadlinesErrorModel => None
+            case _ => None
           }
 
         for {

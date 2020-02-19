@@ -16,11 +16,11 @@
 
 package assets
 
+import assets.BaseIntegrationTestConstants.testPropertyIncomeId
+import implicits.ImplicitDateFormatter._
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
-import assets.BaseIntegrationTestConstants.testPropertyIncomeId
-import implicits.ImplicitDateFormatter._
 
 object PropertyDetailsIntegrationTestConstants {
 

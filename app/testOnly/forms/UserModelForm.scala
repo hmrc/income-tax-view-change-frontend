@@ -18,8 +18,8 @@ package testOnly.forms
 
 import play.api.data.Form
 import play.api.data.Forms._
-import testOnly.models.UserModel
 import testOnly.forms.validation.Constraints._
+import testOnly.models.UserModel
 
 object UserModelForm {
 

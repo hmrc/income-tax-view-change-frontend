@@ -16,13 +16,13 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
 import audit.AuditingService
 import audit.models.ReportDeadlinesAuditing.ReportDeadlinesAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import javax.inject.{Inject, Singleton}
 import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, Result}
 import services.ReportDeadlinesService
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -41,7 +41,8 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
                                           val reportDeadlinesService: ReportDeadlinesService,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           implicit val appConfig: FrontendAppConfig,
-                                          implicit val messagesApi: MessagesApi
+                                          implicit val messagesApi: MessagesApi,
+                                          implicit val ec: ExecutionContext
                                      ) extends BaseController with FeatureSwitching{
 
   val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {

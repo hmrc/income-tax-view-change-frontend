@@ -17,7 +17,6 @@
 package config.filters
 
 import javax.inject.Inject
-
 import play.api.mvc._
 import play.filters.csrf._
 

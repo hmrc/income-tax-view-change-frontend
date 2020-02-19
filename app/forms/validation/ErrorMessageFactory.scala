@@ -16,7 +16,7 @@
 
 package forms.validation
 
-import forms.validation.models.{FieldError, SummaryError, TargetIds}
+import forms.validation.models.{FieldError, SummaryError}
 import play.api.data.validation.Invalid
 
 object ErrorMessageFactory {

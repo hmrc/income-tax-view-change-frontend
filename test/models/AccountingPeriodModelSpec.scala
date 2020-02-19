@@ -16,10 +16,10 @@
 
 package models
 
+import implicits.ImplicitDateFormatter._
 import models.core.AccountingPeriodModel
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
-import implicits.ImplicitDateFormatter._
 
 class AccountingPeriodModelSpec extends UnitSpec with Matchers {
 

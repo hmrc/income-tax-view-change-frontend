@@ -17,7 +17,6 @@
 package controllers
 
 import javax.inject.Inject
-
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import play.api.http.HeaderNames
 import play.api.i18n.MessagesApi

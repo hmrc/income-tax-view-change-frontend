@@ -16,10 +16,10 @@
 
 package views.helpers
 
+import implicits.ImplicitDateFormatter._
 import models.reportDeadlines.{Open, Overdue, ReportDeadlineStatus}
 import play.api.i18n.Messages
 import play.twirl.api.Html
-import implicits.ImplicitDateFormatter._
 
 object ReportDeadlineStatusHelper {
 

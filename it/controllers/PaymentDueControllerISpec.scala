@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testNino, testSelfEmploymentId}
+import assets.BaseIntegrationTestConstants.testMtditid
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import config.FrontendAppConfig

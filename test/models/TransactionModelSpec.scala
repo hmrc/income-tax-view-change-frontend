@@ -17,9 +17,9 @@
 package models
 
 import config.featureswitch.{FeatureSwitching, Payment}
+import implicits.ImplicitDateFormatter._
 import models.financialTransactions.{SubItemModel, TransactionModel}
 import org.scalatest.Matchers
-import implicits.ImplicitDateFormatter._
 import testUtils.TestSupport
 
 class TransactionModelSpec extends TestSupport with Matchers with FeatureSwitching {

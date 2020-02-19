@@ -19,13 +19,12 @@ package testUtils
 import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import auth.MtdItUser
-import com.typesafe.config.Config
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import models.core.UserDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.HeaderNames
 import play.api.i18n.MessagesApi

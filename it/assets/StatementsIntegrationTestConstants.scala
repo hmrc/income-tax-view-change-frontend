@@ -16,9 +16,9 @@
 
 package assets
 
+import implicits.ImplicitDateFormatter._
 import models.financialTransactions.{FinancialTransactionsModel, SubItemModel, TransactionModel}
 import play.api.libs.json.{JsValue, Json}
-import implicits.ImplicitDateFormatter._
 
 object StatementsIntegrationTestConstants {
 

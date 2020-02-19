@@ -23,6 +23,7 @@ import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
+import implicits.ImplicitDateFormatter._
 import models.incomeSourceDetails.BusinessDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -30,7 +31,6 @@ import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import implicits.ImplicitDateFormatter._
 import testUtils.TestSupport
 
 class BusinessDetailsViewSpec extends TestSupport {

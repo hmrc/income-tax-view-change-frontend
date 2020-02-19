@@ -16,11 +16,11 @@
 
 package assets
 
-import play.api.libs.json.{JsArray, JsValue, Json}
 import assets.BaseIntegrationTestConstants.{otherTestSelfEmploymentId, testSelfEmploymentId}
+import implicits.ImplicitDateFormatter._
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
-import implicits.ImplicitDateFormatter._
+import play.api.libs.json.{JsArray, JsValue, Json}
 
 object BusinessDetailsIntegrationTestConstants {
 

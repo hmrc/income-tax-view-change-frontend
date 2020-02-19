@@ -18,7 +18,6 @@ package models.financialTransactions
 
 import java.time.LocalDate
 
-import config.FrontendAppConfig
 import play.api.libs.json.{Format, Json}
 
 case class TransactionModel(chargeType: Option[String] = None,

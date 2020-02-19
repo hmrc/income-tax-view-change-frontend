@@ -52,7 +52,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       financialTransactionsService,
       app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
       app.injector.instanceOf[FrontendAppConfig],
-      app.injector.instanceOf[MessagesApi]
+      app.injector.instanceOf[MessagesApi],
+      ec
     )
   }
 

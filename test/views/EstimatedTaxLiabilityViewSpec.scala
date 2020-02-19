@@ -23,7 +23,7 @@ import assets.IncomeSourceDetailsTestConstants._
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{CalcBreakdown, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import enums.Estimate
 import implicits.ImplicitDateFormatter
 import models.calculation.{CalcDisplayModel, Calculation}

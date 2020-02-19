@@ -21,13 +21,10 @@ import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import play.api.i18n.MessagesApi
-import testUtils.TestSupport
-import mocks.services.MockFinancialTransactionsService
-import models.financialTransactions.{FinancialTransactionsModel, FinancialTransactionsResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
+import play.api.i18n.MessagesApi
 import services.FinancialTransactionsService
 
 import scala.concurrent.Future
@@ -50,7 +47,8 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate with MockInco
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AuditingService],
       app.injector.instanceOf[FrontendAppConfig],
-      app.injector.instanceOf[MessagesApi]
+      app.injector.instanceOf[MessagesApi],
+      ec
     )
   }
 

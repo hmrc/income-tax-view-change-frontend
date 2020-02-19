@@ -19,7 +19,7 @@ package controllers.predicates
 import assets.BaseTestConstants.{testMtditid, testNino, testUserDetailsError}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Ok
@@ -42,6 +42,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
         app.injector.instanceOf[Configuration],
         app.injector.instanceOf[Environment],
         app.injector.instanceOf[MessagesApi],
+        ec,
         mockUserDetailsConnector,
         app.injector.instanceOf[ItvcErrorHandler]).async {
         implicit request =>
@@ -117,6 +118,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
           app.injector.instanceOf[Configuration],
           app.injector.instanceOf[Environment],
           app.injector.instanceOf[MessagesApi],
+          ec,
           mockUserDetailsConnector,
           app.injector.instanceOf[ItvcErrorHandler]
         ).async {

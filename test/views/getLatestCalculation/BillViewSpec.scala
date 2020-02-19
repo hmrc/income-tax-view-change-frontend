@@ -17,13 +17,14 @@
 package views.getLatestCalculation
 
 import assets.BaseTestConstants._
+import assets.BillsTestConstants._
 import assets.EstimatesTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
-import assets.BillsTestConstants._
 import assets.Messages
 import assets.Messages.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, Payment}
+import implicits.ImplicitCurrencyFormatter._
 import models.calculation.BillsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -31,7 +32,6 @@ import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import implicits.ImplicitCurrencyFormatter._
 import testUtils.TestSupport
 
 class BillViewSpec extends TestSupport with FeatureSwitching {

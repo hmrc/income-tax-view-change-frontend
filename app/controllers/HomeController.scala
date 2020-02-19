@@ -19,7 +19,7 @@ package controllers
 import java.time.LocalDate
 
 import auth.MtdItUser
-import config.featureswitch.{Bills, Estimates, FeatureSwitching, ObligationsPage, Payment, ReportDeadlines}
+import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.{Inject, Singleton}
@@ -30,7 +30,7 @@ import play.twirl.api.Html
 import services.{CalculationService, FinancialTransactionsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -43,7 +43,8 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val financialTransactionsService: FinancialTransactionsService,
                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                implicit val appConfig: FrontendAppConfig,
-                               val messagesApi: MessagesApi) extends FrontendController with I18nSupport with FeatureSwitching {
+                               val messagesApi: MessagesApi,
+                               implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate)(implicit request: Request[_], user: MtdItUser[_]): Html = {
     views.html.home(

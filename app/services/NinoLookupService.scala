@@ -16,9 +16,8 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
-
 import connectors.IncomeTaxViewChangeConnector
+import javax.inject.{Inject, Singleton}
 import models.core.NinoResponse
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier

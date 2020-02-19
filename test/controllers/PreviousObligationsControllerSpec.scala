@@ -23,11 +23,11 @@ import config.featureswitch.{FeatureSwitching, ObligationsPage}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlineModelWithIncomeType}
+import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.Mockito.when
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import services.ReportDeadlinesService
-import org.mockito.Mockito.when
-import org.mockito.ArgumentMatchers.{any, eq => matches}
 
 import scala.concurrent.Future
 
@@ -44,6 +44,7 @@ class PreviousObligationsControllerSpec extends MockAuthenticationPredicate with
       app.injector.instanceOf[ItvcErrorHandler],
       reportDeadlinesService,
       appConfig,
+      ec,
       messagesApi
     )
 

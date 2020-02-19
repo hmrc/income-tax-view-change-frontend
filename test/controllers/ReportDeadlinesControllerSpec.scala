@@ -28,7 +28,8 @@ import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 
-class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockReportDeadlinesService with FeatureSwitching{
+class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+                                            with MockReportDeadlinesService with FeatureSwitching{
 
   object TestReportDeadlinesController extends ReportDeadlinesController(
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -39,7 +40,8 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
     mockReportDeadlinesService,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesApi]
+    app.injector.instanceOf[MessagesApi],
+    ec
   )
 
   "The ReportDeadlinesController.getNextObligation function" when {

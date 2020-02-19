@@ -16,9 +16,8 @@
 
 package testOnly.connectors
 
-import javax.inject.{Inject, Singleton}
-
 import connectors.RawResponseReads
+import javax.inject.{Inject, Singleton}
 import testOnly.TestOnlyAppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient

@@ -38,6 +38,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
   object TestCalculationController extends CalculationController()(
     appConfig,
     messagesApi,
+    ec,
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],

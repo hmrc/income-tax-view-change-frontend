@@ -24,12 +24,11 @@ import models.calculation._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CalculationService @Inject()(val individualCalculationsConnector: IndividualCalculationsConnector,
-                                   val frontendAppConfig: FrontendAppConfig) {
+                                   val frontendAppConfig: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
   def getCalculationDetail(nino: String, taxYear: Int)(implicit headerCarrier: HeaderCarrier): Future[CalcDisplayResponseModel] = {
     for {

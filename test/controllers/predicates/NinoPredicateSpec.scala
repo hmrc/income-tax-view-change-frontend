@@ -23,7 +23,7 @@ import config.ItvcErrorHandler
 import mocks.services.MockNinoLookupService
 import models.core.{Nino, NinoResponseError}
 import org.scalatest.EitherValues
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import testUtils.TestSupport
 

@@ -16,24 +16,22 @@
 
 package connectors
 
-import java.io
-
-import javax.inject.{Inject, Singleton}
 import config.FrontendAppConfig
+import javax.inject.{Inject, Singleton}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
 class FinancialTransactionsConnector @Inject()(val http: HttpClient,
-                                               val config: FrontendAppConfig) extends RawResponseReads {
+                                               val config: FrontendAppConfig
+                                              )(implicit ec: ExecutionContext) extends RawResponseReads {
 
   private[connectors] lazy val getFinancialTransactionsUrl: String => String = mtditid => s"${config.ftUrl}/financial-transactions/it/$mtditid"
 
