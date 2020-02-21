@@ -16,11 +16,9 @@
 
 package assets
 
-import java.time.LocalDate
-
 import assets.BaseTestConstants._
 import implicits.ImplicitDateFormatter
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
 
 object ReportDeadlinesTestConstants extends ImplicitDateFormatter {

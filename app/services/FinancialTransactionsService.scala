@@ -16,10 +16,9 @@
 
 package services
 
-import javax.inject.{Inject, Singleton}
-
 import auth.MtdItUser
 import connectors.FinancialTransactionsConnector
+import javax.inject.{Inject, Singleton}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel, TransactionModel}
 import play.api.Logger
 import play.api.mvc.AnyContent

@@ -16,9 +16,8 @@
 
 package controllers.predicates
 
-import javax.inject.{Inject, Singleton}
-
 import controllers.BaseController
+import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc._

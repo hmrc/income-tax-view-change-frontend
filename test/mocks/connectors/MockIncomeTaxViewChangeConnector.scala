@@ -17,14 +17,13 @@
 package mocks.connectors
 
 import connectors.IncomeTaxViewChangeConnector
-import models.calculation.CalculationResponseModel
 import models.core.NinoResponse
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ReportDeadlinesResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future

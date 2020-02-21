@@ -19,7 +19,6 @@ package controllers
 import helpers.ComponentSpecBase
 import implicits.ImplicitDateFormatter
 import play.api.http.Status._
-import implicits.ImplicitDateFormatter._
 
 class BtaPartialControllerISpec extends ComponentSpecBase with ImplicitDateFormatter {
 

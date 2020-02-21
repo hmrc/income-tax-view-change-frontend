@@ -18,13 +18,13 @@ package audit.mocks
 
 import audit.AuditingService
 import audit.models.{AuditModel, ExtendedAuditModel}
-import org.mockito.{AdditionalMatchers, ArgumentMatchers}
 import org.mockito.Mockito._
+import org.mockito.{AdditionalMatchers, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import testUtils.TestSupport
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
-import uk.gov.hmrc.http.HeaderCarrier
 
 trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
 

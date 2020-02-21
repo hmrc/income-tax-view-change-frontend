@@ -16,9 +16,9 @@
 
 package audit.models
 
-import audit.models.EstimatesAuditing.EstimatesAuditModel
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
+import audit.models.EstimatesAuditing.EstimatesAuditModel
 import testUtils.TestSupport
 
 class EstimatesAuditModelSpec extends TestSupport {

@@ -16,14 +16,9 @@
 
 package views.errorPages
 
-import assets.Messages.{EstimatedTaxLiabilityError => messages}
-import assets.BusinessDetailsTestConstants._
 import assets.EstimatesTestConstants._
-import assets.PropertyDetailsTestConstants._
-import assets.BaseTestConstants._
-import auth.MtdItUser
+import assets.Messages.{EstimatedTaxLiabilityError => messages}
 import config.FrontendAppConfig
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._

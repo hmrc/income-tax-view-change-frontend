@@ -17,7 +17,6 @@
 package config.filters
 
 import javax.inject.Inject
-
 import play.api.Configuration
 import play.api.http.DefaultHttpFilters
 import play.filters.csrf.CSRFFilter

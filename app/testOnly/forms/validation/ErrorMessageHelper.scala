@@ -16,8 +16,8 @@
 
 package testOnly.forms.validation
 
-import testOnly.forms.validation.models.{FieldError, SummaryError, TargetIds}
 import play.api.data.{Field, Form, FormError}
+import testOnly.forms.validation.models.{FieldError, SummaryError, TargetIds}
 
 
 object ErrorMessageHelper {

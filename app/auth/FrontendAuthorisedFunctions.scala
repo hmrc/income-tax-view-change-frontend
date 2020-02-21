@@ -16,9 +16,8 @@
 
 package auth
 
-import javax.inject.{Inject, Singleton}
-
 import config.FrontendAuthConnector
+import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 @Singleton

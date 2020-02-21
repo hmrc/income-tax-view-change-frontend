@@ -39,6 +39,7 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
   object TestCalculationController extends EstimatesController()(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
+    ec,
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],

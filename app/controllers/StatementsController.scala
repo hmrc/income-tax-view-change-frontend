@@ -16,22 +16,23 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
 import auth.MtdItUserOptionNino
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, Statements, Payment}
+import config.featureswitch.{FeatureSwitching, Payment, Statements}
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
+import javax.inject.{Inject, Singleton}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import services.FinancialTransactionsService
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StatementsController @Inject()(implicit val appConfig: FrontendAppConfig,
                                      implicit val messagesApi: MessagesApi,
+                                     implicit val ec: ExecutionContext,
                                      val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
                                      val financialTransactionsService: FinancialTransactionsService

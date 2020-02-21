@@ -16,23 +16,23 @@
 
 package controllers.predicates
 
-import javax.inject.{Inject, Singleton}
 import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import connectors.UserDetailsConnector
 import controllers.BaseController
+import javax.inject.{Inject, Singleton}
 import models.core.{UserDetailsError, UserDetailsModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -40,6 +40,7 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
                                         override val config: Configuration,
                                         override val env: Environment,
                                         implicit val messagesApi: MessagesApi,
+                                        implicit val ec: ExecutionContext,
                                         val userDetailsConnector: UserDetailsConnector,
                                         val itvcErrorHandler: ItvcErrorHandler
                                        )

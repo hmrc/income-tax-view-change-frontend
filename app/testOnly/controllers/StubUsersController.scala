@@ -30,12 +30,13 @@ import testOnly.forms.UserModelForm
 import testOnly.models.UserModel
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
                                     override val config: Configuration,
                                     override val env: Environment,
                                     implicit val messagesApi: MessagesApi,
+                                    implicit val ec: ExecutionContext,
                                     val desSimulatorConnector: DesSimulatorConnector
                                    ) extends BaseController with AuthRedirects {
 

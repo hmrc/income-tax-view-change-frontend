@@ -27,12 +27,11 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PayApiConnector @Inject()(val http: HttpClient,
                                 val auditingService: AuditingService,
-                                val config: FrontendAppConfig) {
+                                val config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
   val url: String = config.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
 

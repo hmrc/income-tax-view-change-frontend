@@ -16,17 +16,15 @@
 
 package connectors
 
-import assets.BaseTestConstants.{testMtditid, testNino, testReferrerUrl, testSelfEmploymentId, testTaxYear}
-import assets.CalcBreakdownTestConstants._
+import assets.BaseTestConstants.{testMtditid, testNino, testReferrerUrl, testSelfEmploymentId}
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.NinoLookupTestConstants.{testNinoModelJson, _}
 import assets.ReportDeadlinesTestConstants.{obligationsDataFromJson, obligationsDataSuccessModel}
 import audit.AuditingService
 import audit.mocks.MockAuditingService
-import audit.models.{IncomeSourceDetailsRequestAuditModel, IncomeSourceDetailsResponseAuditModel, ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
+import audit.models._
 import config.FrontendAppConfig
 import mocks.MockHttp
-import models.calculation._
 import models.core.{NinoResponse, NinoResponseError}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
@@ -37,7 +35,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
@@ -46,6 +44,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     val http: HttpClient = mockHttpGet
     val auditingService: AuditingService = mockAuditingService
     val config: FrontendAppConfig = mock[FrontendAppConfig]
+    val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
     val baseUrl = "http://localhost:9999"
 

@@ -32,6 +32,7 @@ trait MockAuthenticationPredicate extends TestSupport with MockUserDetailsConnec
     app.injector.instanceOf[Configuration],
     app.injector.instanceOf[Environment],
     app.injector.instanceOf[MessagesApi],
+    ec,
     mockUserDetailsConnector,
     app.injector.instanceOf[ItvcErrorHandler]
   )

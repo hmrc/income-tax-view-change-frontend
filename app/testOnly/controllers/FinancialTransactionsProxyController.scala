@@ -16,18 +16,20 @@
 
 package testOnly.controllers
 
-import javax.inject.{Inject, Singleton}
-
 import config.FrontendAppConfig
 import controllers.BaseController
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import testOnly.connectors.FinancialTransactionsProxyConnector
 
+import scala.concurrent.ExecutionContext
+
 @Singleton
 class FinancialTransactionsProxyController @Inject()(val financialTransactionsProxyConnector: FinancialTransactionsProxyConnector,
                                                      implicit val appConfig: FrontendAppConfig,
-                                                     implicit val messagesApi: MessagesApi) extends BaseController {
+                                                     implicit val messagesApi: MessagesApi,
+                                                     implicit val ec: ExecutionContext) extends BaseController {
 
   def getFinancialData(regime: String,
                        mtditid: String,

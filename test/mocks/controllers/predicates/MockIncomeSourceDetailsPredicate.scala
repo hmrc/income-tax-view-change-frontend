@@ -26,6 +26,7 @@ trait MockIncomeSourceDetailsPredicate extends TestSupport with MockIncomeSource
 
   object MockIncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate()(
     app.injector.instanceOf[MessagesApi],
+    ec,
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[ItvcErrorHandler]
   )

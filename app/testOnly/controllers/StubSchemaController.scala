@@ -16,10 +16,9 @@
 
 package testOnly.controllers
 
-import javax.inject.{Inject, Singleton}
-
 import config.FrontendAppConfig
 import controllers.BaseController
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.libs.json.{JsValue, Json}
@@ -30,13 +29,14 @@ import testOnly.forms.StubSchemaForm
 import testOnly.models.SchemaModel
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StubSchemaController @Inject()(implicit val appConfig: FrontendAppConfig,
                                      override val config: Configuration,
                                      override val env: Environment,
                                      implicit val messagesApi: MessagesApi,
+                                     implicit val ec: ExecutionContext,
                                      val dynamicStubConnector: DynamicStubConnector
                                   ) extends BaseController with AuthRedirects {
 

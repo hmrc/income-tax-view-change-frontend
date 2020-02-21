@@ -16,36 +16,33 @@
 
 package connectors
 
-import javax.inject.Inject
-
 import audit.AuditingService
 import audit.models._
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.calculation._
+import javax.inject.Inject
 import models.core.{Nino, NinoResponse, NinoResponseError}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeTaxViewChangeConnectorImpl @Inject()(
-                                                  val http: HttpClient,
+class IncomeTaxViewChangeConnectorImpl @Inject()(val http: HttpClient,
                                                   val auditingService: AuditingService,
                                                   val config: FrontendAppConfig
-                                                ) extends IncomeTaxViewChangeConnector
+                                                )(implicit val ec: ExecutionContext) extends IncomeTaxViewChangeConnector
 
 trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   val http: HttpClient
   val auditingService: AuditingService
   val config: FrontendAppConfig
+  implicit val ec: ExecutionContext
 
   def getIncomeSourcesUrl(mtditid: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"

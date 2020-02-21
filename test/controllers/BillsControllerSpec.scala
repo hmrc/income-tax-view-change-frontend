@@ -39,6 +39,7 @@ class BillsControllerSpec extends TestSupport with MockCalculationService
   object TestCalculationController extends BillsController()(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
+    ec,
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],

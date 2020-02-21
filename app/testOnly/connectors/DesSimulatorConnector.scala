@@ -23,11 +23,10 @@ import testOnly.models.UserModel
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DesSimulatorConnector @Inject()(val appConfig: TestOnlyAppConfig,
-                                      val http: HttpClient) extends RawResponseReads {
+                                      val http: HttpClient)(implicit ec: ExecutionContext) extends RawResponseReads {
 
   def stubUser(userModel: UserModel)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url = s"${appConfig.desSimulatorUrl}/test-users/individuals"

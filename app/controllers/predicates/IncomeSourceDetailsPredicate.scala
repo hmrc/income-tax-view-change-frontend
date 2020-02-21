@@ -16,21 +16,21 @@
 
 package controllers.predicates
 
-import javax.inject.{Inject, Singleton}
-
 import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
+import javax.inject.{Inject, Singleton}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionRefiner, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSourceDetailsPredicate @Inject()(implicit val messagesApi: MessagesApi,
+                                             implicit val ec: ExecutionContext,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              val itvcErrorHandler: ItvcErrorHandler
                                             ) extends BaseController with ActionRefiner[MtdItUserWithNino, MtdItUser] {

@@ -20,7 +20,6 @@ import play.api.http.HeaderNames
 import play.api.i18n.I18nSupport
 import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future

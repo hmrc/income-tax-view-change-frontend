@@ -19,8 +19,8 @@ package assets
 import java.time.{LocalDate, ZonedDateTime}
 
 import assets.BaseIntegrationTestConstants.testMtditid
-import play.api.libs.json.{JsValue, Json}
 import implicits.ImplicitDateFormatter._
+import play.api.libs.json.{JsValue, Json}
 
 object FinancialTransactionsIntegrationTestConstants {
 

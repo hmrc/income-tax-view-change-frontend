@@ -17,7 +17,6 @@
 package models.reportDeadlines
 
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._

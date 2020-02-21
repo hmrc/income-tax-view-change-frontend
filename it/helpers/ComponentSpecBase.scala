@@ -17,6 +17,7 @@
 package helpers
 
 import config.FrontendAppConfig
+import implicits.ImplicitDateFormatter
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -25,8 +26,6 @@ import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
-import implicits.ImplicitDateFormatter
-import play.api.libs.json.Json
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers

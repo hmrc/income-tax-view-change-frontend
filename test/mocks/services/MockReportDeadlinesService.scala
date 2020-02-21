@@ -16,18 +16,17 @@
 
 package mocks.services
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtdUserNino, testPropertyIncomeId, testSelfEmploymentId}
-import assets.IncomeSourcesWithDeadlinesTestConstants._
+import assets.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
 import assets.IncomeSourceDetailsTestConstants._
-import auth.MtdItUserWithNino
+import assets.IncomeSourcesWithDeadlinesTestConstants._
 import implicits.ImplicitDateFormatter
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesError, IncomeSourcesWithDeadlinesResponse}
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import services.ReportDeadlinesService
 import uk.gov.hmrc.play.test.UnitSpec

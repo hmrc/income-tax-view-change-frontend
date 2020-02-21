@@ -19,7 +19,6 @@ package assets
 import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants._
 import assets.PropertyDetailsTestConstants._
-import models.calculation.BillsViewModel
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 
 object IncomeSourceDetailsTestConstants {

@@ -16,11 +16,10 @@
 
 package config
 
-import javax.inject.Singleton
-
-import play.api.i18n.Lang
 import com.google.inject.Inject
+import javax.inject.Singleton
 import play.api.Mode.Mode
+import play.api.i18n.Lang
 import play.api.mvc.Call
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig

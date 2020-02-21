@@ -18,7 +18,6 @@ package views.helpers
 
 import assets.BaseTestConstants._
 import assets.Messages.{BtaServiceInfoHeader => messages}
-import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import play.twirl.api.Html

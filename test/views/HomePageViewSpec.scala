@@ -22,7 +22,7 @@ import assets.BaseTestConstants._
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, HomePage => messages}
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{AccountDetails, CalcBreakdown, CalcDataApi, FeatureSwitching, Statements}
+import config.featureswitch._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

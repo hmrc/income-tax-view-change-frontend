@@ -19,7 +19,9 @@ package views
 import assets.BaseTestConstants._
 import assets.Messages.{Statements => messages}
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, Payment}
+import config.featureswitch.FeatureSwitching
+import implicits.ImplicitCurrencyFormatter._
+import implicits.ImplicitDateFormatter._
 import models.financialTransactions.{FinancialTransactionsErrorModel, SubItemModel, TransactionModel, TransactionModelWithYear}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -28,8 +30,6 @@ import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import implicits.ImplicitCurrencyFormatter._
-import implicits.ImplicitDateFormatter._
 import testUtils.TestSupport
 
 class StatementsViewSpec extends TestSupport with FeatureSwitching{

@@ -21,8 +21,8 @@ import assets.BusinessDetailsTestConstants._
 import assets.IncomeSourcesWithDeadlinesTestConstants._
 import assets.PropertyDetailsTestConstants._
 import assets.ReportDeadlinesTestConstants.{obligations4xxDataErrorModel, obligationsDataErrorModel}
-import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, CrystallisedDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
+import models.incomeSourcesWithDeadlines.{BusinessIncomeWithDeadlinesModel, IncomeSourcesWithDeadlinesModel, PropertyIncomeWithDeadlinesModel}
+import models.reportDeadlines.ReportDeadlinesModel
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
 

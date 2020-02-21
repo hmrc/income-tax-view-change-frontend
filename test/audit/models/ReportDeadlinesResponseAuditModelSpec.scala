@@ -18,8 +18,7 @@ package audit.models
 
 import assets.BaseTestConstants._
 import assets.ReportDeadlinesTestConstants._
-import models.reportDeadlines.ReportDeadlineModel
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
 import testUtils.TestSupport
 
 class ReportDeadlinesResponseAuditModelSpec extends TestSupport {

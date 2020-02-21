@@ -16,10 +16,9 @@
 
 package audit
 
-import javax.inject.{Inject, Singleton}
-
 import audit.models.{AuditModel, ExtendedAuditModel}
 import config.{FrontendAppConfig, FrontendAuditConnector}
+import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.libs.json.{JsObject, JsValue, Json, Writes}

@@ -16,14 +16,14 @@
 package controllers
 
   import assets.BaseIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.PreviousObligationsIntegrationTestConstants._
-import config.featureswitch.{FeatureSwitching, ObligationsPage}
-import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import implicits.ImplicitDateFormatter
-import play.api.http.Status._
-import play.api.libs.ws.WSResponse
+  import assets.IncomeSourceIntegrationTestConstants._
+  import assets.PreviousObligationsIntegrationTestConstants._
+  import config.featureswitch.{FeatureSwitching, ObligationsPage}
+  import helpers.ComponentSpecBase
+  import helpers.servicemocks.IncomeTaxViewChangeStub
+  import implicits.ImplicitDateFormatter
+  import play.api.http.Status._
+  import play.api.libs.ws.WSResponse
 
 class PreviousObligationsControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
 

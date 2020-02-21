@@ -22,7 +22,6 @@ import assets.IncomeSourceDetailsTestConstants._
 import auth.MtdItUser
 import mocks.connectors.MockFinancialTransactionsConnector
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.http.Status
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest

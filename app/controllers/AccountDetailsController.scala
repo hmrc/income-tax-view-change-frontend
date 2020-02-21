@@ -16,11 +16,11 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{AccountDetails, FeatureSwitching}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 

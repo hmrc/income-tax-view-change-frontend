@@ -17,9 +17,9 @@
 package controllers.feedback
 
 import java.net.URLEncoder
-import javax.inject.{Inject, Singleton}
 
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,10 +33,11 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials._
 import views.html.feedback.feedback_thankyou
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
+                                   implicit val ec: ExecutionContext,
                                    val wsHttp: HttpClient,
                                    val messagesApi: MessagesApi,
                                    val sessionCookieCrypto: SessionCookieCrypto,
@@ -87,7 +88,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
     implicit request =>
       request.body.asFormUrlEncoded.map { formData =>
         httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
-          rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec = mdcExecutionContext).map {
+          rds = readPartialsForm, hc = partialsReadyHeaderCarrier, ec).map {
           resp =>
             resp.status match {
               case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))

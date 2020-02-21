@@ -16,10 +16,9 @@
 
 package testOnly.controllers
 
-import javax.inject.{Inject, Singleton}
-
 import config.FrontendAppConfig
 import controllers.BaseController
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.libs.json.{JsValue, Json}
@@ -30,15 +29,16 @@ import testOnly.forms.StubDataForm
 import testOnly.models.DataModel
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StubDataController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                     override val config: Configuration,
-                                     override val env: Environment,
-                                     implicit val messagesApi: MessagesApi,
-                                     val dynamicStubConnector: DynamicStubConnector
-                                    ) extends BaseController with AuthRedirects {
+                                   override val config: Configuration,
+                                   override val env: Environment,
+                                   implicit val messagesApi: MessagesApi,
+                                   implicit val ec: ExecutionContext,
+                                   val dynamicStubConnector: DynamicStubConnector
+                                  ) extends BaseController with AuthRedirects {
 
   val show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(view(StubDataForm.stubDataForm)))
@@ -59,21 +59,25 @@ class StubDataController @Inject()(implicit val appConfig: FrontendAppConfig,
       )
   }
 
-  val stubProxy: Action[JsValue] = Action.async(parse.json) { implicit request => withJsonBody[DataModel](
-    json => dynamicStubConnector.addData(json).map(
+  val stubProxy: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    withJsonBody[DataModel](
+      json => dynamicStubConnector.addData(json).map(
+        response => response.status match {
+          case OK => Ok(s"The following JSON was added to the stub: \n\n${Json.toJson(json)}")
+          case _ => InternalServerError(response.body)
+        }
+      )
+    )
+  }
+
+  val deleteAllProxy: Action[AnyContent] = Action.async { implicit request =>
+    dynamicStubConnector.deleteAllData().map(
       response => response.status match {
-        case OK => Ok(s"The following JSON was added to the stub: \n\n${Json.toJson(json)}")
+        case OK => Ok("Delete All Data from the Stub...")
         case _ => InternalServerError(response.body)
       }
     )
-  )}
-
-  val deleteAllProxy: Action[AnyContent] = Action.async { implicit request => dynamicStubConnector.deleteAllData().map(
-    response => response.status match {
-      case OK => Ok("Delete All Data from the Stub...")
-      case _ => InternalServerError(response.body)
-    }
-  )}
+  }
 
   private def view(form: Form[DataModel],
                    showSuccess: Boolean = false,

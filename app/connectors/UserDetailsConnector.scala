@@ -17,19 +17,17 @@
 package connectors
 
 import javax.inject.{Inject, Singleton}
-
-import models._
 import models.core.{UserDetailsError, UserDetailsModel, UserDetailsResponseModel}
 import play.api.Logger
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserDetailsConnector @Inject()(val http: HttpClient) extends RawResponseReads {
+class UserDetailsConnector @Inject()(val http: HttpClient
+                                    )(implicit ec: ExecutionContext) extends RawResponseReads {
 
   def getUserDetails(userDetailsUrl: String)(implicit headerCarrier: HeaderCarrier): Future[UserDetailsResponseModel] = {
     Logger.debug(s"[UserDetailsConnector][getUserDetails] - GET $userDetailsUrl")

@@ -22,7 +22,7 @@ import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, PaymentDue => messages}
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, Payment}
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitCurrencyFormatter._
 import models.financialTransactions.FinancialTransactionsModel
 import org.jsoup.Jsoup

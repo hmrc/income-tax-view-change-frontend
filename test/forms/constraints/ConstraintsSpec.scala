@@ -16,7 +16,6 @@
 
 package forms.constraints
 
-import assets.{Messages => messageLookup}
 import forms.validation.Constraints
 import play.api.data.validation.{Invalid, Valid}
 import testUtils.TestSupport

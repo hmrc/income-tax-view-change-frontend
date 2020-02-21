@@ -16,16 +16,16 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
 import audit.AuditingService
-import audit.models.EstimatesAuditing.{BasicEstimatesAuditModel, EstimatesAuditModel}
 import audit.models.BillsAuditing.{BasicBillsAuditModel, BillsAuditModel}
+import audit.models.EstimatesAuditing.{BasicEstimatesAuditModel, EstimatesAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{CalcDataApi, FeatureSwitching, Payment, CalcBreakdown}
+import config.featureswitch.{CalcBreakdown, CalcDataApi, FeatureSwitching, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import enums.{Crystallised, Estimate}
 import implicits.ImplicitDateFormatter
+import javax.inject.{Inject, Singleton}
 import models.calculation._
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -35,11 +35,12 @@ import play.api.mvc._
 import services.{CalculationService, FinancialTransactionsService}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CalculationController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       implicit val messagesApi: MessagesApi,
+                                      implicit val ec: ExecutionContext,
                                       val checkSessionTimeout: SessionTimeoutPredicate,
                                       val authenticate: AuthenticationPredicate,
                                       val retrieveNino: NinoPredicate,

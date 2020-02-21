@@ -19,9 +19,9 @@ package testOnly.forms
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.{JsValue, Json}
-import testOnly.models.SchemaModel
 import testOnly.forms.validation.Constraints._
 import testOnly.forms.validation.utils.ConstraintUtil._
+import testOnly.models.SchemaModel
 
 object StubSchemaForm {
 
