@@ -183,32 +183,6 @@ object Messages {
     val p2 = "Try refreshing the page in a few minutes."
   }
 
-  //ReportDeadlines Page Messages
-  object ReportDeadlines {
-    val disabledTitle = "Report deadlines"
-    val enabledTitle = "Current Updates"
-    val propertyHeading = "Property income"
-    val periodHeading = "Report period"
-    val statusHeading = "Report due date"
-    val ceased: String => String = date => s"This business ceased trading on $date."
-    val ceasedProperty: String => String = date => s"Ceased trading on $date."
-    val portfolio = "This covers all properties that you earn income from."
-    val eops = "Whole tax year (final check)"
-
-    object Dropdown {
-      val dropdownText = "How to submit a report"
-      val dropdownLink = "Choose accounting software that supports this service (opens in a new tab)"
-      val dropdown1 = "if you have not already."
-      val dropdown2 = "Use your software to record your income and expenses, then send an update to HMRC at least every quarter."
-      val dropdown3 = "Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs."
-      val dropdown4 = "After you send your final report, you can see the Income Tax you owe for the tax year."
-    }
-    object Errors {
-      val p1 = "We can’t display your next report due date at the moment."
-      val p2 = "Try refreshing the page in a few minutes."
-    }
-  }
-
   object NoReportDeadlines {
     val title = "Report deadlines"
     val heading = "Report deadlines"
