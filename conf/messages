@@ -139,22 +139,11 @@ obligations.title                                               = Report deadlin
 obligations.heading                                             = Report deadlines
 obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
-obligations.bi.subheading                                       = Business income
-obligations.pi.subheading                                       = Property income
-obligations.pi.portfolio                                        = This covers all properties that you earn income from.
 obligations.error.p1                                            = We can’t display your next report due date at the moment.
 obligations.error.p2                                            = Try refreshing the page in a few minutes.
-obligations.ceased                                              = This business ceased trading on {0}.
-obligations.ceasedProperties                                    = Ceased trading on {0}.
 obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
 obligations.noReports                                           = You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month.
-obligations.dropdown.text                                       = How to submit a report
-obligations.dropdown.link                                       = Choose accounting software that supports this service (opens in a new tab)
-obligations.dropdown.p1                                         = if you have not already.
-obligations.dropdown.p2                                         = Use your software to record your income and expenses, then send an update to HMRC at least every quarter.
-obligations.dropdown.p3                                         = Send your final report by 31 January. In this report you can add any other income sources, allowances or reliefs.
-obligations.dropdown.p4                                         = After you send your final report, you can see the Income Tax you owe for the tax year.
 
 ## Previous Obligations ##
 previous-obligations.title                                      = Previous Submitted Updates

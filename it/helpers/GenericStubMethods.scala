@@ -24,7 +24,7 @@ trait GenericStubMethods extends CustomMatchers {
       Given("I wiremock stub an isAuthorisedUser user response")
       AuthStub.stubAuthorised()
     } else {
-      Given("I wiremock stub an unatuhorised user response")
+      Given("I wiremock stub an unauthorised user response")
       AuthStub.stubUnauthorised()
     }
   }

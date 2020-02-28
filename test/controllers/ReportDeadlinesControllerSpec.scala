@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.Messages.{NoReportDeadlines, ReportDeadlines => messages}
+import assets.Messages.{NoReportDeadlines, Obligations => messages}
 import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -44,7 +44,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
     ec
   )
 
-  "The ReportDeadlinesController.getNextObligation function" when {
+  "The ReportDeadlinesController.getReportDeadlines function" when {
 
     "the Report Deadlines feature is disabled" should {
 
@@ -68,7 +68,6 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
       "set Report Deadlines enabled" in {
         enable(ReportDeadlines)
-        disable(ObligationsPage)
       }
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
@@ -87,7 +86,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.disabledTitle
+            document.title shouldBe messages.title
           }
         }
 
@@ -108,7 +107,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.disabledTitle
+            document.title shouldBe messages.title
           }
         }
 
@@ -129,7 +128,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.disabledTitle
+            document.title shouldBe messages.title
           }
         }
 
@@ -183,41 +182,6 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.SEE_OTHER
         }
-      }
-    }
-  }
-
-  "getNextObligation" should {
-    "show the obligations page" when {
-
-      "the obligationsPageEnabled feature switch is set to true" in {
-        mockBothIncomeSourcesBusinessAligned()
-        mockBothIncomeSourcesBusinessAlignedWithDeadlines()
-
-        enable(ReportDeadlines)
-
-        enable(ObligationsPage)
-
-        val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
-        val document = Jsoup.parse(bodyOf(result))
-
-        document.getElementById("page-heading").text shouldBe "Updates"
-
-      }
-    }
-    "show the report deadlines page" when {
-      "the obligationsPageEnabled feature switch is set to false" in {
-        mockBothIncomeSourcesBusinessAligned()
-        mockBothIncomeSourcesBusinessAlignedWithDeadlines()
-
-        enable(ReportDeadlines)
-
-        disable(ObligationsPage)
-        val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
-        val document = Jsoup.parse(bodyOf(result))
-
-        document.select("#page-heading").text shouldBe "Report deadlines"
-
       }
     }
   }
