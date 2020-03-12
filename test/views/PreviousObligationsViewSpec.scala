@@ -59,6 +59,10 @@ class PreviousObligationsViewSpec extends TestSupport with ImplicitDateFormatter
       getTextOfElementById("heading") shouldBe Some(previousObligations.heading)
     }
 
+    "have a link to the updates page" in new Setup {
+      pageDocument.select(s"a[href='${controllers.routes.ReportDeadlinesController.getReportDeadlines().url}']").text shouldBe previousObligations.updatesLink
+    }
+
     "have a sub heading" in new Setup {
       getTextOfElementById("sub-heading") shouldBe Some(previousObligations.subHeading)
     }

@@ -50,11 +50,7 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
     views.html.home(
       nextPaymentDueDate = nextPaymentDueDate,
       nextUpdate = nextUpdate,
-      billsEnabled = isEnabled(Bills),
-      paymentEnabled = isEnabled(Payment),
-      reportDeadlinesEnabled = isEnabled(ReportDeadlines),
-      obligationsPageEnabled = isEnabled(ObligationsPage),
-      estimatesEnabled = isEnabled(Estimates)
+      paymentEnabled = isEnabled(Payment)
     )
   }
 

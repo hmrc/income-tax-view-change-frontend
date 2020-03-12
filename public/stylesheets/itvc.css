@@ -1,110 +1,18 @@
 /*Estimated Tax Liabilities*/
 
-.itvc-table td {
-     font-size: inherit;
- }
-
 .no-border-bottom td {
-    border-bottom: 0px;
+    border-bottom: 0;
 }
 
 .summary-data {
     text-align: right !important;
     vertical-align: top;
- }
+}
 
 .total-section {
     font-weight: 700;
-    padding-top:1em;
-    border-top:1px solid #bfc1c3;
-}
-
-.table-heading {
-    font-weight: 700;
-}
-
-.address-box td {
-    line-height: 0.85;
-}
-
-.icon-min-height {
-    min-height: 35px;
-}
-
-.flex-container {
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-}
-
-.task-overdue {
-  display: -moz-inline-stack;
-  display: inline-block;
-  margin: 0 8px 0 0;
-  padding: 2px 5px 0;
-  font-family: "nta", Arial, sans-serif;
-  font-weight: 700;
-  text-transform: none;
-  font-size: 14px;
-  line-height: 1.14286;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-decoration: none;
-  color: #fff;
-  background-color: #B10E1E;
-  margin-left: 5px;
-  padding-top: 3px;
-}
-
-.card {
-    1px solid #dee0e2;
-    width: 100%;
-    border-top-color: rgb(222, 224, 226);
-    border-top-style: solid;
-    border-top-width: 1px;
-    border-right-color: rgb(222, 224, 226);
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-bottom-color: rgb(222, 224, 226);
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    border-left-color: rgb(222, 224, 226);
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-image-source: initial;
-    border-image-slice: initial;
-    border-image-width: initial;
-    border-image-outset: initial;
-    border-image-repeat: initial;
-    background-color: #f8f8f8;
-    margin-bottom: 30px;
-}
-
-.divider1 {
-    border-bottom: 1px solid #dee0e2;
-    margin-top:10px;
-    margin-bottom: 10px;
-    width:80%;
-    align: centre;
-}
-
-.card-header {
-    border-bottom: 1px solid #dee0e2;
-    padding-left: 10px;
-    background-color: #f8f8f8;
-    color: #0b0c0c;
-
-
-}
-
-.card-content {
-    padding: 12px;
-    background-color: #fff;
+    padding-top: 1em;
+    border-top: 1px solid #bfc1c3;
 }
 
 .income td, .income th {
@@ -113,8 +21,8 @@
 }
 
 .panel-right::after {
-    content:"";
-    border-right:7px solid #00823B;
+    content: "";
+    border-right: 7px solid #00823B;
     display: inline;
     height: 50%;
     padding-left: 0.5em;
@@ -122,4 +30,91 @@
 
 .bordered-box--thick {
     border: 5px solid #bfc1c3
+}
+
+/* Home page */
+
+.flex-container {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding: 0 15px;
+}
+
+.tile {
+    flex-grow: 0;
+    flex-basis: 100%;
+    margin-bottom: 2em;
+    border: 1px solid #dee0e2;
+    background: #f3f2f1;
+}
+
+@media screen and (min-width: 600px) and (max-width: 900px) {
+    .tile {
+        flex-basis: 46.99%;
+    }
+
+    .tile:nth-child(2n-2) {
+        margin-left: 2%;
+    }
+
+    .tile:nth-child(2n-1) {
+        margin-right: 2%;
+    }
+}
+
+@media screen and (min-width: 900px) {
+    .tile {
+        flex-basis: 31%;
+    }
+
+    .tile:nth-child(3n-1) {
+        margin-left: 3%;
+        margin-right: 3%;
+    }
+}
+
+html[data-useragent*='MSIE 10.0'] .flex-container {
+
+.tile {
+    flex-basis: 31%;
+    margin: 3%;
+}
+
+}
+
+.tile-no-border {
+    border: 0;
+}
+
+.tile .tile-body {
+    border-bottom: 0;
+    padding: 12px;
+}
+
+.tile .tile-body .heading-medium {
+    margin-top: 0;
+}
+
+.tile .tile-body *:last-child {
+    margin-bottom: 0;
+}
+
+/* Custom css for making the home page heading block styled correctly*/
+
+.heading-xl-addon {
+    margin-top: -60px;
+    padding-bottom: 60px;
+}
+
+@media (max-width: 641px) {
+    .heading-xl-addon {
+        margin-top: -30px;
+        padding-bottom: 30px;
+    }
 }

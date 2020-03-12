@@ -44,9 +44,9 @@
     contentHeader = Some(breadcrumb)
 ) {
 
-    <header class="page-heading">
-        <h1 id="heading" class="heading-xlarge">@messages("previous-obligations.heading")</h1>
-    </header>
+    <h1 id="heading" class="heading-xlarge">@messages("previous-obligations.heading")</h1>
+
+    <a href=@controllers.routes.ReportDeadlinesController.getReportDeadlines().url>@messages("previous-obligations.updates-due")</a>
 
     <h2 id="sub-heading" class="heading-large">@messages("previous-obligations.sub-heading")</h2>
 

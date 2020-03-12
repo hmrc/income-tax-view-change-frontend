@@ -132,7 +132,7 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         getTextOfElementById("heading") shouldBe Some(s"Tax estimate for ${testYear - 1} - $testYear")
       }
       "has the utr reference" in new BreakdownSetup() {
-        getTextOfElementById("utr-reference-heading") shouldBe Some(s"Unique Tax Reference - ${user.mtditid}")
+        getTextOfElementById("utr-reference-heading") shouldBe Some(s"Unique Taxpayer Reference - ${user.mtditid}")
       }
     }
 

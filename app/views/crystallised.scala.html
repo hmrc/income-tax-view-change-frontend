@@ -50,7 +50,7 @@
         <header class="page-heading">
             <span id= "sub-heading" class="heading-secondary">@user.userDetails.map{ details => <span class="heading-secondary">@details.name</span>}</span>
             <h1 class="heading-xlarge" id="heading">@messages("crystalisation.heading",s"${taxYear-1}", s"$taxYear")</h1>
-            <span id=utr-reference-heading  class="heading-secondary">@messages("home.unique.tax.reference")-@user.mtditid</span>
+            <span id=utr-reference-heading  class="heading-secondary">@messages("home.unique.taxpayer.reference", user.mtditid)</span>
         </header>
 
         <section id="whatYouOwe">

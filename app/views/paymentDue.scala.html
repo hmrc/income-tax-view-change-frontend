@@ -40,7 +40,7 @@
 
 <h2 class="heading-large">@messages("paymentDue.sub-heading")</h2>
     @if(financialTransactions.isEmpty) {
-        <h3 id="payments-due-none">@messages("home.incomeTaxPayment.noBills")</h3>
+        <h3 id="payments-due-none">@messages("paymentDue.no-bills")</h3>
     } else {
     @for(financialTransaction <- financialTransactions){
         @for(transaction <- financialTransaction.financialTransactions.get){
