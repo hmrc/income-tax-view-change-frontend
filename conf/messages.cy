@@ -43,12 +43,17 @@ banner.recruitment.text                                         = Helpu i wella�
 banner.recruitment.link                                         = Ymuno â’n panel ymchwil drwy ateb ambell gwestiwn.
 banner.recruitment.dismiss                                      = Na, dim diolch.
 
-## Estimates Page ##
-estimates.title                                                 = Amcangyfrifon
-estimates.heading                                               = Amcangyfrifon
-estimates.viewEstimates                                         = Gweld eich amcangyfrifon cyfredol:
-estimates.estimatesLink                                         = Blwyddyn dreth {0} i {1}
-estimates.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
+## Tax Years Page ##
+taxYears.title                                                 = Fy mlynyddoedd treth
+taxYears.heading                                               = Fy mlynyddoedd treth
+taxYears.viewTaxYears                                          = Ceir rhestr o’r blynyddoedd treth rydych wedi cyflwyno diweddariadau ar eu cyfer isod. Cliciwch ar flwyddyn dreth i fwrw golwg dros grynodeb.
+taxYears.taxYear                                               = Blwyddyn dreth
+taxYears.status                                                = Statws
+taxYears.taxYearsLink                                          = Blwyddyn dreth {0} i {1}
+taxYears.ongoing                                               = AR Y GWEILL
+taxYears.complete                                              = WEDI CWBLHAU
+taxYears.overdue                                               = YN HWYR
+taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 
 # Calc Breakdown
 calc-breakdown.national-regime                                  = (Cyfundrefn Genedlaethol: {0})
@@ -233,7 +238,7 @@ not_enrolled.sign-up.3                                          = cyn i chi allu
 ## Breadcrumbs ##
 breadcrumb-bta                                                  = Cyfrif Treth Busnes
 breadcrumb-it                                                   = Cyfrif Treth Incwm
-breadcrumb-estimates                                            = Amcangyfrifon
+breadcrumb-tax-years                                            = Fy mlynyddoedd treth
 breadcrumb-bills                                                = Biliau
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
 breadcrumb-statement                                            = Datganiad Treth Incwm

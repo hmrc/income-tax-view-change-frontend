@@ -53,6 +53,8 @@ case class TransactionModel(chargeType: Option[String] = None,
   }
 
   val due: Option[LocalDate] = charges().headOption.flatMap(_.dueDate)
+
+  def isOverdue: Boolean = due.exists(_.isBefore(LocalDate.now()))
 }
 
 object TransactionModel {

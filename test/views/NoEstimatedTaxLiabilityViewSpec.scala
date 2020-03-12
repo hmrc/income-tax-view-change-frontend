@@ -44,7 +44,7 @@ class NoEstimatedTaxLiabilityViewSpec extends TestSupport {
     "have a breadcrumb trail" in {
       document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
       document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-      document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
+      document.getElementById("breadcrumb-tax-years").text shouldBe breadcrumbMessages.taxYears
     }
 
     s"have the tax year '${messages.heading}'" in {

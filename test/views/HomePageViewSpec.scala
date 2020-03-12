@@ -117,7 +117,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         }
         "contains a link to the estimates page" in new Setup (estimatesEnabled = true) {
           getTextOfElementById("estimates-link") shouldBe Some("Estimates")
-          getElementById("estimates-link").map(_.attr("href")) shouldBe Some(controllers.routes.EstimatesController.viewEstimateCalculations().url)
+          getElementById("estimates-link").map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.viewTaxYears().url)
         }
         "not contain a link to the estimates page if the feature flag is off" in new Setup {
           getElementById("estimates-link") shouldBe None

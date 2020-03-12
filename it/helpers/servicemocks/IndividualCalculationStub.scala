@@ -31,6 +31,10 @@ object IndividualCalculationStub {
     WiremockHelper.stubGet(getCalculationListUrl(nino, taxYear), status, Json.toJson(body).toString())
   }
 
+  def stubGetCalculationListNotFound(nino: String, taxYear: String): Unit = {
+    WiremockHelper.stubGet(getCalculationListUrl(nino, taxYear), Status.NOT_FOUND, "")
+  }
+
   def verifyGetCalculationList(nino: String, taxYear: String): Unit = {
     WiremockHelper.verifyGet(getCalculationListUrl(nino, taxYear))
   }

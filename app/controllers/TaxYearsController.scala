@@ -45,7 +45,8 @@ class TaxYearsController @Inject()(implicit val appConfig: FrontendAppConfig,
       calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears).map {
         case taxYearCalResponse if taxYearCalResponse.exists(_.isError) =>
           itvcErrorHandler.showInternalServerError
-        case taxYearCalResponse => Ok(views.html.estimates(taxYearCalResponse))
+        case taxYearCalResponse =>
+          Ok(views.html.taxYears(taxYearCalResponse.filter(_.isCalculation)))
           .addingToSession("singleEstimate" -> "false")
       }
   }

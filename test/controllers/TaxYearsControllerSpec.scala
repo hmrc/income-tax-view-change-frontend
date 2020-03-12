@@ -60,7 +60,7 @@ class TaxYearsControllerSpec extends TestSupport with MockCalculationService
 
         lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
-        lazy val messages = new Messages.Estimates
+        lazy val messages = Messages.TaxYears
 
         "return status OK (200)" in {
           setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))

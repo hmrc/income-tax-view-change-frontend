@@ -58,13 +58,16 @@ object Messages {
     val dismiss = "No, thankyou."
   }
 
-  //Estimates Page Messages
-  class Estimates {
-    val title = "Estimates"
-    val heading = "Estimates"
+  //Tax Years Page Messages
+  object TaxYears {
+    val title = "My tax years"
+    val heading = "My tax years"
     val noEstimates = "You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software."
-    val p1 = "View your current estimates:"
-    val taxYearLink: (String, String) => String = (year, yearPlusOne) => s"$year to $yearPlusOne tax year"
+    val p1 = "Below is a list of tax years you have submitted updates for. Click on the tax years to view a summary."
+    val taxYearLink: (String, String) => String = (year, yearPlusOne) => s"$year to $yearPlusOne"
+    val ongoing = "ONGOING"
+    val complete = "COMPLETE"
+    val overdue = "OVERDUE"
   }
 
   // Home Page Messages
@@ -298,7 +301,7 @@ object Messages {
   object Breadcrumbs {
     val bta = "Business tax account"
     val it = "Income Tax account"
-    val estimates = "Estimates"
+    val taxYears = "My tax years"
     val basicItEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
     val itEstimate: Int => String = taxYear => s"Tax estimate for ${taxYear-1} - $taxYear"
     val bills = "Bills"

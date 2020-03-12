@@ -102,8 +102,8 @@ class EstimatedTaxLiabilityViewSpec extends TestSupport with ImplicitDateFormatt
         getTextOfElementById("breadcrumb-it") shouldBe Some(breadcrumbMessages.it)
         getLinkOfElementById("breadcrumb-it") shouldBe Some(controllers.routes.HomeController.home().url)
 
-        getTextOfElementById("breadcrumb-estimates") shouldBe Some(breadcrumbMessages.estimates)
-        getLinkOfElementById("breadcrumb-estimates") shouldBe Some(controllers.routes.EstimatesController.viewEstimateCalculations().url)
+        getTextOfElementById("breadcrumb-tax-years") shouldBe Some(breadcrumbMessages.taxYears)
+        getLinkOfElementById("breadcrumb-tax-years") shouldBe Some(controllers.routes.TaxYearsController.viewTaxYears().url)
 
         getTextOfElementById("breadcrumb-it-estimate") shouldBe Some(breadcrumbMessages.basicItEstimate(testYear))
         getLinkOfElementById("breadcrumb-it-estimate") shouldBe Some("")

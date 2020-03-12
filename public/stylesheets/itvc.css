@@ -123,3 +123,32 @@
 .bordered-box--thick {
     border: 5px solid #bfc1c3
 }
+
+.govUk-tag {
+    display: inline-block;
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+    color: #ffffff;
+    background-color: #005ea5;
+    letter-spacing: 1px;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.25;
+    padding-top: 4px;
+    padding-right: 8px;
+    padding-bottom: 1px;
+    padding-left: 8px;
+}
+
+.govUk-tag--overdue {
+    background-color: #D4351C;
+}
+
+.govUk-tag--complete {
+    background-color: #00703c;
+}
