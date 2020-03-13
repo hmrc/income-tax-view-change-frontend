@@ -33,10 +33,10 @@ import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
-class EstimatesControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate  with FeatureSwitching{
+class TaxYearsControllerSpec extends TestSupport with MockCalculationService
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
-  object TestCalculationController extends EstimatesController()(
+  object TestTaxYearsController extends TaxYearsController()(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesApi],
     ec,
@@ -52,81 +52,58 @@ class EstimatesControllerSpec extends TestSupport with MockCalculationService
 
   lazy val messages = new Messages.Calculation(testYear)
 
-  "The CalculationController.viewEstimateCalculations action" when {
+  "The TestYearsController.viewTaxYears action" when {
 
+    "called with an authenticated HMRC-MTD-IT user" which {
 
-    "Estimates Feature is disabled" should {
+      "successfully retrieves Business only income from the Income Sources predicate" should {
 
-      lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
+        lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+        lazy val messages = new Messages.Estimates
 
-      "return redirect SEE_OTHER (303)" in {
-        disable(Estimates)
-        setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))
-        status(result) shouldBe Status.SEE_OTHER
+        "return status OK (200)" in {
+          setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))
+          mockGetAllLatestCalcSuccess()
+          status(result) shouldBe Status.OK
+        }
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+        "render the Tax Years sub-page" in {
+          document.title shouldBe messages.title
+        }
       }
-      "redirect to home page" in {
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
+
+      "successfully retrieves income sources, but the list returned from the service has a not found error model" should {
+        lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
+
+        "return SEE_OTHER (303)" in {
+          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          mockGetAllLatestCalcSuccessOneNotFound()
+          status(result) shouldBe Status.OK
+        }
+      }
+
+      "successfully retrieves income sources, but the list returned from the service has a internal server error model" should {
+
+        lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
+
+        "return an ISE (500)" in {
+          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          mockGetAllLatestCrystallisedCalcWithError()
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
       }
     }
 
-    "Estimates Feature is enabled" which {
+    "Called with an Unauthenticated User" should {
 
-      "called with an authenticated HMRC-MTD-IT user" which {
-
-        "successfully retrieves Business only income from the Income Sources predicate" should {
-
-          lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
-          lazy val document = result.toHtmlDocument
-          lazy val messages = new Messages.Estimates
-
-          "return status OK (200)" in {
-            enable(Estimates)
-            setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))
-            mockGetAllLatestCalcSuccess()
-            status(result) shouldBe Status.OK
-          }
-          "return HTML" in {
-            contentType(result) shouldBe Some("text/html")
-            charset(result) shouldBe Some("utf-8")
-          }
-          "render the Estimates sub-page" in {
-            document.title shouldBe messages.title
-          }
-        }
-
-        "successfully retrieves income sources, but the list returned from the service has a not found error model" should {
-          lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
-
-          "return SEE_OTHER (303)" in {
-            enable(Estimates)
-            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
-            mockGetAllLatestCalcSuccessOneNotFound()
-            status(result) shouldBe Status.SEE_OTHER
-          }
-        }
-
-        "successfully retrieves income sources, but the list returned from the service has a internal server error model" should {
-
-          lazy val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
-
-          "return an ISE (500)" in {
-            enable(Estimates)
-            setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
-            mockGetAllLatestCrystallisedCalcWithError()
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
-        }
-
-      }
-
-      "Called with an Unauthenticated User" should {
-
-        "return redirect SEE_OTHER (303)" in {
-          setupMockAuthorisationException()
-          val result = TestCalculationController.viewEstimateCalculations(fakeRequestWithActiveSession)
-          enable(Estimates)
-          status(result) shouldBe Status.SEE_OTHER
-        }
+      "return redirect SEE_OTHER (303)" in {
+        setupMockAuthorisationException()
+        val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.SEE_OTHER
       }
     }
   }
