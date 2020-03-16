@@ -51,7 +51,7 @@ BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("breadcrumb-estimat
 }else{
 Some(breadcrumbHelper(Breadcrumb(Vector(
 BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
+BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears().url)),
 BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("breadcrumb-estimated_tax_liability", s"${taxYear-1}", s"$taxYear")))
 )), s"EstimateFor${taxYear}Page"))
 }

@@ -28,6 +28,6 @@ object FinancialTransactionsStub {
     WiremockHelper.stubGet(financialTransactionsUrl(mtditid, from, to), status, response.toString())
 
   //Verifications
-  def verifyGetFinancialTransactions(mtditid: String, from: String, to: String): Unit =
+  def verifyGetFinancialTransactions(mtditid: String, from: String  =  "2017-04-06" , to: String =  "2018-04-05"): Unit =
     WiremockHelper.verifyGet(financialTransactionsUrl(mtditid, from, to))
 }

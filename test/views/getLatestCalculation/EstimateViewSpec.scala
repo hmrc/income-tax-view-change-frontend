@@ -58,7 +58,7 @@ class EstimateViewSpec extends TestSupport with ImplicitDateFormatter {
       "have a breadcrumb trail" in {
         document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        document.getElementById("breadcrumb-estimates").text shouldBe breadcrumbMessages.estimates
+        document.getElementById("breadcrumb-tax-years").text shouldBe breadcrumbMessages.taxYears
         document.getElementById("breadcrumb-it-estimate").text shouldBe breadcrumbMessages.itEstimate(testYear)
       }
 

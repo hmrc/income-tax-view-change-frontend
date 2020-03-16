@@ -59,7 +59,7 @@ class BillViewSpec extends TestSupport with FeatureSwitching {
     "have a breadcrumb trail" in {
       document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
       document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-      document.getElementById("breadcrumb-bills").text shouldBe breadcrumbMessages.bills
+      document.getElementById("breadcrumb-tax-years").text shouldBe breadcrumbMessages.taxYears
       document.getElementById("breadcrumb-finalised-bill").text shouldBe breadcrumbMessages.finalisedBill(testYear)
     }
 

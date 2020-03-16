@@ -33,7 +33,7 @@ title = messages("crystalisation.heading",s"${model.taxYear-1}", s"${model.taxYe
     scriptElem = None,
     contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-bills", Some(controllers.routes.BillsController.viewCrystallisedCalculations.url)),
+        BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears().url)),
         BreadcrumbItem("breadcrumb-finalised-bill", None, Some(messages("crystalisation.heading",s"${model.taxYear-1}", s"${model.taxYear}")))
         )), s"BillFor${model.taxYear}Page"))
 ) {

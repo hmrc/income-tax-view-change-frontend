@@ -82,7 +82,7 @@ class BillsViewSpec extends TestSupport {
       "have a breadcrumb trail" in {
         document2Bills.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         document2Bills.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        document2Bills.getElementById("breadcrumb-bills").text shouldBe breadcrumbMessages.bills
+        document2Bills.getElementById("breadcrumb-tax-years").text shouldBe breadcrumbMessages.taxYears
       }
 
     }
