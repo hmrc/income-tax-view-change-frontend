@@ -18,29 +18,15 @@ feedback.title                                                  = Give feedback
 ## Home Page ##
 home.title                                                      = Your Income Tax
 home.heading                                                    = Income Tax
-home.unique.tax.reference                                       = Unique Tax Reference
-home.bills.heading                                              = Bills
-home.bills.text                                                 = View your current and previous Income Tax bills.
-home.statements.heading                                         = Statements
-home.statements.text                                            = View your Income Tax transactions, including charges and payments.
-home.accounts.heading                                           = Account details
-home.accounts.text                                              = See contact information and other details we have for your businesses.
-
-home.incomeTaxPayment.viewBillAndMakePayment                    = View bill and make payment
-home.incomeTaxPayment.viewBill                                  = View bill
-home.incomeTaxPayment.nextPaymentDue                            = Next payment due
-home.incomeTaxPayment.previousBills                             = Previous bills
-home.incomeTaxPayment.paymentHistory                            = Payment history
-home.incomeTaxPayment.incomeTaxPayments                         = Income tax payments
-home.incomeTaxPayment.noBills                                   = No payments due.
-
-home.updates.heading                                            = Updates
-home.updates.body.heading                                       = Next update due
-home.updates.body.updatesLink                                   = View details for updates
-home.updates.body.previousLink                                  = Previously submitted updates
-home.updates.body.estimatesLink                                 = Estimates
-
-
+home.unique.taxpayer.reference                                  = Unique Taxpayer Reference - {0}
+home.payments.heading                                           = Next payment due
+home.payments.no-payments-due                                   = No payments due.
+home.payments.view                                              = View payments
+home.updates.heading                                            = Next update due
+home.updates.view                                               = View updates
+home.tax-years.heading                                          = My tax years
+home.tax-years.description                                      = Check the status of each tax year.
+home.tax-years.view                                             = View tax years
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service
@@ -148,6 +134,7 @@ obligations.noReports                                           = You don’t ha
 ## Previous Obligations ##
 previous-obligations.title                                      = Previous Submitted Updates
 previous-obligations.heading                                    = Updates
+previous-obligations.updates-due                                = Updates due
 previous-obligations.sub-heading                                = Previously submitted updates
 previous-obligations.no-previous-obligations                    = No previously submitted updates
 previous-obligations.income-source.property-income              = Property Income
@@ -286,6 +273,7 @@ betaBanner.improve                                              = will help us t
 ## Obligations Page ##
 obligations.title.v2                                               = Current Updates
 obligations.heading.v2                                             = Updates
+obligations.previous-obligations                                   = Previously submitted updates
 obligations.sub-heading.v2                                         = Updates due
 obligations.sub-heading.info.prt1.v2                               = You must submit these returns on your
 obligations.sub-heading.info.hyperlink.v2                          = accounting software
@@ -327,7 +315,7 @@ paymentDue.viewBill                                                = View bill
 paymentDue.payNow                                                  = Pay now
 paymentDue.view-bill-aria                                          = View bill for Tax year {0} to {1}
 paymentDue.pay-now-aria                                            = Pay now for Tax year {0} to {1}
-
+paymentDue.no-bills                                                = No payments due.
 
 ## Regimes
 UK = UK

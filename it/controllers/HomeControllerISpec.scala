@@ -91,8 +91,8 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter w
         res should have(
           httpStatus(OK),
           pageTitle(title),
-          elementTextByID("updates-card-body-date")(veryOverdueDate.toLongDate),
-          elementTextByID("income-tax-payment-card-body-date")("14 February 2018")
+          elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverdueDate.toLongDate),
+          elementTextBySelector("#payments-tile > div > p:nth-child(2)")("14 February 2018")
         )
       }
 
@@ -147,8 +147,8 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter w
           res should have(
             httpStatus(OK),
             pageTitle(title),
-            elementTextByID("updates-card-body-date")(veryOverdueDate.toLongDate),
-            elementTextByID("income-tax-payment-card-body-date")("No payments due.")
+            elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverdueDate.toLongDate),
+            elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due.")
           )
         }
 
@@ -195,8 +195,8 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter w
           res should have(
             httpStatus(OK),
             pageTitle(title),
-            elementTextByID("updates-card-body-date")(veryOverdueDate.toLongDate),
-            elementTextByID("income-tax-payment-card-body-date")("No payments due.")
+            elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverdueDate.toLongDate),
+            elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due.")
           )
         }
       }

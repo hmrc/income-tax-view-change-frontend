@@ -18,25 +18,15 @@ feedback.title                                                  = Rhoi adborth
 ## Home Page ##
 home.title                                                      = Eich Treth Incwm
 home.heading                                                    = Treth Incwm
-home.unique.tax.reference                                       = Cyfeirnod Treth Unigryw
-home.bills.heading                                              = Billau
-home.bills.text                                                 = Gweld eich biliau Treth Incwm presennol a blaenorol.
-home.statements.heading                                         = Datganiadau
-home.statements.text                                            = Bwrw golwg ar eich trafodiadau Treth Incwm, gan gynnwys costau a thaliadau.
-home.accounts.heading                                           = Manylion y cyfrif
-home.accounts.text                                              = Gweld y manylion cyswllt a’r manylion eraill sydd gennym ar gyfer eich busnesau.
-
-home.incomeTaxPayment.nextPaymentDue                            = Taliad nesaf yn ddyledus
-home.incomeTaxPayment.viewBill                                  = Bwrw golwg dros y bil
-home.incomeTaxPayment.viewBillAndMakePayment                    = Bwrw golwg dros y bil a gwneud taliad
-home.incomeTaxPayment.incomeTaxPayments                         = Taliadau treth incwm
-home.incomeTaxPayment.previousBills                             = Biliau blaenorol
-
-home.updates.heading                                            = Diweddariadau
-home.updates.body.heading                                       = Diweddariad nesaf i’w ddychwelyd erbyn
-home.updates.body.estimatesLink                                 = Amcangyfrifon
-home.updates.body.previousLink                                  = Diweddariadau a gyflwynwyd yn flaenorol
-home.updates.body.updatesLink                                   = Bwrw golwg dros y manylion ar gyfer diweddariadau
+home.unique.taxpayer.reference                                  = Cyfeirnod Unigryw y Trethdalwr - {0}
+home.payments.heading                                           = Taliad nesaf yn ddyledus
+home.payments.no-payments-due                                   = Dim taliadau’n ddyledus
+home.payments.view                                              = Bwrw golwg dros daliadau
+home.updates.heading                                            = Diweddariad nesaf i’w gyflwyno erbyn
+home.updates.view                                               = Bwrw golwg dros ddiweddariadau
+home.tax-years.heading                                          = Fy mlynyddoedd treth
+home.tax-years.description                                      = Gwirio statws pob blwyddyn dreth
+home.tax-years.view                                             = Bwrw golwg dros flynyddoedd treth
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Helpu i wella’r gwasanaeth hwn
@@ -123,8 +113,8 @@ obligations.tab.two                                             = Diweddariadau 
 ## Previous Obligations ##
 
 previous-obligations.heading                                    = Diweddariadau
+previous-obligations.updates-due                                = Diweddariadau i’w dychwelyd
 previous-obligations.sub-heading                                = Diweddariadau a gyflwynwyd yn flaenorol
-
 previous-obligations.income-source.property-income              = Incwm o eiddo
 previous-obligations.income-source.final-income                 = Blwyddyn dreth – Gwiriad olaf
 previous-obligations.obligation-type.quarterly                  = Diweddariad chwarterol
@@ -257,6 +247,7 @@ betaBanner.improve                                              = yn ein helpu i
 
 ## Obligations Page ##
 obligations.heading.v2                                          = Diweddariadau
+obligations.previous-obligations                                = Diweddariadau a gyflwynwyd yn flaenorol
 obligations.sub-heading.v2                                      = Diweddariadau i’w dychwelyd
 obligations.sub-heading.info.hyperlink.v2                       = meddalwedd cyfrifyddu
 obligation.dropdown.declarations.info.v2                        = Gwybodaeth ynghylch datganiadau
@@ -292,6 +283,7 @@ obligation.dropdown.finalDeclaration.text.v2.prt2               = .
 paymentDue.title                                                = Eich Treth Incwm
 paymentDue.heading                                              = Taliadau treth incwm
 paymentDue.viewBill                                             = Bwrw golwg dros y bil
+paymentDue.no-bills                                             = Dim taliadau’n ddyledus
 
 
 ## Regimes

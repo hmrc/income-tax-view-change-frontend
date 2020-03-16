@@ -43,9 +43,9 @@ bodyClasses = None,
 contentHeader = Some(breadcrumb)
 ) {
 
-<header class="page-heading">
-    <h1 id="page-heading" class="heading-xlarge"> @messages("obligations.heading.v2")</h1>
-</header>
+<h1 id="page-heading" class="heading-xlarge"> @messages("obligations.heading.v2")</h1>
+
+<a href=@controllers.routes.PreviousObligationsController.getPreviousObligations().url>@messages("obligations.previous-obligations")</a>
 
 <section id="sub-heading-section">
     <h2 id="page-sub-heading" class="heading-large"> @messages("obligations.sub-heading.v2") </h2>

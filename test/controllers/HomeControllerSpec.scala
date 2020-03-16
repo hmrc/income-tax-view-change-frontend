@@ -79,7 +79,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         status(result) shouldBe Status.OK
         val document = Jsoup.parse(bodyOf(result))
         document.title shouldBe Messages.HomePage.title
-        document.getElementById("income-tax-payment-card-body-date").text() shouldBe "31 January 2019"
+        document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "31 January 2019"
       }
 
       "display the oldest next payment due day when there multiple payment due" in new Setup {
@@ -97,7 +97,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         status(result) shouldBe Status.OK
         val document = Jsoup.parse(bodyOf(result))
         document.title shouldBe Messages.HomePage.title
-        document.getElementById("income-tax-payment-card-body-date").text() shouldBe "31 January 2018"
+        document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "31 January 2018"
       }
 
       "Not display the next payment due date" when {
@@ -114,7 +114,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
+          document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
 
         }
 
@@ -131,7 +131,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
+          document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
         }
 
         "All financial transaction bill are paid" in new Setup {
@@ -147,7 +147,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
+          document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
         }
 
         "There is no calculation data" in new Setup {
@@ -161,7 +161,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
+          document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
         }
 
         s"All calculation error models from the service have a status of ${Status.NOT_FOUND}" in new Setup {
@@ -175,7 +175,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
+          document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
         }
 
         "There are no crystallised calculation data" in new Setup {
@@ -191,7 +191,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
           document.title shouldBe Messages.HomePage.title
-          document.getElementById("income-tax-payment-card-body-date").text() shouldBe "No payments due."
+          document.select("#payments-tile > div > p:nth-child(2)").text() shouldBe "No payments due."
         }
       }
 
@@ -223,7 +223,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         status(result) shouldBe Status.OK
         val document = Jsoup.parse(bodyOf(result))
         document.title shouldBe Messages.HomePage.title
-        document.getElementById("updates-card-body-date").text() shouldBe "1 January 2018"
+        document.select("#updates-tile > div > p:nth-child(2)").text() shouldBe "1 January 2018"
       }
     }
 

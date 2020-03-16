@@ -134,6 +134,10 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
     lazy val noIncomeSource = IncomeSourcesWithDeadlinesModel(List(), None, None)
 
+    "have a link to the previous obligations" in new Setup(businessIncomeSource) {
+      pageDocument.select(s"a[href='${controllers.routes.PreviousObligationsController.getPreviousObligations().url}']").text shouldBe messages.previousObligations
+    }
+
     "display all of the correct information for the main elements/sections on the page" when {
 
       "showing the breadcrumb trail on the page" in new Setup(businessIncomeSource) {

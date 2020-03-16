@@ -18,6 +18,10 @@ package assets
 
 object Messages {
 
+  object Core {
+    val welsh = "Cymraeg"
+  }
+
   object CalculationBreakdown {
     def estimateSubHeading(taxAmount: String) = s"How your estimate of $taxAmount was calculated"
     val billSubHeading = "How your tax was calculated"
@@ -71,27 +75,12 @@ object Messages {
   object HomePage {
     val title = "Your Income Tax"
     val heading = "Income Tax"
-
-    object EstimatesSection {
-      val heading = "Estimates"
-      val paragraph = "Check what you might owe, based on figures you have submitted."
-    }
-    object BillsSection {
-      val heading = "Bills"
-      val paragraph = "View your current and previous Income Tax bills."
-    }
-    object ReportDeadlinesSection {
-      val heading = "Report deadlines"
-      val paragraph = "Check when your reports are due."
-    }
-    object StatementSection {
-      val heading = "Statements"
-      val paragraph = "View your Income Tax transactions, including charges and payments."
-    }
-    object AccountDetailsSection {
-      val heading = "Account details"
-      val paragraph = "See contact information and other details we have for your businesses."
-    }
+    def taxpayerReference(mtditid: String): String = s"Unique Taxpayer Reference - $mtditid"
+    val updatesHeading = "Next update due"
+    val updatesLink = "View updates"
+    val taxYearsHeading = "My tax years"
+    val taxYearsDescription = "Check the status of each tax year."
+    val taxYearsLink = "View tax years"
   }
 
   // Estimated Tax Liability Page Messages
@@ -104,7 +93,7 @@ object Messages {
       val heading = s"Income tax bill for ${taxYear-1} to $taxYear"
       val tabTitle = heading
       val subHeading = s"Albert Einstein"
-      val utrHeading = "Unique Tax Reference-XAIT0000123456"
+      val utrHeading = "Unique Taxpayer Reference - XAIT0000123456"
       def noBreakdownContent(amount: String): String = s"Your total tax bill amount: $amount"
       val p1 = "This figure is based on the information you provided in your quarterly reports and final report."
       val breakdownHeading = "How this figure was calculated"
@@ -314,6 +303,7 @@ object Messages {
   object Obligations {
     val title = "Current Updates"
     val heading = "Updates"
+    val previousObligations = "Previously submitted updates"
     val tabOne = "Updates due"
     val tabTwo = "Previously submitted updates"
     val subTitle = "Updates due"

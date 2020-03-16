@@ -23,7 +23,8 @@ import play.api.libs.json.Reads
 import play.api.libs.ws.WSResponse
 import uk.gov.hmrc.play.test.UnitSpec
 
-trait   CustomMatchers extends UnitSpec with GivenWhenThen {
+trait CustomMatchers extends UnitSpec with GivenWhenThen {
+
   def httpStatus(expectedValue: Int): HavePropertyMatcher[WSResponse, Int] =
     new HavePropertyMatcher[WSResponse, Int] {
       def apply(response: WSResponse) = {
@@ -107,6 +108,20 @@ trait   CustomMatchers extends UnitSpec with GivenWhenThen {
         )
       }
     }
+
+  def elementTextBySelector(selector: String)(expectedValue: String): HavePropertyMatcher[WSResponse, String] = {
+    HavePropertyMatcher[WSResponse, String] { response =>
+      val body = Jsoup.parse(response.body)
+      Then(s"the text of element should be '$expectedValue'")
+
+      HavePropertyMatchResult(
+        body.select(selector).text == expectedValue,
+        s"select($selector)",
+        expectedValue,
+        body.select(selector).text
+      )
+    }
+  }
 
   def nElementsWithClass(classTag: String)(expectedCount: Int): HavePropertyMatcher[WSResponse, Int] =
     new HavePropertyMatcher[WSResponse, Int] {
