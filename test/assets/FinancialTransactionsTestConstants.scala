@@ -96,7 +96,7 @@ object FinancialTransactionsTestConstants extends ImplicitDateFormatter {
       )
     )
 
-  def transactionModel(taxYear: String = "2018-04-05") = TransactionModel(
+  def transactionModel(taxYear: String = "2018-04-05", outstandingAmount: Option[BigDecimal] = Some(1400.0)) = TransactionModel(
     chargeType = Some("PAYE"),
     mainType = Some("2100"),
     periodKey = Some("13RL"),
@@ -114,7 +114,7 @@ object FinancialTransactionsTestConstants extends ImplicitDateFormatter {
     mainTransaction = Some("1234"),
     subTransaction = Some("5678"),
     originalAmount = Some(3400.0),
-    outstandingAmount = Some(1400.0),
+    outstandingAmount = outstandingAmount,
     clearedAmount = Some(2000.0),
     accruedInterest = Some(0.23),
     items = Some(Seq(SubItemModel(
@@ -179,11 +179,11 @@ object FinancialTransactionsTestConstants extends ImplicitDateFormatter {
     ))
   )
 
-  def financialTransactionsModel(taxYear: String = "2018-04-05") = FinancialTransactionsModel(
+  def financialTransactionsModel(taxYear: String = "2018-04-05", outstandingAmount: Option[BigDecimal] = Some(1400.0)) = FinancialTransactionsModel(
     idType = testIdType,
     idNumber = testIdNumber,
     regimeType = testRegimeType,
     processingDate = testProcessingDate,
-    financialTransactions = Some(Seq(transactionModel(taxYear)))
+    financialTransactions = Some(Seq(transactionModel(taxYear, outstandingAmount)))
   )
 }

@@ -69,7 +69,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     s"have the title '${messages.title}'" in new Setup {
       document.title() shouldBe messages.title
     }
-
     "display the language selection switch" in new Setup {
       getTextOfElementById("cymraeg-switch") shouldBe Some(coreMessages.welsh)
     }
@@ -114,7 +113,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to the tax years page" in new Setup {
         val link: Option[Elements] = getElementById("tax-years-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.EstimatesController.viewEstimateCalculations().url)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.viewTaxYears().url)
         link.map(_.text) shouldBe Some(messages.taxYearsLink)
       }
     }

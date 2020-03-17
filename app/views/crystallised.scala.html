@@ -41,7 +41,7 @@
     scriptElem = None,
     contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-bills", Some(controllers.routes.BillsController.viewCrystallisedCalculations.url)),
+        BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears().url)),
         BreadcrumbItem("breadcrumb-finalised-bill", None, Some(messages("crystalisation.heading",s"${taxYear-1}", s"$taxYear")))
         )), s"BillFor${taxYear}Page"))
 ) {

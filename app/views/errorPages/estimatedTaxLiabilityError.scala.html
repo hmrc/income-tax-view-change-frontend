@@ -28,7 +28,7 @@
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-estimates", Some(controllers.routes.EstimatesController.viewEstimateCalculations.url)),
+        BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears().url)),
         BreadcrumbItem("breadcrumb-it-estimate", None, Some(messages("estimated_tax_liability.heading", s"${taxYear-1}", s"$taxYear")))
     )), "EstimatesErrorPage")
 }

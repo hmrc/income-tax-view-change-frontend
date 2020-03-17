@@ -16,9 +16,12 @@
 
 package assets
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants._
 import enums.Estimate
 import models.calculation._
+import models.financialTransactions.{SubItemModel, TransactionModel, TransactionModelWithYear}
 import play.api.http.Status
 
 object EstimatesTestConstants {
@@ -43,6 +46,11 @@ object EstimatesTestConstants {
   val lastTaxCalcWithYearList = List(
     CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear),
     CalculationResponseModelWithYear(lastTaxCalcSuccess, testYearPlusOne)
+  )
+  val lastThreeTaxCalcWithYear = List(
+    CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear),
+    CalculationResponseModelWithYear(lastTaxCalcSuccess, testYearPlusOne),
+    CalculationResponseModelWithYear(lastTaxCalcSuccess, testYearPlusTwo)
   )
   val lastTaxCalcWithYearListOneNotFound = List(
     CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear),
@@ -77,4 +85,19 @@ object EstimatesTestConstants {
       taxYear = 2018,
       annualEstimate = None
     )
+
+  val lastThreeTaxYearFinancialTransactions = List(
+    TransactionModelWithYear(transactionModelStatus(false, false), testYear),
+    TransactionModelWithYear(transactionModelStatus(true, false), testYearPlusOne),
+    TransactionModelWithYear(transactionModelStatus(false, true), testYearPlusTwo)
+  )
+
+  def transactionModelStatus(paid: Boolean, overdue: Boolean): TransactionModel = {
+    val outstandingAmount = if (paid) 0 else 1
+    val dueDate = if (overdue) LocalDate.now().minusDays(1) else LocalDate.now().plusDays(1)
+    TransactionModel(
+      outstandingAmount = Some(outstandingAmount),
+      items = Some(Seq(SubItemModel(dueDate = Some(dueDate))))
+    )
+  }
 }

@@ -33,7 +33,7 @@ class BreadcrumbModelSpec extends UnitSpec with Matchers {
       BreadcrumbItem("breadcrumb-bills", None).toPage shouldBe "ToBillsPage"
     }
     "return 'ToEstimatesPage'" in {
-      BreadcrumbItem("breadcrumb-estimates", None).toPage shouldBe "ToEstimatesPage"
+      BreadcrumbItem("breadcrumb-tax-years", None).toPage shouldBe "ToTaxYearsPage"
     }
   }
 

@@ -32,6 +32,7 @@ trait MockFinancialTransactionsService extends UnitSpec with MockitoSugar with B
 
   val mockFinancialTransactionsService: FinancialTransactionsService = mock[FinancialTransactionsService]
 
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockFinancialTransactionsService)
@@ -44,7 +45,12 @@ trait MockFinancialTransactionsService extends UnitSpec with MockitoSugar with B
 
   def mockFinancialTransactionSuccess(taxYear: String = "2018-04-05"): Unit =
     setupMockGetFinancialTransactions(testMtditid, testTaxYear)(financialTransactionsModel(taxYear))
+
   def mockFinancialTransactionFailed(): Unit =
     setupMockGetFinancialTransactions(testMtditid, testTaxYear)(financialTransactionsErrorModel)
 
+  def mockGetAllFinancialTransactions(response: List[(Int, FinancialTransactionsResponseModel)]) = {
+    when(mockFinancialTransactionsService.getAllFinancialTransactions(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
+  }
 }

@@ -34,11 +34,16 @@ banner.recruitment.link                                         = Join our resea
 banner.recruitment.dismiss                                      = No, thankyou.
 
 ## Estimates Page ##
-estimates.title                                                 = Estimates
-estimates.heading                                               = Estimates
-estimates.viewEstimates                                         = View your current estimates:
-estimates.estimatesLink                                         = {0} to {1} tax year
-estimates.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
+taxYears.title                                                 = My tax years
+taxYears.heading                                               = My tax years
+taxYears.viewTaxYears                                          = Below is a list of tax years you have submitted updates for. Click on the tax years to view a summary.
+taxYears.taxYear                                               = Tax year
+taxYears.status                                                = Status
+taxYears.taxYearsLink                                          = {0} to {1}
+taxYears.ongoing                                               = ONGOING
+taxYears.overdue                                               = OVERDUE
+taxYears.complete                                              = COMPLETE
+taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 
 ## Calculation Breakdown ##
 calc-breakdown.how-estimate-calculated                          = How your estimate of {0} was calculated
@@ -249,8 +254,7 @@ not_enrolled.sign-up.3                                          = before you can
 ## Breadcrumbs ##
 breadcrumb-bta                                                  = Business tax account
 breadcrumb-it                                                   = Income Tax account
-breadcrumb-estimates                                            = Estimates
-breadcrumb-bills                                                = Bills
+breadcrumb-tax-years                                            = My tax years
 breadcrumb-obligations                                          = Report deadlines
 breadcrumb-statement                                            = Income Tax statement
 breadcrumb-account                                              = Account details
