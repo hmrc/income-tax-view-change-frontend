@@ -175,15 +175,6 @@ crystalisation.additionalPayment.heading                        = Additional pay
 crystalisation.incorrect.heading                                = How to report incorrect figures
 crystalisation.payNow                                           = Pay now
 
-## Bills Page ##
-bills.title                                                     = Bills
-bills.heading                                                   = Bills
-bills.viewBills                                                 = View your finalised bills:
-bills.billLink.screenReaderPrefix                               = view bill for
-bills.billLink                                                  = {0} to {1} tax year
-bills.noBills                                                   = You’ve had no bills since you started reporting through software.
-bills.earlierBills                                              = For earlier bills,
-bills.earlierBillsLink                                          = view your Self Assessment calculations (opens in a new tab)
 
 ## Statements Page ##
 statements.title                                                = Income Tax Statement

@@ -149,16 +149,6 @@ crystalisation.changes                                          = Os gwnewch y n
 crystalisation.additionalPayment.heading                        = Taliad ychwanegol
 crystalisation.payNow                                           = Yn eich blaen i dalu
 
-## Bills Page ##
-bills.title                                                     = Biliau
-bills.heading                                                   = Biliau
-bills.viewBills                                                 = Bwrw golwg ar eich biliau terfynol:
-bills.billLink.screenReaderPrefix                               = gweld bil ar gyfer
-bills.billLink                                                  = Blwyddyn dreth {0} i {1}
-bills.noBills                                                   = Nid ydych wedi cael biliau ers i chi ddechrau rhoi adroddiad drwy feddalwedd.
-bills.earlierBills                                              = Am filiau cynharach,
-bills.earlierBillsLink                                          = bwriwch olwg ar eich cyfrifiadau Hunanasesiad (yn agor mewn tab newydd)
-
 ## Statements Page ##
 statements.title                                                = Datganiad Treth Incwm
 statements.heading                                              = Datganiad Treth Incwm
