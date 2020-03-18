@@ -57,13 +57,6 @@ class RoutesSpec extends TestSupport {
     }
   }
 
-  //Bills route
-  "The URL for the BillsController.viewCrystallisedCalculations action" should {
-    s"be equal to $contextRoute/estimates" in {
-      controllers.routes.BillsController.viewCrystallisedCalculations().url shouldBe s"$contextRoute/bills"
-    }
-  }
-
   //Not-Enrolled route
   "The URL for the NotEnrolledController.show action" should {
     s"be equal to $contextRoute/not-enrolled" in {
