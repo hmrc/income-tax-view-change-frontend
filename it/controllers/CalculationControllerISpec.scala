@@ -23,7 +23,7 @@ import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{CalculationMessages => messages}
-import config.featureswitch.{CalcBreakdown, CalcDataApi, FeatureSwitching}
+import config.featureswitch.{CalcBreakdown, FeatureSwitching}
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
@@ -42,7 +42,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       "return the correct page with a valid total" in {
 
         enable(CalcBreakdown)
-        enable(CalcDataApi)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -434,7 +433,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
     "return the correct page with a valid total" in {
 
       enable(CalcBreakdown)
-      enable(CalcDataApi)
 
       And("I wiremock stub a successful Income Source Details response with single Business and Property income")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
