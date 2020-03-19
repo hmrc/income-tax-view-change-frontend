@@ -24,9 +24,6 @@ GET         /payment                                controllers.PaymentControlle
 #Payments due
 GET         /payments-due                           controllers.PaymentDueController.viewPaymentsDue
 
-#Statements
-GET         /statements                             controllers.StatementsController.getStatements
-
 #Account Details
 GET         /account-details                        controllers.AccountDetailsController.getAccountDetails
 
