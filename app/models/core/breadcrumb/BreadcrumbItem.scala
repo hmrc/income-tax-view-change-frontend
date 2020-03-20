@@ -20,7 +20,6 @@ case class BreadcrumbItem(id: String, url: Option[String] = None, customText: Op
 
   def toPage: String = Map(
     "breadcrumb-it" -> "ToHomePage",
-    "breadcrumb-account" -> "ToAccountDetailsPage",
     "breadcrumb-bills" -> "ToBillsPage",
     "breadcrumb-tax-years" -> "ToTaxYearsPage",
     "breadcrumb-payments-due" -> "ToPaymentsDue"

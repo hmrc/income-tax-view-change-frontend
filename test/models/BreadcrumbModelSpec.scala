@@ -26,9 +26,6 @@ class BreadcrumbModelSpec extends UnitSpec with Matchers {
     "return 'ToHomePage'" in {
       BreadcrumbItem("breadcrumb-it", None).toPage shouldBe "ToHomePage"
     }
-    "return 'ToAccountDetailsPage'" in {
-      BreadcrumbItem("breadcrumb-account", None).toPage shouldBe "ToAccountDetailsPage"
-    }
     "return 'ToBillsPage'" in {
       BreadcrumbItem("breadcrumb-bills", None).toPage shouldBe "ToBillsPage"
     }

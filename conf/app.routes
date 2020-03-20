@@ -24,12 +24,6 @@ GET         /payment                                controllers.PaymentControlle
 #Payments due
 GET         /payments-due                           controllers.PaymentDueController.viewPaymentsDue
 
-#Account Details
-GET         /account-details                        controllers.AccountDetailsController.getAccountDetails
-
-#Business Details
-GET         /account-details/:id                    controllers.BusinessDetailsController.getBusinessDetails(id: Int)
-
 #Feedback Routes
 GET         /feedback                               controllers.feedback.FeedbackController.show
 POST        /feedback                               controllers.feedback.FeedbackController.submit

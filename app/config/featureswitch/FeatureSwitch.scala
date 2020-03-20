@@ -31,7 +31,6 @@ object FeatureSwitch {
     Estimates,
     Bills,
     ReportDeadlines,
-    AccountDetails,
     CalcBreakdown,
     CalcDataApi,
     ObligationsPage
@@ -65,11 +64,6 @@ case object Bills extends FeatureSwitch {
 case object ReportDeadlines extends FeatureSwitch {
   override val name = s"$prefix.enable-report-deadlines"
   override val displayText = "Enable Report Deadlines Feature"
-}
-
-case object AccountDetails extends FeatureSwitch {
-  override val name = s"$prefix.enable-account-details"
-  override val displayText = "Enable Account Details & Business Details Pages"
 }
 
 case object CalcBreakdown extends FeatureSwitch {
