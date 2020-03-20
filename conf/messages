@@ -175,29 +175,6 @@ crystalisation.additionalPayment.heading                        = Additional pay
 crystalisation.incorrect.heading                                = How to report incorrect figures
 crystalisation.payNow                                           = Pay now
 
-
-## Statements Page ##
-statements.title                                                = Income Tax Statement
-statements.heading                                              = Income Tax Statement
-statements.p1                                                   = A record of your charges and payments.
-statements.taxYearStatement                                     = Tax year: {0}-{1}
-statements.stillToPay                                           = Still to pay: {0}
-statements.dueBy                                                = This is due by {0}.
-statements.dueBy.youCan                                         = You can
-statements.dueBy.link                                           = pay this now
-statements.dueBy.screenReaderLink                               = pay your {0}-{1} bill now
-statements.nothingToPay                                         = Nothing left to pay
-statements.paidBill                                             = You’ve paid this bill.
-statements.transactions                                         = Your transactions
-statements.charge                                               = You had a charge of
-statements.youPaid                                              = You paid {0} on {1}
-statements.earlierTransactions                                  = For earlier transactions,
-statements.earlierTransactionsLink                              = view your Self Assessment
-statements.noTransactions                                       = You’ve had no transactions since you started reporting through accounting software.
-
-statements.error.heading                                        = We can’t show your statement right now
-statements.error.p1                                             = Try reloading the page or coming back later.
-
 ## Account Details Page ##
 account.title                                                   = Account details
 account.heading                                                 = Account details
@@ -247,7 +224,6 @@ breadcrumb-bta                                                  = Business tax a
 breadcrumb-it                                                   = Income Tax account
 breadcrumb-tax-years                                            = My tax years
 breadcrumb-obligations                                          = Report deadlines
-breadcrumb-statement                                            = Income Tax statement
 breadcrumb-account                                              = Account details
 breadcrumb-updates                                              = Updates
 breadcrumb-payments-due                                         = Income Tax payments

@@ -149,28 +149,6 @@ crystalisation.changes                                          = Os gwnewch y n
 crystalisation.additionalPayment.heading                        = Taliad ychwanegol
 crystalisation.payNow                                           = Yn eich blaen i dalu
 
-## Statements Page ##
-statements.title                                                = Datganiad Treth Incwm
-statements.heading                                              = Datganiad Treth Incwm
-statements.p1                                                   = Cofnod o’ch costau a thaliadau.
-statements.taxYearStatement                                     = Blwyddyn dreth: {0}-{1}
-statements.stillToPay                                           = Eto i dalu: {0}
-statements.dueBy                                                = Mae hyn yn ddyledus erbyn {0}.
-statements.dueBy.youCan                                         = Gallwch
-statements.dueBy.link                                           = dalu hyn nawr
-statements.dueBy.screenReaderLink                               = dalu eich bil {0}-{1} nawr
-statements.nothingToPay                                         = Dim byd yn weddill i’w dalu
-statements.paidBill                                             = Rydych wedi talu’r bil hwn.
-statements.transactions                                         = Eich trafodiadau
-statements.charge                                               = Cawsoch dâl o
-statements.youPaid                                              = Gwnaethoch dalu {0} ar {1}
-statements.earlierTransactions                                  = Am drafodiadau cynharach,
-statements.earlierTransactionsLink                              = bwriwch olwg ar eich Hunanasesiad
-statements.noTransactions                                       = Nid ydych wedi cael trafodiadau ers i chi ddechrau adrodd drwy feddalwedd cyfrifyddu.
-
-statements.error.heading                                        = Ni allwn ddangos eich datganiad ar hyn o bryd
-statements.error.p1                                             = Rhowch gynnig ar adnewyddu’r dudalen neu dewch yn ôl yn nes ymlaen.
-
 ## Account Details Page ##
 account.title                                                   = Manylion y cyfrif
 account.heading                                                 = Manylion y cyfrif
@@ -220,7 +198,6 @@ breadcrumb-bta                                                  = Cyfrif Treth B
 breadcrumb-it                                                   = Cyfrif Treth Incwm
 breadcrumb-tax-years                                            = Fy mlynyddoedd treth
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
-breadcrumb-statement                                            = Datganiad Treth Incwm
 breadcrumb-account                                              = Manylion y cyfrif
 breadcrumb-updates                                              = Diweddariadau
 breadcrumb-payments-due                                         = Taliadau treth incwm
