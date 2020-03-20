@@ -175,25 +175,6 @@ crystalisation.additionalPayment.heading                        = Additional pay
 crystalisation.incorrect.heading                                = How to report incorrect figures
 crystalisation.payNow                                           = Pay now
 
-## Account Details Page ##
-account.title                                                   = Account details
-account.heading                                                 = Account details
-account.businesses                                              = Your businesses
-account.properties                                              = Your properties
-account.ceasedProperties                                        = Ceased trading on {0}.
-account.reportingPeriod                                         = Reporting period: {0} - {1}
-
-## Business Details Page ##
-business.reportingPeriod                                        = Reporting period: {0} - {1}
-business.ceasedTrading                                          = This business ceased trading on {0}.
-business.addressAndContact                                      = Address and contact details
-business.tradingName                                            = Trading name
-business.businessAddress                                        = Business address
-business.additionalInfo                                         = Additional information
-business.cashMethod                                             = This business uses the cash accounting method.
-business.accrualsMethod                                         = This business uses the accruals accounting method.
-business.backToAccount                                          = Back to account details
-
 ## Statuses ##
 status.received                                                 = Received
 status.overdue                                                  = Overdue
@@ -224,7 +205,6 @@ breadcrumb-bta                                                  = Business tax a
 breadcrumb-it                                                   = Income Tax account
 breadcrumb-tax-years                                            = My tax years
 breadcrumb-obligations                                          = Report deadlines
-breadcrumb-account                                              = Account details
 breadcrumb-updates                                              = Updates
 breadcrumb-payments-due                                         = Income Tax payments
 breadcrumb-estimated_tax_liability                              = {0} to {1} tax year

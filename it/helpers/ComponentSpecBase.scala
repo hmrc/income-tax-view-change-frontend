@@ -93,10 +93,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getPreviousObligations: WSResponse = get(s"/previous-obligations")
 
-    def getAccountDetails: WSResponse = get(s"/account-details")
-
-    def getBusinessDetails(id: Int): WSResponse = get(s"/account-details/$id")
-
     def getBtaPartial: WSResponse = get(s"/partial")
 
     def getHome: WSResponse = get("/")

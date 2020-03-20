@@ -149,25 +149,6 @@ crystalisation.changes                                          = Os gwnewch y n
 crystalisation.additionalPayment.heading                        = Taliad ychwanegol
 crystalisation.payNow                                           = Yn eich blaen i dalu
 
-## Account Details Page ##
-account.title                                                   = Manylion y cyfrif
-account.heading                                                 = Manylion y cyfrif
-account.businesses                                              = Eich busnesau
-account.properties                                              = Eich eiddo
-account.ceasedProperties                                        = Wedi rhoi’r gorau i fasnachu ar {0}.
-account.reportingPeriod                                         = Cyfnod adrodd: {0} - {1}
-
-## Business Details Page ##
-business.reportingPeriod                                        = Cyfnod adrodd: {0} - {1}
-business.ceasedTrading                                          = Rhoddodd y busnes hwn y gorau i fasnachu ar {0}.
-business.addressAndContact                                      = Cyfeiriad a manylion cyswllt
-business.tradingName                                            = Enw masnachu
-business.businessAddress                                        = Cyfeiriad y busnes
-business.additionalInfo                                         = Gwybodaeth ychwanegol
-business.cashMethod                                             = Mae’r busnes hwn yn defnyddio’r dull cyfrifyddu arian parod.
-business.accrualsMethod                                         = Mae’r busnes hwn yn defnyddio’r dull cyfrifyddu croniadau.
-business.backToAccount                                          = Yn ôl i fanylion y cyfrif
-
 ## Statuses ##
 status.received                                                 = Wedi dod i law
 status.overdue                                                  = Yn hwyr
@@ -198,7 +179,6 @@ breadcrumb-bta                                                  = Cyfrif Treth B
 breadcrumb-it                                                   = Cyfrif Treth Incwm
 breadcrumb-tax-years                                            = Fy mlynyddoedd treth
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
-breadcrumb-account                                              = Manylion y cyfrif
 breadcrumb-updates                                              = Diweddariadau
 breadcrumb-payments-due                                         = Taliadau treth incwm
 breadcrumb-estimated_tax_liability                              = Blwyddyn dreth {0} i {1}
