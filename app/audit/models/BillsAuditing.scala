@@ -40,20 +40,4 @@ object BillsAuditing {
       "currentBill" -> dataModel.calcAmount.toString()
     )
   }
-
-  case class BasicBillsAuditModel[A](user: MtdItUser[A], dataModel: Calculation) extends AuditModel {
-
-    override val auditType: String = "billsPageView"
-    override val transactionName: String = "view-bills-page"
-
-    val billAmount: Seq[(String, String)] = dataModel.totalIncomeTaxAndNicsDue match {
-      case Some(amount) => Seq("currentBill" -> amount.toString)
-      case None => Seq.empty
-    }
-
-    override val detail: Seq[(String, String)] = Seq(
-      "mtditid" -> user.mtditid,
-      "nino" -> user.nino
-    ) ++ billAmount
-  }
 }

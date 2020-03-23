@@ -39,23 +39,5 @@ object EstimatesAuditing {
       "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}")
     )
   }
-
-  case class BasicEstimatesAuditModel[A](user: MtdItUser[A], dataModel: Calculation) extends AuditModel {
-
-    override val auditType: String = "estimatesPageView"
-    override val transactionName: String = "view-estimates-page"
-
-    val estimateDetails: Seq[(String, String)] = (dataModel.incomeTaxNicAmount, dataModel.totalIncomeTaxAndNicsDue) match {
-      case (Some(annual), Some(current)) => Seq("annualEstimate" -> annual.toString, "currentEstimate" -> current.toString)
-      case (Some(annual), None) => Seq("annualEstimate" -> annual.toString)
-      case (None, Some(current)) => Seq("currentEstimate" -> current.toString)
-      case (None, None) => Seq.empty
-    }
-
-    override val detail: Seq[(String, String)] = Seq(
-      "mtditid" -> user.mtditid,
-      "nino" -> user.nino
-    ) ++ estimateDetails
-  }
 }
 

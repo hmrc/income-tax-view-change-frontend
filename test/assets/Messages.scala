@@ -89,9 +89,7 @@ object Messages {
   // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {
     val heading = s"Tax estimate for ${taxYear-1} - $taxYear"
-    val subheading = s"Estimates"
     val title = heading
-    val reportedFigures = "These estimates are based on the figures you already submitted for this tax year."
     object Crystallised {
       val heading = s"Income tax bill for ${taxYear-1} to $taxYear"
       val tabTitle = heading
@@ -105,47 +103,6 @@ object Messages {
       val payNow = "Pay now"
       val payDeadline = s"You must pay by 31 January ${taxYear + 1} to avoid penalties."
       def owed(amount: String): String = s"Tax left to pay: $amount"
-    }
-    object EoyEstimate {
-      val heading: String => String = eoyEstimate => s"Annual estimate: $eoyEstimate"
-      val p1 = s"This is for the ${taxYear-1} to $taxYear tax year."
-    }
-    object InYearEstimate {
-      val heading: String => String = inYearEstimate => s"Current estimate: $inYearEstimate"
-      val p1: String => String = calcDate => s"This is for 6 April ${taxYear-1} to $calcDate."
-      object CalculationBreakdown {
-        val heading = "How we calculated this estimate"
-        val nationalRegime = "National Regime"
-        val businessProfit = "Business profit"
-        val businessProfitAndSaving = "Business profit and income from savings"
-        val propertyProfit = "Property profit"
-        val personalAllowance = "Personal Allowance (for period reported)"
-        val personalAllowanceBill = "Personal Allowance"
-        val savingsAllownce = "Savings Allowance (for period reported)"
-        val personalAllowanceEstimates = "Personal Allowance (for period reported)"
-        val additionalAllowances = "Additional allowances"
-        val yourTaxableIncome = "Your taxable income (pay, pensions, profit)"
-        val yourTaxableSavings = "Your taxable income (savings interest)"
-        val atBR: String => String = amount => s"Income Tax ($amount at 20%)"
-        val atHR: String => String = amount => s"Income Tax ($amount at 40%)"
-        val atAR: String => String = amount => s"Income Tax ($amount at 45%)"
-        val dividendIncome = "Income from dividends"
-        val dividendAllowance = "Personal Allowance (dividends)"
-        val taxableDividends = "Your taxable income (dividends)"
-        def dividendAtRate(amount: String, rate: String): String = s"Dividend tax ($amount at $rate%)"
-        val nic2 = "Class 2 National Insurance"
-        val nic4 = "Class 4 National Insurance"
-        val reliefs = "Your tax reliefs"
-        val total = "Your Income Tax and National Insurance estimate"
-      }
-      val accuracy = "Although more accurate than your annual estimate, your current estimate may not be a true reflection of the tax you owe."
-      object WhyThisMayChange {
-        val heading = "Why your current estimates may change"
-        val p1 = "Your estimates could change because:"
-        val bullet1 = "rates and allowances will not be applied in full until the end of the tax year"
-        val bullet2 = "you may earn more money"
-        val bullet3 = "you may have income that is not reported in your accounting software"
-      }
     }
     object Bills {
       val billsTitle = "Bills"
