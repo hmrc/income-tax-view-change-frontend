@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.BillsAuditing.BillsAuditModel
 import audit.models.EstimatesAuditing.EstimatesAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CalcBreakdown, FeatureSwitching, Payment}
+import config.featureswitch.{FeatureSwitching, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import enums.{Crystallised, Estimate}
@@ -77,7 +77,7 @@ class CalculationController @Inject()(implicit val appConfig: FrontendAppConfig,
               renderCrystallisedView(calcDisplayModel, taxYear)
             case Estimate =>
               auditCalcDisplayModel(user, calcDisplayModel, isEstimate = true)
-              Future.successful(Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear, isEnabled(CalcBreakdown))))
+              Future.successful(Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear)))
           }
 
         case CalcDisplayNoDataFound =>
@@ -96,7 +96,7 @@ class CalculationController @Inject()(implicit val appConfig: FrontendAppConfig,
       case transactions: FinancialTransactionsModel =>
         (transactions.findChargeForTaxYear(taxYear), model) match {
           case (Some(charge), calcDisplayModel: CalcDisplayModel) =>
-            Ok(views.html.crystallised(calcDisplayModel, charge, taxYear, isEnabled(CalcBreakdown), isEnabled(Payment)))
+            Ok(views.html.crystallised(calcDisplayModel, charge, taxYear, isEnabled(Payment)))
           case _ =>
             Logger.error(s"[CalculationController][renderCrystallisedView[$taxYear]] No transaction could be retrieved for given year.")
             itvcErrorHandler.showInternalServerError

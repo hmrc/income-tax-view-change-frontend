@@ -23,7 +23,7 @@ import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{CalculationMessages => messages}
-import config.featureswitch.{CalcBreakdown, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
@@ -40,8 +40,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       "an EoY Estimate and feature switch is enabled" should {
 
       "return the correct page with a valid total" in {
-
-        enable(CalcBreakdown)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -121,8 +119,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       "a successful response is retrieved for the financial transactions and there is an outstanding amount (unpaid)" should {
 
         "return the correct page with a valid total" in {
-
-          enable(CalcBreakdown)
 
           And("I wiremock stub a successful Income Source Details response with single Business and Property income")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -204,8 +200,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
     "a successful response is retrieved for the financial transactions and there is no outstanding amount (paid)" should {
 
       "return the correct page with a valid total" in {
-
-        enable(CalcBreakdown)
 
         And("I wiremock stub a successful Income Source Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -321,9 +315,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
 
     "return the correct page with a valid total" in {
 
-      enable(CalcBreakdown)
-
-
       And("I wiremock stub a successful Income Source Details response with single Business and Property income")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
@@ -431,8 +422,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
   "isAuthorisedUser with an active enrolment and the Get Calculation Data API feature is disabled" should {
 
     "return the correct page with a valid total" in {
-
-      enable(CalcBreakdown)
 
       And("I wiremock stub a successful Income Source Details response with single Business and Property income")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
