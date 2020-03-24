@@ -24,17 +24,6 @@ object CalculationMessages {
   val estimateTitle: Int => String = year => s"Tax estimate for ${year - 1} - $year"
   val estimateHeading: Int => String = estimateTitle(_)
 
-  object EstimatedTaxAmount {
-    val subHeading = "Estimates"
-    val currentEstimate: String => String = estimate => s"Current estimate: $estimate"
-    val inYearp1: (String, Int) => String = (calcDate, year) => s"This is for 6 April ${year-1} to ${calcDate}."
-  }
-
-  object CrystalisedTaxAmount {
-    val subHeading = "Bills"
-    val calcBreakdown = "How this figure was calculated"
-  }
-
   val internalServerErrorp1 = "We can’t display your estimated tax amount at the moment."
   val internalServerErrorp2 = "Try refreshing the page in a few minutes."
 }

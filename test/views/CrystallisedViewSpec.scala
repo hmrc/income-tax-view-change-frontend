@@ -45,12 +45,11 @@ class CrystallisedViewSpec extends TestSupport with FeatureSwitching {
   val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), propertyIncomeOnly)(FakeRequest())
 
 
-  private def pageSetup(calcDataModel: Calculation, transactions: TransactionModel, calcBreakdownEnabled: Boolean, paymentEnabled: Boolean, user: MtdItUser[_]) = new {
+  private def pageSetup(calcDataModel: Calculation, transactions: TransactionModel, paymentEnabled: Boolean, user: MtdItUser[_]) = new {
     lazy val page: HtmlFormat.Appendable = views.html.crystallised(
       calculationDisplaySuccessModel(calcDataModel),
       transactions,
       testYear,
-      calcBreakdownEnabled,
       paymentEnabled
     )(FakeRequest(), applicationMessages, mockAppConfig, user)
 
@@ -60,7 +59,7 @@ class CrystallisedViewSpec extends TestSupport with FeatureSwitching {
   }
 
   "The Crystallised view" should {
-    val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), true, true, bizAndPropertyUser)
+    val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), true, bizAndPropertyUser)
     import setup._
     val messages = new Messages.Calculation(testYear)
     val crysMessages = new Messages.Calculation(testYear).Crystallised
@@ -107,23 +106,8 @@ class CrystallisedViewSpec extends TestSupport with FeatureSwitching {
       }
     }
 
-    "have the calculation breakdown section and link hidden" when {
-      "when the breakdown is not required" in {
-        val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), false, true, bizUser)
-        import setup._
-        document.getElementById("inYearCalcBreakdown") shouldBe null
-      }
-
-      "when the breakdown is not required and the bill has been paid off" in {
-        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), false, true, bizUser)
-        import setup._
-        document.getElementById("inYearCalcBreakdown") shouldBe null
-        document.select("section h2").text() shouldBe messages.Crystallised.noBreakdownContent("£3,400")
-      }
-    }
-
     "NOT have payment related content when the bill has been paid" in {
-      val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), true, true, bizAndPropertyUser)
+      val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), true, bizAndPropertyUser)
       import setup._
       Option(document.getElementById("adjustments")) shouldBe None
       Option(document.getElementById("changes")) shouldBe None
@@ -133,7 +117,7 @@ class CrystallisedViewSpec extends TestSupport with FeatureSwitching {
     }
 
     "have a couple of sentences about adjustments when the bill has not been paid" in {
-      val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), true, true, bizAndPropertyUser)
+      val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), true, bizAndPropertyUser)
       import setup._
       document.getElementById("adjustments").text shouldBe crysMessages.errors
       document.getElementById("changes").text shouldBe crysMessages.changes
@@ -141,20 +125,20 @@ class CrystallisedViewSpec extends TestSupport with FeatureSwitching {
 
     "NOT show a button to go to payments" when {
       "not eligible for payments" in {
-        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), true, true, bizAndPropertyUser)
+        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel(), true, bizAndPropertyUser)
         import setup._
         Option(document.getElementById("payment-button")) shouldBe None
       }
 
       "the bill has no outstanding amount" in {
-        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel().copy(outstandingAmount = None), true, true, bizAndPropertyUser)
+        val setup = pageSetup(busPropBRTCalcDataModel, paidTransactionModel().copy(outstandingAmount = None), true, bizAndPropertyUser)
         import setup._
         Option(document.getElementById("payment-button")) shouldBe None
       }
     }
 
     "show a button to go to payments, when eligible for payments" in {
-      val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), true, true, bizAndPropertyUser)
+      val setup = pageSetup(busPropBRTCalcDataModel, transactionModel(), true, bizAndPropertyUser)
       import setup._
       document.getElementById("payment-button").text() shouldBe messages.Crystallised.payNow
       document.getElementById("payment-button").attr("href") shouldBe
