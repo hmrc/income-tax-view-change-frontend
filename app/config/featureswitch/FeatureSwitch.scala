@@ -26,12 +26,13 @@ sealed trait FeatureSwitch {
 object FeatureSwitch {
   val prefix = "feature-switch"
 
-  val switches: Set[FeatureSwitch]  = Set(
+  val switches: Set[FeatureSwitch] = Set(
     Payment,
     Estimates,
     Bills,
     ReportDeadlines,
-    ObligationsPage
+    ObligationsPage,
+    CalculationPageUpdate
   )
 
   def apply(str: String): FeatureSwitch =
@@ -42,6 +43,11 @@ object FeatureSwitch {
 
   def get(str: String): Option[FeatureSwitch] = switches find (_.name == str)
 
+}
+
+case object CalculationPageUpdate extends FeatureSwitch {
+  override val name: String = s"$prefix.enable-calculation-page-update"
+  override val displayText: String = "Enable Calculation Page Update"
 }
 
 case object Payment extends FeatureSwitch {
