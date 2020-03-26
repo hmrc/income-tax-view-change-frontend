@@ -16,43 +16,66 @@
 
 package controllers
 
-import audit.AuditingService
-import audit.models.BillsAuditing.BillsAuditModel
-import audit.models.EstimatesAuditing.EstimatesAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, Payment}
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.featureswitch.FeatureSwitching
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
-import enums.{Crystallised, Estimate}
 import implicits.ImplicitDateFormatter
 import javax.inject.{Inject, Singleton}
 import models.calculation._
-import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, TransactionModel}
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc._
+import play.twirl.api.Html
 import services.{CalculationService, FinancialTransactionsService}
-import uk.gov.hmrc.http.HeaderCarrier
+import views.html.taxYearOverview
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                      implicit val messagesApi: MessagesApi,
-                                      implicit val ec: ExecutionContext,
-                                      val checkSessionTimeout: SessionTimeoutPredicate,
-                                      val authenticate: AuthenticationPredicate,
-                                      val retrieveNino: NinoPredicate,
-                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                      val calculationService: CalculationService,
-                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                      val auditingService: AuditingService,
-                                      val financialTransactionsService: FinancialTransactionsService,
-                                      val itvcErrorHandler: ItvcErrorHandler
-                                     ) extends BaseController with ImplicitDateFormatter with FeatureSwitching {
+class CalculationController @Inject()(authenticate: AuthenticationPredicate,
+                                      calculationService: CalculationService,
+                                      checkSessionTimeout: SessionTimeoutPredicate,
+                                      financialTransactionsService: FinancialTransactionsService,
+                                      itvcErrorHandler: ItvcErrorHandler,
+                                      retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                      retrieveNino: NinoPredicate)
+                                     (implicit val appConfig: FrontendAppConfig,
+                                      val messagesApi: MessagesApi,
+                                      ec: ExecutionContext) extends BaseController with ImplicitDateFormatter with FeatureSwitching {
 
   val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+
+  private def view(taxYear: Int, calculation: Calculation, transaction: Option[TransactionModel] = None)(implicit request: Request[_]): Html = {
+    taxYearOverview(
+      taxYear = taxYear,
+      overview = CalcOverview(calculation, transaction),
+      transaction = transaction
+    )
+  }
+
+  private def showCalculationForYear(taxYear: Int): Action[AnyContent] = action.async {
+    implicit user =>
+      calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
+        case CalcDisplayModel(_, _, calculation, _) =>
+          if (calculation.crystallised) {
+            financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear) map {
+              case _: FinancialTransactionsErrorModel =>
+                Logger.error(s"[CalculationController][showCalculationForYear] - Could not retrieve financial transactions model for year: $taxYear")
+                itvcErrorHandler.showInternalServerError()
+              case financialTransactionsModel: FinancialTransactionsModel =>
+                val transaction = financialTransactionsModel.findChargeForTaxYear(taxYear)
+                Ok(view(taxYear, calculation, transaction))
+            }
+          } else {
+            Future.successful(Ok(view(taxYear, calculation)))
+          }
+        case CalcDisplayNoDataFound | CalcDisplayError =>
+          Logger.error(s"[CalculationController][showCalculationForYear] - Could not retrieve calculation for year $taxYear")
+          Future.successful(itvcErrorHandler.showInternalServerError())
+      }
+  }
 
   def renderCalculationPage(taxYear: Int): Action[AnyContent] = {
     if (taxYear > 0) {
@@ -66,52 +89,5 @@ class CalculationController @Inject()(implicit val appConfig: FrontendAppConfig,
     }
   }
 
-  private val showCalculationForYear: Int => Action[AnyContent] = taxYear => action.async {
-    implicit user =>
-      implicit val sources: IncomeSourceDetailsModel = user.incomeSources
-      calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
-        case calcDisplayModel: CalcDisplayModel =>
-          calcDisplayModel.calcStatus match {
-            case Crystallised =>
-              auditCalcDisplayModel(user, calcDisplayModel, isEstimate = false)
-              renderCrystallisedView(calcDisplayModel, taxYear)
-            case Estimate =>
-              auditCalcDisplayModel(user, calcDisplayModel, isEstimate = true)
-              Future.successful(Ok(views.html.estimatedTaxLiability(calcDisplayModel, taxYear)))
-          }
-
-        case CalcDisplayNoDataFound =>
-          Logger.warn(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Not found")
-          Future.successful(NotFound(views.html.noEstimatedTaxLiability(taxYear)))
-
-        case CalcDisplayError =>
-          Logger.error(s"[CalculationController][showCalculationForYear[$taxYear]] No last tax calculation data could be retrieved. Downstream error")
-          Future.successful(Ok(views.html.errorPages.estimatedTaxLiabilityError(taxYear)))
-      }
-  }
-
-  private def renderCrystallisedView(model: CrystallisedViewModel, taxYear: Int)(implicit user: MtdItUser[_]): Future[Result] = {
-    implicit val sources: IncomeSourceDetailsModel = user.incomeSources
-    financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear).map {
-      case transactions: FinancialTransactionsModel =>
-        (transactions.findChargeForTaxYear(taxYear), model) match {
-          case (Some(charge), calcDisplayModel: CalcDisplayModel) =>
-            Ok(views.html.crystallised(calcDisplayModel, charge, taxYear, isEnabled(Payment)))
-          case _ =>
-            Logger.error(s"[CalculationController][renderCrystallisedView[$taxYear]] No transaction could be retrieved for given year.")
-            itvcErrorHandler.showInternalServerError
-        }
-      case _: FinancialTransactionsErrorModel =>
-        Logger.error(s"[CalculationController][renderCrystallisedView[$taxYear]] FinancialTransactionErrorModel returned from ftResponse")
-        itvcErrorHandler.showInternalServerError
-    }
-  }
-
-  private def auditCalcDisplayModel(user: MtdItUser[_], model: CalcDisplayModel, isEstimate: Boolean)
-                                   (implicit hc: HeaderCarrier): Unit =
-    auditingService.audit(
-      if (isEstimate) EstimatesAuditModel(user, model) else BillsAuditModel(user, model),
-      Some(controllers.routes.CalculationController.renderCalculationPage(user.incomeSources.earliestTaxYear.get).url)
-    )
 }
 
