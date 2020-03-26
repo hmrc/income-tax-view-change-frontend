@@ -32,7 +32,8 @@ object FeatureSwitch {
     Bills,
     ReportDeadlines,
     ObligationsPage,
-    CalculationPageUpdate
+    CalculationPageUpdate,
+    IncomeBreakdown
   )
 
   def apply(str: String): FeatureSwitch =
@@ -73,4 +74,9 @@ case object ReportDeadlines extends FeatureSwitch {
 case object ObligationsPage extends FeatureSwitch {
   override val name = s"$prefix.enable-obligations-page"
   override val displayText = "Enable Obligations Page"
+}
+
+case object IncomeBreakdown extends FeatureSwitch {
+  override val name: String = s"$prefix.enable-calculation-income-breakdown"
+  override val displayText: String = "Enable Income Calc Breakdown"
 }
