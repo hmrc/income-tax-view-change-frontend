@@ -87,6 +87,17 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = rates and allo
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = you may earn more money
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = you may have income that is not reported in your accounting software
 
+## Income Breakdown Page ##
+income_breakdown.heading                                        = Income
+income_breakdown.dates                                          = 6 April {0} to 5 April {1}
+income_breakdown.guidance_software                              = This is a summary of your income for the tax year {0}-{1}. You can see more details in your
+income_breakdown.guidance_software.link                         = record-keeping software
+income_breakdown.table.self_employment                          = Profit from all self employments
+income_breakdown.table.property                                 = Profit from UK land and property
+income_breakdown.table.bbsi                                     = Interest from UK banks, building societies and securities
+income_breakdown.table.dividends                                = Dividends from UK companies
+income_breakdown.total                                          = Total income
+
 ## ReportDeadlines Page ##
 obligations.title                                               = Report deadlines
 obligations.heading                                             = Report deadlines

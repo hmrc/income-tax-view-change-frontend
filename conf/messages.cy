@@ -65,6 +65,17 @@ estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = ni fydd cyfrad
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = efallai y byddwch yn ennill mwy o arian
 estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = efallai bod gennych incwm nac adroddir amdano yn eich meddalwedd cyfrifyddu
 
+## Income Breakdown Page ##
+income_breakdown.heading                                        = Incwm
+income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
+income_breakdown.guidance_software                              = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0}-{1}. Gallwch weld rhagor o fanylion yn eich
+income_breakdown.guidance_software.link                         = meddalwedd cadw cofnodion
+income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
+income_breakdown.table.property                                 = Elw o dir ac eiddo yn y DU
+income_breakdown.table.bbsi                                     = Llog o fanciau, cymdeithasau adeiladu a gwarantau ac ati yn y DU
+income_breakdown.table.dividends                                = Difidendau o gwmnïau yn y DU
+income_breakdown.total                                          = Cyfanswm yr incwm
+
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
