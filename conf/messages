@@ -213,3 +213,8 @@ timeoutDialog.minutes.two                                       = minutes
 timeoutDialog.minute                                            = minute
 timeoutDialog.message                                           = For your security, you will be signed out in:
 button.continue                                                 = Continue
+
+## Not found
+notFound.title = Page not found
+notFound.heading = This page cannot be found
+notFound.message = Please check that you have entered the correct web address.

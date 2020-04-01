@@ -207,3 +207,8 @@ timeoutDialog.message                                           = Er eich diogel
 timeoutDialog.seconds                                           = eiliad
 timeoutDialog.title                                             = Rydych ar fin cael eich allgofnodi
 button.continue                                                 = Yn eich blaen
+
+## Not found
+notFound.title = Heb ddod o hyd i’r dudalen
+notFound.heading = Ni ellir dod o hyd i’r dudalen hon
+notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
