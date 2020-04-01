@@ -59,6 +59,17 @@ tax-year-overview.tax-due                                       = Y dreth sy’n
 tax-year-overview.payment                                       = Taliad
 tax-year-overview.total-remaining                               = Cyfanswm sy’n ddyledus sy’n weddill
 
+## Income Breakdown Page ##
+income_breakdown.heading                                        = Incwm
+income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
+income_breakdown.guidance_software                              = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0}-{1}. Gallwch weld rhagor o fanylion yn eich
+income_breakdown.guidance_software.link                         = meddalwedd cadw cofnodion
+income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
+income_breakdown.table.property                                 = Elw o dir ac eiddo yn y DU
+income_breakdown.table.bbsi                                     = Llog o fanciau, cymdeithasau adeiladu a gwarantau ac ati yn y DU
+income_breakdown.table.dividends                                = Difidendau o gwmnïau yn y DU
+income_breakdown.total                                          = Cyfanswm yr incwm
+
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
@@ -196,3 +207,8 @@ timeoutDialog.message                                           = Er eich diogel
 timeoutDialog.seconds                                           = eiliad
 timeoutDialog.title                                             = Rydych ar fin cael eich allgofnodi
 button.continue                                                 = Yn eich blaen
+
+## Not found
+notFound.title = Heb ddod o hyd i’r dudalen
+notFound.heading = Ni ellir dod o hyd i’r dudalen hon
+notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
