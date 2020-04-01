@@ -29,12 +29,12 @@ object CalcBreakdownTestConstants {
   )
 
   val calculationDataSuccessModel = Calculation(
-    totalIncomeTaxAndNicsDue = Some(0),
+    totalIncomeTaxAndNicsDue = Some(2010.00),
     totalIncomeTaxNicsCharged = Some(90500.00),
     totalTaxableIncome = Some(198500.00),
     incomeTaxNicAmount = None,
     timestamp = Some(testTimeStampString),
-    crystallised = true,
+    crystallised = false,
     nationalRegime = None,
 
     payPensionsProfit = PayPensionsProfit(

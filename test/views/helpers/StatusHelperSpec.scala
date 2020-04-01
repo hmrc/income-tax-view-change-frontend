@@ -35,7 +35,7 @@ class StatusHelperSpec extends TestSupport {
         val result = Jsoup.parse(statusHelper(None).toString())
 
         "has the correct class" in {
-          result.select("div").attr("class") shouldBe "govUk-tag"
+          result.select("span").attr("class") shouldBe "govUk-tag"
         }
 
         "has the correct message" in {
@@ -44,10 +44,10 @@ class StatusHelperSpec extends TestSupport {
       }
 
       "provided with an unpaid financial transaction for an ongoing status" which {
-        val result = Jsoup.parse(statusHelper(Some(TransactionModelWithYear(EstimatesTestConstants.transactionModelStatus(false, false), 2020))).toString())
+        val result = Jsoup.parse(statusHelper(Some(EstimatesTestConstants.transactionModelStatus(false, false))).toString())
 
         "has the correct class" in {
-          result.select("div").attr("class") shouldBe "govUk-tag"
+          result.select("span").attr("class") shouldBe "govUk-tag"
         }
 
         "has the correct message" in {
@@ -56,10 +56,10 @@ class StatusHelperSpec extends TestSupport {
       }
 
       "provided with a paid financial transaction for a complete status" which {
-        val result = Jsoup.parse(statusHelper(Some(TransactionModelWithYear(EstimatesTestConstants.transactionModelStatus(true, false), 2020))).toString())
+        val result = Jsoup.parse(statusHelper(Some(EstimatesTestConstants.transactionModelStatus(true, false))).toString())
 
         "has the correct class" in {
-          result.select("div").attr("class") shouldBe "govUk-tag govUk-tag--complete"
+          result.select("span").attr("class") shouldBe "govUk-tag govUk-tag--complete"
         }
 
         "has the correct message" in {
@@ -68,10 +68,10 @@ class StatusHelperSpec extends TestSupport {
       }
 
       "provided with an unpaid financial transaction for an overdue status" which {
-        val result = Jsoup.parse(statusHelper(Some(TransactionModelWithYear(EstimatesTestConstants.transactionModelStatus(false, true), 2020))).toString())
+        val result = Jsoup.parse(statusHelper(Some(EstimatesTestConstants.transactionModelStatus(false, true))).toString())
 
         "has the correct class" in {
-          result.select("div").attr("class") shouldBe "govUk-tag govUk-tag--overdue"
+          result.select("span").attr("class") shouldBe "govUk-tag govUk-tag--overdue"
         }
 
         "has the correct message" in {

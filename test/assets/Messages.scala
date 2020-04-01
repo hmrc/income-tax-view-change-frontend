@@ -233,6 +233,7 @@ object Messages {
     val statement = "Income Tax statement"
     val updates = "Updates"
     val payementsDue = "Income Tax payments"
+    def taxYearOverview(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear"
   }
 
   //ReportDeadlines Page Messages
@@ -289,6 +290,20 @@ object Messages {
     def billLinkAria(fromYear: String, toYear: String) = s"View bill for Tax year $fromYear to $toYear"
     val payNow = "Pay now"
     def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
+  }
+
+  object TaxYearOverview {
+    val title = "Tax year overview"
+    def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"
+    def status(status: String) = s"Tax year status: $status"
+    def calculationDate(date: String) = s"Calculation date: $date"
+    val summary = "This page shows a summary of your tax year."
+    val income = "Income"
+    val deductions = "Deduction"
+    val taxableIncome = "Total taxable income"
+    val taxDue = "Tax due"
+    val payment = "Payment"
+    val totalRemaining = "Total remaining due"
   }
 
 }

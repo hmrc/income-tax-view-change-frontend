@@ -16,14 +16,10 @@
 
 package assets.messages
 
-object CalculationMessages {
+object TaxYearOverviewMessages {
 
-  val billsTitle: Int => String = year => s"Income tax bill for ${year - 1} to $year"
-  val title: Int => String = year => s"${year - 1} to $year tax year"
-  val heading: Int => String = billsTitle(_)
-  val estimateTitle: Int => String = year => s"Tax estimate for ${year - 1} - $year"
-  val estimateHeading: Int => String = estimateTitle(_)
+  val title: String = "Tax year overview"
+  def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"
+  def calculationDate(date: String): String = s"Calculation date: $date"
 
-  val internalServerErrorp1 = "We can’t display your estimated tax amount at the moment."
-  val internalServerErrorp2 = "Try refreshing the page in a few minutes."
 }
