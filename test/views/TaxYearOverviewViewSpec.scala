@@ -17,6 +17,7 @@
 package views
 
 import assets.Messages.{Breadcrumbs, TaxYearOverview}
+import config.featureswitch.{FeatureSwitching, IncomeBreakdown}
 import models.calculation.CalcOverview
 import models.financialTransactions.TransactionModel
 import org.jsoup.Jsoup
@@ -26,10 +27,9 @@ import play.api.i18n.Messages.Implicits.applicationMessages
 import play.twirl.api.Html
 import testUtils.TestSupport
 import views.html.taxYearOverview
-
 import implicits.ImplicitCurrencyFormatter._
 
-class TaxYearOverviewViewSpec extends TestSupport {
+class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
 
   val testYear: Int = 2020
   val completeOverview: CalcOverview = CalcOverview(
@@ -49,12 +49,18 @@ class TaxYearOverviewViewSpec extends TestSupport {
 
   class Setup(taxYear: Int = testYear,
               overview: CalcOverview = completeOverview,
-              transaction: Option[TransactionModel] = Some(transactionModel)) {
+              transaction: Option[TransactionModel] = Some(transactionModel),
+              incomeBreakdown: Boolean = false) {
 
-    val page: Html = taxYearOverview(taxYear, overview, transaction)
+    val page: Html = taxYearOverview(taxYear, overview, transaction, incomeBreakdown)
     val document: Document = Jsoup.parse(page.body)
     val content: Element = document.selectFirst("#content")
 
+    def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
+
+    def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
+
+    def getElementByCss(selector: String): Option[Element] = Option(document.select(selector).first())
   }
 
   "taxYearOverview" must {
@@ -88,10 +94,21 @@ class TaxYearOverviewViewSpec extends TestSupport {
     }
 
     "have a table of income and deductions" which {
-      "has a row for income" in new Setup {
+      "has a row but no link for income when FS IncomeBreakdown is disabled " in new Setup {
+
         val row: Elements = content.select("#income-deductions-table tr:nth-child(1)")
         row.select("td:nth-child(1)").text shouldBe TaxYearOverview.income
         row.select("td[class=numeric]").text shouldBe completeOverview.income.toCurrencyString
+        val link: Option[Element] =
+          getElementByCss("#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a")
+        link shouldBe None
+      }
+      "has a row and link to view updates when FS IncomeBreakdown is enabled" in new Setup( incomeBreakdown = true) {
+
+        val link: Option[Element] =
+          getElementByCss("#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a")
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url)
+        link.map(_.text) shouldBe Some(TaxYearOverview.income)
       }
       "has a row for deductions" in new Setup {
         val row: Elements = content.select("#income-deductions-table tr:nth-child(2)")
