@@ -32,7 +32,7 @@ object TestHeadersModel {
     "UK_SE_SAVINGS_EXAMPLE" -> "Self Employed with Savings",
     "ERROR_MESSAGES_EXIST" -> "Failed Calculation",
     "NOT_FOUND" -> "Calculation Not Found",
-    "CRYSTALLISATION_METADATA" -> "Crystallised Calculation"
+    "ITVC_CRYSTALLISATION_METADATA" -> "Crystallised Calculation"
   )
 
   val validCalcIdHeaders: Seq[String] = Seq("DEFAULT", "NOT_FOUND")

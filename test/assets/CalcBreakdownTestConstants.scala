@@ -690,7 +690,7 @@ object CalcBreakdownTestConstants {
     )
 
   val calculationAllIncomeSources = Calculation(
-    totalTaxableIncome = Some(10010.10),
+    totalIncomeReceived = Some(10010.10),
     crystallised = false,
     payPensionsProfit = PayPensionsProfit(
       totalSelfEmploymentProfit = Some(1001.01),
