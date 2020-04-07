@@ -92,8 +92,8 @@ object Messages {
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} $title"
     def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
-      s"You can see more details in your record-keeping software."
-    val guidanceLink = "record-keeping software"
+      s"You can see more details in your record-keeping software (opens in a new tab)."
+    val guidanceLink = "record-keeping software (opens in a new tab)"
     val selfEmployments = "Profit from all self employments"
     val property = "Profit from UK land and property"
     val bbsi = "Interest from UK banks, building societies and securities"

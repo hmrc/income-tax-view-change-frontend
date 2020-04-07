@@ -23,7 +23,7 @@
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal]) = {
   @if(dataItem.isDefined) {
-   <tr>
+   <tr id="@messageCode">
     <td>@messages(s"income_breakdown.table.$messageCode")</td>
     <td class="numeric">@{dataItem.get.toCurrency}</td>
    </tr>
@@ -42,7 +42,7 @@
  <div>
   <p>
    @messages("income_breakdown.guidance_software", s"${taxYear-1}", s"$taxYear")
-   <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax">@messages("income_breakdown.guidance_software.link")</a>.
+   <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">@messages("income_breakdown.guidance_software.link") <span class="visually-hidden">@messages("obligations.opens-in-new-tab")</span></a>.
   </p>
 
   <table>
@@ -52,7 +52,7 @@
    @tableRow("dividends", calcModel.calcDataModel.dividends.taxableIncome)
    <tr class="no-border-bottom">
     <td class="total-section">@messages("income_breakdown.total")</td>
-    <td class="numeric total-section">@calcModel.calcDataModel.totalTaxableIncome.getOrElse(BigDecimal(0)).toCurrency</td>
+    <td class="numeric total-section">@calcModel.calcDataModel.totalIncomeReceived.getOrElse(BigDecimal(0)).toCurrency</td>
    </tr>
   </table>
  </div>
