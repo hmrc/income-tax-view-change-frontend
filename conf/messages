@@ -71,6 +71,15 @@ income_breakdown.table.bbsi                                     = Interest from 
 income_breakdown.table.dividends                                = Dividends from UK companies
 income_breakdown.total                                          = Total income
 
+## Deduction Breakdown Page ##
+deduction_breakdown.heading                                            = Deductions
+deduction_breakdown.dates                                              = 6 April {0} to 5 April {1}
+deduction_breakdown.guidance_software                                  = This is a summary of your income for the tax year {0}-{1}. You can see more details in your
+deduction_breakdown.guidance_software.link                             = record-keeping software
+deduction_breakdown.table.personal_allowance                           = Personal Allowance
+deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Gift of investments and property to charity
+deduction_breakdown.total                                              = Total deductions
+
 ## ReportDeadlines Page ##
 obligations.title                                               = Report deadlines
 obligations.heading                                             = Report deadlines
