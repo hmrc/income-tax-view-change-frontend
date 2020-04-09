@@ -60,21 +60,25 @@
                 </p>
             }
 
-            <p id="tax-year-summary">@messages("tax-year-overview.summary")</p>
+            <p id="tax-year-summary">
+                @if(incomeBreakdown) {
+                    @messages("tax-year-overview.links-summary")
+                } else {
+                    @messages("tax-year-overview.no-links-summary")
+                }
+            </p>
 
             <table id="income-deductions-table">
-                @if(incomeBreakdown == false) {
-                    <tr>
-                        <td>@messages("tax-year-overview.income")</td>
-                        <td class="numeric">@{overview.income.toCurrencyString}</td>
-                    </tr>
-                } else {
-                    <tr>
-                        <td><a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>
-                            @messages("tax-year-overview.income")</a></td>
-                        <td class="numeric">@{overview.income.toCurrencyString}</td>
-                    </tr>
-                }
+                <tr>
+                    <td>
+                        @if(incomeBreakdown) {
+                            <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+                        } else {
+                            @messages("tax-year-overview.income")
+                        }
+                    </td>
+                    <td class="numeric">@{overview.income.toCurrencyString}</td>
+                </tr>
                 <tr>
                     <td>@messages("tax-year-overview.deductions")</td>
                     <td class="numeric">@{overview.deductions.toNegativeCurrencyString}</td>

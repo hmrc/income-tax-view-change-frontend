@@ -89,8 +89,17 @@ class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
       status.select("span").hasClass("govUk-tag") shouldBe true
     }
 
-    "have a summary of the tables on the page" in new Setup {
-      content.select("#tax-year-summary").text shouldBe TaxYearOverview.summary
+    "have a summary of the tables on the page" which {
+      "describes links" when {
+        "incomeBreakdown feature switch is enabled" in new Setup(incomeBreakdown = true) {
+          content.select("#tax-year-summary").text shouldBe TaxYearOverview.linksSummary
+        }
+      }
+      "describes the page" when {
+        "none of the feature switches are enabled" in new Setup(incomeBreakdown = false) {
+          content.select("#tax-year-summary").text shouldBe TaxYearOverview.noLinksSummary
+        }
+      }
     }
 
     "have a table of income and deductions" which {
@@ -103,7 +112,7 @@ class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
           getElementByCss("#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a")
         link shouldBe None
       }
-      "has a row and link to view updates when FS IncomeBreakdown is enabled" in new Setup( incomeBreakdown = true) {
+      "has a row and link to view updates when FS IncomeBreakdown is enabled" in new Setup(incomeBreakdown = true) {
 
         val link: Option[Element] =
           getElementByCss("#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a")
