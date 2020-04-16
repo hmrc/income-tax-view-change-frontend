@@ -51,13 +51,25 @@ tax-year-overview.heading                                       = 6 Ebrill {0} h
 tax-year-overview.heading-secondary                             = Trosolwg blwyddyn dreth
 tax-year-overview.status                                        = Statws y flwyddyn dreth:
 tax-year-overview.calculation-date                              = Dyddiad y cyfrifiad:
-tax-year-overview.summary                                       = Mae’r dudalen hon yn dangos crynodeb o’ch blwyddyn dreth.
+tax-year-overview.links-summary                                 = Cliciwch ar bob cysylltiad i gael rhagor o fanylion am bob adran.
+tax-year-overview.no-links-summary                              = Mae’r dudalen hon yn dangos crynodeb o’ch blwyddyn dreth.
 tax-year-overview.income                                        = Incwm
 tax-year-overview.deductions                                    = Didyniad
 tax-year-overview.taxable-income                                = Cyfanswm eich incwm trethadwy
 tax-year-overview.tax-due                                       = Y dreth sy’n ddyledus
 tax-year-overview.payment                                       = Taliad
 tax-year-overview.total-remaining                               = Cyfanswm sy’n ddyledus sy’n weddill
+
+## Income Breakdown Page ##
+income_breakdown.heading                                        = Incwm
+income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
+income_breakdown.guidance_software                              = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0}-{1}. Gallwch weld rhagor o fanylion yn eich
+income_breakdown.guidance_software.link                         = meddalwedd cadw cofnodion
+income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
+income_breakdown.table.property                                 = Elw o dir ac eiddo yn y DU
+income_breakdown.table.bbsi                                     = Llog o fanciau, cymdeithasau adeiladu a gwarantau ac ati yn y DU
+income_breakdown.table.dividends                                = Difidendau o gwmnïau yn y DU
+income_breakdown.total                                          = Cyfanswm yr incwm
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
@@ -196,3 +208,8 @@ timeoutDialog.message                                           = Er eich diogel
 timeoutDialog.seconds                                           = eiliad
 timeoutDialog.title                                             = Rydych ar fin cael eich allgofnodi
 button.continue                                                 = Yn eich blaen
+
+## Not found
+notFound.title = Heb ddod o hyd i’r dudalen
+notFound.heading = Ni ellir dod o hyd i’r dudalen hon
+notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.

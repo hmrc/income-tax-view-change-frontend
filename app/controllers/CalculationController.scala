@@ -17,7 +17,7 @@
 package controllers
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, IncomeBreakdown}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
@@ -47,11 +47,12 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
 
   val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
-  private def view(taxYear: Int, calculation: Calculation, transaction: Option[TransactionModel] = None)(implicit request: Request[_]): Html = {
+  private def view(taxYear: Int, calculation: Calculation, transaction: Option[TransactionModel] = None, incomeBreakdown: Boolean = false)(implicit request: Request[_]): Html = {
     taxYearOverview(
       taxYear = taxYear,
       overview = CalcOverview(calculation, transaction),
-      transaction = transaction
+      transaction = transaction,
+      incomeBreakdown = isEnabled(IncomeBreakdown)
     )
   }
 

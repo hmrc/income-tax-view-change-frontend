@@ -15,6 +15,9 @@ GET         /previous-obligations                   controllers.PreviousObligati
 #Calculation
 GET         /calculation/:taxYear                   controllers.CalculationController.renderCalculationPage(taxYear: Int)
 
+#IncomeSummary
+GET         /calculation/:taxYear/income            controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int)
+
 #TaxYears
 GET         /tax-years                              controllers.TaxYearsController.viewTaxYears
 

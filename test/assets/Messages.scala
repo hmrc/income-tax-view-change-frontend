@@ -54,6 +54,7 @@ object Messages {
 
   object Base {
     val backToHome = "Back to Income Tax home"
+    val back = "Back"
   }
 
   object RecruitmentBanner {
@@ -84,6 +85,20 @@ object Messages {
     val taxYearsHeading = "My tax years"
     val taxYearsDescription = "Check the status of each tax year."
     val taxYearsLink = "View tax years"
+  }
+
+  object IncomeBreakdown {
+    val title = "Income"
+    def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
+    def heading(taxYear: Int): String = s"${subHeading(taxYear)} $title"
+    def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
+      s"You can see more details in your record-keeping software (opens in a new tab)."
+    val guidanceLink = "record-keeping software (opens in a new tab)"
+    val selfEmployments = "Profit from all self employments"
+    val property = "Profit from UK land and property"
+    val bbsi = "Interest from UK banks, building societies and securities"
+    val dividends = "Dividends from UK companies"
+    val total = "Total income"
   }
 
   // Estimated Tax Liability Page Messages
@@ -297,7 +312,8 @@ object Messages {
     def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"
     def status(status: String) = s"Tax year status: $status"
     def calculationDate(date: String) = s"Calculation date: $date"
-    val summary = "This page shows a summary of your tax year."
+    val linksSummary = "Click on each link for more detail about each section."
+    val noLinksSummary = "This page shows a summary of your tax year."
     val income = "Income"
     val deductions = "Deduction"
     val taxableIncome = "Total taxable income"
