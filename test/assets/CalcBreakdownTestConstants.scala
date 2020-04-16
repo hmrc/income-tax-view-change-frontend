@@ -682,10 +682,25 @@ object CalcBreakdownTestConstants {
         totalNic = Some(66000.00)
       )
     )
+
   val errorCalculationModel: CalculationErrorModel =
     CalculationErrorModel(
       Status.INTERNAL_SERVER_ERROR,
       "Internal server error"
     )
 
+  val calculationAllIncomeSources = Calculation(
+    totalIncomeReceived = Some(10010.10),
+    crystallised = false,
+    payPensionsProfit = PayPensionsProfit(
+      totalSelfEmploymentProfit = Some(1001.01),
+      totalPropertyProfit = Some(2002.02)
+    ),
+    savingsAndGains = SavingsAndGains(
+      taxableIncome = Some(3003.03)
+    ),
+    dividends = Dividends(
+      taxableIncome = Some(4004.04)
+    )
+  )
 }

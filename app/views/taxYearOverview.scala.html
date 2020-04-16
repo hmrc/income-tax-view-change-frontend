@@ -22,7 +22,7 @@
 @import views.html.helpers.{breadcrumbHelper, statusHelper}
 @import views.html.templates.main_template
 
-@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None, incomeBreakdown: Boolean = false)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @breadcrumb = @{
     breadcrumbHelper(
@@ -60,11 +60,23 @@
                 </p>
             }
 
-            <p id="tax-year-summary">@messages("tax-year-overview.summary")</p>
+            <p id="tax-year-summary">
+                @if(incomeBreakdown) {
+                    @messages("tax-year-overview.links-summary")
+                } else {
+                    @messages("tax-year-overview.no-links-summary")
+                }
+            </p>
 
             <table id="income-deductions-table">
                 <tr>
-                    <td>@messages("tax-year-overview.income")</td>
+                    <td>
+                        @if(incomeBreakdown) {
+                            <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+                        } else {
+                            @messages("tax-year-overview.income")
+                        }
+                    </td>
                     <td class="numeric">@{overview.income.toCurrencyString}</td>
                 </tr>
                 <tr>
