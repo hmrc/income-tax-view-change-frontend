@@ -79,7 +79,7 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
           mockGetLatestCalculationId(testNino, "2017-18")(Right("testIdOne"))
           mockGetCalculation(testNino, "testIdOne")(calculationDataSuccessModel)
 
-          await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplaySuccessCrystalisationModel(calculationDataSuccessModel)
+          await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
 
         }
 

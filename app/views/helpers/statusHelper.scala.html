@@ -14,18 +14,16 @@
  * limitations under the License.
  *@
 
-@import models.financialTransactions.TransactionModelWithYear
+@import models.financialTransactions.TransactionModel
 
-@(transaction: Option[TransactionModelWithYear])(implicit messages: Messages)
+@(transaction: Option[TransactionModel])(implicit messages: Messages)
 
 @statusLabel(message: String, status: Option[String] = None) = {
- <div class="@{s"govUk-tag${status.getOrElse("")}"}">
-  <span>@message</span>
- </div>
+  <span class="@{s"govUk-tag${status.getOrElse("")}"}">@message</span>
 }
 
 @{transaction match {
-    case Some(bill) if bill.model.isPaid => statusLabel(messages("taxYears.complete"), Some(" govUk-tag--complete"))
-    case Some(bill) if bill.model.isOverdue => statusLabel(messages("taxYears.overdue"), Some(" govUk-tag--overdue"))
+    case Some(bill) if bill.isPaid => statusLabel(messages("taxYears.complete"), Some(" govUk-tag--complete"))
+    case Some(bill) if bill.isOverdue => statusLabel(messages("taxYears.overdue"), Some(" govUk-tag--overdue"))
     case _ => statusLabel(messages("taxYears.ongoing"))
 }}

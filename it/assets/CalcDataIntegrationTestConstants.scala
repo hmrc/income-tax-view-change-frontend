@@ -137,7 +137,8 @@ object CalcDataIntegrationTestConstants {
   ,
   "taxableIncome" -> Json.obj(
     "summary" -> Json.obj(
-      "totalTaxableIncome" -> 198500
+      "totalTaxableIncome" -> 198500,
+      "totalIncomeReceivedFromAllSources" -> 199505
     ),
     "detail" -> Json.obj(
       "payPensionsProfit" -> Json.obj(
@@ -281,11 +282,11 @@ object CalcDataIntegrationTestConstants {
           )
         )
       )
-    )
-    ,
+    ),
     "taxableIncome" -> Json.obj(
       "summary" -> Json.obj(
-        "totalTaxableIncome" -> 198500
+        "totalTaxableIncome" -> 198500,
+        "totalIncomeReceivedFromAllSources" -> 199505
       ),
       "detail" -> Json.obj(
         "payPensionsProfit" -> Json.obj(
