@@ -30,6 +30,7 @@ object CalculationErrorModel {
 
 case class Calculation(totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
                        totalIncomeTaxNicsCharged: Option[BigDecimal] = None,
+                       totalIncomeReceived: Option[BigDecimal] = None,
                        totalTaxableIncome: Option[BigDecimal] = None,
                        incomeTaxNicAmount: Option[BigDecimal] = None,
                        timestamp: Option[String] = None,
@@ -45,6 +46,7 @@ object Calculation {
   implicit val reads: Reads[Calculation] = (
     readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalIncomeTaxAndNicsDue") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalIncomeTaxNicsCharged") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "summary" \ "totalIncomeReceivedFromAllSources") and
       readNullable[BigDecimal](__ \ "taxableIncome" \ "summary" \ "totalTaxableIncome") and
       readNullable[BigDecimal](__ \ "endOfYearEstimate" \ "summary" \ "incomeTaxNicAmount") and
       readNullable[String](__ \ "metadata" \ "calculationTimestamp") and

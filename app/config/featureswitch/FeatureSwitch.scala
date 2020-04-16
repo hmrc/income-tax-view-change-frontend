@@ -32,7 +32,6 @@ object FeatureSwitch {
     Bills,
     ReportDeadlines,
     ObligationsPage,
-    CalculationPageUpdate,
     IncomeBreakdown
   )
 
@@ -44,11 +43,6 @@ object FeatureSwitch {
 
   def get(str: String): Option[FeatureSwitch] = switches find (_.name == str)
 
-}
-
-case object CalculationPageUpdate extends FeatureSwitch {
-  override val name: String = s"$prefix.enable-calculation-page-update"
-  override val displayText: String = "Enable Calculation Page Update"
 }
 
 case object Payment extends FeatureSwitch {

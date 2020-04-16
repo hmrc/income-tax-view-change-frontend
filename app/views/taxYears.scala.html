@@ -53,7 +53,7 @@
                         </a>
                     </td>
                     <td>
-                        @statusHelper(transactions.find(_.taxYear == calc.year))
+                        @statusHelper(transactions.find(_.taxYear == calc.year).map(_.model))
                     </td>
                 </tr>
             }

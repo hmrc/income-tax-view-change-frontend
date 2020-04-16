@@ -45,25 +45,19 @@ taxYears.complete                                              = WEDI CWBLHAU
 taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 
-# Calc Breakdown
-calc-breakdown.national-regime                                  = (Cyfundrefn Genedlaethol: {0})
-calc-breakdown.calculation.income-tax                           = Treth Incwm ({0} ar {1}%)
-calc-breakdown.calculation.dividend                             = Treth ar Ddifidendau ({0} ar {1}%)
-calc-breakdown.calculation.class-two-ni                         = Yswiriant Gwladol Dosbarth 2
-calc-breakdown.calculation.class-four-ni                        = Yswiriant Gwladol Dosbarth 4
-
-## Estimated Tax Liability Page ##
-estimated_tax_liability.title                                   = Blwyddyn dreth {0} i {1}
-estimated_tax_liability.heading                                 = Blwyddyn dreth {0} i {1}
-estimated_tax_liability.subheading                              = Amcangyfrifon
-
-estimated_tax_liability.no-data                                 = Unwaith i chi gyflwyno adroddiad gan ddefnyddio’ch meddalwedd cyfrifyddu, gallwch fwrw golwg ar eich amcangyfrif treth yma.
-estimated_tax_liability.error.p1                                = Ni allwn ddangos swm amcangyfrifedig eich treth ar hyn o bryd.
-estimated_tax_liability.error.p2                                = Rhowch gynnig ar adnewyddu’r dudalen mewn ychydig funudau.
-estimated_tax_liability.inYearEstimate.whyThisMayChange.p1      = Gallai eich amcangyfrifon newid oherwydd:
-estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet1 = ni fydd cyfraddau na lwfansau’n cael eu cymhwyso’n llawn tan ddiwedd y flwyddyn dreth
-estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet2 = efallai y byddwch yn ennill mwy o arian
-estimated_tax_liability.inYearEstimate.whyThisMayChange.bullet3 = efallai bod gennych incwm nac adroddir amdano yn eich meddalwedd cyfrifyddu
+## Tax Year Overview Page ##
+tax-year-overview.title                                         = Trosolwg blwyddyn dreth
+tax-year-overview.heading                                       = 6 Ebrill {0} hyd at 5 Ebrill {1}
+tax-year-overview.heading-secondary                             = Trosolwg blwyddyn dreth
+tax-year-overview.status                                        = Statws y flwyddyn dreth:
+tax-year-overview.calculation-date                              = Dyddiad y cyfrifiad:
+tax-year-overview.summary                                       = Mae’r dudalen hon yn dangos crynodeb o’ch blwyddyn dreth.
+tax-year-overview.income                                        = Incwm
+tax-year-overview.deductions                                    = Didyniad
+tax-year-overview.taxable-income                                = Cyfanswm eich incwm trethadwy
+tax-year-overview.tax-due                                       = Y dreth sy’n ddyledus
+tax-year-overview.payment                                       = Taliad
+tax-year-overview.total-remaining                               = Cyfanswm sy’n ddyledus sy’n weddill
 
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
@@ -98,18 +92,7 @@ crystalisation.title                                            = Eich cyflwynia
 crystalisation.heading                                          = Blwyddyn dreth {0} i {1}
 crystalisation.subheading                                       = Biliau
 crystalisation.dueBy                                            = erbyn 31 Ionawr {0}
-crystalisation.whatYouOwe.para                                  = Mae’r ffigur hwn yn seiliedig ar yr wybodaeth rydych wedi’i darparu yn eich adroddiadau chwarterol a’ch adroddiad terfynol.
 crystalisation.warning                                          = Gallai eich taliad gymryd hyd at 5 diwrnod i’w brosesu. Gallwn godi dirwy arnoch os yw’n hwyr.
-crystalisation.calc-breakdown.heading                           = Sut y cyfrifwyd y ffigur hwn
-
-crystalisation.calc-breakdown.subtotal                          = Is-gyfanswm (ac eithrio taliadau a wnaed gennych)
-crystalisation.calc-breakdown.payment                           = Eich taliadau hyd yn hyn
-crystalisation.calc-breakdown.owed                              = Cyfanswm sy’n ddyledus, erbyn 31 Ionawr {0}
-
-crystalisation.incorrect                                        = Ffigurau anghywir
-crystalisation.adjustments                                      = Os oes unrhyw wallau, gallwch wneud addasiadau drwy’ch meddalwedd.
-crystalisation.changes                                          = Os gwnewch y newidiadau hyn cyn 31 Ionawr {0}, ni chewch eich cosbi.
-crystalisation.additionalPayment.heading                        = Taliad ychwanegol
 crystalisation.payNow                                           = Yn eich blaen i dalu
 
 ## Statuses ##
@@ -144,7 +127,7 @@ breadcrumb-tax-years                                            = Fy mlynyddoedd
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
 breadcrumb-updates                                              = Diweddariadau
 breadcrumb-payments-due                                         = Taliadau treth incwm
-breadcrumb-estimated_tax_liability                              = Blwyddyn dreth {0} i {1}
+breadcrumb-tax-year-overview                                    = 6 Ebrill {0} hyd at 5 Ebrill {1}
 
 
 ## Standard Error Page ##

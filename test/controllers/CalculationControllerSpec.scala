@@ -16,236 +16,131 @@
 
 package controllers
 
-import assets.BaseTestConstants._
+import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
-import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import assets.FinancialTransactionsTestConstants.transactionModel
 import assets.Messages
-import assets.Messages.EstimatedTaxLiabilityError
-import audit.AuditingService
+import config.ItvcErrorHandler
 import config.featureswitch.FeatureSwitching
-import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
-import models.calculation.CalcDisplayError
+import models.calculation.CalcOverview
 import play.api.http.Status
+import play.api.i18n.Lang
+import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService with FeatureSwitching {
 
-  object TestCalculationController extends CalculationController()(
-    appConfig,
-    messagesApi,
-    ec,
-    app.injector.instanceOf[SessionTimeoutPredicate],
+  object TestCalculationController extends CalculationController(
     MockAuthenticationPredicate,
-    app.injector.instanceOf[NinoPredicate],
-    MockIncomeSourceDetailsPredicate,
     mockCalculationService,
-    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
-    app.injector.instanceOf[AuditingService],
+    app.injector.instanceOf[SessionTimeoutPredicate],
     mockFinancialTransactionsService,
-    app.injector.instanceOf[ItvcErrorHandler]
-  )
+    app.injector.instanceOf[ItvcErrorHandler],
+    MockIncomeSourceDetailsPredicate,
+    app.injector.instanceOf[NinoPredicate]
+  )(appConfig, messagesApi, ec)
 
   lazy val messages = new Messages.Calculation(testYear)
 
   "The CalculationController.renderCalculationPage(year) action" when {
-
-    "Called with an Authenticated HMRC-MTD-IT User" when {
-
-      "it receives Business only income from the Income Sources predicate " +
-        "and successful calculation from the Calculation Service" should {
-
-        lazy val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
-
-        "return Status OK (200)" in {
-          mockFinancialTransactionFailed()
-          mockCalculationSuccess()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the EstimatedTaxLiability page" in {
-          document.title() shouldBe messages.title
-        }
-      }
-
-      "it receives Property only income from the Income Sources predicate " +
-        "and successful calculation from the Calculation Service" should {
-
-        lazy val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
-
-        "return Status OK (200)" in {
-          mockFinancialTransactionFailed()
-          mockPropertyIncomeSource()
-          mockCalculationSuccess()
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the EstimatedTaxLiability page" in {
-          document.title() shouldBe messages.title
-        }
-      }
-
-      "it receives a crystallised calculation from the Calculation Service " +
-        "and a transaction from the Financial Transactions Service" should {
-        lazy val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
-
-        "return Status OK (200)" in {
-          mockFinancialTransactionSuccess()
-          mockPropertyIncomeSource()
-          mockCalculationCrystalisationSuccess()
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the crystalisation page" in {
-          document.title() shouldBe messages.Crystallised.tabTitle
-        }
-
-      }
-
-      "it receives a crystallised calculation from the Calculation Service " +
-        "and an error model from the Financial Transactions Service" should {
-        lazy val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
-
-        "return Status Internal Server Error (500)" in {
-          mockFinancialTransactionFailed()
-          mockPropertyIncomeSource()
-          mockCalculationCrystalisationSuccess()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-      }
-
-      "it receives a crystallised calculation from the Calculation Service " +
-        "and no transaction with the correct date" should {
-        lazy val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
-
-        "return Status Internal Server Error (500)" in {
-          mockFinancialTransactionSuccess("2020-04-05")
-          mockPropertyIncomeSource()
-          mockCalculationCrystalisationSuccess()
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-
-      }
-
-      "it receives Business Income source from the Income Sources predicate " +
-        "and an error from the Calculation Service" should {
-
-        lazy val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
-
-        "return Status OK (200)" in {
-          mockFinancialTransactionSuccess()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
-          setupMockGetCalculation(testMtdUserNino.nino, testYear)(CalcDisplayError)
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the EstimatedTaxLiability page" in {
-          document.title() shouldBe messages.title
-        }
-      }
-
-      "it receives Business Income from the Income Sources predicate " +
-        "and an error from the Calculation Service" should {
-
-        lazy val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
-
-        "return Status OK (200)" in {
-          mockFinancialTransactionSuccess()
-          mockCalculationError()
-          mockSingleBusinessIncomeSource()
-          status(result) shouldBe Status.OK
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the EstimatedTaxLiabilityError page" in {
-          document.title() shouldBe EstimatedTaxLiabilityError.title
-        }
-
-        s"Have a paragraph with the messages ${EstimatedTaxLiabilityError.p1}" in {
-          document.getElementById("p1").text() shouldBe EstimatedTaxLiabilityError.p1
-        }
-
-        s"Have a paragraph with the messages ${EstimatedTaxLiabilityError.p2}" in {
-          document.getElementById("p2").text() shouldBe EstimatedTaxLiabilityError.p2
-        }
-
-      }
-
-      "it receives Business Income from the Income Sources predicate " +
-        "and No Data Found from the Calculation Service" should {
-
-        lazy val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
-        lazy val document = result.toHtmlDocument
-
-        "return a 404" in {
-          mockFinancialTransactionSuccess()
-          mockCalculationNotFound()
-          mockSingleBusinessIncomeSource()
-          status(result) shouldBe Status.NOT_FOUND
-        }
-
-        "return HTML" in {
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-        }
-
-        "render the EstimatedTaxLiabilityNoData page" in {
-          document.title() shouldBe messages.title
-        }
-      }
-
-      "provided with a negative tax year " should {
-        lazy val result = TestCalculationController.renderCalculationPage(-testYear)(fakeRequestWithActiveSession)
-
-        "return Status Bad Request Error (400)" in {
-          mockFinancialTransactionFailed()
-          mockPropertyIncomeSource()
-          mockCalculationCrystalisationSuccess()
-          status(result) shouldBe Status.BAD_REQUEST
-        }
-      }
-    }
-
     "Called with an Unauthenticated User" should {
-
       "return redirect SEE_OTHER (303)" in {
         setupMockAuthorisationException()
         val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+
+    "Called with an Authenticated HMRC-MTD-IT User" when {
+      "provided with a negative tax year" should {
+        "return Status Bad Request Error (400)" in {
+          mockPropertyIncomeSource()
+
+          val result = TestCalculationController.renderCalculationPage(-testYear)(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.BAD_REQUEST
+        }
+      }
+
+      "the calculation returned from the calculation service was not found" should {
+        "return the internal server error page" in {
+          mockSingleBusinessIncomeSource()
+          mockCalculationNotFound()
+
+          val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          contentType(result) shouldBe Some("text/html")
+        }
+      }
+
+      "the calculation returned from the calculation service was an error" should {
+        "return the internal server error page" in {
+          mockSingleBusinessIncomeSource()
+          mockCalculationError()
+
+          val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          contentType(result) shouldBe Some("text/html")
+        }
+      }
+
+      "the calculation returned from the calculation service is not crystallised" should {
+        "return OK (200) with the correct view" in {
+          mockSingleBusinessIncomeSource()
+          mockCalculationSuccess()
+
+          val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
+          val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, None)(
+            implicitly, applicationMessages(Lang("en"), implicitly), implicitly
+          ).toString
+
+          val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.OK
+          contentAsString(result) shouldBe expectedContent
+          contentType(result) shouldBe Some("text/html")
+        }
+      }
+
+      "the calculation returned from the calculation service is crystallised" when {
+        "the financial transaction returned from the service was an error" should {
+          "return the internal server error page" in {
+            mockSingleBusinessIncomeSource()
+            mockCalculationCrystalisationSuccess()
+            mockFinancialTransactionFailed()
+
+            val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
+
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            contentType(result) shouldBe Some("text/html")
+          }
+        }
+
+        "the financial transaction returned from the service is successful" should {
+          "return OK (200) with the correct view" in {
+            mockSingleBusinessIncomeSource()
+            mockCalculationCrystalisationSuccess()
+            mockFinancialTransactionSuccess()
+
+            val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
+            val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, Some(transactionModel()))(
+              implicitly, applicationMessages(Lang("en"), implicitly), implicitly
+            ).toString
+
+            val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
+
+            status(result) shouldBe Status.OK
+            contentAsString(result) shouldBe expectedContent
+            contentType(result) shouldBe Some("text/html")
+          }
+        }
       }
     }
   }
