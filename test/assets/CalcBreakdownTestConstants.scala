@@ -703,4 +703,16 @@ object CalcBreakdownTestConstants {
       taxableIncome = Some(4004.04)
     )
   )
+
+  val calculationAllDeductionSources = Calculation(
+    crystallised = false,
+    allowancesAndDeductions = AllowancesAndDeductions(
+      personalAllowance = Some(11500),
+      giftOfInvestmentsAndPropertyToCharity = Some(10000),
+      totalAllowancesAndDeductions = Some (21000),
+      totalReliefs = Some(500)
+    )
+
+  )
+
 }

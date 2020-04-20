@@ -101,6 +101,18 @@ object Messages {
     val total = "Total income"
   }
 
+  object DeductionBreakdown {
+    val title = "Deductions"
+    def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
+    def heading(taxYear: Int): String = s"${subHeading(taxYear)} $title"
+    def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
+      s"You can see more details in your record-keeping software (opens in a new tab)."
+    val guidanceLink = "record-keeping software (opens in a new tab)"
+    val personalAllowance = "Personal Allowance"
+    val giftOfInvestmentsAndPropertyToCharity = "Gift of investments and property to charity"
+    val total = "Total deductions"
+  }
+
   // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {
     val heading = s"Tax estimate for ${taxYear-1} - $taxYear"

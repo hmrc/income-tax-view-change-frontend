@@ -18,6 +18,9 @@ GET         /calculation/:taxYear                   controllers.CalculationContr
 #IncomeSummary
 GET         /calculation/:taxYear/income            controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int)
 
+#Deductions Summary
+GET         /calculation/:taxYear/deductions        controllers.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
+
 #TaxYears
 GET         /tax-years                              controllers.TaxYearsController.viewTaxYears
 
