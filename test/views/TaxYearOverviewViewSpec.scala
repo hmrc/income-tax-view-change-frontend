@@ -50,9 +50,10 @@ class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
   class Setup(taxYear: Int = testYear,
               overview: CalcOverview = completeOverview,
               transaction: Option[TransactionModel] = Some(transactionModel),
-              incomeBreakdown: Boolean = false) {
+              incomeBreakdown: Boolean = false,
+              deductionBreakdown: Boolean = false) {
 
-    val page: Html = taxYearOverview(taxYear, overview, transaction, incomeBreakdown)
+    val page: Html = taxYearOverview(taxYear, overview, transaction, incomeBreakdown, deductionBreakdown)
     val document: Document = Jsoup.parse(page.body)
     val content: Element = document.selectFirst("#content")
 
@@ -91,12 +92,21 @@ class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
 
     "have a summary of the tables on the page" which {
       "describes links" when {
-        "incomeBreakdown feature switch is enabled" in new Setup(incomeBreakdown = true) {
+        "incomeBreakdown and deductionBreakdown feature switch are enabled" in new Setup(deductionBreakdown = true,
+          incomeBreakdown = true) {
+          content.select("#tax-year-summary").text shouldBe TaxYearOverview.linksSummary
+        }
+        "incomeBreakdown feature switch is enabled and deductionBreakdown is disabled" in new Setup(
+          incomeBreakdown = true, deductionBreakdown = false) {
+          content.select("#tax-year-summary").text shouldBe TaxYearOverview.linksSummary
+        }
+        "incomeBreakdown feature switch is disabled and deductionBreakdown is enabled" in new Setup(
+          deductionBreakdown = true, incomeBreakdown = false) {
           content.select("#tax-year-summary").text shouldBe TaxYearOverview.linksSummary
         }
       }
       "describes the page" when {
-        "none of the feature switches are enabled" in new Setup(incomeBreakdown = false) {
+        "none of the feature switches are enabled" in new Setup(incomeBreakdown = false, deductionBreakdown = false) {
           content.select("#tax-year-summary").text shouldBe TaxYearOverview.noLinksSummary
         }
       }
@@ -119,10 +129,21 @@ class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
         link.map(_.attr("href")) shouldBe Some(controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url)
         link.map(_.text) shouldBe Some(TaxYearOverview.income)
       }
-      "has a row for deductions" in new Setup {
+      "has a row but no link for deductions when FS DeductionsBreakdown is disabled " in new Setup {
+
         val row: Elements = content.select("#income-deductions-table tr:nth-child(2)")
         row.select("td:nth-child(1)").text shouldBe TaxYearOverview.deductions
         row.select("td[class=numeric]").text shouldBe completeOverview.deductions.toNegativeCurrencyString
+        val link: Option[Element] =
+          getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")
+        link shouldBe None
+      }
+      "has a row and link to view updates when FS DeductionsBreakdown is enabled" in new Setup(deductionBreakdown = true) {
+
+        val link: Option[Element] =
+          getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")
+        link.map(_.text) shouldBe Some(TaxYearOverview.deductions)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url)
       }
       "has a total row for total taxable income" in new Setup {
         val row: Elements = content.select("#income-deductions-table tr:nth-child(3)")
