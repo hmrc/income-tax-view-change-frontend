@@ -71,6 +71,15 @@ income_breakdown.table.bbsi                                     = Llog o fanciau
 income_breakdown.table.dividends                                = Difidendau o gwmnïau yn y DU
 income_breakdown.total                                          = Cyfanswm yr incwm
 
+## Deduction Breakdown Page ##
+deduction_breakdown.heading                                            = Didyniadau
+deduction_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
+deduction_breakdown.guidance_software                                  = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0}-{1}. Gallwch weld rhagor o fanylion yn eich
+deduction_breakdown.guidance_software.link                             = meddalwedd cadw cofnodion
+deduction_breakdown.table.personal_allowance                           = Lwfans Personol
+deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
+deduction_breakdown.total                                              = Cyfanswm y didyniadau
+
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
