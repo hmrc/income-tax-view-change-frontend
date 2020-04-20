@@ -17,7 +17,7 @@
 package controllers
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeBreakdown}
+import config.featureswitch.{FeatureSwitching, IncomeBreakdown, DeductionBreakdown}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
@@ -52,7 +52,8 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
       taxYear = taxYear,
       overview = CalcOverview(calculation, transaction),
       transaction = transaction,
-      incomeBreakdown = isEnabled(IncomeBreakdown)
+      incomeBreakdown = isEnabled(IncomeBreakdown),
+      deductionBreakdown = isEnabled(DeductionBreakdown)
     )
   }
 
