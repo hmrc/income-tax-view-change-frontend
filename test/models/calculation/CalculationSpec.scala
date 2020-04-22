@@ -61,7 +61,10 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     nic = Nic(
       class2 = Some(1.0),
       class4 = Some(2.0),
-      totalNic = Some(3.0)
+      totalNic = Some(3.0),
+      class4Bands = Some(Seq(
+        NicBand(1.0, 2.0, 3.0)
+      ))
     )
   )
   val minimalModel: Calculation = Calculation(
@@ -81,6 +84,17 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         )
       ),
       "detail" -> Json.obj(
+        "nics" -> Json.obj(
+          "class4Nics" -> Json.obj(
+            "class4NicBands" -> Json.arr(
+              Json.obj(
+                "income" -> 1.0,
+                "rate" -> 2.0,
+                "amount" -> 3.0
+              )
+            )
+          )
+        ),
         "incomeTax" -> Json.obj(
           "payPensionsProfit" -> Json.obj(
             "incomeTaxAmount" -> 3.0,
@@ -93,6 +107,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
               )
             )
           ),
+
           "savingsAndGains" -> Json.obj(
             "incomeTaxAmount" -> 1.0,
             "taxBands" -> Json.arr(
@@ -219,7 +234,14 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     "nic" -> Json.obj(
       "class2" -> 1.0,
       "class4" -> 2.0,
-      "totalNic" -> 3.0
+      "totalNic" -> 3.0,
+      "class4Bands" -> Json.arr(
+        Json.obj(
+          "income" -> 1.0,
+          "rate" -> 2.0,
+          "amount" -> 3.0
+        )
+      )
     )
   )
   val minimalWriteJson: JsObject = Json.obj(
