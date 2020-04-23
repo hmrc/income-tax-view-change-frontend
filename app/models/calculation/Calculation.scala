@@ -94,13 +94,27 @@ object AllowancesAndDeductions {
 
 case class Nic(class2: Option[BigDecimal] = None,
                class4: Option[BigDecimal] = None,
+               class4Bands: Option[Seq[NicBand]] = None,
                totalNic: Option[BigDecimal] = None)
 
 object Nic {
   implicit val reads: Reads[Nic] = (
     readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "nics" \ "class2NicsAmount") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "nics" \ "class4NicsAmount") and
+      readNullable[Seq[NicBand]](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "nics" \ "class4Nics" \ "class4NicBands") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "nics" \ "totalNic")
     ) (Nic.apply _)
   implicit val writes: OWrites[Nic] = Json.writes[Nic]
 }
+
+
+
+case class NicBand(income: BigDecimal,
+                   rate: BigDecimal,
+                   amount: BigDecimal)
+
+object NicBand {
+  implicit val format: OFormat[NicBand] = Json.format[NicBand]
+
+}
+
