@@ -33,7 +33,8 @@ object FeatureSwitch {
     ReportDeadlines,
     ObligationsPage,
     IncomeBreakdown,
-    DeductionBreakdown
+    DeductionBreakdown,
+    TaxDue
   )
 
   def apply(str: String): FeatureSwitch =
