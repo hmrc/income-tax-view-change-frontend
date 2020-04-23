@@ -80,3 +80,8 @@ case object DeductionBreakdown extends FeatureSwitch {
   override val name: String = s"$prefix.enable-calculation-deduction-breakdown"
   override val displayText: String = "Enable Deduction Calc Breakdown"
 }
+
+case object TaxDue extends FeatureSwitch {
+  override val name: String = s"$prefix.enable-tax-due"
+  override val displayText: String = "Enable Tax Due Feature"
+}
