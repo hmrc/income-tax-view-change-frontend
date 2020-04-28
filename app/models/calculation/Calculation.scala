@@ -115,6 +115,11 @@ case class NicBand(income: BigDecimal,
 
 object NicBand {
   implicit val format: OFormat[NicBand] = Json.format[NicBand]
-
 }
 
+case class TaxDeductedAtSource(savings: Option[BigDecimal],
+                               ukLandAndProperty: Option[BigDecimal])
+
+object TaxDeductedAtSource {
+  implicit val format: OFormat[TaxDeductedAtSource] = Json.format[TaxDeductedAtSource]
+}
