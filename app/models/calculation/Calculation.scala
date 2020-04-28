@@ -117,4 +117,3 @@ object NicBand {
   implicit val format: OFormat[NicBand] = Json.format[NicBand]
 
 }
-

@@ -40,7 +40,9 @@ case class Calculation(totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
                        savingsAndGains: SavingsAndGains = SavingsAndGains(),
                        dividends: Dividends = Dividends(),
                        allowancesAndDeductions: AllowancesAndDeductions = AllowancesAndDeductions(),
-                       nic: Nic = Nic()) extends CalculationResponseModel with CrystallisedViewModel
+                       nic: Nic = Nic(),
+                       savings: Option[BigDecimal] = None
+                      ) extends CalculationResponseModel with CrystallisedViewModel
 
 object Calculation {
   implicit val reads: Reads[Calculation] = (
@@ -56,7 +58,8 @@ object Calculation {
       __.read[SavingsAndGains] and
       __.read[Dividends] and
       __.read[AllowancesAndDeductions] and
-      __.read[Nic]
+      __.read[Nic] and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "savings")
     ) (Calculation.apply _)
   implicit val writes: OWrites[Calculation] = Json.writes[Calculation]
 }
