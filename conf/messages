@@ -80,6 +80,31 @@ deduction_breakdown.table.personal_allowance                           = Persona
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Gift of investments and property to charity
 deduction_breakdown.total                                              = Total deductions
 
+## Tax Calculation Breakdown Page ##
+taxCal_breakdown.heading                                            = Tax calculation
+taxCal_breakdown.dates                                              = 6 April {0} to 5 April {1}
+taxCal_breakdown.explanation                                        = This calculation is based on your taxable income of {0}
+taxCal-breakdown.national-regime                                    = Tax regime: {0}
+taxCal_breakdown.pay_pensions_profit                                = Pay, pensions and profit
+taxCal_breakdown.savings                                            = Savings
+taxCal_breakdown.dividends                                          = Dividends
+taxCal_breakdown.additional_charges                                 = Additional charges
+taxCal_breakdown.additional_deductions                              = Additional deductions
+taxCal_breakdown.table.SSR                                          = Starting rate ({0} at {1}%)
+taxCal_breakdown.table.SRT                                          = Starter rate ({0} at {1}%)
+taxCal_breakdown.table.BRT                                          = Basic rate ({0} at {1}%)
+taxCal_breakdown.table.IRT                                          = Intermediate rate ({0} at {1}%)
+taxCal_breakdown.table.HRT                                          = Higher rate ({0} at {1}%)
+taxCal_breakdown.table.ART                                          = Additional rate ({0} at {1}%)
+taxCal_breakdown.table.ART_scottish                                 = Top rate ({0} at {1}%)
+taxCal_breakdown.table.ZRTBR                                        = Basic rate band at nil rate ({0} at {1}%)
+taxCal_breakdown.table.ZRTHR                                        = Higher rate band at nil rate ({0} at {1}%)
+taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
+taxCal_breakdown.table.total_tax_due                                = Total tax due
+taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
+taxCal_breakdown.table.nic2                                         = Class 2 National Insurance
+taxCal_breakdown.table.banks_and_building_societies                 = Interest received from UK banks and building societies
+
 ## ReportDeadlines Page ##
 obligations.title                                               = Report deadlines
 obligations.heading                                             = Report deadlines
@@ -211,9 +236,9 @@ paymentDue.pay-now-aria                                            = Pay now for
 paymentDue.no-bills                                                = No payments due.
 
 ## Regimes
-UK = UK
-Scotland = Scotland
-Wales = Wales
+regimes.UK = UK
+regimes.Scotland = Scotland
+regimes.Wales = Wales
 
 ## Timeout
 timeoutDialog.title                                             = You are about to be signed out
