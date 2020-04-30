@@ -107,14 +107,10 @@ object Nic {
   implicit val writes: OWrites[Nic] = Json.writes[Nic]
 }
 
-
-
 case class NicBand(income: BigDecimal,
                    rate: BigDecimal,
                    amount: BigDecimal)
 
 object NicBand {
   implicit val format: OFormat[NicBand] = Json.format[NicBand]
-
 }
-

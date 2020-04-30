@@ -113,7 +113,54 @@ object Messages {
     val total = "Total deductions"
   }
 
-  // Estimated Tax Liability Page Messages
+  object TaxCalcBreakdown {
+    val title = "Tax calculation"
+
+    def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
+    def heading(taxYear: Int): String = s"${subHeading(taxYear)} $title"
+    val sectionHeadingPPP: String = "Pay, pensions and profit"
+    val sectionHeadingSavings: String = "Savings"
+    val sectionHeadingDividends: String = "Dividends"
+    val sectionHeadingAdditionalChar: String = "Additional charges"
+    val sectionHeadingAdditionalDeduc: String = "Additional deductions"
+    val sectionHeadingTotal: String = "Total tax due"
+    val guidance: String = "This calculation is based on your taxable income of £0"
+    val regime: String = "Tax regime: UK"
+    val regimeScotland: String = "Tax regime: Scotland"
+    val regimeWales: String = "Tax regime: Wales"
+    //pay, pension and profit table
+    val pPP_BRT: String = "Basic rate (£20,000 at 20.0%)"
+    val pPP_HRT: String = "Higher rate (£100,000 at 40.0%)"
+    val pPP_ART: String = "Additional rate (£50,000 at 45.0%)"
+    //pay, pension and profit table for Scotland
+    val pPP_Scot_SRT: String = "Starter rate (£20,000 at 10.0%)"
+    val pPP_Scot_BRT: String = "Basic rate (£20,000 at 20.0%)"
+    val pPP_Scot_IRT: String = "Intermediate rate (£20,000 at 25.0%)"
+    val pPP_Scot_HRT: String = "Higher rate (£100,000 at 40.0%)"
+    val pPP_Scot_ART: String = "Top rate (£500,000 at 45.0%)"
+    //savings table
+    val saving_SSR: String = "Starting rate (£1 at 0.0%)"
+    val saving_BRT: String = "Basic rate (£20 at 10.0%)"
+    val saving_HRT: String = "Higher rate (£2,000 at 40.0%)"
+    val saving_ART: String = "Additional rate (£100,000 at 50.0%)"
+    val saving_ZRTBR: String = "Basic rate band at nil rate (£20 at 0.0%)"
+    val saving_ZRTHR: String = "Higher rate band at nil rate (£10,000 at 0.0%)"
+    //dividends table
+    val dividend_BRT: String = "Basic rate (£1,000 at 7.5%)"
+    val dividend_HRT: String = "Higher rate (£2,000 at 37.5%)"
+    val dividend_ART: String = "Additional rate (£3,000 at 38.1%)"
+    val dividend_ZRTBR: String = "Basic rate band at nil rate (£1,000 at 0%)"
+    val dividend_ZRTHR: String = "Higher rate band at nil rate (£2,000 at 0%)"
+    val dividend_ZRTAR: String = "Additional rate band at nil rate (£3,000 at 0%)"
+    //additional charges table
+    val Nic4_ZRT: String = "Class 4 National Insurance (£2,000 at 1%)"
+    val Nic4_BRT: String = "Class 4 National Insurance (£3,000 at 2%)"
+    val Nic4_HRT: String = "Class 4 National Insurance (£5,000 at 3%)"
+    val Nic2: String = "Class 2 National Insurance"
+    //additional deduction
+    val BBSI: String = "Interest received from UK banks and building societies"
+  }
+    // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {
     val heading = s"Tax estimate for ${taxYear-1} - $taxYear"
     val title = heading

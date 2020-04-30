@@ -58,11 +58,11 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have an deduction table" which {
 
         "has only one table row" in new Setup(view) {
-          content hasTableWithCorrectSize 1
+          content hasTableWithCorrectSize (1, 1)
         }
 
         "has a total line with a zero value" in new Setup(view) {
-          val row: Element = content.table.select("tr").first()
+          val row: Element = content.table().select("tr").first()
           row.select("td").first().text() shouldBe DeductionBreakdown.total
           row.select("td").last().text() shouldBe "£0"
         }
@@ -99,24 +99,24 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have an deduction table" which {
 
         "has all three table rows" in new Setup(view) {
-          content hasTableWithCorrectSize 3
+          content hasTableWithCorrectSize (1,3)
         }
 
         "has a personal allowance line with the correct value" in new Setup(view) {
-          val row: Element = content.table.select("tr").get(0)
+          val row: Element = content.table().select("tr").get(0)
           row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
           row.select("td").last().text() shouldBe "£11,500"
         }
 
         "has a gift of investments and property to charity line with the correct value" in new Setup(view) {
-          val row: Element = content.table.select("tr").get(1)
+          val row: Element = content.table().select("tr").get(1)
           row.select("td").first().text() shouldBe DeductionBreakdown.giftOfInvestmentsAndPropertyToCharity
           row.select("td").last().text() shouldBe "£10,000"
         }
 
 
         "has a total deductions line with the correct value" in new Setup(view) {
-          val row: Element = content.table.select("tr").get(2)
+          val row: Element = content.table().select("tr").get(2)
           row.select("td").first().text() shouldBe DeductionBreakdown.total
           row.select("td").last().text() shouldBe "£21,500"
         }

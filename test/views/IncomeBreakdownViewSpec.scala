@@ -58,11 +58,11 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have an income table" which {
 
         "has only one table row" in new Setup(view) {
-          content hasTableWithCorrectSize 1
+          content hasTableWithCorrectSize (1,1)
         }
 
         "has a total line with a zero value" in new Setup(view) {
-          val row: Element = content.table.select("tr").first()
+          val row: Element = content.table().select("tr").first()
           row.select("td").first().text() shouldBe IncomeBreakdown.total
           row.select("td").last().text() shouldBe "£0"
         }
@@ -99,35 +99,35 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have an income table" which {
 
         "has all five table rows" in new Setup(view) {
-          content hasTableWithCorrectSize 5
+          content hasTableWithCorrectSize (1,5)
         }
 
         "has a total self-employment profit line with the correct value" in new Setup(view) {
-          val row: Element = content.table.select("tr").get(0)
+          val row: Element = content.table().select("tr").get(0)
           row.select("td").first().text() shouldBe IncomeBreakdown.selfEmployments
           row.select("td").last().text() shouldBe "£1,001.01"
         }
 
         "has a total property profit line with the correct value" in new Setup(view) {
-          val row: Element = content.table.select("tr").get(1)
+          val row: Element = content.table().select("tr").get(1)
           row.select("td").first().text() shouldBe IncomeBreakdown.property
           row.select("td").last().text() shouldBe "£2,002.02"
         }
 
         "has a total savings profit line with the correct value" in new Setup(view) {
-          val row: Element = content.table.select("tr").get(2)
+          val row: Element = content.table().select("tr").get(2)
           row.select("td").first().text() shouldBe IncomeBreakdown.bbsi
           row.select("td").last().text() shouldBe "£3,003.03"
         }
 
         "has a total dividends profit line with the correct value" in new Setup(view) {
-          val row: Element = content.table.select("tr").get(3)
+          val row: Element = content.table().select("tr").get(3)
           row.select("td").first().text() shouldBe IncomeBreakdown.dividends
           row.select("td").last().text() shouldBe "£4,004.04"
         }
 
         "has a total line with the correct value" in new Setup(view) {
-          val row: Element = content.table.select("tr").get(4)
+          val row: Element = content.table().select("tr").get(4)
           row.select("td").first().text() shouldBe IncomeBreakdown.total
           row.select("td").last().text() shouldBe "£10,010.10"
         }

@@ -80,6 +80,34 @@ deduction_breakdown.table.personal_allowance                           = Lwfans 
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
 deduction_breakdown.total                                              = Cyfanswm y didyniadau
 
+## Tax Calculation Breakdown Page ##
+taxCal_breakdown.heading                                            = Cyfrifiad Treth
+taxCal_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
+taxCal_breakdown.explanation                                        = Mae’r cyfrifiad hwn yn seiliedig ar eich incwm trethadwy o {0}
+taxCal-breakdown.national-regime                                    = Cyfundrefn dreth: {0}
+taxCal_breakdown.pay_pensions_profit                                = Cyflog, pensiynau ac elw
+taxCal_breakdown.savings                                            = Cynilion
+taxCal_breakdown.dividends                                          = Difidendau
+taxCal_breakdown.additional_charges                                 = Taliadau ychwanegol
+taxCal_breakdown.additional_deductions                              = Didyniadau ychwanegol
+taxCal_breakdown.table.SSR                                          = Cynilion ({0} at {1}%)
+taxCal_breakdown.table.SRT                                          = Cyfradd cychwyn ({0} at {1}%)
+taxCal_breakdown.table.BRT                                          = Cyfradd sylfaenol ({0} at {1}%)
+taxCal_breakdown.table.IRT                                          = Cyfradd ganolradd ({0} at {1}%)
+taxCal_breakdown.table.HRT                                          = Cyfradd uwch ({0} at {1}%)
+taxCal_breakdown.table.ART                                          = Cyfradd ychwanegol ({0} at {1}%)
+taxCal_breakdown.table.ART_scottish                                 = Cyfradd uchaf ({0} at {1}%)
+taxCal_breakdown.table.ZRTBR                                        = Haen cyfradd sylfaenol ar y gyfradd sero ({0} at {1}%)
+taxCal_breakdown.table.ZRTHR                                        = Haen cyfradd uwch ar y gyfradd sero ({0} at {1}%)
+taxCal_breakdown.table.ZRTAR                                        = Haen cyfradd ychwanegol ar y gyfradd sero ({0} at {1}%)
+taxCal_breakdown.table.total_tax_due                                = Cyfanswm y dreth sy’n ddyledus
+taxCal_breakdown.table.nic4.ZRT                                     = Yswiriant Gwladol Dosbarth 4 ({0} at {1}%)
+taxCal_breakdown.table.nic4.BRT                                     = Yswiriant Gwladol Dosbarth 4 ({0} at {1}%)
+taxCal_breakdown.table.nic4.HRT                                     = Yswiriant Gwladol Dosbarth 4 ({0} at {1}%)
+taxCal_breakdown.table.nic2                                         = Yswiriant Gwladol Dosbarth 2
+taxCal_breakdown.table.banks_and_building_societies                 = Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
+
+
 ## ReportDeadlines Page ##
 obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
@@ -205,9 +233,9 @@ paymentDue.no-bills                                             = Dim taliadau�
 
 
 ## Regimes
-UK = Y DU
-Scotland = Yr Alban
-Wales = Cymru
+regimes.UK = Y DU
+regimes.Scotland = Yr Alban
+regimes.Wales = Cymru
 
 ## Timeout
 timeoutDialog.minute                                            = munud

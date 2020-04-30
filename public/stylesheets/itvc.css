@@ -147,3 +147,23 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 .govUk-tag--complete {
     background-color: #00703c;
 }
+
+.govuk-caption-m {
+    font-weight: 400;
+    font-size: 19px;
+    display: block;
+    color: #6f777b;
+}
+
+.govuk-heading-m {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.11111;
+    display: block;
+    margin-top: 45px;
+    margin-bottom: 15px;
+}
+
+.total-heading span {
+    float: right;
+}
