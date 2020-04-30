@@ -20,7 +20,7 @@ import assets.BaseTestConstants.testMtdUserNino
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.AuditingService
-import config.featureswitch.{DeductionBreakdown, FeatureSwitching}
+import config.featureswitch.{DeductionBreakdown, FeatureSwitching, TaxDue}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -49,7 +49,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
   "showTaxDueSummary" when {
     "feature switch TaxDue is enabled" when {
-      enable(DeductionBreakdown)
+      enable(TaxDue)
 
       "given a tax year which can be found in ETMP" should {
 
@@ -67,7 +67,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
           charset(result) shouldBe Some("utf-8")
         }
 
-        "render the IncomeBreakdown page" in {
+        "render the Tax Due page" in {
           document.title() shouldBe "Tax calculation"
         }
       }
@@ -106,7 +106,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
         lazy val document = result.toHtmlDocument
 
         "return Status NotFound (404)" in {
-          disable(DeductionBreakdown)
+          disable(TaxDue)
           mockCalculationNotFound()
           setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
           status(result) shouldBe Status.NOT_FOUND

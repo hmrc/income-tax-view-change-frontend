@@ -33,9 +33,9 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   "Calling the TaxDueSummaryController.showTaxDueSummary(taxYear)" when {
 
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid CalcDisplayModel response, " +
-      "feature switch TaxDueBreakdown is enabled" should {
+      "feature switch TaxDue is enabled" should {
       enable(TaxDue)
-      "return the correct income summary page" in {
+      "return the correct tax due summary page" in {
 
         And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
@@ -60,7 +60,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         res should have(
           httpStatus(OK),
           pageTitle(messages.taxDueSummaryTitle),
-          elementTextBySelector("h1")(messages.deductionsSummaryHeading)
+          elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + messages.taxDueSummaryTitle)
         )
       }
     }

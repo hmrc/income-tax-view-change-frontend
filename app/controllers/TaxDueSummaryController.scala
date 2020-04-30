@@ -54,10 +54,10 @@ class TaxDueSummaryController @Inject()(implicit val appConfig: FrontendAppConfi
 
     action.async {
       implicit user =>
-        if (isEnabled(TaxDue)) {
+          if (isEnabled(TaxDue)) {
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>
-              Future.successful(Ok(views.html.deductionBreakdown(calcDisplayModel, taxYear)))
+              Future.successful(Ok(views.html.taxCalcBreakdown(calcDisplayModel, taxYear)))
 
             case CalcDisplayNoDataFound =>
               Logger.warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
