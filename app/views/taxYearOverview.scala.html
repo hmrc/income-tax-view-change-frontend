@@ -22,7 +22,7 @@
 @import views.html.helpers.{breadcrumbHelper, statusHelper}
 @import views.html.templates.main_template
 
-@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None, incomeBreakdown: Boolean = false, deductionBreakdown: Boolean = false)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None, incomeBreakdown: Boolean = false, deductionBreakdown: Boolean = false, taxDue: Boolean = false)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @breadcrumb = @{
     breadcrumbHelper(
@@ -97,7 +97,13 @@
 
             <table id="taxdue-payments-table" class="table--spaced-top">
                 <tr>
-                    <td>@messages("tax-year-overview.tax-due")</td>
+                    <td>
+                        @if(taxDue) {
+                            <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages("tax-year-overview.tax-due")</a>
+                        } else {
+                            @messages("tax-year-overview.tax-due")
+                        }
+                    </td>
                     <td class="numeric">@{overview.taxDue.toCurrencyString}</td>
                 </tr>
                 <tr>
