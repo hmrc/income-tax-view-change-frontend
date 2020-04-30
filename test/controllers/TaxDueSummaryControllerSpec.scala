@@ -32,20 +32,15 @@ import testUtils.TestSupport
 class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService with FeatureSwitching {
 
-  object TestTaxDueSummaryController extends TaxDueSummaryController()(
-    appConfig,
-    messagesApi,
-    ec,
+  object TestTaxDueSummaryController extends TaxDueSummaryController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
     mockCalculationService,
-    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
-    app.injector.instanceOf[AuditingService],
-    mockFinancialTransactionsService,
     app.injector.instanceOf[ItvcErrorHandler]
-  )
+  )(appConfig, messagesApi, ec)
+
 
   "showTaxDueSummary" when {
     "feature switch TaxDue is enabled" when {

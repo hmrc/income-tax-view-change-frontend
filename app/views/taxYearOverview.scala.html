@@ -61,7 +61,7 @@
             }
 
             <p id="tax-year-summary">
-                @if(incomeBreakdown || deductionBreakdown) {
+                @if(incomeBreakdown || deductionBreakdown || taxDue) {
                     @messages("tax-year-overview.links-summary")
                 } else {
                     @messages("tax-year-overview.no-links-summary")

@@ -16,10 +16,9 @@
 
 package controllers
 
-import audit.AuditingService
 import auth.MtdItUser
-import config.featureswitch.{TaxDue, FeatureSwitching}
-import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.featureswitch.{FeatureSwitching, TaxDue}
+import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import javax.inject.{Inject, Singleton}
@@ -27,25 +26,21 @@ import models.calculation._
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc._
-import services.{CalculationService, FinancialTransactionsService}
+import services.CalculationService
 import views.html.errorPages.notFound
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxDueSummaryController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                        implicit val messagesApi: MessagesApi,
-                                        implicit val ec: ExecutionContext,
-                                        val checkSessionTimeout: SessionTimeoutPredicate,
-                                        val authenticate: AuthenticationPredicate,
-                                        val retrieveNino: NinoPredicate,
-                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                        val calculationService: CalculationService,
-                                        val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                        val auditingService: AuditingService,
-                                        val financialTransactionsService: FinancialTransactionsService,
-                                        val itvcErrorHandler: ItvcErrorHandler
-                                     ) extends BaseController with ImplicitDateFormatter with FeatureSwitching {
+class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredicate,
+                                        authenticate: AuthenticationPredicate,
+                                        retrieveNino: NinoPredicate,
+                                        retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                        calculationService: CalculationService,
+                                        itvcErrorHandler: ItvcErrorHandler)
+                                       (implicit val appConfig: FrontendAppConfig,
+                                        val messagesApi: MessagesApi,
+                                        ec: ExecutionContext) extends BaseController with ImplicitDateFormatter with FeatureSwitching {
 
   val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
@@ -54,7 +49,7 @@ class TaxDueSummaryController @Inject()(implicit val appConfig: FrontendAppConfi
 
     action.async {
       implicit user =>
-          if (isEnabled(TaxDue)) {
+        if (isEnabled(TaxDue)) {
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>
               Future.successful(Ok(views.html.taxCalcBreakdown(calcDisplayModel, taxYear)))
