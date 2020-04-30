@@ -28,6 +28,79 @@ object CalcBreakdownTestConstants {
     crystallised = true
   )
 
+  val calculationBillTaxableIncomeZeroModel = Calculation(
+    totalIncomeTaxAndNicsDue = Some(0.00),
+    totalTaxableIncome = Some(0.00),
+    crystallised = true,
+    nationalRegime = Some("UK")
+  )
+
+  val calculationBillWelshModel = Calculation(
+    totalTaxableIncome = Some(0.00),
+    crystallised = true,
+    nationalRegime = Some("Wales"),
+    payPensionsProfit = PayPensionsProfit(
+      totalSelfEmploymentProfit = None,
+      totalPropertyProfit = None,
+      incomeTaxAmount = Some(66500),
+      taxableIncome = Some(170000),
+      List(TaxBand(
+        name = "BRT",
+        rate = 20.0,
+        income = 20000.00,
+        taxAmount = 4000.00),
+        TaxBand(
+          name = "HRT",
+          rate = 40.0,
+          income = 100000.00,
+          taxAmount = 40000.00),
+        TaxBand(
+          name = "ART",
+          rate = 45.0,
+          income = 50000.00,
+          taxAmount = 22500.00)
+      )
+    )
+  )
+
+  val calculationBillScotlandModel = Calculation(
+    totalTaxableIncome = Some(0.00),
+    crystallised = true,
+    nationalRegime = Some("Scotland"),
+    payPensionsProfit = PayPensionsProfit(
+      totalSelfEmploymentProfit = None,
+      totalPropertyProfit = None,
+      incomeTaxAmount = Some(66500),
+      taxableIncome = Some(170000),
+      List(TaxBand(
+        name = "SRT",
+        rate = 10.0,
+        income = 20000.00,
+        taxAmount = 2000.00),
+        TaxBand(
+        name = "BRT",
+        rate = 20.0,
+        income = 20000.00,
+        taxAmount = 4000.00),
+        TaxBand(
+          name = "IRT",
+          rate = 25.0,
+          income = 20000.00,
+          taxAmount = 45000.00),
+        TaxBand(
+          name = "HRT",
+          rate = 40.0,
+          income = 100000.00,
+          taxAmount = 40000.00),
+        TaxBand(
+          name = "ART",
+          rate = 45.0,
+          income = 50000.00,
+          taxAmount = 22500.00)
+      )
+    )
+  )
+
   val calculationDataSuccessModel = Calculation(
     totalIncomeTaxAndNicsDue = Some(2010.00),
     totalIncomeTaxNicsCharged = Some(90500.00),
@@ -139,14 +212,69 @@ object CalcBreakdownTestConstants {
     )
   )
 
-  val scottishBandModelJustSRT = Calculation(
+  val scottishTaxBandModelJustPPP = Calculation(
     totalIncomeTaxAndNicsDue = Some(0),
     totalIncomeTaxNicsCharged = Some(149.86),
     totalTaxableIncome = Some(132.00),
     incomeTaxNicAmount = None,
     timestamp = None,
     crystallised = true,
-    nationalRegime = None,
+    nationalRegime = Some("Scotland"),
+
+    payPensionsProfit = PayPensionsProfit(
+      totalSelfEmploymentProfit = None,
+      totalPropertyProfit = None,
+      incomeTaxAmount = Some(66500),
+      taxableIncome = Some(170000),
+      List(TaxBand(
+        name = "SRT",
+        rate = 10.0,
+        income = 20000.00,
+        taxAmount = 2000.00
+
+      ),
+
+        TaxBand(
+        name = "BRT",
+        rate = 20.0,
+        income = 20000.00,
+        taxAmount = 4000.00
+
+      ),
+
+        TaxBand(
+          name = "IRT",
+          rate = 25.0,
+          income = 20000.00,
+          taxAmount = 45000.00
+
+        ),
+
+        TaxBand(
+          name = "HRT",
+          rate = 40.0,
+          income = 100000.00,
+          taxAmount = 40000.00
+
+        ),
+        TaxBand(
+          name = "ART",
+          rate = 45.0,
+          income = 500000.00,
+          taxAmount = 22500.00
+
+        ))
+    )
+  )
+
+  val scottishTaxBandModelJustSRT = Calculation(
+    totalIncomeTaxAndNicsDue = Some(0),
+    totalIncomeTaxNicsCharged = Some(149.86),
+    totalTaxableIncome = Some(132.00),
+    incomeTaxNicAmount = None,
+    timestamp = None,
+    crystallised = true,
+    nationalRegime = Some("Scotland"),
 
     payPensionsProfit = PayPensionsProfit(
       totalSelfEmploymentProfit = None,
@@ -377,13 +505,13 @@ object CalcBreakdownTestConstants {
       totalPropertyProfit = None,
       incomeTaxAmount = Some(26),
       taxableIncome = Some(132),
-      List(TaxBand(
+      List(
+        TaxBand(
         name = "BRT",
         rate = 20.0,
         income = 132.00,
         taxAmount = 26.00
-
-      ),
+        ),
         TaxBand(
           name = "HRT",
           rate = 40.0,
@@ -402,57 +530,52 @@ object CalcBreakdownTestConstants {
     savingsAndGains = SavingsAndGains(
       Some(0),
       Some(0),
-      List(TaxBand(
+      List(
+        TaxBand(
         name = "SSR",
         rate = 0.0,
         income = 0.00,
         taxAmount = 0.0
-
-      ),
+        ),
         TaxBand(
           name = "ZRT",
           rate = 0.0,
           income = 0.00,
           taxAmount = 0.0
-
         ),
         TaxBand(
           name = "BRT",
           rate = 20.0,
           income = 0.0,
           taxAmount = 0.0
-
         ),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 0.0,
           taxAmount = 0.0
-
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 0.0,
           taxAmount = 0.0
-
         ))
     ),
     dividends = Dividends(
       incomeTaxAmount = Some(5000),
       taxableIncome = Some(6000),
-      List(TaxBand(
+      List(
+        TaxBand(
         name = "basic-band",
         rate = 7.5,
         income = 1000,
-        taxAmount = 75.0
-      ),
+        taxAmount = 75.0),
         TaxBand(
           name = "higher-band",
           rate = 37.5,
           income = 2000,
-          taxAmount = 750.0
-        ),
+          taxAmount = 750.0),
         TaxBand(
           name = "additional-band",
           rate = 38.1,
@@ -583,7 +706,7 @@ object CalcBreakdownTestConstants {
       incomeTaxNicAmount = Some(987.65),
       timestamp = Some(testTimeStampString),
       crystallised = true,
-      nationalRegime = None,
+      nationalRegime = Some("UK"),
       payPensionsProfit = PayPensionsProfit(
         totalSelfEmploymentProfit = None,
         totalPropertyProfit = None,
@@ -593,84 +716,89 @@ object CalcBreakdownTestConstants {
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00
-
-        ),
+          taxAmount = 4000.00),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 100000.00,
-            taxAmount = 40000.00
-
-          ),
+            taxAmount = 40000.00),
           TaxBand(
             name = "ART",
             rate = 45.0,
             income = 50000.00,
-            taxAmount = 22500.00
-
-          ))
+            taxAmount = 22500.00)
+          )
       ),
       savingsAndGains = SavingsAndGains(
         Some(0),
-        Some(0),
-        List(TaxBand(
+        Some(500),
+        List(
+          TaxBand(
           name = "SSR",
           rate = 0.0,
           income = 1.00,
-          taxAmount = 0.0
-
-        ),
-          TaxBand(
-            name = "ZRT",
-            rate = 0.0,
-            income = 20.00,
-            taxAmount = 0.0
-
-          ),
+          taxAmount = 0.0),
           TaxBand(
             name = "BRT",
-            rate = 20.0,
-            income = 0.0,
-            taxAmount = 0.0
-
-          ),
+            rate = 10.0,
+            income = 20.00,
+            taxAmount = 2.0),
+          TaxBand(
+            name = "ZRTBR",
+            rate = 0.0,
+            income = 20.0,
+            taxAmount = 0.0),
           TaxBand(
             name = "HRT",
             rate = 40.0,
-            income = 0.0,
-            taxAmount = 0.0
-
-          ),
+            income = 2000.0,
+            taxAmount = 800.0),
+          TaxBand(
+            name = "ZRTHR",
+            rate = 0.0,
+            income = 10000.0,
+            taxAmount = 0.0),
           TaxBand(
             name = "ART",
-            rate = 45.0,
-            income = 0.0,
-            taxAmount = 0.0
-
-          ))
+            rate = 50.0,
+            income = 100000.0,
+            taxAmount = 5000.0)
+        )
       ),
       dividends = Dividends(
         incomeTaxAmount = Some(5000),
         taxableIncome = Some(6000),
-        List(TaxBand(
-          name = "basic-band",
-          rate = 7.5,
-          income = 1000,
-          taxAmount = 75.0
-        ),
+        List(
           TaxBand(
-            name = "higher-band",
+            name = "BRT",
+            rate = 7.5,
+            income = 1000,
+            taxAmount = 75.0),
+          TaxBand(
+            name = "ZRTBR",
+            rate = 0,
+            income = 1000,
+            taxAmount = 0.0),
+          TaxBand(
+            name = "HRT",
             rate = 37.5,
             income = 2000,
-            taxAmount = 750.0
-          ),
+            taxAmount = 750.0),
           TaxBand(
-            name = "additional-band",
+            name = "ZRTHR",
+            rate = 0,
+            income = 2000,
+            taxAmount = 0.0),
+          TaxBand(
+            name = "ART",
             rate = 38.1,
             income = 3000,
-            taxAmount = 1143.0
-          )
+            taxAmount = 1143.0),
+          TaxBand(
+            name = "ZRTAR",
+            rate = 0,
+            income = 3000,
+            taxAmount = 0.0)
         )
       ),
       allowancesAndDeductions = AllowancesAndDeductions(
@@ -679,8 +807,26 @@ object CalcBreakdownTestConstants {
       nic = Nic(
         class2 = Some(10000.00),
         class4 = Some(14000.00),
-        totalNic = Some(66000.00)
-      )
+        class4Bands = Some(Seq(
+          NicBand(
+            rate = 1,
+            income = 2000,
+            amount = 100
+          ),
+          NicBand(
+            rate = 2,
+            income = 3000,
+            amount = 200
+          ),
+          NicBand(
+            rate = 3,
+            income = 5000,
+            amount = 300
+          )
+        )),
+        totalNic = Some(24000.00)
+      ),
+      savings = Some(10000)
     )
 
   val errorCalculationModel: CalculationErrorModel =

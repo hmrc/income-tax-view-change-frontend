@@ -19,6 +19,7 @@ package testUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import org.jsoup.select.Evaluator.IsNthOfType
 import org.scalatest.Assertion
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Call
@@ -38,6 +39,8 @@ trait ViewSpec extends TestSupport {
 
   object Selectors {
     val h1: String = "h1"
+    val h2: String = "h2"
+    val h3: String = "h3"
     val backLink: String = ".back-link"
     val form: String = "form"
     val summaryError: String = "#error-summary-display ul a"
@@ -55,7 +58,15 @@ trait ViewSpec extends TestSupport {
 
     //noinspection ScalaStyle
     def h1: Element = {
-      element.select(Selectors.h1) getOrElse fail("h1 not found")
+      element.select(s"${Selectors.h1}") getOrElse fail("h1 not found")
+    }
+
+    def h2: Element = {
+      element.select(s"${Selectors.h2}") getOrElse fail("h2 not found")
+    }
+
+    def h3: Element = {
+      element.select(s"${Selectors.h3}") getOrElse fail("h3 not found")
     }
 
     def backLink: Element = {
@@ -78,8 +89,8 @@ trait ViewSpec extends TestSupport {
       element.select(Selectors.link) getOrElse fail("link element not found")
     }
 
-    def table: Element = {
-      element.select(Selectors.table) getOrElse fail("table element not found")
+    def table(nthOfType: Int = 1): Element = {
+      element.select(s"${Selectors.table}:nth-of-type($nthOfType)") getOrElse fail("table element not found")
     }
   }
 
@@ -110,8 +121,8 @@ trait ViewSpec extends TestSupport {
       element.inputError.text shouldBe errorMessage
     }
 
-    def hasTableWithCorrectSize(size: Int): Assertion = {
-      element.table.select("tr").size() shouldBe size
+    def hasTableWithCorrectSize(table: Int = 1, size: Int): Assertion = {
+      element.table(table).select("tr").size() shouldBe size
     }
   }
 
