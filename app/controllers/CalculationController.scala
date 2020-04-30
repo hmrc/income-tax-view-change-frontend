@@ -47,7 +47,9 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
 
   val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
-  private def view(taxYear: Int, calculation: Calculation, transaction: Option[TransactionModel] = None,
+  private def view(taxYear: Int,
+                   calculation: Calculation,
+                   transaction: Option[TransactionModel] = None,
                    incomeBreakdown: Boolean = false,
                    taxDue: Boolean = false)(implicit request: Request[_]): Html = {
     taxYearOverview(
