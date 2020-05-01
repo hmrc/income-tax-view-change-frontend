@@ -24,7 +24,8 @@ object TestHeadersModel {
   implicit val formats: OFormat[TestHeadersModel] = Json.format[TestHeadersModel]
 
   val validTestHeaders: Map[String, String] = Map(
-    "DEFAULT" -> "Default",
+    "ITVC_DEFAULT" -> "Default",
+    "ITVC_SCOTLAND_DEFAULT" -> "Scottish Default",
     "UK_MULTIPLE_INCOMES_EXAMPLE" -> "Multiple Incomes",
     "UK_PROP_DIVIDENDS_EXAMPLE" -> "Property with Dividends",
     "UK_PROP_SAVINGS_EXAMPLE" -> "Property with Savings",
