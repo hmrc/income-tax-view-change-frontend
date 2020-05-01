@@ -91,6 +91,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getIncomeSummary(year: String): WSResponse = get(s"/calculation/$year/income")
 
+    def getTaxDueSummary(year: String): WSResponse = get(s"/calculation/$year/tax-due")
+
     def getDeductionsSummary(year: String): WSResponse = get(s"/calculation/$year/deductions")
 
     def getReportDeadlines: WSResponse = get(s"/obligations")
