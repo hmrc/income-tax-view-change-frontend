@@ -101,9 +101,7 @@ taxCal_breakdown.table.ZRTBR                                        = Haen cyfra
 taxCal_breakdown.table.ZRTHR                                        = Haen cyfradd uwch ar y gyfradd sero ({0} at {1}%)
 taxCal_breakdown.table.ZRTAR                                        = Haen cyfradd ychwanegol ar y gyfradd sero ({0} at {1}%)
 taxCal_breakdown.table.total_tax_due                                = Cyfanswm y dreth sy’n ddyledus
-taxCal_breakdown.table.nic4.ZRT                                     = Yswiriant Gwladol Dosbarth 4 ({0} at {1}%)
-taxCal_breakdown.table.nic4.BRT                                     = Yswiriant Gwladol Dosbarth 4 ({0} at {1}%)
-taxCal_breakdown.table.nic4.HRT                                     = Yswiriant Gwladol Dosbarth 4 ({0} at {1}%)
+taxCal_breakdown.table.nic4                                         = Yswiriant Gwladol Dosbarth 4 ({0} at {1}%)
 taxCal_breakdown.table.nic2                                         = Yswiriant Gwladol Dosbarth 2
 taxCal_breakdown.table.banks_and_building_societies                 = Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
 
