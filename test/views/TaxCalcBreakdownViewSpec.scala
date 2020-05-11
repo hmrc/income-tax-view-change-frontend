@@ -309,12 +309,8 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       "have an additional charges table" which {
 
-        "has all four table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(4, 4)
-        }
-
-        "has the correct heading" in new Setup(view) {
-          content.table(4).h3.text() shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+        "has all three table rows" in new Setup(view) {
+          content hasTableWithCorrectSize(4, 3)
         }
 
         "has a Nic4 zero rate threshold(ZRT) line with the correct value" in new Setup(view) {
@@ -334,9 +330,20 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
           row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic4_HRT
           row.select("td").last().text() shouldBe "£300"
         }
+      }
+
+      "have an additional charges table" which {
+
+        "has all four table rows" in new Setup(view) {
+          content hasTableWithCorrectSize(5, 1)
+        }
+
+        "has the correct heading" in new Setup(view) {
+          content.table(5).h3.text() shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
+        }
 
         "has a Nic2 line with the correct value" in new Setup(view) {
-          val row: Element = content.table(4).select("tr").get(3)
+          val row: Element = content.table(5).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic2
           row.select("td").last().text() shouldBe "£10,000"
         }
@@ -345,15 +352,15 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
       "have an additional deductions table" which {
 
         "has one table row" in new Setup(view) {
-          content hasTableWithCorrectSize(5, 1)
+          content hasTableWithCorrectSize(6, 1)
         }
 
         "has the correct heading" in new Setup(view) {
-          content.table(5).h3.text() shouldBe TaxCalcBreakdown.sectionHeadingAdditionalDeduc
+          content.table(6).h3.text() shouldBe TaxCalcBreakdown.sectionHeadingAdditionalDeduc
         }
 
         "has a UK banks and building societies line with the correct value" in new Setup(view) {
-          val row: Element = content.table(5).select("tr").get(0)
+          val row: Element = content.table(6).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.BBSI
           row.select("td").last().text() shouldBe "£10,000"
         }

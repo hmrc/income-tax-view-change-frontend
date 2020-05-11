@@ -107,7 +107,8 @@ object Nic {
   implicit val writes: OWrites[Nic] = Json.writes[Nic]
 }
 
-case class NicBand(income: BigDecimal,
+case class NicBand(name: String,
+                   income: BigDecimal,
                    rate: BigDecimal,
                    amount: BigDecimal)
 

@@ -88,8 +88,10 @@ taxCal-breakdown.national-regime                                    = Tax regime
 taxCal_breakdown.pay_pensions_profit                                = Pay, pensions and profit
 taxCal_breakdown.savings                                            = Savings
 taxCal_breakdown.dividends                                          = Dividends
+taxCal_breakdown.class4_national_insurance                          = Class 4 National Insurance
 taxCal_breakdown.additional_charges                                 = Additional charges
 taxCal_breakdown.additional_deductions                              = Additional deductions
+taxCal_breakdown.table.ZRT                                          = Zero rate ({0} at {1}%)
 taxCal_breakdown.table.SSR                                          = Starting rate ({0} at {1}%)
 taxCal_breakdown.table.SRT                                          = Starter rate ({0} at {1}%)
 taxCal_breakdown.table.BRT                                          = Basic rate ({0} at {1}%)
@@ -102,6 +104,7 @@ taxCal_breakdown.table.ZRTHR                                        = Higher rat
 taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.total_tax_due                                = Total tax due
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
+
 taxCal_breakdown.table.nic2                                         = Class 2 National Insurance
 taxCal_breakdown.table.banks_and_building_societies                 = Interest received from UK banks and building societies
 

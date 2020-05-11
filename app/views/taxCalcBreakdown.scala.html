@@ -105,26 +105,37 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
         </table>
     }
 
-    @if(calcModel.calcDataModel.nic.class4Bands.nonEmpty || calcModel.calcDataModel.nic.class2.nonEmpty){
+    @if(calcModel.calcDataModel.nic.class4Bands.nonEmpty){
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.class4_national_insurance")</h3>
+            </caption>
+            <tbody>
+                @calcModel.calcDataModel.nic.class4Bands.map { nicBands =>
+                    @for(band <- nicBands.filter(_.income > 0)
+                    .sortBy(_.name == "ZRT").sortBy(_.name == "BRT").sortBy(_.name == "HRT")
+                    ){
+                        <tr>
+                            <td>
+                                @messages(
+                                s"taxCal_breakdown.table.${band.name}",
+                                band.income.toCurrencyString,
+                                s"${band.rate}"
+                                )
+                            </td>
+                            <td class="numeric">@{band.amount.toCurrency}</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+    @if(calcModel.calcDataModel.nic.class2.nonEmpty){
         <table>
             <caption>
                 <h3 class="heading-medium">@messages("taxCal_breakdown.additional_charges")</h3>
             </caption>
             <tbody>
-                @calcModel.calcDataModel.nic.class4Bands.map { nicBands =>
-                    @nicBands.filter(_.income > 0).sortBy(_.rate).map { nicBand =>
-                        <tr>
-                            <td>
-                                @messages(
-                                    s"taxCal_breakdown.table.nic4",
-                                    nicBand.income.toCurrencyString,
-                                    s"${nicBand.rate}"
-                                )
-                            </td>
-                            <td class="numeric">@{nicBand.amount.toCurrency}</td>
-                        </tr>
-                    }
-                }
                 @calcModel.calcDataModel.nic.class2.map { amount =>
                     <tr>
                         <td >@messages("taxCal_breakdown.table.nic2")</td>

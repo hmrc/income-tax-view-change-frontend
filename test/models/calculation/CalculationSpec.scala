@@ -63,7 +63,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       class4 = Some(2.0),
       totalNic = Some(3.0),
       class4Bands = Some(Seq(
-        NicBand(1.0, 2.0, 3.0)
+        NicBand("ZRT", 1.0, 2.0, 3.0)
       ))
     ),
     savings = Some(100.0)
@@ -88,7 +88,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         "nics" -> Json.obj(
           "class4Nics" -> Json.obj(
             "class4NicBands" -> Json.arr(
-              Json.obj(
+              Json.obj("name" -> "ZRT",
                 "income" -> 1.0,
                 "rate" -> 2.0,
                 "amount" -> 3.0
@@ -241,6 +241,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "totalNic" -> 3.0,
       "class4Bands" -> Json.arr(
         Json.obj(
+          "name" -> "ZRT",
           "income" -> 1.0,
           "rate" -> 2.0,
           "amount" -> 3.0

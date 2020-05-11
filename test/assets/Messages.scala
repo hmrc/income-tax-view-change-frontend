@@ -152,10 +152,11 @@ object Messages {
     val dividend_ZRTBR: String = "Basic rate band at nil rate (£1,000 at 0%)"
     val dividend_ZRTHR: String = "Higher rate band at nil rate (£2,000 at 0%)"
     val dividend_ZRTAR: String = "Additional rate band at nil rate (£3,000 at 0%)"
+    //Class 4 National Insurance
+    val Nic4_ZRT: String = "Zero rate (£2,000 at 1%)"
+    val Nic4_BRT: String = "Basic rate (£3,000 at 2%)"
+    val Nic4_HRT: String = "Higher rate (£5,000 at 3%)"
     //additional charges table
-    val Nic4_ZRT: String = "Class 4 National Insurance (£2,000 at 1%)"
-    val Nic4_BRT: String = "Class 4 National Insurance (£3,000 at 2%)"
-    val Nic4_HRT: String = "Class 4 National Insurance (£5,000 at 3%)"
     val Nic2: String = "Class 2 National Insurance"
     //additional deduction
     val BBSI: String = "Interest received from UK banks and building societies"
