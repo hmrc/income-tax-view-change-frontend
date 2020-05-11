@@ -112,8 +112,7 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
             </caption>
             <tbody>
                 @calcModel.calcDataModel.nic.class4Bands.map { nicBands =>
-                    @for(band <- nicBands.filter(_.income > 0)
-                    .sortBy(_.name == "ZRT").sortBy(_.name == "BRT").sortBy(_.name == "HRT")
+                    @for(band <- nicBands.filter(_.income > 0).sortBy(_.rate)
                     ){
                         <tr>
                             <td>

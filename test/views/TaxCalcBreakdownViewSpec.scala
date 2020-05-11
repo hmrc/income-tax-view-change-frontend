@@ -307,7 +307,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       }
 
-      "have an additional charges table" which {
+      "have a Nic 4 table" which {
 
         "has all three table rows" in new Setup(view) {
           content hasTableWithCorrectSize(4, 3)
