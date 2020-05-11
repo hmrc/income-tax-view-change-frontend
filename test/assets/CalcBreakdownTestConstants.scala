@@ -809,16 +809,19 @@ object CalcBreakdownTestConstants {
         class4 = Some(14000.00),
         class4Bands = Some(Seq(
           NicBand(
+            name = "ZRT",
             rate = 1,
             income = 2000,
             amount = 100
           ),
           NicBand(
+            name = "BRT",
             rate = 2,
             income = 3000,
             amount = 200
           ),
           NicBand(
+            name = "HRT",
             rate = 3,
             income = 5000,
             amount = 300
