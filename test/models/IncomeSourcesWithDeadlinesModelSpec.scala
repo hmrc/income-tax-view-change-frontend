@@ -118,50 +118,6 @@ class IncomeSourcesWithDeadlinesModelSpec extends UnitSpec with Matchers {
         noIncomeDetailsWithNoDeadlines.businessIncomeSources shouldBe List.empty
       }
     }
-
-
-    "the user has an error with a 5xx status in the business income sources" should {
-      "return a true for hasAnyServerErrors" in {
-        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataErrorModel)),
-          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligationsDataSuccessModel)), None).hasAnyServerErrors shouldBe true
-      }
-    }
-    "the user has an error with a single 5xx status in the business income sources" should {
-      "return a true for hasAnyServerErrors" in {
-        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataSuccessModel),
-          BusinessIncomeWithDeadlinesModel(business1, obligationsDataErrorModel)),
-          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligationsDataSuccessModel)), None).hasAnyServerErrors shouldBe true
-      }
-    }
-    "the user has an error with a 5xx status in the property income sources" should {
-      "return a true for hasAnyServerErrors" in {
-        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataErrorModel)),
-          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligations4xxDataErrorModel)), None).hasAnyServerErrors shouldBe true
-      }
-    }
-    "the user has an error with a 4xx status in the business income sources" should {
-      "return a false for hasAnyServerErrors" in {
-        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligations4xxDataErrorModel)),
-          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligationsDataSuccessModel)), None).hasAnyServerErrors shouldBe false
-      }
-    }
-    "the user has an error with a 4xx status in the property income sources" should {
-      "return a false for hasAnyServerErrors" in {
-        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataSuccessModel)),
-          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligations4xxDataErrorModel)), None).hasAnyServerErrors shouldBe false
-      }
-    }
-    "the user has no errors for any income sources" should {
-      "return a false for hasAnyServerErrors" in {
-        IncomeSourcesWithDeadlinesModel(List(BusinessIncomeWithDeadlinesModel(business1, obligationsDataSuccessModel)),
-          Some(PropertyIncomeWithDeadlinesModel(propertyDetails, obligationsDataSuccessModel)), None).hasAnyServerErrors shouldBe false
-      }
-    }
-    "the user has no income sources" should {
-      "return a false for hasAnyServerErrors" in {
-        IncomeSourcesWithDeadlinesModel(List.empty, None, None).hasAnyServerErrors shouldBe false
-      }
-    }
   }
 
 }

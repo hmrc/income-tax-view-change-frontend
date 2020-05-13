@@ -28,6 +28,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
 import implicits.ImplicitDateFormatter
 import models.calculation.{CalculationItem, ListCalculationItems}
+import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
 
 class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
@@ -43,10 +44,12 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter w
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         And("I wiremock stub obligation responses")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(
+          singleObligationQuarterlyReturnModel(testSelfEmploymentId),
+          singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
+          singleObligationOverdueModel(testPropertyId),
+          singleObligationCrystallisationModel
+        )))
 
         And("I stub a successful calculation response for 2017-18")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
@@ -103,10 +106,12 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter w
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
           And("I wiremock stub obligation responses")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(
+            singleObligationQuarterlyReturnModel(testSelfEmploymentId),
+            singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
+            singleObligationOverdueModel(testPropertyIncomeId),
+            singleObligationCrystallisationModel
+          )))
 
           And("I stub a successful estimated calculation response for 2017-18")
           IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
@@ -157,10 +162,12 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter w
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
           And("I wiremock stub a single business obligation response")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(
+            singleObligationQuarterlyReturnModel(testSelfEmploymentId),
+            singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
+            singleObligationOverdueModel(testPropertyIncomeId),
+            singleObligationCrystallisationModel
+          )))
 
           And("I stub a not found calculation response for 2017-18")
           IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
@@ -206,10 +213,12 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter w
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         And("I wiremock stub a single business obligation response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, testNino, singleObligationQuarterlyReturnModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationOverdueModel)
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, singleObligationCrystallisationModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(
+          singleObligationQuarterlyReturnModel(testSelfEmploymentId),
+          singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
+          singleObligationOverdueModel(testPropertyIncomeId),
+          singleObligationCrystallisationModel
+        )))
 
         And("I stub an error calculation response for 2017-18")
         IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(

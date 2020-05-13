@@ -18,7 +18,7 @@ package assets
 
 import assets.BaseTestConstants._
 import implicits.ImplicitDateFormatter
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
+import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
 
 object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
@@ -83,9 +83,15 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
   ))
 
 
-  val quarterlyObligationsDataSuccessModel : ReportDeadlinesModel = ReportDeadlinesModel(List(secondQuarterlyObligation, openObligation))
+  val quarterlyObligationsDataSuccessModel : ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(secondQuarterlyObligation, openObligation))
 
-  val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueObligation, openObligation))
+  val reportDeadlinesDataSelfEmploymentSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testSelfEmploymentId, List(overdueObligation, openObligation))
+
+  val reportDeadlinesDataPropertySuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(overdueObligation, openObligation))
+
+  val obligationsDataSelfEmploymentOnlySuccessModel: ObligationsModel = ObligationsModel(List(reportDeadlinesDataSelfEmploymentSuccessModel))
+
+  val obligationsDataPropertyOnlySuccessModel: ObligationsModel = ObligationsModel(List(reportDeadlinesDataPropertySuccessModel))
 
   val previousObligationOne: ReportDeadlineModel = ReportDeadlineModel(
     "2017-1-1",
@@ -134,9 +140,9 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
   )
 
 
-  val previousObligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(previousObligationTwo, previousObligationOne))
-  val previousObligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(previousObligationThree, previousObligationFour))
-  val previousObligationsCrystallisedSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(previousObligationFive))
+  val previousObligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(previousObligationTwo, previousObligationOne))
+  val previousObligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(previousObligationThree, previousObligationFour))
+  val previousObligationsCrystallisedSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(previousObligationFive))
 
   val reportDeadlineOverdueJson = Json.obj(
     "start" -> "2017-07-01",
@@ -153,6 +159,15 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     "periodKey" -> "#003"
   )
   val obligationsDataSuccessJson = Json.obj(
+    "identification" -> testSelfEmploymentId,
+    "obligations" -> Json.arr(
+      reportDeadlineOverdueJson,
+      reportDeadlineOpenJson
+    )
+  )
+
+  val reportDeadlinesDataFromJson: JsValue = Json.obj(
+    "identification" -> testSelfEmploymentId,
     "obligations" -> Json.arr(
       reportDeadlineOverdueJson,
       reportDeadlineOpenJson
@@ -160,11 +175,9 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
   )
 
   val obligationsDataFromJson: JsValue = Json.obj(
-    "identification" -> testSelfEmploymentId,
     "obligations" -> Json.arr(
-      reportDeadlineOverdueJson,
-      reportDeadlineOpenJson
-    )
+        reportDeadlinesDataFromJson
+      )
   )
 
   val overdueEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
@@ -194,10 +207,20 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
   ))
 
 
-  val obligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueEOPSObligation, openEOPSObligation))
+  val obligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(overdueEOPSObligation, openEOPSObligation))
 
-  val obligationsCrystallisedSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(crystallisedObligation))
-  val obligationsCrystallisedEmptySuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List())
+  val obligationsCrystallisedSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testNino, List(crystallisedObligation))
+
+  val obligationsAllDeadlinesSuccessModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel,
+    obligationsEOPSDataSuccessModel, obligationsCrystallisedSuccessModel))
+
+  val obligationsCrystallisedEmptySuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testNino, List())
+
+  val obligationsPropertyOnlySuccessModel: ObligationsModel = ObligationsModel(Seq(obligationsEOPSDataSuccessModel, obligationsCrystallisedEmptySuccessModel))
+
+  val obligationsCrystallisedOnlySuccessModel: ObligationsModel = ObligationsModel(Seq(obligationsCrystallisedSuccessModel))
+
+  val emptyObligationsSuccessModel: ObligationsModel = ObligationsModel(Seq())
 
   val reportDeadlineEOPSOverdueJson: JsValue = Json.obj(
     "start" -> "2017-04-06",
@@ -220,9 +243,9 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
 
 
 
-  val twoObligationsSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueObligation, openEOPSObligation))
+  val twoObligationsSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(overdueObligation, openEOPSObligation))
 
-  val crystallisedDeadlineSuccess: ReportDeadlinesModel = ReportDeadlinesModel(List(openCrystObligation))
+  val crystallisedDeadlineSuccess: ReportDeadlinesModel = ReportDeadlinesModel(testMtditid, List(openCrystObligation))
 
   val obligationsDataErrorModel = ReportDeadlinesErrorModel(testErrorStatus, testErrorMessage)
   val obligations4xxDataErrorModel = ReportDeadlinesErrorModel(404, testErrorMessage)
@@ -232,6 +255,18 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
     "message" -> testErrorMessage
   )
 
+  val obligationsDataAllMinusCrystallisedSuccessModel: ObligationsModel = ObligationsModel(List(
+    reportDeadlinesDataPropertySuccessModel,
+    reportDeadlinesDataSelfEmploymentSuccessModel,
+    ReportDeadlinesModel(testSelfEmploymentId2, List(overdueObligation, openObligation))
+  ))
+
+  val obligationsDataAllDataSuccessModel: ObligationsModel = ObligationsModel(List(
+    reportDeadlinesDataPropertySuccessModel,
+    reportDeadlinesDataSelfEmploymentSuccessModel,
+    crystallisedDeadlineSuccess,
+    ReportDeadlinesModel(testSelfEmploymentId2, List(overdueObligation, openObligation))
+  ))
 }
 
 

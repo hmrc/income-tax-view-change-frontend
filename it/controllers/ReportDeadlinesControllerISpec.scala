@@ -15,10 +15,7 @@
  */
 package controllers
 
-import java.time.LocalDate
-
 import assets.BaseIntegrationTestConstants._
-import assets.BusinessDetailsIntegrationTestConstants.b1TradingName
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.{ReportDeadlinesMessages => messages}
@@ -26,6 +23,7 @@ import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.ImplicitDateFormatter
+import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
 
 class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
@@ -44,8 +42,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationEOPSPropertyModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testMtditid, testNino)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(singleObligationEOPSPropertyModel)))
 
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
@@ -105,8 +102,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testPropertyIncomeId, testNino, singleObligationQuarterlyModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testMtditid, testNino)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
@@ -135,8 +131,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testMtditid, testNino)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
 
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
@@ -165,9 +160,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
           enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationQuarterlyModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(otherTestSelfEmploymentId, testNino, singleObligationQuarterlyModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testMtditid, testNino)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
+            singleObligationQuarterlyModel(otherTestSelfEmploymentId))))
 
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
@@ -196,8 +190,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         "the user has a eops SE income obligation only" in {
           enable(ObligationsPage)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, SEIncomeSourceEOPSModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testMtditid, testNino)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(SEIncomeSourceEOPSModel(testSelfEmploymentId))))
 
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
@@ -229,8 +222,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, noObligationsModel)
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testMtditid, testNino, crystallisedEOPSModel)
+          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
 
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
@@ -280,7 +272,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         And("I wiremock stub a single business obligation response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testSelfEmploymentId, testNino, singleObligationOverdueModel)
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(singleObligationOverdueModel(testSelfEmploymentId))))
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")
         val res = IncomeTaxViewChangeFrontend.getReportDeadlines

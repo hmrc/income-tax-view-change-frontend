@@ -16,13 +16,12 @@
 
 package audit.models
 
-case class ReportDeadlinesRequestAuditModel(mtditid: String, nino: String, incomeSourceId: String) extends AuditModel {
+case class ReportDeadlinesRequestAuditModel(mtditid: String, nino: String) extends AuditModel {
 
   override val transactionName: String = "report-deadlines-request"
   override val auditType: String = "reportDeadlinesRequest"
   override val detail: Seq[(String, String)] = Seq(
     "mtditid" -> mtditid,
-    "nino" -> nino,
-    "incomeSourceId" -> incomeSourceId
+    "nino" -> nino
   )
 }

@@ -22,6 +22,7 @@ package controllers
   import helpers.ComponentSpecBase
   import helpers.servicemocks.IncomeTaxViewChangeStub
   import implicits.ImplicitDateFormatter
+  import models.reportDeadlines.ObligationsModel
   import play.api.http.Status._
   import play.api.libs.ws.WSResponse
 
@@ -34,9 +35,7 @@ class PreviousObligationsControllerISpec extends ComponentSpecBase with Implicit
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-      IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testSelfEmploymentId, testNino)
-      IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testPropertyIncomeId, testNino)
-      IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testMtditid, testNino)
+      IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getPreviousObligations
 
@@ -57,15 +56,15 @@ class PreviousObligationsControllerISpec extends ComponentSpecBase with Implicit
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-      IncomeTaxViewChangeStub.stubGetPreviousObligations(testSelfEmploymentId, testNino, previousQuarterlyObligation)
-      IncomeTaxViewChangeStub.stubGetPreviousObligations(testPropertyIncomeId, testNino, previousEOPSObligation)
-      IncomeTaxViewChangeStub.stubGetPreviousObligations(testMtditid, testNino, previousCrystallisationObligation)
+      IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino, ObligationsModel(Seq(
+        previousQuarterlyObligation(testSelfEmploymentId),
+        previousEOPSObligation(testPropertyIncomeId),
+        previousCrystallisationObligation
+      )))
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getPreviousObligations
 
-      IncomeTaxViewChangeStub.verifyGetPreviousObligations(testSelfEmploymentId, testNino)
-      IncomeTaxViewChangeStub.verifyGetPreviousObligations(testPropertyIncomeId, testNino)
-      IncomeTaxViewChangeStub.verifyGetPreviousObligations(testMtditid, testNino)
+      IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
       result should have(
         httpStatus(OK),

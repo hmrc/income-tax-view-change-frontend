@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import javax.inject.Inject
 import models.core.{Nino, NinoResponse, NinoResponseError}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
@@ -52,12 +52,12 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     s"${config.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
   }
 
-  def getReportDeadlinesUrl(incomeSourceID: String, nino: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/$nino/income-source/$incomeSourceID/report-deadlines"
+  def getReportDeadlinesUrl(nino: String): String = {
+    s"${config.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines"
   }
 
-  def getPreviousObligationsUrl(incomeSourceID: String, nino: String): String = {
-    s"${config.itvcProtectedService}/income-tax-view-change/$nino/income-source/$incomeSourceID/fulfilled-report-deadlines"
+  def getPreviousObligationsUrl(nino: String): String = {
+    s"${config.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines"
   }
 
   def getIncomeSources(mtditid: String, nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
@@ -132,24 +132,26 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     }
   }
 
-  def getReportDeadlines(incomeSourceID: String)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
+  def getReportDeadlines()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
 
-    val url = getReportDeadlinesUrl(incomeSourceID, mtdUser.nino)
+    val url = getReportDeadlinesUrl(mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - GET $url")
 
-    auditingService.audit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, incomeSourceID))
+    auditingService.audit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
         case OK =>
           Logger.debug(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - RESPONSE status: ${response.status}, json: ${response.json}")
-          response.json.validate[ReportDeadlinesModel].fold(
+          response.json.validate[ObligationsModel].fold(
             invalid => {
               Logger.error(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - Json Validation Error: $invalid")
               ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
             },
             valid => {
-              auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser.mtditid, mtdUser.nino, incomeSourceID, valid.obligations))
+              valid.obligations.foreach { data =>
+                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser.mtditid, mtdUser.nino, data.identification, data.obligations))
+              }
               valid
             }
           )
@@ -168,24 +170,26 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     }
   }
 
-  def getPreviousObligations(incomeSourceId: String)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
+  def getPreviousObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
 
-    val url = getPreviousObligationsUrl(incomeSourceId, mtdUser.nino)
+    val url = getPreviousObligationsUrl(mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
 
-    auditingService.audit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, incomeSourceId))
+    auditingService.audit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
         case OK =>
           Logger.debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, json: ${response.json}")
-          response.json.validate[ReportDeadlinesModel].fold(
+          response.json.validate[ObligationsModel].fold(
             invalid => {
               Logger.error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Json Validation Error: $invalid")
               ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
             },
             valid => {
-              auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser.mtditid, mtdUser.nino, incomeSourceId, valid.obligations))
+              valid.obligations.foreach { data =>
+                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser.mtditid, mtdUser.nino, data.identification, data.obligations))
+              }
               valid
             }
           )

@@ -54,7 +54,7 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
     if(user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       auditReportDeadlines(user)
       reportDeadlinesService.createIncomeSourcesWithDeadlinesModel(user.incomeSources).map {
-        case withDeadlines: IncomeSourcesWithDeadlinesModel if !withDeadlines.hasAnyServerErrors =>
+        case withDeadlines: IncomeSourcesWithDeadlinesModel =>
           Ok(views.html.obligations(withDeadlines))
         case _=>
           Logger.error(s"[ReportDeadlinesController][renderView] error occurred while trying to render report Deadlines page")

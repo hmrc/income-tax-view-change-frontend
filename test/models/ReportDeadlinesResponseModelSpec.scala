@@ -29,7 +29,7 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
 
     "for the 1st Obligation" should {
 
-      val obligation = obligationsDataSuccessModel.obligations.head
+      val obligation = reportDeadlinesDataSelfEmploymentSuccessModel.obligations.head
 
       "have the start date as 1st July 2017" in {
         obligation.start shouldBe "2017-7-1".toLocalDate
@@ -58,7 +58,7 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
 
     "for the 2nd Obligation" should {
 
-      val obligation = obligationsDataSuccessModel.obligations(1)
+      val obligation = reportDeadlinesDataSelfEmploymentSuccessModel.obligations(1)
 
       "have the start date as 1st July 2017" in {
         obligation.start shouldBe "2017-7-1".toLocalDate
@@ -144,13 +144,13 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
     }
 
     "be formatted to JSON correctly" in {
-      Json.toJson[ReportDeadlinesModel](obligationsDataSuccessModel) shouldBe obligationsDataSuccessJson
+      Json.toJson[ReportDeadlinesModel](reportDeadlinesDataSelfEmploymentSuccessModel) shouldBe obligationsDataSuccessJson
     }
 
     "be able to parse a JSON into the Model" in {
       Json.fromJson[ReportDeadlinesModel](obligationsDataSuccessJson).fold(
         invalid => invalid,
-        valid => valid) shouldBe obligationsDataSuccessModel
+        valid => valid) shouldBe reportDeadlinesDataSelfEmploymentSuccessModel
     }
 
   }
@@ -171,34 +171,6 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
 
     "be able to parse a JSON into the Model" in {
       Json.fromJson[ReportDeadlinesErrorModel](obligationsDataErrorJson) shouldBe JsSuccess(obligationsDataErrorModel)
-    }
-  }
-
-  "The ReportDeadlinesResponseModel .apply function" should {
-
-    "create a ReportDeadlines Model when passed the correct Json" in {
-      ReportDeadlinesResponseModel.apply("ReportDeadlinesModel", obligationsDataSuccessJson) shouldBe obligationsDataSuccessModel
-    }
-
-    "create a ReportDeadlinesErrorModel when passed the correct Json" in {
-      ReportDeadlinesResponseModel.apply("ReportDeadlinesErrorModel", obligationsDataErrorJson) shouldBe obligationsDataErrorModel
-    }
-
-    "create a ReportDeadlinesModel when passed the correct Json" in {
-      ReportDeadlinesResponseModel.apply("ReportDeadlineModel", reportDeadlineOpenJson) shouldBe openObligation
-    }
-  }
-
-  "The ReportDeadlinesResponseModel .unapply function" should {
-
-    "extract the ReportDeadlinesModel and Json" in {
-      ReportDeadlinesResponseModel.unapply(obligationsDataSuccessModel) shouldBe Some(("ReportDeadlinesModel", obligationsDataSuccessJson))
-    }
-    "extract the ReportDeadlinesErrorModel and Json" in {
-      ReportDeadlinesResponseModel.unapply(obligationsDataErrorModel) shouldBe Some(("ReportDeadlinesErrorModel", obligationsDataErrorJson))
-    }
-    "extract the ReportDeadlineModel and Json" in {
-      ReportDeadlinesResponseModel.unapply(overdueObligation) shouldBe Some(("ReportDeadlineModel", reportDeadlineOverdueJson))
     }
   }
 }
