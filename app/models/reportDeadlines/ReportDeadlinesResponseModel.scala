@@ -25,7 +25,13 @@ import play.api.libs.json._
 
 sealed trait ReportDeadlinesResponseModel
 
-case class ReportDeadlinesModel(obligations: List[ReportDeadlineModel]) extends ReportDeadlinesResponseModel {
+case class ObligationsModel(obligations: Seq[ReportDeadlinesModel]) extends ReportDeadlinesResponseModel
+
+object ObligationsModel {
+  implicit val format: OFormat[ObligationsModel] = Json.format[ObligationsModel]
+}
+
+case class ReportDeadlinesModel(identification: String, obligations: List[ReportDeadlineModel]) {
   val currentQuarterlyDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == "Quarterly").sortBy(_.start.toEpochDay)
   val currentEOPsDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == "EOPS").sortBy(_.start.toEpochDay)
   val currentCrystDeadlines: List[ReportDeadlineModel] = obligations.filter(_.obligationType == "Crystallised").sortBy(_.start.toEpochDay)
@@ -65,23 +71,4 @@ object ReportDeadlinesModel {
 
 object ReportDeadlinesErrorModel {
   implicit val format: Format[ReportDeadlinesErrorModel] = Json.format[ReportDeadlinesErrorModel]
-}
-
-object ReportDeadlinesResponseModel {
-  def unapply(obsRespModel: ReportDeadlinesResponseModel): Option[(String, JsValue)] = {
-    val (p: Product, sub) = obsRespModel match {
-      case model: ReportDeadlinesModel => (model, Json.toJson(model)(ReportDeadlinesModel.format))
-      case model: ReportDeadlineModel => (model, Json.toJson(model)(ReportDeadlineModel.format))
-      case error: ReportDeadlinesErrorModel => (error, Json.toJson(error)(ReportDeadlinesErrorModel.format))
-    }
-    Some(p.productPrefix -> sub)
-  }
-  def apply(`class`: String, data: JsValue): ReportDeadlinesResponseModel ={
-    (`class` match {
-      case "ReportDeadlinesModel" => Json.fromJson[ReportDeadlinesModel](data)(ReportDeadlinesModel.format)
-      case "ReportDeadlineModel" => Json.fromJson[ReportDeadlineModel](data)(ReportDeadlineModel.format)
-      case "ReportDeadlinesErrorModel" => Json.fromJson[ReportDeadlinesErrorModel](data)(ReportDeadlinesErrorModel.format)
-    }).get
-  }
-  implicit val format: Format[ReportDeadlinesResponseModel] = Json.format[ReportDeadlinesResponseModel]
 }

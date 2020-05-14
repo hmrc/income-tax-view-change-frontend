@@ -20,6 +20,7 @@ import java.time.LocalDate
 import implicits.ImplicitDateFormatter._
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
+import BaseIntegrationTestConstants._
 
 object ReportDeadlinesIntegrationTestConstants {
   def successResponse(obligationsModel: ReportDeadlinesModel): JsValue = {
@@ -46,7 +47,9 @@ object ReportDeadlinesIntegrationTestConstants {
   val deadlineStart6 = "2017-11-01"
   val deadlineEnd6 = "2018-02-01"
 
-  val multipleReportDeadlinesDataSuccessModel = ReportDeadlinesModel(List(
+  val testPropertyId = "1234"
+
+  def multipleReportDeadlinesDataSuccessModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
     ReportDeadlineModel(
       start = deadlineStart1,
       end = deadlineEnd1,
@@ -99,7 +102,7 @@ object ReportDeadlinesIntegrationTestConstants {
 
   val overdueDate: LocalDate = LocalDate.now().minusDays(1)
 
-  val singleObligationQuarterlyReturnModel = ReportDeadlinesModel(List(
+  def singleObligationQuarterlyReturnModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
     ReportDeadlineModel(
       start = singleObligationStart,
       end = singleObligationEndQuarter,
@@ -112,7 +115,7 @@ object ReportDeadlinesIntegrationTestConstants {
 
   val veryOverdueDate: LocalDate = LocalDate.of(2017, 5, 5)
 
-  val singleObligationCrystallisationModel = ReportDeadlinesModel(List(
+  val singleObligationCrystallisationModel: ReportDeadlinesModel = ReportDeadlinesModel(testMtditid, List(
     ReportDeadlineModel(
       start = singleObligationStart,
       end = singleObligationEndQuarter,
@@ -123,7 +126,7 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  val singleObligationOverdueModel = ReportDeadlinesModel(List(
+  def singleObligationOverdueModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
     ReportDeadlineModel(
       start = singleObligationStart,
       end = singleObligationEnd,
@@ -138,7 +141,7 @@ object ReportDeadlinesIntegrationTestConstants {
   val singleObligationEndEOPs = "2018-07-05"
   val singleObligationDueEOPs = "2018-01-01"
 
-  val singleObligationEOPSPropertyModel = ReportDeadlinesModel(List(
+  val singleObligationEOPSPropertyModel = ReportDeadlinesModel(testPropertyId, List(
     ReportDeadlineModel(
       singleObligationStartEOPs,
       singleObligationEndEOPs,
@@ -149,11 +152,11 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  val noObligationsModel = ReportDeadlinesModel(List(
+  def noObligationsModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
 
   ))
 
-  val singleObligationQuarterlyModel = ReportDeadlinesModel(List(
+  def singleObligationQuarterlyModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
     ReportDeadlineModel(
       singleObligationStart,
       singleObligationEnd,
@@ -164,7 +167,7 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  val singleObligationPlusYearOpenModel = ReportDeadlinesModel(List(
+  def singleObligationPlusYearOpenModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
     ReportDeadlineModel(
       start = "2017-04-06",
       end = "2017-07-05",
@@ -176,7 +179,7 @@ object ReportDeadlinesIntegrationTestConstants {
   ))
 
 
-  val SEIncomeSourceEOPSModel = ReportDeadlinesModel(List(
+  def SEIncomeSourceEOPSModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
     ReportDeadlineModel(
       start = "2017-04-06",
       end = "2018-04-05",
@@ -187,7 +190,7 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  val crystallisedEOPSModel = ReportDeadlinesModel(List(
+  val crystallisedEOPSModel = ReportDeadlinesModel(testMtditid, List(
     ReportDeadlineModel(
       start = "2017-04-06",
       end = "2018-04-05",
@@ -198,7 +201,7 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  val crystallisedEOPSModelMulti = ReportDeadlinesModel(List(
+  val crystallisedEOPSModelMulti = ReportDeadlinesModel(testMtditid, List(
     ReportDeadlineModel(
       start = "2018-04-06",
       end = "2019-04-05",
@@ -217,5 +220,5 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  val emptyModel = ReportDeadlinesModel(List())
+  def emptyModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List())
 }

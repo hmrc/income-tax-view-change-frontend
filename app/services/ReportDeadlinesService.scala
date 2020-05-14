@@ -22,7 +22,7 @@ import auth.MtdItUser
 import connectors._
 import javax.inject.{Inject, Singleton}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import models.incomeSourcesWithDeadlines._
+import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesError, _}
 import models.reportDeadlines._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,118 +34,78 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
 
   def getNextDeadlineDueDate(incomeSourceResponse: IncomeSourceDetailsModel)
                             (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[LocalDate] = {
-    getAllDeadlines(incomeSourceResponse).map { reportDeadlines =>
-      reportDeadlines.map(_.due).sortWith(_ isBefore _).head
+    getReportDeadlines().map {
+      case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
+        deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _).head
+      case error: ReportDeadlinesErrorModel => throw new Exception(s"${error.message}")
+      case _ =>
+        Logger.error("Unexpected Exception getting next deadline due")
+        throw new Exception(s"Unexpected Exception getting next deadline due")
     }
-  }
-
-  def getAllDeadlines(incomeSourceResponse: IncomeSourceDetailsModel)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[List[ReportDeadlineModel]] = {
-
-    val allRetrievalIds: List[String] = incomeSourceResponse.businesses.map(_.incomeSourceId) ++
-      incomeSourceResponse.property.map(_.incomeSourceId) :+
-      mtdItUser.mtditid
-
-    Future.sequence(
-      allRetrievalIds.map { incomeSource =>
-        getReportDeadlines(incomeSource).map {
-          case ReportDeadlinesModel(obligations) => obligations
-          case _: ReportDeadlinesErrorModel => Nil
-          case _ => Nil
-        }
-      }
-    ).map(_.flatten)
   }
 
   def previousObligationsWithIncomeType(incomeSourceResponse: IncomeSourceDetailsModel)
                                        (implicit hc: HeaderCarrier, ec: ExecutionContext,
                                         mtdItUser: MtdItUser[_]): Future[List[ReportDeadlineModelWithIncomeType]] = {
-
-    val businessIdsWithName = incomeSourceResponse.businesses.map(_.incomeSourceId) zip incomeSourceResponse.businesses.map(_.tradingName.getOrElse("Business"))
-    val businessPreviousObligations = getBusinessObligationsFromIds(businessIdsWithName)
-    val propertyPreviousObligations = getPreviousObligationsFromIds(incomeSourceResponse.property.map(_.incomeSourceId).toList)
-    val crystallisationPreviousObligations = getPreviousObligationsFromIds(List(mtdItUser.mtditid))
-
-    for {
-      business <- businessPreviousObligations
-      property <- propertyPreviousObligations
-      crystallisation <- crystallisationPreviousObligations
-    } yield {
-      (
-        business ++
-        property.map(obligation => ReportDeadlineModelWithIncomeType("Property", obligation)) ++
-        crystallisation.map(obligation => ReportDeadlineModelWithIncomeType("Crystallised", obligation))
-      ).sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse
+    createIncomeSourcesWithDeadlinesModel(incomeSourceResponse, previousDeadlines = true) map {
+      case allDeadlines: IncomeSourcesWithDeadlinesModel =>
+        val previousBusinessDeadlines = allDeadlines.businessIncomeSources.flatMap{
+          singleBusinessDeadlines => singleBusinessDeadlines.reportDeadlines.obligations.map {
+            deadline => ReportDeadlineModelWithIncomeType(singleBusinessDeadlines.incomeSource.tradingName.getOrElse("Business"), deadline)
+          }
+        }
+        val previousPropertyDeadlines = allDeadlines.propertyIncomeSource.map(propertyDeadlines => propertyDeadlines.reportDeadlines.obligations map {
+          deadline => ReportDeadlineModelWithIncomeType("Property", deadline)
+        })
+        val previousCrystallisedDeadlines = allDeadlines.crystallisedDeadlinesModel.map {
+          crystallisedDeadlines => crystallisedDeadlines.reportDeadlines.obligations map {
+            deadline => ReportDeadlineModelWithIncomeType("Crystallised", deadline)
+          }
+        }
+        (previousBusinessDeadlines ++ previousPropertyDeadlines.toList.flatten ++ previousCrystallisedDeadlines.toList.flatten)
+          .sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse
+      case _ => List()
     }
   }
 
-  private def getPreviousObligationsFromIds(incomeSourceIds: List[String])
-                                           (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[List[ReportDeadlineModel]] = {
-    Future.sequence(
-      incomeSourceIds.map { id =>
-        incomeTaxViewChangeConnector.getPreviousObligations(id).map {
-          case ReportDeadlinesModel(obligations) => obligations
-          case _: ReportDeadlinesErrorModel => Nil
-          case _ => Nil
-        }
-      }
-    ).map(_.flatten)
+  def getReportDeadlines(previous: Boolean = false)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
+    if (previous) {
+      Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting previous Report Deadlines for nino: ${mtdUser.nino}")
+      incomeTaxViewChangeConnector.getPreviousObligations()
+    } else {
+      Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting current Report Deadlines for nino: ${mtdUser.nino}")
+      incomeTaxViewChangeConnector.getReportDeadlines()
+    }
   }
 
-  private def getBusinessObligationsFromIds(incomeSourceIdsWithName: List[(String, String)])
-                                           (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[List[ReportDeadlineModelWithIncomeType]] = {
-    Future.sequence(
-      incomeSourceIdsWithName.map { case (incomeId, name) =>
-        incomeTaxViewChangeConnector.getPreviousObligations(incomeId).map {
-          case ReportDeadlinesModel(obligations) => obligations.map(obligation => ReportDeadlineModelWithIncomeType(name, obligation))
-          case _: ReportDeadlinesErrorModel => Nil
-          case _ => Nil
-        }
-      }
-    ).map(_.flatten)
-  }
-
-  def getReportDeadlines(incomeSourceId: String)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
-    Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting Report Deadlines for incomeSourceID: $incomeSourceId")
-    incomeTaxViewChangeConnector.getReportDeadlines(incomeSourceId)
-  }
-
-  def createIncomeSourcesWithDeadlinesModel(incomeSourceResponse: IncomeSourceDetailsResponse)
+  def createIncomeSourcesWithDeadlinesModel(incomeSourceResponse: IncomeSourceDetailsResponse, previousDeadlines: Boolean = false)
                                            (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdUser: MtdItUser[_])
   : Future[IncomeSourcesWithDeadlinesResponse] = {
     incomeSourceResponse match {
       case sources: IncomeSourceDetailsModel =>
-        val businessIncomeModelFList: Future[List[BusinessIncomeWithDeadlinesModel]] =
-          Future.sequence(sources.businesses.map { seTrade =>
-            getReportDeadlines(seTrade.incomeSourceId).map { obs =>
-              BusinessIncomeWithDeadlinesModel(
-                seTrade,
-                obs
-              )
+        getReportDeadlines(previousDeadlines).map {
+          case obligations: ObligationsModel =>
+            val propertyIncomeDeadlines: Option[PropertyIncomeWithDeadlinesModel] = {
+              sources.property.flatMap { property =>
+                obligations.obligations.find(_.identification == property.incomeSourceId) map { deadline =>
+                  PropertyIncomeWithDeadlinesModel(property, deadline)
+                }
+              }
             }
-          })
-
-        val propertyIncomeModelFOpt: Future[Option[PropertyIncomeWithDeadlinesModel]] =
-          Future.sequence(Option.option2Iterable(sources.property.map { propertyIncome =>
-            getReportDeadlines(propertyIncome.incomeSourceId).map { obs =>
-              PropertyIncomeWithDeadlinesModel(propertyIncome, obs)
+            val businessIncomeDeadlines:  List[BusinessIncomeWithDeadlinesModel]  = {
+              sources.businesses.flatMap { business =>
+                val deadlines = obligations.obligations.find(_.identification == business.incomeSourceId)
+                deadlines.map(deadline => BusinessIncomeWithDeadlinesModel(business, deadline))
+              }
             }
-          })).map(_.headOption)
+            val crystallisedDeadlines: Option[CrystallisedDeadlinesModel] = {
+                obligations.obligations.find(_.identification == mtdUser.mtditid) map { deadline =>
+                  CrystallisedDeadlinesModel(deadline)
+                }
+            }
 
-
-        val crystallisedModelFList: Future[Option[CrystallisedDeadlinesModel]] =
-          getReportDeadlines(mtdUser.mtditid).map {
-            case deadlines: ReportDeadlinesModel => Some(CrystallisedDeadlinesModel(deadlines))
-            case deadlines: ReportDeadlinesErrorModel => None
-            case _ => None
-          }
-
-        for {
-          businessList <- businessIncomeModelFList
-          property <- propertyIncomeModelFOpt
-          crystallised <- crystallisedModelFList
-        } yield {
-          IncomeSourcesWithDeadlinesModel(businessList, property, crystallised)
+            IncomeSourcesWithDeadlinesModel(businessIncomeDeadlines, propertyIncomeDeadlines, crystallisedDeadlines)
+          case _ => IncomeSourcesWithDeadlinesError
         }
       case _: IncomeSourceDetailsError => Future.successful(IncomeSourcesWithDeadlinesError)
     }

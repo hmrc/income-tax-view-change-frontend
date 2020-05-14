@@ -21,7 +21,7 @@ import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesModel, 
 import play.api.libs.json.{Format, Json}
 
 abstract class IncomeModelWithDeadlines {
-  def reportDeadlines: ReportDeadlinesResponseModel
+  def reportDeadlines: ReportDeadlinesModel
 }
 
 sealed trait IncomeSourcesWithDeadlinesResponse
@@ -29,49 +29,16 @@ case object IncomeSourcesWithDeadlinesError extends IncomeSourcesWithDeadlinesRe
 case class IncomeSourcesWithDeadlinesModel(
                                             businessIncomeSources: List[BusinessIncomeWithDeadlinesModel],
                                             propertyIncomeSource: Option[PropertyIncomeWithDeadlinesModel],
-                                            crystallisedDeadlinesModel: Option[CrystallisedDeadlinesModel]) extends IncomeSourcesWithDeadlinesResponse {
+                                            crystallisedDeadlinesModel: Option[CrystallisedDeadlinesModel]) extends IncomeSourcesWithDeadlinesResponse
 
-  val incomeSources: List[IncomeModelWithDeadlines] = businessIncomeSources ++ propertyIncomeSource
-
-  val isServerError: ReportDeadlinesResponseModel => Boolean = {
-    case ReportDeadlinesErrorModel(status, _) if status >= 500 => true
-    case _ => false
-  }
-
-  val hasAnyServerErrors: Boolean = businessIncomeSources.map(_.reportDeadlines).exists(isServerError) ||
-    propertyIncomeSource.exists(x => isServerError(x.reportDeadlines))
-
-  val hasPropertyIncome: Boolean = propertyIncomeSource.nonEmpty
-  val hasBusinessIncome: Boolean = businessIncomeSources.nonEmpty
-  val hasBothIncomeSources: Boolean = hasPropertyIncome && hasBusinessIncome
-
-  val allReportDeadlinesErrored: Boolean = !incomeSources.map(_.reportDeadlines).exists {
-    case _: ReportDeadlinesModel => true
-    case _ => false
-  }
-
-  val allReportDeadlinesErroredForAllIncomeSources: Boolean = hasBothIncomeSources && allReportDeadlinesErrored
-
-  val hasBusinessReportErrors: Boolean = businessIncomeSources.map(_.reportDeadlines).exists {
-    case _: ReportDeadlinesErrorModel => true
-    case _ => false
-  }
-
-  val hasPropertyReportErrors: Boolean = propertyIncomeSource.map(_.reportDeadlines).exists {
-    case _: ReportDeadlinesErrorModel => true
-    case _ => false
-  }
-
-}
-
-case class CrystallisedDeadlinesModel(reportDeadlines: ReportDeadlinesResponseModel)
+case class CrystallisedDeadlinesModel(reportDeadlines: ReportDeadlinesModel)
 
 case class PropertyIncomeWithDeadlinesModel(
                                              incomeSource: PropertyDetailsModel,
-                                             reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModelWithDeadlines
+                                             reportDeadlines: ReportDeadlinesModel) extends IncomeModelWithDeadlines
 case class BusinessIncomeWithDeadlinesModel(
                                              incomeSource: BusinessDetailsModel,
-                                             reportDeadlines: ReportDeadlinesResponseModel) extends IncomeModelWithDeadlines
+                                             reportDeadlines: ReportDeadlinesModel) extends IncomeModelWithDeadlines
 
 object BusinessIncomeWithDeadlinesModel {
   implicit val format: Format[BusinessIncomeWithDeadlinesModel] = Json.format[BusinessIncomeWithDeadlinesModel]

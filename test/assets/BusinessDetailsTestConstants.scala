@@ -122,7 +122,7 @@ object BusinessDetailsTestConstants {
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
 
-  val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(List(overdueObligation, openObligation))
+  val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testSelfEmploymentId, List(overdueObligation, openObligation))
 
   val businessIncomeModel =
     BusinessIncomeWithDeadlinesModel(
@@ -133,7 +133,7 @@ object BusinessDetailsTestConstants {
   val businessIncomeModel2 =
     BusinessIncomeWithDeadlinesModel(
       business2,
-      obligationsDataSuccessModel
+      obligationsDataSuccessModel.copy(identification = business2.incomeSourceId)
     )
 
   val business2018IncomeModel =

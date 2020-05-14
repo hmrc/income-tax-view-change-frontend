@@ -26,7 +26,7 @@ class ReportDeadlinesRequestAuditModelSpec extends TestSupport {
 
   "The ReportDeadlinesRequestAuditModel" should {
 
-    lazy val testReportDeadlinesRequestAuditModel = ReportDeadlinesRequestAuditModel(testMtditid, testNino, testSelfEmploymentId)
+    lazy val testReportDeadlinesRequestAuditModel = ReportDeadlinesRequestAuditModel(testMtditid, testNino)
 
     s"Have the correct transaction name of '$transactionName'" in {
       testReportDeadlinesRequestAuditModel.transactionName shouldBe transactionName
@@ -39,8 +39,7 @@ class ReportDeadlinesRequestAuditModelSpec extends TestSupport {
     "Have the correct details for the audit event" in {
       testReportDeadlinesRequestAuditModel.detail shouldBe Seq(
         "mtditid" -> testMtditid,
-        "nino" -> testNino,
-        "incomeSourceId" -> testSelfEmploymentId
+        "nino" -> testNino
       )
     }
   }

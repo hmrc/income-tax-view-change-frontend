@@ -44,92 +44,14 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
   }
 
   def setupMockReportDeadlinesResult(incomeSourceId: String)(response: ReportDeadlinesResponseModel): Unit = {
-    when(mockReportDeadlinesService.getReportDeadlines(ArgumentMatchers.eq(incomeSourceId))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(mockReportDeadlinesService.getReportDeadlines()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  //Business Report Deadline Mocks
-  def mockBusinessSuccess(): Unit = setupMockReportDeadlinesResult(testSelfEmploymentId)(
-    ReportDeadlinesModel(
-      List(
-        ReportDeadlineModel(
-          start = "2017-04-06",
-          end = "2017-07-05",
-          due = "2017-08-05",
-          obligationType = "Quarterly",
-          dateReceived = None,
-          periodKey = "periodKey"
-        ),
-        ReportDeadlineModel(
-          start = "2017-07-06",
-          end = "2017-10-05",
-          due = "2017-11-05",
-          obligationType = "Quarterly",
-          dateReceived = None,
-          periodKey = "periodKey"
-        ),
-        ReportDeadlineModel(
-          start = "2017-10-06",
-          end = "2018-01-05",
-          due = "2018-02-05",
-          obligationType = "Quarterly",
-          dateReceived = None,
-          periodKey = "periodKey"
-        ),
-        ReportDeadlineModel(
-          start = "2018-01-06",
-          end = "2018-04-05",
-          due = "2018-05-06",
-          obligationType = "Quarterly",
-          dateReceived = None,
-          periodKey = "periodKey"
-        )
-      )
-    )
-  )
   def mockBusinessError(): Unit = setupMockReportDeadlinesResult(testSelfEmploymentId)(
     ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
 
-  //Property Report Deadline Mocks
-  def mockPropertySuccess(): Unit = setupMockReportDeadlinesResult(testPropertyIncomeId)(
-    ReportDeadlinesModel(
-      List(
-        ReportDeadlineModel(
-          start = "2017-04-06",
-          end = "2017-07-05",
-          due = "2017-08-05",
-          obligationType = "Quarterly",
-          dateReceived = None,
-          periodKey = "periodKey"
-        ),
-        ReportDeadlineModel(
-          start = "2017-07-06",
-          end = "2017-10-05",
-          due = "2017-11-05",
-          obligationType = "Quarterly",
-          dateReceived = None,
-          periodKey = "periodKey"
-        ),
-        ReportDeadlineModel(
-          start = "2017-10-06",
-          end = "2018-01-05",
-          due = "2018-02-05",
-          obligationType = "Quarterly",
-          dateReceived = None,
-          periodKey = "periodKey"
-        ),
-        ReportDeadlineModel(
-          start = "2018-01-06",
-          end = "2018-04-05",
-          due = "2018-05-06",
-          obligationType = "Quarterly",
-          dateReceived = None,
-          periodKey = "periodKey"
-        )
-      )
-    )
-  )
   def mockPropertyError(): Unit = setupMockReportDeadlinesResult(testPropertyIncomeId)(
     ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
   )
@@ -138,7 +60,7 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
   def setupMockGetIncomeSourceWithDeadlines(incomeSourceDetails: IncomeSourceDetailsModel)(sources: IncomeSourcesWithDeadlinesResponse): Unit = {
     when(
       mockReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(
-        ArgumentMatchers.eq(incomeSourceDetails)
+        ArgumentMatchers.eq(incomeSourceDetails), ArgumentMatchers.anyBoolean()
       )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(sources))
   }

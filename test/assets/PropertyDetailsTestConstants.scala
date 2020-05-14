@@ -60,12 +60,12 @@ object PropertyDetailsTestConstants extends ImplicitDateFormatter {
 
   val propertyIncomeModel = PropertyIncomeWithDeadlinesModel(
     propertyDetails,
-    obligationsDataSuccessModel
+    reportDeadlinesDataPropertySuccessModel
   )
 
   val ceasedPropertyIncomeModel = PropertyIncomeWithDeadlinesModel(
     ceasedPropertyDetails,
-    obligationsDataSuccessModel
+    reportDeadlinesDataSelfEmploymentSuccessModel
   )
 
   val openCrystallised: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
@@ -78,6 +78,6 @@ object PropertyDetailsTestConstants extends ImplicitDateFormatter {
   ))
 
   val crystallisedDeadlines = CrystallisedDeadlinesModel(
-      ReportDeadlinesModel(List(openCrystallised))
+      ReportDeadlinesModel("AA123456A", List(openCrystallised))
   )
 }

@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
 import models.core.{Nino, NinoResponseError}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import models.reportDeadlines.ReportDeadlinesModel
+import models.reportDeadlines.{ObligationsModel, ReportDeadlinesModel}
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 
@@ -53,35 +53,35 @@ object IncomeTaxViewChangeStub {
 
 
   //PreviousObligations Stubs
-  def previousObligationsUrl(incomeSourceId: String, nino: String): String = {
-    s"/income-tax-view-change/$nino/income-source/$incomeSourceId/fulfilled-report-deadlines"
+  def previousObligationsUrl(nino: String): String = {
+    s"/income-tax-view-change/$nino/fulfilled-report-deadlines"
   }
 
-  def stubGetPreviousObligations(incomeSourceId: String, nino: String, deadlines: ReportDeadlinesModel): Unit =
-    WiremockHelper.stubGet(previousObligationsUrl(incomeSourceId, nino), Status.OK, Json.toJson(deadlines).toString())
+  def stubGetPreviousObligations(nino: String, deadlines: ObligationsModel): Unit =
+    WiremockHelper.stubGet(previousObligationsUrl(nino), Status.OK, Json.toJson(deadlines).toString())
 
-  def stubGetPreviousObligationsNotFound(incomeSourceId: String, nino: String): Unit =
-    WiremockHelper.stubGet(previousObligationsUrl(incomeSourceId, nino), Status.NOT_FOUND, "")
+  def stubGetPreviousObligationsNotFound(nino: String): Unit =
+    WiremockHelper.stubGet(previousObligationsUrl(nino), Status.NOT_FOUND, "")
 
-  def verifyGetPreviousObligations(incomeSourceId: String, nino: String): Unit =
-    WiremockHelper.verifyGet(previousObligationsUrl(incomeSourceId, nino))
+  def verifyGetPreviousObligations(nino: String): Unit =
+    WiremockHelper.verifyGet(previousObligationsUrl(nino))
 
 
   //ReportDeadlines Stubs
   //=====================
-  def reportDeadlinesUrl(incomeSourceId: String, nino: String): String = s"/income-tax-view-change/$nino/income-source/$incomeSourceId/report-deadlines"
+  def reportDeadlinesUrl(nino: String): String = s"/income-tax-view-change/$nino/report-deadlines"
 
-  def stubGetReportDeadlines(incomeSourceId: String, nino: String , deadlines: ReportDeadlinesModel): Unit =
-    WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId, nino), Status.OK, Json.toJson(deadlines).toString())
+  def stubGetReportDeadlines(nino: String , deadlines: ObligationsModel): Unit =
+    WiremockHelper.stubGet(reportDeadlinesUrl(nino), Status.OK, Json.toJson(deadlines).toString())
 
   def stubGetReportDeadlinesError(incomeSourceId: String, nino: String): Unit =
-    WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId, nino), Status.INTERNAL_SERVER_ERROR, "ISE")
+    WiremockHelper.stubGet(reportDeadlinesUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
 
   def stubGetReportDeadlinesNotFound(incomeSourceId: String, nino: String): Unit =
-    WiremockHelper.stubGet(reportDeadlinesUrl(incomeSourceId, nino), Status.NO_CONTENT, "")
+    WiremockHelper.stubGet(reportDeadlinesUrl(nino), Status.NO_CONTENT, "")
 
   def verifyGetReportDeadlines(incomeSourceId: String, nino: String): Unit =
-    WiremockHelper.verifyGet(reportDeadlinesUrl(incomeSourceId, nino))
+    WiremockHelper.verifyGet(reportDeadlinesUrl(nino))
 
   //PayApi Stubs
   def stubPayApiResponse(url: String, status: Int, response: JsValue): StubMapping = {

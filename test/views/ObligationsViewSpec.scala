@@ -63,7 +63,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       List(),
       Some(PropertyIncomeWithDeadlinesModel(
         propertyDetails,
-        reportDeadlines = obligationsDataSuccessModel
+        reportDeadlines = reportDeadlinesDataSelfEmploymentSuccessModel
       )),
       None
     )
@@ -82,7 +82,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       List(
         BusinessIncomeWithDeadlinesModel(
           business1,
-          reportDeadlines = ReportDeadlinesModel(List(quarterlyBusinessObligation))
+          reportDeadlines = ReportDeadlinesModel(business1.incomeSourceId, List(quarterlyBusinessObligation))
         )
       ),
       None,
@@ -94,7 +94,7 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       Some(
         PropertyIncomeWithDeadlinesModel(
           PropertyDetailsModel("testIncomeSource", AccountingPeriodModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 1)), None, None, None, None),
-          ReportDeadlinesModel(
+          ReportDeadlinesModel("testIncomeSource",
             List(
               ReportDeadlineModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 31), LocalDate.of(2020, 1, 1), "EOPS", None, "EOPS")
             )
@@ -107,27 +107,27 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
     lazy val crystallisedIncomeSource = IncomeSourcesWithDeadlinesModel(
       List(BusinessIncomeWithDeadlinesModel(
         business1,
-        crystallisedObligation
+        ReportDeadlinesModel(business1.incomeSourceId, List(crystallisedObligation))
       )),
       None,
-      crystallisedDeadlinesModel = Some(CrystallisedDeadlinesModel(ReportDeadlinesModel(List(crystallisedObligation))))
+      crystallisedDeadlinesModel = Some(CrystallisedDeadlinesModel(ReportDeadlinesModel(testMtdItUser.mtditid, List(crystallisedObligation))))
     )
 
 
     lazy val multiCrystallisedIncomeSource = IncomeSourcesWithDeadlinesModel(
       List(BusinessIncomeWithDeadlinesModel(
         business1,
-        crystallisedObligation
+        ReportDeadlinesModel(business1.incomeSourceId, List(crystallisedObligation))
       )),
       None,
-      crystallisedDeadlinesModel = Some(CrystallisedDeadlinesModel(ReportDeadlinesModel(List(crystallisedObligationTwo, crystallisedObligation))))
+      crystallisedDeadlinesModel = Some(CrystallisedDeadlinesModel(ReportDeadlinesModel(testMtdItUser.mtditid, List(crystallisedObligationTwo, crystallisedObligation))))
     )
 
 
     lazy val eopsSEIncomeSource = IncomeSourcesWithDeadlinesModel(businessIncomeSources =
       List(BusinessIncomeWithDeadlinesModel(
         incomeSource = business1,
-        reportDeadlines = ReportDeadlinesModel(List(openEOPSObligation))
+        reportDeadlines = ReportDeadlinesModel(business1.incomeSourceId, List(openEOPSObligation))
       )),
       propertyIncomeSource = None,
       None)
