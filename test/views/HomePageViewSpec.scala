@@ -42,7 +42,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val testMtdItUser: MtdItUser[_] = MtdItUser(
     testMtditid,
     testNino,
-    Some(testUserDetails),
+    Some(testRetrievedUserName),
     IncomeSourceDetailsModel(Nil, None)
   )(FakeRequest())
 

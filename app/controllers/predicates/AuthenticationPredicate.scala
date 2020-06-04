@@ -18,16 +18,14 @@ package controllers.predicates
 
 import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import connectors.UserDetailsConnector
 import controllers.BaseController
 import javax.inject.{Inject, Singleton}
-import models.core.{UserDetailsError, UserDetailsModel}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
@@ -41,7 +39,6 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
                                         override val env: Environment,
                                         implicit val messagesApi: MessagesApi,
                                         implicit val ec: ExecutionContext,
-                                        val userDetailsConnector: UserDetailsConnector,
                                         val itvcErrorHandler: ItvcErrorHandler
                                        )
   extends BaseController with AuthRedirects with ActionBuilder[MtdItUserOptionNino]
@@ -52,15 +49,8 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     implicit val req: Request[A] = request
 
-    authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and userDetailsUri) {
-      case enrolments ~ userDetailsUrl => {
-        userDetailsConnector.getUserDetails(userDetailsUrl.get).flatMap {
-          case userDetails: UserDetailsModel =>
-            f(buildMtdUserOptionNino(enrolments, Some(userDetails)))
-          case UserDetailsError =>
-            f(buildMtdUserOptionNino(enrolments))
-        }
-      }
+    authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name) {
+      case enrolments ~ userName => f(buildMtdUserOptionNino(enrolments, userName))
     } recover {
       case _: InsufficientEnrolments =>
         Logger.error("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
@@ -77,12 +67,12 @@ class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthori
     }
   }
 
-  private def buildMtdUserOptionNino[A](enrolments: Enrolments, userDetails: Option[UserDetailsModel] = None)
+  private def buildMtdUserOptionNino[A](enrolments: Enrolments, userName: Option[Name])
                                        (implicit request: Request[A]): MtdItUserOptionNino[A] = {
     MtdItUserOptionNino(
       mtditid = enrolments.getEnrolment(appConfig.mtdItEnrolmentKey).flatMap(_.getIdentifier(appConfig.mtdItIdentifierKey)).map(_.value).get,
       nino = enrolments.getEnrolment(appConfig.ninoEnrolmentKey).flatMap(_.getIdentifier(appConfig.ninoIdentifierKey)).map(_.value),
-      userDetails,
+      userName,
       saUtr = enrolments.getEnrolment(appConfig.saEnrolmentKey).flatMap(_.getIdentifier(appConfig.saIdentifierKey)).map(_.value)
     )
   }

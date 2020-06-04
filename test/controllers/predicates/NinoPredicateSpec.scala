@@ -16,7 +16,7 @@
 
 package controllers.predicates
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testUserDetails}
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testRetrievedUserName}
 import audit.AuditingService
 import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
@@ -31,10 +31,10 @@ class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLooku
 
   "The NinoPredicate" when {
 
-    lazy val userNoNino = MtdItUserOptionNino(testMtditid, None, Some(testUserDetails), Some("testUtr"))(fakeRequestWithActiveSession)
-    lazy val userNinoInSession = MtdItUserOptionNino(testMtditid, None, Some(testUserDetails), Some("testUtr"))(fakeRequestWithNino)
-    lazy val userWithNino = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testUserDetails), Some("testUtr"))(fakeRequestWithActiveSession)
-    lazy val successResponse = MtdItUserWithNino(testMtditid, testNino, Some(testUserDetails))
+    lazy val userNoNino = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName), Some("testUtr"))(fakeRequestWithActiveSession)
+    lazy val userNinoInSession = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName), Some("testUtr"))(fakeRequestWithNino)
+    lazy val userWithNino = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName), Some("testUtr"))(fakeRequestWithActiveSession)
+    lazy val successResponse = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName))
 
     lazy val ninoServiceSuccess = Nino(testNino)
     lazy val ninoServiceError   = NinoResponseError(testErrorStatus, testErrorMessage)
