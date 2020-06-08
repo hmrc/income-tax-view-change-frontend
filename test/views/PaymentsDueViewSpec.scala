@@ -16,7 +16,7 @@
 
 package views
 
-import assets.BaseTestConstants.{testMtditid, testNino, testTimeStampString, testUserDetails}
+import assets.BaseTestConstants.{testMtditid, testNino, testTimeStampString, testRetrievedUserName}
 import assets.FinancialTransactionsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import assets.Messages.{Breadcrumbs => breadcrumbMessages, PaymentDue => messages}
@@ -37,7 +37,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessAndPropertyAligned)(FakeRequest())
+  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned)(FakeRequest())
 
   class Setup(model: List[FinancialTransactionsModel], paymentEnabled: Boolean = false) {
     val html: HtmlFormat.Appendable = views.html.paymentDue(model, paymentEnabled)(FakeRequest(), applicationMessages, mockAppConfig)

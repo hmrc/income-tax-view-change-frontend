@@ -20,7 +20,6 @@ import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import models.core.UserDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.{BeforeAndAfterEach, Suite}
@@ -57,15 +56,7 @@ trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MockitoSugar
   implicit val user: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
-    userDetails =
-      Some(
-        UserDetailsModel(
-          name = testUserName,
-          email = None,
-          affinityGroup = "",
-          credentialRole = ""
-        )
-      ),
+    userName = Some(testRetrievedUserName),
     incomeSources = businessAndPropertyAligned
   )(FakeRequest())
 

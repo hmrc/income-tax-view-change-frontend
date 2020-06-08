@@ -41,7 +41,7 @@ class IncomeSourceDetailsPredicate @Inject()(implicit val messagesApi: MessagesA
     implicit val req = request
 
     incomeSourceDetailsService.getIncomeSourceDetails() map {
-      case sources: IncomeSourceDetailsModel => Right(MtdItUser(request.mtditid, request.nino, request.userDetails, sources))
+      case sources: IncomeSourceDetailsModel => Right(MtdItUser(request.mtditid, request.nino, request.userName, sources))
       case _ => Left(itvcErrorHandler.showInternalServerError)
     }
   }

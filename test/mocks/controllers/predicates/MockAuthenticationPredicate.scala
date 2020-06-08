@@ -19,12 +19,11 @@ package mocks.controllers.predicates
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.AuthenticationPredicate
 import mocks.auth._
-import mocks.connectors.MockUserDetailsConnector
 import play.api.i18n.MessagesApi
 import play.api.{Configuration, Environment}
 import testUtils.TestSupport
 
-trait MockAuthenticationPredicate extends TestSupport with MockUserDetailsConnector with MockFrontendAuthorisedFunctions {
+trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorisedFunctions {
 
   object MockAuthenticationPredicate extends AuthenticationPredicate(
     mockAuthService,
@@ -33,7 +32,6 @@ trait MockAuthenticationPredicate extends TestSupport with MockUserDetailsConnec
     app.injector.instanceOf[Environment],
     app.injector.instanceOf[MessagesApi],
     ec,
-    mockUserDetailsConnector,
     app.injector.instanceOf[ItvcErrorHandler]
   )
 

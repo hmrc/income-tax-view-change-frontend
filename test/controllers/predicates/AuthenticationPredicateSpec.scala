@@ -16,7 +16,7 @@
 
 package controllers.predicates
 
-import assets.BaseTestConstants.{testMtditid, testNino, testUserDetailsError}
+import assets.BaseTestConstants.{testMtditid, testNino}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.scalatestplus.mockito.MockitoSugar
@@ -43,7 +43,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
         app.injector.instanceOf[Environment],
         app.injector.instanceOf[MessagesApi],
         ec,
-        mockUserDetailsConnector,
         app.injector.instanceOf[ItvcErrorHandler]).async {
         implicit request =>
           Future.successful(Ok(testMtditid + " " + testNino))
@@ -74,7 +73,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
       }
       "there is a HMRC-MTD-IT enrolment but a user details error from auth" should {
         "return Ok (200)" in {
-          setupMockUserDetails()(testUserDetailsError)
           status(result) shouldBe Status.OK
         }
       }
@@ -119,7 +117,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
           app.injector.instanceOf[Environment],
           app.injector.instanceOf[MessagesApi],
           ec,
-          mockUserDetailsConnector,
           app.injector.instanceOf[ItvcErrorHandler]
         ).async {
           implicit request =>

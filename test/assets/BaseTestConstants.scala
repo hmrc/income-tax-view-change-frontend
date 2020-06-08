@@ -18,10 +18,9 @@ package assets
 
 import assets.IncomeSourceDetailsTestConstants._
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
-import models.core.{UserDetailsError, UserDetailsModel}
 import play.api.http.Status
 import play.api.test.FakeRequest
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Name, ~}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 
 object BaseTestConstants {
@@ -30,14 +29,11 @@ object BaseTestConstants {
   val testNino = "AB123456C"
   val testTaxYear = 2018
   val testUserName = "Albert Einstein"
-  val testUserDetails = UserDetailsModel(testUserName, None, "n/a", "n/a")
-  val testUserDetailsError = UserDetailsError
-  val testUserDetailsUrl = "/user/oid/potato"
+  val testRetrievedUserName: Name = Name(Some(testUserName), None)
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
   lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some("saUtr"))(FakeRequest())
   lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None)(FakeRequest())
-  lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testUserDetails), businessesAndPropertyIncome)(FakeRequest())
-  lazy val testMtdItUserNoUserDetails: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, businessesAndPropertyIncome)(FakeRequest())
+  lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessesAndPropertyIncome)(FakeRequest())
   val testSelfEmploymentId  = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"
@@ -48,12 +44,12 @@ object BaseTestConstants {
   val testAuthSuccessResponse = new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
-  )),Option(testUserDetailsUrl))
+  )),Option(testRetrievedUserName))
   val testAuthSuccessWithSaUtrResponse = new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
     Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "saUtr")), "activated")
-  )),Option(testUserDetailsUrl))
+  )),Option(testRetrievedUserName))
   val testReferrerUrl = "/test/url"
 
 }

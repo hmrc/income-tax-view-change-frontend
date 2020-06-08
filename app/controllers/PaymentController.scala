@@ -25,7 +25,7 @@ import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentController @Inject()(implicit val config: FrontendAppConfig,
@@ -47,7 +47,7 @@ class PaymentController @Inject()(implicit val config: FrontendAppConfig,
         }
         case _ =>
           Logger.error("Failed to start payments journey due to missing UTR")
-          throw new Exception("Failed to start payments journey due to missing UTR")
+          Future.failed( new Exception("Failed to start payments journey due to missing UTR"))
       }
   }
 }

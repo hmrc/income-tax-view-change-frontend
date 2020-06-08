@@ -72,7 +72,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
-          Some(testUserDetails),
+          Some(testRetrievedUserName),
           propertyIncomeOnly
         )(FakeRequest())
 
@@ -86,7 +86,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
-          Some(testUserDetails),
+          Some(testRetrievedUserName),
           businessIncome2018and2019
         )(FakeRequest())
         setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2018)(financialTransactionsModel())
@@ -101,7 +101,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
-          Some(testUserDetails),
+          Some(testRetrievedUserName),
           noIncomeDetails
         )(FakeRequest())
 
@@ -131,7 +131,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
-          Some(testUserDetails),
+          Some(testRetrievedUserName),
           businessIncome2018and2019
         )(FakeRequest())
 
@@ -151,7 +151,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
             testMtditid,
             testNino,
-            Some(testUserDetails),
+            Some(testRetrievedUserName),
             businessIncome2018and2019
           )(FakeRequest())
 
@@ -168,7 +168,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
-          Some(testUserDetails),
+          Some(testRetrievedUserName),
           propertyIncomeOnly
         )(FakeRequest())
 
@@ -190,7 +190,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
-          Some(testUserDetails),
+          Some(testRetrievedUserName),
           propertyIncomeOnly
         )(FakeRequest())
 
@@ -205,7 +205,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
-          Some(testUserDetails),
+          Some(testRetrievedUserName),
           propertyIncomeOnly
         )(FakeRequest())
 
@@ -226,7 +226,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
-          Some(testUserDetails),
+          Some(testRetrievedUserName),
           propertyIncomeOnly
         )(FakeRequest())
 
@@ -241,7 +241,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
-          Some(testUserDetails),
+          Some(testRetrievedUserName),
           businessIncome2018and2019AndProp
         )(FakeRequest())
 
