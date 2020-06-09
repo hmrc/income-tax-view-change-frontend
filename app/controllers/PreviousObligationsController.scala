@@ -20,6 +20,7 @@ import config.featureswitch.{FeatureSwitching, ObligationsPage}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.{Inject, Singleton}
+import models.reportDeadlines.ObligationsModel
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import services.ReportDeadlinesService
@@ -41,8 +42,9 @@ class PreviousObligationsController @Inject()(val checkSessionTimeout: SessionTi
   val getPreviousObligations: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       if(isEnabled(ObligationsPage)) {
-        reportDeadlinesService.previousObligationsWithIncomeType(user.incomeSources).map { previousObligations =>
-          Ok(views.html.previousObligations(previousObligations))
+        reportDeadlinesService.getReportDeadlines(previous = true).map {
+          case previousObligations: ObligationsModel => Ok(views.html.previousObligations(previousObligations))
+          case _ => Ok(views.html.previousObligations(ObligationsModel(List())))
         }
       } else {
         Future.successful(Redirect(controllers.routes.HomeController.home()))

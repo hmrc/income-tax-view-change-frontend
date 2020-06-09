@@ -18,11 +18,11 @@ package views
 
 import java.time.LocalDate
 
-import assets.BaseTestConstants.testMtdItUser
+import assets.BaseTestConstants.{testMtdItUser, testPropertyIncomeId, testSelfEmploymentId}
 import assets.Messages.{PreviousObligations => previousObligations}
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlineModelWithIncomeType}
+import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlineModelWithIncomeType, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.i18n.Messages.Implicits.applicationMessages
@@ -39,10 +39,13 @@ class PreviousObligationsViewSpec extends TestSupport with ImplicitDateFormatter
   val date: LocalDate = LocalDate.now
 
   val reportDeadline: ReportDeadlineModel = ReportDeadlineModel(date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001")
-  val basicDeadline: ReportDeadlineModelWithIncomeType = ReportDeadlineModelWithIncomeType("Property", reportDeadline)
+  def basicDeadline(obligationType: String = "Quarterly"): ReportDeadlinesModel = ReportDeadlinesModel(testSelfEmploymentId, List(reportDeadline.copy(obligationType = obligationType)))
+  val basicBusinessDeadline: ReportDeadlinesModel = basicDeadline()
+  val basicPropertyDeadline: ReportDeadlinesModel = basicDeadline().copy(identification = testPropertyIncomeId)
+  val basicCrystallisedDeadline: ReportDeadlinesModel = basicDeadline().copy(identification = testMtdItUser.mtditid)
 
-  class Setup(previousObligations: List[ReportDeadlineModelWithIncomeType] = Nil) {
-    val html: HtmlFormat.Appendable = views.html.previousObligations(previousObligations)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
+  class Setup(previousObligations: List[ReportDeadlinesModel] = Nil) {
+    val html: HtmlFormat.Appendable = views.html.previousObligations(ObligationsModel(previousObligations))(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def getElementById(id: String): Option[Element] = Option(pageDocument.getElementById(id))
@@ -77,22 +80,22 @@ class PreviousObligationsViewSpec extends TestSupport with ImplicitDateFormatter
       getElementById("submitted-on-date-0") shouldBe None
     }
 
-    "not display the no previous updates message when there are previous updates to display" in new Setup(List(basicDeadline)) {
+    "not display the no previous updates message when there are previous updates to display" in new Setup(List(basicDeadline())) {
       getElementById("no-previous-obligations") shouldBe None
     }
 
     "display a list of previously submitted updates" that {
 
-      val propertyObligation = basicDeadline.copy(incomeType = "Property")
-      val businessObligation = basicDeadline.copy(incomeType = "Obligations Ltd.")
-      val crystallisationObligation = basicDeadline.copy(incomeType = "Crystallised")
+      val propertyObligation = basicPropertyDeadline
+      val businessObligation = basicBusinessDeadline
+      val crystallisationObligation = basicCrystallisedDeadline
 
       "displays the correct income source" when {
         "it is from property" in new Setup(List(propertyObligation)) {
           getTextOfElementById("income-source-0") shouldBe Some(previousObligations.propertyIncomeSource)
         }
         "it is from business" in new Setup(List(businessObligation)) {
-          getTextOfElementById("income-source-0") shouldBe Some("Obligations Ltd.")
+          getTextOfElementById("income-source-0") shouldBe Some("business")
         }
         "it is from a crystallisation" in new Setup(List(crystallisationObligation)) {
           getTextOfElementById("income-source-0") shouldBe Some(previousObligations.crystallisationIncomeSource)
@@ -100,30 +103,30 @@ class PreviousObligationsViewSpec extends TestSupport with ImplicitDateFormatter
       }
 
       "displays the correct obligation type" when {
-        "it is quarterly" in new Setup(List(basicDeadline.copy(obligation = reportDeadline.copy(obligationType = "Quarterly")))) {
+        "it is quarterly" in new Setup(List(basicDeadline())) {
           getTextOfElementById("obligation-type-0") shouldBe Some(previousObligations.quarterly)
         }
-        "it is eops" in new Setup(List(basicDeadline.copy(obligation = reportDeadline.copy(obligationType = "EOPS")))) {
+        "it is eops" in new Setup(List(basicDeadline("EOPS"))) {
           getTextOfElementById("obligation-type-0") shouldBe Some(previousObligations.eops)
         }
-        "it is crystallisation" in new Setup(List(basicDeadline.copy(obligation = reportDeadline.copy(obligationType = "Crystallised")))) {
+        "it is crystallisation" in new Setup(List(basicDeadline("Crystallised"))) {
           getTextOfElementById("obligation-type-0") shouldBe Some(previousObligations.crystallised)
         }
       }
 
-      "displays the from and to dates of the obligation" in new Setup(List(basicDeadline)) {
+      "displays the from and to dates of the obligation" in new Setup(List(basicDeadline())) {
         getTextOfElementById("date-from-to-0") shouldBe Some(previousObligations.dateToDate(date.toLongDate, date.plusMonths(1).toLongDate))
       }
 
-      "displays the date the obligation was due on" in new Setup(List(basicDeadline)) {
+      "displays the date the obligation was due on" in new Setup(List(basicDeadline())) {
         getTextOfElementById("was-due-on-0") shouldBe Some(previousObligations.wasDueOn(date.plusMonths(2).toLongDate))
       }
 
-      "displays the submitted on label" in new Setup(List(basicDeadline)) {
+      "displays the submitted on label" in new Setup(List(basicDeadline())) {
         getTextOfElementById("submitted-on-label-0") shouldBe Some(previousObligations.submittedOn)
       }
 
-      "displays the date the obligation was submitted" in new Setup(List(basicDeadline)) {
+      "displays the date the obligation was submitted" in new Setup(List(basicDeadline())) {
         getTextOfElementById("submitted-on-date-0") shouldBe Some(date.plusMonths(1).toLongDate)
       }
 

@@ -58,12 +58,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays one eops property income obligation")
           res should have(
-            elementTextByID("eops-pi-dates")("6 April 2017 to 5 July 2018"),
-            elementTextByID("eops-pi-due-date")("1 January 2018"),
-            isElementVisibleById("pi-quarterly-return-period")(expectedValue = false),
-            isElementVisibleById("pi-quarterly-return-due-date")(expectedValue = false),
-            isElementVisibleById("quarterly-bi-business-period")(expectedValue = false),
-            isElementVisibleById("quarterly-bi-business-due")(expectedValue = false)
+            elementTextBySelector("#eops-return-section-0 #eops-return-period")("6 April 2017 to 5 July 2018"),
+            elementTextBySelector("#eops-return-section-0 #eops-return-due-date")("1 January 2018"),
+            isElementVisibleById("eops-return-section-1")(expectedValue = false)
           )
         }
 
@@ -86,14 +83,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             pageTitle(messages.title)
           )
 
-          Then("the page displays no property obligation dates")
+          Then("the page displays no obligation dates")
           res should have(
-            isElementVisibleById("eops-pi-dates")(expectedValue = false),
-            isElementVisibleById("eops-pi-due-date")(expectedValue = false),
-            isElementVisibleById("pi-quarterly-return-period")(expectedValue = false),
-            isElementVisibleById("pi-quarterly-return-due-date")(expectedValue = false),
-            isElementVisibleById("quarterly-bi-business-period")(expectedValue = false),
-            isElementVisibleById("quarterly-bi-business-due")(expectedValue = false)
+            isElementVisibleById("eops-return-section-0")(expectedValue = false)
           )
         }
 
@@ -117,12 +109,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays the property obligation dates")
           res should have(
-            isElementVisibleById("pi-quarterly-return-period")(expectedValue = true),
-            isElementVisibleById("pi-quarterly-return-due-date")(expectedValue = true),
-            isElementVisibleById("eops-pi-dates")(expectedValue = false),
-            isElementVisibleById("eops-pi-due-date")(expectedValue = false),
-            isElementVisibleById("quarterly-bi-business-period")(expectedValue = false),
-            isElementVisibleById("quarterly-bi-business-due")(expectedValue = false)
+            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-period")(expectedValue = "6 April 2017 to 5 July 2017"),
+            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-due-date")(expectedValue = "1 January 2018"),
+            isElementVisibleById("quarterly-return-section-1")(expectedValue = false)
           )
         }
 
@@ -147,12 +136,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays the property obligation dates")
           res should have(
-            isElementVisibleById("pi-quarterly-return-period")(expectedValue = false),
-            isElementVisibleById("pi-quarterly-return-due-date")(expectedValue = false),
-            isElementVisibleById("eops-pi-dates")(expectedValue = false),
-            isElementVisibleById("eops-pi-due-date")(expectedValue = false),
-            isElementVisibleById("quarterly-bi-business-period")(expectedValue = true),
-            isElementVisibleById("quarterly-bi-business-due")(expectedValue = true)
+            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-period")(expectedValue = "6 April 2017 to 5 July 2017"),
+            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-due-date")(expectedValue = "1 January 2018"),
+            isElementVisibleById("quarterly-return-section-1")(expectedValue = false)
           )
         }
 
@@ -174,16 +160,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
             pageTitle(messages.obligationsTitle)
           )
 
-          Then("the page displays the property obligation dates")
+          Then("the page displays all the business obligation dates")
           res should have(
-            isElementVisibleById("pi-quarterly-return-period")(expectedValue = false),
-            isElementVisibleById("pi-quarterly-return-due-date")(expectedValue = false),
-            isElementVisibleById("eops-pi-dates")(expectedValue = false),
-            isElementVisibleById("eops-pi-due-date")(expectedValue = false),
-            isElementVisibleById("quarterly-bi-business-period")(expectedValue = true),
-            isElementVisibleById("quarterly-bi-business-due")(expectedValue = true),
-            isElementVisibleById("quarterly-bi-secondBusiness-period")(expectedValue = true),
-            isElementVisibleById("quarterly-bi-secondBusiness-due")(expectedValue = true)
+            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-period")(expectedValue = "6 April 2017 to 5 July 2017"),
+            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-due-date")(expectedValue = "1 January 2018"),
+            elementTextBySelector("#quarterly-return-section-1 #quarterly-return-period")(expectedValue = "6 April 2017 to 5 July 2017"),
+            elementTextBySelector("#quarterly-return-section-1 #quarterly-return-due-date")(expectedValue = "1 January 2018"),
+            isElementVisibleById("quarterly-return-section-2")(expectedValue = false)
           )
         }
 
@@ -205,14 +188,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays SE income source obligation dates")
           res should have(
-            elementTextByID("eops-SEI-dates")("6 April 2017 to 5 April 2018"),
-            elementTextByID("eops-SEI-due-date")("31 January 2018")
+            elementTextBySelector("#eops-return-section-0 #eops-return-period")("6 April 2017 to 5 April 2018"),
+            elementTextBySelector("#eops-return-section-0 #eops-return-due-date")("31 January 2018")
           )
 
           Then("the page displays no property obligation dates")
           res should have(
-            isElementVisibleById("eops-pi-dates")(expectedValue = false),
-            isElementVisibleById("eops-pi-due-date")(expectedValue = false)
+            isElementVisibleById("eops-return-section-1")(expectedValue = false)
           )
 
         }
@@ -238,26 +220,18 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays crystallised obligation information")
           res should have(
-            isElementVisibleById("crystallised-heading")(expectedValue = true),
-            isElementVisibleById("crystallised-period")(expectedValue = true),
-            isElementVisibleById("crystallised-due-on")(expectedValue = true),
-            isElementVisibleById("crystallised-due")(expectedValue = true)
+            elementTextBySelector("#crystallised-section-0 #crystallised-title")(expectedValue = "Whole tax year (final check)"),
+            elementTextBySelector("#crystallised-section-0 #crystallised-due-on-title")(expectedValue = "Due on:"),
+            elementTextBySelector("#crystallised-section-0 #crystallised-period")("6 April 2017 to 5 April 2018"),
+            elementTextBySelector("#crystallised-section-0 #crystallised-due-date")("31 January 2019")
           )
 
-          Then("the page displays no property obligation dates")
+          Then("the page displays no property or business obligation dates")
           res should have(
-            isElementVisibleById("eops-pi-dates")(expectedValue = false),
-            isElementVisibleById("eops-pi-due-date")(expectedValue = false)
+            isElementVisibleById("eops-return-section-0")(expectedValue = false),
+            isElementVisibleById("quarterly-return-section-0")(expectedValue = false)
           )
-
-          Then("the page displays no income obligation dates")
-          res should have(
-            isElementVisibleById("eops-SEI-dates")(expectedValue = false),
-            isElementVisibleById("eops-SEI-due-date")(expectedValue = false)
-          )
-
         }
-
       }
     }
 

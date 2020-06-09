@@ -17,6 +17,7 @@
 package models
 
 import assets.BaseTestConstants._
+import assets.{BaseTestConstants, IncomeSourceDetailsTestConstants, ReportDeadlinesTestConstants}
 import assets.ReportDeadlinesTestConstants._
 import models.reportDeadlines._
 import org.scalatest.Matchers
@@ -171,6 +172,49 @@ class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
 
     "be able to parse a JSON into the Model" in {
       Json.fromJson[ReportDeadlinesErrorModel](obligationsDataErrorJson) shouldBe JsSuccess(obligationsDataErrorModel)
+    }
+  }
+
+  "The ObligationsModel" should {
+
+    "return a list of all models with source in date order" when {
+
+      "calling .allDeadlinesWithSource" in {
+        ReportDeadlinesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource()(
+          BaseTestConstants.testMtdItUser) shouldBe List(
+          ReportDeadlineModelWithIncomeType("Property", overdueEOPSObligation),
+          ReportDeadlineModelWithIncomeType("business", overdueObligation),
+          ReportDeadlineModelWithIncomeType("business", openObligation),
+          ReportDeadlineModelWithIncomeType("Property", openEOPSObligation),
+          ReportDeadlineModelWithIncomeType("Crystallised", crystallisedObligation)
+        )
+      }
+    }
+
+    "return a list of only specific updates with source in date order" when {
+
+      "calling .allQuarterly" in {
+        ReportDeadlinesTestConstants.obligationsAllDeadlinesSuccessModel.allQuarterly(
+          BaseTestConstants.testMtdItUser) shouldBe List(
+          ReportDeadlineModelWithIncomeType("business", overdueObligation),
+          ReportDeadlineModelWithIncomeType("business", openObligation)
+        )
+      }
+
+      "calling .allEops" in {
+        ReportDeadlinesTestConstants.obligationsAllDeadlinesSuccessModel.allEops(
+          BaseTestConstants.testMtdItUser) shouldBe List(
+          ReportDeadlineModelWithIncomeType("Property", overdueEOPSObligation),
+          ReportDeadlineModelWithIncomeType("Property", openEOPSObligation)
+        )
+      }
+
+      "calling .allCrystallised" in {
+        ReportDeadlinesTestConstants.obligationsAllDeadlinesSuccessModel.allCrystallised(
+          BaseTestConstants.testMtdItUser) shouldBe List(
+          ReportDeadlineModelWithIncomeType("Crystallised", crystallisedObligation)
+        )
+      }
     }
   }
 }

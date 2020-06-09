@@ -17,16 +17,14 @@
 package assets
 
 import assets.BusinessDetailsTestConstants._
-import assets.PropertyDetailsTestConstants._
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
+import assets.ReportDeadlinesTestConstants._
+import models.reportDeadlines.ObligationsModel
 
 object IncomeSourcesWithDeadlinesTestConstants {
-  val businessAndPropertyIncomeWithDeadlines = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel, businessIncomeModel2), Some(propertyIncomeModel), None)
-  val singleBusinessIncomeWithDeadlines = IncomeSourcesWithDeadlinesModel(List(businessIncomeModel), None, None)
-  val businessIncome2018and2019WithDeadlines = IncomeSourcesWithDeadlinesModel(List(business2018IncomeModel, business2019IncomeModel), None, None)
-  val propertyIncomeOnlyWithDeadlines = IncomeSourcesWithDeadlinesModel(List.empty, Some(propertyIncomeModel), None)
-  val crystallisedOnlyDeadlines = IncomeSourcesWithDeadlinesModel(List.empty, None, Some(crystallisedDeadlines))
-  val businessAndPropertyAlignedWithDeadlines =
-    IncomeSourcesWithDeadlinesModel(List(businessIncomeModelAlignedTaxYear), Some(propertyIncomeModel), None)
-  val noIncomeDetailsWithNoDeadlines = IncomeSourcesWithDeadlinesModel(List.empty, None, None)
+  val businessAndPropertyIncomeWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel,
+    obligationsDataSuccessModel.copy(identification = business2.incomeSourceId), reportDeadlinesDataPropertySuccessModel))
+  val singleBusinessIncomeWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel))
+  val propertyIncomeOnlyWithDeadlines = ObligationsModel(Seq(reportDeadlinesDataPropertySuccessModel))
+  val businessAndPropertyAlignedWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel, reportDeadlinesDataPropertySuccessModel))
+  val noIncomeDetailsWithNoDeadlines = ObligationsModel(Seq.empty)
 }

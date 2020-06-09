@@ -20,7 +20,6 @@ import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testSelfEmpl
 import assets.ReportDeadlinesTestConstants._
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourcesWithDeadlines.BusinessIncomeWithDeadlinesModel
 import models.reportDeadlines.ReportDeadlinesModel
 
 object BusinessDetailsTestConstants {
@@ -38,7 +37,7 @@ object BusinessDetailsTestConstants {
     postCode = Some("ZL1 064"),
     countryCode = "UK"
   )
-  val testContactDetails = ContactDetailsModel(Some("123456789"),Some("0123456789"),Some("8008135"),Some("google@chuckNorris.com"))
+  val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
   val testCessation = CessationModel(Some("2018-1-1".toLocalDate), Some("It was a stupid idea anyway"))
 
   val business1 = BusinessDetailsModel(
@@ -123,34 +122,4 @@ object BusinessDetailsTestConstants {
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
 
   val obligationsDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testSelfEmploymentId, List(overdueObligation, openObligation))
-
-  val businessIncomeModel =
-    BusinessIncomeWithDeadlinesModel(
-      business1,
-      obligationsDataSuccessModel
-    )
-
-  val businessIncomeModel2 =
-    BusinessIncomeWithDeadlinesModel(
-      business2,
-      obligationsDataSuccessModel.copy(identification = business2.incomeSourceId)
-    )
-
-  val business2018IncomeModel =
-    BusinessIncomeWithDeadlinesModel(
-      business2018,
-      obligationsDataSuccessModel
-    )
-
-  val businessIncomeModelAlignedTaxYear =
-    BusinessIncomeWithDeadlinesModel(
-      alignedBusiness,
-      obligationsDataSuccessModel
-    )
-
-  val business2019IncomeModel =
-    BusinessIncomeWithDeadlinesModel(
-      business2019,
-      obligationsDataSuccessModel
-    )
 }

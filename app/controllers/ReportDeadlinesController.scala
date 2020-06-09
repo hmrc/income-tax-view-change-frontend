@@ -23,7 +23,7 @@ import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.{Inject, Singleton}
-import models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel
+import models.reportDeadlines.ObligationsModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
@@ -53,8 +53,8 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
   private def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
     if(user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       auditReportDeadlines(user)
-      reportDeadlinesService.createIncomeSourcesWithDeadlinesModel(user.incomeSources).map {
-        case withDeadlines: IncomeSourcesWithDeadlinesModel =>
+      reportDeadlinesService.getReportDeadlines().map {
+        case withDeadlines: ObligationsModel =>
           Ok(views.html.obligations(withDeadlines))
         case _=>
           Logger.error(s"[ReportDeadlinesController][renderView] error occurred while trying to render report Deadlines page")

@@ -21,8 +21,7 @@ import java.time.LocalDate
 import auth.MtdItUser
 import connectors._
 import javax.inject.{Inject, Singleton}
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesError, _}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.reportDeadlines._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -44,30 +43,6 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
     }
   }
 
-  def previousObligationsWithIncomeType(incomeSourceResponse: IncomeSourceDetailsModel)
-                                       (implicit hc: HeaderCarrier, ec: ExecutionContext,
-                                        mtdItUser: MtdItUser[_]): Future[List[ReportDeadlineModelWithIncomeType]] = {
-    createIncomeSourcesWithDeadlinesModel(incomeSourceResponse, previousDeadlines = true) map {
-      case allDeadlines: IncomeSourcesWithDeadlinesModel =>
-        val previousBusinessDeadlines = allDeadlines.businessIncomeSources.flatMap{
-          singleBusinessDeadlines => singleBusinessDeadlines.reportDeadlines.obligations.map {
-            deadline => ReportDeadlineModelWithIncomeType(singleBusinessDeadlines.incomeSource.tradingName.getOrElse("Business"), deadline)
-          }
-        }
-        val previousPropertyDeadlines = allDeadlines.propertyIncomeSource.map(propertyDeadlines => propertyDeadlines.reportDeadlines.obligations map {
-          deadline => ReportDeadlineModelWithIncomeType("Property", deadline)
-        })
-        val previousCrystallisedDeadlines = allDeadlines.crystallisedDeadlinesModel.map {
-          crystallisedDeadlines => crystallisedDeadlines.reportDeadlines.obligations map {
-            deadline => ReportDeadlineModelWithIncomeType("Crystallised", deadline)
-          }
-        }
-        (previousBusinessDeadlines ++ previousPropertyDeadlines.toList.flatten ++ previousCrystallisedDeadlines.toList.flatten)
-          .sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse
-      case _ => List()
-    }
-  }
-
   def getReportDeadlines(previous: Boolean = false)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
     if (previous) {
       Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting previous Report Deadlines for nino: ${mtdUser.nino}")
@@ -75,39 +50,6 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
     } else {
       Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting current Report Deadlines for nino: ${mtdUser.nino}")
       incomeTaxViewChangeConnector.getReportDeadlines()
-    }
-  }
-
-  def createIncomeSourcesWithDeadlinesModel(incomeSourceResponse: IncomeSourceDetailsResponse, previousDeadlines: Boolean = false)
-                                           (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdUser: MtdItUser[_])
-  : Future[IncomeSourcesWithDeadlinesResponse] = {
-    incomeSourceResponse match {
-      case sources: IncomeSourceDetailsModel =>
-        getReportDeadlines(previousDeadlines).map {
-          case obligations: ObligationsModel =>
-            val propertyIncomeDeadlines: Option[PropertyIncomeWithDeadlinesModel] = {
-              sources.property.flatMap { property =>
-                obligations.obligations.find(_.identification == property.incomeSourceId) map { deadline =>
-                  PropertyIncomeWithDeadlinesModel(property, deadline)
-                }
-              }
-            }
-            val businessIncomeDeadlines:  List[BusinessIncomeWithDeadlinesModel]  = {
-              sources.businesses.flatMap { business =>
-                val deadlines = obligations.obligations.find(_.identification == business.incomeSourceId)
-                deadlines.map(deadline => BusinessIncomeWithDeadlinesModel(business, deadline))
-              }
-            }
-            val crystallisedDeadlines: Option[CrystallisedDeadlinesModel] = {
-                obligations.obligations.find(_.identification == mtdUser.mtditid) map { deadline =>
-                  CrystallisedDeadlinesModel(deadline)
-                }
-            }
-
-            IncomeSourcesWithDeadlinesModel(businessIncomeDeadlines, propertyIncomeDeadlines, crystallisedDeadlines)
-          case _ => IncomeSourcesWithDeadlinesError
-        }
-      case _: IncomeSourceDetailsError => Future.successful(IncomeSourcesWithDeadlinesError)
     }
   }
 }
