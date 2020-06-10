@@ -21,8 +21,7 @@ import assets.ReportDeadlinesTestConstants._
 import implicits.ImplicitDateFormatter
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{PropertiesRentedModel, PropertyDetailsModel}
-import models.incomeSourcesWithDeadlines.{CrystallisedDeadlinesModel, PropertyIncomeWithDeadlinesModel}
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
+import models.reportDeadlines.ReportDeadlineModel
 
 object PropertyDetailsTestConstants extends ImplicitDateFormatter {
 
@@ -58,16 +57,6 @@ object PropertyDetailsTestConstants extends ImplicitDateFormatter {
     paperless = None
   )
 
-  val propertyIncomeModel = PropertyIncomeWithDeadlinesModel(
-    propertyDetails,
-    reportDeadlinesDataPropertySuccessModel
-  )
-
-  val ceasedPropertyIncomeModel = PropertyIncomeWithDeadlinesModel(
-    ceasedPropertyDetails,
-    reportDeadlinesDataSelfEmploymentSuccessModel
-  )
-
   val openCrystallised: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
     start = "2017-04-06",
     end = "2018-04-05",
@@ -76,8 +65,4 @@ object PropertyDetailsTestConstants extends ImplicitDateFormatter {
     dateReceived = None,
     obligationType = "Crystallised"
   ))
-
-  val crystallisedDeadlines = CrystallisedDeadlinesModel(
-      ReportDeadlinesModel("AA123456A", List(openCrystallised))
-  )
 }

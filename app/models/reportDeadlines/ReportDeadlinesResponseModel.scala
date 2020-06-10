@@ -18,14 +18,41 @@ package models.reportDeadlines
 
 import java.time.LocalDate
 
+import auth.MtdItUser
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 
-
 sealed trait ReportDeadlinesResponseModel
 
-case class ObligationsModel(obligations: Seq[ReportDeadlinesModel]) extends ReportDeadlinesResponseModel
+case class ObligationsModel(obligations: Seq[ReportDeadlinesModel]) extends ReportDeadlinesResponseModel {
+  def allDeadlinesWithSource(previous: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[ReportDeadlineModelWithIncomeType] = {
+    val deadlines = obligations.flatMap { deadlinesModel =>
+      if (mtdItUser.incomeSources.property.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
+        deadline => Some(ReportDeadlineModelWithIncomeType("Property", deadline))
+      } else if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
+        deadline =>
+          Some(ReportDeadlineModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
+            .get.tradingName.getOrElse("Business"), deadline))
+      } else if (mtdItUser.mtditid == deadlinesModel.identification) deadlinesModel.obligations.map {
+        deadline => Some(ReportDeadlineModelWithIncomeType("Crystallised", deadline))
+      } else None
+
+    }.flatten
+
+    if (previous) deadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
+  }
+
+  def allQuarterly(implicit mtdItUser: MtdItUser[_]): Seq[ReportDeadlineModelWithIncomeType] =
+    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Quarterly")
+
+  def allEops(implicit mtdItUser: MtdItUser[_]): Seq[ReportDeadlineModelWithIncomeType] =
+    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "EOPS")
+
+  def allCrystallised(implicit mtdItUser: MtdItUser[_]): Seq[ReportDeadlineModelWithIncomeType] =
+    allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Crystallised")
+}
 
 object ObligationsModel {
   implicit val format: OFormat[ObligationsModel] = Json.format[ObligationsModel]
@@ -62,7 +89,7 @@ object ReportDeadlineModel {
       (__ \ "obligationType").write[String] and
       (__ \ "dateReceived").writeNullable[LocalDate] and
       (__ \ "periodKey").write[String]
-  )(unlift(ReportDeadlineModel.unapply))
+    ) (unlift(ReportDeadlineModel.unapply))
 }
 
 object ReportDeadlinesModel {

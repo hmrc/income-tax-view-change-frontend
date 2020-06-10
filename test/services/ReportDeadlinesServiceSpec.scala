@@ -19,14 +19,11 @@ package services
 import java.time.LocalDate
 
 import assets.BaseTestConstants._
-import assets.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _, _}
+import assets.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import assets.IncomeSourceDetailsTestConstants._
-import assets.IncomeSourcesWithDeadlinesTestConstants._
-import assets.PropertyDetailsTestConstants.{propertyDetails, propertyIncomeModel}
-import assets.ReportDeadlinesTestConstants.{obligationsCrystallisedSuccessModel, _}
+import assets.ReportDeadlinesTestConstants._
 import mocks.connectors.MockIncomeTaxViewChangeConnector
-import models.incomeSourcesWithDeadlines._
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModelWithIncomeType, ReportDeadlinesErrorModel, ReportDeadlinesModel}
+import models.reportDeadlines.ObligationsModel
 import testUtils.TestSupport
 
 class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
@@ -67,32 +64,6 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
     }
   }
 
-  "previousObligationsWithIncomeType" should {
-    "return all the deadlines for any property and business income sources with crystallisation ordered by date submitted (latest first)" in new Setup {
-      setupMockPreviousObligations(testNino)(ObligationsModel(Seq(
-        ReportDeadlinesModel(testSelfEmploymentId, previousObligationsDataSuccessModel.obligations),
-        ReportDeadlinesModel(testPropertyIncomeId, previousObligationsEOPSDataSuccessModel.obligations),
-        ReportDeadlinesModel(testMtditid, previousObligationsCrystallisedSuccessModel.obligations)
-      )))
-
-      await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List(
-        ReportDeadlineModelWithIncomeType("Property", previousObligationFour),
-        ReportDeadlineModelWithIncomeType("Crystallised", previousObligationFive),
-        ReportDeadlineModelWithIncomeType("Property", previousObligationThree),
-        ReportDeadlineModelWithIncomeType(testTradeName, previousObligationTwo),
-        ReportDeadlineModelWithIncomeType(testTradeName, previousObligationOne)
-      )
-    }
-
-    "return an error" when {
-      "deadlines are errored" in new Setup {
-        setupMockPreviousObligations(testNino)(obligationsDataErrorModel)
-
-        await(previousObligationsWithIncomeType(businessAndPropertyAligned)) shouldBe List()
-      }
-    }
-  }
-
   "The ReportDeadlinesService.getReportDeadlines method" when {
 
     "a valid list of Report Deadlines is returned from the connector" should {
@@ -118,102 +89,6 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
       "return the error for previous deadlines" in {
         setupMockPreviousObligations(testSelfEmploymentId)(obligationsDataErrorModel)
         await(TestReportDeadlinesService.getReportDeadlines(previous = true)) shouldBe obligationsDataErrorModel
-      }
-    }
-  }
-
-  "The ReportDeadlinesService.createIncomeSourcesWithDeadlinesModel method" when {
-
-    "A user has multiple SE Business and Property Income Sources" when {
-
-      "A successful set of report deadlines is retrieved for all income sources" should {
-
-        "Return a IncomeSourcesWithDeadlines response which contains the expected report deadlines with the associated Income Sources" in {
-          setupMockReportDeadlines(testNino)(obligationsDataAllMinusCrystallisedSuccessModel)
-          await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(businessesAndPropertyIncome)) shouldBe
-            businessAndPropertyIncomeWithDeadlines
-        }
-
-      }
-
-      "No successful report deadlines are retrieved" should {
-
-        "Return a IncomeSourcesWithDeadlines response which all errored responses" in {
-          setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
-          await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(businessesAndPropertyIncome)) shouldBe
-            IncomeSourcesWithDeadlinesError
-        }
-
-      }
-
-    }
-
-    "A user has a single SE Business Income Source" when {
-
-      "A successful set of report deadlines is retrieved for the SE Business" should {
-
-        "Return a IncomeSourcesWithDeadlines response which contains the expected report deadlines" in {
-
-          setupMockReportDeadlines(testNino)(obligationsDataSelfEmploymentOnlySuccessModel)
-          await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(singleBusinessIncome)) shouldBe
-            singleBusinessIncomeWithDeadlines
-        }
-
-      }
-
-      "No successful report deadlines are retrieved" should {
-
-        "Return a IncomeSourcesWithDeadlines response with errored report deadlines" in {
-
-          setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
-          await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(singleBusinessIncome)) shouldBe
-            IncomeSourcesWithDeadlinesError
-        }
-      }
-    }
-
-
-    "A user has only has crystallised Obligation and both income sources" should {
-      "Return a successful crystallised Obligation" in {
-        setupMockReportDeadlines(testNino)(obligationsDataAllDataSuccessModel)
-        await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(businessesAndPropertyIncome)) shouldBe
-          IncomeSourcesWithDeadlinesModel(
-            List(businessIncomeModel, businessIncomeModel2),
-            Some(propertyIncomeModel),
-            Some(CrystallisedDeadlinesModel(crystallisedDeadlineSuccess))
-          )
-      }
-    }
-
-
-    "A user has only has Property Income Source" when {
-
-      "A successful set of report deadlines is retrieved for the SE Business" should {
-
-        "Return a IncomeSourcesWithDeadlines response which contains the expected report deadlines" in {
-
-          setupMockReportDeadlines(testNino)(obligationsDataPropertyOnlySuccessModel)
-          await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(propertyIncomeOnly)) shouldBe
-            propertyIncomeOnlyWithDeadlines
-        }
-
-      }
-
-      "No successful report deadlines are retrieved" should {
-
-        "Return a IncomeSourcesWithDeadlines response with errored report deadlines" in {
-
-          setupMockReportDeadlines(testNino)(obligationsDataErrorModel)
-          await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(propertyIncomeOnly)) shouldBe IncomeSourcesWithDeadlinesError
-        }
-      }
-    }
-
-
-    "The Income Source Details are Errored" should {
-
-      "Return an IncomeSourcesWithDeadlinesError" in {
-        await(TestReportDeadlinesService.createIncomeSourcesWithDeadlinesModel(errorResponse)) shouldBe IncomeSourcesWithDeadlinesError
       }
     }
   }

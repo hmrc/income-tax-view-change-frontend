@@ -209,7 +209,7 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
 
   val obligationsEOPSDataSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testPropertyIncomeId, List(overdueEOPSObligation, openEOPSObligation))
 
-  val obligationsCrystallisedSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testNino, List(crystallisedObligation))
+  val obligationsCrystallisedSuccessModel: ReportDeadlinesModel = ReportDeadlinesModel(testMtditid, List(crystallisedObligation))
 
   val obligationsAllDeadlinesSuccessModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel,
     obligationsEOPSDataSuccessModel, obligationsCrystallisedSuccessModel))

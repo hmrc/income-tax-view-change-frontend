@@ -18,11 +18,12 @@ package controllers
 
 import java.time.LocalDate
 
+import assets.BaseTestConstants
 import config.ItvcErrorHandler
 import config.featureswitch.{FeatureSwitching, ObligationsPage}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlineModelWithIncomeType}
+import models.reportDeadlines._
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
 import play.api.mvc.Result
@@ -69,14 +70,25 @@ class PreviousObligationsControllerSpec extends MockAuthenticationPredicate with
 
     s"return $OK with html" in new Setup {
       mockBothIncomeSourcesBusinessAligned()
-      when(reportDeadlinesService.previousObligationsWithIncomeType(matches(user.incomeSources))(any(), any(), any()))
-        .thenReturn(Future.successful(List(
-          ReportDeadlineModelWithIncomeType("Business", ReportDeadlineModel(date, date, date, "Quarterly", Some(date), "#001")),
-          ReportDeadlineModelWithIncomeType("Property", ReportDeadlineModel(date, date, date, "EOPS", Some(date), "EOPS"))
-        )))
+      when(reportDeadlinesService.getReportDeadlines(matches(true))(any(), any()))
+          .thenReturn(Future.successful(ObligationsModel(Seq(
+            ReportDeadlinesModel(BaseTestConstants.testSelfEmploymentId, List(ReportDeadlineModel(date, date, date, "Quarterly", Some(date), "#001"))),
+            ReportDeadlinesModel(BaseTestConstants.testPropertyIncomeId, List(ReportDeadlineModel(date, date, date, "EOPS", Some(date), "EOPS")))
+          ))))
 
       val result: Result = await(controller.getPreviousObligations(fakeRequestWithActiveSession))
       
+      status(result) shouldBe OK
+      contentType(result) shouldBe Some("text/html")
+    }
+
+    s"return $OK with html when previous deadlines returns an error response" in new Setup {
+      mockBothIncomeSourcesBusinessAligned()
+      when(reportDeadlinesService.getReportDeadlines(matches(true))(any(), any()))
+          .thenReturn(Future.successful(ReportDeadlinesErrorModel(500, "error")))
+
+      val result: Result = await(controller.getPreviousObligations(fakeRequestWithActiveSession))
+
       status(result) shouldBe OK
       contentType(result) shouldBe Some("text/html")
     }

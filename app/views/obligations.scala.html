@@ -24,11 +24,10 @@
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import models.reportDeadlines.ReportDeadlinesModel
 @import models.reportDeadlines.QuarterlyObligation
-@import models.incomeSourcesWithDeadlines.{IncomeSourcesWithDeadlinesResponse, PropertyIncomeWithDeadlinesModel}
 @import models.reportDeadlines.EopsObligation
 @import models.reportDeadlines.QuarterlyObligation
 
-@(incomeSources: models.incomeSourcesWithDeadlines.IncomeSourcesWithDeadlinesModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(obligations: models.reportDeadlines.ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @breadcrumb = {
 @breadcrumbHelper(Breadcrumb(Vector(
@@ -76,69 +75,30 @@ contentHeader = Some(breadcrumb)
 
 </details>
 
-@incomeSources.propertyIncomeSource match{
-case Some(propertyIncomeWithDeadlines) =>{
-@propertyIncomeWithDeadlines.reportDeadlines match {
-case reportDeadlines: ReportDeadlinesModel => {
-@for(deadline <- reportDeadlines.currentQuarterlyDeadlines) {
-<div id="pi-quarterly-return-section"  class="grid-row divider--bottom">
-    <div class="row-border">
-        <div class="column-half">
-            <p style="font-weight:bold">
-                <span id="pi-quarterly-return-title">@messages("obligations.propertyIncome")</span><br/>
-                <span id="pi-quarterly-return-period" style="font-weight:normal">
-                                    @{s"${deadline.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.end.toLongDate}"}
-                                </span>
-            </p>
+    @for(deadline <- obligations.allQuarterly.zip(0 to obligations.allQuarterly.size)) {
+        <div id=@{s"quarterly-return-section-${deadline._2}"} class="grid-row divider--bottom">
+            <div class="row-border">
+                <div class="column-half">
+                    <p style="font-weight:bold">
+                        <span id="quarterly-return-title">@{if(deadline._1.incomeType == "Property") messages("obligations.propertyIncome") else deadline._1.incomeType}</span><br/>
+                        <span id="quarterly-return-period" style="font-weight:normal">
+                        @{s"${deadline._1.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline._1.obligation.end.toLongDate}"}
+                        </span>
+                    </p>
+                </div>
+                <div class="column-half">
+                    <p>
+                        <span id="quarterly-due-on-title">
+                        @{messages("obligations.dueOn")}
+                        </span><br/>
+                        <span id="quarterly-return-due-date" style="font-weight:normal">
+                        @{deadline._1.obligation.due.toLongDate}
+                        </span>
+                    </p>
+                </div>
+            </div>
         </div>
-        <div class="column-half">
-            <p>
-                                <span id="pi-quarterly-due-on-title">
-                                    @{messages("obligations.dueOn")}
-                                </span><br/>
-                <span id="pi-quarterly-return-due-date" style="font-weight:normal">
-                                    @{deadline.due.toLongDate}
-                                </span>
-            </p>
-        </div>
-    </div>
-</div>
-}
-}
-case _ => { }
-}
-}
-
-case _ => { }
-
-}
-
-<section id="quarterly-business-returns">
-    @for(businessIncomeSource <- incomeSources.businessIncomeSources){
-    @businessIncomeSource.reportDeadlines match{
-    case businessDeadlines: ReportDeadlinesModel => {
-    @for(deadline <- businessDeadlines.currentQuarterlyDeadlines) {
-    <div id="quarterlyIncomeTableRow" class="grid-row divider--bottom">
-        <div class="column-half">
-            <p>
-            <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-heading" class="bold">@{businessIncomeSource.incomeSource.tradingName.get}</div>
-            <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-period">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
-            </p>
-        </div>
-        <div class="column-half">
-            <p>
-            <div id="quarterly-bi-due-on">@messages("obligations.dueOn")</div>
-            <div id="quarterly-bi-@{businessIncomeSource.incomeSource.tradingName.get}-due">@{deadline.due.toLongDate}</div>
-            </p>
-        </div>
-    </div>
     }
-    }
-    case _ => {}
-    }
-    }
-
-</section>
 
 <h3 id="annualUpdates-heading" class="heading-medium">@messages("obligations.annualUpdates")</h3>
 
@@ -160,53 +120,30 @@ case _ => { }
 
 </details>
 
-@for(propertyIncomeSource <- incomeSources.propertyIncomeSource) {
-@propertyIncomeSource.reportDeadlines match {
-case propertyDeadlines: ReportDeadlinesModel => {
-@for(deadline <- propertyDeadlines.currentEOPsDeadlines) {
-<div id="eopsPropertyTableRow" class="grid-row divider--bottom">
-    <div class="column-half">
-        <p>
-            <div id="eops-pi-heading" class="bold">@messages("obligations.propertyIncome")</div>
-            <div id="eops-pi-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
-        </p>
-    </div>
-    <div class="column-half">
-        <p>
-            <div id="eops-pi-due-on">@messages("obligations.dueOn")</div>
-            <div id="eops-pi-due-date">@deadline.due.toLongDate</div>
-        </p>
-    </div>
-</div>
-}
-}
-case _ => {}
-}
-}
-
-@for(businessIncomeSource <- incomeSources.businessIncomeSources){
-    @businessIncomeSource.reportDeadlines match {
-        case businessIncomeDeadlines: ReportDeadlinesModel => {
-            @for(deadline <- businessIncomeDeadlines.currentEOPsDeadlines){
-                <div id = "eopsSEIncomeSection"  class="grid-row divider--bottom">
-                    <div class="column-half">
-                        <p>
-                        <div id="eops-SEI-@{businessIncomeSource.incomeSource.tradingName.get}-heading" class="bold">@{businessIncomeSource.incomeSource.tradingName.get}</div>
-                        <div id="eops-SEI-dates">@messages("obligations.dateToDate", deadline.start.toLongDate, deadline.end.toLongDate)</div>
-                        </p>
-                    </div>
-                    <div class="column-half">
-                        <p>
-                        <div id="eops-SEI-due-on">@messages("obligations.dueOn")</div>
-                        <div id="eops-SEI-due-date">@deadline.due.toLongDate</div>
-                        </p>
-                    </div>
+    @for(deadline <- obligations.allEops.zip(0 to obligations.allEops.size)) {
+        <div id=@{s"eops-return-section-${deadline._2}"} class="grid-row divider--bottom">
+            <div class="row-border">
+                <div class="column-half">
+                    <p style="font-weight:bold">
+                        <span id="eops-return-title">@{if(deadline._1.incomeType == "Property") messages("obligations.propertyIncome") else deadline._1.incomeType}</span><br/>
+                        <span id="eops-return-period" style="font-weight:normal">
+                        @{s"${deadline._1.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline._1.obligation.end.toLongDate}"}
+                        </span>
+                    </p>
                 </div>
-            }
-        }
-        case _ => {}
+                <div class="column-half">
+                    <p>
+                        <span id="eops-due-on-title">
+                        @{messages("obligations.dueOn")}
+                        </span><br/>
+                        <span id="eops-return-due-date" style="font-weight:normal">
+                        @{deadline._1.obligation.due.toLongDate}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
     }
-}
 
 <h3 id="declarations-heading" class="heading-medium">@messages("obligations.finalDeclarationUpdate")</h3>
 
@@ -225,42 +162,28 @@ case _ => {}
 
 </details>
 
-
-
-@incomeSources.crystallisedDeadlinesModel match{
-case Some(crystallisedDeadlinesModel) =>{
-@crystallisedDeadlinesModel.reportDeadlines match {
-case reportDeadlines: ReportDeadlinesModel => {
-@for(deadline <- reportDeadlines.currentCrystDeadlines) {
-<div id="crystallised-section"  class="grid-row divider--bottom">
-    <div class="row-border">
-        <div class="column-half">
-            <p style="font-weight:bold">
-                <span id="crystallised-heading">@messages("obligations.eops")</span><br/>
-                <span id="crystallised-period" style="font-weight:normal">
-                                    @{s"${deadline.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.end.toLongDate}"}
-                                </span>
-            </p>
+    @for(deadline <- obligations.allCrystallised.zip(0 to obligations.allCrystallised.size)) {
+        <div id=@{s"crystallised-section-${deadline._2}"}  class="grid-row divider--bottom">
+            <div class="row-border">
+                <div class="column-half">
+                    <p style="font-weight:bold">
+                        <span id="crystallised-title">@messages("obligations.eops")</span><br/>
+                        <span id="crystallised-period" style="font-weight:normal">
+                        @{s"${deadline._1.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline._1.obligation.end.toLongDate}"}
+                        </span>
+                    </p>
+                </div>
+                <div class="column-half">
+                    <p>
+                        <span id="crystallised-due-on-title">
+                        @{messages("obligations.dueOn")}
+                        </span><br/>
+                        <span id="crystallised-due-date" style="font-weight:normal">
+                        @{deadline._1.obligation.due.toLongDate}
+                        </span>
+                    </p>
+                </div>
+            </div>
         </div>
-        <div class="column-half">
-            <p>
-                                <span id="crystallised-due-on">
-                                    @{messages("obligations.dueOn")}
-                                </span><br/>
-                <span id="crystallised-due" style="font-weight:normal">
-                                    @{deadline.due.toLongDate}
-                                </span>
-            </p>
-        </div>
-    </div>
-</div>
-}
-}
-case _ => { }
-}
-}
-
-case _ => { }
-
-}
+    }
 }
