@@ -22,6 +22,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.core.{Nino, NinoResponse, NinoResponseError}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, FinancialDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsErrorModel, PaymentAllocationsModel, PaymentAllocationsResponseModel}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
@@ -63,6 +64,14 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   def getPaymentAllocationsUrl(nino: String, paymentLot: String, paymentLotItem: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/$nino/payment-allocations/$paymentLot/$paymentLotItem"
+  }
+
+  def getChargesUrl(nino: String, from: String, to: String): String = {
+    s"${config.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
+  }
+
+  def getPaymentsUrl(nino: String, from: String, to: String): String = {
+    s"${config.itvcProtectedService}/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
   }
 
   def getIncomeSources(mtditid: String, nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
@@ -247,4 +256,36 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   }
 
+  def getFinancialDetails(from: String, to: String)
+                         (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+
+    val url = getChargesUrl(mtdUser.nino, from, to)
+    Logger.debug(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - GET $url")
+
+    http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
+      response.status match {
+        case OK =>
+          Logger.debug(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, json: ${response.json}")
+          response.json.validate[FinancialDetailsModel].fold(
+            invalid => {
+              Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Json Validation Error: $invalid")
+              FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
+            },
+            valid => valid
+          )
+        case status =>
+          if(status >= 500) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, body: ${response.body}")
+          }
+          FinancialDetailsErrorModel(response.status, response.body)
+      }
+    } recover {
+      case ex =>
+        Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Unexpected failure, ${ex.getMessage}", ex)
+        FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+    }
+
+  }
 }

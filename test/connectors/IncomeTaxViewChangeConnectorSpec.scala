@@ -20,6 +20,7 @@ import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.NinoLookupTestConstants.{testNinoModelJson, _}
 import assets.PaymentAllocationsTestConstants._
+import assets.FinancialDetailsTestConstants._
 import assets.ReportDeadlinesTestConstants._
 import audit.AuditingService
 import audit.mocks.MockAuditingService
@@ -27,6 +28,7 @@ import audit.models._
 import config.FrontendAppConfig
 import mocks.MockHttp
 import models.core.{NinoResponse, NinoResponseError}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsErrorModel, PaymentAllocationsResponseModel}
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
@@ -291,6 +293,45 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
       val result: Future[PaymentAllocationsResponseModel] = getPaymentAllocations(testPaymentLot, testPaymentLotItem)
       await(result) shouldBe PaymentAllocationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
+    }
+
+  }
+
+  "getFinancialDetails" should {
+
+    val successResponse = HttpResponse(Status.OK, Some(testValidFinancialDetailsModelJson))
+    val successResponseBadJson = HttpResponse(Status.OK, Some(testInvalidFinancialDetailsJson))
+    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+
+    val getChargesTestUrl =
+      s"http://localhost:9999/income-tax-view-change/$testNino/financial-details/charges/from/$testFrom/to/$testTo"
+
+    "return a FinancialDetails model when successful JSON is received" in new Setup {
+      setupMockHttpGet(getChargesTestUrl)(successResponse)
+
+      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testFrom, testTo)
+      await(result) shouldBe testValidFinancialDetailsModel
+    }
+
+    "return FinancialDetails model in case of bad/malformed JSON response" in new Setup {
+      setupMockHttpGet(getChargesTestUrl)(successResponseBadJson)
+
+      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testFrom, testTo)
+      await(result) shouldBe testFinancialDetailsErrorModelParsing
+    }
+
+    "return FinancialDetailsErrorResponse model in case of failure" in new Setup {
+      setupMockHttpGet(getChargesTestUrl)(badResponse)
+
+      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testFrom, testTo)
+      await(result) shouldBe FinancialDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
+    }
+
+    "return FinancialDetailsErrorModel model in case of future failed scenario" in new Setup {
+      setupMockFailedHttpGet(getChargesTestUrl)(badResponse)
+
+      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testFrom, testTo)
+      await(result) shouldBe FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
     }
 
   }
