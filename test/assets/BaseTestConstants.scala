@@ -39,6 +39,8 @@ object BaseTestConstants {
   val testPropertyIncomeId = "1234"
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
+  val testFrom = "2017-01-01"
+  val testTo = "2017-01-31"
   val testPaymentLot = "081203010024"
   val testPaymentLotItem = "000001"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
