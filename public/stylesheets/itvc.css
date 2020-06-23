@@ -167,3 +167,8 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 .total-heading span {
     float: right;
 }
+
+.grid-row-spacing {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
