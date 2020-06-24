@@ -55,8 +55,7 @@
         <div id="no-previous-obligations">@messages("previous-obligations.no-previous-obligations")</div>
     } else {
         @previousObligations.allDeadlinesWithSource(previous = true).zipWithIndex.map { case (obligationWithType, index) =>
-            <div id="row-@index" class="grid-row divider--bottom">
-                <p></p>
+            <div id="row-@index" class="grid-row divider--bottom grid-row-spacing">
                 <div class="column-half">
                     <span id="income-source-@index" class="bold">
                         @{obligationWithType.incomeType match {
@@ -78,13 +77,11 @@
                     <div id="was-due-on-@index">
                         @messages("previous-obligation.obligation-type.was-due-on", obligationWithType.obligation.due.toLongDate)
                     </div>
-                    <br>
                 </div>
                 <div class="column-half">
                     <div id="submitted-on-label-@index">@messages("previous-obligations.submitted-on")</div>
                     <div id="submitted-on-date-@index">@obligationWithType.obligation.dateReceived.map(_.toLongDate)</div>
                 </div>
-                <p></p>
             </div>
         }
     }

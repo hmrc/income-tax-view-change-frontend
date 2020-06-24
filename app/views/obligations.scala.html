@@ -75,26 +75,16 @@ contentHeader = Some(breadcrumb)
 
 </details>
 
-    @for(deadline <- obligations.allQuarterly.zip(0 to obligations.allQuarterly.size)) {
-        <div id=@{s"quarterly-return-section-${deadline._2}"} class="grid-row divider--bottom">
+    @for((deadline, index) <- obligations.allQuarterly.zip(0 to obligations.allQuarterly.size)) {
+        <div id="@{s"quarterly-return-section-${index}"}" class="grid-row divider--bottom grid-row-spacing">
             <div class="row-border">
                 <div class="column-half">
-                    <p style="font-weight:bold">
-                        <span id="quarterly-return-title">@{if(deadline._1.incomeType == "Property") messages("obligations.propertyIncome") else deadline._1.incomeType}</span><br/>
-                        <span id="quarterly-return-period" style="font-weight:normal">
-                        @{s"${deadline._1.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline._1.obligation.end.toLongDate}"}
-                        </span>
-                    </p>
+                    <div id="quarterly-return-title" class="bold">@{if(deadline.incomeType == "Property"){messages("obligations.propertyIncome")} else {deadline.incomeType}}</div>
+                    <div id="quarterly-return-period">@{s"${deadline.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.obligation.end.toLongDate}"}</div>
                 </div>
                 <div class="column-half">
-                    <p>
-                        <span id="quarterly-due-on-title">
-                        @{messages("obligations.dueOn")}
-                        </span><br/>
-                        <span id="quarterly-return-due-date" style="font-weight:normal">
-                        @{deadline._1.obligation.due.toLongDate}
-                        </span>
-                    </p>
+                    <div id="quarterly-due-on-title">@{messages("obligations.dueOn")}</div>
+                    <div id="quarterly-return-due-date">@{deadline.obligation.due.toLongDate}</div>
                 </div>
             </div>
         </div>
@@ -120,26 +110,16 @@ contentHeader = Some(breadcrumb)
 
 </details>
 
-    @for(deadline <- obligations.allEops.zip(0 to obligations.allEops.size)) {
-        <div id=@{s"eops-return-section-${deadline._2}"} class="grid-row divider--bottom">
+    @for((deadline, index) <- obligations.allEops.zip(0 to obligations.allEops.size)) {
+        <div id="@{s"eops-return-section-$index"}" class="grid-row divider--bottom grid-row-spacing">
             <div class="row-border">
                 <div class="column-half">
-                    <p style="font-weight:bold">
-                        <span id="eops-return-title">@{if(deadline._1.incomeType == "Property") messages("obligations.propertyIncome") else deadline._1.incomeType}</span><br/>
-                        <span id="eops-return-period" style="font-weight:normal">
-                        @{s"${deadline._1.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline._1.obligation.end.toLongDate}"}
-                        </span>
-                    </p>
+                    <div id="eops-return-title" class="bold">@{if(deadline.incomeType == "Property"){messages("obligations.propertyIncome")} else {deadline.incomeType}}</div>
+                    <div id="eops-return-period">@{s"${deadline.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.obligation.end.toLongDate}"}</div>
                 </div>
                 <div class="column-half">
-                    <p>
-                        <span id="eops-due-on-title">
-                        @{messages("obligations.dueOn")}
-                        </span><br/>
-                        <span id="eops-return-due-date" style="font-weight:normal">
-                        @{deadline._1.obligation.due.toLongDate}
-                        </span>
-                    </p>
+                    <div id="eops-due-on-title">@{messages("obligations.dueOn")}</div>
+                    <div id="eops-return-due-date">@{deadline.obligation.due.toLongDate}</div>
                 </div>
             </div>
         </div>
@@ -162,26 +142,16 @@ contentHeader = Some(breadcrumb)
 
 </details>
 
-    @for(deadline <- obligations.allCrystallised.zip(0 to obligations.allCrystallised.size)) {
-        <div id=@{s"crystallised-section-${deadline._2}"}  class="grid-row divider--bottom">
+    @for((deadline, index) <- obligations.allCrystallised.zip(0 to obligations.allCrystallised.size)) {
+        <div id="@{s"crystallised-section-${index}"}"  class="grid-row divider--bottom grid-row-spacing">
             <div class="row-border">
                 <div class="column-half">
-                    <p style="font-weight:bold">
-                        <span id="crystallised-title">@messages("obligations.eops")</span><br/>
-                        <span id="crystallised-period" style="font-weight:normal">
-                        @{s"${deadline._1.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline._1.obligation.end.toLongDate}"}
-                        </span>
-                    </p>
+                    <div id="crystallised-title" class="bold">@messages("obligations.eops")</div>
+                    <div id="crystallised-period">@{s"${deadline.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.obligation.end.toLongDate}"}</div>
                 </div>
                 <div class="column-half">
-                    <p>
-                        <span id="crystallised-due-on-title">
-                        @{messages("obligations.dueOn")}
-                        </span><br/>
-                        <span id="crystallised-due-date" style="font-weight:normal">
-                        @{deadline._1.obligation.due.toLongDate}
-                        </span>
-                    </p>
+                    <div id="crystallised-due-on-title">@{messages("obligations.dueOn")}</div>
+                    <div id="crystallised-due-date">@{deadline.obligation.due.toLongDate}</div>
                 </div>
             </div>
         </div>
