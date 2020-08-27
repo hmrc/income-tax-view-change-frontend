@@ -187,7 +187,8 @@ betaBanner.improve                                              = yn ein helpu i
 obligations.heading.v2                                          = Diweddariadau
 obligations.previous-obligations                                = Diweddariadau a gyflwynwyd yn flaenorol
 obligations.sub-heading.v2                                      = Diweddariadau i’w dychwelyd
-obligations.sub-heading.info.hyperlink.v2                       = meddalwedd cyfrifyddu
+obligations.sub-heading.info                                    = Mae’n rhaid i chi gyflwyno’r Ffurflenni Treth hyn ar eich {0} erbyn y dyddiadau sydd wedi eu rhestru.
+obligations.record-keeping-software                             = meddalwedd cadw cofnodion (yn agor mewn tab newydd)
 obligation.dropdown.declarations.info.v2                        = Gwybodaeth ynghylch datganiadau
 obligations.dropdown.declarations.types.v2                      = Mae dau fath o ddatganiadau.
 obligations.dropdown.declarations.li1.type1.v2                  = Diwedd cyfnod cyfrifyddu ar gyfer pob endid
@@ -198,24 +199,18 @@ obligations.declarations                                        = Datganiadau
 obligations.propertyIncome                                      = Incwm o eiddo
 obligations.dueOn                                               = I’w ddychwelyd erbyn:
 obligations.dateToDate                                          = {0} i {1}
-obligation.dropdown.finalDeclaration.text.v2.prt2               = .
-obligations.sub-heading.info.prt1.v2                            = Mae’n rhaid i chi gyflwyno’r Ffurflenni Treth hyn ar eich
-obligations.sub-heading.info.prt2.v2                            = erbyn y dyddiadau sydd wedi eu rhestru
 obligations.quarterlyUpdates                                    = Diweddariadau chwarterol
+obligation.dropdown.quarterlyReturn.text.v2.lin2                = Gan ddefnyddio eich {0}, mae’n rhaid i chi gyflwyno 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
 obligation.dropdown.quarterlyReturn.info.v2                     = Beth yw diweddariad chwarterol?
 obligation.dropdown.quarterlyReturn.text.v2                     = Mae diweddariad chwarterol yn nodi’r incwm a’r treuliau ar gyfer pob cyfnod 3 mis.
-obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1           = Gan ddefnyddio eich
-obligation.dropdown.quarterlyReturn.text.v2.lin2.prt2           = , mae’n rhaid i chi gyflwyno 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
 obligations.annualUpdates                                       = Diweddariadau blynyddol
+obligation.dropdown.annualReturn.text.v2.lin2                   = Gan ddefnyddio eich {0}, mae’n rhaid i chi gyflwyno un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd y cyfnod cyfrifyddu.
 obligation.dropdown.annualUpdates.info.v2                       = Beth yw diweddariad blynyddol?
 obligation.dropdown.annualReturn.text.v2                        = Yn y diweddariad blynyddol, mae’n rhaid i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu cyflwyno yn gywir, neu mae’n rhaid i chi gywiro unrhyw gamgymeriadau
-obligation.dropdown.annualReturn.text.v2.lin2.prt2              = , mae’n rhaid i chi gyflwyno un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd y cyfnod cyfrifyddu.
 obligations.opens-in-new-tab                                    = (yn agor mewn tab newydd)
-
 obligations.finalDeclarationUpdate                              = Datganiad terfynol
+obligation.dropdown.finalDeclaration.text.v2                    = Mae eich datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu cyflwyno yn gywir ac eich bod wedi cyflwyno pob ffynhonnell incwm, hyd eithaf eich gwybodaeth, gan ddefnyddio eich {0}.
 obligation.dropdown.finalDeclaration.info.v2                    = Beth yw datganiad terfynol?
-obligation.dropdown.finalDeclaration.text.v2.prt1               = Mae eich datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu cyflwyno yn gywir ac eich bod wedi cyflwyno pob ffynhonnell incwm, hyd eithaf eich gwybodaeth, gan ddefnyddio eich
-obligation.dropdown.finalDeclaration.text.v2.prt2               = .
 
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm

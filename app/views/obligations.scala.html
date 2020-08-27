@@ -26,6 +26,7 @@
 @import models.reportDeadlines.QuarterlyObligation
 @import models.reportDeadlines.EopsObligation
 @import models.reportDeadlines.QuarterlyObligation
+@import views.html.helpers.currentObligationsHelper
 
 @(obligations: models.reportDeadlines.ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
@@ -48,112 +49,8 @@ contentHeader = Some(breadcrumb)
 
 <section id="sub-heading-section">
     <h2 id="page-sub-heading" class="heading-large"> @messages("obligations.sub-heading.v2") </h2>
-
-    <p>@messages("obligations.sub-heading.info.prt1.v2")
-        <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
-            @messages("obligations.sub-heading.info.hyperlink.v2")<span class="visually-hidden">@messages("obligations.opens-in-new-tab")</span></a> @messages("obligations.sub-heading.info.prt2.v2")
-    </p>
 </section>
 
-<h3 id="quarterlyReturns-heading" class="heading-medium">@messages("obligations.quarterlyUpdates")</h3>
+@currentObligationsHelper(obligations)
 
-<details role="group">
-
-    <summary id="quarterly-dropdown-title" role="button" aria-controls="details-content-0" aria-expanded="false">
-        @messages("obligation.dropdown.quarterlyReturn.info.v2")
-    </summary>
-
-    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-        <p><span id="quarterly-dropdown-line1">@messages("obligation.dropdown.quarterlyReturn.text.v2")</span> </p>
-
-        <p><span id="quarterly-dropdown-line2">@messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1")
-            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
-                @messages("obligations.sub-heading.info.hyperlink.v2")<span class="visually-hidden">@messages("obligations.opens-in-new-tab")</span></a>@messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt2")
-        </span>
-        </p>
-    </div>
-
-</details>
-
-    @for((deadline, index) <- obligations.allQuarterly.zip(0 to obligations.allQuarterly.size)) {
-        <div id="@{s"quarterly-return-section-${index}"}" class="grid-row divider--bottom grid-row-spacing">
-            <div class="row-border">
-                <div class="column-half">
-                    <div id="quarterly-return-title" class="bold">@{if(deadline.incomeType == "Property"){messages("obligations.propertyIncome")} else {deadline.incomeType}}</div>
-                    <div id="quarterly-return-period">@{s"${deadline.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.obligation.end.toLongDate}"}</div>
-                </div>
-                <div class="column-half">
-                    <div id="quarterly-due-on-title">@{messages("obligations.dueOn")}</div>
-                    <div id="quarterly-return-due-date">@{deadline.obligation.due.toLongDate}</div>
-                </div>
-            </div>
-        </div>
-    }
-
-<h3 id="annualUpdates-heading" class="heading-medium">@messages("obligations.annualUpdates")</h3>
-
-<details role="group">
-
-    <summary id="annual-dropdown-title" role="button" aria-controls="details-content-1" aria-expanded="false">
-        @messages("obligation.dropdown.annualUpdates.info.v2")
-    </summary>
-
-    <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
-        <p><span id="annual-dropdown-line1"> @messages("obligation.dropdown.annualReturn.text.v2")</span> </p>
-
-        <p><span id="annual-dropdown-line2">@messages("obligation.dropdown.quarterlyReturn.text.v2.lin2.prt1")
-            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
-                @messages("obligations.sub-heading.info.hyperlink.v2")<span class="visually-hidden">@messages("obligations.opens-in-new-tab")</span></a>@messages("obligation.dropdown.annualReturn.text.v2.lin2.prt2")
-        </span>
-        </p>
-    </div>
-
-</details>
-
-    @for((deadline, index) <- obligations.allEops.zip(0 to obligations.allEops.size)) {
-        <div id="@{s"eops-return-section-$index"}" class="grid-row divider--bottom grid-row-spacing">
-            <div class="row-border">
-                <div class="column-half">
-                    <div id="eops-return-title" class="bold">@{if(deadline.incomeType == "Property"){messages("obligations.propertyIncome")} else {deadline.incomeType}}</div>
-                    <div id="eops-return-period">@{s"${deadline.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.obligation.end.toLongDate}"}</div>
-                </div>
-                <div class="column-half">
-                    <div id="eops-due-on-title">@{messages("obligations.dueOn")}</div>
-                    <div id="eops-return-due-date">@{deadline.obligation.due.toLongDate}</div>
-                </div>
-            </div>
-        </div>
-    }
-
-<h3 id="declarations-heading" class="heading-medium">@messages("obligations.finalDeclarationUpdate")</h3>
-
-<details role="group">
-
-    <summary id="declaration-dropdown-title" role="button" aria-controls="details-content-2" aria-expanded="false">
-        @messages("obligation.dropdown.finalDeclaration.info.v2")
-    </summary>
-
-    <div class="panel panel-border-narrow" id="details-content-2" aria-hidden="true">
-        <p>@messages("obligation.dropdown.finalDeclaration.text.v2.prt1")
-            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
-                @messages("obligations.sub-heading.info.hyperlink.v2")<span class="visually-hidden">@messages("obligations.opens-in-new-tab")</span></a>@messages("obligation.dropdown.finalDeclaration.text.v2.prt2")
-        </p>
-    </div>
-
-</details>
-
-    @for((deadline, index) <- obligations.allCrystallised.zip(0 to obligations.allCrystallised.size)) {
-        <div id="@{s"crystallised-section-${index}"}"  class="grid-row divider--bottom grid-row-spacing">
-            <div class="row-border">
-                <div class="column-half">
-                    <div id="crystallised-title" class="bold">@messages("obligations.eops")</div>
-                    <div id="crystallised-period">@{s"${deadline.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.obligation.end.toLongDate}"}</div>
-                </div>
-                <div class="column-half">
-                    <div id="crystallised-due-on-title">@{messages("obligations.dueOn")}</div>
-                    <div id="crystallised-due-date">@{deadline.obligation.due.toLongDate}</div>
-                </div>
-            </div>
-        </div>
-    }
 }

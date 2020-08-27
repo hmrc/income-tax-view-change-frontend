@@ -14,36 +14,31 @@
  * limitations under the License.
  */
 
-package views
+package views.helpers
 
 import java.time.LocalDate
 
 import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.{business1, testTradeName}
-import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
+import assets.Messages.{CurrentObligationsHelper => messages}
 import assets.PropertyDetailsTestConstants.propertyDetails
 import assets.ReportDeadlinesTestConstants.{twoObligationsSuccessModel, _}
-import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits.applicationMessages
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
-class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
-
-  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+class CurrentObligationsHelperSpec extends TestSupport with ImplicitDateFormatter {
 
   class Setup(model: ObligationsModel) {
-    val html: HtmlFormat.Appendable = views.html.obligations(model)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
-    val pageDocument: Document = Jsoup.parse(contentAsString(views.html.obligations(model)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(views.html.helpers.currentObligationsHelper(model)))
   }
 
-  "The Deadline Reports Page" should {
+  "The Current Obligations Helper" should {
 
     lazy val businessIncomeSource = ObligationsModel(Seq(ReportDeadlinesModel(
       business1.incomeSourceId,
@@ -100,28 +95,10 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
     lazy val noIncomeSource = ObligationsModel(Seq())
 
-    "have a link to the previous obligations" in new Setup(businessIncomeSource) {
-      pageDocument.select(s"a[href='${controllers.routes.PreviousObligationsController.getPreviousObligations().url}']").text shouldBe messages.previousObligations
-    }
+    "display all of the correct information for the main elements/sections" when {
 
-    "display all of the correct information for the main elements/sections on the page" when {
-
-      "showing the breadcrumb trail on the page" in new Setup(businessIncomeSource) {
-        pageDocument.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-        pageDocument.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        pageDocument.getElementById("breadcrumb-updates").text shouldBe breadcrumbMessages.updates
-      }
-
-      s"showing the title ${messages.title} on the page" in new Setup(businessIncomeSource) {
-        pageDocument.title() shouldBe messages.title
-      }
-
-      s"showing the heading ${messages.heading} on the page" in new Setup(businessIncomeSource) {
-        pageDocument.getElementById("page-heading").text shouldBe messages.heading
-      }
-
-      s"showing the Sub heading ${messages.subTitle} on page" in new Setup(businessIncomeSource) {
-        pageDocument.getElementById("page-sub-heading").text shouldBe messages.subTitle
+      s"show the sub heading para about record keeping software" in new Setup(businessIncomeSource) {
+        pageDocument.select("#sub-heading-section p").text shouldBe messages.subHeadingPara
       }
 
 
@@ -139,19 +116,19 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
       "showing the Quarterly update heading and drop down section on the page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("quarterly-dropdown-title").text shouldBe messages.quarterlyDropDown
-        pageDocument.getElementById("quarterly-dropdown-line1").text == messages.quarterlyDropdownLine1
-        pageDocument.getElementById("quarterly-dropdown-line2").text == messages.quarterlyDropdownLine2
+        pageDocument.getElementById("quarterly-dropdown-line1").text shouldBe messages.quarterlyDropdownLine1
+        pageDocument.getElementById("quarterly-dropdown-line2").text shouldBe messages.quarterlyDropdownLine2
       }
 
       "showing the Annual update heading and drop down section on the page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("annual-dropdown-title").text shouldBe messages.annualDropDown
-        pageDocument.getElementById("annual-dropdown-line1").text == messages.annualDropdownListOne
-        pageDocument.getElementById("annual-dropdown-line2").text == messages.annualDropdownListTwo
+        pageDocument.getElementById("annual-dropdown-line1").text shouldBe messages.annualDropdownListOne
+        pageDocument.getElementById("annual-dropdown-line2").text shouldBe messages.annualDropdownListTwo
       }
 
       "showing the Final declaration heading and drop down section on the page" in new Setup(businessIncomeSource) {
         pageDocument.getElementById("declaration-dropdown-title").text shouldBe messages.finalDeclarationDropDown
-        pageDocument.getElementById("details-content-2").text == messages.finalDeclerationDetails
+        pageDocument.getElementById("details-content-2").text shouldBe messages.finalDeclerationDetails
       }
 
     }
@@ -175,7 +152,6 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
           pageDocument.select("#eops-return-section-0 div div:nth-child(2) div:nth-child(1)").text shouldBe messages.dueOn
           pageDocument.select("#eops-return-section-0 div div:nth-child(2) div:nth-child(2)").text shouldBe "31 October 2017"
         }
-
       }
 
       "display all of the correct information for the quarterly property section" when {
@@ -228,11 +204,8 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
           pageDocument.select("#crystallised-section-1 div div:nth-child(2) div:nth-child(1)").text shouldBe messages.dueOn
           pageDocument.select("#crystallised-section-1 div div:nth-child(2) div:nth-child(2)").text shouldBe "31 October 2017"
         }
-
       }
-
 
     }
   }
 }
-

@@ -63,6 +63,27 @@ object Messages {
     val dismiss = "No, thankyou."
   }
 
+  object CurrentObligationsHelper {
+    val subHeading = "Updates due"
+    val subHeadingPara = "You must submit these returns on your record-keeping software (opens in a new tab) by the dates listed."
+    val annualDropdownListOne = "In the annual update you must declare that the 4 quarterly updates you submitted are correct or amend any errors."
+    val annualDropdownListTwo = "Using your record-keeping software (opens in a new tab), you need to submit one annual update for each source of income at the end of its accounting period."
+    val quarterlyDropdownLine1 ="A quarterly update sets out the income and expenses for each 3-month period."
+    val quarterlyDropdownLine2 ="Using your record-keeping software (opens in a new tab), you must submit 4 quarterly updates in a year for each source of income."
+    val finalDeclerationDetails = "Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your record-keeping software (opens in a new tab)."
+    val quarterlyDropDown = "What is a quarterly update?"
+    val annualDropDown = "What is an annual update?"
+    val finalDeclarationDropDown = "What is a final declaration?"
+    val declarationsHeading = "Final declaration"
+    val quarterlyHeading = "Quarterly updates"
+    val annualHeading = "Annual updates"
+    val finalDeclarationHeading = "Final Declaration"
+    val propertyIncome = "Property Income"
+    def fromToDates(from: String, to: String) = s"$from to $to"
+    val dueOn = "Due on:"
+    val crystallisedHeading = "Whole tax year (final check)"
+  }
+
   //Tax Years Page Messages
   object TaxYears {
     val title = "My tax years"
