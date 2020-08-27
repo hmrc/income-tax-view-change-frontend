@@ -16,7 +16,6 @@ bta.manage-account                                              = Manage account
 feedback.title                                                  = Give feedback
 
 ## Home Page ##
-home.title                                                      = Your Income Tax
 home.heading                                                    = Income Tax
 home.unique.taxpayer.reference                                  = Unique Taxpayer Reference - {0}
 home.payments.heading                                           = Next payment due
@@ -34,7 +33,6 @@ banner.recruitment.link                                         = Join our resea
 banner.recruitment.dismiss                                      = No, thankyou.
 
 ## Tax Years Page ##
-taxYears.title                                                 = My tax years
 taxYears.heading                                               = My tax years
 taxYears.viewTaxYears                                          = Below is a list of tax years you have submitted updates for. Click on the tax years to view a summary.
 taxYears.taxYear                                               = Tax year
@@ -46,7 +44,6 @@ taxYears.complete                                              = COMPLETE
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 
 ## Tax Year Overview ##
-tax-year-overview.title                                         = Tax year overview
 tax-year-overview.heading                                       = 6 April {0} to 5 April {1}
 tax-year-overview.heading-secondary                             = Tax year overview
 tax-year-overview.status                                        = Tax year status:
@@ -109,7 +106,6 @@ taxCal_breakdown.table.nic2                                         = Class 2 Na
 taxCal_breakdown.table.banks_and_building_societies                 = Interest received from UK banks and building societies
 
 ## ReportDeadlines Page ##
-obligations.title                                               = Report deadlines
 obligations.heading                                             = Report deadlines
 obligations.accountingPeriod                                    = Report period
 obligations.reportDueDate                                       = Report due date
@@ -120,7 +116,6 @@ obligations.eops                                                = Whole tax year
 obligations.noReports                                           = You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month.
 
 ## Previous Obligations ##
-previous-obligations.title                                      = Previous Submitted Updates
 previous-obligations.heading                                    = Updates
 previous-obligations.updates-due                                = Updates due
 previous-obligations.sub-heading                                = Previously submitted updates
@@ -137,7 +132,6 @@ previous-obligations.updates-tab                                = Updates due
 previous-obligations.previous-updates-tab                       = Previously submitted updates
 
 ## Crystalisation Page ##
-crystalisation.title                                            = Your final submission
 crystalisation.heading                                          = Income tax bill for {0} to {1}
 crystalisation.subheading                                       = Bills
 crystalisation.dueBy                                            = You must pay by 31 January {0} to avoid penalties.
@@ -150,7 +144,6 @@ status.received                                                 = Received
 status.overdue                                                  = Overdue
 
 ## Timeout page ##
-timeout.title                                                   = Your session has timed out
 timeout.heading                                                 = Your session has timed out
 timeout.signIn.1                                                = To view your quarterly reporting details, you’ll have to
 timeout.signIn.2                                                = sign in
@@ -165,7 +158,6 @@ bta_partial.home_button                                         = View your Inco
 
 ## Not Enrolled
 not_enrolled.heading                                            = You can’t view this page
-not_enrolled.title                                              = You can’t view this page
 not_enrolled.sign-up.1                                          = You need to
 not_enrolled.sign-up.2                                          = sign up for quarterly reporting
 not_enrolled.sign-up.3                                          = before you can view this page.
@@ -180,7 +172,6 @@ breadcrumb-payments-due                                         = Income Tax pay
 breadcrumb-tax-year-overview                                    = 6 April {0} to 5 April {1}
 
 ## Standard Error Page ##
-standardError.title                                             = There is a problem with the service - Income Tax reporting through software - GOV.UK
 standardError.heading                                           = Sorry, there is a problem with the service
 standardError.message                                           = Try again later.
 
@@ -192,7 +183,6 @@ betaBanner.feedback                                             = feedback
 betaBanner.improve                                              = will help us to improve it.
 
 ## Obligations Page ##
-obligations.title.v2                                               = Current Updates
 obligations.heading.v2                                             = Updates
 obligations.previous-obligations                                   = Previously submitted updates
 obligations.sub-heading.v2                                         = Updates due
@@ -227,7 +217,6 @@ obligations.tab.two                                                = Previously 
 obligations.opens-in-new-tab                                       = (opens in a new tab)
 
 ## Payment Due Page ##
-paymentDue.title                                                   = Payments Due
 paymentDue.heading                                                 = Income Tax payments
 paymentDue.sub-heading                                             = Payment due
 paymentDue.tax-year                                                = Tax year {0} to {1}
@@ -253,6 +242,5 @@ timeoutDialog.message                                           = For your secur
 button.continue                                                 = Continue
 
 ## Not found
-notFound.title = Page not found
 notFound.heading = This page cannot be found
 notFound.message = Please check that you have entered the correct web address.

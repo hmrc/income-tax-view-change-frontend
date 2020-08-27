@@ -24,7 +24,7 @@
 @(taxYears: List[CalculationResponseModelWithYear], transactions: List[TransactionModelWithYear] = List())(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @main_template(
-    title = messages("taxYears.title"),
+    title = messages("taxYears.heading"),
     bodyClasses = None,
     contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
                             BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),

@@ -19,7 +19,7 @@
 
 @()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@main_template(title = messages("not_enrolled.title"), bodyClasses = None, showLogout = true, showBtaHeader = false) {
+@main_template(title = messages("not_enrolled.heading"), bodyClasses = None, showLogout = true, showBtaHeader = false) {
 
   <h1 class="h1-heading" id="page-heading">@messages("not_enrolled.heading")</h1>
   <p id="sign-up">

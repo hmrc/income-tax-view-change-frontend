@@ -66,7 +66,7 @@ class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
 
   "taxYearOverview" must {
     "have the correct title" in new Setup {
-      document.title shouldBe TaxYearOverview.title
+      document.title shouldBe TaxYearOverview.title(testYear - 1, testYear)
     }
 
     "have a breadcrumb trail" in new Setup(taxYear = testYear) {

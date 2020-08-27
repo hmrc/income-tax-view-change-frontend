@@ -59,7 +59,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitle(TaxYearOverviewMessages.title),
+          pageTitle(TaxYearOverviewMessages.title(testYearInt - 1, testYearInt)),
           elementTextBySelector("h1")(TaxYearOverviewMessages.heading(testYearInt - 1, testYearInt)),
           elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDate("6 July 2017")),
           elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505"),
@@ -100,7 +100,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitle(TaxYearOverviewMessages.title),
+          pageTitle(TaxYearOverviewMessages.title(testYearInt - 1, testYearInt)),
           elementTextBySelector("h1")(TaxYearOverviewMessages.heading(testYearInt - 1, testYearInt)),
           elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDate("6 July 2017")),
           elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505"),

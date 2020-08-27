@@ -19,7 +19,7 @@
 
 @()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@main_template(title = messages("timeout.title"), bodyClasses = None, showLogout = false, showBtaHeader = false, timeout = false) {
+@main_template(title = messages("timeout.heading"), bodyClasses = None, showLogout = false, showBtaHeader = false, timeout = false) {
 
   <h1 class="h1-heading">@Messages("timeout.heading")</h1>
   <p id="sign-in">

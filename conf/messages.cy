@@ -16,7 +16,6 @@ bta.manage-account                                              = Rheoli’r cyf
 feedback.title                                                  = Rhoi adborth
 
 ## Home Page ##
-home.title                                                      = Eich Treth Incwm
 home.heading                                                    = Treth Incwm
 home.unique.taxpayer.reference                                  = Cyfeirnod Unigryw y Trethdalwr - {0}
 home.payments.heading                                           = Taliad nesaf yn ddyledus
@@ -34,7 +33,6 @@ banner.recruitment.link                                         = Ymuno â’n p
 banner.recruitment.dismiss                                      = Na, dim diolch.
 
 ## Tax Years Page ##
-taxYears.title                                                 = Fy mlynyddoedd treth
 taxYears.heading                                               = Fy mlynyddoedd treth
 taxYears.viewTaxYears                                          = Ceir rhestr o’r blynyddoedd treth rydych wedi cyflwyno diweddariadau ar eu cyfer isod. Cliciwch ar flwyddyn dreth i fwrw golwg dros grynodeb.
 taxYears.taxYear                                               = Blwyddyn dreth
@@ -46,7 +44,6 @@ taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 
 ## Tax Year Overview Page ##
-tax-year-overview.title                                         = Trosolwg blwyddyn dreth
 tax-year-overview.heading                                       = 6 Ebrill {0} hyd at 5 Ebrill {1}
 tax-year-overview.heading-secondary                             = Trosolwg blwyddyn dreth
 tax-year-overview.status                                        = Statws y flwyddyn dreth:
@@ -109,7 +106,6 @@ taxCal_breakdown.table.banks_and_building_societies                 = Llog a gaf
 
 
 ## ReportDeadlines Page ##
-obligations.title                                               = Dyddiadau cau ar gyfer adroddiadau
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
 obligations.accountingPeriod                                    = Cyfnod adrodd
 obligations.reportDueDate                                       = Dyddiad cau ar gyfer adrodd
@@ -137,7 +133,6 @@ previous-obligations.updates-tab                                = Diweddariadau 
 previous-obligations.previous-updates-tab                       = Diweddariadau a gyflwynwyd yn flaenorol
 
 ## Crystalisation Page ##
-crystalisation.title                                            = Eich cyflwyniad terfynol
 crystalisation.heading                                          = Blwyddyn dreth {0} i {1}
 crystalisation.subheading                                       = Biliau
 crystalisation.dueBy                                            = erbyn 31 Ionawr {0}
@@ -149,7 +144,6 @@ status.received                                                 = Wedi dod i law
 status.overdue                                                  = Yn hwyr
 
 ## Timeout page ##
-timeout.title                                                   = Mae’ch sesiwn wedi dod i ben
 timeout.heading                                                 = Mae’ch sesiwn wedi dod i ben
 timeout.signIn.1                                                = Er mwyn gweld eich manylion adrodd chwarterol, bydd yn rhaid i chi
 timeout.signIn.2                                                = fewngofnodi
@@ -164,7 +158,6 @@ bta_partial.home_button                                         = Bwrw golwg ar 
 
 ## Not Enrolled
 not_enrolled.heading                                            = Ni chewch weld y dudalen hon
-not_enrolled.title                                              = Ni chewch weld y dudalen hon
 not_enrolled.sign-up.1                                          = Mae’n rhaid i chi
 not_enrolled.sign-up.2                                          = gofrestru ar gyfer adrodd chwarterol
 not_enrolled.sign-up.3                                          = cyn i chi allu fwrw golwg ar y dudalen hon.
@@ -180,7 +173,6 @@ breadcrumb-tax-year-overview                                    = 6 Ebrill {0} h
 
 
 ## Standard Error Page ##
-standardError.title                                             = Mae problem gyda’r gwasanaeth – Rhoi gwybod am eich Treth Incwm drwy feddalwedd – GOV.UK
 standardError.heading                                           = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 standardError.message                                           = Rhowch gynnig arall arni yn nes ymlaen.
 
@@ -226,7 +218,6 @@ obligation.dropdown.finalDeclaration.text.v2.prt1               = Mae eich datga
 obligation.dropdown.finalDeclaration.text.v2.prt2               = .
 
 ## Payment Due Page ##
-paymentDue.title                                                = Eich Treth Incwm
 paymentDue.heading                                              = Taliadau treth incwm
 paymentDue.viewBill                                             = Bwrw golwg dros y bil
 paymentDue.no-bills                                             = Dim taliadau’n ddyledus
@@ -247,6 +238,5 @@ timeoutDialog.title                                             = Rydych ar fin 
 button.continue                                                 = Yn eich blaen
 
 ## Not found
-notFound.title = Heb ddod o hyd i’r dudalen
 notFound.heading = Ni ellir dod o hyd i’r dudalen hon
 notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
