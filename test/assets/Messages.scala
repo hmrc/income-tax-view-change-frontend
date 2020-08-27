@@ -77,7 +77,7 @@ object Messages {
 
   // Home Page Messages
   object HomePage {
-    val title = "Your Income Tax"
+    val title = "Income Tax"
     val heading = "Income Tax"
     def taxpayerReference(mtditid: String): String = s"Unique Taxpayer Reference - $mtditid"
     val updatesHeading = "Next update due"
@@ -313,7 +313,7 @@ object Messages {
 
   //ReportDeadlines Page Messages
   object Obligations {
-    val title = "Current Updates"
+    val title = "Updates"
     val heading = "Updates"
     val previousObligations = "Previously submitted updates"
     val tabOne = "Updates due"
@@ -338,7 +338,7 @@ object Messages {
   }
 
   object PreviousObligations {
-    val title = "Previous Submitted Updates"
+    val title = "Updates"
     val heading = "Updates"
     val subHeading = "Previously submitted updates"
     val noPreviousObligations = "No previously submitted updates"
@@ -355,7 +355,7 @@ object Messages {
   }
 
   object PaymentDue {
-    val title = "Payments Due"
+    val title = "Income Tax payments"
     val heading = "Income Tax payments"
     val subTitle = "Payment due"
     val due = "due"
@@ -368,7 +368,7 @@ object Messages {
   }
 
   object TaxYearOverview {
-    val title = "Tax year overview"
+    def title(firstYear: Int, secondYear: Int) = s"6 April $firstYear to 5 April $secondYear"
     def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"
     def status(status: String) = s"Tax year status: $status"
     def calculationDate(date: String) = s"Calculation date: $date"

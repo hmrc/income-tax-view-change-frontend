@@ -30,6 +30,6 @@ object ReportDeadlinesMessages extends ComponentSpecBase{
   val errorp2 = "Try refreshing the page in a few minutes."
 
   //Obligations view messages
-  val obligationsTitle = "Current Updates"
+  val obligationsTitle = "Updates"
 
 }

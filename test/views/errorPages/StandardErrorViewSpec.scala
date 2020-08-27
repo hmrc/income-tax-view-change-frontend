@@ -28,14 +28,13 @@ class StandardErrorViewSpec extends TestSupport {
   "The Standard Error view" should {
 
     lazy val page: HtmlFormat.Appendable = views.html.errorPages.standardError(
-      messagesApi.apply("standardError.title"),
       messagesApi.apply("standardError.heading"),
       messagesApi.apply("standardError.message")
     )
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     "render the correct title" in {
-      document.title() shouldBe "There is a problem with the service - Income Tax reporting through software - GOV.UK"
+      document.title() shouldBe "Sorry, there is a problem with the service"
     }
 
     "render the correct heading" in {

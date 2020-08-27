@@ -89,9 +89,10 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
       showCalculationForYear(taxYear)
     } else {
       action.async { implicit request =>
-        Future.successful(BadRequest(views.html.errorPages.standardError(messagesApi.apply("standardError.title"),
+        Future.successful(BadRequest(views.html.errorPages.standardError(
           messagesApi.apply("standardError.heading"),
-          messagesApi.apply("standardError.message"))))
+          messagesApi.apply("standardError.message")
+        )))
       }
     }
   }

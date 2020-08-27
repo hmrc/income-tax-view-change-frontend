@@ -35,15 +35,19 @@
     )
 }
 
+@heading = @{
+    messages("tax-year-overview.heading", (taxYear - 1).toString, taxYear.toString)
+}
+
 @main_template(
-    title = messages("tax-year-overview.title"),
+    title = heading,
     mainClass = Some("full-width"),
     contentHeader = Some(breadcrumb)
 ) {
 
     <h1 class="heading-xlarge">
         <span class="heading-secondary">@messages("tax-year-overview.heading-secondary")</span>
-        @messages("tax-year-overview.heading", (taxYear - 1).toString, taxYear.toString)
+        @heading
     </h1>
 
     <div class="grid-row">

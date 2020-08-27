@@ -17,7 +17,6 @@
 @()(implicit appConfig: config.FrontendAppConfig, request: Request[_], messages: Messages)
 
 @views.html.errorPages.standardError(
-    messages("notFound.title"),
     messages("notFound.heading"),
     messages("notFound.message")
 )
