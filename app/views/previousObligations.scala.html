@@ -14,22 +14,12 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitDateFormatter._
 @import views.html.templates.main_template
 @import views.html.helpers.breadcrumbHelper
-@import views.helpers.{ReportDeadlinesPage, ReportDeadlineStatusHelper}
-@import views.helpers.ReportDeadlineRenderHelper.renderReportDeadlines
-@import views.html.helpers.backToHomeHelper
-@import views.html.helpers.accordionHelper
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
-@import models.reportDeadlines.ReportDeadlinesModel
-@import models.reportDeadlines.QuarterlyObligation
-@import models.reportDeadlines.EopsObligation
-@import models.reportDeadlines.QuarterlyObligation
-@import models.reportDeadlines.ReportDeadlineModelWithIncomeType
 @import models.reportDeadlines.ObligationsModel
-@import models.incomeSourceDetails.IncomeSourceDetailsModel
 
+@import views.html.obligationTemplates.previousObligationsHelper
 @(previousObligations: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @breadcrumb = {
@@ -51,42 +41,6 @@
 
     <h2 id="sub-heading" class="heading-large">@messages("previous-obligations.sub-heading")</h2>
 
-    @if(previousObligations.obligations.isEmpty) {
-        <div id="no-previous-obligations">@messages("previous-obligations.no-previous-obligations")</div>
-    } else {
-        @previousObligations.allDeadlinesWithSource(previous = true).zipWithIndex.map { case (obligationWithType, index) =>
-            <div id="row-@index" class="grid-row divider--bottom grid-row-spacing">
-                <div class="column-half">
-                    <span id="income-source-@index" class="bold">
-                        @{obligationWithType.incomeType match {
-                            case "Property" => messages("previous-obligations.income-source.property-income")
-                            case "Crystallised" => messages("previous-obligations.income-source.final-income")
-                            case _ => obligationWithType.incomeType
-                            }}
-                    </span>
-                    <div id="obligation-type-@index">
-                        @{obligationWithType.obligation.obligationType match {
-                            case "Quarterly" => messages("previous-obligations.obligation-type.quarterly")
-                            case "EOPS" => messages("previous-obligations.obligation-type.eops")
-                            case "Crystallised" => messages("previous-obligations.obligation-type.crystallised")
-                        }}
-                    </div>
-                    <div id="date-from-to-@index">
-                        @messages("previous-obligations.obligation-type.start-to-end", obligationWithType.obligation.start.toLongDate, obligationWithType.obligation.end.toLongDate)
-                    </div>
-                    <div id="was-due-on-@index">
-                        @messages("previous-obligation.obligation-type.was-due-on", obligationWithType.obligation.due.toLongDate)
-                    </div>
-                </div>
-                <div class="column-half">
-                    <div id="submitted-on-label-@index">@messages("previous-obligations.submitted-on")</div>
-                    <div id="submitted-on-date-@index">@obligationWithType.obligation.dateReceived.map(_.toLongDate)</div>
-                </div>
-            </div>
-        }
-    }
-
-
-
+    @previousObligationsHelper(previousObligations)
 
 }
