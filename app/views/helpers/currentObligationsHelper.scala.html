@@ -1,0 +1,133 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import implicits.ImplicitDateFormatter._
+
+@(obligations: models.reportDeadlines.ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+<section id="sub-heading-section">
+
+    <p>@Html(messages(
+        "obligations.sub-heading.info",
+        <a id="recordKeepingSoftware" href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">{messages("obligations.record-keeping-software")}</a>
+        ))
+    </p>
+</section>
+
+<h3 id="quarterlyReturns-heading" class="heading-medium">@messages("obligations.quarterlyUpdates")</h3>
+
+<details role="group">
+
+    <summary id="quarterly-dropdown-title" role="button" aria-controls="details-content-0" aria-expanded="false">
+        @messages("obligation.dropdown.quarterlyReturn.info.v2")
+    </summary>
+
+    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+        <p><span id="quarterly-dropdown-line1">@messages("obligation.dropdown.quarterlyReturn.text.v2")</span> </p>
+
+        <p><span id="quarterly-dropdown-line2">@Html(messages("obligation.dropdown.quarterlyReturn.text.v2.lin2",
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
+                {messages("obligations.record-keeping-software")}</a>
+            ))
+        </span>
+        </p>
+    </div>
+
+</details>
+
+@for((deadline, index) <- obligations.allQuarterly.zip(0 to obligations.allQuarterly.size)) {
+<div id="@{s"quarterly-return-section-${index}"}" class="grid-row divider--bottom grid-row-spacing">
+<div class="row-border">
+    <div class="column-half">
+        <div class="bold">@{if(deadline.incomeType == "Property"){messages("obligations.propertyIncome")} else {deadline.incomeType}}</div>
+        <div>@{s"${deadline.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.obligation.end.toLongDate}"}</div>
+    </div>
+    <div class="column-half">
+        <div>@{messages("obligations.dueOn")}</div>
+        <div>@{deadline.obligation.due.toLongDate}</div>
+    </div>
+</div>
+</div>
+}
+
+<h3 id="annualUpdates-heading" class="heading-medium">@messages("obligations.annualUpdates")</h3>
+
+<details role="group">
+
+    <summary id="annual-dropdown-title" role="button" aria-controls="details-content-1" aria-expanded="false">
+        @messages("obligation.dropdown.annualUpdates.info.v2")
+    </summary>
+
+    <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
+        <p><span id="annual-dropdown-line1"> @messages("obligation.dropdown.annualReturn.text.v2")</span> </p>
+
+        <p><span id="annual-dropdown-line2">@Html(messages("obligation.dropdown.annualReturn.text.v2.lin2",
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
+                {messages("obligations.record-keeping-software")}</a>
+            ))
+        </span>
+        </p>
+    </div>
+
+</details>
+
+@for((deadline, index) <- obligations.allEops.zip(0 to obligations.allEops.size)) {
+<div id="@{s"eops-return-section-$index"}" class="grid-row divider--bottom grid-row-spacing">
+<div class="row-border">
+    <div class="column-half">
+        <div class="bold">@{if(deadline.incomeType == "Property"){messages("obligations.propertyIncome")} else {deadline.incomeType}}</div>
+        <div>@{s"${deadline.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.obligation.end.toLongDate}"}</div>
+    </div>
+    <div class="column-half">
+        <div>@{messages("obligations.dueOn")}</div>
+        <div>@{deadline.obligation.due.toLongDate}</div>
+    </div>
+</div>
+</div>
+}
+
+<h3 id="declarations-heading" class="heading-medium">@messages("obligations.finalDeclarationUpdate")</h3>
+
+<details role="group">
+
+    <summary id="declaration-dropdown-title" role="button" aria-controls="details-content-2" aria-expanded="false">
+        @messages("obligation.dropdown.finalDeclaration.info.v2")
+    </summary>
+
+    <div class="panel panel-border-narrow" id="details-content-2" aria-hidden="true">
+        <p>@Html(messages("obligation.dropdown.finalDeclaration.text.v2",
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
+                {messages("obligations.record-keeping-software")}</a>
+            ))
+        </p>
+    </div>
+
+</details>
+
+@for((deadline, index) <- obligations.allCrystallised.zip(0 to obligations.allCrystallised.size)) {
+<div id="@{s"crystallised-section-${index}"}" class="grid-row divider--bottom grid-row-spacing">
+<div class="row-border">
+    <div class="column-half">
+        <div class="bold">@messages("obligations.eops")</div>
+        <div>@{s"${deadline.obligation.start.toLongDate} ${messages("obligations.quarterly.to")} ${deadline.obligation.end.toLongDate}"}</div>
+    </div>
+    <div class="column-half">
+        <div>@{messages("obligations.dueOn")}</div>
+        <div>@{deadline.obligation.due.toLongDate}</div>
+    </div>
+</div>
+</div>
+}

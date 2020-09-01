@@ -58,8 +58,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays one eops property income obligation")
           res should have(
-            elementTextBySelector("#eops-return-section-0 #eops-return-period")("6 April 2017 to 5 July 2018"),
-            elementTextBySelector("#eops-return-section-0 #eops-return-due-date")("1 January 2018"),
+            elementTextBySelector("#eops-return-section-0 div div:nth-child(1) div:nth-child(2)")("6 April 2017 to 5 July 2018"),
+            elementTextBySelector("#eops-return-section-0 div div:nth-child(2) div:nth-child(2)")("1 January 2018"),
             isElementVisibleById("eops-return-section-1")(expectedValue = false)
           )
         }
@@ -109,8 +109,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays the property obligation dates")
           res should have(
-            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-period")(expectedValue = "6 April 2017 to 5 July 2017"),
-            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-due-date")(expectedValue = "1 January 2018"),
+            elementTextBySelector("#quarterly-return-section-0 div div:nth-child(1) div:nth-child(2)")(expectedValue = "6 April 2017 to 5 July 2017"),
+            elementTextBySelector("#quarterly-return-section-0 div div:nth-child(2) div:nth-child(2)")(expectedValue = "1 January 2018"),
             isElementVisibleById("quarterly-return-section-1")(expectedValue = false)
           )
         }
@@ -136,8 +136,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays the property obligation dates")
           res should have(
-            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-period")(expectedValue = "6 April 2017 to 5 July 2017"),
-            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-due-date")(expectedValue = "1 January 2018"),
+            elementTextBySelector("#quarterly-return-section-0 div div:nth-child(1) div:nth-child(2)")(expectedValue = "6 April 2017 to 5 July 2017"),
+            elementTextBySelector("#quarterly-return-section-0 div div:nth-child(2) div:nth-child(2)")(expectedValue = "1 January 2018"),
             isElementVisibleById("quarterly-return-section-1")(expectedValue = false)
           )
         }
@@ -162,10 +162,10 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays all the business obligation dates")
           res should have(
-            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-period")(expectedValue = "6 April 2017 to 5 July 2017"),
-            elementTextBySelector("#quarterly-return-section-0 #quarterly-return-due-date")(expectedValue = "1 January 2018"),
-            elementTextBySelector("#quarterly-return-section-1 #quarterly-return-period")(expectedValue = "6 April 2017 to 5 July 2017"),
-            elementTextBySelector("#quarterly-return-section-1 #quarterly-return-due-date")(expectedValue = "1 January 2018"),
+            elementTextBySelector("#quarterly-return-section-0 div div:nth-child(1) div:nth-child(2)")(expectedValue = "6 April 2017 to 5 July 2017"),
+            elementTextBySelector("#quarterly-return-section-0 div div:nth-child(2) div:nth-child(2)")(expectedValue = "1 January 2018"),
+            elementTextBySelector("#quarterly-return-section-1 div div:nth-child(1) div:nth-child(2)")(expectedValue = "6 April 2017 to 5 July 2017"),
+            elementTextBySelector("#quarterly-return-section-1 div div:nth-child(2) div:nth-child(2)")(expectedValue = "1 January 2018"),
             isElementVisibleById("quarterly-return-section-2")(expectedValue = false)
           )
         }
@@ -188,8 +188,8 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays SE income source obligation dates")
           res should have(
-            elementTextBySelector("#eops-return-section-0 #eops-return-period")("6 April 2017 to 5 April 2018"),
-            elementTextBySelector("#eops-return-section-0 #eops-return-due-date")("31 January 2018")
+            elementTextBySelector("#eops-return-section-0 div div:nth-child(1) div:nth-child(2)")("6 April 2017 to 5 April 2018"),
+            elementTextBySelector("#eops-return-section-0 div div:nth-child(2) div:nth-child(2)")("31 January 2018")
           )
 
           Then("the page displays no property obligation dates")
@@ -220,10 +220,10 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
 
           Then("the page displays crystallised obligation information")
           res should have(
-            elementTextBySelector("#crystallised-section-0 #crystallised-title")(expectedValue = "Whole tax year (final check)"),
-            elementTextBySelector("#crystallised-section-0 #crystallised-due-on-title")(expectedValue = "Due on:"),
-            elementTextBySelector("#crystallised-section-0 #crystallised-period")("6 April 2017 to 5 April 2018"),
-            elementTextBySelector("#crystallised-section-0 #crystallised-due-date")("31 January 2019")
+            elementTextBySelector("#crystallised-section-0 div div:nth-child(1) div:nth-child(1)")(expectedValue = "Whole tax year (final check)"),
+            elementTextBySelector("#crystallised-section-0 div div:nth-child(2) div:nth-child(1)")(expectedValue = "Due on:"),
+            elementTextBySelector("#crystallised-section-0 div div:nth-child(1) div:nth-child(2)")("6 April 2017 to 5 April 2018"),
+            elementTextBySelector("#crystallised-section-0 div div:nth-child(2) div:nth-child(2)")("31 January 2019")
           )
 
           Then("the page displays no property or business obligation dates")
