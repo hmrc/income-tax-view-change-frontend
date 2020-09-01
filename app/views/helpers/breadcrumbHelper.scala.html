@@ -18,16 +18,18 @@
 
 @(breadcrumb: Breadcrumb, page: String)(implicit messages: Messages, appConfig: config.FrontendAppConfig)
 
-<nav id="breadcrumbs" class="breadcrumbs breadcrumbs-2-7">
-    <ol>
+<nav id="breadcrumbs" class="breadcrumbs soft--top">
+    <ol class="push--top">
         <li>
-            <a id="breadcrumb-bta" data-journey-click="@{page}:ClickBreadcrumb:btaLink" href=@appConfig.businessTaxAccount>@messages("breadcrumb-bta")</a>
+            <a id="breadcrumb-bta" data-journey-click="@{page}:ClickBreadcrumb:btaLink" href=@appConfig.businessTaxAccount>
+                @messages("breadcrumb-bta")</a>
         </li>
 
         @breadcrumb.items.map { item =>
         <li>
             @if(item.url.isDefined){
-                <a id=@item.id data-journey-click="@{page}:ClickBreadcrumb:@{item.toPage}" href=@item.url>@item.customText.fold(messages(item.id))(text => text)</a>
+                <a id=@item.id data-journey-click="@{page}:ClickBreadcrumb:@{item.toPage}" href=@item.url>
+                    @item.customText.fold(messages(item.id))(text => text)</a>
             } else {
                 <span id=@item.id>@item.customText.fold(messages(item.id))(text => text)</span>
             }
