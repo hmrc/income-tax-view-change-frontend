@@ -26,6 +26,14 @@ import views.html.deductionBreakdown
 
 class DeductionBreakdownViewSpec extends ViewSpec {
 
+  object Breadcrumbs {
+    val businessTaxAccount = "Business tax account"
+    val home = "Income Tax account"
+    val taxYears = "My tax years"
+    def taxYear(start: Int, end: Int): String = s"6 April $start to 5 April $end"
+    val deductions = "Deductions"
+  }
+
   "The deduction breakdown view" when {
 
     "provided with a calculation without tax deductions for the 2017 tax year" should {
@@ -39,8 +47,27 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         document title() shouldBe DeductionBreakdown.title
       }
 
-      "have the correct back link" in new Setup(view) {
-        content hasBackLinkTo controllers.routes.CalculationController.renderCalculationPage(taxYear).url
+      "have the correct breadcrumbs" in new Setup(view) {
+        val breadcrumbNav: Element = content.selectHead("#breadcrumbs")
+
+        val first: Element = breadcrumbNav.selectHead("ol").selectNth("li", 1).selectHead("a")
+        first.attr("href") shouldBe appConfig.businessTaxAccount
+        first.text shouldBe Breadcrumbs.businessTaxAccount
+
+        val second: Element = breadcrumbNav.selectHead("ol").selectNth("li", 2).selectHead("a")
+        second.attr("href") shouldBe controllers.routes.HomeController.home().url
+        second.text shouldBe Breadcrumbs.home
+
+        val third: Element = breadcrumbNav.selectHead("ol").selectNth("li", 3).selectHead("a")
+        third.attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
+        third.text shouldBe Breadcrumbs.taxYears
+
+        val forth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 4).selectHead("a")
+        forth.attr("href") shouldBe controllers.routes.CalculationController.renderCalculationPage(taxYear).url
+        forth.text shouldBe Breadcrumbs.taxYear(taxYear - 1, taxYear)
+
+        val fifth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 5)
+        fifth.text shouldBe Breadcrumbs.deductions
       }
 
       "have the correct heading" in new Setup(view) {
@@ -80,8 +107,27 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         document title() shouldBe DeductionBreakdown.title
       }
 
-      "have the correct back link" in new Setup(view) {
-        content hasBackLinkTo controllers.routes.CalculationController.renderCalculationPage(taxYear).url
+      "have the correct breadcrumbs" in new Setup(view) {
+        val breadcrumbNav: Element = content.selectHead("#breadcrumbs")
+
+        val first: Element = breadcrumbNav.selectHead("ol").selectNth("li", 1).selectHead("a")
+        first.attr("href") shouldBe appConfig.businessTaxAccount
+        first.text shouldBe Breadcrumbs.businessTaxAccount
+
+        val second: Element = breadcrumbNav.selectHead("ol").selectNth("li", 2).selectHead("a")
+        second.attr("href") shouldBe controllers.routes.HomeController.home().url
+        second.text shouldBe Breadcrumbs.home
+
+        val third: Element = breadcrumbNav.selectHead("ol").selectNth("li", 3).selectHead("a")
+        third.attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
+        third.text shouldBe Breadcrumbs.taxYears
+
+        val forth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 4).selectHead("a")
+        forth.attr("href") shouldBe controllers.routes.CalculationController.renderCalculationPage(taxYear).url
+        forth.text shouldBe Breadcrumbs.taxYear(taxYear - 1, taxYear)
+
+        val fifth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 5)
+        fifth.text shouldBe Breadcrumbs.deductions
       }
 
       "have the correct heading" in new Setup(view) {

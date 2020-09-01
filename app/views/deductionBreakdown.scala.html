@@ -14,44 +14,51 @@
  * limitations under the License.
  *@
 
- @import models.calculation.CalcDisplayModel
- @import views.html.templates.main_template
- @import implicits.ImplicitCurrencyFormatter._
- @import views.html.helpers.backLinkHelper
+@import models.calculation.CalcDisplayModel
+@import views.html.templates.main_template
+@import implicits.ImplicitCurrencyFormatter._
+@import views.html.helpers.breadcrumbHelper
+@import models.core.breadcrumb.BreadcrumbItem
+@import models.core.breadcrumb.Breadcrumb
 
 @(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal]) = {
-  @dataItem.map { data =>
-   <tr id="@messageCode">
-    <td>@messages(s"deduction_breakdown.table.$messageCode")</td>
-    <td class="numeric">@{data.toCurrency}</td>
-   </tr>
-  }
+    @dataItem.map { data =>
+        <tr id="@messageCode">
+            <td>@messages(s"deduction_breakdown.table.$messageCode")</td>
+            <td class="numeric">@{data.toCurrency}</td>
+        </tr>
+    }
 }
 
 @main_template(messages("deduction_breakdown.heading",  s"${taxYear-1}", s"$taxYear"),
- contentHeader = Some(backLinkHelper(controllers.routes.CalculationController.renderCalculationPage(taxYear).url))
+    contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears.url)),
+        BreadcrumbItem("breadcrumb-tax-year-overview", Some(controllers.routes.CalculationController.renderCalculationPage(taxYear).url), Some(messages("breadcrumb-tax-year-overview", s"${taxYear - 1}", s"$taxYear"))),
+        BreadcrumbItem("breadcrumb-deductions")
+    )), "DeductionsPage"))
 ) {
 
- <h1 class="heading-xlarge">
-  <span class="heading-secondary">@messages("deduction_breakdown.dates", s"${taxYear-1}", s"$taxYear")</span>
-  @messages("deduction_breakdown.heading")
- </h1>
+    <h1 class="heading-xlarge">
+        <span class="heading-secondary">@messages("deduction_breakdown.dates", s"${taxYear-1}", s"$taxYear")</span>
+        @messages("deduction_breakdown.heading")
+    </h1>
 
- <div>
-  <p>
-   @messages("deduction_breakdown.guidance_software", s"${taxYear-1}", s"$taxYear")
-   <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">@messages("deduction_breakdown.guidance_software.link")</a>.
-  </p>
+    <div>
+        <p>
+            @messages("deduction_breakdown.guidance_software", s"${taxYear-1}", s"$taxYear")
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">@messages("deduction_breakdown.guidance_software.link")</a>.
+        </p>
 
-  <table>
-   @tableRow("personal_allowance", calcModel.calcDataModel.allowancesAndDeductions.personalAllowance)
-   @tableRow("gift_of_investments_and_property_to_charity", calcModel.calcDataModel.allowancesAndDeductions.giftOfInvestmentsAndPropertyToCharity)
-   <tr class="no-border-bottom">
-    <td class="total-section">@messages("deduction_breakdown.total")</td>
-    <td class="numeric total-section">@calcModel.calcDataModel.allowancesAndDeductions.totalAllowancesDeductionsReliefs.getOrElse(BigDecimal(0)).toCurrency</td>
-   </tr>
-  </table>
- </div>
+        <table>
+            @tableRow("personal_allowance", calcModel.calcDataModel.allowancesAndDeductions.personalAllowance)
+            @tableRow("gift_of_investments_and_property_to_charity", calcModel.calcDataModel.allowancesAndDeductions.giftOfInvestmentsAndPropertyToCharity)
+            <tr class="no-border-bottom">
+                <td class="total-section">@messages("deduction_breakdown.total")</td>
+                <td class="numeric total-section">@calcModel.calcDataModel.allowancesAndDeductions.totalAllowancesDeductionsReliefs.getOrElse(BigDecimal(0)).toCurrency</td>
+            </tr>
+        </table>
+    </div>
 }

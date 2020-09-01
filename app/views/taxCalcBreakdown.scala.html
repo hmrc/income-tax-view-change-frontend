@@ -14,10 +14,12 @@
  * limitations under the License.
  *@
 
-@import models.calculation.{CalcDisplayModel, TaxBand, NicBand}
+@import models.calculation.{CalcDisplayModel, TaxBand}
 @import views.html.templates.main_template
 @import implicits.ImplicitCurrencyFormatter._
-@import views.html.helpers.backLinkHelper
+@import views.html.helpers.breadcrumbHelper
+@import models.core.breadcrumb.BreadcrumbItem
+@import models.core.breadcrumb.Breadcrumb
 
 @(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages,
 appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
@@ -40,7 +42,12 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @main_template(
     messages("taxCal_breakdown.heading", s"${taxYear-1}", s"$taxYear"),
-    contentHeader = Some(backLinkHelper(controllers.routes.CalculationController.renderCalculationPage(taxYear).url))
+    contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears.url)),
+        BreadcrumbItem("breadcrumb-tax-year-overview", Some(controllers.routes.CalculationController.renderCalculationPage(taxYear).url), Some(messages("breadcrumb-tax-year-overview", (taxYear - 1).toString, taxYear.toString))),
+        BreadcrumbItem("breadcrumb-tax-calc")
+    )), "TaxCalcPage"))
 ){
 
     <h1 class="heading-xlarge">

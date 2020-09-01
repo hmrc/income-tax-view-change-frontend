@@ -14,46 +14,54 @@
  * limitations under the License.
  *@
 
- @import models.calculation.CalcDisplayModel
- @import views.html.templates.main_template
- @import implicits.ImplicitCurrencyFormatter._
- @import views.html.helpers.backLinkHelper
+@import implicits.ImplicitCurrencyFormatter._
+@import models.calculation.CalcDisplayModel
+@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
+@import views.html.helpers.breadcrumbHelper
+@import views.html.templates.main_template
 
 @(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal]) = {
-  @if(dataItem.isDefined) {
-   <tr id="@messageCode">
-    <td>@messages(s"income_breakdown.table.$messageCode")</td>
-    <td class="numeric">@{dataItem.get.toCurrency}</td>
-   </tr>
-  }
+    @if(dataItem.isDefined) {
+        <tr id="@messageCode">
+            <td>@messages(s"income_breakdown.table.$messageCode")</td>
+            <td class="numeric">@{
+                dataItem.get.toCurrency
+            }</td>
+        </tr>
+    }
 }
 
-@main_template(messages("income_breakdown.heading",  s"${taxYear-1}", s"$taxYear"),
- contentHeader = Some(backLinkHelper(controllers.routes.CalculationController.renderCalculationPage(taxYear).url))
+@main_template(messages("income_breakdown.heading", s"${taxYear - 1}", s"$taxYear"),
+    contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
+        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
+        BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears.url)),
+        BreadcrumbItem("breadcrumb-tax-year-overview", Some(controllers.routes.CalculationController.renderCalculationPage(taxYear).url), Some(messages("breadcrumb-tax-year-overview", (taxYear - 1).toString, taxYear.toString))),
+        BreadcrumbItem("breadcrumb-income")
+    )), "IncomePage"))
 ) {
 
- <h1 class="heading-xlarge">
-  <span class="heading-secondary">@messages("income_breakdown.dates", s"${taxYear-1}", s"$taxYear")</span>
-  @messages("income_breakdown.heading")
- </h1>
+    <h1 class="heading-xlarge">
+        <span class="heading-secondary">@messages("income_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>
+        @messages("income_breakdown.heading")
+    </h1>
 
- <div>
-  <p>
-   @messages("income_breakdown.guidance_software", s"${taxYear-1}", s"$taxYear")
-   <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">@messages("income_breakdown.guidance_software.link")</a>.
-  </p>
+    <div>
+        <p>
+            @messages("income_breakdown.guidance_software", s"${taxYear - 1}", s"$taxYear")
+            <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">@messages("income_breakdown.guidance_software.link")</a>
+        </p>
 
-  <table>
-   @tableRow("self_employment", calcModel.calcDataModel.payPensionsProfit.totalSelfEmploymentProfit)
-   @tableRow("property", calcModel.calcDataModel.payPensionsProfit.totalPropertyProfit)
-   @tableRow("bbsi", calcModel.calcDataModel.savingsAndGains.taxableIncome)
-   @tableRow("dividends", calcModel.calcDataModel.dividends.taxableIncome)
-   <tr class="no-border-bottom">
-    <td class="total-section">@messages("income_breakdown.total")</td>
-    <td class="numeric total-section">@calcModel.calcDataModel.totalIncomeReceived.getOrElse(BigDecimal(0)).toCurrency</td>
-   </tr>
-  </table>
- </div>
+        <table>
+            @tableRow("self_employment", calcModel.calcDataModel.payPensionsProfit.totalSelfEmploymentProfit)
+            @tableRow("property", calcModel.calcDataModel.payPensionsProfit.totalPropertyProfit)
+            @tableRow("bbsi", calcModel.calcDataModel.savingsAndGains.taxableIncome)
+            @tableRow("dividends", calcModel.calcDataModel.dividends.taxableIncome)
+            <tr class="no-border-bottom">
+                <td class="total-section">@messages("income_breakdown.total")</td>
+                <td class="numeric total-section">@calcModel.calcDataModel.totalIncomeReceived.getOrElse(BigDecimal(0)).toCurrency</td>
+            </tr>
+        </table>
+    </div>
 }
