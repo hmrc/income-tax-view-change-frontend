@@ -114,7 +114,7 @@ object Messages {
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} $title"
     def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
       s"You can see more details in your record-keeping software (opens in new tab)."
-    val guidanceLink = "record-keeping software (opens in new tab)"
+    val guidanceLink = "record-keeping software (opens in new tab)."
     val selfEmployments = "Profit from all self employments"
     val property = "Profit from UK land and property"
     val bbsi = "Interest from UK banks, building societies and securities"

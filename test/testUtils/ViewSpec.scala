@@ -16,6 +16,7 @@
 
 package testUtils
 
+import scala.collection.JavaConversions._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -55,6 +56,13 @@ trait ViewSpec extends TestSupport {
   }
 
   implicit class CustomSelectors(element: Element) {
+
+    def selectHead(selector: String): Element = element.select(selector).headOption match {
+      case Some(element) => element
+      case None => fail(s"$selector not found")
+    }
+
+    def selectNth(selector: String, nth: Int): Element = element.selectHead(s"$selector:nth-of-type($nth)")
 
     //noinspection ScalaStyle
     def h1: Element = {

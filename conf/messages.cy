@@ -61,7 +61,7 @@ tax-year-overview.total-remaining                               = Cyfanswm sy’
 income_breakdown.heading                                        = Incwm
 income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
 income_breakdown.guidance_software                              = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0}-{1}. Gallwch weld rhagor o fanylion yn eich
-income_breakdown.guidance_software.link                         = meddalwedd cadw cofnodion (yn agor mewn tab newydd)
+income_breakdown.guidance_software.link                         = meddalwedd cadw cofnodion (yn agor mewn tab newydd).
 income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
 income_breakdown.table.property                                 = Elw o dir ac eiddo yn y DU
 income_breakdown.table.bbsi                                     = Llog o fanciau, cymdeithasau adeiladu a gwarantau ac ati yn y DU
@@ -170,6 +170,9 @@ breadcrumb-obligations                                          = Dyddiadau cau 
 breadcrumb-updates                                              = Diweddariadau
 breadcrumb-payments-due                                         = Taliadau treth incwm
 breadcrumb-tax-year-overview                                    = 6 Ebrill {0} hyd at 5 Ebrill {1}
+breadcrumb-income                                               = Incwm
+breadcrumb-deductions                                           = Didyniadau
+breadcrumb-tax-calc                                             = Cyfrifiad Treth
 
 
 ## Standard Error Page ##
