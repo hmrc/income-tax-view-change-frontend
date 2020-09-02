@@ -68,7 +68,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       }
 
       "render the IncomeBreakdown page" in {
-        document.title() shouldBe "Income"
+        document.title() shouldBe "Income - Business Tax account - GOV.UK"
       }
     }
       "given a tax year which can not be found in ETMP" should {

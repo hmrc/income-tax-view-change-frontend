@@ -22,7 +22,7 @@ import helpers.ComponentSpecBase
 object ReportDeadlinesMessages extends ComponentSpecBase{
 
   //Report deadlines view messages
-  val title = "Report deadlines"
+  val title = "Report deadlines - Business Tax account - GOV.UK"
   val overdue: LocalDate => String = date => s"${date.toLongDateShort} Overdue"
   val wholeTaxYear = "Whole tax year (final check)"
   val propertyHeading = "Property income"
@@ -30,6 +30,6 @@ object ReportDeadlinesMessages extends ComponentSpecBase{
   val errorp2 = "Try refreshing the page in a few minutes."
 
   //Obligations view messages
-  val obligationsTitle = "Updates"
+  val obligationsTitle = "Updates - Business Tax account - GOV.UK"
 
 }

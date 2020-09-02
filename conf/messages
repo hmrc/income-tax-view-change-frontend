@@ -244,3 +244,6 @@ button.continue                                                 = Continue
 ## Not found
 notFound.heading = This page cannot be found
 notFound.message = Please check that you have entered the correct web address.
+
+## Title pattern
+titlePattern.serviceName.govUk = {0} - Business Tax account - GOV.UK

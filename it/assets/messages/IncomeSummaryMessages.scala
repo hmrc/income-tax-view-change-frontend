@@ -18,6 +18,6 @@ package assets.messages
 
 object IncomeSummaryMessages {
 
-  val incomeSummaryTitle = "Income"
+  val incomeSummaryTitle = "Income - Business Tax account - GOV.UK"
   val incomeSummaryHeading = "6 April 2017 to 5 April 2018 Income"
 }

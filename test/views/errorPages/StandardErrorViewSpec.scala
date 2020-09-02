@@ -34,7 +34,7 @@ class StandardErrorViewSpec extends TestSupport {
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     "render the correct title" in {
-      document.title() shouldBe "Sorry, there is a problem with the service"
+      document.title() shouldBe "Sorry, there is a problem with the service - Business Tax account - GOV.UK"
     }
 
     "render the correct heading" in {

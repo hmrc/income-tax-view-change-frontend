@@ -60,7 +60,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         res should have(
           httpStatus(OK),
           pageTitle(messages.taxDueSummaryTitle),
-          elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + messages.taxDueSummaryTitle)
+          elementTextBySelector("h1")(messages.taxDueSummaryHeading ++ " " + "Tax calculation")
         )
       }
     }
