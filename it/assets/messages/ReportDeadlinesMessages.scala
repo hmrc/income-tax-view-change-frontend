@@ -32,4 +32,10 @@ object ReportDeadlinesMessages extends ComponentSpecBase{
   //Obligations view messages
   val obligationsTitle = "Updates - Business Tax account - GOV.UK"
 
+  //Previous Obligations
+  val noPreviousObligations = "No previously submitted updates"
+
+  //No Reports
+  val noReports = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
+
 }

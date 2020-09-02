@@ -100,7 +100,7 @@ class CurrentObligationsHelperSpec extends TestSupport with ImplicitDateFormatte
     "display all of the correct information for the main elements/sections" when {
 
       s"show the sub heading para about record keeping software" in new Setup(businessIncomeSource) {
-        pageDocument.select("#sub-heading-section p").text shouldBe currentObligations.subHeadingPara
+        pageDocument.getElementById("submit-using-record-keeping-software").text shouldBe currentObligations.subHeadingPara
       }
 
 

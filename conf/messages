@@ -215,6 +215,7 @@ obligation.dropdown.finalDeclaration.text.v2                       = Your final 
 obligations.tab.one                                                = Updates due
 obligations.tab.two                                                = Previously submitted updates
 obligations.opens-in-new-tab                                       = (opens in a new tab)
+obligations.contents                                               = Contents
 
 ## Payment Due Page ##
 paymentDue.heading                                                 = Income Tax payments

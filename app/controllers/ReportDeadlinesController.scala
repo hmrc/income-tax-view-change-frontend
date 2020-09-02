@@ -27,6 +27,7 @@ import models.reportDeadlines.ObligationsModel
 import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import play.twirl.api.Html
 import services.ReportDeadlinesService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -43,22 +44,35 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
                                           implicit val appConfig: FrontendAppConfig,
                                           implicit val messagesApi: MessagesApi,
                                           implicit val ec: ExecutionContext
-                                     ) extends BaseController with FeatureSwitching{
+                                         ) extends BaseController with FeatureSwitching {
 
   val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      if (isEnabled(ReportDeadlines)) renderView else fRedirectToHome
+      if (isEnabled(ReportDeadlines)) {
+          renderViewBothObligations
+      }
+      else fRedirectToHome
   }
 
-  private def renderView[A](implicit user: MtdItUser[A]): Future[Result] = {
-    if(user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
+  private def renderViewBothObligations[A](implicit user: MtdItUser[A]): Future[Result] = {
+    if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       auditReportDeadlines(user)
-      reportDeadlinesService.getReportDeadlines().map {
-        case withDeadlines: ObligationsModel =>
-          Ok(views.html.obligations(withDeadlines))
-        case _=>
-          Logger.error(s"[ReportDeadlinesController][renderView] error occurred while trying to render report Deadlines page")
-          itvcErrorHandler.showInternalServerError
+      for {
+        currentObligations <- reportDeadlinesService.getReportDeadlines().map {
+          case currentObligations: ObligationsModel => currentObligations
+          case _ => ObligationsModel(List())
+        }
+        previousObligations <- reportDeadlinesService.getReportDeadlines(true).map {
+          case previousObligations: ObligationsModel => previousObligations
+          case _ => ObligationsModel(List())
+        }
+      } yield {
+        (currentObligations, previousObligations) match {
+          case (currentObligations, previousObligations) if currentObligations.obligations.nonEmpty =>
+            Ok(views.html.obligations(currentObligations, previousObligations))
+          case _ =>
+            itvcErrorHandler.showInternalServerError
+        }
       }
     } else {
       Future.successful(Ok(views.html.noReportDeadlines()))

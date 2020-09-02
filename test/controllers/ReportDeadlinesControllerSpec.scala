@@ -16,6 +16,9 @@
 
 package controllers
 
+import java.time.LocalDate
+
+import assets.BaseTestConstants
 import assets.Messages.{NoReportDeadlines, Obligations => messages}
 import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
@@ -23,10 +26,17 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockReportDeadlinesService
+import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.Mockito.when
+import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
+import services.ReportDeadlinesService
+
+import scala.concurrent.Future
 
 class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
                                             with MockReportDeadlinesService with FeatureSwitching{
@@ -43,6 +53,24 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
     app.injector.instanceOf[MessagesApi],
     ec
   )
+
+  val reportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]
+
+  val date: LocalDate = LocalDate.now
+
+  def mockPreviousObligations: OngoingStubbing[Future[ReportDeadlinesResponseModel]] = {
+    when(reportDeadlinesService.getReportDeadlines(matches(true))(any(), any()))
+      .thenReturn(Future.successful(ObligationsModel(Seq(
+        ReportDeadlinesModel(BaseTestConstants.testSelfEmploymentId, List(ReportDeadlineModel(date, date, date, "Quarterly", Some(date), "#001"))),
+        ReportDeadlinesModel(BaseTestConstants.testPropertyIncomeId, List(ReportDeadlineModel(date, date, date, "EOPS", Some(date), "EOPS")))
+      ))))
+  }
+
+  def mockNoPreviousObligations: OngoingStubbing[Future[ReportDeadlinesResponseModel]] = {
+    when(reportDeadlinesService.getReportDeadlines(matches(true))(any(), any()))
+      .thenReturn(Future.successful(ObligationsModel(Seq(
+      ))))
+  }
 
   "The ReportDeadlinesController.getReportDeadlines function" when {
 
@@ -72,11 +100,12 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
-        "successfully retrieves a set of Business ReportDeadlines from the ReportDeadlines service" should {
+        "successfully retrieves a set of Business ReportDeadlines and Previous Obligations from the ReportDeadlines service" should {
 
           "return Status OK (200)" in {
             mockSingleBusinessIncomeSource()
             mockSingleBusinessIncomeSourceWithDeadlines()
+            mockPreviousObligations
             status(result) shouldBe Status.OK
           }
 
@@ -90,7 +119,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
         }
 
-        "successfully retrieves a set of Property ReportDeadlines from the ReportDeadlines service" should {
+        "successfully retrieves a set of Property ReportDeadlines and Previous from the ReportDeadlines service" should {
 
           lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(bodyOf(result))
@@ -98,6 +127,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           "return Status OK (200)" in {
             mockPropertyIncomeSource()
             mockPropertyIncomeSourceWithDeadlines()
+            mockPreviousObligations
             status(result) shouldBe Status.OK
           }
 
@@ -111,7 +141,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
         }
 
-        "successfully retrieves a set of both Business & Property ReportDeadlines from the ReportDeadlines service" should {
+        "successfully retrieves a set of both Business & Property ReportDeadlines and Previous Obligations from the ReportDeadlines service" should {
 
           lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(bodyOf(result))
@@ -119,6 +149,70 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           "return Status OK (200)" in {
             mockBothIncomeSourcesBusinessAligned()
             mockBothIncomeSourcesBusinessAlignedWithDeadlines()
+            mockPreviousObligations
+            status(result) shouldBe Status.OK
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+
+          "render the ReportDeadlines page" in {
+            document.title shouldBe messages.title
+          }
+        }
+
+        "successfully retrieves a set of only Business ReportDeadlines and no Previous Obligations from the ReportDeadlines service" should {
+
+          "return Status OK (200)" in {
+            mockSingleBusinessIncomeSource()
+            mockSingleBusinessIncomeSourceWithDeadlines()
+            mockNoPreviousObligations
+            status(result) shouldBe Status.OK
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+
+          "render the ReportDeadlines page" in {
+            document.title shouldBe messages.title
+          }
+        }
+
+        "successfully retrieves a set of only Property ReportDeadlines and no Previous from the ReportDeadlines service" should {
+
+          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val document = Jsoup.parse(bodyOf(result))
+
+          "return Status OK (200)" in {
+            mockPropertyIncomeSource()
+            mockPropertyIncomeSourceWithDeadlines()
+            mockNoPreviousObligations
+            status(result) shouldBe Status.OK
+          }
+
+          "return HTML" in {
+            contentType(result) shouldBe Some("text/html")
+            charset(result) shouldBe Some("utf-8")
+          }
+
+          "render the ReportDeadlines page" in {
+            document.title shouldBe messages.title
+          }
+        }
+
+        "successfully retrieves a set of only both Business & Property ReportDeadlines and no Previous Obligations from the ReportDeadlines service" should {
+
+          lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+          lazy val document = Jsoup.parse(bodyOf(result))
+
+          "return Status OK (200)" in {
+            mockBothIncomeSourcesBusinessAligned()
+            mockBothIncomeSourcesBusinessAlignedWithDeadlines()
+            mockNoPreviousObligations
             status(result) shouldBe Status.OK
           }
 
@@ -168,7 +262,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
             document.title shouldBe NoReportDeadlines.title
           }
 
-          s"have the correct no report deadlines messges '${NoReportDeadlines.noReports}'" in {
+          s"have the correct no report deadlines message '${NoReportDeadlines.noReports}'" in {
             document.getElementById("p1").text shouldBe NoReportDeadlines.noReports
           }
         }
