@@ -86,7 +86,7 @@ object Messages {
 
   //Tax Years Page Messages
   object TaxYears {
-    val title = "My tax years"
+    val title = "My tax years - Business Tax account - GOV.UK"
     val heading = "My tax years"
     val noEstimates = "You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software."
     val p1 = "Below is a list of tax years you have submitted updates for. Click on the tax years to view a summary."
@@ -98,7 +98,7 @@ object Messages {
 
   // Home Page Messages
   object HomePage {
-    val title = "Income Tax"
+    val title = "Income Tax - Business Tax account - GOV.UK"
     val heading = "Income Tax"
     def taxpayerReference(mtditid: String): String = s"Unique Taxpayer Reference - $mtditid"
     val updatesHeading = "Next update due"
@@ -109,9 +109,9 @@ object Messages {
   }
 
   object IncomeBreakdown {
-    val title = "Income"
+    val title = "Income - Business Tax account - GOV.UK"
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
-    def heading(taxYear: Int): String = s"${subHeading(taxYear)} $title"
+    def heading(taxYear: Int): String = s"${subHeading(taxYear)} Income"
     def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
       s"You can see more details in your record-keeping software (opens in new tab)."
     val guidanceLink = "record-keeping software (opens in new tab)."
@@ -123,9 +123,9 @@ object Messages {
   }
 
   object DeductionBreakdown {
-    val title = "Deductions"
+    val title = "Deductions - Business Tax account - GOV.UK"
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
-    def heading(taxYear: Int): String = s"${subHeading(taxYear)} $title"
+    def heading(taxYear: Int): String = s"${subHeading(taxYear)} Deductions"
     def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
       s"You can see more details in your record-keeping software (opens in new tab)."
     val guidanceLink = "record-keeping software (opens in new tab)"
@@ -135,10 +135,10 @@ object Messages {
   }
 
   object TaxCalcBreakdown {
-    val title = "Tax calculation"
+    val title = "Tax calculation - Business Tax account - GOV.UK"
 
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
-    def heading(taxYear: Int): String = s"${subHeading(taxYear)} $title"
+    def heading(taxYear: Int): String = s"${subHeading(taxYear)} Tax calculation"
     val sectionHeadingPPP: String = "Pay, pensions and profit"
     val sectionHeadingSavings: String = "Savings"
     val sectionHeadingDividends: String = "Dividends"
@@ -185,10 +185,10 @@ object Messages {
     // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {
     val heading = s"Tax estimate for ${taxYear-1} - $taxYear"
-    val title = heading
+    val title = s"Tax estimate for ${taxYear-1} - $taxYear - Business Tax account - GOV.UK"
     object Crystallised {
       val heading = s"Income tax bill for ${taxYear-1} to $taxYear"
-      val tabTitle = heading
+      val tabTitle =s"$heading - Business Tax account - GOV.UK"
       val subHeading = s"Albert Einstein"
       val utrHeading = "Unique Taxpayer Reference - XAIT0000123456"
       def noBreakdownContent(amount: String): String = s"Your total tax bill amount: $amount"
@@ -201,7 +201,7 @@ object Messages {
       def owed(amount: String): String = s"Tax left to pay: $amount"
     }
     object Bills {
-      val billsTitle = "Bills"
+      val billsTitle = "Bills - Business Tax account - GOV.UK"
       val billsHeading = "Bills"
       val viewBills = "View your finalised bills:"
       val billLink = s"${taxYear-1} to $taxYear tax year"
@@ -215,7 +215,7 @@ object Messages {
   object NoEstimatedTaxLiability {
     val subHeading = "Estimates"
     val heading = "Tax estimate for 2017 - 2018"
-    val title = heading
+    val title = s"$heading - Business Tax account - GOV.UK"
     val p1 = "Once you’ve submitted a report using your accounting software, you can view your tax estimate here."
   }
 
@@ -223,21 +223,21 @@ object Messages {
   object EstimatedTaxLiabilityError {
     val subHeading = "Estimates"
     val heading = "Tax estimate for 2017 - 2018"
-    val title = heading
+    val title = s"$heading - Business Tax account - GOV.UK"
     val p1 = "We can’t display your estimated tax amount at the moment."
     val p2 = "Try refreshing the page in a few minutes."
   }
 
   object NoReportDeadlines {
-    val title = "Report deadlines"
+    val title = "Report deadlines - Business Tax account - GOV.UK"
     val heading = "Report deadlines"
     val noReports = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
   }
 
   // Statements Page Messages
   object Statements {
-    val title = "Income Tax Statement"
-    val pageHeading = title
+    val title = "Income Tax Statement - Business Tax account - GOV.UK"
+    val pageHeading = "Income Tax Statement"
     val p1 = "A record of your charges and payments."
     val taxYear: Int => String = taxYear => s"Tax year: ${taxYear-1}-$taxYear"
     val totalCharges = "Total charges"
@@ -260,7 +260,7 @@ object Messages {
 
   // Timeout Messages
   object Timeout {
-    val title = "Your session has timed out"
+    val title = "Your session has timed out - Business Tax account - GOV.UK"
     val heading = "Your session has timed out"
     val signIn = "To view your quarterly reporting details, you’ll have to sign in using your Government Gateway ID."
   }
@@ -272,7 +272,7 @@ object Messages {
   }
 
   object ISE {
-    val title = "Sorry, we are experiencing technical difficulties - 500"
+    val title = "Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK"
   }
 
   object BtaServiceInfoHeader {
@@ -289,12 +289,12 @@ object Messages {
   }
 
   object NotEnrolled {
-    val title = "You can’t view this page"
-    val heading = title
+    val title = "You can’t view this page - Business Tax account - GOV.UK"
+    val heading = "You can’t view this page"
     val signUp = "You need to sign up for quarterly reporting before you can view this page."
   }
   object ExitSurvey {
-    val title = "Give feedback"
+    val title = "Give feedback - Business Tax account - GOV.UK"
     val heading = "Give feedback"
     val q1 = "Overall, how did you feel about the service you received today?"
     object Options {
@@ -312,7 +312,7 @@ object Messages {
   }
 
   object Thankyou {
-    val title = "Thank you"
+    val title = "Thank you - Business Tax account - GOV.UK"
     val heading = "Thank you"
     val line1 = "Your feedback will help us improve this service."
     val signInLink = "Go back to sign in."
@@ -334,7 +334,7 @@ object Messages {
 
   //ReportDeadlines Page Messages
   object Obligations {
-    val title = "Updates"
+    val title = "Updates - Business Tax account - GOV.UK"
     val heading = "Updates"
     val previousObligations = "Previously submitted updates"
     val tabOne = "Updates due"
@@ -359,7 +359,7 @@ object Messages {
   }
 
   object PreviousObligations {
-    val title = "Updates"
+    val title = "Updates - Business Tax account - GOV.UK"
     val heading = "Updates"
     val subHeading = "Previously submitted updates"
     val noPreviousObligations = "No previously submitted updates"
@@ -376,7 +376,7 @@ object Messages {
   }
 
   object PaymentDue {
-    val title = "Income Tax payments"
+    val title = "Income Tax payments - Business Tax account - GOV.UK"
     val heading = "Income Tax payments"
     val subTitle = "Payment due"
     val due = "due"
@@ -389,7 +389,7 @@ object Messages {
   }
 
   object TaxYearOverview {
-    def title(firstYear: Int, secondYear: Int) = s"6 April $firstYear to 5 April $secondYear"
+    def title(firstYear: Int, secondYear: Int) = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
     def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"
     def status(status: String) = s"Tax year status: $status"
     def calculationDate(date: String) = s"Calculation date: $date"

@@ -238,3 +238,6 @@ button.continue                                                 = Yn eich blaen
 ## Not found
 notFound.heading = Ni ellir dod o hyd i’r dudalen hon
 notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
+
+## Title pattern
+titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK

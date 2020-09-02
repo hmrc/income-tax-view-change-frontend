@@ -18,7 +18,7 @@ package assets.messages
 
 object TaxYearOverviewMessages {
 
-  def title(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear"
+  def title(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
   def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"
   def calculationDate(date: String): String = s"Calculation date: $date"
 

@@ -18,7 +18,7 @@ package assets.messages
 
 object HomeMessages {
 
-  val title = "Income Tax"
+  val title = "Income Tax - Business Tax account - GOV.UK"
   val internalServerError = "Sorry, we are experiencing technical difficulties - 500"
 
 }

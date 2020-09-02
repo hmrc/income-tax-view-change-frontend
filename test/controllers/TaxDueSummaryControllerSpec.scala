@@ -63,7 +63,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
         }
 
         "render the Tax Due page" in {
-          document.title() shouldBe "Tax calculation"
+          document.title() shouldBe "Tax calculation - Business Tax account - GOV.UK"
         }
       }
       "given a tax year which can not be found in ETMP" should {
