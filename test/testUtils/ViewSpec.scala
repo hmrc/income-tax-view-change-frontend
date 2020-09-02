@@ -20,11 +20,12 @@ import scala.collection.JavaConversions._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import org.jsoup.select.Evaluator.IsNthOfType
 import org.scalatest.Assertion
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Call
 import play.twirl.api.Html
+
+import scala.collection.JavaConversions._
 
 trait ViewSpec extends TestSupport {
 
@@ -35,7 +36,7 @@ trait ViewSpec extends TestSupport {
 
   class Setup(page: Html) {
     val document: Document = Jsoup.parse(page.body)
-    val content: Element = document.selectFirst("#content")
+    lazy val content: Element = document.selectHead("#content")
   }
 
   object Selectors {
@@ -64,7 +65,7 @@ trait ViewSpec extends TestSupport {
 
     def selectNth(selector: String, nth: Int): Element = element.selectHead(s"$selector:nth-of-type($nth)")
 
-    //noinspection ScalaStyle
+    //scalastyle:off
     def h1: Element = {
       element.select(s"${Selectors.h1}") getOrElse fail("h1 not found")
     }
@@ -76,6 +77,7 @@ trait ViewSpec extends TestSupport {
     def h3: Element = {
       element.select(s"${Selectors.h3}") getOrElse fail("h3 not found")
     }
+    //scalastyle:on
 
     def backLink: Element = {
       element.select(Selectors.backLink) getOrElse fail("back link not found")
