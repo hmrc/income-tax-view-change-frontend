@@ -28,7 +28,9 @@
 @import models.reportDeadlines.QuarterlyObligation
 
 @import views.html.obligationTemplates.currentObligationsHelper
-@(obligations: models.reportDeadlines.ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@import views.html.obligationTemplates.previousObligationsHelper
+
+@(currentObligations: models.reportDeadlines.ObligationsModel, previousObligations: models.reportDeadlines.ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @breadcrumb = {
 @breadcrumbHelper(Breadcrumb(Vector(
@@ -44,13 +46,31 @@ contentHeader = Some(breadcrumb)
 ) {
 
 <h1 id="page-heading" class="heading-xlarge"> @messages("obligations.heading.v2")</h1>
+<div class="govuk-tabs" data-module="govuk-tabs">
+    <h2 class="govuk-tabs__title">
+        @messages("obligations.contents")
+    </h2>
+    <ul class="govuk-tabs__list" role="tablist">
+        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected" role="presentation">
+            <a class="govuk-tabs__tab" href="#current" id="tab_current" role="tab" aria-controls="current" aria-selected="true">
+                @messages("obligations.sub-heading.v2")
+            </a>
+        </li>
+        <li class="govuk-tabs__list-item" role="presentation">
+            <a class="govuk-tabs__tab" href="#previous" id="tab_previous" role="tab" aria-controls="previous" aria-selected="false">
+                @messages("obligations.previous-obligations")
+            </a>
+        </li>
+    </ul>
+    <div class="govuk-tabs__panel" id="current" role="tabpanel" aria-labelledby="tab_current">
+        <h2 class="heading-large">@messages("obligations.sub-heading.v2")</h2>
+        @currentObligationsHelper(currentObligations)
+    </div>
+    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="previous" role="tabpanel" aria-labelledby="tab_previous">
+        <h2 class="heading-large">@messages("obligations.previous-obligations")</h2>
+        @previousObligationsHelper(previousObligations)
+    </div>
+</div>
 
-<a href=@controllers.routes.PreviousObligationsController.getPreviousObligations().url>@messages("obligations.previous-obligations")</a>
-
-<section id="sub-heading-section">
-    <h2 id="page-sub-heading" class="heading-large"> @messages("obligations.sub-heading.v2") </h2>
-</section>
-
-@currentObligationsHelper(obligations)
 
 }

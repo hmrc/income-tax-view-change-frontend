@@ -18,16 +18,13 @@
 
 @(obligations: models.reportDeadlines.ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-<section id="sub-heading-section">
-
-    <p>@Html(messages(
+ <div id="submit-using-record-keeping-software">@Html(messages(
         "obligations.sub-heading.info",
-        <a id="recordKeepingSoftware" href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">{messages("obligations.record-keeping-software")}</a>
+        <a id="record-keeping-software-link" href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">{messages("obligations.record-keeping-software")}</a>
         ))
-    </p>
-</section>
+ </div>
 
-<h3 id="quarterlyReturns-heading" class="heading-medium">@messages("obligations.quarterlyUpdates")</h3>
+<h2 id="quarterlyReturns-heading" class="heading-medium">@messages("obligations.quarterlyUpdates")</h2>
 
 <details role="group">
 

@@ -214,6 +214,8 @@ obligations.opens-in-new-tab                                    = (yn agor mewn 
 obligations.finalDeclarationUpdate                              = Datganiad terfynol
 obligation.dropdown.finalDeclaration.text.v2                    = Mae eich datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu cyflwyno yn gywir ac eich bod wedi cyflwyno pob ffynhonnell incwm, hyd eithaf eich gwybodaeth, gan ddefnyddio eich {0}.
 obligation.dropdown.finalDeclaration.info.v2                    = Beth yw datganiad terfynol?
+obligations.contents                                            = Cynnwys
+
 
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm

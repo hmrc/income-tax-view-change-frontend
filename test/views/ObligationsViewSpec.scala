@@ -18,11 +18,10 @@ package views
 
 import java.time.LocalDate
 
-import assets.BaseTestConstants.testMtdItUser
-import assets.BusinessDetailsTestConstants.{business1, testTradeName}
-import assets.Messages.{Breadcrumbs => breadcrumbMessages, Obligations => messages}
-import assets.PropertyDetailsTestConstants.propertyDetails
-import assets.ReportDeadlinesTestConstants.{twoObligationsSuccessModel, _}
+import assets.BaseTestConstants.{testMtdItUser, testSelfEmploymentId}
+import assets.BusinessDetailsTestConstants.business1
+import assets.Messages.{Breadcrumbs => breadcrumbMessages}
+import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
@@ -38,9 +37,15 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  class Setup(model: ObligationsModel) {
-    val html: HtmlFormat.Appendable = views.html.obligations(model)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
-    val pageDocument: Document = Jsoup.parse(contentAsString(views.html.obligations(model)))
+  class Setup(currentObligations: ObligationsModel, previousObligations: ObligationsModel) {
+    val html: HtmlFormat.Appendable = views.html.obligations(currentObligations, previousObligations)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
+    val pageDocument: Document = Jsoup.parse(contentAsString(views.html.obligations(currentObligations, previousObligations)))
+  }
+
+  object obligationsMessages {
+    val updates: String = "Updates"
+    val updatesDue: String = "Updates due"
+    val previousUpdates: String = "Previously submitted updates"
   }
 
   "The Deadline Reports Page" should {
@@ -50,188 +55,38 @@ class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
       twoObligationsSuccessModel.obligations
     )))
 
-    lazy val piQuarterlyReturnSource = ObligationsModel(Seq(ReportDeadlinesModel(
-      propertyDetails.incomeSourceId,
-      reportDeadlinesDataSelfEmploymentSuccessModel.obligations
-    )))
+    val date: LocalDate = LocalDate.now.minusYears(1)
+    val reportDeadline: ReportDeadlineModel = ReportDeadlineModel(date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001")
 
-    lazy val twoPiQuarterlyReturnSource = ObligationsModel(Seq(ReportDeadlinesModel(
-      propertyDetails.incomeSourceId,
-      quarterlyObligationsDataSuccessModel.obligations
-    )))
+    def basicDeadline(identification: String, obligationType: String): ReportDeadlinesModel = ReportDeadlinesModel(identification, List(reportDeadline.copy(obligationType = obligationType)))
 
+    val basicBusinessDeadline: ReportDeadlinesModel = basicDeadline(testSelfEmploymentId, "Quarterly")
 
-    lazy val quarterlyBusinessIncomeSource = ObligationsModel(Seq(ReportDeadlinesModel(
-      business1.incomeSourceId,
-      List(quarterlyBusinessObligation)
-    )))
+    val obligationModelWithSingleBusiness: ObligationsModel = ObligationsModel(Seq(basicBusinessDeadline))
 
-    lazy val eopsPropertyIncomeSource = ObligationsModel(Seq(ReportDeadlinesModel(
-      propertyDetails.incomeSourceId,
-      List(
-        ReportDeadlineModel(LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 31), LocalDate.of(2020, 1, 1), "EOPS", None, "EOPS")
-      )
-    )))
-
-    lazy val crystallisedIncomeSource = ObligationsModel(Seq(
-      ReportDeadlinesModel(
-        business1.incomeSourceId,
-        List(crystallisedObligation)),
-      ReportDeadlinesModel(
-        testMtdItUser.mtditid,
-        List(crystallisedObligation))
-    ))
-
-
-    lazy val multiCrystallisedIncomeSource = ObligationsModel(Seq(
-      ReportDeadlinesModel(
-        business1.incomeSourceId,
-        List(crystallisedObligation)),
-      ReportDeadlinesModel(
-        testMtdItUser.mtditid,
-        List(crystallisedObligationTwo, crystallisedObligation))
-    ))
-
-
-    lazy val eopsSEIncomeSource = ObligationsModel(Seq(ReportDeadlinesModel(
-      business1.incomeSourceId,
-      List(openEOPSObligation)
-    )))
-
-    lazy val noIncomeSource = ObligationsModel(Seq())
-
-    "have a link to the previous obligations" in new Setup(businessIncomeSource) {
-      pageDocument.select(s"a[href='${controllers.routes.PreviousObligationsController.getPreviousObligations().url}']").text shouldBe messages.previousObligations
+    "have a h1" in new Setup(businessIncomeSource, obligationModelWithSingleBusiness) {
+      pageDocument.select("h1").text shouldBe obligationsMessages.updates
     }
 
     "display all of the correct information for the main elements/sections on the page" when {
 
-      "showing the breadcrumb trail on the page" in new Setup(businessIncomeSource) {
+      "showing the breadcrumb trail on the page" in new Setup(businessIncomeSource, obligationModelWithSingleBusiness) {
         pageDocument.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
         pageDocument.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
         pageDocument.getElementById("breadcrumb-updates").text shouldBe breadcrumbMessages.updates
       }
 
-      s"showing the title ${messages.title} on the page" in new Setup(businessIncomeSource) {
-        pageDocument.title() shouldBe messages.title
+      s"showing the heading ${obligationsMessages.updates} on the page" in new Setup(businessIncomeSource, obligationModelWithSingleBusiness) {
+        pageDocument.getElementById("page-heading").text shouldBe obligationsMessages.updates
       }
 
-      s"showing the heading ${messages.heading} on the page" in new Setup(businessIncomeSource) {
-        pageDocument.getElementById("page-heading").text shouldBe messages.heading
+      s"showing the first tab ${obligationsMessages.updatesDue} on the page" in new Setup(businessIncomeSource, obligationModelWithSingleBusiness) {
+        pageDocument.getElementById("tab_current").text shouldBe obligationsMessages.updatesDue
       }
 
-      s"showing the Sub heading ${messages.subTitle} on page" in new Setup(businessIncomeSource) {
-        pageDocument.getElementById("page-sub-heading").text shouldBe messages.subTitle
+      s"showing the second tab ${obligationsMessages.previousUpdates} on the page" in new Setup(businessIncomeSource, obligationModelWithSingleBusiness) {
+        pageDocument.getElementById("tab_previous").text shouldBe obligationsMessages.previousUpdates
       }
-
-
-      "showing the heading for the quarterly updates section" in new Setup(businessIncomeSource) {
-        pageDocument.getElementById("quarterlyReturns-heading").text shouldBe messages.quarterlyHeading
-      }
-
-      "showing the heading for the annual updates section" in new Setup(eopsPropertyIncomeSource) {
-        pageDocument.getElementById("annualUpdates-heading").text shouldBe messages.annualHeading
-      }
-
-      "showing the heading for the final declaration section" in new Setup(eopsPropertyIncomeSource) {
-        pageDocument.getElementById("declarations-heading").text shouldBe messages.declarationsHeading
-      }
-
-      "showing the Quarterly update heading and drop down section on the page" in new Setup(businessIncomeSource) {
-        pageDocument.getElementById("quarterly-dropdown-title").text shouldBe messages.quarterlyDropDown
-        pageDocument.getElementById("quarterly-dropdown-line1").text == messages.quarterlyDropdownLine1
-        pageDocument.getElementById("quarterly-dropdown-line2").text == messages.quarterlyDropdownLine2
-      }
-
-      "showing the Annual update heading and drop down section on the page" in new Setup(businessIncomeSource) {
-        pageDocument.getElementById("annual-dropdown-title").text shouldBe messages.annualDropDown
-        pageDocument.getElementById("annual-dropdown-line1").text == messages.annualDropdownListOne
-        pageDocument.getElementById("annual-dropdown-line2").text == messages.annualDropdownListTwo
-      }
-
-      "showing the Final declaration heading and drop down section on the page" in new Setup(businessIncomeSource) {
-        pageDocument.getElementById("declaration-dropdown-title").text shouldBe messages.finalDeclarationDropDown
-        pageDocument.getElementById("details-content-2").text == messages.finalDeclerationDetails
-      }
-
-    }
-    "display all of the correct information for the EOPS property section" when {
-      "showing the eops property income section" in new Setup(eopsPropertyIncomeSource) {
-        pageDocument.select("#eops-return-section-0 div div:nth-child(1) div:nth-child(1)").text shouldBe messages.propertyIncome
-        pageDocument.select("#eops-return-section-0 div div:nth-child(1) div:nth-child(2)").text shouldBe messages.fromToDates("1 January 2019", "31 January 2020")
-        pageDocument.select("#eops-return-section-0 div div:nth-child(2) div:nth-child(1)").text shouldBe messages.dueOn
-        pageDocument.select("#eops-return-section-0 div div:nth-child(2) div:nth-child(2)").text shouldBe "1 January 2020"
-      }
-
-      "not showing the eops property section when there is no property income report" in new Setup(noIncomeSource) {
-        Option(pageDocument.getElementById("eopsPropertyTableRow")) shouldBe None
-      }
-
-      "display all of the correct information for the EOPS business section" when {
-
-        "showing the eops business income section" in new Setup(eopsSEIncomeSource) {
-          pageDocument.select("#eops-return-section-0 div div:nth-child(1) div:nth-child(1)").text shouldBe testTradeName
-          pageDocument.select("#eops-return-section-0 div div:nth-child(1) div:nth-child(2)").text shouldBe messages.fromToDates("6 April 2017", "5 April 2018")
-          pageDocument.select("#eops-return-section-0 div div:nth-child(2) div:nth-child(1)").text shouldBe messages.dueOn
-          pageDocument.select("#eops-return-section-0 div div:nth-child(2) div:nth-child(2)").text shouldBe "31 October 2017"
-        }
-
-      }
-
-      "display all of the correct information for the quarterly property section" when {
-
-        "showing the quarterly property income section" in new Setup(piQuarterlyReturnSource) {
-          pageDocument.select("#quarterly-return-section-0 div div:nth-child(1) div:nth-child(1)").text shouldBe messages.propertyIncome
-          pageDocument.select("#quarterly-return-section-0 div div:nth-child(1) div:nth-child(2)").text shouldBe messages.fromToDates("1 July 2017", "30 September 2017")
-          pageDocument.select("#quarterly-return-section-0 div div:nth-child(2) div:nth-child(1)").text shouldBe messages.dueOn
-          pageDocument.select("#quarterly-return-section-0 div div:nth-child(2) div:nth-child(2)").text shouldBe "30 October 2017"
-        }
-
-        "showing the property income quarterly return due date most recent when there are more then one" in new Setup(twoPiQuarterlyReturnSource) {
-          pageDocument.select("#quarterly-return-section-0 div div:nth-child(2) div:nth-child(2)").text shouldBe "31 October 2017"
-        }
-      }
-
-      "display all of the correct information for the quarterly business section" when {
-
-        "showing the quarterly business income section" in new Setup(quarterlyBusinessIncomeSource) {
-          pageDocument.select("#quarterly-return-section-0 div div:nth-child(1) div:nth-child(1)").text() shouldBe testTradeName
-          pageDocument.select("#quarterly-return-section-0 div div:nth-child(1) div:nth-child(2)").text() shouldBe messages.fromToDates("1 July 2017", "30 September 2017")
-          pageDocument.select("#quarterly-return-section-0 div div:nth-child(2) div:nth-child(1)").text shouldBe messages.dueOn
-          pageDocument.select("#quarterly-return-section-0 div div:nth-child(2) div:nth-child(2)").text() shouldBe "30 October 2019"
-        }
-      }
-
-
-      "display all of the correct information for the crystallised section" when {
-
-        "showing the crystallised section" in new Setup(crystallisedIncomeSource) {
-          pageDocument.select("#crystallised-section-0 div div:nth-child(1) div:nth-child(1)").text shouldBe messages.crystallisedHeading
-          pageDocument.select("#crystallised-section-0 div div:nth-child(1) div:nth-child(2)").text shouldBe messages.fromToDates("1 October 2017", "30 October 2018")
-          pageDocument.select("#crystallised-section-0 div div:nth-child(2) div:nth-child(1)").text shouldBe messages.dueOn
-          pageDocument.select("#crystallised-section-0 div div:nth-child(2) div:nth-child(2)").text shouldBe "31 October 2017"
-        }
-      }
-
-      "display all of the correct information for the crystallised section for multiple crystallised obligations" when {
-
-        "showing the crystallised section for the first obligation" in new Setup(multiCrystallisedIncomeSource) {
-          pageDocument.select("#crystallised-section-0 div div:nth-child(1) div:nth-child(1)").text() shouldBe messages.crystallisedHeading
-          pageDocument.select("#crystallised-section-0 div div:nth-child(1) div:nth-child(2)").text shouldBe messages.fromToDates("1 October 2017", "30 October 2018")
-          pageDocument.select("#crystallised-section-0 div div:nth-child(2) div:nth-child(1)").text shouldBe messages.dueOn
-          pageDocument.select("#crystallised-section-0 div div:nth-child(2) div:nth-child(2)").text shouldBe "31 October 2017"
-        }
-
-        "showing the crystallised section for the second obligation" in new Setup(multiCrystallisedIncomeSource) {
-          pageDocument.select("#crystallised-section-1 div div:nth-child(1) div:nth-child(1)").text() shouldBe messages.crystallisedHeading
-          pageDocument.select("#crystallised-section-1 div div:nth-child(1) div:nth-child(2)").text shouldBe messages.fromToDates("1 October 2017", "30 October 2018")
-          pageDocument.select("#crystallised-section-1 div div:nth-child(2) div:nth-child(1)").text shouldBe messages.dueOn
-          pageDocument.select("#crystallised-section-1 div div:nth-child(2) div:nth-child(2)").text shouldBe "31 October 2017"
-        }
-
-      }
-
-
     }
   }
 }

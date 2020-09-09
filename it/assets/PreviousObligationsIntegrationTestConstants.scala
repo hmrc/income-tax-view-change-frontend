@@ -17,8 +17,8 @@ package assets
 
 import java.time.LocalDate
 
-import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
-import BaseIntegrationTestConstants.testMtditid
+import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
+import BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 
 object PreviousObligationsIntegrationTestConstants {
 
@@ -50,5 +50,11 @@ object PreviousObligationsIntegrationTestConstants {
       )
     )
   )
+
+  val previousObligationsModel = ObligationsModel(Seq(
+    previousQuarterlyObligation(testSelfEmploymentId),
+    previousEOPSObligation(testPropertyIncomeId),
+    previousCrystallisationObligation
+  ))
 
 }
