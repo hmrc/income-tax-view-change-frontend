@@ -123,6 +123,7 @@ previous-obligations.heading                                    = Diweddariadau
 previous-obligations.updates-due                                = Diweddariadau i’w dychwelyd
 previous-obligations.sub-heading                                = Diweddariadau a gyflwynwyd yn flaenorol
 previous-obligations.income-source.property-income              = Incwm o eiddo
+previous-obligations.no-previous-obligations                    = Dim diweddariadau wedi’u cyflwyno’n flaenorol
 previous-obligations.income-source.final-income                 = Blwyddyn dreth – Gwiriad olaf
 previous-obligations.obligation-type.quarterly                  = Diweddariad chwarterol
 previous-obligations.obligation-type.crystallised               = Datganiad
