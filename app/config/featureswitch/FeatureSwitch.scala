@@ -28,13 +28,13 @@ object FeatureSwitch {
 
   val switches: Set[FeatureSwitch] = Set(
     Payment,
-    Estimates,
     Bills,
     ReportDeadlines,
     ObligationsPage,
     IncomeBreakdown,
     DeductionBreakdown,
-    TaxDue
+    TaxDue,
+    API5
   )
 
   def apply(str: String): FeatureSwitch =
@@ -50,11 +50,6 @@ object FeatureSwitch {
 case object Payment extends FeatureSwitch {
   override val name = s"$prefix.enable-payment"
   override val displayText = "Enable Payment functionality"
-}
-
-case object Estimates extends FeatureSwitch {
-  override val name = s"$prefix.enable-estimates"
-  override val displayText = "Enable Estimates"
 }
 
 case object Bills extends FeatureSwitch {
@@ -85,4 +80,9 @@ case object DeductionBreakdown extends FeatureSwitch {
 case object TaxDue extends FeatureSwitch {
   override val name: String = s"$prefix.enable-tax-due"
   override val displayText: String = "Enable Tax Due Feature"
+}
+
+case object API5 extends FeatureSwitch {
+  override val name = s"$prefix.enable-API5"
+  override val displayText = "Enable API5 Calls"
 }
