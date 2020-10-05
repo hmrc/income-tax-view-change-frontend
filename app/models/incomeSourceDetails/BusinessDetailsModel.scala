@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails
 
+import java.time.LocalDate
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel, ContactDetailsModel}
 import play.api.libs.json.{Format, Json}
 
@@ -28,7 +29,8 @@ case class BusinessDetailsModel(incomeSourceId: String,
                                 cashOrAccruals: Option[String],
                                 seasonal: Option[Boolean],
                                 cessation: Option[CessationModel],
-                                paperless: Option[Boolean])
+                                paperless: Option[Boolean],
+                                incomeSourceStartDate: Option[LocalDate])
 
 object BusinessDetailsModel {
   implicit val format: Format[BusinessDetailsModel] = Json.format[BusinessDetailsModel]

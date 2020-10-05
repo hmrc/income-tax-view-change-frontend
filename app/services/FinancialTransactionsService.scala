@@ -17,6 +17,8 @@
 package services
 
 import auth.MtdItUser
+import config.FrontendAppConfig
+import config.featureswitch.{API5, FeatureSwitching}
 import connectors.FinancialTransactionsConnector
 import javax.inject.{Inject, Singleton}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel, TransactionModel}
@@ -27,17 +29,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialTransactionsService @Inject()(val financialTransactionsConnector: FinancialTransactionsConnector){
+class FinancialTransactionsService @Inject()(val financialTransactionsConnector: FinancialTransactionsConnector)
+                                            (implicit val appConfig: FrontendAppConfig) extends FeatureSwitching{
 
   def getFinancialTransactions(mtditid: String, taxYear: Int)(implicit headCarrier: HeaderCarrier): Future[FinancialTransactionsResponseModel] = {
     Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] - Requesting Financial Transactions from connector for mtditid: $mtditid")
     financialTransactionsConnector.getFinancialTransactions(mtditid, taxYear)
   }
 
-  def getAllFinancialTransactions(implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialTransactionsResponseModel)]] = {
-    Logger.debug(s"[FinancialTransactionsService][getAllFinancialTransactions] - Requesting Financial Transactions for all periods for mtditid: ${user.mtditid}")
+  def getAllFinancialTransactions(implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[List[(
+    Int, FinancialTransactionsResponseModel)]] = {Logger.debug(
+    s"[FinancialTransactionsService][getAllFinancialTransactions] - Requesting Financial Transactions for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(user.incomeSources.orderedTaxYears.map {
+    Future.sequence(user.incomeSources.orderedTaxYears(isEnabled(API5)).map {
       taxYear => financialTransactionsConnector.getFinancialTransactions(user.mtditid, taxYear).map {
         case transaction: FinancialTransactionsModel => Some((taxYear, transaction))
         case error: FinancialTransactionsErrorModel if error.code >= 500 => Some((taxYear, error))
@@ -47,18 +51,20 @@ class FinancialTransactionsService @Inject()(val financialTransactionsConnector:
     ).map (_.flatten)
   }
 
-  def getAllUnpaidFinancialTransactions(implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialTransactionsResponseModel]] = {
-    Logger.debug(s"[FinancialTransactionsService][getAllUnpaidFinancialTransactions] - filtering all Financial Transactions for all periods for mtditid: ${user.mtditid}")
+  def getAllUnpaidFinancialTransactions(implicit user: MtdItUser[AnyContent],
+                                        hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialTransactionsResponseModel]] = {
+    Logger.debug(
+      s"[FinancialTransactionsService][getAllUnpaidFinancialTransactions] - filtering all Financial Transactions for all periods for mtditid: ${user.mtditid}")
     getAllFinancialTransactions.map { transactionsWithYear =>
       transactionsWithYear.filter{
         case (_, transactionModel: FinancialTransactionsErrorModel) => true
         case (taxYear, transactionModel: FinancialTransactionsModel) => transactionModel.financialTransactions.getOrElse{
-          Logger.info(s"[FinancialTransactionsService][getAllUnpaidFinancialTransactions] - no financial transactions for mtditid: ${user.mtditid} and taxYear: $taxYear")
+          Logger.info(
+            s"[FinancialTransactionsService][getAllUnpaidFinancialTransactions] - no financial transactions for mtditid: ${user.mtditid} and taxYear: $taxYear")
           List.empty[TransactionModel]
         }.exists(!_.isPaid)
       }.map(_._2)
     }
   }
-
 }
 

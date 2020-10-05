@@ -75,7 +75,8 @@ object BusinessDetailsIntegrationTestConstants {
     )),
     contactDetails = None,
     seasonal = None,
-    paperless = None
+    paperless = None,
+    incomeSourceStartDate = Some(b1AccountingEnd)
   )
 
   val business2 = BusinessDetailsModel(
@@ -101,7 +102,8 @@ object BusinessDetailsIntegrationTestConstants {
     )),
     contactDetails = None,
     seasonal = None,
-    paperless = None
+    paperless = None,
+    incomeSourceStartDate = Some(b2AccountingEnd)
   )
 
 }

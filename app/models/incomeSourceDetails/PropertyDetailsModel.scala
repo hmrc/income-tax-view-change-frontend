@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails
 
+import java.time.LocalDate
 import models.core.{AccountingPeriodModel, CessationModel, ContactDetailsModel}
 import play.api.libs.json.{Json, OFormat}
 
@@ -24,7 +25,8 @@ case class PropertyDetailsModel(incomeSourceId: String,
                                 contactDetails: Option[ContactDetailsModel],
                                 propertiesRented: Option[PropertiesRentedModel],
                                 cessation: Option[CessationModel],
-                                paperless: Option[Boolean])
+                                paperless: Option[Boolean],
+                                incomeSourceStartDate: Option[LocalDate])
 
 object PropertyDetailsModel {
   implicit val format: OFormat[PropertyDetailsModel] = Json.format[PropertyDetailsModel]
