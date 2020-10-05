@@ -12,7 +12,7 @@ import sbt.Tests.{Group, SubProcess}
 val appName = "income-tax-view-change-frontend"
 
 val bootstrapPlayVersion      = "5.1.0"
-val govTemplateVersion        = "5.23.0"
+val govTemplateVersion        = "5.57.0-play-25"
 val playPartialsVersion       = "6.9.0-play-25"
 val authClientVersion         = "2.22.0-play-25"
 val playUiVersion             = "8.12.0-play-25"
