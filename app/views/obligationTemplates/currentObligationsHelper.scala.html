@@ -15,7 +15,7 @@
  *@
 
 @import implicits.ImplicitDateFormatter
-
+@import views.html.helpers.accordionHelper
 @(obligations: models.reportDeadlines.ObligationsModel, implicitDateFormatter: ImplicitDateFormatter)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 

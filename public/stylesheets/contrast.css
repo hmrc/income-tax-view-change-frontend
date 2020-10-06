@@ -1,0 +1,420 @@
+/*Accessibility changes for high-contrast*/
+
+ a:focus,
+  .error-summary .error-summary-list a:focus,
+  details summary:focus {
+    outline: 3px solid transparent;
+    color: #0b0c0c;
+    background-color: #fd0;
+    -webkit-box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+    box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+    text-decoration: none;
+  }
+
+  .error-summary-list li {
+    margin-bottom: 5px;
+  }
+  details summary:focus .summary {
+    text-decoration: none;
+  }
+  input:focus,
+  textarea:focus,
+  select:focus,
+  #global-header input:focus {
+    outline-color: #fd0;
+  }
+  .button {
+    border: 2px solid transparent;
+  }
+  .button:focus:not(:active):not(:hover) {
+    border-color: #fd0;
+    color: #0b0c0c;
+    background-color: #fd0;
+    -webkit-box-shadow: 0 2px 0 #0b0c0c;
+    box-shadow: 0 2px 0 #0b0c0c;
+  }
+  .button:focus {
+    border-color: #fd0;
+    outline: 3px solid transparent;
+    -webkit-box-shadow: inset 0 0 0 1px #fd0;
+    box-shadow: inset 0 0 0 1px #fd0;
+  }
+  .autocomplete__input:focus,
+  .form-control:focus {
+    outline: 3px solid #fd0;
+    outline-offset: 0;
+    -webkit-box-shadow: inset 0 0 0 2px;
+    box-shadow: inset 0 0 0 2px;
+  }
+  .multiple-choice [type=checkbox]:focus+label::before {
+    border-width: 3px;
+  }
+
+  .report-error .report-error__toggle:focus,
+  #footer a:focus,
+  #global-header .header-proposition #proposition-links li a:focus,
+  #global-header .header-proposition a.menu:focus,
+  #global-header #logo:focus {
+    color: #0b0c0c;
+  }
+  #global-header #logo:focus img {
+    filter: invert(1);
+  }
+  .account-menu__link:focus,
+  .is-smaller .account-menu__link--home:focus,
+  .is-smaller .account-menu__link--menu:focus,
+  .is-smaller .account-menu__link--home.account-menu__link--active:focus,
+  .is-smaller .account-menu__link--menu.account-menu__link--active:focus {
+    color: #0b0c0c;
+    background-color: #fd0;
+  }
+  @media (min-width: 641px){
+    #footer .footer-meta .copyright a {
+      background-position: 50% 0;
+      float: right;
+    }
+  }
+  #footer .footer-meta .copyright a:focus {
+    background-color: #fd0;
+  }
+
+  textarea:focus {
+    outline: 3px solid #fd0;
+    outline-offset: 0;
+    -webkit-box-shadow: inset 0 0 0 2px;
+    box-shadow: inset 0 0 0 2px;
+  }
+
+  .form-control-error.form-control-error:focus {
+    border-color: #0b0c0c;
+    -webkit-box-shadow: none;
+    box-shadow: none
+  }
+
+  .multiple-choice input {
+    top: -2px;
+    left: -2px;
+    width: 44px;
+    height: 44px;
+  }
+  .multiple-choice [type="radio"] + label::before {
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+  }
+  .multiple-choice [type="radio"]:focus + label::before {
+    border-width: 4px;
+  }
+  .multiple-choice [type=radio]+label::after {
+    top: 10px;
+    left: 10px;
+  }
+
+#skiplink-container {
+  text-align: left;
+  background: none;
+}
+#skiplink-container div {
+  text-align: left;
+  margin: 0;
+  max-width: none;
+}
+
+#skiplink-container .skiplink {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  -webkit-clip-path: inset(50%) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  font-family: "GDS Transport", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  font-size: 1.6rem;
+  text-decoration: underline;
+  line-height: 1.14286;
+  display: block;
+  padding: 10px 15px;
+}
+
+#skiplink-container .skiplink:active,
+#skiplink-container .skiplink:focus {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  margin: inherit !important;
+  overflow: visible !important;
+  clip: auto !important;
+  -webkit-clip-path: none !important;
+  clip-path: none !important;
+  white-space: inherit !important;
+}
+
+
+.button--secondary,
+.button--secondary:visited,
+.button--secondary.disabled:hover,
+.button--secondary[disabled="disabled"]:hover,
+.button--secondary[disabled]:hover,
+.block-label,
+.block-label--stacked,
+.footer,
+.box--shaded,
+.side-nav__link:hover,
+.dataTable tbody .status--unconfirmed,
+.tag,
+.tabs-nav .tabs-nav__tab:focus,
+.tabs-nav .tabs-nav__tab:hover,
+.tabs-nav .tabs-nav__tab:active,
+.tabs-nav a.tabs-nav__tab:focus,
+.tabs-nav .tabs-nav__tab.link-style:focus,
+.tabs-nav .tabs-nav__tab.button--link-style:focus,
+.tabs-nav a.tabs-nav__tab:hover,
+.tabs-nav .tabs-nav__tab.link-style:hover,
+.tabs-nav .tabs-nav__tab.button--link-style:hover,
+.tabs-nav a.tabs-nav__tab:active,
+.tabs-nav .tabs-nav__tab.link-style:active,
+.tabs-nav .tabs-nav__tab.button--link-style:active,
+.annual-summaries--group .statement__summary--parent[aria-expanded=true],
+.payments .table-label.selected,
+.payments .table-label:hover,
+html {
+  background-color: #f3f2f1;
+}
+.button--secondary:active {
+  -webkit-box-shadow: 0 0 0 #f3f2f1;
+  box-shadow: 0 0 0 #f3f2f1
+}
+.block-label,
+.block-label--stacked {
+  border-color: #f3f2f1;
+}
+.dynamically-displayed {
+  border-left: 5px solid #f3f2f1;
+}
+.explore a,
+.explore--inside-government a,
+.explore--inline a,
+.explore .link-style,
+.explore--inside-government .link-style,
+.explore--inline .link-style,
+.explore .button--link-style,
+.explore--inside-government .button--link-style,
+.explore--inline .button--link-style,
+.explore--inline__links {
+  color: #f3f2f1;
+}
+.indent {
+  border-left-color: #f3f2f1;
+}
+.services-dashboard .service-option--links:first-child .service-option--item,
+.account-menu__link:hover,
+.is-smaller .account-menu__link--back {
+  border-bottom-color: #f3f2f1;
+}
+
+
+.heading--underlined,
+.section--branded h2,
+.table--light-header thead,
+.table__header--highlight,
+.business-tax .section--branded h2,
+.is-smaller .account-menu__link--home.account-menu__link--active:hover,
+.account-menu__link--active,
+.account-menu__link--active:visited {
+  border-bottom-color: #1d70b8;
+}
+.heading-large--blue,
+.button.button--link,
+a.back-to-top-link:visited,
+.back-to-top-link.link-style:visited,
+.back-to-top-link.button--link-style:visited,
+.page-nav__link,
+.banner-links,
+.side-nav--child .side-nav__list--selected .side-nav__link,
+.dataTables_paginate a,
+.dataTables_paginate .link-style,
+.dataTables_paginate .button--link-style,
+.accordion__button:visited,
+.toggle__button,
+.tabs-nav .tabs-nav__tab:visited,
+.tabs-nav__tab,
+.payments .tab,
+.services-dashboard .service-option--links .service-option--link:link,
+.link,
+.link:active,
+details summary,
+a,
+.link-style,
+.button--link-style,
+.button--link-style,
+.subnav a:visited,
+.subnav .link-style:visited,
+.subnav .button--link-style:visited,
+.is-smaller .subnav__section a:hover,
+.is-smaller .subnav__section .link-style:hover,
+.is-smaller .subnav__section .button--link-style:hover {
+  color: #1d70b8
+}
+.brand-border--top,
+.section--blue-top,
+.footer,
+.service-info {
+  border-top-color: #1d70b8;
+}
+.button--notification,
+.button--notification:visited,
+.button--notification.disabled:hover,
+.button--notification[disabled="disabled"]:hover,
+.button--notification[disabled]:hover,
+.alpha-banner .phase-tag,
+.beta-banner .phase-tag,
+.phase-tag,
+.side-nav__list--selected .side-nav__link,
+.side-nav__list--selected:hover .side-nav__link,
+.highlight-message--dark,
+.hero,
+.paye-statements .sidebar-links__item.selected,
+option:active,
+option:checked,
+.phase-banner .phase-tag,
+.phase-banner-alpha .phase-tag,
+.phase-banner-beta .phase-tag,
+.phase-tag,
+.full-width-banner,
+.hmrc-banner .phase-tag {
+  background-color: #1d70b8;
+}
+select:focus::-ms-value {
+  background-color: #1d70b8;
+}
+.button--notification:active {
+  -webkit-box-shadow: 0 0 0 #1d70b8;
+  box-shadow: 0 0 0 #1d70b8;
+}
+.attorneyBanner,
+.panel-indent--info,
+.delegation-banner {
+  border-left-color: #1d70b8;
+}
+
+.page-nav__link:focus,
+.js-enabled .add-focus,
+.modal-dialog__content:focus,
+.button:focus,
+details summary:focus,
+.error-summary:focus {
+  outline-color: #ffdd00;
+}
+.multiple-choice [type=radio]:focus+label::before {
+  -webkit-box-shadow: 0 0 0 4px #ffdd00;
+  box-shadow: 0 0 0 4px #ffdd00;
+}
+.multiple-choice [type=checkbox]:focus+label::before {
+  -webkit-box-shadow: 0 0 0 3px #ffdd00;
+  box-shadow: 0 0 0 3px #ffdd00
+}
+.account-menu__link:focus,
+.is-smaller .account-menu__link--home:focus,
+.is-smaller .account-menu__link--menu:focus,
+.is-smaller .account-menu__link--home.account-menu__link--active:focus,
+.is-smaller .account-menu__link--menu.account-menu__link--active:focus {
+  border-bottom-color: #ffdd00;
+}
+
+button,
+.button,
+button:visited,
+.button:visited,
+button.disabled:hover,
+button[disabled="disabled"]:hover,
+button[disabled]:hover,
+.button.disabled:hover,
+.button[disabled="disabled"]:hover,
+.button[disabled]:hover,
+.button--small,
+.button--small:visited,
+.button--small.disabled:hover,
+.button--small[disabled="disabled"]:hover,
+.button--small[disabled]:hover,
+.toggle__button--active,
+.toggle__button--active:hover,
+.toggle__button--active:focus,
+.button[disabled="disabled"] {
+  background-color: #00703c;
+}
+button:active,
+.button:active,
+.button--small:active {
+  -webkit-box-shadow: 0 0 0 #00703c;
+  box-shadow: 0 0 0 #00703c;
+}
+.list--ticks li::before,
+.tick,
+.form-hint-list-item--valid {
+  color: #00703c;
+}
+
+.button--alert,
+.button--alert:visited,
+.button--alert.disabled:hover,
+.button--alert[disabled="disabled"]:hover,
+.button--alert[disabled]:hover,
+.marker-column__marker,
+.reminder.urgent a,
+.reminder.urgent .link-style,
+.reminder.urgent .button--link-style,
+.alert-block,
+.alert--important,
+.tabs-nav .tabs-nav__tab .count,
+.flag.flag--urgent,
+.highlight-block--red,
+.main-nav .count,
+.badge {
+  background-color: #d4351c;
+}
+.button--alert:active {
+  -webkit-box-shadow: 0 0 0 #d4351c;
+  box-shadow: 0 0 0 #d4351c;
+}
+.email-form-errors .error-notification,
+.annual-summaries--group .alert--text,
+.sent-in-error,
+.business-tax .content__body .flag.flag--urgent,
+.error-message,
+.error-summary .error-summary-list a,
+.error-summary .error-summary-list .link-style,
+.error-summary .error-summary-list .button--link-style {
+  color: #d4351c;
+}
+.email-form-errors .error-notification,
+.attorneyBanner--client-request-rejected,
+.business-tax .content__body .flag.flag--urgent,
+.form-group-error {
+ border-left-color: #d4351c;
+}
+.business-tax .alert--failure,
+.form-control-error,
+textarea.form-control-error,
+input.form-control-error[type="text"],
+input.form-control-error[type="password"],
+.error-summary {
+  border-color: #d4351c;
+}
+
+
+.form-control-error.form-control-error.form-control-error {
+  border-color: #d4351c;
+}
+
+.govuk-box-highlight {
+  background-color: #00703c;
+}
+
+.header__menu__proposition-links .faded-text--small {
+    color: #A7A7A7
+}

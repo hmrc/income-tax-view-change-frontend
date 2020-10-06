@@ -18,11 +18,11 @@
 
 @(id: String, category: String, label: String, content : Html)(implicit messages: Messages)
 
-<details role="group" onclick="markAccordionOpen('@escapeEcmaScript(category)', '@escapeEcmaScript(label)')">
-    <summary role="button" aria-controls="details-content-0" aria-expanded="false">
-        <span id="@id" class="summary">@label</span>
+<details class="govuk-details" role="group" onclick="markAccordionOpen('@escapeEcmaScript(category)', '@escapeEcmaScript(label)')">
+    <summary class="govuk-details__summary" role="button" aria-controls="details-content-0" aria-expanded="false">
+        <span id="@id" class="govuk-details__summary-text">@label</span>
     </summary>
-    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+    <div class="govuk-details__text" id="details-content-0" aria-hidden="true">
         @content
     </div>
 </details>
