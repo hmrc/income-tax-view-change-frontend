@@ -19,12 +19,16 @@ package models
 import assets.BaseTestConstants._
 import assets.{BaseTestConstants, IncomeSourceDetailsTestConstants, ReportDeadlinesTestConstants}
 import assets.ReportDeadlinesTestConstants._
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import javax.inject.Inject
 import models.reportDeadlines._
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
+import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.test.UnitSpec
 
-class ReportDeadlinesResponseModelSpec extends UnitSpec with Matchers{
+class ReportDeadlinesResponseModelSpec @Inject()(val languageUtils: LanguageUtils) extends UnitSpec with Matchers with ImplicitDateFormatter {
+
 
   "The ReportDeadlinesModel" should {
 

@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import assets.Messages
+import assets.MessagesLookUp
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import testUtils.TestSupport
@@ -25,12 +25,12 @@ class BackToHomeHelperSpec extends TestSupport {
 
   "The backToHomeHelper template" should {
 
-    lazy val view = views.html.helpers.backToHomeHelper("unitTest")(applicationMessages)
+    lazy val view = views.html.helpers.backToHomeHelper("unitTest")(implicitly)
     lazy val document = Jsoup.parse(view.body)
     lazy val backToHomeLink = document.getElementById("it-home-back")
 
-    s"Render the text ${Messages.Base.backToHome}" in {
-      backToHomeLink.text shouldBe Messages.Base.backToHome
+    s"Render the text ${MessagesLookUp.Base.backToHome}" in {
+      backToHomeLink.text shouldBe MessagesLookUp.Base.backToHome
     }
 
     "Have the correct link class of 'link-back'" in {

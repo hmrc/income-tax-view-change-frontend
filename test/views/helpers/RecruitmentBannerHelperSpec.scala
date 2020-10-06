@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import assets.Messages
+import assets.MessagesLookUp
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
 import testUtils.TestSupport
@@ -28,15 +28,15 @@ class RecruitmentBannerHelperSpec extends TestSupport{
     lazy val view = views.html.helpers.recruitmentBannerHelper()
     lazy val document = Jsoup.parse(view.body)
 
-    s"have the correct header message '${Messages.RecruitmentBanner.text}'" in {
-      document.getElementById("recruitment-banner-text").text shouldBe Messages.RecruitmentBanner.text
+    s"have the correct header message '${MessagesLookUp.RecruitmentBanner.text}'" in {
+      document.getElementById("recruitment-banner-text").text shouldBe MessagesLookUp.RecruitmentBanner.text
     }
-    s"have the correct link text '${Messages.RecruitmentBanner.link}' and url ${appConfig.enterSurveyUrl}" in {
-      document.getElementById("recruitment-banner-link").text shouldBe Messages.RecruitmentBanner.link
+    s"have the correct link text '${MessagesLookUp.RecruitmentBanner.link}' and url ${appConfig.enterSurveyUrl}" in {
+      document.getElementById("recruitment-banner-link").text shouldBe MessagesLookUp.RecruitmentBanner.link
       document.getElementById("recruitment-banner-link").attr("href") shouldBe appConfig.enterSurveyUrl
     }
-    s"have the correct dismiss text '${Messages.RecruitmentBanner.dismiss}'" in {
-      document.getElementById("recruitment-banner-dismiss").text shouldBe Messages.RecruitmentBanner.dismiss
+    s"have the correct dismiss text '${MessagesLookUp.RecruitmentBanner.dismiss}'" in {
+      document.getElementById("recruitment-banner-dismiss").text shouldBe MessagesLookUp.RecruitmentBanner.dismiss
     }
 
   }

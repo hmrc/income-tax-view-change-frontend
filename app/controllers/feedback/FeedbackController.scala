@@ -22,12 +22,12 @@ import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Request, RequestHeader}
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.controller.{FrontendController, UnauthorisedAction}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.filters.frontend.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials._
@@ -39,10 +39,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    implicit val ec: ExecutionContext,
                                    val wsHttp: HttpClient,
-                                   val messagesApi: MessagesApi,
                                    val sessionCookieCrypto: SessionCookieCrypto,
-                                   val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter
-                                  ) extends FrontendController with PartialRetriever with I18nSupport {
+                                   val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                   mcc: MessagesControllerComponents
+                                  ) extends FrontendController(mcc) with PartialRetriever with I18nSupport {
   override val httpGet = wsHttp
   val httpPost = wsHttp
 
@@ -76,7 +76,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
   private def feedbackThankYouPartialUrl(ticketId: String)(implicit request: Request[AnyContent]) =
     s"${config.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/confirmation?ticketId=${urlEncode(ticketId)}"
 
-  def show: Action[AnyContent] = UnauthorisedAction {
+  def show: Action[AnyContent] = Action {
     implicit request =>
       (request.session.get(REFERER), request.headers.get(REFERER)) match {
         case (None, Some(ref)) => Ok(views.html.feedback.feedback(feedbackFormPartialUrl, None)).withSession(request.session + (REFERER -> ref))
@@ -84,7 +84,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
-  def submit: Action[AnyContent] = UnauthorisedAction.async {
+  def submit: Action[AnyContent] = Action.async {
     implicit request =>
       request.body.asFormUrlEncoded.map { formData =>
         httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(
@@ -102,7 +102,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
       }
   }
 
-  def thankyou: Action[AnyContent] = UnauthorisedAction {
+  def thankyou: Action[AnyContent] = Action {
     implicit request =>
       val ticketId = request.session.get(TICKET_ID).getOrElse("N/A")
       val referer = request.session.get(REFERER).getOrElse("/")

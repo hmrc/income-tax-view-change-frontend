@@ -16,7 +16,7 @@
 
 package views.notEnrolled
 
-import assets.Messages.{NotEnrolled => messages}
+import assets.MessagesLookUp.{NotEnrolled => notEnrolledMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
@@ -28,23 +28,23 @@ class NotEnrolledViewSpec extends TestSupport {
 
   lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  lazy val page = views.html.notEnrolled.notEnrolled()(FakeRequest(), applicationMessages, mockAppConfig)
+  lazy val page = views.html.notEnrolled.notEnrolled()(FakeRequest(), implicitly, mockAppConfig)
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The Not Enrolled view" should {
 
-    s"have the title '${messages.title}'" in {
-      document.title() shouldBe messages.title
+    s"have the title '${notEnrolledMessages.title}'" in {
+      document.title() shouldBe notEnrolledMessages.title
     }
 
-    s"have the H1 '${messages.heading}'" in {
-      document.getElementsByTag("H1").text() shouldBe messages.heading
+    s"have the H1 '${notEnrolledMessages.heading}'" in {
+      document.getElementsByTag("H1").text() shouldBe notEnrolledMessages.heading
     }
 
     s"have a paragraph" which {
 
       "has the text" in {
-        document.getElementById("sign-up").text() shouldBe messages.signUp
+        document.getElementById("sign-up").text() shouldBe notEnrolledMessages.signUp
       }
 
       "has a link to sign-in page" in {

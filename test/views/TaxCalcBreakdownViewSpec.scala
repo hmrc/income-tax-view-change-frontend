@@ -17,7 +17,7 @@
 package views
 
 import assets.CalcBreakdownTestConstants
-import assets.Messages.TaxCalcBreakdown
+import assets.MessagesLookUp.TaxCalcBreakdown
 import enums.Crystallised
 import models.calculation.CalcDisplayModel
 import org.jsoup.nodes.Element

@@ -25,33 +25,34 @@ import implicits.ImplicitDateFormatter
 import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.{CalculationService, FinancialTransactionsService}
+import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.notFound
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSummaryController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                 implicit val messagesApi: MessagesApi,
-                                 implicit val ec: ExecutionContext,
-                                 val checkSessionTimeout: SessionTimeoutPredicate,
-                                 val authenticate: AuthenticationPredicate,
-                                 val retrieveNino: NinoPredicate,
-                                 val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                 val calculationService: CalculationService,
-                                 val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
-                                 val auditingService: AuditingService,
-                                 val financialTransactionsService: FinancialTransactionsService,
-                                 val itvcErrorHandler: ItvcErrorHandler
-                                     ) extends BaseController with ImplicitDateFormatter with FeatureSwitching {
+class IncomeSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+                                        val authenticate: AuthenticationPredicate,
+                                        val retrieveNino: NinoPredicate,
+                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                        val calculationService: CalculationService,
+                                        val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
+                                        val auditingService: AuditingService,
+                                        val financialTransactionsService: FinancialTransactionsService,
+                                        val itvcErrorHandler: ItvcErrorHandler)
+                                       (implicit val executionContext: ExecutionContext,
+                                        val languageUtils: LanguageUtils,
+                                        val appConfig: FrontendAppConfig,
+                                        mcc: MessagesControllerComponents)
+                                        extends BaseController with ImplicitDateFormatter with FeatureSwitching  with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
 
-  def showIncomeSummary(taxYear: Int): Action[AnyContent] = {
-
+  def showIncomeSummary(taxYear: Int): Action[AnyContent] =
     action.async {
       implicit user =>
         if (isEnabled(IncomeBreakdown)) {
@@ -70,6 +71,5 @@ class IncomeSummaryController @Inject()(implicit val appConfig: FrontendAppConfi
         }
         else Future.successful(NotFound(notFound()))
     }
-  }
 
 }

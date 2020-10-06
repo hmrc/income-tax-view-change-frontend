@@ -53,4 +53,4 @@ GET         /not-enrolled                           controllers.notEnrolled.NotE
 GET         /partial                                controllers.BTAPartialController.setupPartial
 
 #Language Controller
-GET         /language/:lang                         @controllers.ItvcLanguageController.switchToLanguage(lang: String)
+GET         /language/:lang                         controllers.ItvcLanguageController.switchToLanguage(lang: String)

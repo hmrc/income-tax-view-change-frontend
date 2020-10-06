@@ -17,13 +17,15 @@
 package models.core
 
 import java.time.LocalDate
+import java.time.chrono.ChronoLocalDate
 
-import implicits.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter
 import play.api.libs.json.{Format, Json}
+import uk.gov.hmrc.play.language.LanguageUtils
 
 
 case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
-  val determineTaxYear: Int = if(end isBefore s"${end.getYear}-4-6") end.getYear else end.getYear + 1
+  val determineTaxYear: Int = if(end isBefore LocalDate.of(end.getYear,4,6)) end.getYear else end.getYear + 1
 }
 
 object AccountingPeriodModel {

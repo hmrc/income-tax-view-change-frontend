@@ -20,6 +20,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import assets.BaseTestConstants.{testMtdItUser, testPropertyIncomeId, testSelfEmploymentId}
+import implicits.ImplicitDateFormatterImpl
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
@@ -44,7 +45,10 @@ class PreviousObligationsHelperSpec extends ViewSpec {
     val submittedOn: String = "Submitted on"
   }
 
-  class TestSetup(previousObligations: ObligationsModel) extends Setup(previousObligationsHelper(previousObligations))
+  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
+
+
+  class TestSetup(previousObligations: ObligationsModel) extends Setup(previousObligationsHelper(previousObligations, mockImplicitDateFormatter))
 
   val date: LocalDate = LocalDate.now.minusYears(1)
   val reportDeadline: ReportDeadlineModel = ReportDeadlineModel(date, date.plusMonths(1), date.plusMonths(2), "Quarterly", Some(date.plusMonths(1)), "#001")

@@ -27,11 +27,15 @@ import config.featureswitch.{Bills, FeatureSwitching}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
 import implicits.ImplicitDateFormatter
+import javax.inject.{Inject, Singleton}
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
+import uk.gov.hmrc.play.language.LanguageUtils
 
-class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
+@Singleton
+class HomeControllerISpec @Inject() (val languageUtils: LanguageUtils) extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
+
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
 
@@ -94,7 +98,7 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter w
         res should have(
           httpStatus(OK),
           pageTitle(title),
-          elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverdueDate.toLongDate),
+          elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
           elementTextBySelector("#payments-tile > div > p:nth-child(2)")("14 February 2018")
         )
       }
@@ -152,7 +156,7 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter w
           res should have(
             httpStatus(OK),
             pageTitle(title),
-            elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverdueDate.toLongDate),
+            elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
             elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due.")
           )
         }
@@ -202,7 +206,7 @@ class HomeControllerISpec extends ComponentSpecBase with ImplicitDateFormatter w
           res should have(
             httpStatus(OK),
             pageTitle(title),
-            elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverdueDate.toLongDate),
+            elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
             elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due.")
           )
         }

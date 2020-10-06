@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import templates.govuk_wrapper
+@import play.twirl.api.HtmlFormat
 
 @(pageTitle: String, heading: String, message: String, scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 

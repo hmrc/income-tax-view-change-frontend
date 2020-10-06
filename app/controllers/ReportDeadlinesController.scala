@@ -22,11 +22,12 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import implicits.ImplicitDateFormatterImpl
 import javax.inject.{Inject, Singleton}
 import models.reportDeadlines.ObligationsModel
 import play.api.Logger
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.Html
 import services.ReportDeadlinesService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -42,9 +43,10 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
                                           val reportDeadlinesService: ReportDeadlinesService,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           implicit val appConfig: FrontendAppConfig,
-                                          implicit val messagesApi: MessagesApi,
-                                          implicit val ec: ExecutionContext
-                                         ) extends BaseController with FeatureSwitching {
+                                          implicit val mcc: MessagesControllerComponents,
+                                          implicit val executionContext: ExecutionContext,
+                                          implicit val dateFormatter: ImplicitDateFormatterImpl)
+                                          extends BaseController with FeatureSwitching with I18nSupport {
 
   val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
@@ -69,7 +71,7 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
       } yield {
         (currentObligations, previousObligations) match {
           case (currentObligations, previousObligations) if currentObligations.obligations.nonEmpty =>
-            Ok(views.html.obligations(currentObligations, previousObligations))
+            Ok(views.html.obligations(currentObligations, previousObligations, dateFormatter))
           case _ =>
             itvcErrorHandler.showInternalServerError
         }

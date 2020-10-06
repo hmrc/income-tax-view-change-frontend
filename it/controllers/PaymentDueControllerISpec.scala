@@ -26,7 +26,8 @@ import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub}
 import implicits.ImplicitDateFormatter
 import play.api.http.Status._
 
-class PaymentDueControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
+class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching {
+
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-due" when {
 

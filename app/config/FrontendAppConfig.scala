@@ -18,28 +18,23 @@ package config
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.Mode.Mode
+import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.Call
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject()(val environment: Environment,
-                                  val conf: Configuration) extends ServicesConfig {
+class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) {
 
-  override protected def runModeConfiguration: Configuration = conf
-  override protected def mode: Mode = environment.mode
-  private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   //App
   private lazy val baseUrl: String = "report-quarterly/income-and-expenses/view"
-  lazy val itvcFrontendEnvironment: String = loadConfig("base.url")
-  lazy val appName: String = loadConfig("appName")
+  lazy val itvcFrontendEnvironment: String = servicesConfig.getString("base.url")
+  lazy val appName: String = servicesConfig.getString("appName")
 
   //Feedback Config
-  private lazy val contactHost: String = loadConfig(s"contact-frontend.host")
-  private lazy val contactFrontendService: String = baseUrl("contact-frontend")
+  private lazy val contactHost: String = servicesConfig.getString(s"contact-frontend.host")
+  private lazy val contactFrontendService: String = servicesConfig.baseUrl("contact-frontend")
   lazy val contactFormServiceIdentifier: String = "ITVC"
   lazy val contactFrontendPartialBaseUrl: String = s"$contactFrontendService"
   lazy val reportAProblemPartialUrl: String = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
@@ -47,57 +42,57 @@ class FrontendAppConfig @Inject()(val environment: Environment,
   lazy val betaFeedbackUrl = s"/$baseUrl/feedback"
 
   //SA-API Config
-  lazy val saApiService: String = baseUrl("self-assessment-api")
+  lazy val saApiService: String = servicesConfig.baseUrl("self-assessment-api")
 
   //ITVC Protected Service
-  lazy val itvcProtectedService: String = baseUrl("income-tax-view-change")
+  lazy val itvcProtectedService: String = servicesConfig.baseUrl("income-tax-view-change")
 
   //Individual Calculation Service
-  lazy val individualCalculationsService: String = baseUrl("individual-calculations")
+  lazy val individualCalculationsService: String = servicesConfig.baseUrl("individual-calculations")
 
   //GA
-  lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
-  lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
+  lazy val analyticsToken: String = servicesConfig.getString(s"google-analytics.token")
+  lazy val analyticsHost: String = servicesConfig.getString(s"google-analytics.host")
 
   //GG Sign In via Company Auth Frontend
-  lazy val ggSignInContinueUrl: String = loadConfig("government-gateway.continue.url")
-  lazy val signInUrl: String = loadConfig("base.sign-in")
+  lazy val ggSignInContinueUrl: String = servicesConfig.getString("government-gateway.continue.url")
+  lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
 
   //Exit Survey
-  lazy val exitSurveyBaseUrl:String = loadConfig("feedback-frontend.host") + loadConfig("feedback-frontend.url")
+  lazy val exitSurveyBaseUrl:String = servicesConfig.getString("feedback-frontend.host") + servicesConfig.getString("feedback-frontend.url")
   lazy val exitSurveyUrl = s"$exitSurveyBaseUrl/$contactFormServiceIdentifier"
 
   //Sign out
-  lazy val ggUrl: String = loadConfig(s"government-gateway.url")
+  lazy val ggUrl: String = servicesConfig.getString(s"government-gateway.url")
   lazy val ggSignOutUrl = s"$ggUrl/gg/sign-out?continue=$exitSurveyUrl"
 
   //MTD Income Tax Enrolment
-  lazy val mtdItEnrolmentKey: String = loadConfig("enrolments.mtd.key")
-  lazy val mtdItIdentifierKey: String = loadConfig("enrolments.mtd.identifier")
+  lazy val mtdItEnrolmentKey: String = servicesConfig.getString("enrolments.mtd.key")
+  lazy val mtdItIdentifierKey: String = servicesConfig.getString("enrolments.mtd.identifier")
 
   //NINO Enrolment
-  lazy val ninoEnrolmentKey: String = loadConfig("enrolments.nino.key")
-  lazy val ninoIdentifierKey: String = loadConfig("enrolments.nino.identifier")
+  lazy val ninoEnrolmentKey: String = servicesConfig.getString("enrolments.nino.key")
+  lazy val ninoIdentifierKey: String = servicesConfig.getString("enrolments.nino.identifier")
 
   //SA Enrolment
-  lazy val saEnrolmentKey: String = loadConfig("enrolments.sa.key")
-  lazy val saIdentifierKey: String = loadConfig("enrolments.sa.identifier")
+  lazy val saEnrolmentKey: String = servicesConfig.getString("enrolments.sa.key")
+  lazy val saIdentifierKey: String = servicesConfig.getString("enrolments.sa.identifier")
 
   //Business Tax Account
-  lazy val btaService: String = baseUrl("business-account")
-  lazy val businessTaxAccount: String = loadConfig("business-tax-account.url")
+  lazy val btaService: String = servicesConfig.baseUrl("business-account")
+  lazy val businessTaxAccount: String = servicesConfig.getString("business-tax-account.url")
   lazy val btaManageAccountUrl: String = s"$businessTaxAccount/manage-account"
   lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"
   lazy val selfAssessmentUrl: String = s"$businessTaxAccount/self-assessment"
 
   //Subscription Service
-  lazy val signUpUrl: String = loadConfig("mtd-subscription-service.url")
+  lazy val signUpUrl: String = servicesConfig.getString("mtd-subscription-service.url")
 
-  lazy val ftUrl: String = baseUrl("financial-transactions")
+  lazy val ftUrl: String = servicesConfig.baseUrl("financial-transactions")
 
-  lazy val paymentsUrl: String = baseUrl("pay-api")
+  lazy val paymentsUrl: String = servicesConfig.baseUrl("pay-api")
 
-  lazy val enterSurveyUrl: String = loadConfig("enter-survey.url")
+  lazy val enterSurveyUrl: String = servicesConfig.getString("enter-survey.url")
 
   //Payment Redirect route
   lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/payments-due"

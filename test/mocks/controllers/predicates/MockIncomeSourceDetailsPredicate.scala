@@ -20,15 +20,12 @@ import config.ItvcErrorHandler
 import controllers.predicates.IncomeSourceDetailsPredicate
 import mocks.services._
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 
 trait MockIncomeSourceDetailsPredicate extends TestSupport with MockIncomeSourceDetailsService {
 
-  object MockIncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate()(
-    app.injector.instanceOf[MessagesApi],
-    ec,
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[ItvcErrorHandler]
-  )
-
+  object MockIncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate(
+    mockIncomeSourceDetailsService, app.injector.instanceOf[ItvcErrorHandler])(
+    ec, app.injector.instanceOf[MessagesControllerComponents])
 }

@@ -14,15 +14,15 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitDateFormatter._
+@import implicits.ImplicitDateFormatter
 @import implicits.ImplicitCurrencyFormatter._
 @import models.financialTransactions.FinancialTransactionsModel
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import views.html.helpers.breadcrumbHelper
 @import views.html.templates.main_template
 
-@(financialTransactions: List[FinancialTransactionsModel], paymentEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
-
+@(financialTransactions: List[FinancialTransactionsModel], paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@import implicitDateFormatter.longDate
 
 @main_template(
     title = messages("paymentDue.heading"),

@@ -16,22 +16,25 @@
 
 package controllers
 
-import assets.Messages.{BtaPartial => messages}
+import assets.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import config.FrontendAppConfig
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import play.api.http.Status
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
 class BTAPartialControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
-  object TestBTAPartialController extends BTAPartialController()(
-    app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesApi],
+  object TestBTAPartialController extends BTAPartialController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate
+    )(
+    ec,
+    appConfig,
+    app.injector.instanceOf[MessagesControllerComponents]
   )
 
   "The BTAPartialController.setupPartial action" when {
@@ -51,7 +54,7 @@ class BTAPartialControllerSpec extends TestSupport with MockAuthenticationPredic
       }
 
       "render the BTA partial" in {
-        document.getElementById("it-quarterly-reporting-heading").text() shouldBe messages.heading
+        document.getElementById("it-quarterly-reporting-heading").text() shouldBe btaPartialMessages.heading
       }
     }
 

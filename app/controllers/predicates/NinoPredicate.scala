@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
                               val itvcErrorHandler: ItvcErrorHandler,
                               val auditingService: AuditingService)(
-                              implicit ec: ExecutionContext) extends ActionRefiner[MtdItUserOptionNino, MtdItUserWithNino] {
+                              implicit val executionContext: ExecutionContext) extends ActionRefiner[MtdItUserOptionNino, MtdItUserWithNino] {
 
   override def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUserWithNino[A]]] = {
 

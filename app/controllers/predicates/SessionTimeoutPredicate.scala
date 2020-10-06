@@ -16,19 +16,24 @@
 
 package controllers.predicates
 
-import controllers.BaseController
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import controllers.BaseController
 
-import scala.concurrent.Future
+
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionTimeoutPredicate @Inject()(implicit val messagesApi: MessagesApi)
-  extends BaseController with ActionBuilder[Request] with ActionFunction[Request, Request] {
+class SessionTimeoutPredicate @Inject()(implicit mcc: MessagesControllerComponents, val ec: ExecutionContext)
+  extends BaseController with ActionBuilder[Request, AnyContent] with ActionFunction[Request, Request] {
+
+  override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+  override val executionContext: ExecutionContext = mcc.executionContext
+
 
   override def invokeBlock[A](request: Request[A], f: Request[A] => Future[Result]): Future[Result] = {
 

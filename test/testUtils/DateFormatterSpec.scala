@@ -19,12 +19,14 @@ package testUtils
 import java.time.LocalDate
 
 import implicits.ImplicitDateFormatter
+import javax.inject.Inject
 import play.api.i18n.{Lang, Messages}
+import uk.gov.hmrc.play.language.LanguageUtils
 
-class DateFormatterSpec extends TestSupport with ImplicitDateFormatter {
+class DateFormatterSpec @Inject() (val languageUtils: LanguageUtils) extends TestSupport with ImplicitDateFormatter {
 
   private trait Test {
-    implicit lazy val msgs: Messages = Messages(new Lang("en"), messagesApi)
+    val dateFormatter = app.injector.instanceOf[ImplicitDateFormatter]
   }
 
   "The implicit date formatter" when {
@@ -42,24 +44,13 @@ class DateFormatterSpec extends TestSupport with ImplicitDateFormatter {
 
     "The implicit date formatter" should {
 
-      "change localDates to full dates in English if the locale is not cy" in new Test{
+      "change localDates to full dates" in new Test{
         "2017-04-01".toLocalDate.toLongDate shouldBe "1 April 2017"
       }
 
-      "change LocalDateTime to long date output in English if the locale is not cy" in new Test {
+      "change LocalDateTime to long date output" in new Test {
         "2017-04-01T11:23:45.123Z".toLocalDateTime.toLongDateTime shouldBe "1 April 2017"
       }
-
-      "change LocalDateTime to long date output in Welsh if the locale is cy" in new Test{
-        override implicit lazy val msgs: Messages = Messages(new Lang("cy"), messagesApi)
-        "2017-04-01T11:23:45.123Z".toLocalDateTime.toLongDateTime shouldBe "1 Ebrill 2017"
-      }
-
-      "change localDates to full dates in Welsh if the locale is cy" in new Test {
-        override implicit lazy val msgs: Messages = Messages(new Lang("cy"), messagesApi)
-        "2017-04-01".toLocalDate.toLongDateShort shouldBe "1 Ebrill 2017"
-      }
-
     }
   }
 }

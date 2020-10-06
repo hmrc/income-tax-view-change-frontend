@@ -20,7 +20,6 @@ import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.MessagesApi
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core._
@@ -33,16 +32,20 @@ import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthenticationPredicate @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
+                                        val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val appConfig: FrontendAppConfig,
                                         override val config: Configuration,
                                         override val env: Environment,
-                                        implicit val messagesApi: MessagesApi,
-                                        implicit val ec: ExecutionContext,
-                                        val itvcErrorHandler: ItvcErrorHandler
+                                        val itvcErrorHandler: ItvcErrorHandler,
+                                        mcc: MessagesControllerComponents
                                        )
-  extends BaseController with AuthRedirects with ActionBuilder[MtdItUserOptionNino]
+  extends BaseController with AuthRedirects with ActionBuilder[MtdItUserOptionNino, AnyContent]
     with ActionFunction[Request, MtdItUserOptionNino] {
+
+  override val parser: BodyParser[AnyContent] = mcc.parsers.defaultBodyParser
+  override val executionContext: ExecutionContext = mcc.executionContext
+
 
   override def invokeBlock[A](request: Request[A], f: MtdItUserOptionNino[A] => Future[Result]): Future[Result] = {
 

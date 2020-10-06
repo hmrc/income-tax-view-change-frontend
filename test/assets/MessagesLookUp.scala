@@ -16,7 +16,7 @@
 
 package assets
 
-object Messages {
+object MessagesLookUp {
 
   object Core {
     val welsh = "Cymraeg"
@@ -401,6 +401,11 @@ object Messages {
     val taxDue = "Tax due"
     val payment = "Payment"
     val totalRemaining = "Total remaining due"
+  }
+
+  object StandardErrorView {
+    val heading = "Sorry, there is a problem with the service"
+    val errorMessage = "Try again later."
   }
 
 }

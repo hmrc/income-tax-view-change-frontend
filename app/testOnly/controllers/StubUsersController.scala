@@ -20,9 +20,9 @@ import config.FrontendAppConfig
 import controllers.BaseController
 import javax.inject.Inject
 import play.api.data.Form
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.api.{Configuration, Environment}
 import play.twirl.api.HtmlFormat
 import testOnly.connectors.DesSimulatorConnector
@@ -35,10 +35,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
                                     override val config: Configuration,
                                     override val env: Environment,
-                                    implicit val messagesApi: MessagesApi,
-                                    implicit val ec: ExecutionContext,
+                                    implicit val mcc: MessagesControllerComponents,
+                                    implicit val executionContext: ExecutionContext,
                                     val desSimulatorConnector: DesSimulatorConnector
-                                   ) extends BaseController with AuthRedirects {
+                                   ) extends BaseController with AuthRedirects with I18nSupport {
 
   def show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(view(UserModelForm.userModelForm)))

@@ -24,7 +24,7 @@ class BetaBannerHelperSpec extends TestSupport {
 
   "The beta banner" should {
 
-    lazy val view = views.html.helpers.betaBanner()(applicationMessages, appConfig)
+    lazy val view = views.html.helpers.betaBanner()(implicitly, appConfig)
     lazy val document = Jsoup.parse(view.body)
 
     "have the BETA label" in {

@@ -16,15 +16,18 @@
 
 package controllers
 
+import javax.inject.Inject
 import play.api.http.HeaderNames
-import play.api.i18n.I18nSupport
-import play.api.mvc.{RequestHeader, Result}
+import play.api.mvc.{MessagesControllerComponents, RequestHeader, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-trait BaseController extends FrontendController with I18nSupport {
+abstract class BaseController @Inject()(implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+
+  implicit val executionContext: ExecutionContext
+
   override implicit def hc(implicit rh: RequestHeader): HeaderCarrier = {
     rh.headers.headers.find(_._1 == HeaderNames.REFERER) match {
       case Some(referrer) => super.hc.withExtraHeaders(referrer)

@@ -20,6 +20,8 @@ import assets.BaseTestConstants._
 import assets.FinancialTransactionsTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import auth.MtdItUser
+import implicits.ImplicitDateFormatter
+import javax.inject.Inject
 import mocks.connectors.MockFinancialTransactionsConnector
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
 import play.api.http.Status
@@ -27,11 +29,13 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.ExecutionContext
 
 
-class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTransactionsConnector{
+class FinancialTransactionsServiceSpec @Inject() (val languageUtils: LanguageUtils)
+  extends TestSupport with MockFinancialTransactionsConnector with ImplicitDateFormatter{
 
   object TestFinancialTransactionsService extends FinancialTransactionsService(mockFinancialTransactionsConnector)
 

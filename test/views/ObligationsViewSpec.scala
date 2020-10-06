@@ -20,10 +20,10 @@ import java.time.LocalDate
 
 import assets.BaseTestConstants.{testMtdItUser, testSelfEmploymentId}
 import assets.BusinessDetailsTestConstants.business1
-import assets.Messages.{Breadcrumbs => breadcrumbMessages}
+import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages}
 import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import implicits.ImplicitDateFormatter
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,13 +33,15 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
-class ObligationsViewSpec extends TestSupport with ImplicitDateFormatter {
+class ObligationsViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
+  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
+
   class Setup(currentObligations: ObligationsModel, previousObligations: ObligationsModel) {
-    val html: HtmlFormat.Appendable = views.html.obligations(currentObligations, previousObligations)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
-    val pageDocument: Document = Jsoup.parse(contentAsString(views.html.obligations(currentObligations, previousObligations)))
+    val html: HtmlFormat.Appendable = views.html.obligations(currentObligations, previousObligations, mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
+    val pageDocument: Document = Jsoup.parse(contentAsString(views.html.obligations(currentObligations, previousObligations, mockImplicitDateFormatter)))
   }
 
   object obligationsMessages {

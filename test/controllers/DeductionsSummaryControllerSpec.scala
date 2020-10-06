@@ -26,16 +26,14 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
 import play.api.http.Status
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
 import testUtils.TestSupport
 
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService with FeatureSwitching {
 
-  object TestDeductionsSummaryController extends DeductionsSummaryController()(
-    appConfig,
-    messagesApi,
-    ec,
+  object TestDeductionsSummaryController extends DeductionsSummaryController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
@@ -45,6 +43,11 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     app.injector.instanceOf[AuditingService],
     mockFinancialTransactionsService,
     app.injector.instanceOf[ItvcErrorHandler]
+  )(
+    appConfig,
+    app.injector.instanceOf[MessagesControllerComponents],
+    ec,
+    mockLanguageUtils
   )
 
   "showDeductionsSummary" when {

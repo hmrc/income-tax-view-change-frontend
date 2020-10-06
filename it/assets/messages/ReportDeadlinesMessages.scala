@@ -19,11 +19,11 @@ import java.time.LocalDate
 
 import helpers.ComponentSpecBase
 
-object ReportDeadlinesMessages extends ComponentSpecBase{
+object ReportDeadlinesMessages extends ComponentSpecBase {
 
   //Report deadlines view messages
   val title = "Report deadlines - Business Tax account - GOV.UK"
-  val overdue: LocalDate => String = date => s"${date.toLongDateShort} Overdue"
+  val overdue: LocalDate => String = date => s"${date} Overdue"
   val wholeTaxYear = "Whole tax year (final check)"
   val propertyHeading = "Property income"
   val errorp1 = "We can’t display your next report due date at the moment."

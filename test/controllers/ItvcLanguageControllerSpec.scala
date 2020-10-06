@@ -16,18 +16,22 @@
 
 package controllers
 
-import play.api.Play
+import config.FrontendAppConfig
+import play.api.{Configuration, Play}
 import play.api.http.Status
 import play.api.i18n.Lang
-import play.api.mvc.Cookie
+import play.api.i18n.Messages.Implicits.applicationMessagesApi
+import play.api.mvc.{Cookie, MessagesControllerComponents}
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
 class ItvcLanguageControllerSpec extends TestSupport {
 
-  object TestItvcLanguageController extends ItvcLanguageController(
+  object TestItvcLanguageController extends ItvcLanguageController()(
+    app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
-    messagesApi
+    mockLanguageUtils,
+    app.injector.instanceOf[Configuration]
   )
 
   "Calling LanguageController.langToCall" should {

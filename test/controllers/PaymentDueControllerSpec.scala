@@ -20,16 +20,20 @@ import assets.FinancialTransactionsTestConstants._
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import javax.inject.Inject
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import services.FinancialTransactionsService
+import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.Future
 
-class PaymentDueControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class PaymentDueControllerSpec @Inject() (val languageUtils: LanguageUtils) extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter {
 
 
   trait Setup {
@@ -37,7 +41,6 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate with MockInco
     val financialTransactionsService: FinancialTransactionsService = mock[FinancialTransactionsService]
 
     val controller = new PaymentDueController(
-
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
@@ -47,8 +50,9 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate with MockInco
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AuditingService],
       app.injector.instanceOf[FrontendAppConfig],
-      app.injector.instanceOf[MessagesApi],
-      ec
+      app.injector.instanceOf[MessagesControllerComponents],
+      ec,
+      app.injector.instanceOf[ImplicitDateFormatterImpl]
     )
   }
 

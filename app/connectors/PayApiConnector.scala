@@ -52,7 +52,7 @@ class PayApiConnector @Inject()(val http: HttpClient,
       case response if response.status == CREATED =>
         response.json.validate[PaymentJourneyModel].fold(
           invalid => {
-            Logger.error(s"Invalid Json with ${invalid.asString}")
+            Logger.error(s"Invalid Json with $invalid")
             PaymentJourneyErrorResponse(response.status, "Invalid Json")
           },
           valid => valid

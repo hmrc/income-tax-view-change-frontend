@@ -18,7 +18,6 @@ package controllers
 
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
@@ -26,8 +25,8 @@ import scala.concurrent.Future
 
 @Singleton
 class SignOutController @Inject()(implicit val config: FrontendAppConfig,
-                                  val messagesApi: MessagesApi
-                                   ) extends FrontendController with I18nSupport {
+                                  mcc: MessagesControllerComponents
+                                   ) extends FrontendController(mcc) {
 
   val signOut:Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Redirect(config.ggSignOutUrl))

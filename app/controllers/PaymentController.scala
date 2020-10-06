@@ -23,14 +23,14 @@ import javax.inject.{Inject, Singleton}
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import play.api.Logger
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentController @Inject()(implicit val config: FrontendAppConfig,
-                                  implicit val messagesApi: MessagesApi,
-                                  implicit val ec: ExecutionContext,
+                                  mcc: MessagesControllerComponents,
+                                  implicit val executionContext: ExecutionContext,
                                   val checkSessionTimeout: SessionTimeoutPredicate,
                                   val authenticate: AuthenticationPredicate,
                                   payApiConnector: PayApiConnector) extends BaseController {

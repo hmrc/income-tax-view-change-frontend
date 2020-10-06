@@ -15,11 +15,10 @@
  */
 
 package views
-import assets.Messages.{NoReportDeadlines => messages}
+import assets.MessagesLookUp.{NoReportDeadlines => reportDeadlinesMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -32,19 +31,19 @@ class NoReportDeadlinesViewSpec extends TestSupport {
   "The noReportDeadlines view" should {
 
     lazy val page: HtmlFormat.Appendable =
-      views.html.noReportDeadlines()(FakeRequest(), applicationMessages, mockAppConfig)
+      views.html.noReportDeadlines()(FakeRequest(), implicitly, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
-    s"have the title '${messages.title}'" in {
-      document.title() shouldBe messages.title
+    s"have the title '${reportDeadlinesMessages.title}'" in {
+      document.title() shouldBe reportDeadlinesMessages.title
     }
 
-    s"have the heading '${messages.heading}'" in {
-      document.getElementById("page-heading").text() shouldBe messages.heading
+    s"have the heading '${reportDeadlinesMessages.heading}'" in {
+      document.getElementById("page-heading").text() shouldBe reportDeadlinesMessages.heading
     }
 
     s"have the text the correct content text" in {
-      document.getElementById("p1").text() shouldBe messages.noReports
+      document.getElementById("p1").text() shouldBe reportDeadlinesMessages.noReports
     }
 
   }

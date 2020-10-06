@@ -16,22 +16,28 @@
 
 package config
 
-import controllers.BaseController
+import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
+import controllers.Assets.InternalServerError
 import javax.inject.Inject
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Request, Result}
-import play.twirl.api.HtmlFormat
+import play.api.i18n.{I18nSupport, Lang, MessagesApi}
+import play.api.mvc.{Request, Result, Results}
 import uk.gov.hmrc.play.bootstrap.http.FrontendErrorHandler
+import views.html.templates.error_template
 
-class ItvcErrorHandler @Inject()(val messagesApi: MessagesApi,
-                                 implicit val config: FrontendAppConfig) extends FrontendErrorHandler with BaseController {
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)
-                                    (implicit request: Request[_]): HtmlFormat.Appendable =
-    views.html.errorPages.standardError(heading, message)
+import scala.concurrent.ExecutionContext
+
+class ItvcErrorHandler @Inject() (implicit val ec: ExecutionContext,
+                                 val messagesApi: MessagesApi,
+                                 val config: FrontendAppConfig) extends FrontendErrorHandler with I18nSupport {
+
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]):
+  play.twirl.api.HtmlFormat.Appendable =
+    error_template(pageTitle, heading, message)(implicitly, implicitly, config)
+
 
   def showInternalServerError()(implicit request: Request[_]): Result = InternalServerError(standardErrorTemplate(
-    messagesApi.apply("standardError.heading"),
-    messagesApi.apply("standardError.heading"),
-    messagesApi.apply("standardError.message")
+    messagesApi.preferred(request)("standardError.heading"),
+    messagesApi.preferred(request)("standardError.heading"),
+    messagesApi.preferred(request)("standardError.message")
   ))
 }

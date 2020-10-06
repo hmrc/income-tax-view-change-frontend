@@ -20,24 +20,23 @@ import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import org.scalatestplus.play.PortNumber
+import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneServerPerSuite}
 import play.api.http.Status.SEE_OTHER
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.ws.WSResponse
+import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.{Application, Environment, Mode}
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
-  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods with ImplicitDateFormatter {
+  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
 
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-
-  implicit lazy val msgs: Messages = Messages(new Lang("en"), app.injector.instanceOf[MessagesApi])
 
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,

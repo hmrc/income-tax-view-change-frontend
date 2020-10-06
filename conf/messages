@@ -107,18 +107,11 @@ taxCal_breakdown.table.banks_and_building_societies                 = Interest r
 
 ## ReportDeadlines Page ##
 obligations.heading                                             = Report deadlines
-obligations.accountingPeriod                                    = Report period
-obligations.reportDueDate                                       = Report due date
-obligations.error.p1                                            = We can’t display your next report due date at the moment.
-obligations.error.p2                                            = Try refreshing the page in a few minutes.
 obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
 obligations.noReports                                           = You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month.
 
 ## Previous Obligations ##
-previous-obligations.heading                                    = Updates
-previous-obligations.updates-due                                = Updates due
-previous-obligations.sub-heading                                = Previously submitted updates
 previous-obligations.no-previous-obligations                    = No previously submitted updates
 previous-obligations.income-source.property-income              = Property Income
 previous-obligations.income-source.final-income                 = Tax year - Final check
@@ -128,8 +121,6 @@ previous-obligations.obligation-type.crystallised               = Declaration
 previous-obligations.obligation-type.start-to-end               = {0} to {1}
 previous-obligation.obligation-type.was-due-on                  = Was due on {0}
 previous-obligations.submitted-on                               = Submitted on
-previous-obligations.updates-tab                                = Updates due
-previous-obligations.previous-updates-tab                       = Previously submitted updates
 
 ## Crystalisation Page ##
 crystalisation.heading                                          = Income tax bill for {0} to {1}

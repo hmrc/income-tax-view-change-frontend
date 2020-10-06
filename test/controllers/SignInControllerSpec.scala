@@ -18,6 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import play.api.http.Status
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import testUtils.TestSupport
@@ -27,8 +28,9 @@ class SignInControllerSpec extends TestSupport {
   object TestSignInController extends SignInController(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[Configuration],
-    app.injector.instanceOf[Environment]
-  )
+    app.injector.instanceOf[Environment])(
+    app.injector.instanceOf[MessagesControllerComponents])
+
 
   "navigating to SignIn page" should {
     lazy val result = TestSignInController.signIn(fakeRequestNoSession)

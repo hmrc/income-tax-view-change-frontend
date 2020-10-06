@@ -17,21 +17,23 @@
 package audit
 
 import audit.models.{AuditModel, ExtendedAuditModel}
-import config.{FrontendAppConfig, FrontendAuditConnector}
+import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.libs.json.{JsObject, JsValue, Json, Writes}
+import play.api.libs.json.JodaWrites._
+import play.api.libs.json.JodaReads._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
-import uk.gov.hmrc.play.audit.http.connector.AuditResult
+import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Success}
 import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: FrontendAuditConnector) {
+class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector) {
 
   implicit val dataEventWrites: Writes[DataEvent] = Json.writes[DataEvent]
   implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]

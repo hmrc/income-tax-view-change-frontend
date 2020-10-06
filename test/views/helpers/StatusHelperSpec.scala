@@ -18,7 +18,7 @@ package views.helpers
 
 import java.time.LocalDate
 
-import assets.{EstimatesTestConstants, Messages}
+import assets.{EstimatesTestConstants, MessagesLookUp}
 import models.financialTransactions.{SubItemModel, TransactionModel, TransactionModelWithYear}
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
@@ -39,7 +39,7 @@ class StatusHelperSpec extends TestSupport {
         }
 
         "has the correct message" in {
-          result.select("span").text() shouldBe Messages.TaxYears.ongoing
+          result.select("span").text() shouldBe MessagesLookUp.TaxYears.ongoing
         }
       }
 
@@ -51,7 +51,7 @@ class StatusHelperSpec extends TestSupport {
         }
 
         "has the correct message" in {
-          result.select("span").text() shouldBe Messages.TaxYears.ongoing
+          result.select("span").text() shouldBe MessagesLookUp.TaxYears.ongoing
         }
       }
 
@@ -63,7 +63,7 @@ class StatusHelperSpec extends TestSupport {
         }
 
         "has the correct message" in {
-          result.select("span").text() shouldBe Messages.TaxYears.complete
+          result.select("span").text() shouldBe MessagesLookUp.TaxYears.complete
         }
       }
 
@@ -75,7 +75,7 @@ class StatusHelperSpec extends TestSupport {
         }
 
         "has the correct message" in {
-          result.select("span").text() shouldBe Messages.TaxYears.overdue
+          result.select("span").text() shouldBe MessagesLookUp.TaxYears.overdue
         }
       }
     }

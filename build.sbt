@@ -1,3 +1,4 @@
+
 import sbt._
 import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
@@ -11,36 +12,37 @@ import sbt.Tests.{Group, SubProcess}
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion      = "5.1.0"
-val govTemplateVersion        = "5.57.0-play-25"
-val playPartialsVersion       = "6.9.0-play-25"
-val authClientVersion         = "2.22.0-play-25"
-val playUiVersion             = "8.12.0-play-25"
-val playLanguageVersion       = "3.4.0"
+val bootstrapPlayVersion      = "1.7.0"
+val govTemplateVersion        = "5.52.0-play-26"
+val playPartialsVersion       = "6.10.0-play-26"
+val authClientVersion         = "2.22.0-play-26"
+val playUiVersion             = "8.12.0-play-26"
+val playLanguageVersion       = "4.2.0-play-26"
 
-val scalaTestPlusVersion      = "2.0.1"
-val hmrcTestVersion           = "3.9.0-play-25"
-val scalatestVersion          = "3.0.7"
+val scalaTestPlusVersion      = "3.1.3"
+val hmrcTestVersion           = "3.9.0-play-26"
+val scalatestVersion          = "3.0.8"
 val pegdownVersion            = "1.6.0"
 val jsoupVersion              = "1.11.3"
 val mockitoVersion            = "2.27.0"
 val scalaMockVersion          = "3.5.0"
-val wiremockVersion           = "2.5.1"
+val wiremockVersion           = "2.26.1"
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-25" % bootstrapPlayVersion,
+  "uk.gov.hmrc" %% "bootstrap-play-26" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "uk.gov.hmrc" %% "auth-client" % authClientVersion,
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
-  "uk.gov.hmrc" %% "logback-json-logger" % "4.5.0"
-
+  "uk.gov.hmrc" %% "logback-json-logger" % "4.8.0",
+  "com.typesafe.play" %% "play-json-joda" % "2.6.10"
 )
 
-def test(scope: String = "test,it") = Seq(
+def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
+  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.7.0" % Test classifier "tests",
   "org.scalatest" %% "scalatest" % scalatestVersion % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock-scalatest-support" % scalaMockVersion % scope,
@@ -48,7 +50,7 @@ def test(scope: String = "test,it") = Seq(
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
-  "com.github.tomakehurst" % "wiremock" % wiremockVersion % scope
+  "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope
 )
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
@@ -70,7 +72,7 @@ lazy val scoverageSettings = {
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests map {
-    test => new Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name, "-Dlogger.resource=logback-test.xml"))))
+    test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name, "-Dlogger.resource=logback-test.xml"))))
   }
 
 
@@ -90,8 +92,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    routesGenerator := InjectedRoutesGenerator
+    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)

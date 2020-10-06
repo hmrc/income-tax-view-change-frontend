@@ -22,18 +22,17 @@ import controllers.BaseController
 import javax.inject.{Inject, Singleton}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.i18n.MessagesApi
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceDetailsPredicate @Inject()(implicit val messagesApi: MessagesApi,
-                                             implicit val ec: ExecutionContext,
-                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             val itvcErrorHandler: ItvcErrorHandler
-                                            ) extends BaseController with ActionRefiner[MtdItUserWithNino, MtdItUser] {
+class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                             val itvcErrorHandler: ItvcErrorHandler)
+                                            (implicit val executionContext: ExecutionContext,
+                                             mcc: MessagesControllerComponents) extends BaseController with ActionRefiner[MtdItUserWithNino, MtdItUser] {
 
   override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUser[A]]] = {
 

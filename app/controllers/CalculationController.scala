@@ -20,15 +20,16 @@ import auth.MtdItUser
 import config.featureswitch.{DeductionBreakdown, FeatureSwitching, IncomeBreakdown, TaxDue}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
-import implicits.ImplicitDateFormatter
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import javax.inject.{Inject, Singleton}
 import models.calculation._
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, TransactionModel}
 import play.api.Logger
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, Lang}
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, FinancialTransactionsService}
+import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.taxYearOverview
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,10 +43,13 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
                                       retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                       retrieveNino: NinoPredicate)
                                      (implicit val appConfig: FrontendAppConfig,
-                                      val messagesApi: MessagesApi,
-                                      ec: ExecutionContext) extends BaseController with ImplicitDateFormatter with FeatureSwitching {
+                                      val languageUtils: LanguageUtils,
+                                      mcc: MessagesControllerComponents,
+                                      val executionContext: ExecutionContext,
+                                      dateFormatter: ImplicitDateFormatterImpl)
+                                      extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
   private def view(taxYear: Int,
                    calculation: Calculation,
@@ -58,7 +62,8 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
       transaction = transaction,
       incomeBreakdown = isEnabled(IncomeBreakdown),
       deductionBreakdown = isEnabled(DeductionBreakdown),
-      taxDue = isEnabled(TaxDue)
+      taxDue = isEnabled(TaxDue),
+      dateFormatter
     )
   }
 
@@ -90,8 +95,8 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
     } else {
       action.async { implicit request =>
         Future.successful(BadRequest(views.html.errorPages.standardError(
-          messagesApi.apply("standardError.heading"),
-          messagesApi.apply("standardError.message")
+          messagesApi.preferred(request)("standardError.heading"),
+          messagesApi.preferred(request)("standardError.message")
         )))
       }
     }
