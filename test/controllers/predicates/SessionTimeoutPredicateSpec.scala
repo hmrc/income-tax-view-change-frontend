@@ -19,7 +19,7 @@ package controllers.predicates
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Ok
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.api.test.Helpers.{redirectLocation, _}
 import testUtils.TestSupport
 
@@ -29,7 +29,7 @@ import scala.concurrent.Future
 class SessionTimeoutPredicateSpec extends TestSupport {
 
   def setupResult(): Action[AnyContent] =
-    new SessionTimeoutPredicate()(app.injector.instanceOf[MessagesApi]).async {
+    new SessionTimeoutPredicate()(app.injector.instanceOf[MessagesControllerComponents], ec).async {
       implicit request =>
         Future.successful(Ok("success"))
     }

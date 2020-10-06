@@ -28,8 +28,8 @@ import scala.concurrent.Future
 @Singleton
 class SignInController @Inject()(val appConfig: FrontendAppConfig,
                                  override val config: Configuration,
-                                 override val env: Environment
-                                ) extends FrontendController with AuthRedirects {
+                                 override val env: Environment)
+                                (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) with AuthRedirects {
 
   val signIn: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(toGGLogin(appConfig.ggSignInContinueUrl))

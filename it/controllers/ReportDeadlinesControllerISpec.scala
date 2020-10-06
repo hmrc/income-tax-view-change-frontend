@@ -27,8 +27,7 @@ import implicits.ImplicitDateFormatter
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
 
-class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
-
+class ReportDeadlinesControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   "Calling the ReportDeadlinesController" when {
 
@@ -39,7 +38,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase with ImplicitDate
       "the obligations feature switch is enabled" when {
 
         "the user has a eops property income obligation only and no previous obligations" in {
-          enable(ObligationsPage)
+          enable(ReportDeadlines)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 

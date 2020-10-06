@@ -16,11 +16,13 @@
 
 package assets
 
-import implicits.ImplicitDateFormatter._
+import java.time.LocalDate
+
+import implicits.ImplicitDateFormatter
 
 object BaseIntegrationTestConstants {
 
-  val testDate = "2018-05-05".toLocalDate
+  val testDate = LocalDate.of(2018, 5, 5)
 
   val testMtditidEnrolmentKey = "HMRC-MTD-IT"
   val testMtditidEnrolmentIdentifier = "MTDITID"

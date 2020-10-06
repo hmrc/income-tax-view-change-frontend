@@ -20,24 +20,26 @@ import java.time.LocalDate
 
 import assets.BaseTestConstants.testMtdItUser
 import assets.BusinessDetailsTestConstants.{business1, testTradeName}
-import assets.Messages.{CurrentObligationsHelper => currentObligations}
+import assets.MessagesLookUp.{CurrentObligationsHelper => currentObligations}
 import assets.PropertyDetailsTestConstants.propertyDetails
 import assets.ReportDeadlinesTestConstants.{twoObligationsSuccessModel, _}
-import implicits.ImplicitDateFormatter
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import javax.inject.Inject
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.obligationTemplates.currentObligationsHelper
 
-class CurrentObligationsHelperSpec extends TestSupport with ImplicitDateFormatter {
+class CurrentObligationsHelperSpec @Inject() (val languageUtils: LanguageUtils) extends TestSupport with ImplicitDateFormatter {
 
-  implicit val messages: Messages = messagesApi.preferred(user)
+  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
 
   class Setup(model: ObligationsModel) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(currentObligationsHelper(model)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(currentObligationsHelper(model, mockImplicitDateFormatter)))
   }
 
   "The Current Obligations Helper" should {

@@ -26,6 +26,7 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
 import play.api.http.Status
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
 import testUtils.TestSupport
 
@@ -39,7 +40,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
     MockIncomeSourceDetailsPredicate,
     mockCalculationService,
     app.injector.instanceOf[ItvcErrorHandler]
-  )(appConfig, messagesApi, ec)
+  )(appConfig, mockLanguageUtils, app.injector.instanceOf[MessagesControllerComponents], ec)
 
 
   "showTaxDueSummary" when {

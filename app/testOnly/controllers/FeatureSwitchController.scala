@@ -21,16 +21,16 @@ import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.twirl.api.Html
 import testOnly.views.html.featureSwitch
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.collection.immutable.ListMap
 
-class FeatureSwitchController @Inject()(implicit val messagesApi: MessagesApi,
+class FeatureSwitchController @Inject()(implicit mcc: MessagesControllerComponents,
                                         val appConfig: FrontendAppConfig)
-  extends FrontendController with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
   private def view(switchNames: Map[FeatureSwitch, Boolean])(implicit request: Request[_]): Html = {
     featureSwitch(

@@ -16,15 +16,17 @@
 
 package models
 
+import java.time.LocalDate
+
 import config.featureswitch.{FeatureSwitching, Payment}
-import implicits.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter
 import models.financialTransactions.{SubItemModel, TransactionModel}
 import org.scalatest.Matchers
 import testUtils.TestSupport
 
 class TransactionModelSpec extends TestSupport with Matchers with FeatureSwitching {
 
-  lazy val charge = SubItemModel(dueDate = Some("2018-07-01"))
+  lazy val charge = SubItemModel(dueDate = Some(LocalDate.of(2018,7,1)))
   lazy val payment = SubItemModel(paymentReference = Some("XYZ"))
 
   "TransactionModel.isPaid method" should {

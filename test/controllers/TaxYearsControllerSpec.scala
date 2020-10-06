@@ -21,24 +21,28 @@ import assets.BusinessDetailsTestConstants._
 import assets.EstimatesTestConstants._
 import assets.FinancialTransactionsTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
-import assets.Messages
+import assets.MessagesLookUp
 import audit.AuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import implicits.ImplicitDateFormatter
+import javax.inject.Inject
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.http.Status
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import uk.gov.hmrc.play.language.LanguageUtils
 
-class TaxYearsControllerSpec extends TestSupport with MockCalculationService with MockFinancialTransactionsService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
+class TaxYearsControllerSpec @Inject() (val languageUtils: LanguageUtils) extends TestSupport with MockCalculationService with MockFinancialTransactionsService
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter {
 
   object TestTaxYearsController extends TaxYearsController()(
     app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesApi],
+    app.injector.instanceOf[MessagesControllerComponents],
     ec,
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
@@ -51,7 +55,7 @@ class TaxYearsControllerSpec extends TestSupport with MockCalculationService wit
     mockFinancialTransactionsService
   )
 
-  lazy val messages = new Messages.Calculation(testYear)
+  lazy val CalcMessages = new MessagesLookUp.Calculation(testYear)
 
   "The TestYearsController.viewTaxYears action" when {
 
@@ -62,7 +66,7 @@ class TaxYearsControllerSpec extends TestSupport with MockCalculationService wit
 
           lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
           lazy val document = result.toHtmlDocument
-          lazy val messages = Messages.TaxYears
+          lazy val messages = MessagesLookUp.TaxYears
 
           "return an ISE (500)" in {
             setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))
@@ -79,7 +83,7 @@ class TaxYearsControllerSpec extends TestSupport with MockCalculationService wit
 
           lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
           lazy val document = result.toHtmlDocument
-          lazy val messages = Messages.TaxYears
+          lazy val messages = MessagesLookUp.TaxYears
 
           "return status OK (200)" in {
             setupMockGetIncomeSourceDetails(testMtdUserNino)(IncomeSourceDetailsModel(List(business1, business2018), None))

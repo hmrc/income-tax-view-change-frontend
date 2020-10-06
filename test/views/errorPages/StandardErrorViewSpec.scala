@@ -19,6 +19,7 @@ package views.errorPages
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages.Implicits._
+import assets.MessagesLookUp.{StandardErrorView => standardErrorMessages}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
@@ -28,8 +29,8 @@ class StandardErrorViewSpec extends TestSupport {
   "The Standard Error view" should {
 
     lazy val page: HtmlFormat.Appendable = views.html.errorPages.standardError(
-      messagesApi.apply("standardError.heading"),
-      messagesApi.apply("standardError.message")
+      standardErrorMessages.heading,
+      standardErrorMessages.errorMessage
     )
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 

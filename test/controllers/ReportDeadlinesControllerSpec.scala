@@ -19,11 +19,13 @@ package controllers
 import java.time.LocalDate
 
 import assets.BaseTestConstants
-import assets.Messages.{NoReportDeadlines, Obligations => messages}
+import assets.MessagesLookUp.{NoReportDeadlines, Obligations => obligationsMessages}
 import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import javax.inject.Inject
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockReportDeadlinesService
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
@@ -33,12 +35,14 @@ import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import services.ReportDeadlinesService
+import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.Future
 
-class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+class ReportDeadlinesControllerSpec @Inject() (val languageUtils: LanguageUtils) extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
                                             with MockReportDeadlinesService with FeatureSwitching{
 
   object TestReportDeadlinesController extends ReportDeadlinesController(
@@ -50,8 +54,9 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
     mockReportDeadlinesService,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesApi],
-    ec
+    app.injector.instanceOf[MessagesControllerComponents],
+    ec,
+    app.injector.instanceOf[ImplicitDateFormatterImpl]
   )
 
   val reportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]
@@ -115,7 +120,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.title
+            document.title shouldBe obligationsMessages.title
           }
         }
 
@@ -137,7 +142,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.title
+            document.title shouldBe obligationsMessages.title
           }
         }
 
@@ -159,7 +164,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.title
+            document.title shouldBe obligationsMessages.title
           }
         }
 
@@ -178,7 +183,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.title
+            document.title shouldBe obligationsMessages.title
           }
         }
 
@@ -200,7 +205,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.title
+            document.title shouldBe obligationsMessages.title
           }
         }
 
@@ -222,7 +227,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
           }
 
           "render the ReportDeadlines page" in {
-            document.title shouldBe messages.title
+            document.title shouldBe obligationsMessages.title
           }
         }
 

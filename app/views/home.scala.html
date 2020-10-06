@@ -16,12 +16,13 @@
 
 @import java.time.LocalDate
 
-@import implicits.ImplicitDateFormatter._
+@import implicits.ImplicitDateFormatter
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import views.html.templates.main_template
 @import views.html.helpers.breadcrumbHelper
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, paymentEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@import implicitDateFormatter.longDate
 
 @breadcrumb = {
     @breadcrumbHelper(Breadcrumb(Vector(

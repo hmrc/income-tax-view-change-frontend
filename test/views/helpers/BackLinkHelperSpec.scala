@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import assets.Messages
+import assets.MessagesLookUp
 import testUtils.ViewSpec
 import views.html.helpers.backLinkHelper
 
@@ -30,7 +30,7 @@ class BackLinkHelperSpec extends ViewSpec {
 
       "has the correct url and message" in new Test {
         document hasBackLinkTo "testUrl"
-        document.backLink.text() shouldBe Messages.Base.back
+        document.backLink.text() shouldBe MessagesLookUp.Base.back
       }
     }
   }

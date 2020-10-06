@@ -20,11 +20,14 @@ import config.FrontendAppConfig
 import controllers.BaseController
 import javax.inject.Inject
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.forms.TestHeadersForm
 import testOnly.models.TestHeadersModel
 
-class TestHeadersController @Inject()(val messagesApi: MessagesApi, implicit val appConfig: FrontendAppConfig) extends BaseController {
+import scala.concurrent.ExecutionContext
+
+class TestHeadersController @Inject()(implicit appConfig: FrontendAppConfig, mcc: MessagesControllerComponents,
+                                     val executionContext: ExecutionContext) extends BaseController {
 
   def showTestHeaders: Action[AnyContent] = Action { implicit request =>
     Ok(testOnly.views.html.testHeaders(TestHeadersForm.form.fill(TestHeadersModel(

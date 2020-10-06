@@ -32,7 +32,7 @@ trait ViewSpec extends TestSupport {
   val testCall: Call = Call("POST", "/test-url")
   val testBackUrl: String = "/test-url"
 
-  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(user)
+  implicit val messagesLookUp: Messages = app.injector.instanceOf[MessagesApi].preferred(user)
 
   class Setup(page: Html) {
     val document: Document = Jsoup.parse(page.body)

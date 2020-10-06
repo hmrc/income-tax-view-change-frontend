@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import play.api.http.Status
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
@@ -26,7 +27,7 @@ class SignOutControllerSpec extends TestSupport {
 
   object TestSignOutController extends SignOutController()(
     app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesApi]
+    app.injector.instanceOf[MessagesControllerComponents]
   )
 
   "navigating to signout page" should {

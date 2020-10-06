@@ -16,7 +16,7 @@
 
 package views.timeout
 
-import assets.Messages.{Timeout => messages}
+import assets.MessagesLookUp.{Timeout => timeoutMessages}
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.i18n.Messages.Implicits._
@@ -28,23 +28,23 @@ class SessionTimeoutViewSpec extends TestSupport {
 
   lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  lazy val page = views.html.timeout.timeout()(FakeRequest(), applicationMessages, mockAppConfig)
+  lazy val page = views.html.timeout.timeout()(FakeRequest(), implicitly ,mockAppConfig)
   lazy val document = Jsoup.parse(contentAsString(page))
 
   "The Session timeout view" should {
 
-    s"have the title '${messages.title}'" in {
-      document.title() shouldBe messages.title
+    s"have the title '${timeoutMessages.title}'" in {
+      document.title() shouldBe timeoutMessages.title
     }
 
-    s"have the H1 '${messages.heading}'" in {
-      document.getElementsByTag("H1").text() shouldBe messages.heading
+    s"have the H1 '${timeoutMessages.heading}'" in {
+      document.getElementsByTag("H1").text() shouldBe timeoutMessages.heading
     }
 
     s"have a paragraph" which {
 
       "has the text" in {
-        document.getElementById("sign-in").text() shouldBe messages.signIn
+        document.getElementById("sign-in").text() shouldBe timeoutMessages.signIn
       }
 
       "has a link to sign-in page" in {

@@ -24,9 +24,10 @@ import implicits.ImplicitDateFormatter
 import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.CalculationService
+import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.notFound
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,10 +40,11 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
                                         calculationService: CalculationService,
                                         itvcErrorHandler: ItvcErrorHandler)
                                        (implicit val appConfig: FrontendAppConfig,
-                                        val messagesApi: MessagesApi,
-                                        ec: ExecutionContext) extends BaseController with ImplicitDateFormatter with FeatureSwitching {
+                                        val languageUtils: LanguageUtils,
+                                        mcc: MessagesControllerComponents,
+                                        val executionContext: ExecutionContext) extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
 
   def showTaxDueSummary(taxYear: Int): Action[AnyContent] = {

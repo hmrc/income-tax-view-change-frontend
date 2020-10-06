@@ -107,21 +107,12 @@ taxCal_breakdown.table.banks_and_building_societies                 = Llog a gaf
 
 ## ReportDeadlines Page ##
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau
-obligations.accountingPeriod                                    = Cyfnod adrodd
-obligations.reportDueDate                                       = Dyddiad cau ar gyfer adrodd
-obligations.error.p1                                            = Ni allwn ddangos eich dyddiad cau nesaf ar gyfer adrodd ar hyn o bryd.
-obligations.error.p2                                            = Rhowch gynnig ar adnewyddu’r dudalen mewn ychydig funudau.
 obligations.quarterly.to                                        = i
 obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
 obligations.noReports                                           = Nid oes unrhyw adroddiadau’n nesáu at eu dyddiad cau ar hyn o bryd. Bydd eich dyddiad cau nesaf yn dangos yma ar ddydd Llun cyntaf y mis nesaf.
-obligations.tab.one                                             = Diweddariadau i ddod
-obligations.tab.two                                             = Diweddariadau a gyflwynwyd yn flaenorol
 
 ## Previous Obligations ##
 
-previous-obligations.heading                                    = Diweddariadau
-previous-obligations.updates-due                                = Diweddariadau i’w dychwelyd
-previous-obligations.sub-heading                                = Diweddariadau a gyflwynwyd yn flaenorol
 previous-obligations.income-source.property-income              = Incwm o eiddo
 previous-obligations.no-previous-obligations                    = Dim diweddariadau wedi’u cyflwyno’n flaenorol
 previous-obligations.income-source.final-income                 = Blwyddyn dreth – Gwiriad olaf
@@ -129,9 +120,6 @@ previous-obligations.obligation-type.quarterly                  = Diweddariad ch
 previous-obligations.obligation-type.crystallised               = Datganiad
 previous-obligations.obligation-type.start-to-end               = {0} i {1}
 previous-obligation.obligation-type.was-due-on                  = Roedd yn ddyledus ar {0}
-previous-obligations.submitted-on                               = Cyflwynwyd ar
-previous-obligations.updates-tab                                = Diweddariadau i ddod
-previous-obligations.previous-updates-tab                       = Diweddariadau a gyflwynwyd yn flaenorol
 
 ## Crystalisation Page ##
 crystalisation.heading                                          = Blwyddyn dreth {0} i {1}

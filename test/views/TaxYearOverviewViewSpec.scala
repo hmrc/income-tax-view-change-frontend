@@ -16,7 +16,7 @@
 
 package views
 
-import assets.Messages.{Breadcrumbs, TaxYearOverview}
+import assets.MessagesLookUp.{Breadcrumbs, TaxYearOverview}
 import config.featureswitch.{FeatureSwitching, IncomeBreakdown}
 import models.calculation.CalcOverview
 import models.financialTransactions.TransactionModel
@@ -28,6 +28,7 @@ import play.twirl.api.Html
 import testUtils.TestSupport
 import views.html.taxYearOverview
 import implicits.ImplicitCurrencyFormatter._
+import implicits.ImplicitDateFormatterImpl
 
 class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
 
@@ -47,13 +48,17 @@ class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
     outstandingAmount = Some(8.08)
   )
 
+  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
+
+
   class Setup(taxYear: Int = testYear,
               overview: CalcOverview = completeOverview,
               transaction: Option[TransactionModel] = Some(transactionModel),
               incomeBreakdown: Boolean = false,
-              deductionBreakdown: Boolean = false) {
+              deductionBreakdown: Boolean = false,
+              taxDue: Boolean = false) {
 
-    val page: Html = taxYearOverview(taxYear, overview, transaction, incomeBreakdown, deductionBreakdown)
+    val page: Html = taxYearOverview(taxYear, overview, transaction, incomeBreakdown, deductionBreakdown, taxDue, mockImplicitDateFormatter)
     val document: Document = Jsoup.parse(page.body)
     val content: Element = document.selectFirst("#content")
 

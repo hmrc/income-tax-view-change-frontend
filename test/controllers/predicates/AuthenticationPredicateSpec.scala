@@ -23,7 +23,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Ok
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import testUtils.TestSupport
@@ -36,14 +36,15 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
   "The AuthenticationPredicate" when {
 
     def setupResult(): Action[AnyContent] =
-      new AuthenticationPredicate(
+      new AuthenticationPredicate()(
+        ec,
         mockAuthService,
         app.injector.instanceOf[FrontendAppConfig],
         app.injector.instanceOf[Configuration],
         app.injector.instanceOf[Environment],
-        app.injector.instanceOf[MessagesApi],
-        ec,
-        app.injector.instanceOf[ItvcErrorHandler]).async {
+        app.injector.instanceOf[ItvcErrorHandler],
+        app.injector.instanceOf[MessagesControllerComponents]
+        ).async {
         implicit request =>
           Future.successful(Ok(testMtditid + " " + testNino))
       }
@@ -110,14 +111,14 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
     "When an exception which is not an authorisation exception" should {
 
       def setupFailedFutureResult(): Action[AnyContent] =
-        new AuthenticationPredicate(
+        new AuthenticationPredicate()(
+          ec,
           mockAuthService,
           app.injector.instanceOf[FrontendAppConfig],
           app.injector.instanceOf[Configuration],
           app.injector.instanceOf[Environment],
-          app.injector.instanceOf[MessagesApi],
-          ec,
-          app.injector.instanceOf[ItvcErrorHandler]
+          app.injector.instanceOf[ItvcErrorHandler],
+          app.injector.instanceOf[MessagesControllerComponents]
         ).async {
           implicit request =>
             Future.failed(new Exception("Unexpected Error"))

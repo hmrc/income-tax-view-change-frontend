@@ -18,10 +18,11 @@ package controllers
 
 import java.time.{LocalDate, ZonedDateTime}
 
-import assets.Messages
-import config.featureswitch.{Bills, FeatureSwitching}
+import assets.MessagesLookUp
+import config.featureswitch.{Bills, FeatureSwitching, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.calculation.{Calculation, CalculationErrorModel, CalculationResponseModelWithYear}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
@@ -30,6 +31,7 @@ import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import services.{CalculationService, FinancialTransactionsService, ReportDeadlinesService}
 
 import scala.concurrent.Future
@@ -52,8 +54,9 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       financialTransactionsService,
       app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
       app.injector.instanceOf[FrontendAppConfig],
-      app.injector.instanceOf[MessagesApi],
-      ec
+      app.injector.instanceOf[MessagesControllerComponents],
+      ec,
+      app.injector.instanceOf[ImplicitDateFormatterImpl]
     )
   }
 
@@ -66,7 +69,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
   "navigating to the home page" should {
     "return ok (200)" which {
       "there is a next payment due date to display" in new Setup {
-        enable(Bills)
+        enable(Payment)
         when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
         mockSingleBusinessIncomeSource()
         when(calculationService.getAllLatestCalculations(any(), any())(any()))
@@ -78,7 +81,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
         status(result) shouldBe Status.OK
         val document = Jsoup.parse(bodyOf(result))
-        document.title shouldBe Messages.HomePage.title
+        document.title shouldBe MessagesLookUp.HomePage.title
         document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "31 January 2019"
       }
 
@@ -96,7 +99,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
         status(result) shouldBe Status.OK
         val document = Jsoup.parse(bodyOf(result))
-        document.title shouldBe Messages.HomePage.title
+        document.title shouldBe MessagesLookUp.HomePage.title
         document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "31 January 2018"
       }
 
@@ -113,7 +116,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
-          document.title shouldBe Messages.HomePage.title
+          document.title shouldBe MessagesLookUp.HomePage.title
           document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
 
         }
@@ -130,7 +133,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
-          document.title shouldBe Messages.HomePage.title
+          document.title shouldBe MessagesLookUp.HomePage.title
           document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
         }
 
@@ -146,7 +149,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
-          document.title shouldBe Messages.HomePage.title
+          document.title shouldBe MessagesLookUp.HomePage.title
           document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
         }
 
@@ -160,7 +163,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
-          document.title shouldBe Messages.HomePage.title
+          document.title shouldBe MessagesLookUp.HomePage.title
           document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
         }
 
@@ -174,7 +177,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
-          document.title shouldBe Messages.HomePage.title
+          document.title shouldBe MessagesLookUp.HomePage.title
           document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
         }
 
@@ -190,7 +193,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
-          document.title shouldBe Messages.HomePage.title
+          document.title shouldBe MessagesLookUp.HomePage.title
           document.select("#payments-tile > div > p:nth-child(2)").text() shouldBe "No payments due."
         }
       }
@@ -222,7 +225,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
         status(result) shouldBe Status.OK
         val document = Jsoup.parse(bodyOf(result))
-        document.title shouldBe Messages.HomePage.title
+        document.title shouldBe MessagesLookUp.HomePage.title
         document.select("#updates-tile > div > p:nth-child(2)").text() shouldBe "1 January 2018"
       }
     }

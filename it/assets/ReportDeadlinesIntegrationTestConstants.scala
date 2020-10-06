@@ -17,10 +17,9 @@ package assets
 
 import java.time.LocalDate
 
-import implicits.ImplicitDateFormatter._
+import assets.BaseIntegrationTestConstants._
 import models.reportDeadlines.{ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
-import BaseIntegrationTestConstants._
 
 object ReportDeadlinesIntegrationTestConstants {
   def successResponse(obligationsModel: ReportDeadlinesModel): JsValue = {
@@ -34,18 +33,18 @@ object ReportDeadlinesIntegrationTestConstants {
     "reason" -> reason
   )
 
-  val deadlineStart1 = "2017-01-01"
-  val deadlineEnd1 = "2017-03-31"
-  val deadlineStart2 = "2017-04-01"
-  val deadlineEnd2 = "2017-06-30"
-  val deadlineStart3 = "2016-06-01"
-  val deadlineEnd3 = "2017-06-30"
-  val deadlineStart4 = "2017-07-01"
-  val deadlineEnd4 = "2017-09-30"
-  val deadlineStart5 = "2017-10-01"
-  val deadlineEnd5 = "2018-01-31"
-  val deadlineStart6 = "2017-11-01"
-  val deadlineEnd6 = "2018-02-01"
+  val deadlineStart1 = LocalDate.of(2017,1,1)
+  val deadlineEnd1 = LocalDate.of(2017,3,31)
+  val deadlineStart2 = LocalDate.of(2017,4,1)
+  val deadlineEnd2 = LocalDate.of(2017,6,30)
+  val deadlineStart3 = LocalDate.of(2016,6,1)
+  val deadlineEnd3 = LocalDate.of(2017,6,30)
+  val deadlineStart4 = LocalDate.of(2017,7,1)
+  val deadlineEnd4 = LocalDate.of(2017,9,30)
+  val deadlineStart5 = LocalDate.of(2017,10,1)
+  val deadlineEnd5 = LocalDate.of(2018,1,31)
+  val deadlineStart6 = LocalDate.of(2017,11,1)
+  val deadlineEnd6 = LocalDate.of(2018,2,1)
 
   val testPropertyId = "1234"
 
@@ -95,10 +94,10 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  val singleObligationStart = "2017-04-06"
-  val singleObligationEndQuarter = "2017-05-05"
-  val singleObligationEnd = "2017-07-05"
-  val singleObligationDue = "2018-01-01"
+  val singleObligationStart = LocalDate.of(2017,4,6)
+  val singleObligationEndQuarter = LocalDate.of(2017,5,5)
+  val singleObligationEnd = LocalDate.of(2017,7,5)
+  val singleObligationDue = LocalDate.of(2018,1,1)
 
   val overdueDate: LocalDate = LocalDate.now().minusDays(1)
 
@@ -114,6 +113,7 @@ object ReportDeadlinesIntegrationTestConstants {
   ))
 
   val veryOverdueDate: LocalDate = LocalDate.of(2017, 5, 5)
+  val veryOverDueLongDate = "5 May 2017"
 
   val singleObligationCrystallisationModel: ReportDeadlinesModel = ReportDeadlinesModel(testMtditid, List(
     ReportDeadlineModel(
@@ -137,9 +137,9 @@ object ReportDeadlinesIntegrationTestConstants {
     )
   ))
 
-  val singleObligationStartEOPs = "2017-04-06"
-  val singleObligationEndEOPs = "2018-07-05"
-  val singleObligationDueEOPs = "2018-01-01"
+  val singleObligationStartEOPs = LocalDate.of(2017,4,6)
+  val singleObligationEndEOPs = LocalDate.of(2018,7,5)
+  val singleObligationDueEOPs = LocalDate.of(2018,1,1)
 
   val singleObligationEOPSPropertyModel = ReportDeadlinesModel(testPropertyId, List(
     ReportDeadlineModel(
@@ -169,8 +169,8 @@ object ReportDeadlinesIntegrationTestConstants {
 
   def singleObligationPlusYearOpenModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
     ReportDeadlineModel(
-      start = "2017-04-06",
-      end = "2017-07-05",
+      start = LocalDate.of(2017,4,6),
+      end = LocalDate.of(2017,7,5),
       due = LocalDate.now().plusYears(1),
       obligationType = "Quarterly",
       dateReceived = None,
@@ -181,9 +181,9 @@ object ReportDeadlinesIntegrationTestConstants {
 
   def SEIncomeSourceEOPSModel(incomeId: String): ReportDeadlinesModel = ReportDeadlinesModel(incomeId, List(
     ReportDeadlineModel(
-      start = "2017-04-06",
-      end = "2018-04-05",
-      due = "2018-01-31",
+      start = LocalDate.of(2017,4,6),
+      end = LocalDate.of(2018,4,5),
+      due = LocalDate.of(2018,1,31),
       "EOPS",
       dateReceived = None,
       periodKey = "#003"
@@ -192,9 +192,9 @@ object ReportDeadlinesIntegrationTestConstants {
 
   val crystallisedEOPSModel = ReportDeadlinesModel(testMtditid, List(
     ReportDeadlineModel(
-      start = "2017-04-06",
-      end = "2018-04-05",
-      due = "2019-01-31",
+      start = LocalDate.of(2017,4,6),
+      end = LocalDate.of(2018,4,5),
+      due = LocalDate.of(2019,1,31),
       "Crystallised",
       dateReceived = None,
       periodKey = "#003"
@@ -203,17 +203,17 @@ object ReportDeadlinesIntegrationTestConstants {
 
   val crystallisedEOPSModelMulti = ReportDeadlinesModel(testMtditid, List(
     ReportDeadlineModel(
-      start = "2018-04-06",
-      end = "2019-04-05",
-      due = "2020-01-31",
+      start = LocalDate.of(2018,4,6),
+      end = LocalDate.of(2019,4,5),
+      due = LocalDate.of(2020,1,31),
       "Crystallised",
       dateReceived = None,
       periodKey = "#003"
     ),
     ReportDeadlineModel(
-      start = "2017-04-06",
-      end = "2018-04-05",
-      due = "2019-01-31",
+      start = LocalDate.of(2017,4,6),
+      end = LocalDate.of(2018,4,5),
+      due = LocalDate.of(2019,1,31),
       "Crystallised",
       dateReceived = None,
       periodKey = "#003"

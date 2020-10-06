@@ -20,12 +20,17 @@ import javax.inject.Inject
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import play.api.http.HeaderNames
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
+import testUtils.TestSupport
 
-class BaseControllerSpec extends MockAuthenticationPredicate {
+import scala.concurrent.ExecutionContext
 
-  class TestBaseController @Inject()(implicit val messagesApi: MessagesApi) extends BaseController
+class BaseControllerSpec extends TestSupport with MockAuthenticationPredicate {
 
-  object TestBaseController extends TestBaseController()(fakeApplication.injector.instanceOf[MessagesApi])
+  object TestBaseController extends BaseController()(
+    app.injector.instanceOf[MessagesControllerComponents]) {
+    override implicit val executionContext: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  }
 
   "The BaseController.hc() method" when {
 

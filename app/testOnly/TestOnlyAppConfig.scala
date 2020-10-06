@@ -19,11 +19,12 @@ package testOnly
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class TestOnlyAppConfig @Inject()(env: Environment, config: Configuration) extends FrontendAppConfig(env, config) {
+class TestOnlyAppConfig @Inject()(servicesConfig: ServicesConfig, config: Configuration) extends FrontendAppConfig(servicesConfig, config) {
 
-  lazy val dynamicStubUrl: String = baseUrl("itvc-dynamic-stub")
-  lazy val desSimulatorUrl: String = baseUrl("des-simulator")
+  lazy val dynamicStubUrl: String = servicesConfig.baseUrl("itvc-dynamic-stub")
+  lazy val desSimulatorUrl: String = servicesConfig.baseUrl("des-simulator")
 
 }

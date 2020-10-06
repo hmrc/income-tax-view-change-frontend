@@ -26,16 +26,14 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
 import play.api.http.Status
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{charset, contentType, _}
 import testUtils.TestSupport
 
 class IncomeSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService with FeatureSwitching {
 
-  object TestIncomeSummaryController extends IncomeSummaryController()(
-    appConfig,
-    messagesApi,
-    ec,
+  object TestIncomeSummaryController extends IncomeSummaryController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
@@ -44,8 +42,11 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService],
     mockFinancialTransactionsService,
-    app.injector.instanceOf[ItvcErrorHandler]
-  )
+    app.injector.instanceOf[ItvcErrorHandler])(
+    ec,
+    mockLanguageUtils,
+    appConfig,
+    app.injector.instanceOf[MessagesControllerComponents])
 
   "showIncomeSummary" when {
     "feature switch IncomeBreakdown is enabled" when {

@@ -12,39 +12,39 @@
 # Add all the application routes to the prod.routes file
 
 
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-schema                          @testOnly.controllers.StubSchemaController.show
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema                          @testOnly.controllers.StubSchemaController.submit
+GET         /report-quarterly/income-and-expenses/view/test-only/stub-schema                          testOnly.controllers.StubSchemaController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema                          testOnly.controllers.StubSchemaController.submit
 
 # NOCSRF
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema/proxy                    @testOnly.controllers.StubSchemaController.stubProxy
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema/proxy                    testOnly.controllers.StubSchemaController.stubProxy
 
 # NOCSRF
-DELETE      /report-quarterly/income-and-expenses/view/test-only/all-schemas/proxy                    @testOnly.controllers.StubSchemaController.deleteAllProxy
+DELETE      /report-quarterly/income-and-expenses/view/test-only/all-schemas/proxy                    testOnly.controllers.StubSchemaController.deleteAllProxy
 
 
-GET         /report-quarterly/income-and-expenses/view/test-only/stub-data                            @testOnly.controllers.StubDataController.show
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-data                            @testOnly.controllers.StubDataController.submit
-
-# NOCSRF
-POST        /report-quarterly/income-and-expenses/view/test-only/stub-data/proxy                      @testOnly.controllers.StubDataController.stubProxy
+GET         /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.submit
 
 # NOCSRF
-DELETE      /report-quarterly/income-and-expenses/view/test-only/all-data/proxy                       @testOnly.controllers.StubDataController.deleteAllProxy
-
-GET         /report-quarterly/income-and-expenses/view/test-only/add-user                             @testOnly.controllers.StubUsersController.show
-POST        /report-quarterly/income-and-expenses/view/test-only/add-user                             @testOnly.controllers.StubUsersController.submit
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-data/proxy                      testOnly.controllers.StubDataController.stubProxy
 
 # NOCSRF
-POST        /report-quarterly/income-and-expenses/view/test-only/add-user/proxy                       @testOnly.controllers.StubUsersController.stubUsers
+DELETE      /report-quarterly/income-and-expenses/view/test-only/all-data/proxy                       testOnly.controllers.StubDataController.deleteAllProxy
 
-GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       @testOnly.controllers.FeatureSwitchController.show
-POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       @testOnly.controllers.FeatureSwitchController.submit
+GET         /report-quarterly/income-and-expenses/view/test-only/add-user                             testOnly.controllers.StubUsersController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/add-user                             testOnly.controllers.StubUsersController.submit
 
-GET         /report-quarterly/income-and-expenses/view/test-only/test-headers                         @testOnly.controllers.TestHeadersController.showTestHeaders
-POST        /report-quarterly/income-and-expenses/view/test-only/test-headers                         @testOnly.controllers.TestHeadersController.submitTestHeaders
+# NOCSRF
+POST        /report-quarterly/income-and-expenses/view/test-only/add-user/proxy                       testOnly.controllers.StubUsersController.stubUsers
 
-GET         /report-quarterly/income-and-expenses/view/test-only/bta-partial                          @testOnly.controllers.TestBTAPartialController.viewBTAPartial
+GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.submit
 
-GET         /report-quarterly/income-and-expenses/view/test-only/financial-transactions/:regime/:mtditid   @testOnly.controllers.FinancialTransactionsProxyController.getFinancialData(regime: String, mtditid: String, onlyOpenItems: Option[String], dateFrom: Option[String], dateTo: Option[String], includeLocks: Option[String], calculateAccruedInterest: Option[String], customerPaymentInfo: Option[String])
+GET         /report-quarterly/income-and-expenses/view/test-only/test-headers                         testOnly.controllers.TestHeadersController.showTestHeaders
+POST        /report-quarterly/income-and-expenses/view/test-only/test-headers                         testOnly.controllers.TestHeadersController.submitTestHeaders
+
+GET         /report-quarterly/income-and-expenses/view/test-only/bta-partial                          testOnly.controllers.TestBTAPartialController.viewBTAPartial
+
+GET         /report-quarterly/income-and-expenses/view/test-only/financial-transactions/:regime/:mtditid   testOnly.controllers.FinancialTransactionsProxyController.getFinancialData(regime: String, mtditid: String, onlyOpenItems: Option[String], dateFrom: Option[String], dateTo: Option[String], includeLocks: Option[String], calculateAccruedInterest: Option[String], customerPaymentInfo: Option[String])
 
 ->          /                                                                                          prod.Routes

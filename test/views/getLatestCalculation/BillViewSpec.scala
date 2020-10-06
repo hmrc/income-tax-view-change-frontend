@@ -20,8 +20,8 @@ import assets.BaseTestConstants._
 import assets.BillsTestConstants._
 import assets.EstimatesTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
-import assets.Messages
-import assets.Messages.{Breadcrumbs => breadcrumbMessages}
+import assets.MessagesLookUp
+import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, Payment}
 import implicits.ImplicitCurrencyFormatter._
@@ -42,15 +42,15 @@ class BillViewSpec extends TestSupport with FeatureSwitching {
 
 
   private def pageSetup(model: BillsViewModel, paymentsEnabled: Boolean = false, user: MtdItUser[_]) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.getLatestCalculation.bill(model, paymentsEnabled)(FakeRequest(), applicationMessages, appConfig, user)
+    lazy val page: HtmlFormat.Appendable = views.html.getLatestCalculation.bill(model, paymentsEnabled)(FakeRequest(), implicitly, appConfig, user)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
   "The bill view" should {
     val setup = pageSetup(unpaidBillsViewModel, paymentsEnabled = false,  bizAndPropertyUser)
     import setup._
-    val messages = new Messages.Calculation(testYear)
-    val crysMessages = new Messages.Calculation(testYear).Crystallised
+    val messages = new MessagesLookUp.Calculation(testYear)
+    val crysMessages = new MessagesLookUp.Calculation(testYear).Crystallised
 
     s"have the title '${crysMessages.tabTitle}'" in {
       document.title() shouldBe crysMessages.tabTitle

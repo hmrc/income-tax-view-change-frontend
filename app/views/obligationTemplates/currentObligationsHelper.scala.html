@@ -14,9 +14,10 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitDateFormatter._
+@import implicits.ImplicitDateFormatter
 
-@(obligations: models.reportDeadlines.ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(obligations: models.reportDeadlines.ObligationsModel, implicitDateFormatter: ImplicitDateFormatter)(implicit messages: Messages, user: auth.MtdItUser[_])
+@import implicitDateFormatter.longDate
 
  <div id="submit-using-record-keeping-software">@Html(messages(
         "obligations.sub-heading.info",

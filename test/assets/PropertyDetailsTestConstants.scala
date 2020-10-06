@@ -16,6 +16,8 @@
 
 package assets
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants.testPropertyIncomeId
 import assets.ReportDeadlinesTestConstants._
 import implicits.ImplicitDateFormatter
@@ -23,11 +25,11 @@ import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{PropertiesRentedModel, PropertyDetailsModel}
 import models.reportDeadlines.ReportDeadlineModel
 
-object PropertyDetailsTestConstants extends ImplicitDateFormatter {
+object PropertyDetailsTestConstants {
 
-  val testPropertyAccountingPeriod = AccountingPeriodModel("2017-04-06", "2018-04-05")
+  val testPropertyAccountingPeriod = AccountingPeriodModel(LocalDate.of(2017,4,6), LocalDate.of(2018,4,5))
 
-  val testCessation = CessationModel(Some("2018-1-1".toLocalDate), Some("It was a stupid idea anyway"))
+  val testCessation = CessationModel(Some(LocalDate.of(2018,1,1)), Some("It was a stupid idea anyway"))
 
   val propertyDetails = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
@@ -58,9 +60,9 @@ object PropertyDetailsTestConstants extends ImplicitDateFormatter {
   )
 
   val openCrystallised: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
-    start = "2017-04-06",
-    end = "2018-04-05",
-    due = "2017-10-31",
+    start = LocalDate.of(2017,4,6),
+    end = LocalDate.of(2018,4,5),
+    due = LocalDate.of(2017,10,31),
     periodKey = "#003",
     dateReceived = None,
     obligationType = "Crystallised"

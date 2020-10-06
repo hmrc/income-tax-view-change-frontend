@@ -27,7 +27,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import play.api.http.Status
 import play.api.i18n.MessagesApi
-import play.api.mvc.Result
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HeaderCarrier
@@ -46,7 +46,7 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
 
     val testController = new PaymentController()(
       appConfig,
-      app.injector.instanceOf[MessagesApi],
+      app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,

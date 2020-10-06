@@ -19,18 +19,21 @@ package controllers
 import config.FrontendAppConfig
 import controllers.predicates._
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+
+import scala.concurrent.ExecutionContext
+
 
 @Singleton
-class BTAPartialController @Inject()(implicit val config: FrontendAppConfig,
-                                     implicit val messagesApi: MessagesApi,
-                                     val checkSessionTimeout: SessionTimeoutPredicate,
-                                     val authenticate: AuthenticationPredicate
-                                    ) extends BaseController {
+class BTAPartialController @Inject()(checkSessionTimeout: SessionTimeoutPredicate,
+                                     authenticate: AuthenticationPredicate)
+                                    (implicit val executionContext:ExecutionContext,
+                                     config: FrontendAppConfig,
+                                     mcc: MessagesControllerComponents) extends BaseController with I18nSupport {
 
-  val setupPartial: Action[AnyContent] = (checkSessionTimeout andThen authenticate) {
-    implicit request => Ok(views.html.btaPartial())
+  def setupPartial: Action[AnyContent] = (checkSessionTimeout andThen authenticate)  {
+        implicit request => Ok(views.html.btaPartial())
   }
 
 }

@@ -28,8 +28,8 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class FinancialTransactionsProxyController @Inject()(val financialTransactionsProxyConnector: FinancialTransactionsProxyConnector,
                                                      implicit val appConfig: FrontendAppConfig,
-                                                     implicit val messagesApi: MessagesApi,
-                                                     implicit val ec: ExecutionContext) extends BaseController {
+                                                     implicit val mcc: MessagesControllerComponents,
+                                                     implicit val executionContext: ExecutionContext) extends BaseController {
 
   def getFinancialData(regime: String,
                        mtditid: String,

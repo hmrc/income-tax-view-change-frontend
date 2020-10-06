@@ -16,39 +16,45 @@
 
 package assets
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants._
 import implicits.ImplicitDateFormatter
+import javax.inject.Inject
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.play.language.LanguageUtils
 
-object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
+object ReportDeadlinesTestConstants {
 
   def fakeReportDeadlinesModel(m: ReportDeadlineModel): ReportDeadlineModel = new ReportDeadlineModel(m.start,m.end,m.due, m.obligationType, m.dateReceived, m.periodKey) {
-    override def currentTime() = "2017-10-31"
+    override def currentTime() = LocalDate.of(2017,10,31)
   }
 
+  val testStartDate = LocalDate.of(2017, 7, 1)
+
   val quarterlyBusinessObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-    start = "2017-7-1",
-    end = "2017-9-30",
-    due = "2019-10-30",
+    start = LocalDate.of(2017, 7, 1),
+    end = LocalDate.of(2017,9,30),
+    due = LocalDate.of(2019,10,30),
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#002"
   ))
 
   val overdueObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-    start = "2017-7-1",
-    end = "2017-9-30",
-    due = "2017-10-30",
+    start = LocalDate.of(2017, 7, 1),
+    end = LocalDate.of(2017,9,30),
+    due = LocalDate.of(2017,10,30),
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#002"
   ))
 
   val openObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-    start = "2017-7-1",
-    end = "2017-9-30",
-    due = "2017-10-31",
+    start = LocalDate.of(2017, 7, 1),
+    end = LocalDate.of(2017,9,30),
+    due = LocalDate.of(2017,10,31),
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#003"
@@ -56,27 +62,27 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
 
 
   val secondQuarterlyObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-    start = "2017-10-1",
-    end = "2017-12-30",
-    due = "2017-10-31",
+    start = LocalDate.of(2017, 10, 1),
+    end = LocalDate.of(2017,10,31),
+    due = LocalDate.of(2017,10,31),
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#002"
   ))
 
   val crystallisedObligation = fakeReportDeadlinesModel(ReportDeadlineModel(
-    start = "2017-10-1",
-    end = "2018-10-30",
-    due = "2017-10-31",
+    start = LocalDate.of(2017, 10, 1),
+    end = LocalDate.of(2018,10,30),
+    due = LocalDate.of(2017,10,31),
     obligationType = "Crystallised",
     dateReceived = None,
     periodKey = ""
   ))
 
   val crystallisedObligationTwo = fakeReportDeadlinesModel(ReportDeadlineModel(
-    start = "2018-10-1",
-    end = "2019-10-30",
-    due = "2020-10-31",
+    start = LocalDate.of(2018, 10, 1),
+    end = LocalDate.of(2019,10,30),
+    due = LocalDate.of(2020,10,31),
     obligationType = "Crystallised",
     dateReceived = None,
     periodKey = ""
@@ -94,48 +100,48 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
   val obligationsDataPropertyOnlySuccessModel: ObligationsModel = ObligationsModel(List(reportDeadlinesDataPropertySuccessModel))
 
   val previousObligationOne: ReportDeadlineModel = ReportDeadlineModel(
-    "2017-1-1",
-    "2017-4-1",
-    "2017-5-1",
+    LocalDate.of(2017, 1, 1),
+    LocalDate.of(2017,4,1),
+    LocalDate.of(2017,5,1),
     "Quarterly",
-    Some("2017-4-1"),
+    Some(LocalDate.of(2017,4,1)),
     "#001"
   )
 
   val previousObligationTwo: ReportDeadlineModel = ReportDeadlineModel(
-    "2017-4-1",
-    "2017-7-1",
-    "2017-8-1",
+    LocalDate.of(2017, 4, 1),
+    LocalDate.of(2017,7,1),
+    LocalDate.of(2017,8,1),
     "Quarterly",
-    Some("2017-7-1"),
+    Some(LocalDate.of(2017,7,1)),
     "#002"
   )
 
   val previousObligationThree: ReportDeadlineModel = ReportDeadlineModel(
-    "2017-1-1",
-    "2018-1-1",
-    "2018-1-30",
+    LocalDate.of(2017, 1, 1),
+    LocalDate.of(2018,1,1),
+    LocalDate.of(2018,1,1),
     "EOPS",
-    Some("2018-1-30"),
+    Some(LocalDate.of(2018,1,30)),
     "EOPS"
   )
 
   val previousObligationFour: ReportDeadlineModel = ReportDeadlineModel(
-    "2019-1-1",
-    "2019-1-1",
-    "2019-1-30",
+    LocalDate.of(2019, 1, 1),
+    LocalDate.of(2019,1,1),
+    LocalDate.of(2019,1,30),
     "EOPS",
-    Some("2019-1-30"),
+    Some(LocalDate.of(2019,1,30)),
     "EOPS"
   )
 
 
   val previousObligationFive: ReportDeadlineModel = ReportDeadlineModel(
-    "2019-1-1",
-    "2019-1-1",
-    "2019-1-31",
+    LocalDate.of(2019, 1, 1),
+    LocalDate.of(2019,1,1),
+    LocalDate.of(2019,1,31),
     "Crystallised",
-    Some("2018-1-31"),
+    Some(LocalDate.of(2018,1,31)),
     "Crystallised "
   )
 
@@ -181,26 +187,26 @@ object ReportDeadlinesTestConstants extends ImplicitDateFormatter {
   )
 
   val overdueEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
-    start = "2017-04-06",
-    end = "2018-04-05",
-    due = "2017-10-01",
+    start = LocalDate.of(2017, 4, 6),
+    end = LocalDate.of(2018, 4, 5),
+    due = LocalDate.of(2017, 10, 1),
     obligationType = "EOPS",
     dateReceived = None,
     periodKey = "#002"
   ))
   val openEOPSObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
-    start = "2017-04-06",
-    end = "2018-04-05",
-    due = "2017-10-31",
+    start = LocalDate.of(2017, 4, 6),
+    end = LocalDate.of(2018, 4, 5),
+    due = LocalDate.of(2017, 10, 31),
     obligationType = "EOPS",
     dateReceived = None,
     periodKey = "#003"
   ))
 
   val openCrystObligation: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(
-    start = "2017-04-06",
-    end = "2018-04-05",
-    due = "2019-10-31",
+    start = LocalDate.of(2017, 4, 6),
+    end = LocalDate.of(2018, 4, 5),
+    due = LocalDate.of(2019,10,31),
     obligationType = "Crystallised",
     dateReceived = None,
     periodKey = ""

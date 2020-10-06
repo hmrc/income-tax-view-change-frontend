@@ -17,12 +17,15 @@
 package models
 
 import assets.FinancialTransactionsTestConstants._
+import implicits.ImplicitDateFormatter
+import javax.inject.Inject
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, TransactionModel}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
+import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.test.UnitSpec
 
-class FinancialTransactionsModelSpec extends UnitSpec with Matchers {
+class FinancialTransactionsModelSpec @Inject() (val languageUtils: LanguageUtils) extends UnitSpec with Matchers with ImplicitDateFormatter {
 
   "The FinancialTransactionsModel" should {
 

@@ -19,16 +19,18 @@ package controllers
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
 import assets.FinancialTransactionsTestConstants.transactionModel
-import assets.Messages
+import assets.MessagesLookUp
 import config.ItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
 import models.calculation.CalcOverview
 import play.api.http.Status
 import play.api.i18n.Lang
 import play.api.i18n.Messages.Implicits.applicationMessages
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
@@ -43,9 +45,20 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     app.injector.instanceOf[ItvcErrorHandler],
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate]
-  )(appConfig, messagesApi, ec)
+  )(appConfig,
+    mockLanguageUtils,
+    app.injector.instanceOf[MessagesControllerComponents],
+    ec,
+    app.injector.instanceOf[ImplicitDateFormatterImpl])
 
-  lazy val messages = new Messages.Calculation(testYear)
+  lazy val messagesLookUp = new MessagesLookUp.Calculation(testYear)
+
+  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
+
+  val testIncomeBreakdown: Boolean = false
+  val testDeductionBreakdown: Boolean = false
+  val testTaxDue: Boolean = false
+
 
   "The CalculationController.renderCalculationPage(year) action" when {
     "Called with an Unauthenticated User" should {
@@ -97,7 +110,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           mockCalculationSuccess()
 
           val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
-          val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, None)(
+          val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter)(
             implicitly, applicationMessages(Lang("en"), implicitly), implicitly
           ).toString
 
@@ -130,7 +143,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
             mockFinancialTransactionSuccess()
 
             val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
-            val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, Some(transactionModel()))(
+            val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, Some(transactionModel()), testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter)(
               implicitly, applicationMessages(Lang("en"), implicitly), implicitly
             ).toString
 

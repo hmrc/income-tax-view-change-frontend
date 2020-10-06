@@ -17,9 +17,8 @@
 package views.helpers
 
 import assets.BaseTestConstants._
-import assets.Messages.{BtaServiceInfoHeader => messages}
+import assets.MessagesLookUp.{BtaServiceInfoHeader => btaServiceMessages}
 import org.jsoup.Jsoup
-import play.api.i18n.Messages.Implicits._
 import play.twirl.api.Html
 import testUtils.TestSupport
 import views.html.helpers.renderServiceInfoHelper
@@ -27,7 +26,7 @@ import views.html.helpers.renderServiceInfoHelper
 class RenderServiceInfoHelperSpec extends TestSupport {
 
   def html(user: Option[String]): Html = renderServiceInfoHelper(user)(
-    applicationMessages,
+    implicitly,
     appConfig
   )
 
@@ -45,8 +44,8 @@ class RenderServiceInfoHelperSpec extends TestSupport {
 
         lazy val homeLink = document.getElementById("service-info-home-link")
 
-        s"should have the text '${messages.btaHome}'" in {
-          homeLink.text() shouldBe messages.btaHome
+        s"should have the text '${btaServiceMessages.btaHome}'" in {
+          homeLink.text() shouldBe btaServiceMessages.btaHome
         }
 
         s"should have a link to '${appConfig.businessTaxAccount}'" in {
@@ -59,8 +58,8 @@ class RenderServiceInfoHelperSpec extends TestSupport {
 
         lazy val manageAccountLink = document.getElementById("service-info-manage-account-link")
 
-        s"should have the text '${messages.btaManageAccount}'" in {
-          manageAccountLink.text() shouldBe messages.btaManageAccount
+        s"should have the text '${btaServiceMessages.btaManageAccount}'" in {
+          manageAccountLink.text() shouldBe btaServiceMessages.btaManageAccount
         }
 
         s"should have a link to '${appConfig.businessTaxAccount}'" in {
@@ -73,8 +72,8 @@ class RenderServiceInfoHelperSpec extends TestSupport {
 
         lazy val messagesLink = document.getElementById("service-info-messages-link")
 
-        s"should have the text '${messages.btaMessages}'" in {
-          messagesLink.text() shouldBe messages.btaMessages
+        s"should have the text '${btaServiceMessages.btaMessages}'" in {
+          messagesLink.text() shouldBe btaServiceMessages.btaMessages
         }
 
         s"should have a link to '${appConfig.btaMessagesUrl}'" in {

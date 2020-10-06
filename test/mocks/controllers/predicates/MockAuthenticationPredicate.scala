@@ -20,19 +20,19 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.AuthenticationPredicate
 import mocks.auth._
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import play.api.{Configuration, Environment}
 import testUtils.TestSupport
 
 trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorisedFunctions {
 
-  object MockAuthenticationPredicate extends AuthenticationPredicate(
+  object MockAuthenticationPredicate extends AuthenticationPredicate()(
+    ec,
     mockAuthService,
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[Configuration],
     app.injector.instanceOf[Environment],
-    app.injector.instanceOf[MessagesApi],
-    ec,
-    app.injector.instanceOf[ItvcErrorHandler]
+    app.injector.instanceOf[ItvcErrorHandler],
+    app.injector.instanceOf[MessagesControllerComponents]
   )
-
 }

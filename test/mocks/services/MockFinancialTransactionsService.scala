@@ -16,6 +16,8 @@
 
 package mocks.services
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants.{testMtditid, testTaxYear}
 import assets.FinancialTransactionsTestConstants.{financialTransactionsErrorModel, financialTransactionsModel}
 import models.financialTransactions.FinancialTransactionsResponseModel
@@ -43,7 +45,7 @@ trait MockFinancialTransactionsService extends UnitSpec with MockitoSugar with B
       ArgumentMatchers.eq(mtditid), ArgumentMatchers.eq(taxYear)
     )(ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
-  def mockFinancialTransactionSuccess(taxYear: String = "2018-04-05"): Unit =
+  def mockFinancialTransactionSuccess(taxYear: LocalDate = LocalDate.of(2018,4,5)): Unit =
     setupMockGetFinancialTransactions(testMtditid, testTaxYear)(financialTransactionsModel(taxYear))
 
   def mockFinancialTransactionFailed(): Unit =

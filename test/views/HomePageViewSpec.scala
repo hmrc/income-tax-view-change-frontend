@@ -19,11 +19,11 @@ package views
 import java.time.LocalDate
 
 import assets.BaseTestConstants._
-import assets.Messages.{Breadcrumbs => breadcrumbMessages, Core => coreMessages, HomePage => messages}
+import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages, Core => coreMessages, HomePage => homeMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
-import implicits.ImplicitDateFormatter._
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -47,15 +47,19 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   )(FakeRequest())
 
   val updateDate: LocalDate = LocalDate.of(2018, 1, 1)
+  val updateDateLongDate = "1 January 2018"
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
+
+  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), paymentEnabled: Boolean = true) {
 
     lazy val page: HtmlFormat.Appendable = views.html.home(
       nextPaymentDueDate = paymentDueDate,
       nextUpdate = updateDate,
-      paymentEnabled = paymentEnabled
-    )(FakeRequest(), applicationMessages, mockAppConfig, testMtdItUser)
+      paymentEnabled = paymentEnabled,
+      implicitDateFormatter = mockImplicitDateFormatter
+    )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
@@ -66,8 +70,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
   "home" should {
 
-    s"have the title '${messages.title}'" in new Setup {
-      document.title() shouldBe messages.title
+    s"have the title '${homeMessages.title}'" in new Setup {
+      document.title() shouldBe homeMessages.title
     }
     "display the language selection switch" in new Setup {
       getTextOfElementById("cymraeg-switch") shouldBe Some(coreMessages.welsh)
@@ -78,8 +82,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       getTextOfElementById("breadcrumb-it") shouldBe Some(breadcrumbMessages.it)
     }
 
-    s"have the page heading '${messages.heading}'" in new Setup {
-      getTextOfElementById("income-tax-heading") shouldBe Some(messages.heading)
+    s"have the page heading '${homeMessages.heading}'" in new Setup {
+      getTextOfElementById("income-tax-heading") shouldBe Some(homeMessages.heading)
     }
 
     s"have the subheading with the users name '$testUserName'" in new Setup {
@@ -87,34 +91,34 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     "have the users mtd-it-id" in new Setup {
-      getTextOfElementById("utr-reference-heading") shouldBe Some(messages.taxpayerReference(testMtdItUser.mtditid))
+      getTextOfElementById("utr-reference-heading") shouldBe Some(homeMessages.taxpayerReference(testMtdItUser.mtditid))
     }
 
     "have an updates tile" which {
       "has a heading" in new Setup {
-        getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(messages.updatesHeading)
+        getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(homeMessages.updatesHeading)
       }
       "has the date of the next update due" in new Setup {
-        getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDate.toLongDate)
+        getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDateLongDate)
       }
       "has a link to view updates" in new Setup {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
         link.map(_.attr("href")) shouldBe Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url)
-        link.map(_.text) shouldBe Some(messages.updatesLink)
+        link.map(_.text) shouldBe Some(homeMessages.updatesLink)
       }
     }
 
     "have a tax years tile" which {
       "has a heading" in new Setup {
-        getElementById("tax-years-tile").map(_.select("h2").text) shouldBe Some(messages.taxYearsHeading)
+        getElementById("tax-years-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
       }
       "has a description" in new Setup {
-        getElementById("tax-years-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(messages.taxYearsDescription)
+        getElementById("tax-years-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(homeMessages.taxYearsDescription)
       }
       "has a link to the tax years page" in new Setup {
         val link: Option[Elements] = getElementById("tax-years-tile").map(_.select("a"))
         link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.viewTaxYears().url)
-        link.map(_.text) shouldBe Some(messages.taxYearsLink)
+        link.map(_.text) shouldBe Some(homeMessages.taxYearsLink)
       }
     }
 

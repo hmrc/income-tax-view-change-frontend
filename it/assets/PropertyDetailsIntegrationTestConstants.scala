@@ -16,8 +16,10 @@
 
 package assets
 
+import java.time.LocalDate
+
 import assets.BaseIntegrationTestConstants.testPropertyIncomeId
-import implicits.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
@@ -25,13 +27,15 @@ import play.api.libs.json.{JsValue, Json}
 object PropertyDetailsIntegrationTestConstants {
 
   val propertyAccountingStart = "2017-01-01"
+  val propertyAccountingStartLocalDate = LocalDate.of(2017, 1, 1)
   val propertyAccountingEnd = "2017-12-31"
+  val propertyAccounringEndLocalDate = LocalDate.of(2017, 12, 31)
 
   val property: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
     accountingPeriod = AccountingPeriodModel(
-      start = propertyAccountingStart,
-      end = propertyAccountingEnd
+      start = propertyAccountingStartLocalDate,
+      end = propertyAccounringEndLocalDate
     ),
     contactDetails = None,
     propertiesRented = None,

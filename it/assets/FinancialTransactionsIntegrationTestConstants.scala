@@ -16,10 +16,11 @@
 
 package assets
 
+import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 
 import assets.BaseIntegrationTestConstants.testMtditid
-import implicits.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter
 import play.api.libs.json.{JsValue, Json}
 
 object FinancialTransactionsIntegrationTestConstants {
@@ -27,7 +28,9 @@ object FinancialTransactionsIntegrationTestConstants {
   val testIdType: String = "MTDBSA"
   val testIdNumber: String = testMtditid
   val testRegimeType: String = "ITSA"
-  val testProcessingDate: ZonedDateTime = "2017-03-07T22:55:56.987Z".toZonedDateTime
+  val testProcessingDate: ZonedDateTime = ZonedDateTime.parse(s"2017-03-07T22:55:56.987Z", DateTimeFormatter.ISO_ZONED_DATE_TIME)
+  val testJsonFromDate: LocalDate = LocalDate.of(2017,4,6)
+  val testJsonToDate: LocalDate = LocalDate.of(2018,4,5)
 
   def financialTransactionsSingleErrorJson(status: String = "500"): JsValue =
     Json.obj(
@@ -49,7 +52,7 @@ object FinancialTransactionsIntegrationTestConstants {
       )
     )
 
-  def financialTransactionsJson(outstandingAmount: BigDecimal, from: LocalDate = "2017-04-06", to: LocalDate ="2018-04-05"): JsValue =
+  def financialTransactionsJson(outstandingAmount: BigDecimal, from: String = "2017-04-06", to: String ="2018-04-05"): JsValue =
     Json.obj(
       "idType" -> testIdType,
       "idNumber" -> testMtditid,
@@ -61,8 +64,8 @@ object FinancialTransactionsIntegrationTestConstants {
           "mainType" -> "2100",
           "periodKey" -> "13RL",
           "periodKeyDescription" -> "abcde",
-          "taxPeriodFrom" -> from,
-          "taxPeriodTo" -> to,
+          "taxPeriodFrom" -> LocalDate.parse(from, DateTimeFormatter.ofPattern("uuuu-M-d")),
+          "taxPeriodTo" -> LocalDate.parse(to, DateTimeFormatter.ofPattern("uuuu-M-d")),
           "businessPartner" -> "6622334455",
           "contractAccountCategory" -> "02",
           "contractAccount" -> "X",

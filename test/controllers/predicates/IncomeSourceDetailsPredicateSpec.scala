@@ -23,16 +23,15 @@ import config.ItvcErrorHandler
 import mocks.services.MockIncomeSourceDetailsService
 import play.api.http.Status
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 
 
 class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSourceDetailsService {
 
-  object IncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate()(
-    app.injector.instanceOf[MessagesApi],
-    ec,
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[ItvcErrorHandler]
+  object IncomeSourceDetailsPredicate extends IncomeSourceDetailsPredicate(mockIncomeSourceDetailsService,
+    app.injector.instanceOf[ItvcErrorHandler])(
+    ec, app.injector.instanceOf[MessagesControllerComponents]
   )
 
   lazy val userWithNino = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName))

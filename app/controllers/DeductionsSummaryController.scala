@@ -18,25 +18,23 @@ package controllers
 
 import audit.AuditingService
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, DeductionBreakdown}
+import config.featureswitch.{DeductionBreakdown, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
 import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import services.{CalculationService, FinancialTransactionsService}
+import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.notFound
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeductionsSummaryController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                            implicit val messagesApi: MessagesApi,
-                                            implicit val ec: ExecutionContext,
-                                            val checkSessionTimeout: SessionTimeoutPredicate,
+class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                             val authenticate: AuthenticationPredicate,
                                             val retrieveNino: NinoPredicate,
                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
@@ -44,10 +42,14 @@ class DeductionsSummaryController @Inject()(implicit val appConfig: FrontendAppC
                                             val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                             val auditingService: AuditingService,
                                             val financialTransactionsService: FinancialTransactionsService,
-                                            val itvcErrorHandler: ItvcErrorHandler
-                                     ) extends BaseController with ImplicitDateFormatter with FeatureSwitching {
+                                            val itvcErrorHandler: ItvcErrorHandler)
+                                            (implicit val appConfig: FrontendAppConfig,
+                                             mcc: MessagesControllerComponents,
+                                             val executionContext: ExecutionContext,
+                                             val languageUtils: LanguageUtils)
+                                             extends BaseController with ImplicitDateFormatter with FeatureSwitching  with I18nSupport {
 
-  val action: ActionBuilder[MtdItUser] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
 
   def showDeductionsSummary(taxYear: Int): Action[AnyContent] = {

@@ -19,12 +19,14 @@ package services
 import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import audit.mocks.MockAuditingService
+import javax.inject.Inject
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.MockReportDeadlinesService
 import testUtils.TestSupport
+import uk.gov.hmrc.play.language.LanguageUtils
 
 
-class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockReportDeadlinesService with MockAuditingService {
+class IncomeSourceDetailsServiceSpec @Inject() (val languageUtils: LanguageUtils) extends TestSupport with MockIncomeTaxViewChangeConnector with MockReportDeadlinesService with MockAuditingService {
 
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector)
 

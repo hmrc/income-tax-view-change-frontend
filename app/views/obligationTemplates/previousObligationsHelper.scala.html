@@ -18,9 +18,10 @@
 
 @import config.FrontendAppConfig
 @import auth.MtdItUser
-@import implicits.ImplicitDateFormatter._
+@import implicits.ImplicitDateFormatter
 
-@(previousObligations: ObligationsModel)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig, user: MtdItUser[_])
+@(previousObligations: ObligationsModel, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig, user: MtdItUser[_])
+@import implicitDateFormatter.longDate
 
 @if(previousObligations.obligations.isEmpty) {
     <div id="no-previous-obligations">@messages("previous-obligations.no-previous-obligations")</div>

@@ -22,6 +22,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import implicits.ImplicitDateFormatterImpl
 import javax.inject.{Inject, Singleton}
 import models.financialTransactions.FinancialTransactionsModel
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -43,14 +44,16 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val financialTransactionsService: FinancialTransactionsService,
                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                implicit val appConfig: FrontendAppConfig,
-                               val messagesApi: MessagesApi,
-                               implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with FeatureSwitching {
+                               mcc: MessagesControllerComponents,
+                               implicit val ec: ExecutionContext,
+                               dateFormatter: ImplicitDateFormatterImpl) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate)(implicit request: Request[_], user: MtdItUser[_]): Html = {
     views.html.home(
       nextPaymentDueDate = nextPaymentDueDate,
       nextUpdate = nextUpdate,
-      paymentEnabled = isEnabled(Payment)
+      paymentEnabled = isEnabled(Payment),
+      implicitDateFormatter = dateFormatter
     )
   }
 

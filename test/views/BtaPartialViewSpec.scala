@@ -16,30 +16,29 @@
 
 package views
 
-import assets.Messages.{BtaPartial => messages}
+import assets.MessagesLookUp.{BtaPartial => btaPartialMessages}
 import org.jsoup.Jsoup
-import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
 class BtaPartialViewSpec extends TestSupport {
 
-  lazy val page: HtmlFormat.Appendable = views.html.btaPartial()(FakeRequest(), applicationMessages, appConfig)
+  lazy val page: HtmlFormat.Appendable = views.html.btaPartial()(FakeRequest(), implicitly, appConfig)
   lazy val document = Jsoup.parse(page.body)
 
   "The BtaPartial view" should {
 
-    s"have the heading '${messages.heading}'" in {
-      document.getElementById("it-quarterly-reporting-heading").text shouldBe messages.heading
+    s"have the heading '${btaPartialMessages.heading}'" in {
+      document.getElementById("it-quarterly-reporting-heading").text shouldBe btaPartialMessages.heading
     }
 
-    s"have the correct p1 message '${messages.p1}'" in {
-      document.getElementById("it-quarterly-reporting-p1").text shouldBe messages.p1
+    s"have the correct p1 message '${btaPartialMessages.p1}'" in {
+      document.getElementById("it-quarterly-reporting-p1").text shouldBe btaPartialMessages.p1
     }
 
-    s"have the correct p2 message '${messages.p2}'" in {
-      document.getElementById("it-quarterly-reporting-p2").text shouldBe messages.p2
+    s"have the correct p2 message '${btaPartialMessages.p2}'" in {
+      document.getElementById("it-quarterly-reporting-p2").text shouldBe btaPartialMessages.p2
     }
 
     s"have have a button to the ITVC home page" which {
@@ -50,8 +49,8 @@ class BtaPartialViewSpec extends TestSupport {
         homeButton.attr("href") shouldBe appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.home().url
       }
 
-      s"has the correct button text of '${messages.button}'" in {
-        homeButton.text shouldBe messages.button
+      s"has the correct button text of '${btaPartialMessages.button}'" in {
+        homeButton.text shouldBe btaPartialMessages.button
       }
 
       "has the correct button class of 'button'" in {

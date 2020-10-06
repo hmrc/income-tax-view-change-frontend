@@ -16,12 +16,14 @@
 
 package models
 
-import implicits.ImplicitDateFormatter._
+import implicits.ImplicitDateFormatter
+import javax.inject.Inject
 import models.core.AccountingPeriodModel
 import org.scalatest.Matchers
+import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.test.UnitSpec
 
-class AccountingPeriodModelSpec extends UnitSpec with Matchers {
+class AccountingPeriodModelSpec @Inject() (val languageUtils: LanguageUtils) extends UnitSpec with Matchers with ImplicitDateFormatter {
 
   "The AccountingPeriodModel Model" when {
     "the end date is before the Start of the next Tax Year" should {

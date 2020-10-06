@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.BaseController
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.api.{Configuration, Environment}
@@ -35,10 +35,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class StubDataController @Inject()(implicit val appConfig: FrontendAppConfig,
                                    override val config: Configuration,
                                    override val env: Environment,
-                                   implicit val messagesApi: MessagesApi,
-                                   implicit val ec: ExecutionContext,
+                                   implicit val mcc: MessagesControllerComponents,
+                                   implicit val executionContext: ExecutionContext,
                                    val dynamicStubConnector: DynamicStubConnector
-                                  ) extends BaseController with AuthRedirects {
+                                  ) extends BaseController with AuthRedirects with I18nSupport {
 
   val show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(view(StubDataForm.stubDataForm)))

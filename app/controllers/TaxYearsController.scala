@@ -21,15 +21,15 @@ import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartials
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.Inject
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{CalculationService, FinancialTransactionsService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearsController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                   implicit val messagesApi: MessagesApi,
-                                   implicit val ec: ExecutionContext,
+                                   mcc: MessagesControllerComponents,
+                                   implicit val executionContext: ExecutionContext,
                                    val checkSessionTimeout: SessionTimeoutPredicate,
                                    val authenticate: AuthenticationPredicate,
                                    val retrieveNino: NinoPredicate,
@@ -39,7 +39,7 @@ class TaxYearsController @Inject()(implicit val appConfig: FrontendAppConfig,
                                    val itvcErrorHandler: ItvcErrorHandler,
                                    val auditingService: AuditingService,
                                    val financialTransactionsService: FinancialTransactionsService
-                                  ) extends BaseController {
+                                  ) extends BaseController with I18nSupport {
 
   val viewTaxYears: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>

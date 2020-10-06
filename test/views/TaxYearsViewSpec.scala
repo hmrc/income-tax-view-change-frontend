@@ -17,8 +17,8 @@
 package views
 
 import assets.EstimatesTestConstants._
-import assets.Messages
-import assets.Messages.{Breadcrumbs => breadcrumbMessages}
+import assets.MessagesLookUp
+import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages}
 import config.FrontendAppConfig
 import models.calculation.CalculationResponseModelWithYear
 import models.financialTransactions.TransactionModelWithYear
@@ -37,7 +37,7 @@ class TaxYearsViewSpec extends TestSupport {
 
   private def pageSetup(calcs: List[CalculationResponseModelWithYear], transactions: List[TransactionModelWithYear] = List()) = new {
     lazy val page: HtmlFormat.Appendable =
-      views.html.taxYears(calcs, transactions)(FakeRequest(), applicationMessages, mockAppConfig)
+      views.html.taxYears(calcs, transactions)(FakeRequest(), implicitly, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
@@ -45,7 +45,7 @@ class TaxYearsViewSpec extends TestSupport {
     "the user has two tax years with no financial transactions" should {
       val setup = pageSetup(lastTaxCalcWithYearList)
       import setup._
-      val messages = Messages.TaxYears
+      val messages = MessagesLookUp.TaxYears
 
       s"have the title '${messages.title}'" in {
         document.title() shouldBe messages.title
@@ -74,7 +74,7 @@ class TaxYearsViewSpec extends TestSupport {
     "the user has three tax years with different financial information" should {
       val setup = pageSetup(lastThreeTaxCalcWithYear, lastThreeTaxYearFinancialTransactions)
       import setup._
-      val messages = Messages.TaxYears
+      val messages = MessagesLookUp.TaxYears
 
       s"have the title '${messages.title}'" in {
         document.title() shouldBe messages.title
@@ -101,7 +101,7 @@ class TaxYearsViewSpec extends TestSupport {
     "the user has no taxYears" should {
       val setup = pageSetup(List())
       import setup._
-      val messages = Messages.TaxYears
+      val messages = MessagesLookUp.TaxYears
 
       s"have the title '${messages.title}'" in {
         document.title() shouldBe messages.title

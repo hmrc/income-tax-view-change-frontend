@@ -16,19 +16,20 @@
 
 package controllers
 
-import assets.Messages.{NotEnrolled => messages}
+import assets.MessagesLookUp.{NotEnrolled => notEnrolleMessages}
 import config.FrontendAppConfig
 import controllers.notEnrolled.NotEnrolledController
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi
+import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 
 class NotEnrolledControllerSpec extends TestSupport {
 
   object TestNotEnrolledController extends NotEnrolledController()(
     app.injector.instanceOf[FrontendAppConfig],
-    app.injector.instanceOf[MessagesApi]
+    app.injector.instanceOf[MessagesControllerComponents]
   )
 
   "the NotEnrolledController.show() action" should {
@@ -41,7 +42,7 @@ class NotEnrolledControllerSpec extends TestSupport {
     }
 
     "show the not_enrolled page" in {
-      document.getElementById("page-heading").text() shouldBe messages.heading
+      document.getElementById("page-heading").text() shouldBe notEnrolleMessages.heading
     }
 
   }
