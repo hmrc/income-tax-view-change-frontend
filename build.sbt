@@ -6,7 +6,6 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.SbtAutoBuildPlugin
 import play.core.PlayVersion
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
-import uk.gov.hmrc.SbtArtifactory
 
 import sbt.Tests.{Group, SubProcess}
 
@@ -55,8 +54,8 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 
-lazy val plugins : Seq[Plugins] = Seq.empty
-lazy val playSettings : Seq[Setting[_]] = Seq.empty
+lazy val plugins: Seq[Plugins] = Seq.empty
+lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
@@ -70,24 +69,18 @@ lazy val scoverageSettings = {
   )
 }
 
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
-  tests map {
-    test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name, "-Dlogger.resource=logback-test.xml"))))
-  }
-
-
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(playSettings : _*)
   .settings(scalaSettings: _*)
+  .settings(scalaVersion := "2.12.12")
   .settings(publishingSettings: _*)
   .settings(scoverageSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(majorVersion := 1)
   .settings(
     Keys.fork in Test := true,
-    javaOptions in Test += "-Dlogger.resource=logback-test.xml",
-    scalaVersion := "2.11.12"
+    javaOptions in Test += "-Dlogger.resource=logback-test.xml"
   )
   .settings(
     libraryDependencies ++= appDependencies,
@@ -98,9 +91,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
     Keys.fork in IntegrationTest := false,
-    unmanagedSourceDirectories in IntegrationTest <<= (baseDirectory in IntegrationTest)(base => Seq(base / "it")),
+    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
-    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
     parallelExecution in IntegrationTest := false)
   .settings(resolvers ++= Seq(
     Resolver.bintrayRepo("hmrc", "releases"),
