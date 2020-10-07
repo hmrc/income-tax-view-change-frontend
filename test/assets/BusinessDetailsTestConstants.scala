@@ -56,7 +56,8 @@ object BusinessDetailsTestConstants {
     address = Some(testBizAddress),
     contactDetails = None,
     seasonal = None,
-    paperless = None
+    paperless = None,
+    incomeSourceStartDate = None
   )
 
 
@@ -70,7 +71,8 @@ object BusinessDetailsTestConstants {
     address = Some(testBizAddress),
     contactDetails = None,
     seasonal = None,
-    paperless = None
+    paperless = None,
+    incomeSourceStartDate = None
   )
 
   val business2018 = BusinessDetailsModel(
@@ -83,7 +85,8 @@ object BusinessDetailsTestConstants {
     address = Some(testBizAddress),
     contactDetails = None,
     seasonal = None,
-    paperless = None
+    paperless = None,
+    incomeSourceStartDate = None
   )
 
   val business2019 = BusinessDetailsModel(
@@ -96,7 +99,8 @@ object BusinessDetailsTestConstants {
     address = Some(testBizAddress),
     contactDetails = None,
     seasonal = None,
-    paperless = None
+    paperless = None,
+    incomeSourceStartDate = None
   )
 
   val alignedBusiness = BusinessDetailsModel(
@@ -109,7 +113,8 @@ object BusinessDetailsTestConstants {
     address = Some(testBizAddress),
     contactDetails = None,
     seasonal = None,
-    paperless = None
+    paperless = None,
+    incomeSourceStartDate = None
   )
 
   val ceasedBusiness = BusinessDetailsModel(
@@ -122,7 +127,8 @@ object BusinessDetailsTestConstants {
     address = Some(testBizAddress),
     contactDetails = None,
     seasonal = None,
-    paperless = None
+    paperless = None,
+    incomeSourceStartDate = None
   )
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)

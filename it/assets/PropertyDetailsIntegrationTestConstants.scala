@@ -40,7 +40,8 @@ object PropertyDetailsIntegrationTestConstants {
     contactDetails = None,
     propertiesRented = None,
     cessation = None,
-    paperless = None
+    paperless = None,
+    incomeSourceStartDate = Some(propertyAccounringEndLocalDate)
   )
 
   val propertySuccessResponse: JsValue = Json.obj(

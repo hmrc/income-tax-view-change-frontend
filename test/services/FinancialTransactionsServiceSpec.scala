@@ -20,10 +20,12 @@ import assets.BaseTestConstants._
 import assets.FinancialTransactionsTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import auth.MtdItUser
+import config.featureswitch.{API5, FeatureSwitching}
 import implicits.ImplicitDateFormatter
 import javax.inject.Inject
 import mocks.connectors.MockFinancialTransactionsConnector
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
+import play.api.data.Forms.list
 import play.api.http.Status
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
@@ -35,7 +37,7 @@ import scala.concurrent.ExecutionContext
 
 
 class FinancialTransactionsServiceSpec @Inject() (val languageUtils: LanguageUtils)
-  extends TestSupport with MockFinancialTransactionsConnector with ImplicitDateFormatter{
+  extends TestSupport with MockFinancialTransactionsConnector with ImplicitDateFormatter with FeatureSwitching{
 
   object TestFinancialTransactionsService extends FinancialTransactionsService(mockFinancialTransactionsConnector)
 
@@ -61,18 +63,141 @@ class FinancialTransactionsServiceSpec @Inject() (val languageUtils: LanguageUti
 
   }
 
-  "The FinancialTransactionsService.getAllFinancialTransactions method" when {
+    "The FinancialTransactionsService.getAllFinancialTransactions method with API5 enabled" when {
+
+      " a successful financial transaction response is returned from the connector" should {
+        val hc = new HeaderCarrier()
+
+        def testFinancialTransactionWithYear(taxYear: Int) = (taxYear, financialTransactionsModel(s"$taxYear-04-05"))
+
+        "return a valid set of transactions for a single tax year" in {
+          enable(API5)
+          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
+            testMtditid,
+            testNino,
+            Some(testRetrievedUserName),
+            propertyIncomeOnly
+          )(FakeRequest())
+
+          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
+          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+
+          result shouldBe List(testFinancialTransactionWithYear(2019))
+        }
+
+        "return a valid set of transactions for a multiple tax years" in {
+          enable(API5)
+          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
+            testMtditid,
+            testNino,
+            Some(testRetrievedUserName),
+            businessIncome2018and2019
+          )(FakeRequest())
+          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
+          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(financialTransactionsModel("2019-04-05"))
+
+          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc, ec: ExecutionContext))
+
+          result shouldBe List(testFinancialTransactionWithYear(2019), testFinancialTransactionWithYear(2019))
+        }
+
+        "return no financial transactions" in {
+          enable(API5)
+          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
+            testMtditid,
+            testNino,
+            Some(testRetrievedUserName),
+            noIncomeDetails
+          )(FakeRequest())
+
+          setupFinancialTransactionsResponse(testNino, testTaxYear)(FinancialTransactionsModel(
+            None,
+            None,
+            None,
+            "2017-07-06T12:34:56.789Z".toZonedDateTime,
+            None))
+
+          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc, ec: ExecutionContext))
+
+          result shouldBe List.empty
+        }
+
+      }
 
 
-    "a successful financial transaction response is returned from the connector" should {
+      "a un-successful financial transaction response is returned from the connector" should {
+        val hc = new HeaderCarrier()
+
+
+        def testFinancialTransactionWithYear(taxYear: Int) = (taxYear, financialTransactionsModel(s"$taxYear-04-05"))
+
+        "return a financial transaction with a valid transaction retrieved and a bad Request response" in {
+          enable(API5)
+          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
+            testMtditid,
+            testNino,
+            Some(testRetrievedUserName),
+            businessIncome2018and2019
+          )(FakeRequest())
+
+          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
+          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(FinancialTransactionsErrorModel(
+            Status.BAD_REQUEST,
+            "Bad Request Recieved"
+          ))
+
+          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+
+          result shouldBe List(testFinancialTransactionWithYear(2019))
+        }
+
+        "pass the errored tax year with a valid transaction retrieved and a internal server error response" in {
+          enable(API5)
+          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
+            testMtditid,
+            testNino,
+            Some(testRetrievedUserName),
+            businessIncome2018and2019
+          )(FakeRequest())
+
+          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
+          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(financialTransactionsErrorModel)
+
+          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+
+          result shouldBe List(testFinancialTransactionWithYear(2019), (2020, financialTransactionsErrorModel))
+        }
+
+        "return an internal error with a financial transaction with a server error response" in {
+          enable(API5)
+          setupFinancialTransactionsResponse(testNino, testTaxYear)(financialTransactionsModel())
+          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
+            testMtditid,
+            testNino,
+            Some(testRetrievedUserName),
+            propertyIncomeOnly
+          )(FakeRequest())
+
+          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsErrorModel)
+
+          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+
+          result shouldBe List((2018, financialTransactionsErrorModel))
+        }
+      }
+    }
+
+
+  "The FinancialTransactionsService.getAllFinancialTransactions method with API5 disabled" when {
+
+    " a successful financial transaction response is returned from the connector" should {
       val hc = new HeaderCarrier()
 
-
-
-      def testFinancialTransactionWithYear(taxYear:Int) = (taxYear, financialTransactionsModel(s"$taxYear-04-05"))
+      def testFinancialTransactionWithYear(taxYear: Int) = (taxYear, financialTransactionsModel(s"$taxYear-04-05"))
 
 
       "return a valid set of transactions for a single tax year" in {
+        disable(API5)
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
@@ -80,28 +205,30 @@ class FinancialTransactionsServiceSpec @Inject() (val languageUtils: LanguageUti
           propertyIncomeOnly
         )(FakeRequest())
 
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2018)(financialTransactionsModel())
+        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
         val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
 
-        result shouldBe List(testFinancialTransactionWithYear(2018))
+        result shouldBe List(testFinancialTransactionWithYear(2019))
       }
 
       "return a valid set of transactions for a multiple tax years" in {
+        disable(API5)
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
           Some(testRetrievedUserName),
           businessIncome2018and2019
         )(FakeRequest())
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2018)(financialTransactionsModel())
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel("2019-04-05"))
+        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
+        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(financialTransactionsModel("2019-04-05"))
 
         val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc, ec: ExecutionContext))
 
-         result shouldBe List(testFinancialTransactionWithYear(2018) , testFinancialTransactionWithYear(2019))
+        result shouldBe List(testFinancialTransactionWithYear(2019), testFinancialTransactionWithYear(2019))
       }
 
       "return no financial transactions" in {
+        disable(API5)
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
@@ -116,9 +243,9 @@ class FinancialTransactionsServiceSpec @Inject() (val languageUtils: LanguageUti
           "2017-07-06T12:34:56.789Z".toZonedDateTime,
           None))
 
-        val result =  await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc, ec: ExecutionContext))
+        val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc, ec: ExecutionContext))
 
-        result shouldBe  List.empty
+        result shouldBe List.empty
       }
 
     }
@@ -128,10 +255,10 @@ class FinancialTransactionsServiceSpec @Inject() (val languageUtils: LanguageUti
       val hc = new HeaderCarrier()
 
 
-
-      def testFinancialTransactionWithYear(taxYear:Int) = (taxYear, financialTransactionsModel(s"$taxYear-04-05"))
+      def testFinancialTransactionWithYear(taxYear: Int) = (taxYear, financialTransactionsModel(s"$taxYear-04-05"))
 
       "return a financial transaction with a valid transaction retrieved and a bad Request response" in {
+        disable(API5)
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
           testNino,
@@ -139,35 +266,36 @@ class FinancialTransactionsServiceSpec @Inject() (val languageUtils: LanguageUti
           businessIncome2018and2019
         )(FakeRequest())
 
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2018)(financialTransactionsModel())
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(FinancialTransactionsErrorModel(
+        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
+        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(FinancialTransactionsErrorModel(
           Status.BAD_REQUEST,
           "Bad Request Recieved"
         ))
 
-        val result =  await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+        val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
 
-        result shouldBe List(testFinancialTransactionWithYear(2018))
+        result shouldBe List(testFinancialTransactionWithYear(2019))
       }
 
       "pass the errored tax year with a valid transaction retrieved and a internal server error response" in {
-
+        disable(API5)
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-            testMtditid,
-            testNino,
-            Some(testRetrievedUserName),
-            businessIncome2018and2019
-          )(FakeRequest())
+          testMtditid,
+          testNino,
+          Some(testRetrievedUserName),
+          businessIncome2018and2019
+        )(FakeRequest())
 
-          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2018)(financialTransactionsModel())
-          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsErrorModel)
+        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
+        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(financialTransactionsErrorModel)
 
-          val result =  await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+        val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
 
-          result shouldBe List(testFinancialTransactionWithYear(2018), (2019, financialTransactionsErrorModel))
+        result shouldBe List(testFinancialTransactionWithYear(2019), (2020, financialTransactionsErrorModel))
       }
 
       "return an internal error with a financial transaction with a server error response" in {
+        disable(API5)
         setupFinancialTransactionsResponse(testNino, testTaxYear)(financialTransactionsModel())
         val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
           testMtditid,
@@ -176,96 +304,13 @@ class FinancialTransactionsServiceSpec @Inject() (val languageUtils: LanguageUti
           propertyIncomeOnly
         )(FakeRequest())
 
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2018)(financialTransactionsErrorModel)
+        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsErrorModel)
 
-        val result =  await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+        val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
 
         result shouldBe List((2018, financialTransactionsErrorModel))
       }
     }
-
   }
 
-  "The FinancialTransactionsService.getAllUnpaidFinancialTransactions method" when {
-    "returning all the unpaid/errored transactions" should {
-      val hc = new HeaderCarrier()
-
-      "with a single unpaid transaction" in {
-        val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-          testMtditid,
-          testNino,
-          Some(testRetrievedUserName),
-          propertyIncomeOnly
-        )(FakeRequest())
-
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2018)(financialTransactionsModel())
-
-        val result =  await(TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
-
-        result shouldBe List(financialTransactionsModel())
-      }
-
-      "with a single unpaid transaction and paid transaction" in {
-        val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-          testMtditid,
-          testNino,
-          Some(testRetrievedUserName),
-          propertyIncomeOnly
-        )(FakeRequest())
-
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2018)(FinancialTransactionsModel(
-          None,
-          None,
-          None,
-          "2017-07-06T12:34:56.789Z".toZonedDateTime,
-          Some(Seq(paidTransactionModel("2018-04-05")))
-        ))
-
-        val result =  await(TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
-
-        result shouldBe List()
-      }
-
-      "with a single error response transaction" in {
-        val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-          testMtditid,
-          testNino,
-          Some(testRetrievedUserName),
-          propertyIncomeOnly
-        )(FakeRequest())
-
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2018)(financialTransactionsErrorModel)
-
-        val result =  await(TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
-
-        result shouldBe List(financialTransactionsErrorModel)
-      }
-
-      "with a error response transaction, unpaid and paid transaction" in {
-        val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-          testMtditid,
-          testNino,
-          Some(testRetrievedUserName),
-          businessIncome2018and2019AndProp
-        )(FakeRequest())
-
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2017)(FinancialTransactionsModel(
-          None,
-          None,
-          None,
-          "2017-07-06T12:34:56.789Z".toZonedDateTime,
-          Some(Seq(paidTransactionModel("2018-04-05")))
-        ))
-
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2018)(financialTransactionsModel())
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsErrorModel)
-
-
-        val result =  await(TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
-
-        result shouldBe List(financialTransactionsModel(),financialTransactionsErrorModel)
-      }
-
-    }
-  }
 }

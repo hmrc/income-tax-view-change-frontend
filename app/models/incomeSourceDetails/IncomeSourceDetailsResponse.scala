@@ -16,6 +16,8 @@
 
 package models.incomeSourceDetails
 
+import java.time.LocalDate
+
 import models.core.AccountingPeriodModel
 import play.api.libs.json.{Format, JsValue, Json}
 
@@ -24,18 +26,36 @@ sealed trait IncomeSourceDetailsResponse {
 }
 
 case class IncomeSourceDetailsModel(businesses: List[BusinessDetailsModel],
-                                    property: Option[PropertyDetailsModel]) extends IncomeSourceDetailsResponse {
+                                    property: Option[PropertyDetailsModel]
+                                   ) extends IncomeSourceDetailsResponse {
 
   override def toJson: JsValue = Json.toJson(this)
 
+  val startingTaxYear: Option[Int] = (businesses.flatMap(_.incomeSourceStartDate) ++ property.flatMap(_.incomeSourceStartDate))
+    .map(_.getYear).sortWith(_ < _).headOption
+
   val accountingPeriods: List[AccountingPeriodModel] = businesses.map(_.accountingPeriod) ++ property.map(_.accountingPeriod)
-  val orderedTaxYears: List[Int] = accountingPeriods.map(_.determineTaxYear).sortWith(_ < _).distinct
+
+  def orderedTaxYears(api5Enable: Boolean): List[Int] = {
+    if (api5Enable) {
+      startingTaxYear.fold(List.empty[Int])(year => (year to getCurrentTaxEndYear).toList)
+    }
+    else {
+      accountingPeriods.map(_.determineTaxYear).sortWith(_ < _).distinct
+    }
+  }
 
   val hasPropertyIncome: Boolean = property.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty
 
-  val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
+  val earliestTaxYear: Option[Int] = orderedTaxYears(false).headOption
 
+  val getCurrentTaxEndYear: Int = {
+    val currentDate = LocalDate.now
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
+
+  }
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {
