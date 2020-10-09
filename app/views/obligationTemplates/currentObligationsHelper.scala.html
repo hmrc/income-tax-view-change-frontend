@@ -1,39 +1,39 @@
 @*
- * Copyright 2020 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2020 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import implicits.ImplicitDateFormatter
 @import views.html.helpers.accordionHelper
 @(obligations: models.reportDeadlines.ObligationsModel, implicitDateFormatter: ImplicitDateFormatter)(implicit messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
- <div id="submit-using-record-keeping-software">@Html(messages(
-        "obligations.sub-heading.info",
-        <a id="record-keeping-software-link" href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">{messages("obligations.record-keeping-software")}</a>
-        ))
- </div>
+<div id="submit-using-record-keeping-software">@Html(messages(
+    "obligations.sub-heading.info",
+    <a id="record-keeping-software-link" href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">{messages("obligations.record-keeping-software")}</a>
+    ))
+</div>
 
 <h2 id="quarterlyReturns-heading" class="heading-medium">@messages("obligations.quarterlyUpdates")</h2>
 
-<details role="group">
+<details class="govuk-details" role="group">
 
-    <summary id="quarterly-dropdown-title" role="button" aria-controls="details-content-0" aria-expanded="false">
-        @messages("obligation.dropdown.quarterlyReturn.info.v2")
+    <summary class="govuk-details__summary" id="quarterly-dropdown-title" role="button" aria-controls="details-content-0" aria-expanded="false">
+        <span class="govuk-details__summary-text"> @messages("obligation.dropdown.quarterlyReturn.info.v2") </span>
     </summary>
 
-    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+    <div class="govuk-details__text" id="details-content-0" aria-hidden="true">
         <p><span id="quarterly-dropdown-line1">@messages("obligation.dropdown.quarterlyReturn.text.v2")</span> </p>
 
         <p><span id="quarterly-dropdown-line2">@Html(messages("obligation.dropdown.quarterlyReturn.text.v2.lin2",
@@ -63,13 +63,13 @@
 
 <h3 id="annualUpdates-heading" class="heading-medium">@messages("obligations.annualUpdates")</h3>
 
-<details role="group">
+<details class= "govuk-details" role="group">
 
-    <summary id="annual-dropdown-title" role="button" aria-controls="details-content-1" aria-expanded="false">
-        @messages("obligation.dropdown.annualUpdates.info.v2")
+    <summary class= "govuk-details__summary" id="annual-dropdown-title" role="button" aria-controls="details-content-1" aria-expanded="false">
+        <span class="govuk-details__summary-text"> @messages("obligation.dropdown.annualUpdates.info.v2") </span>
     </summary>
 
-    <div class="panel panel-border-narrow" id="details-content-1" aria-hidden="true">
+    <div class="govuk-details__text" id="details-content-1" aria-hidden="true">
         <p><span id="annual-dropdown-line1"> @messages("obligation.dropdown.annualReturn.text.v2")</span> </p>
 
         <p><span id="annual-dropdown-line2">@Html(messages("obligation.dropdown.annualReturn.text.v2.lin2",
@@ -99,13 +99,13 @@
 
 <h3 id="declarations-heading" class="heading-medium">@messages("obligations.finalDeclarationUpdate")</h3>
 
-<details role="group">
+<details class="govuk-details" role="group">
 
-    <summary id="declaration-dropdown-title" role="button" aria-controls="details-content-2" aria-expanded="false">
-        @messages("obligation.dropdown.finalDeclaration.info.v2")
+    <summary class="govuk-details__summary" id="declaration-dropdown-title" role="button" aria-controls="details-content-2" aria-expanded="false">
+        <span class="govuk-details__summary-text"> @messages("obligation.dropdown.finalDeclaration.info.v2") </span>
     </summary>
 
-    <div class="panel panel-border-narrow" id="details-content-2" aria-hidden="true">
+    <div class="govuk-details__text" id="details-content-2" aria-hidden="true">
         <p>@Html(messages("obligation.dropdown.finalDeclaration.text.v2",
             <a href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax" target="_blank">
                 {messages("obligations.record-keeping-software")}</a>
