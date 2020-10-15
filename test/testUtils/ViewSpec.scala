@@ -102,6 +102,10 @@ trait ViewSpec extends TestSupport {
     def table(nthOfType: Int = 1): Element = {
       element.select(s"${Selectors.table}:nth-of-type($nthOfType)") getOrElse fail("table element not found")
     }
+
+    def breadcrumbNav: Element = {
+      element.selectHead("#breadcrumbs")
+    }
   }
 
   implicit class ElementTests(element: Element) {

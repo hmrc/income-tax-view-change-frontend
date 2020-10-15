@@ -18,7 +18,7 @@
 
 @(breadcrumb: Breadcrumb, page: String)(implicit messages: Messages, appConfig: config.FrontendAppConfig)
 
-<nav id="breadcrumbs" class="breadcrumbs soft--top">
+<nav id="breadcrumbs" class="breadcrumbs soft--top" aria-label="@messages("breadcrumb.landmark-label")">
     <ol class="push--top">
         <li>
             <a id="breadcrumb-bta" data-journey-click="@{page}:ClickBreadcrumb:btaLink" href=@appConfig.businessTaxAccount>
