@@ -28,7 +28,7 @@
 @import testOnly.forms.validation.ErrorMessageHelper._
 
 @hintText(hint: String) = {
-    <span class="form-hint">
+    <span class="form-hint" id="input-helper-hint">
     @hint
     </span>
 }
@@ -47,7 +47,11 @@
         @formHint.fold(Nil: Seq[Html])(_.map(hintText))
     </label>
     @fieldErrorHelper(field, parentForm)
-    <input name=@field.name class="input--fullwidth" id=@field.name type="text"
+    @if(formHint.isDefined) {
+        <input name=@field.name class="input--fullwidth" id=@field.name type="text" aria-describedby="input-helper-hint"
+    } else {
+        <input name=@field.name class="input--fullwidth" id=@field.name type="text"
+    }
         @maxLength.fold(Html(""))(max => Html(s"maxlength=$max"))
         value="@field.value.fold("")(v => v)"
         @if(isNumeric){pattern="[0-9]*" inputmode="numeric"}
