@@ -76,7 +76,7 @@ object BusinessDetailsIntegrationTestConstants {
     contactDetails = None,
     seasonal = None,
     paperless = None,
-    incomeSourceStartDate = Some(b1AccountingEnd)
+    firstAccountingPeriodEndDate = Some(b1AccountingEnd)
   )
 
   val business2 = BusinessDetailsModel(
@@ -103,7 +103,7 @@ object BusinessDetailsIntegrationTestConstants {
     contactDetails = None,
     seasonal = None,
     paperless = None,
-    incomeSourceStartDate = Some(b2AccountingEnd)
+    firstAccountingPeriodEndDate = Some(b2AccountingEnd)
   )
 
 }
