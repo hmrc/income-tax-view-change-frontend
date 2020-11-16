@@ -31,7 +31,7 @@ case class IncomeSourceDetailsModel(businesses: List[BusinessDetailsModel],
 
   override def toJson: JsValue = Json.toJson(this)
 
-  val startingTaxYear: Option[Int] = (businesses.flatMap(_.incomeSourceStartDate) ++ property.flatMap(_.incomeSourceStartDate))
+  val startingTaxYear: Option[Int] = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
     .map(_.getYear).sortWith(_ < _).headOption
 
   val accountingPeriods: List[AccountingPeriodModel] = businesses.map(_.accountingPeriod) ++ property.map(_.accountingPeriod)

@@ -43,7 +43,7 @@ object PropertyDetailsTestConstants {
     cessation = None,
     contactDetails = None,
     paperless = None,
-    incomeSourceStartDate = None
+    firstAccountingPeriodEndDate = None
   )
 
   val ceasedPropertyDetails = PropertyDetailsModel(
@@ -58,7 +58,7 @@ object PropertyDetailsTestConstants {
     cessation = Some(testCessation),
     contactDetails = None,
     paperless = None,
-    incomeSourceStartDate = None
+    firstAccountingPeriodEndDate = None
   )
 
   val openCrystallised: ReportDeadlineModel = fakeReportDeadlinesModel(ReportDeadlineModel(

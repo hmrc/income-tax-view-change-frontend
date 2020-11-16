@@ -30,7 +30,7 @@ case class BusinessDetailsModel(incomeSourceId: String,
                                 seasonal: Option[Boolean],
                                 cessation: Option[CessationModel],
                                 paperless: Option[Boolean],
-                                incomeSourceStartDate: Option[LocalDate])
+                                firstAccountingPeriodEndDate: Option[LocalDate])
 
 object BusinessDetailsModel {
   implicit val format: Format[BusinessDetailsModel] = Json.format[BusinessDetailsModel]

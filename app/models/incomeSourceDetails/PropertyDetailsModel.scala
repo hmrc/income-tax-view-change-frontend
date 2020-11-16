@@ -26,7 +26,7 @@ case class PropertyDetailsModel(incomeSourceId: String,
                                 propertiesRented: Option[PropertiesRentedModel],
                                 cessation: Option[CessationModel],
                                 paperless: Option[Boolean],
-                                incomeSourceStartDate: Option[LocalDate])
+                                firstAccountingPeriodEndDate: Option[LocalDate])
 
 object PropertyDetailsModel {
   implicit val format: OFormat[PropertyDetailsModel] = Json.format[PropertyDetailsModel]
