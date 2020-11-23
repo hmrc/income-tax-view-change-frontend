@@ -18,7 +18,10 @@ package models.financialTransactions
 
 import java.time.{LocalDate, ZonedDateTime}
 
+import auth.MtdItUser
+import play.api.Logger
 import play.api.libs.json.{Format, Json}
+import play.api.mvc.AnyContent
 
 sealed trait FinancialTransactionsResponseModel
 
@@ -33,6 +36,12 @@ case class FinancialTransactionsModel(idType: Option[String],
 
   def findChargeForTaxYear(taxYear: Int): Option[TransactionModel] =
     financialTransactions.getOrElse(Seq()).find(_.taxPeriodTo.fold(false)(_ == LocalDate.parse(s"$taxYear-04-05")))
+
+  def isAllPaid(taxYear: Int)(implicit user: MtdItUser[AnyContent]): Boolean = financialTransactions.getOrElse {
+    Logger.info(
+      s"[FinancialTransactionsService][getAllUnpaidFinancialTransactions] - no financial transactions for mtditid: ${user.mtditid} and taxYear: $taxYear")
+    List.empty[TransactionModel]
+  }.forall(_.isPaid)
 
 }
 

@@ -16,11 +16,10 @@
 
 package assets
 
-import java.time.{LocalDate, ZonedDateTime}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZonedDateTime}
 
 import assets.BaseTestConstants._
-import implicits.ImplicitDateFormatter
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
 import play.api.libs.json.{JsValue, Json}
 
@@ -181,6 +180,8 @@ object FinancialTransactionsTestConstants{
       )
     ))
   )
+
+  val fullTransactionModel: TransactionModel = transactionModel()
 
   def financialTransactionsModel(taxYear: LocalDate = LocalDate.of(2018,2,17), outstandingAmount: Option[BigDecimal] = Some(1400.0)) = FinancialTransactionsModel(
     idType = testIdType,

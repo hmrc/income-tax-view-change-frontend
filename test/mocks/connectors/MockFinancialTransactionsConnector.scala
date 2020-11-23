@@ -36,10 +36,10 @@ trait MockFinancialTransactionsConnector extends UnitSpec with MockitoSugar with
     reset(mockFinancialTransactionsConnector)
   }
 
-  def setupFinancialTransactionsResponse(nino: String, taxYear: Int)(response: FinancialTransactionsResponseModel): Unit =
+  def mockGetFinancialTransactions(mtditid: String, taxYear: Int)(response: FinancialTransactionsResponseModel): Unit =
     when(
       mockFinancialTransactionsConnector.getFinancialTransactions(
-        ArgumentMatchers.eq(nino), ArgumentMatchers.eq(taxYear)
+        ArgumentMatchers.eq(mtditid), ArgumentMatchers.eq(taxYear)
       )(ArgumentMatchers.any())
     ).thenReturn(Future.successful(response))
 }
