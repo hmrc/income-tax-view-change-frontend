@@ -23,8 +23,8 @@ import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, Payment}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub}
-import implicits.ImplicitDateFormatter
 import play.api.http.Status._
+import play.api.libs.json.Json
 
 class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -74,8 +74,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
         And("I wiremock stub a single financial transaction response")
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, financialTransactionsJson(2000,"2017-04-06", "2018-04-05"))
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000,"2018-04-06", "2019-04-05"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, financialTransactionsJson(2000, "2017-04-06", "2018-04-05"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000, "2018-04-06", "2019-04-05"))
 
         And("the payment feature switch is set to false")
         disable(Payment)
@@ -106,7 +106,44 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       }
 
-      "render the payments due page with a single transaction and a bad Request and" in {
+      "render the payments due page where there is a mix of paid, unpaid and non charge transactions" in {
+        val testTaxYear = 2019
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+
+        And("I wiremock stub a single financial transaction response")
+        val mixedJson = financialTransactionsJson(1000, "2018-04-06", "2019-04-05") ++ Json.obj(
+          "financialTransactions" -> Json.arr(
+            transactionJson(None, Some(1000.00), "2018-04-06", "2019-04-05"),
+            transactionJson(Some(3000.00), Some(1000.00), "2018-04-06", "2019-04-05"),
+            transactionJson(Some(-3000.00), Some(-1000.00), "2018-04-06", "2019-04-05")
+          )
+        )
+
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, mixedJson)
+
+        When("I call GET /report-quarterly/income-and-expenses/view/payments-due")
+        val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+        verifyFinancialTransactionsCall(testMtditid, "2017-04-06", "2018-04-05")
+        verifyFinancialTransactionsCall(testMtditid, "2018-04-06", "2019-04-05")
+
+        Then("the result should have a HTTP status of OK (200) and the payments due page")
+        res should have(
+          httpStatus(OK),
+          pageTitle("Income Tax payments - Business Tax account - GOV.UK"),
+          isElementVisibleById(s"payments-due-$testTaxYear")(expectedValue = true),
+          isElementVisibleById(s"payments-due-outstanding-$testTaxYear")(expectedValue = true),
+          isElementVisibleById(s"payments-due-on-$testTaxYear")(expectedValue = true),
+          isElementVisibleById(s"bills-link-$testTaxYear")(expectedValue = true),
+          isElementVisibleById(s"payment-link-$testTaxYear")(expectedValue = false)
+        )
+
+
+      }
+
+      "render the payments due page with a single transaction and a not found" in {
         val testTaxYear1 = 2018
         val testTaxYear2 = 2019
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -114,8 +151,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
         And("I wiremock stub a single financial transaction response")
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(BAD_REQUEST, financialTransactionsSingleErrorJson("400"))
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000,"2018-04-06", "2019-04-05"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(NOT_FOUND, financialTransactionsSingleErrorJson("400"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000, "2018-04-06", "2019-04-05"))
 
         And("the payment feature switch is set to false")
         disable(Payment)
@@ -179,8 +216,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
         And("I wiremock stub a single financial transaction response")
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, financialTransactionsSingleErrorJson("400"))
-        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000,"2018-04-06", "2019-04-05"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(INTERNAL_SERVER_ERROR, financialTransactionsSingleErrorJson("500"))
+        FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(3000, "2018-04-06", "2019-04-05"))
 
         And("the payment feature switch is set to false")
         disable(Payment)

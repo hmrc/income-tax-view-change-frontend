@@ -16,299 +16,526 @@
 
 package services
 
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZonedDateTime}
+
 import assets.BaseTestConstants._
 import assets.FinancialTransactionsTestConstants._
-import assets.IncomeSourceDetailsTestConstants._
 import auth.MtdItUser
 import config.featureswitch.{API5, FeatureSwitching}
-import implicits.ImplicitDateFormatter
-import javax.inject.Inject
 import mocks.connectors.MockFinancialTransactionsConnector
-import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
-import play.api.data.Forms.list
+import models.core.AccountingPeriodModel
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel, TransactionModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import testUtils.TestSupport
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.language.LanguageUtils
-
-import scala.concurrent.ExecutionContext
 
 
-class FinancialTransactionsServiceSpec @Inject() (val languageUtils: LanguageUtils)
-  extends TestSupport with MockFinancialTransactionsConnector with ImplicitDateFormatter with FeatureSwitching{
+class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTransactionsConnector with FeatureSwitching {
+
+  override def beforeEach(): Unit = {
+    disable(API5)
+    super.beforeEach()
+  }
+
+  private val april = 4
+  private val fifth = 5
+  private val sixth = 6
+
+  private def getTaxEndYear(date: LocalDate): Int = {
+    if (date.isBefore(LocalDate.of(date.getYear, april, sixth))) date.getYear
+    else date.getYear + 1
+  }
+
+  private def getFinancialTransactionSuccess(taxYear: Int,
+                                             financialTransactions: Seq[TransactionModel] = Seq(fullTransactionModel)): FinancialTransactionsModel = {
+    FinancialTransactionsModel(
+      idType = Some("MTDBSA"),
+      idNumber = Some("XQIT00000000001"),
+      regimeType = Some("ITSA"),
+      processingDate = ZonedDateTime.parse(s"$taxYear-07-06T12:34:56.789Z", DateTimeFormatter.ISO_ZONED_DATE_TIME),
+      financialTransactions = Some(financialTransactions)
+    )
+  }
+
+  private def mtdUser(numYears: Int): MtdItUser[AnyContent] = MtdItUser(
+    testMtditid,
+    testNino,
+    Some(testRetrievedUserName),
+    IncomeSourceDetailsModel(
+      businesses = (1 to numYears).toList.map { count =>
+        BusinessDetailsModel(
+          incomeSourceId = s"income-id-$count",
+          accountingPeriod = AccountingPeriodModel(
+            start = LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count)), april, sixth),
+            end = LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth)
+          ),
+          None, None, None, None, None, None, None, None,
+          firstAccountingPeriodEndDate = Some(LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth))
+        )
+      },
+      property = None
+    )
+  )(FakeRequest())
 
   object TestFinancialTransactionsService extends FinancialTransactionsService(mockFinancialTransactionsConnector)
 
-  "The FinancialTransactionsService.getFinancialTransactions method" when {
-
+  "getFinancialTransactions" when {
     "a successful financial transaction response is returned from the connector" should {
-
       "return a valid FinancialTransactions model" in {
-        setupFinancialTransactionsResponse(testNino, testTaxYear)(financialTransactionsModel())
+        mockGetFinancialTransactions(testNino, testTaxYear)(financialTransactionsModel())
         await(TestFinancialTransactionsService.getFinancialTransactions(testNino, testTaxYear)) shouldBe financialTransactionsModel()
       }
-
     }
-
     "a error model is returned from the connector" should {
-
       "return a FinancialTransactionsError model" in {
-        setupFinancialTransactionsResponse(testNino, testTaxYear)(financialTransactionsErrorModel)
+        mockGetFinancialTransactions(testNino, testTaxYear)(financialTransactionsErrorModel)
         await(TestFinancialTransactionsService.getFinancialTransactions(testNino, testTaxYear)) shouldBe financialTransactionsErrorModel
       }
-
     }
-
   }
 
-    "The FinancialTransactionsService.getAllFinancialTransactions method with API5 enabled" when {
-
-      " a successful financial transaction response is returned from the connector" should {
-        val hc = new HeaderCarrier()
-
-        def testFinancialTransactionWithYear(taxYear: Int) = (taxYear, financialTransactionsModel(s"$taxYear-04-05"))
-
-        "return a valid set of transactions for a single tax year" in {
+  "getAllFinancialTransactions" when {
+    "API5 is enabled" should {
+      "return a set of successful financial transactions" when {
+        "a successful response is returned for a single year" in {
           enable(API5)
-          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-            testMtditid,
-            testNino,
-            Some(testRetrievedUserName),
-            propertyIncomeOnly
-          )(FakeRequest())
+          val financialTransaction = getFinancialTransactionSuccess(getTaxEndYear(LocalDate.now))
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now), financialTransaction)
+          )
 
-          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
-          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransaction)
 
-          result shouldBe List(testFinancialTransactionWithYear(2019))
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(1), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
         }
-
-        "return a valid set of transactions for a multiple tax years" in {
+        "successful responses are returned for multiple years" in {
           enable(API5)
-          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-            testMtditid,
-            testNino,
-            Some(testRetrievedUserName),
-            businessIncome2018and2019
-          )(FakeRequest())
-          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
-          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(financialTransactionsModel("2019-04-05"))
+          val financialTransactionLastYear = getFinancialTransactionSuccess(getTaxEndYear(LocalDate.now.minusYears(1)))
+          val financialTransaction = getFinancialTransactionSuccess(getTaxEndYear(LocalDate.now))
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now.minusYears(1)), financialTransactionLastYear),
+            (getTaxEndYear(LocalDate.now), financialTransaction)
+          )
 
-          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc, ec: ExecutionContext))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(financialTransactionLastYear)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransaction)
 
-          result shouldBe List(testFinancialTransactionWithYear(2019), testFinancialTransactionWithYear(2019))
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(2), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
         }
-
-        "return no financial transactions" in {
+        "a successful response and a not found response are returned" in {
           enable(API5)
-          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-            testMtditid,
-            testNino,
-            Some(testRetrievedUserName),
-            noIncomeDetails
-          )(FakeRequest())
+          val financialTransactionLastYear = getFinancialTransactionSuccess(getTaxEndYear(LocalDate.now.minusYears(1)))
+          val financialTransactionNotFound = FinancialTransactionsErrorModel(Status.NOT_FOUND, "not found")
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now.minusYears(1)), financialTransactionLastYear)
+          )
 
-          setupFinancialTransactionsResponse(testNino, testTaxYear)(FinancialTransactionsModel(
-            None,
-            None,
-            None,
-            "2017-07-06T12:34:56.789Z".toZonedDateTime,
-            None))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(financialTransactionLastYear)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactionNotFound)
 
-          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc, ec: ExecutionContext))
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(2), headerCarrier, ec)
 
-          result shouldBe List.empty
+          await(result) shouldBe expectedResult
         }
+        "only not found response is returned" in {
+          enable(API5)
+          val financialTransactionNotFound = FinancialTransactionsErrorModel(Status.NOT_FOUND, "not found")
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List.empty
 
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactionNotFound)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(1), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
       }
-
-
-      "a un-successful financial transaction response is returned from the connector" should {
-        val hc = new HeaderCarrier()
-
-
-        def testFinancialTransactionWithYear(taxYear: Int) = (taxYear, financialTransactionsModel(s"$taxYear-04-05"))
-
-        "return a financial transaction with a valid transaction retrieved and a bad Request response" in {
+      "return a set of financial transactions with error transactions" when {
+        "an error response is returned for a single year" in {
           enable(API5)
-          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-            testMtditid,
-            testNino,
-            Some(testRetrievedUserName),
-            businessIncome2018and2019
-          )(FakeRequest())
+          val financialTransactionsError = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal service error")
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now), financialTransactionsError)
+          )
 
-          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
-          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(FinancialTransactionsErrorModel(
-            Status.BAD_REQUEST,
-            "Bad Request Recieved"
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactionsError)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(1), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+        "an error response is returned for multiple years" in {
+          enable(API5)
+          val financialTransactionsError = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal service error")
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now.minusYears(1)), financialTransactionsError),
+            (getTaxEndYear(LocalDate.now), financialTransactionsError)
+          )
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(financialTransactionsError)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactionsError)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(2), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+        "an error response is returned along with a successful response" in {
+          enable(API5)
+          val financialTransactionsErrorLastYear = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
+          val financialTransactions = getFinancialTransactionSuccess(getTaxEndYear(LocalDate.now))
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now.minusYears(1)), financialTransactionsErrorLastYear),
+            (getTaxEndYear(LocalDate.now), financialTransactions)
+          )
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(financialTransactionsErrorLastYear)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactions)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(2), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+      }
+    }
+    "API5 is disabled" should {
+      "return a set of successful financial transactions" when {
+        "a successful response is returned for a single year" in {
+          val financialTransaction = getFinancialTransactionSuccess(getTaxEndYear(LocalDate.now))
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now), financialTransaction)
+          )
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransaction)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(1), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+        "successful responses are returned for multiple years" in {
+          val financialTransactionLastYear = getFinancialTransactionSuccess(getTaxEndYear(LocalDate.now.minusYears(1)))
+          val financialTransaction = getFinancialTransactionSuccess(getTaxEndYear(LocalDate.now))
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now.minusYears(1)), financialTransactionLastYear),
+            (getTaxEndYear(LocalDate.now), financialTransaction)
+          )
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(financialTransactionLastYear)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransaction)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(2), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+        "a successful response and a not found response are returned" in {
+          val financialTransactionLastYear = getFinancialTransactionSuccess(getTaxEndYear(LocalDate.now.minusYears(1)))
+          val financialTransactionNotFound = FinancialTransactionsErrorModel(Status.NOT_FOUND, "not found")
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now.minusYears(1)), financialTransactionLastYear)
+          )
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(financialTransactionLastYear)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactionNotFound)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(2), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+        "only not found response is returned" in {
+          val financialTransactionNotFound = FinancialTransactionsErrorModel(Status.NOT_FOUND, "not found")
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List.empty
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactionNotFound)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(1), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+      }
+      "return a set of financial transactions with error transactions" when {
+        "an error response is returned for a single year" in {
+          val financialTransactionsError = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal service error")
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now), financialTransactionsError)
+          )
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactionsError)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(1), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+        "an error response is returned for multiple years" in {
+          val financialTransactionsError = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal service error")
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now.minusYears(1)), financialTransactionsError),
+            (getTaxEndYear(LocalDate.now), financialTransactionsError)
+          )
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(financialTransactionsError)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactionsError)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(2), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+        "an error response is returned along with a successful response" in {
+          val financialTransactionsErrorLastYear = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
+          val financialTransactions = getFinancialTransactionSuccess(getTaxEndYear(LocalDate.now))
+          val expectedResult: List[(Int, FinancialTransactionsResponseModel)] = List(
+            (getTaxEndYear(LocalDate.now.minusYears(1)), financialTransactionsErrorLastYear),
+            (getTaxEndYear(LocalDate.now), financialTransactions)
+          )
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(financialTransactionsErrorLastYear)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactions)
+
+          val result = TestFinancialTransactionsService.getAllFinancialTransactions(mtdUser(2), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+      }
+    }
+  }
+
+  "getAllUnpaidFinancialTransactions" when {
+    "API5 is enabled" should {
+      "return financial transactions with only the unpaid transactions" when {
+        "only unpaid transactions exist" in {
+          enable(API5)
+
+          val financialTransactionLastYear = getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = Some(100.00)),
+              fullTransactionModel.copy(outstandingAmount = Some(200.00))
+            )
+          )
+          val financialTransaction = getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = Some(300.00)),
+              fullTransactionModel.copy(outstandingAmount = Some(400.00))
+            )
+          )
+          val expectedResult: List[FinancialTransactionsResponseModel] = List(
+            financialTransactionLastYear,
+            financialTransaction
+          )
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(financialTransactionLastYear)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransaction)
+
+          val result = TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(mtdUser(2), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
+        }
+        "a mix of unpaid, paid and non charge transactions exist" in {
+          enable(API5)
+
+          val expectedResult: List[FinancialTransactionsResponseModel] = List(
+            getFinancialTransactionSuccess(
+              taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+              financialTransactions = Seq(
+                fullTransactionModel.copy(outstandingAmount = Some(100.00)),
+              )
+            ),
+            getFinancialTransactionSuccess(
+              taxYear = getTaxEndYear(LocalDate.now),
+              financialTransactions = Seq(
+                fullTransactionModel.copy(outstandingAmount = Some(300.00)),
+              )
+            )
+          )
+
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = None),
+              fullTransactionModel.copy(outstandingAmount = Some(100.00)),
+              fullTransactionModel.copy(outstandingAmount = Some(-200.00), originalAmount = Some(-200.00))
+            )
+          ))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = Some(300.00)),
+              fullTransactionModel.copy(outstandingAmount = Some(-400.00), originalAmount = Some(-400.00)),
+              fullTransactionModel.copy(outstandingAmount = None)
+            )
           ))
 
-          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+          val result = TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(mtdUser(2), headerCarrier, ec)
 
-          result shouldBe List(testFinancialTransactionWithYear(2019))
+          await(result) shouldBe expectedResult
         }
-
-        "pass the errored tax year with a valid transaction retrieved and a internal server error response" in {
+        "no unpaid transactions exist" in {
           enable(API5)
-          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-            testMtditid,
-            testNino,
-            Some(testRetrievedUserName),
-            businessIncome2018and2019
-          )(FakeRequest())
 
-          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
-          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(financialTransactionsErrorModel)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = None),
+              fullTransactionModel.copy(outstandingAmount = None)
+            )
+          ))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = None),
+              fullTransactionModel.copy(outstandingAmount = None)
+            )
+          ))
 
-          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+          val result = TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(mtdUser(2), headerCarrier, ec)
 
-          result shouldBe List(testFinancialTransactionWithYear(2019), (2020, financialTransactionsErrorModel))
+          await(result) shouldBe List.empty[FinancialTransactionsResponseModel]
         }
-
-        "return an internal error with a financial transaction with a server error response" in {
+        "errored financial transactions exist" in {
           enable(API5)
-          setupFinancialTransactionsResponse(testNino, testTaxYear)(financialTransactionsModel())
-          val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-            testMtditid,
-            testNino,
-            Some(testRetrievedUserName),
-            propertyIncomeOnly
-          )(FakeRequest())
 
-          setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsErrorModel)
+          val financialTransactionError = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
+          val expectedResult: List[FinancialTransactionsResponseModel] = List(
+            getFinancialTransactionSuccess(
+              taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+              financialTransactions = Seq(
+                fullTransactionModel.copy(outstandingAmount = Some(100.00))
+              )
+            ),
+            financialTransactionError
+          )
 
-          val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = Some(100.00)),
+              fullTransactionModel.copy(outstandingAmount = None)
+            )
+          ))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactionError)
 
-          result shouldBe List((2018, financialTransactionsErrorModel))
+          val result = TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(mtdUser(2), headerCarrier, ec)
+
+          await(result) shouldBe expectedResult
         }
       }
     }
+    "API5 is disabled" should {
+      "return financial transactions with only the unpaid transactions" when {
+        "only unpaid transactions exist" in {
+          val financialTransactionLastYear = getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = Some(100.00)),
+              fullTransactionModel.copy(outstandingAmount = Some(200.00))
+            )
+          )
+          val financialTransaction = getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = Some(300.00)),
+              fullTransactionModel.copy(outstandingAmount = Some(400.00))
+            )
+          )
+          val expectedResult: List[FinancialTransactionsResponseModel] = List(
+            financialTransactionLastYear,
+            financialTransaction
+          )
 
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(financialTransactionLastYear)
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransaction)
 
-  "The FinancialTransactionsService.getAllFinancialTransactions method with API5 disabled" when {
+          val result = TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(mtdUser(2), headerCarrier, ec)
 
-    " a successful financial transaction response is returned from the connector" should {
-      val hc = new HeaderCarrier()
+          await(result) shouldBe expectedResult
+        }
+        "a mix of unpaid, paid and non charge transactions exist" in {
+          val expectedResult: List[FinancialTransactionsResponseModel] = List(
+            getFinancialTransactionSuccess(
+              taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+              financialTransactions = Seq(
+                fullTransactionModel.copy(outstandingAmount = Some(100.00)),
+              )
+            ),
+            getFinancialTransactionSuccess(
+              taxYear = getTaxEndYear(LocalDate.now),
+              financialTransactions = Seq(
+                fullTransactionModel.copy(outstandingAmount = Some(300.00)),
+              )
+            )
+          )
 
-      def testFinancialTransactionWithYear(taxYear: Int) = (taxYear, financialTransactionsModel(s"$taxYear-04-05"))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = None),
+              fullTransactionModel.copy(outstandingAmount = Some(100.00)),
+              fullTransactionModel.copy(outstandingAmount = Some(-200.00), originalAmount = Some(-200.00))
+            )
+          ))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = Some(300.00)),
+              fullTransactionModel.copy(outstandingAmount = Some(-400.00), originalAmount = Some(-400.00)),
+              fullTransactionModel.copy(outstandingAmount = None)
+            )
+          ))
 
+          val result = TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(mtdUser(2), headerCarrier, ec)
 
-      "return a valid set of transactions for a single tax year" in {
-        disable(API5)
-        val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-          testMtditid,
-          testNino,
-          Some(testRetrievedUserName),
-          propertyIncomeOnly
-        )(FakeRequest())
+          await(result) shouldBe expectedResult
+        }
+        "no unpaid transactions exist" in {
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = None),
+              fullTransactionModel.copy(outstandingAmount = None)
+            )
+          ))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = None),
+              fullTransactionModel.copy(outstandingAmount = None)
+            )
+          ))
 
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
-        val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
+          val result = TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(mtdUser(2), headerCarrier, ec)
 
-        result shouldBe List(testFinancialTransactionWithYear(2019))
-      }
+          await(result) shouldBe List.empty[FinancialTransactionsResponseModel]
+        }
+        "errored financial transactions exist" in {
+          val financialTransactionError = FinancialTransactionsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
+          val expectedResult: List[FinancialTransactionsResponseModel] = List(
+            getFinancialTransactionSuccess(
+              taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+              financialTransactions = Seq(
+                fullTransactionModel.copy(outstandingAmount = Some(100.00))
+              )
+            ),
+            financialTransactionError
+          )
 
-      "return a valid set of transactions for a multiple tax years" in {
-        disable(API5)
-        val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-          testMtditid,
-          testNino,
-          Some(testRetrievedUserName),
-          businessIncome2018and2019
-        )(FakeRequest())
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(financialTransactionsModel("2019-04-05"))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now.minusYears(1)))(getFinancialTransactionSuccess(
+            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
+            financialTransactions = Seq(
+              fullTransactionModel.copy(outstandingAmount = Some(100.00)),
+              fullTransactionModel.copy(outstandingAmount = None)
+            )
+          ))
+          mockGetFinancialTransactions(testMtditid, getTaxEndYear(LocalDate.now))(financialTransactionError)
 
-        val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc, ec: ExecutionContext))
+          val result = TestFinancialTransactionsService.getAllUnpaidFinancialTransactions(mtdUser(2), headerCarrier, ec)
 
-        result shouldBe List(testFinancialTransactionWithYear(2019), testFinancialTransactionWithYear(2019))
-      }
-
-      "return no financial transactions" in {
-        disable(API5)
-        val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-          testMtditid,
-          testNino,
-          Some(testRetrievedUserName),
-          noIncomeDetails
-        )(FakeRequest())
-
-        setupFinancialTransactionsResponse(testNino, testTaxYear)(FinancialTransactionsModel(
-          None,
-          None,
-          None,
-          "2017-07-06T12:34:56.789Z".toZonedDateTime,
-          None))
-
-        val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc, ec: ExecutionContext))
-
-        result shouldBe List.empty
-      }
-
-    }
-
-
-    "a un-successful financial transaction response is returned from the connector" should {
-      val hc = new HeaderCarrier()
-
-
-      def testFinancialTransactionWithYear(taxYear: Int) = (taxYear, financialTransactionsModel(s"$taxYear-04-05"))
-
-      "return a financial transaction with a valid transaction retrieved and a bad Request response" in {
-        disable(API5)
-        val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-          testMtditid,
-          testNino,
-          Some(testRetrievedUserName),
-          businessIncome2018and2019
-        )(FakeRequest())
-
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(FinancialTransactionsErrorModel(
-          Status.BAD_REQUEST,
-          "Bad Request Recieved"
-        ))
-
-        val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
-
-        result shouldBe List(testFinancialTransactionWithYear(2019))
-      }
-
-      "pass the errored tax year with a valid transaction retrieved and a internal server error response" in {
-        disable(API5)
-        val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-          testMtditid,
-          testNino,
-          Some(testRetrievedUserName),
-          businessIncome2018and2019
-        )(FakeRequest())
-
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsModel())
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2020)(financialTransactionsErrorModel)
-
-        val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
-
-        result shouldBe List(testFinancialTransactionWithYear(2019), (2020, financialTransactionsErrorModel))
-      }
-
-      "return an internal error with a financial transaction with a server error response" in {
-        disable(API5)
-        setupFinancialTransactionsResponse(testNino, testTaxYear)(financialTransactionsModel())
-        val testMtdItUser: MtdItUser[AnyContent] = MtdItUser(
-          testMtditid,
-          testNino,
-          Some(testRetrievedUserName),
-          propertyIncomeOnly
-        )(FakeRequest())
-
-        setupFinancialTransactionsResponse(testMtdItUser.mtditid, 2019)(financialTransactionsErrorModel)
-
-        val result = await(TestFinancialTransactionsService.getAllFinancialTransactions(testMtdItUser, hc: HeaderCarrier, ec: ExecutionContext))
-
-        result shouldBe List((2018, financialTransactionsErrorModel))
+          await(result) shouldBe expectedResult
+        }
       }
     }
   }

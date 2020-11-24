@@ -21,7 +21,7 @@ import java.time.{LocalDate, ZonedDateTime}
 
 import assets.BaseIntegrationTestConstants.testMtditid
 import implicits.ImplicitDateFormatter
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 
 object FinancialTransactionsIntegrationTestConstants {
 
@@ -52,7 +52,7 @@ object FinancialTransactionsIntegrationTestConstants {
       )
     )
 
-  def financialTransactionsJson(outstandingAmount: BigDecimal, from: String = "2017-04-06", to: String ="2018-04-05"): JsValue =
+  def financialTransactionsJson(outstandingAmount: BigDecimal, from: String = "2017-04-06", to: String ="2018-04-05"): JsObject =
     Json.obj(
       "idType" -> testIdType,
       "idNumber" -> testMtditid,
@@ -107,6 +107,52 @@ object FinancialTransactionsIntegrationTestConstants {
         )
       )
     )
+
+  def transactionJson(outstandingAmount: Option[BigDecimal], originalAmount: Option[BigDecimal], from: String = "2017-04-06", to: String ="2018-04-05"): JsObject = Json.obj(
+    "chargeType" -> "PAYE",
+    "mainType" -> "2100",
+    "periodKey" -> "13RL",
+    "periodKeyDescription" -> "abcde",
+    "taxPeriodFrom" -> LocalDate.parse(from, DateTimeFormatter.ofPattern("uuuu-M-d")),
+    "taxPeriodTo" -> LocalDate.parse(to, DateTimeFormatter.ofPattern("uuuu-M-d")),
+    "businessPartner" -> "6622334455",
+    "contractAccountCategory" -> "02",
+    "contractAccount" -> "X",
+    "contractObjectType" -> "ABCD",
+    "contractObject" -> "00000003000000002757",
+    "sapDocumentNumber" -> "1040000872",
+    "sapDocumentNumberItem" -> "XM00",
+    "chargeReference" -> "XM002610011594",
+    "mainTransaction" -> "1234",
+    "subTransaction" -> "5678",
+    "clearedAmount" -> 2000,
+    "accruedInterest" -> 0.23,
+    "items" -> Json.arr(
+      Json.obj(
+        "subItem" -> "000",
+        "dueDate" -> "2018-02-14",
+        "amount" -> 3400,
+        "clearingDate" -> "2018-02-17",
+        "clearingReason" -> "A",
+        "outgoingPaymentMethod" -> "B",
+        "paymentLock" -> "C",
+        "clearingLock" -> "D",
+        "interestLock" -> "E",
+        "dunningLock" -> "1",
+        "returnFlag" -> false,
+        "paymentReference" -> "F",
+        "paymentAmount" -> 2000,
+        "paymentMethod" -> "G",
+        "paymentLot" -> "H",
+        "paymentLotItem" -> "112",
+        "clearingSAPDocument" -> "3350000253",
+        "statisticalDocument" -> "I",
+        "returnReason" -> "J",
+        "promiseToPay" -> "K"
+      )
+    )
+  ) ++ outstandingAmount.fold(Json.obj())(amount => Json.obj("outstandingAmount" -> amount)) ++
+    originalAmount.fold(Json.obj())(amount => Json.obj("originalAmount" -> amount))
 
 
   def financialTransactionWithoutDueDatesJson(outstandingAmount: BigDecimal): JsValue =
