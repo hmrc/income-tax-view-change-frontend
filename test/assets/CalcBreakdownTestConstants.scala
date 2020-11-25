@@ -843,7 +843,12 @@ object CalcBreakdownTestConstants {
     crystallised = false,
     payPensionsProfit = PayPensionsProfit(
       totalSelfEmploymentProfit = Some(1001.01),
-      totalPropertyProfit = Some(2002.02)
+      totalPropertyProfit = Some(2002.02),
+			totalPayeEmploymentAndLumpSumIncome = Some(5005.05),
+			totalBenefitsInKind = Some(6006.06),
+			totalEmploymentExpenses = Some(7007.07),
+			totalOccupationalPensionIncome = Some(8008.08),
+			totalStateBenefitsIncome = Some(9009.09)
     ),
     savingsAndGains = SavingsAndGains(
       taxableIncome = Some(3003.03)

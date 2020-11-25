@@ -62,10 +62,15 @@ income_breakdown.heading                                        = Incwm
 income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
 income_breakdown.guidance_software                              = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0}-{1}. Gallwch weld rhagor o fanylion yn eich
 income_breakdown.guidance_software.link                         = meddalwedd cadw cofnodion (yn agor mewn tab newydd).
+income_breakdown.table.employment	                            = Cyflog o bob cyflogaeth
+income_breakdown.table.benefits_received                        = Buddiannau a threuliau a gafwyd
+income_breakdown.table.allowable_expenses                       = Treuliau caniataol
 income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
 income_breakdown.table.property                                 = Elw o dir ac eiddo yn y DU
 income_breakdown.table.bbsi                                     = Llog o fanciau, cymdeithasau adeiladu a gwarantau ac ati yn y DU
 income_breakdown.table.dividends                                = Difidendau o gwmnïau yn y DU
+income_breakdown.table.occupational_pensions                    = Pensiynau galwedigaethol
+income_breakdown.table.state_benefit                            = Incwm o fudd-daliadau’r Wladwriaeth
 income_breakdown.total                                          = Cyfanswm yr incwm
 
 ## Deduction Breakdown Page ##

@@ -145,35 +145,65 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have an income table" which {
 
         "has all five table rows" in new Setup(view) {
-          content hasTableWithCorrectSize (1,5)
+          content hasTableWithCorrectSize (1,10)
         }
 
+				"has a employment income line with the correct value" in new Setup(view) {
+					val row: Element = content.table().select("tr").get(0)
+					row.select("td").first().text() shouldBe IncomeBreakdown.employments
+					row.select("td").last().text() shouldBe "£5,005.05"
+				}
+
+				"has a benefits and expenses income line with the correct value" in new Setup(view) {
+					val row: Element = content.table().select("tr").get(1)
+					row.select("td").first().text() shouldBe IncomeBreakdown.benefitsAndExpenses
+					row.select("td").last().text() shouldBe "£6,006.06"
+				}
+
+				"has an allowable expenses line with the correct value" in new Setup(view) {
+					val row: Element = content.table().select("tr").get(2)
+					row.select("td").first().text() shouldBe IncomeBreakdown.allowableExpenses
+					row.select("td").last().text() shouldBe "-£7,007.07"
+				}
+
         "has a total self-employment profit line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(0)
+          val row: Element = content.table().select("tr").get(3)
           row.select("td").first().text() shouldBe IncomeBreakdown.selfEmployments
           row.select("td").last().text() shouldBe "£1,001.01"
         }
 
         "has a total property profit line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(1)
+          val row: Element = content.table().select("tr").get(4)
           row.select("td").first().text() shouldBe IncomeBreakdown.property
           row.select("td").last().text() shouldBe "£2,002.02"
         }
 
         "has a total savings profit line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(2)
+          val row: Element = content.table().select("tr").get(5)
           row.select("td").first().text() shouldBe IncomeBreakdown.bbsi
           row.select("td").last().text() shouldBe "£3,003.03"
         }
 
         "has a total dividends profit line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(3)
+          val row: Element = content.table().select("tr").get(6)
           row.select("td").first().text() shouldBe IncomeBreakdown.dividends
           row.select("td").last().text() shouldBe "£4,004.04"
         }
 
+				"has an occupational pensions line with the correct value" in new Setup(view) {
+					val row: Element = content.table().select("tr").get(7)
+					row.select("td").first().text() shouldBe IncomeBreakdown.occupationalPensions
+					row.select("td").last().text() shouldBe "£8,008.08"
+				}
+
+				"has an state benefits line with the correct value" in new Setup(view) {
+					val row: Element = content.table().select("tr").get(8)
+					row.select("td").first().text() shouldBe IncomeBreakdown.stateBenefits
+					row.select("td").last().text() shouldBe "£9,009.09"
+				}
+
         "has a total line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(4)
+          val row: Element = content.table().select("tr").get(9)
           row.select("td").first().text() shouldBe IncomeBreakdown.total
           row.select("td").last().text() shouldBe "£10,010.10"
         }

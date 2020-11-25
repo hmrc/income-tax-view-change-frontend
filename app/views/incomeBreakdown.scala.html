@@ -22,12 +22,13 @@
 
 @(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
-@tableRow(messageCode: String, dataItem: Option[BigDecimal]) = {
+@tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
     @if(dataItem.isDefined) {
         <tr id="@messageCode">
             <td>@messages(s"income_breakdown.table.$messageCode")</td>
             <td class="numeric">@{
-                dataItem.get.toCurrency
+				if(isNegative) dataItem.get.toNegativeCurrencyString
+				else dataItem.get.toCurrency
             }</td>
         </tr>
     }
@@ -54,10 +55,15 @@
         </p>
 
         <table>
+			@tableRow("employment", calcModel.calcDataModel.payPensionsProfit.totalPayeEmploymentAndLumpSumIncome)
+			@tableRow("benefits_received", calcModel.calcDataModel.payPensionsProfit.totalBenefitsInKind)
+			@tableRow("allowable_expenses", calcModel.calcDataModel.payPensionsProfit.totalEmploymentExpenses, isNegative = true)
             @tableRow("self_employment", calcModel.calcDataModel.payPensionsProfit.totalSelfEmploymentProfit)
             @tableRow("property", calcModel.calcDataModel.payPensionsProfit.totalPropertyProfit)
             @tableRow("bbsi", calcModel.calcDataModel.savingsAndGains.taxableIncome)
             @tableRow("dividends", calcModel.calcDataModel.dividends.taxableIncome)
+			@tableRow("occupational_pensions", calcModel.calcDataModel.payPensionsProfit.totalOccupationalPensionIncome)
+			@tableRow("state_benefit", calcModel.calcDataModel.payPensionsProfit.totalStateBenefitsIncome)
             <tr class="no-border-bottom">
                 <td class="total-section">@messages("income_breakdown.total")</td>
                 <td class="numeric total-section">@calcModel.calcDataModel.totalIncomeReceived.getOrElse(BigDecimal(0)).toCurrency</td>
