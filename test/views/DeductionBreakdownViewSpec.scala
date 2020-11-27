@@ -145,7 +145,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have an deduction table" which {
 
         "has all three table rows" in new Setup(view) {
-          content hasTableWithCorrectSize (1,3)
+          content hasTableWithCorrectSize (1,5)
         }
 
         "has a personal allowance line with the correct value" in new Setup(view) {
@@ -154,17 +154,29 @@ class DeductionBreakdownViewSpec extends ViewSpec {
           row.select("td").last().text() shouldBe "£11,500"
         }
 
-        "has a gift of investments and property to charity line with the correct value" in new Setup(view) {
+        "has a pensions contributions line with the correct value" in new Setup(view) {
           val row: Element = content.table().select("tr").get(1)
+          row.select("td").first().text() shouldBe DeductionBreakdown.totalPensionContributions
+          row.select("td").last().text() shouldBe "£12,500"
+        }
+
+        "has a loss relief line with the correct value" in new Setup(view) {
+          val row: Element = content.table().select("tr").get(2)
+          row.select("td").first().text() shouldBe DeductionBreakdown.lossesAppliedToGeneralIncome
+          row.select("td").last().text() shouldBe "£12,500"
+
+        }
+
+        "has a gift of investments and property to charity line with the correct value" in new Setup(view) {
+          val row: Element = content.table().select("tr").get(3)
           row.select("td").first().text() shouldBe DeductionBreakdown.giftOfInvestmentsAndPropertyToCharity
           row.select("td").last().text() shouldBe "£10,000"
         }
 
-
         "has a total deductions line with the correct value" in new Setup(view) {
-          val row: Element = content.table().select("tr").get(2)
+          val row: Element = content.table().select("tr").get(4)
           row.select("td").first().text() shouldBe DeductionBreakdown.total
-          row.select("td").last().text() shouldBe "£21,500"
+          row.select("td").last().text() shouldBe "£47,500"
         }
       }
     }

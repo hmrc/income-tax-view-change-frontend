@@ -75,6 +75,8 @@ deduction_breakdown.guidance_software                                  = Dyma gr
 deduction_breakdown.guidance_software.link                             = meddalwedd cadw cofnodion (yn agor mewn tab newydd)
 deduction_breakdown.table.personal_allowance                           = Lwfans Personol
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
+deduction_breakdown.table.pension_contributions                        = Cyfraniadau pensiwn
+deduction_breakdown.table.loss_relief                                  = Rhyddhad colledion
 deduction_breakdown.total                                              = Cyfanswm y didyniadau
 
 ## Tax Calculation Breakdown Page ##
