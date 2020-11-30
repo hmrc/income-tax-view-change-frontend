@@ -30,7 +30,14 @@ case class PayPensionsProfit(totalSelfEmploymentProfit: Option[BigDecimal] = Non
                              totalPropertyProfit: Option[BigDecimal] = None,
                              incomeTaxAmount: Option[BigDecimal] = None,
                              taxableIncome: Option[BigDecimal] = None,
-                             bands: List[TaxBand] = Nil)
+                             bands: List[TaxBand] = Nil,
+														 totalPayeEmploymentAndLumpSumIncome: Option[BigDecimal] = None,
+														 totalBenefitsInKind: Option[BigDecimal] = None,
+														 totalEmploymentExpenses: Option[BigDecimal] = None,
+														 totalEmploymentIncome: Option[BigDecimal] = None,
+														 totalOccupationalPensionIncome: Option[BigDecimal] = None,
+														 totalStateBenefitsIncome: Option[BigDecimal] = None
+														)
 
 object PayPensionsProfit {
   implicit val reads: Reads[PayPensionsProfit] = (
@@ -38,7 +45,13 @@ object PayPensionsProfit {
       readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalPropertyProfit") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "payPensionsProfit" \ "incomeTaxAmount") and
       readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "taxableIncome") and
-      readNullableList[TaxBand](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "payPensionsProfit" \ "taxBands")
+      readNullableList[TaxBand](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "payPensionsProfit" \ "taxBands") and
+			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalPayeEmploymentAndLumpSumIncome") and
+			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalBenefitsInKind") and
+			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalEmploymentExpenses") and
+			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalEmploymentIncome") and
+			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalOccupationalPensionIncome") and
+			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalStateBenefitsIncome")
     ) (PayPensionsProfit.apply _)
   implicit val writes: OWrites[PayPensionsProfit] = Json.writes[PayPensionsProfit]
 }
