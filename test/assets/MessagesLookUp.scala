@@ -135,6 +135,8 @@ object MessagesLookUp {
       s"You can see more details in your record-keeping software (opens in new tab)."
     val guidanceLink = "record-keeping software (opens in new tab)"
     val personalAllowance = "Personal Allowance"
+    val totalPensionContributions = "Pensions contributions"
+    val lossesAppliedToGeneralIncome = "Loss relief"
     val giftOfInvestmentsAndPropertyToCharity = "Gift of investments and property to charity"
     val total = "Total deductions"
   }

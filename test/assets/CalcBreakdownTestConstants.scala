@@ -370,6 +370,8 @@ object CalcBreakdownTestConstants {
 
     allowancesAndDeductions = AllowancesAndDeductions(
       personalAllowance = Some(2868.00),
+      totalPensionContributions = Some(12500),
+      lossesAppliedToGeneralIncome = Some(12500),
       giftOfInvestmentsAndPropertyToCharity = Some(1000.25),
       totalAllowancesAndDeductions = Some(24.90),
       totalReliefs = Some(120)
@@ -480,6 +482,8 @@ object CalcBreakdownTestConstants {
     ),
     allowancesAndDeductions = AllowancesAndDeductions(
       personalAllowance = Some(2868.00),
+      totalPensionContributions = Some(12500),
+      lossesAppliedToGeneralIncome = Some(12500),
       giftOfInvestmentsAndPropertyToCharity = Some(1000.25),
       totalAllowancesAndDeductions = Some(24.90),
       totalReliefs = Some(120)
@@ -586,6 +590,8 @@ object CalcBreakdownTestConstants {
     ),
     allowancesAndDeductions = AllowancesAndDeductions(
       personalAllowance = Some(2868.00),
+      totalPensionContributions = Some(12500),
+      lossesAppliedToGeneralIncome = Some(12500),
       giftOfInvestmentsAndPropertyToCharity = Some(1000.25),
       totalAllowancesAndDeductions = Some(24.90),
       totalReliefs = Some(120)
@@ -862,8 +868,10 @@ object CalcBreakdownTestConstants {
     crystallised = false,
     allowancesAndDeductions = AllowancesAndDeductions(
       personalAllowance = Some(11500),
+      totalPensionContributions = Some(12500),
+      lossesAppliedToGeneralIncome = Some(12500),
       giftOfInvestmentsAndPropertyToCharity = Some(10000),
-      totalAllowancesAndDeductions = Some (21000),
+      totalAllowancesAndDeductions = Some (47000),
       totalReliefs = Some(500)
     )
 

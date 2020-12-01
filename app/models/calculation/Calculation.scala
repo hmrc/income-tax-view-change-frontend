@@ -87,8 +87,11 @@ object SavingsAndGains {
 }
 
 case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
+                                   totalPensionContributions: Option[BigDecimal] = None,
+                                   lossesAppliedToGeneralIncome: Option[BigDecimal] = None,
                                    giftOfInvestmentsAndPropertyToCharity: Option[BigDecimal] = None,
                                    totalAllowancesAndDeductions: Option[BigDecimal] = None,
+                                   totalTaxableIncome: Option[BigDecimal] = None,
                                    totalReliefs: Option[BigDecimal] = None) {
 
   val totalAllowancesDeductionsReliefs: Option[BigDecimal] = (totalAllowancesAndDeductions ++ totalReliefs).reduceOption(_ + _)
@@ -98,8 +101,11 @@ case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
 object AllowancesAndDeductions {
   implicit val reads: Reads[AllowancesAndDeductions] = (
     readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "personalAllowance") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "pensionContributions" \ "totalPensionContributions") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "lossesAppliedToGeneralIncome") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "giftOfInvestmentsAndPropertyToCharity") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "summary" \ "totalAllowancesAndDeductions") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "summary" \ "totalTaxableIncome") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "summary" \ "totalReliefs")
     ) (AllowancesAndDeductions.apply _)
   implicit val writes: OWrites[AllowancesAndDeductions] = Json.writes[AllowancesAndDeductions]

@@ -79,6 +79,8 @@ deduction_breakdown.dates                                              = 6 April
 deduction_breakdown.guidance_software                                  = This is a summary of your income for the tax year {0}-{1}. You can see more details in your
 deduction_breakdown.guidance_software.link                             = record-keeping software (opens in new tab)
 deduction_breakdown.table.personal_allowance                           = Personal Allowance
+deduction_breakdown.table.pension_contributions                        = Pensions contributions
+deduction_breakdown.table.loss_relief                                  = Loss relief
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Gift of investments and property to charity
 deduction_breakdown.total                                              = Total deductions
 

@@ -54,6 +54,8 @@
 
         <table>
             @tableRow("personal_allowance", calcModel.calcDataModel.allowancesAndDeductions.personalAllowance)
+            @tableRow("pension_contributions", calcModel.calcDataModel.allowancesAndDeductions.totalPensionContributions)
+            @tableRow("loss_relief", calcModel.calcDataModel.allowancesAndDeductions.lossesAppliedToGeneralIncome)
             @tableRow("gift_of_investments_and_property_to_charity", calcModel.calcDataModel.allowancesAndDeductions.giftOfInvestmentsAndPropertyToCharity)
             <tr class="no-border-bottom">
                 <td class="total-section">@messages("deduction_breakdown.total")</td>
