@@ -18,6 +18,6 @@ package assets.messages
 
 object DeductionsSummaryMessages {
 
-  val deductionsSummaryTitle = "Deductions - Business Tax account - GOV.UK"
-  val deductionsSummaryHeading = "6 April 2017 to 5 April 2018 Deductions"
+  val deductionsSummaryTitle = "Allowances and deductions - Business Tax account - GOV.UK"
+  val deductionsSummaryHeading = "6 April 2017 to 5 April 2018 Allowances and deductions"
 }

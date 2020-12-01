@@ -31,7 +31,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
     val home = "Income Tax account"
     val taxYears = "My tax years"
     def taxYear(start: Int, end: Int): String = s"6 April $start to 5 April $end"
-    val deductions = "Deductions"
+    val deductions = "Allowances and deductions"
   }
 
   "The deduction breakdown view" when {
@@ -78,8 +78,6 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = content.select("p").get(1)
         guidance.text() shouldBe DeductionBreakdown.guidance(taxYear)
-        guidance hasCorrectLink(DeductionBreakdown.guidanceLink,
-          "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax")
       }
 
       "have an deduction table" which {
@@ -138,8 +136,6 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = content.select("p").get(1)
         guidance.text() shouldBe DeductionBreakdown.guidance(taxYear)
-        guidance hasCorrectLink(DeductionBreakdown.guidanceLink,
-          "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax")
       }
 
       "have an deduction table" which {
