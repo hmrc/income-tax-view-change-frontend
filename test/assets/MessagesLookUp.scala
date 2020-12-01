@@ -113,8 +113,7 @@ object MessagesLookUp {
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Income"
     def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
-      s"You can see more details in your record-keeping software (opens in new tab)."
-    val guidanceLink = "record-keeping software (opens in new tab)."
+      s"You can see more details in your record-keeping software."
 		val employments = "Pay from all employments"
 		val benefitsAndExpenses = "Benefits & expenses received"
 		val allowableExpenses = "Allowable expenses"
@@ -128,17 +127,16 @@ object MessagesLookUp {
   }
 
   object DeductionBreakdown {
-    val title = "Deductions - Business Tax account - GOV.UK"
+    val title = "Allowances and deductions - Business Tax account - GOV.UK"
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
-    def heading(taxYear: Int): String = s"${subHeading(taxYear)} Deductions"
+    def heading(taxYear: Int): String = s"${subHeading(taxYear)} Allowances and deductions"
     def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
-      s"You can see more details in your record-keeping software (opens in new tab)."
-    val guidanceLink = "record-keeping software (opens in new tab)"
+      s"You can see more details in your record-keeping software."
     val personalAllowance = "Personal Allowance"
     val totalPensionContributions = "Pensions contributions"
     val lossesAppliedToGeneralIncome = "Loss relief"
     val giftOfInvestmentsAndPropertyToCharity = "Gift of investments and property to charity"
-    val total = "Total deductions"
+    val total = "Total allowances and deductions"
   }
 
   object TaxCalcBreakdown {

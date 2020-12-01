@@ -78,8 +78,6 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = content.select("p").get(1)
         guidance.text() shouldBe IncomeBreakdown.guidance(taxYear)
-        guidance hasCorrectLink(IncomeBreakdown.guidanceLink,
-          "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax")
       }
 
       "have an income table" which {
@@ -138,8 +136,6 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       "have the correct guidance" in new Setup(view) {
         val guidance: Element = content.select("p").get(1)
         guidance.text() shouldBe IncomeBreakdown.guidance(taxYear)
-        guidance hasCorrectLink(IncomeBreakdown.guidanceLink,
-          "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax")
       }
 
       "have an income table" which {

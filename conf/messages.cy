@@ -60,8 +60,7 @@ tax-year-overview.total-remaining                               = Cyfanswm sy’
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
 income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
-income_breakdown.guidance_software                              = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0}-{1}. Gallwch weld rhagor o fanylion yn eich
-income_breakdown.guidance_software.link                         = meddalwedd cadw cofnodion (yn agor mewn tab newydd).
+income_breakdown.guidance_software                              = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0}-{1}. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
 income_breakdown.table.employment	                            = Cyflog o bob cyflogaeth
 income_breakdown.table.benefits_received                        = Buddiannau a threuliau a gafwyd
 income_breakdown.table.allowable_expenses                       = Treuliau caniataol
@@ -74,15 +73,14 @@ income_breakdown.table.state_benefit                            = Incwm o fudd-d
 income_breakdown.total                                          = Cyfanswm yr incwm
 
 ## Deduction Breakdown Page ##
-deduction_breakdown.heading                                            = Didyniadau
+deduction_breakdown.heading                                            = Lwfansau a didyniadau
 deduction_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
-deduction_breakdown.guidance_software                                  = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0}-{1}. Gallwch weld rhagor o fanylion yn eich
-deduction_breakdown.guidance_software.link                             = meddalwedd cadw cofnodion (yn agor mewn tab newydd)
+deduction_breakdown.guidance_software                                  = Dyma grynodeb o’ch incwm ar gyfer blwyddyn dreth {0}-{1}. Gallwch weld rhagor o fanylion yn eich meddalwedd cadw cofnodion.
 deduction_breakdown.table.personal_allowance                           = Lwfans Personol
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
 deduction_breakdown.table.pension_contributions                        = Cyfraniadau pensiwn
 deduction_breakdown.table.loss_relief                                  = Rhyddhad colledion
-deduction_breakdown.total                                              = Cyfanswm y didyniadau
+deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
 
 ## Tax Calculation Breakdown Page ##
 taxCal_breakdown.heading                                            = Cyfrifiad Treth
@@ -168,7 +166,7 @@ breadcrumb-updates                                              = Diweddariadau
 breadcrumb-payments-due                                         = Taliadau treth incwm
 breadcrumb-tax-year-overview                                    = 6 Ebrill {0} hyd at 5 Ebrill {1}
 breadcrumb-income                                               = Incwm
-breadcrumb-deductions                                           = Didyniadau
+breadcrumb-deductions                                           = Lwfansau a didyniadau
 breadcrumb-tax-calc                                             = Cyfrifiad Treth
 
 

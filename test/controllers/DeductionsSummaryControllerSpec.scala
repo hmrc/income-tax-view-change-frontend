@@ -71,7 +71,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe "Deductions - Business Tax account - GOV.UK"
+          document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
         }
       }
       "given a tax year which can not be found in ETMP" should {
