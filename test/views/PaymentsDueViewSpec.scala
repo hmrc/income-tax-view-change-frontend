@@ -46,7 +46,8 @@ class PaymentsDueViewSpec @Inject() (val languageUtils: LanguageUtils) extends T
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
 
 
-  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned)(FakeRequest())
+  val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
+    Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
 
   class Setup(model: List[FinancialTransactionsModel], paymentEnabled: Boolean = false) {
     val html: HtmlFormat.Appendable = views.html.paymentDue(model, paymentEnabled, mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)

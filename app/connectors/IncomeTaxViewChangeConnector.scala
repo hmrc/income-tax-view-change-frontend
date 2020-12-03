@@ -74,12 +74,14 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     s"${config.itvcProtectedService}/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
   }
 
-  def getIncomeSources(mtditid: String, nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
+  def getIncomeSources(mtditid: String, nino: String,
+                       saUtr: Option[String], credId: Option[String],
+                       userType: Option[String])(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
 
     val url = getIncomeSourcesUrl(mtditid)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getIncomeSources] - GET $url")
 
-    auditingService.audit(IncomeSourceDetailsRequestAuditModel(mtditid, nino))
+    auditingService.extendedAudit(IncomeSourceDetailsRequestAuditModel(mtditid, nino, saUtr, credId, userType))
 
     http.GET[HttpResponse](url) map { response =>
       response.status match {
@@ -95,7 +97,10 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
                 mtditid,
                 nino,
                 valid.businesses.map(_.incomeSourceId),
-                valid.property.map(_.incomeSourceId)
+                valid.property.map(_.incomeSourceId),
+                saUtr,
+                credId,
+                userType
               ))
               valid
             }
@@ -151,7 +156,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     val url = getReportDeadlinesUrl(mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - GET $url")
 
-    auditingService.audit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino))
+    auditingService.extendedAudit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, mtdUser.saUtr, mtdUser.credId, mtdUser.userType))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
@@ -164,7 +169,9 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             },
             valid => {
               valid.obligations.foreach { data =>
-                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser.mtditid, mtdUser.nino, data.identification, data.obligations))
+                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(
+                  mtdUser.mtditid, mtdUser.nino, data.identification, data.obligations, mtdUser.saUtr, mtdUser.credId, mtdUser.userType)
+                )
               }
               valid
             }
@@ -189,7 +196,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     val url = getPreviousObligationsUrl(mtdUser.nino)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
 
-    auditingService.audit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino))
+    auditingService.extendedAudit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, mtdUser.saUtr, mtdUser.credId, mtdUser.userType))
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
@@ -202,7 +209,8 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             },
             valid => {
               valid.obligations.foreach { data =>
-                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(mtdUser.mtditid, mtdUser.nino, data.identification, data.obligations))
+                auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(
+                  mtdUser.mtditid, mtdUser.nino, data.identification, data.obligations, mtdUser.saUtr, mtdUser.credId, mtdUser.userType))
               }
               valid
             }

@@ -16,12 +16,20 @@
 
 package audit.models
 
-case class ReportDeadlinesRequestAuditModel(mtditid: String, nino: String) extends AuditModel {
+import play.api.libs.json.{JsValue, Json, Writes}
 
-  override val transactionName: String = "report-deadlines-request"
-  override val auditType: String = "reportDeadlinesRequest"
-  override val detail: Seq[(String, String)] = Seq(
-    "mtditid" -> mtditid,
-    "nino" -> nino
-  )
+case class ReportDeadlinesRequestAuditModel(mtditid: String, nino: String,
+                                            saUtr: Option[String], credId: Option[String],
+                                            userType: Option[String]) extends ExtendedAuditModel {
+
+  override val transactionName: String = "view-obligations"
+  override val auditType: String = "ViewObligations"
+
+  private case class AuditDetail(mtditid: String, nationalInsuranceNumber: String,
+                                 saUtr: Option[String], credId: Option[String],
+                                 userType: Option[String])
+
+  private implicit val auditDetailWrites: Writes[AuditDetail] = Json.writes[AuditDetail]
+
+  override val detail: JsValue = Json.toJson(AuditDetail(mtditid, nino, saUtr, credId, userType))
 }

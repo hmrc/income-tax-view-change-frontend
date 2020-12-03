@@ -16,7 +16,8 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{testMtditid, testNino}
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
+import play.api.libs.json.Json
 import testUtils.TestSupport
 
 class IncomeSourceDetailsRequestAuditModelSpec extends TestSupport {
@@ -26,7 +27,8 @@ class IncomeSourceDetailsRequestAuditModelSpec extends TestSupport {
 
   "The IncomeSourceDetailsRequestAuditModel" should {
 
-    lazy val testIncomeSourceDetailsRequestAuditModel = IncomeSourceDetailsRequestAuditModel(testMtditid, testNino)
+    lazy val testIncomeSourceDetailsRequestAuditModel = IncomeSourceDetailsRequestAuditModel(testMtditid, testNino,
+      Some(testSaUtr), Some(testCredId), Some(testUserType))
 
     s"Have the correct transaction name of '$transactionName'" in {
       testIncomeSourceDetailsRequestAuditModel.transactionName shouldBe transactionName
@@ -37,9 +39,12 @@ class IncomeSourceDetailsRequestAuditModelSpec extends TestSupport {
     }
 
     "Have the correct details for the audit event" in {
-      testIncomeSourceDetailsRequestAuditModel.detail shouldBe Seq(
+      testIncomeSourceDetailsRequestAuditModel.detail shouldBe Json.obj(
         "mtditid" -> testMtditid,
-        "nino" -> testNino
+        "nationalInsuranceNumber" -> testNino,
+        "saUtr" -> testSaUtr,
+        "credId" -> testCredId,
+        "userType" -> testUserType
       )
     }
   }

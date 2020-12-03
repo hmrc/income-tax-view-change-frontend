@@ -43,7 +43,8 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     implicit val req: MtdItUserOptionNino[A] = request
 
-    def buildMtdUserWithNino(nino: String) = MtdItUserWithNino(request.mtditid, nino, request.userName)
+    def buildMtdUserWithNino(nino: String) = MtdItUserWithNino(request.mtditid, nino, request.userName,
+      request.saUtr, request.credId, request.userType)
 
     (request.nino, request.session.get("nino")) match {
       case (Some(nino), _) =>

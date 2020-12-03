@@ -23,8 +23,8 @@ import testUtils.TestSupport
 
 class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
 
-  val transactionName = "report-deadlines-response"
-  val auditEvent = "reportDeadlinesResponse"
+  val transactionName = "view-obligations-response"
+  val auditEvent = "ViewObligationsResponse"
 
   "The ReportDeadlinesResponseAuditModel" when {
 
@@ -35,7 +35,10 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
         testMtditid,
         testNino,
         testSelfEmploymentId,
-        deadlines
+        deadlines,
+        Some("saUtr"),
+        Some("credId"),
+        Some("individual")
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
@@ -49,8 +52,11 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testReportDeadlinesResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
-          "nino" -> testNino,
+          "nationalInsuranceNumber" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> testUserType,
           "reportDeadlines" -> Json.arr(
             Json.obj(
               "startDate" -> "2017-07-01",
@@ -84,7 +90,10 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
         testMtditid,
         testNino,
         testSelfEmploymentId,
-        List(openObligation)
+        List(openObligation),
+        Some("saUtr"),
+        Some("credId"),
+        Some("individual")
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
@@ -98,8 +107,11 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testReportDeadlinesResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
-          "nino" -> testNino,
+          "nationalInsuranceNumber" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> testUserType,
           "reportDeadlines" -> Json.arr(
             Json.obj(
               "startDate" -> "2017-07-01",
@@ -113,13 +125,16 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
       }
     }
 
-    "Supplied with no Obligations" should {
+    "Supplied with no Obligations and optional fields" should {
 
       val testReportDeadlinesResponseAuditModel = ReportDeadlinesResponseAuditModel(
         testMtditid,
         testNino,
         testSelfEmploymentId,
-        List()
+        List(),
+        None,
+        None,
+        None
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
@@ -133,7 +148,7 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testReportDeadlinesResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
-          "nino" -> testNino,
+          "nationalInsuranceNumber" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
           "reportDeadlines" -> Json.arr()
         )
