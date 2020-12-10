@@ -83,8 +83,8 @@ class PaymentsDueViewSpec @Inject() (val languageUtils: LanguageUtils) extends T
         pageDocument.getElementsByTag("h1").text shouldBe paymentDueMessages.heading
       }
 
-      s"have the sub heading  ${paymentDueMessages.subTitle}" in new Setup(unpaidFinancialTransactions) {
-        pageDocument.select("article h2").text shouldBe paymentDueMessages.subTitle
+      s"have the description  ${paymentDueMessages.description}" in new Setup(unpaidFinancialTransactions) {
+        pageDocument.select("p1").text shouldBe paymentDueMessages.description
       }
 
       "display current unpaid bills" in new Setup(unpaidFinancialTransactions) {
