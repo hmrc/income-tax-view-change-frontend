@@ -163,7 +163,7 @@ breadcrumb-it                                                   = Cyfrif Treth I
 breadcrumb-tax-years                                            = Fy mlynyddoedd treth
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
 breadcrumb-updates                                              = Diweddariadau
-breadcrumb-payments-due                                         = Taliadau treth incwm
+breadcrumb-payments-due                                         = Taliadau sy’n ddyledus
 breadcrumb-tax-year-overview                                    = 6 Ebrill {0} hyd at 5 Ebrill {1}
 breadcrumb-income                                               = Incwm
 breadcrumb-deductions                                           = Lwfansau a didyniadau
@@ -214,6 +214,7 @@ obligations.contents                                            = Cynnwys
 
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm
+paymentDue.description                                                   = Os ydych wedi gwneud taliad yn ystod y 7 diwrnod diwethaf, mae’n bosibl na fydd y symiau a ddangosir yma yn gywir.
 paymentDue.viewBill                                             = Bwrw golwg dros y bil
 paymentDue.no-bills                                             = Dim taliadau’n ddyledus
 

@@ -333,7 +333,7 @@ object MessagesLookUp {
     val obligations = "Report deadlines"
     val statement = "Income Tax statement"
     val updates = "Updates"
-    val payementsDue = "Income Tax payments"
+    val payementsDue = "Payments due"
     def taxYearOverview(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear"
   }
 
@@ -381,9 +381,9 @@ object MessagesLookUp {
   }
 
   object PaymentDue {
-    val title = "Income Tax payments - Business Tax account - GOV.UK"
-    val heading = "Income Tax payments"
-    val subTitle = "Payment due"
+    val title = "Payments due - Business Tax account - GOV.UK"
+    val heading = "Payments due"
+    val description = "If you have made a payment in the last 7 days, the amounts shown here may not be accurate."
     val due = "due"
     def taxYearPeriod(from: String, to:String) = s"Tax year $from to $to"
     val noBills = "No payments due."

@@ -165,7 +165,7 @@ breadcrumb-it                                                   = Income Tax acc
 breadcrumb-tax-years                                            = My tax years
 breadcrumb-obligations                                          = Report deadlines
 breadcrumb-updates                                              = Updates
-breadcrumb-payments-due                                         = Income Tax payments
+breadcrumb-payments-due                                         = Payments due
 breadcrumb-tax-year-overview                                    = 6 April {0} to 5 April {1}
 breadcrumb-income                                               = Income
 breadcrumb-deductions                                           = Allowances and deductions
@@ -215,8 +215,8 @@ obligations.opens-in-new-tab                                       = (opens in a
 obligations.contents                                               = Contents
 
 ## Payment Due Page ##
-paymentDue.heading                                                 = Income Tax payments
-paymentDue.sub-heading                                             = Payment due
+paymentDue.heading                                                 = Payments due
+paymentDue.description                                             = If you have made a payment in the last 7 days, the amounts shown here may not be accurate.
 paymentDue.tax-year                                                = Tax year {0} to {1}
 paymentDue.due                                                     = due
 paymentDue.viewBill                                                = View bill
