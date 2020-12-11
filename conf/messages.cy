@@ -109,6 +109,15 @@ taxCal_breakdown.table.nic4                                         = Yswiriant 
 taxCal_breakdown.table.nic2                                         = Yswiriant Gwladol Dosbarth 2
 taxCal_breakdown.table.banks_and_building_societies                 = Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
 
+taxCal_breakdown.taxDeductedAtSource								= Didyniadau treth
+taxCal_breakdown.table.taxDeductedAtSource.savings					= Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
+taxCal_breakdown.table.taxDeductedAtSource.payeEmployments          = Pob cyflogaeth
+taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = Pensiynau’r DU
+taxCal_breakdown.table.taxDeductedAtSource.stateBenefits	        = Budd-daliadau’r Wladwriaeth
+taxCal_breakdown.table.taxDeductedAtSource.cis				        = CIS ac incwm masnachu
+taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty		= Tir ac eiddo yn y DU
+taxCal_breakdown.table.taxDeductedAtSource.total					= Cyfanswm y dreth a ddidynnwyd
+
 
 ## ReportDeadlines Page ##
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau

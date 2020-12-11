@@ -835,7 +835,15 @@ object CalcBreakdownTestConstants {
         )),
         totalNic = Some(24000.00)
       ),
-      savings = Some(10000)
+			taxDeductedAtSource = TaxDeductedAtSource(
+				Some(100.0),
+				Some(200.0),
+				Some(300.0),
+				Some(400.0),
+				Some(500.0),
+				Some(600.0),
+				Some(700.0)
+			)
     )
 
   val errorCalculationModel: CalculationErrorModel =

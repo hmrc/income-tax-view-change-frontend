@@ -66,7 +66,15 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         NicBand("ZRT", 1.0, 2.0, 3.0)
       ))
     ),
-    savings = Some(100.0)
+		taxDeductedAtSource = TaxDeductedAtSource(
+			Some(100.0),
+			Some(200.0),
+			Some(300.0),
+			Some(400.0),
+			Some(500.0),
+			Some(600.0),
+			Some(700.0)
+		)
   )
   val minimalModel: Calculation = Calculation(
     crystallised = true
@@ -82,8 +90,9 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "class2NicsAmount" -> 1.0,
           "class4NicsAmount" -> 2.0,
           "totalNic" -> 3.0
-        )
-      ),
+        ),
+				"totalTaxDeducted" -> 700.0
+			),
       "detail" -> Json.obj(
         "nics" -> Json.obj(
           "class4Nics" -> Json.obj(
@@ -97,8 +106,13 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           )
         ),
         "taxDeductedAtSource" -> Json.obj(
-          "savings" -> 100.0
-        ),
+					"payeEmployments" -> 100.0,
+					"occupationalPensions" -> 200.0,
+					"stateBenefits" -> 300.0,
+					"cis" -> 400.0,
+					"ukLandAndProperty" -> 500.0,
+					"savings" -> 600.0
+				),
         "incomeTax" -> Json.obj(
           "payPensionsProfit" -> Json.obj(
             "incomeTaxAmount" -> 3.0,
@@ -248,7 +262,15 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         )
       )
     ),
-    "savings" ->  100.0
+		"taxDeductedAtSource" ->  Json.obj(
+			"payeEmployments" -> 100,
+			"ukPensions" -> 200,
+			"stateBenefits" -> 300,
+			"cis" -> 400,
+			"ukLandAndProperty" -> 500,
+			"savings" -> 600,
+			"total" -> 700
+		)
   )
   val minimalWriteJson: JsObject = Json.obj(
     "crystallised" -> true,
@@ -262,7 +284,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "bands" -> Json.arr()
     ),
     "allowancesAndDeductions" -> Json.obj(),
-    "nic" -> Json.obj()
+    "nic" -> Json.obj(),
+		"taxDeductedAtSource" -> Json.obj()
   )
 
   "Calculation" must {

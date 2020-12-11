@@ -24,7 +24,7 @@ import org.jsoup.nodes.Element
 import testUtils.ViewSpec
 import views.html.taxCalcBreakdown
 
-class TaxCalcBreakdownViewSpec extends ViewSpec {
+class 	TaxCalcBreakdownViewSpec extends ViewSpec {
 
   object Breadcrumbs {
     val businessTaxAccount = "Business tax account"
@@ -398,17 +398,53 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
       "have an additional deductions table" which {
 
         "has one table row" in new Setup(view) {
-          content hasTableWithCorrectSize(6, 1)
+          content hasTableWithCorrectSize(6, 7)
         }
 
         "has the correct heading" in new Setup(view) {
           content.table(6).h3.text() shouldBe TaxCalcBreakdown.sectionHeadingAdditionalDeduc
         }
 
-        "has a UK banks and building societies line with the correct value" in new Setup(view) {
+        "has an employments line with the correct value" in new Setup(view) {
           val row: Element = content.table(6).select("tr").get(0)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.employments
+          row.select("td").last().text() shouldBe "-£100"
+        }
+
+				"has a UK pensions line with the correct value" in new Setup(view) {
+          val row: Element = content.table(6).select("tr").get(1)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.ukPensions
+          row.select("td").last().text() shouldBe "-£200"
+        }
+
+				"has a state benefits line with the correct value" in new Setup(view) {
+          val row: Element = content.table(6).select("tr").get(2)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.stateBenefits
+          row.select("td").last().text() shouldBe "-£300"
+        }
+
+				"has a CIS line with the correct value" in new Setup(view) {
+          val row: Element = content.table(6).select("tr").get(3)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.cis
+          row.select("td").last().text() shouldBe "-£400"
+        }
+
+				"has a UK land and property line with the correct value" in new Setup(view) {
+          val row: Element = content.table(6).select("tr").get(4)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.ukLandAndProperty
+          row.select("td").last().text() shouldBe "-£500"
+        }
+
+				"has a UK banks and building societies line with the correct value" in new Setup(view) {
+          val row: Element = content.table(6).select("tr").get(5)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.BBSI
-          row.select("td").last().text() shouldBe "£10,000"
+          row.select("td").last().text() shouldBe "-£600"
+        }
+
+				"has a total deductions line with the correct value" in new Setup(view) {
+          val row: Element = content.table(6).select("tr").get(6)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.totalDeductions
+          row.select("td").last().text() shouldBe "£700"
         }
       }
 
