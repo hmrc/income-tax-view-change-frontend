@@ -86,6 +86,36 @@ object SavingsAndGains {
   implicit val writes: OWrites[SavingsAndGains] = Json.writes[SavingsAndGains]
 }
 
+case class ReductionsAndCharges(giftAidTax: Option[BigDecimal] = None,
+                                totalPensionSavingsTaxCharges: Option[BigDecimal] = None,
+                                statePensionLumpSumCharges: Option[BigDecimal] = None,
+                                totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
+                                propertyFinanceRelief: Option[BigDecimal] = None,
+                                incomeTaxDueAfterTaxReductions: Option[BigDecimal] = None,
+                                totalIncomeTaxDue: Option[BigDecimal] = None
+                               )
+
+object ReductionsAndCharges{
+  implicit val reads: Reads[ReductionsAndCharges] = (
+    readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "giftAid" \ "giftAidTax") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax"  \ "totalPensionSavingsTaxCharges") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax"  \ "statePensionLumpSumCharges") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "totalStudentLoansRepaymentAmount") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "residentialFinanceCosts" \ "propertyFinanceRelief") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax" \ "incomeTaxDueAfterTaxReductions") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax" \ "totalIncomeTaxDue")
+    ) (ReductionsAndCharges.apply _)
+  implicit val writes: OWrites[ReductionsAndCharges] = Json.writes[ReductionsAndCharges]
+}
+
+case class ResidentialFinanceCosts(rate: BigDecimal,
+                                   propertyFinanceRelief: BigDecimal)
+
+object ResidentialFinanceCosts {
+  implicit val format: OFormat[ResidentialFinanceCosts] = Json.format[ResidentialFinanceCosts]
+}
+
+
 case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
                                    totalPensionContributions: Option[BigDecimal] = None,
                                    lossesAppliedToGeneralIncome: Option[BigDecimal] = None,

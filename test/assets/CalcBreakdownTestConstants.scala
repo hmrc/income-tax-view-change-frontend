@@ -178,6 +178,14 @@ object CalcBreakdownTestConstants {
         ))
     ),
 
+    reductionsAndCharges = ReductionsAndCharges(
+      giftAidTax = Some(5000.99),
+      totalPensionSavingsTaxCharges = Some(5000.99),
+      statePensionLumpSumCharges = Some(5000.99),
+      totalStudentLoansRepaymentAmount = Some(5000.99),
+      propertyFinanceRelief = Some(5000.99)
+    ),
+
     dividends = Dividends(
       incomeTaxAmount = Some(5000),
       taxableIncome = Some(6000),
@@ -344,6 +352,14 @@ object CalcBreakdownTestConstants {
         ))
     ),
 
+    reductionsAndCharges = ReductionsAndCharges(
+      giftAidTax = Some(5000.99),
+      totalPensionSavingsTaxCharges = Some(5000.99),
+      statePensionLumpSumCharges = Some(5000.99),
+      totalStudentLoansRepaymentAmount = Some(5000.99),
+      propertyFinanceRelief = Some(5000.99)
+    ),
+
     dividends = Dividends(
       incomeTaxAmount = Some(5000),
       taxableIncome = Some(6000),
@@ -457,6 +473,15 @@ object CalcBreakdownTestConstants {
 
         ))
     ),
+
+    reductionsAndCharges = ReductionsAndCharges(
+      giftAidTax = Some(5000.99),
+      totalPensionSavingsTaxCharges = Some(5000.99),
+      statePensionLumpSumCharges = Some(5000.99),
+      totalStudentLoansRepaymentAmount = Some(5000.99),
+      propertyFinanceRelief = Some(5000.99)
+    ),
+
     dividends = Dividends(
       incomeTaxAmount = Some(5000),
       taxableIncome = Some(6000),
@@ -566,6 +591,14 @@ object CalcBreakdownTestConstants {
           taxAmount = 0.0
         ))
     ),
+    reductionsAndCharges = ReductionsAndCharges(
+      giftAidTax = Some(5000.99),
+      totalPensionSavingsTaxCharges = Some(5000.99),
+      statePensionLumpSumCharges = Some(5000.99),
+      totalStudentLoansRepaymentAmount = Some(5000.99),
+      propertyFinanceRelief = Some(5000.99)
+    ),
+
     dividends = Dividends(
       incomeTaxAmount = Some(5000),
       taxableIncome = Some(6000),
@@ -695,11 +728,19 @@ object CalcBreakdownTestConstants {
             "total" -> 0,
             "taxableIncome" -> 0,
             "bands" -> Json.arr()
-          )
+          ),
+          "reductionsAndCharges" -> Json.obj(
+            "giftAidTax"-> 0,
+            "totalPensionSavingsTaxCharges"-> 0,
+            "statePensionLumpSumCharges"-> 0,
+            "totalStudentLoansRepaymentAmount"-> 0,
+            "propertyFinanceRelief"-> 0
+          ),
         ),
         "nic" -> Json.obj(
           "class2" -> 0,
           "class4" -> 0
+
         )
       )
     )
@@ -771,6 +812,13 @@ object CalcBreakdownTestConstants {
             taxAmount = 5000.0)
         )
       ),
+      reductionsAndCharges = ReductionsAndCharges(
+        giftAidTax = Some(5000),
+        totalPensionSavingsTaxCharges = Some(5000),
+        statePensionLumpSumCharges = Some(5000),
+        totalStudentLoansRepaymentAmount = Some(5000),
+        propertyFinanceRelief = Some(5000)
+      ),
       dividends = Dividends(
         incomeTaxAmount = Some(5000),
         taxableIncome = Some(6000),
@@ -831,19 +879,43 @@ object CalcBreakdownTestConstants {
             rate = 3,
             income = 5000,
             amount = 300
-          )
+          ),
+          NicBand(
+            name = "giftAidTax",
+            rate = 4,
+            income = 6000,
+            amount = 400
+          ),
+          NicBand(
+            name = "totalPensionSavingsTaxCharges",
+            rate = 5,
+            income = 7000,
+            amount = 500
+          ),
+          NicBand(
+            name = "statePensionLumpSumCharges",
+            rate = 6,
+            income = 8000,
+            amount = 600
+          ),
+          NicBand(
+            name = "totalStudentLoansRepaymentAmount",
+            rate = 7,
+            income = 9000,
+            amount = 700
+          ),
         )),
         totalNic = Some(24000.00)
       ),
-			taxDeductedAtSource = TaxDeductedAtSource(
-				Some(100.0),
-				Some(200.0),
-				Some(300.0),
-				Some(400.0),
-				Some(500.0),
-				Some(600.0),
-				Some(700.0)
-			)
+      taxDeductedAtSource = TaxDeductedAtSource(
+        Some(100.0),
+        Some(200.0),
+        Some(300.0),
+        Some(400.0),
+        Some(500.0),
+        Some(600.0),
+        Some(700.0)
+      )
     )
 
   val errorCalculationModel: CalculationErrorModel =

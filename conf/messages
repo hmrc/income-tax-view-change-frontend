@@ -108,8 +108,16 @@ taxCal_breakdown.table.total_tax_due                                = Total tax 
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
 
 taxCal_breakdown.table.nic2                                         = Class 2 National Insurance
+taxCal_breakdown.table.banks_and_building_societies                 = Interest received from UK banks and building societies
 
 taxCal_breakdown.taxDeductedAtSource								= Tax deductions
+taxCal_breakdown.table.giftAidTax                                   = Gift Aid tax charge
+taxCal_breakdown.table.totalPensionSavingsTaxCharges                = Total pension saving charges
+taxCal_breakdown.table.statePensionLumpSumCharges                   = State pension lump sum
+taxCal_breakdown.table.other_charges                                = Other charges
+taxCal_breakdown.table.totalStudentLoansRepaymentAmount             = Student Loan repayments
+taxCal_breakdown.table.tax_reductions                               = Tax reductions
+taxCal_breakdown.table.property_finance_relief                      = Relief for finance costs
 taxCal_breakdown.table.taxDeductedAtSource.savings					= Interest received from UK banks and building societies
 taxCal_breakdown.table.taxDeductedAtSource.payeEmployments          = All employments
 taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = UK pensions

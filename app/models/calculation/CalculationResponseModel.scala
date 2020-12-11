@@ -38,6 +38,7 @@ case class Calculation(totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
                        nationalRegime: Option[String] = None,
                        payPensionsProfit: PayPensionsProfit = PayPensionsProfit(),
                        savingsAndGains: SavingsAndGains = SavingsAndGains(),
+                       reductionsAndCharges: ReductionsAndCharges = ReductionsAndCharges(),
                        dividends: Dividends = Dividends(),
                        allowancesAndDeductions: AllowancesAndDeductions = AllowancesAndDeductions(),
                        nic: Nic = Nic(),
@@ -56,6 +57,7 @@ object Calculation {
       readNullable[String](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "taxRegime") and
       __.read[PayPensionsProfit] and
       __.read[SavingsAndGains] and
+      __.read[ReductionsAndCharges] and
       __.read[Dividends] and
       __.read[AllowancesAndDeductions] and
       __.read[Nic] and

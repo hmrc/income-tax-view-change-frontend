@@ -40,6 +40,19 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
     </tr>
 }
 
+@tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
+    @if(dataItem.isDefined) {
+    <tr id="@messageCode">
+        <td>@messages(s"taxCal_breakdown.table.$messageCode")</td>
+        <td class="numeric">@{
+            if(isNegative) dataItem.get.toNegativeCurrencyString
+            else dataItem.get.toCurrency
+            }</td>
+    </tr>
+    }
+}
+
+
 @main_template(
     messages("taxCal_breakdown.heading", s"${taxYear-1}", s"$taxYear"),
     contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
@@ -136,21 +149,77 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
             </tbody>
         </table>
     }
+
+<table>
+    <caption>
+        <h3 class="heading-medium">@messages("taxCal_breakdown.table.tax_reductions")</h3>
+    </caption>
+    @tableRow("property_finance_relief", calcModel.calcDataModel.reductionsAndCharges.propertyFinanceRelief, isNegative = true)
+</table>
+
+
+
     @if(calcModel.calcDataModel.nic.class2.nonEmpty){
         <table>
             <caption>
                 <h3 class="heading-medium">@messages("taxCal_breakdown.additional_charges")</h3>
             </caption>
+
             <tbody>
                 @calcModel.calcDataModel.nic.class2.map { amount =>
                     <tr>
                         <td >@messages("taxCal_breakdown.table.nic2")</td>
                         <td class="numeric">@{amount.toCurrency}</td>
+
                     </tr>
                 }
             </tbody>
+            <tbody>
+            @calcModel.calcDataModel.reductionsAndCharges.giftAidTax.map { amount =>
+            <tr>
+                <td >@messages("taxCal_breakdown.table.giftAidTax")</td>
+                <td class="numeric">@{amount.toCurrency}</td>
+
+            </tr>
+            }
+            </tbody>
+            <tbody>
+            @calcModel.calcDataModel.reductionsAndCharges.totalPensionSavingsTaxCharges.map { amount =>
+            <tr>
+                <td >@messages("taxCal_breakdown.table.totalPensionSavingsTaxCharges")</td>
+                <td class="numeric">@{amount.toCurrency}</td>
+
+            </tr>
+            }
+            </tbody>
+            <tbody>
+            @calcModel.calcDataModel.reductionsAndCharges.statePensionLumpSumCharges.map { amount =>
+            <tr>
+                <td >@messages("taxCal_breakdown.table.statePensionLumpSumCharges")</td>
+                <td class="numeric">@{amount.toCurrency}</td>
+
+            </tr>
+            }
+            </tbody>
         </table>
     }
+
+<table>
+    <caption>
+        <h3 class="heading-medium">@messages("taxCal_breakdown.table.other_charges")</h3>
+    </caption>
+
+    <tbody>
+    @calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.map { amount =>
+    <tr>
+        <td >@messages("taxCal_breakdown.table.totalStudentLoansRepaymentAmount")</td>
+        <td class="numeric">@{amount.toCurrency}</td>
+
+    </tr>
+    }
+    </tbody>
+
+</table>
 
 	@if(calcModel.calcDataModel.taxDeductedAtSource.nonEmpty) {
 		<table>
