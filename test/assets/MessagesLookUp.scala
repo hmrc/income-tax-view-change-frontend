@@ -148,7 +148,7 @@ object MessagesLookUp {
     val sectionHeadingSavings: String = "Savings"
     val sectionHeadingDividends: String = "Dividends"
     val sectionHeadingAdditionalChar: String = "Additional charges"
-    val sectionHeadingAdditionalDeduc: String = "Additional deductions"
+    val sectionHeadingAdditionalDeduc: String = "Tax deductions"
     val sectionHeadingTotal: String = "Total tax due"
     val guidance: String = "This calculation is based on your taxable income of £0"
     val regime: String = "Tax regime: UK"
@@ -186,6 +186,12 @@ object MessagesLookUp {
     val Nic2: String = "Class 2 National Insurance"
     //additional deduction
     val BBSI: String = "Interest received from UK banks and building societies"
+    val employments: String = "All employments"
+    val ukPensions: String = "UK pensions"
+    val stateBenefits: String = "State benefits"
+    val cis: String = "CIS and trading income"
+    val ukLandAndProperty: String = "UK land and property"
+    val totalDeductions: String = "Total tax deducted"
   }
     // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {

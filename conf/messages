@@ -108,7 +108,17 @@ taxCal_breakdown.table.total_tax_due                                = Total tax 
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
 
 taxCal_breakdown.table.nic2                                         = Class 2 National Insurance
-taxCal_breakdown.table.banks_and_building_societies                 = Interest received from UK banks and building societies
+
+taxCal_breakdown.taxDeductedAtSource								= Tax deductions
+taxCal_breakdown.table.taxDeductedAtSource.savings					= Interest received from UK banks and building societies
+taxCal_breakdown.table.taxDeductedAtSource.payeEmployments          = All employments
+taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = UK pensions
+taxCal_breakdown.table.taxDeductedAtSource.stateBenefits	        = State benefits
+taxCal_breakdown.table.taxDeductedAtSource.cis				        = CIS and trading income
+taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty		= UK land and property
+taxCal_breakdown.table.taxDeductedAtSource.total					= Total tax deducted
+
+
 
 ## ReportDeadlines Page ##
 obligations.heading                                             = Report deadlines
