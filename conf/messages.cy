@@ -108,6 +108,21 @@ taxCal_breakdown.table.total_tax_due                                = Cyfanswm y
 taxCal_breakdown.table.nic4                                         = Yswiriant Gwladol Dosbarth 4 ({0} ar {1}%)
 taxCal_breakdown.table.nic2                                         = Yswiriant Gwladol Dosbarth 2
 taxCal_breakdown.table.banks_and_building_societies                 = Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
+taxCal_breakdown.table.totalStudentLoansRepaymentAmount             = Ad-daliadau Benthyciad Myfyriwr
+taxCal_breakdown.table.other_charges                                = Taliadau eraill
+taxCal_breakdown.table.giftAidTax                                   = Tâl treth Rhodd Cymorth
+taxCal_breakdown.table.totalPensionSavingsTaxCharges                = Cyfanswm y taliadau a godir ar gynilion pensiwn
+taxCal_breakdown.table.statePensionLumpSumCharges                   = Cyfandaliad Pensiwn y Wladwriaeth
+taxCal_breakdown.table.tax_reductions                               = Gostyngiadau treth
+taxCal_breakdown.table.property_finance_relief                      = Rhyddhad am gostau ariannol
+taxCal_breakdown.taxDeductedAtSource								= Didyniadau treth
+taxCal_breakdown.table.taxDeductedAtSource.savings					= Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
+taxCal_breakdown.table.taxDeductedAtSource.payeEmployments          = Pob cyflogaeth
+taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = Pensiynau’r DU
+taxCal_breakdown.table.taxDeductedAtSource.stateBenefits	        = Budd-daliadau’r Wladwriaeth
+taxCal_breakdown.table.taxDeductedAtSource.cis				        = CIS ac incwm masnachu
+taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty		= Tir ac eiddo yn y DU
+taxCal_breakdown.table.taxDeductedAtSource.total					= Cyfanswm y dreth a ddidynnwyd
 
 
 ## ReportDeadlines Page ##
@@ -163,7 +178,7 @@ breadcrumb-it                                                   = Cyfrif Treth I
 breadcrumb-tax-years                                            = Fy mlynyddoedd treth
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
 breadcrumb-updates                                              = Diweddariadau
-breadcrumb-payments-due                                         = Taliadau treth incwm
+breadcrumb-payments-due                                         = Taliadau sy’n ddyledus
 breadcrumb-tax-year-overview                                    = 6 Ebrill {0} hyd at 5 Ebrill {1}
 breadcrumb-income                                               = Incwm
 breadcrumb-deductions                                           = Lwfansau a didyniadau
@@ -214,6 +229,7 @@ obligations.contents                                            = Cynnwys
 
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm
+paymentDue.description                                                   = Os ydych wedi gwneud taliad yn ystod y 7 diwrnod diwethaf, mae’n bosibl na fydd y symiau a ddangosir yma yn gywir.
 paymentDue.viewBill                                             = Bwrw golwg dros y bil
 paymentDue.no-bills                                             = Dim taliadau’n ddyledus
 

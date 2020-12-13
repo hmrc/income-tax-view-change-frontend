@@ -38,7 +38,7 @@
     <h1 class="heading-xlarge" id="page-heading">@messages("paymentDue.heading")</h1>
 </header>
 
-<h2 class="heading-large">@messages("paymentDue.sub-heading")</h2>
+<p id="p1">@messages("paymentDue.description")</p>
     @if(financialTransactions.isEmpty) {
         <h3 id="payments-due-none">@messages("paymentDue.no-bills")</h3>
     } else {

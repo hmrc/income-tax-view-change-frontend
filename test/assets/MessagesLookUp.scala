@@ -148,7 +148,10 @@ object MessagesLookUp {
     val sectionHeadingSavings: String = "Savings"
     val sectionHeadingDividends: String = "Dividends"
     val sectionHeadingAdditionalChar: String = "Additional charges"
-    val sectionHeadingAdditionalDeduc: String = "Additional deductions"
+    val sectionHeadingTaxReductions: String = "Tax reductions"
+    val otherCharges: String = "Other charges"
+    val reliefForFinanceCosts: String = "minus - Relief for finance costs (£0.00 at 20%)"
+    val sectionHeadingAdditionalDeduc: String = "Tax deductions"
     val sectionHeadingTotal: String = "Total tax due"
     val guidance: String = "This calculation is based on your taxable income of £0"
     val regime: String = "Tax regime: UK"
@@ -182,10 +185,20 @@ object MessagesLookUp {
     val Nic4_ZRT: String = "Zero rate (£2,000 at 1%)"
     val Nic4_BRT: String = "Basic rate (£3,000 at 2%)"
     val Nic4_HRT: String = "Higher rate (£5,000 at 3%)"
+    val giftAidTaxCharge: String = "Gift Aid tax charge"
+    val totalPensionSavingCharges: String = "Total pension saving charges"
+    val statePensionLumpSum: String = "State pension lump sum"
+    val totalStudentLoansRepaymentAmount: String = "Student Loan repayments"
     //additional charges table
     val Nic2: String = "Class 2 National Insurance"
     //additional deduction
     val BBSI: String = "Interest received from UK banks and building societies"
+    val employments: String = "All employments"
+    val ukPensions: String = "UK pensions"
+    val stateBenefits: String = "State benefits"
+    val cis: String = "CIS and trading income"
+    val ukLandAndProperty: String = "UK land and property"
+    val totalDeductions: String = "Total tax deducted"
   }
     // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {
@@ -333,7 +346,7 @@ object MessagesLookUp {
     val obligations = "Report deadlines"
     val statement = "Income Tax statement"
     val updates = "Updates"
-    val payementsDue = "Income Tax payments"
+    val payementsDue = "Payments due"
     def taxYearOverview(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear"
   }
 
@@ -381,9 +394,9 @@ object MessagesLookUp {
   }
 
   object PaymentDue {
-    val title = "Income Tax payments - Business Tax account - GOV.UK"
-    val heading = "Income Tax payments"
-    val subTitle = "Payment due"
+    val title = "Payments due - Business Tax account - GOV.UK"
+    val heading = "Payments due"
+    val description = "If you have made a payment in the last 7 days, the amounts shown here may not be accurate."
     val due = "due"
     def taxYearPeriod(from: String, to:String) = s"Tax year $from to $to"
     val noBills = "No payments due."

@@ -110,6 +110,24 @@ taxCal_breakdown.table.nic4                                         = Class 4 Na
 taxCal_breakdown.table.nic2                                         = Class 2 National Insurance
 taxCal_breakdown.table.banks_and_building_societies                 = Interest received from UK banks and building societies
 
+taxCal_breakdown.taxDeductedAtSource								= Tax deductions
+taxCal_breakdown.table.giftAidTax                                   = Gift Aid tax charge
+taxCal_breakdown.table.totalPensionSavingsTaxCharges                = Total pension saving charges
+taxCal_breakdown.table.statePensionLumpSumCharges                   = State pension lump sum
+taxCal_breakdown.table.other_charges                                = Other charges
+taxCal_breakdown.table.totalStudentLoansRepaymentAmount             = Student Loan repayments
+taxCal_breakdown.table.tax_reductions                               = Tax reductions
+taxCal_breakdown.table.property_finance_relief                      = Relief for finance costs
+taxCal_breakdown.table.taxDeductedAtSource.savings					= Interest received from UK banks and building societies
+taxCal_breakdown.table.taxDeductedAtSource.payeEmployments          = All employments
+taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = UK pensions
+taxCal_breakdown.table.taxDeductedAtSource.stateBenefits	        = State benefits
+taxCal_breakdown.table.taxDeductedAtSource.cis				        = CIS and trading income
+taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty		= UK land and property
+taxCal_breakdown.table.taxDeductedAtSource.total					= Total tax deducted
+
+
+
 ## ReportDeadlines Page ##
 obligations.heading                                             = Report deadlines
 obligations.quarterly.to                                        = to
@@ -165,7 +183,7 @@ breadcrumb-it                                                   = Income Tax acc
 breadcrumb-tax-years                                            = My tax years
 breadcrumb-obligations                                          = Report deadlines
 breadcrumb-updates                                              = Updates
-breadcrumb-payments-due                                         = Income Tax payments
+breadcrumb-payments-due                                         = Payments due
 breadcrumb-tax-year-overview                                    = 6 April {0} to 5 April {1}
 breadcrumb-income                                               = Income
 breadcrumb-deductions                                           = Allowances and deductions
@@ -215,8 +233,8 @@ obligations.opens-in-new-tab                                       = (opens in a
 obligations.contents                                               = Contents
 
 ## Payment Due Page ##
-paymentDue.heading                                                 = Income Tax payments
-paymentDue.sub-heading                                             = Payment due
+paymentDue.heading                                                 = Payments due
+paymentDue.description                                             = If you have made a payment in the last 7 days, the amounts shown here may not be accurate.
 paymentDue.tax-year                                                = Tax year {0} to {1}
 paymentDue.due                                                     = due
 paymentDue.viewBill                                                = View bill

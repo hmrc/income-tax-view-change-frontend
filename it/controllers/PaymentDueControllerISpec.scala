@@ -21,6 +21,7 @@ import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, Payment}
+import assets.messages.{PaymentsDueMessages => messages}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
@@ -55,14 +56,13 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
           httpStatus(OK),
-          pageTitle("Income Tax payments - Business Tax account - GOV.UK"),
+          pageTitle("Payments due - Business Tax account - GOV.UK"),
           isElementVisibleById(s"payments-due-$testTaxYear")(true),
           isElementVisibleById(s"payments-due-outstanding-$testTaxYear")(true),
           isElementVisibleById(s"payments-due-on-$testTaxYear")(true),
           isElementVisibleById(s"bills-link-$testTaxYear")(true),
           isElementVisibleById(s"payment-link-$testTaxYear")(false)
         )
-
 
       }
 
@@ -90,7 +90,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
           httpStatus(OK),
-          pageTitle("Income Tax payments - Business Tax account - GOV.UK"),
+          pageTitle("Payments due - Business Tax account - GOV.UK"),
           isElementVisibleById(s"payments-due-$testTaxYear1")(true),
           isElementVisibleById(s"payments-due-outstanding-$testTaxYear1")(true),
           isElementVisibleById(s"payments-due-on-$testTaxYear1")(true),
@@ -132,14 +132,14 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
           httpStatus(OK),
-          pageTitle("Income Tax payments - Business Tax account - GOV.UK"),
+          pageTitle("Payments due - Business Tax account - GOV.UK"),
+          elementTextByID("p1")(messages.description),
           isElementVisibleById(s"payments-due-$testTaxYear")(expectedValue = true),
           isElementVisibleById(s"payments-due-outstanding-$testTaxYear")(expectedValue = true),
           isElementVisibleById(s"payments-due-on-$testTaxYear")(expectedValue = true),
           isElementVisibleById(s"bills-link-$testTaxYear")(expectedValue = true),
           isElementVisibleById(s"payment-link-$testTaxYear")(expectedValue = false)
         )
-
 
       }
 
@@ -167,7 +167,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
           httpStatus(OK),
-          pageTitle("Income Tax payments - Business Tax account - GOV.UK"),
+          pageTitle("Payments due - Business Tax account - GOV.UK"),
           isElementVisibleById(s"payments-due-$testTaxYear2")(true),
           isElementVisibleById(s"payments-due-outstanding-$testTaxYear2")(true),
           isElementVisibleById(s"payments-due-on-$testTaxYear2")(true),
@@ -198,7 +198,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
           httpStatus(OK),
-          pageTitle("Income Tax payments - Business Tax account - GOV.UK"),
+          pageTitle("Payments due - Business Tax account - GOV.UK"),
           isElementVisibleById(s"payments-due-$testTaxYear1")(false),
           isElementVisibleById(s"payments-due-outstanding-$testTaxYear1")(false),
           isElementVisibleById(s"payments-due-on-$testTaxYear1")(false),
