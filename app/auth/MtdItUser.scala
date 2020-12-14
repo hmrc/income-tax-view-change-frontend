@@ -18,20 +18,27 @@ package auth
 
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.retrieve.Name
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 
 case class MtdItUserOptionNino[A](mtditid: String,
                                   nino: Option[String],
                                   userName: Option[Name],
-                                  saUtr: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                  saUtr: Option[String],
+                                  credId: Option[String],
+                                  userType: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
 
 case class MtdItUserWithNino[A](mtditid: String,
                                 nino: String,
-                                userName: Option[Name])(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                userName: Option[Name],
+                                saUtr: Option[String],
+                                credId: Option[String],
+                                userType: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
 
 case class MtdItUser[A](mtditid: String,
                         nino: String,
                         userName: Option[Name],
-                        incomeSources: IncomeSourceDetailsModel
-                       )(implicit request: Request[A]) extends WrappedRequest[A](request)
+                        incomeSources: IncomeSourceDetailsModel,
+                        saUtr: Option[String],
+                        credId: Option[String],
+                        userType: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
 

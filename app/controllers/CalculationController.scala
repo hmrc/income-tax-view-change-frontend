@@ -16,6 +16,8 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.BillsAuditing.BillsAuditModel
 import auth.MtdItUser
 import config.featureswitch.{DeductionBreakdown, FeatureSwitching, IncomeBreakdown, TaxDue}
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -41,7 +43,9 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
                                       financialTransactionsService: FinancialTransactionsService,
                                       itvcErrorHandler: ItvcErrorHandler,
                                       retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                      retrieveNino: NinoPredicate)
+                                      retrieveNino: NinoPredicate,
+                                      val auditingService: AuditingService
+                                     )
                                      (implicit val appConfig: FrontendAppConfig,
                                       val languageUtils: LanguageUtils,
                                       mcc: MessagesControllerComponents,
@@ -70,7 +74,8 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
   private def showCalculationForYear(taxYear: Int): Action[AnyContent] = action.async {
     implicit user =>
       calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
-        case CalcDisplayModel(_, _, calculation, _) =>
+        case CalcDisplayModel(_, calcAmount, calculation, _) =>
+          auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
           if (calculation.crystallised) {
             financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear) map {
               case _: FinancialTransactionsErrorModel =>

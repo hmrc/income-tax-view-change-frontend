@@ -91,38 +91,38 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return an IncomeSourceDetailsModel when successful JSON is received" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(successResponse)
 
-      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino)
+      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))
       await(result) shouldBe singleBusinessIncome
 
-      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino), Some(testReferrerUrl))
-      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtditid, testNino, List(testSelfEmploymentId), None))
+      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)), Some(testReferrerUrl))
+      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtditid, testNino, List(testSelfEmploymentId), None, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(successResponseBadJson)
 
-      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino)
+      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
 
-      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino))
+      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
     "return IncomeSourceDetailsError model in case of failure" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(badResponse)
 
-      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino)
+      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))
       await(result) shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
 
-      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino))
+      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in new Setup {
       setupMockFailedHttpGet(getIncomeSourcesTestUrl)(badResponse)
 
-      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino)
+      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
 
-      verifyAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino))
+      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
   }
 
@@ -178,8 +178,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[ReportDeadlinesResponseModel] = getReportDeadlines()
       await(result) shouldBe obligationsDataSelfEmploymentOnlySuccessModel
 
-      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino), Some(testReferrerUrl))
-      verifyExtendedAudit(ReportDeadlinesResponseAuditModel(testMtditid, testNino, testSelfEmploymentId, reportDeadlinesDataSelfEmploymentSuccessModel.obligations))
+      verifyExtendedAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)), Some(testReferrerUrl))
+      verifyExtendedAudit(ReportDeadlinesResponseAuditModel(testMtditid, testNino, testSelfEmploymentId,
+        reportDeadlinesDataSelfEmploymentSuccessModel.obligations, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
     "return ErrorResponse model in case of failure" in new Setup {
@@ -188,7 +189,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[ReportDeadlinesResponseModel] = getReportDeadlines()
       await(result) shouldBe ReportDeadlinesErrorModel(Status.BAD_REQUEST, "Error Message")
 
-      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino))
+      verifyExtendedAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
     "return BusinessListError model when bad JSON is received" in new Setup {
@@ -197,7 +198,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[ReportDeadlinesResponseModel] = getReportDeadlines()
       await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
 
-      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino))
+      verifyExtendedAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
     "return ReportDeadlinesErrorModel model in case of future failed scenario" in new Setup {
@@ -206,7 +207,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[ReportDeadlinesResponseModel] = getReportDeadlines()
       await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
 
-      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino))
+      verifyExtendedAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
   }
@@ -225,8 +226,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[ReportDeadlinesResponseModel] = getPreviousObligations()
       await(result) shouldBe obligationsDataSelfEmploymentOnlySuccessModel
 
-      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino), Some(testReferrerUrl))
-      verifyExtendedAudit(ReportDeadlinesResponseAuditModel(testMtditid, testNino, testSelfEmploymentId, reportDeadlinesDataSelfEmploymentSuccessModel.obligations))
+      verifyExtendedAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)), Some(testReferrerUrl))
+      verifyExtendedAudit(ReportDeadlinesResponseAuditModel(testMtditid, testNino, testSelfEmploymentId,
+        reportDeadlinesDataSelfEmploymentSuccessModel.obligations, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
     "return an error model in case of failure" in new Setup {
@@ -235,7 +237,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[ReportDeadlinesResponseModel] = getPreviousObligations()
       await(result) shouldBe ReportDeadlinesErrorModel(Status.BAD_REQUEST, "Error Message")
 
-      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino))
+      verifyExtendedAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
     "return BusinessListError model when bad JSON is received" in new Setup {
@@ -244,7 +246,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[ReportDeadlinesResponseModel] = getPreviousObligations()
       await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
 
-      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino))
+      verifyExtendedAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
     "return ReportDeadlinesErrorModel model in case of future failed scenario" in new Setup {
@@ -253,7 +255,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[ReportDeadlinesResponseModel] = getPreviousObligations()
       await(result) shouldBe ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
 
-      verifyAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino))
+      verifyExtendedAudit(ReportDeadlinesRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
     }
 
   }

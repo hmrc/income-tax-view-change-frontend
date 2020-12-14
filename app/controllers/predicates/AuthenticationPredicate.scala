@@ -23,8 +23,8 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
@@ -52,8 +52,8 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     implicit val req: Request[A] = request
 
-    authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name) {
-      case enrolments ~ userName => f(buildMtdUserOptionNino(enrolments, userName))
+    authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name and credentials and affinityGroup) {
+      case enrolments ~ userName ~ credentials ~ affinityGroup  => f(buildMtdUserOptionNino(enrolments, userName, credentials, affinityGroup))
     } recover {
       case _: InsufficientEnrolments =>
         Logger.error("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
@@ -70,13 +70,16 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
     }
   }
 
-  private def buildMtdUserOptionNino[A](enrolments: Enrolments, userName: Option[Name])
+  private def buildMtdUserOptionNino[A](enrolments: Enrolments, userName: Option[Name],
+                                        credentials: Option[Credentials], affinityGroup: Option[AffinityGroup])
                                        (implicit request: Request[A]): MtdItUserOptionNino[A] = {
     MtdItUserOptionNino(
       mtditid = enrolments.getEnrolment(appConfig.mtdItEnrolmentKey).flatMap(_.getIdentifier(appConfig.mtdItIdentifierKey)).map(_.value).get,
       nino = enrolments.getEnrolment(appConfig.ninoEnrolmentKey).flatMap(_.getIdentifier(appConfig.ninoIdentifierKey)).map(_.value),
       userName,
-      saUtr = enrolments.getEnrolment(appConfig.saEnrolmentKey).flatMap(_.getIdentifier(appConfig.saIdentifierKey)).map(_.value)
+      saUtr = enrolments.getEnrolment(appConfig.saEnrolmentKey).flatMap(_.getIdentifier(appConfig.saIdentifierKey)).map(_.value),
+      credId = credentials.map(credential => credential.providerId),
+      userType = affinityGroup.map(ag => (ag.toJson \ "affinityGroup").as[String])
     )
   }
 }

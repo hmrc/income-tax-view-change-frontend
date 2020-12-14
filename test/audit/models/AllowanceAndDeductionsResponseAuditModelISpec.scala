@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,31 +20,33 @@ import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, t
 import play.api.libs.json.Json
 import testUtils.TestSupport
 
-class ReportDeadlinesRequestAuditModelSpec extends TestSupport {
+class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
 
-  val transactionName = "view-obligations"
-  val auditEvent = "ViewObligations"
+  val transactionName = "allowances-deductions-details-response"
+  val auditEvent = "AllowancesDeductionsDetailsResponse"
 
-  "The ReportDeadlinesRequestAuditModel" should {
+  "The AllowanceAndDeductionsResponseAuditModel" should {
 
-    lazy val testReportDeadlinesRequestAuditModel = ReportDeadlinesRequestAuditModel(testMtditid, testNino,
-      Some(testSaUtr), Some(testCredId), Some(testUserType))
+    lazy val testAllowanceAndDeductionsResponseAuditModel = AllowanceAndDeductionsResponseAuditModel(testMtditid, testNino,
+      Some(testSaUtr), Some(testCredId), Some(testUserType), Some(BigDecimal(123.12)), Some(BigDecimal(456.78)))
 
     s"Have the correct transaction name of '$transactionName'" in {
-      testReportDeadlinesRequestAuditModel.transactionName shouldBe transactionName
+      testAllowanceAndDeductionsResponseAuditModel.transactionName shouldBe transactionName
     }
 
     s"Have the correct audit event type of '$auditEvent'" in {
-      testReportDeadlinesRequestAuditModel.auditType shouldBe auditEvent
+      testAllowanceAndDeductionsResponseAuditModel.auditType shouldBe auditEvent
     }
 
     "Have the correct details for the audit event" in {
-      testReportDeadlinesRequestAuditModel.detail shouldBe Json.obj(
+      testAllowanceAndDeductionsResponseAuditModel.detail shouldBe Json.obj(
         "mtditid" -> testMtditid,
         "nationalInsuranceNumber" -> testNino,
         "saUtr" -> testSaUtr,
         "credId" -> testCredId,
-        "userType" -> testUserType
+        "userType" -> testUserType,
+        "personalAllowance" -> "123.12",
+        "pensionContributions" -> "456.78"
       )
     }
   }
