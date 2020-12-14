@@ -23,20 +23,29 @@ import play.api.libs.json._
 case class ReportDeadlinesResponseAuditModel(mtditid: String,
                                              nino: String,
                                              incomeSourceId: String,
-                                             reportDeadlines: List[ReportDeadlineModel]) extends ExtendedAuditModel {
+                                             reportDeadlines: List[ReportDeadlineModel],
+                                             saUtr: Option[String],
+                                             credId: Option[String],
+                                             userType: Option[String]) extends ExtendedAuditModel {
 
-  override val transactionName: String = "report-deadlines-response"
-  override val auditType: String = "reportDeadlinesResponse"
+  override val transactionName: String = "view-obligations-response"
+  override val auditType: String = "ViewObligationsResponse"
 
   private case class AuditDetail(mtditid: String,
-                                 nino: String,
+                                 nationalInsuranceNumber: String,
                                  incomeSourceId: String,
+                                 saUtr: Option[String],
+                                 credId: Option[String],
+                                 userType: Option[String],
                                  reportDeadlines: List[ReportDeadlineModel])
 
   private implicit val auditDetailWrites: Writes[AuditDetail] = (
     (__ \ "mtditid").write[String] and
-      (__ \ "nino").write[String] and
+      (__ \ "nationalInsuranceNumber").write[String] and
       (__ \ "incomeSourceId").write[String] and
+      (__ \ "saUtr").writeNullable[String] and
+      (__ \ "credId").writeNullable[String] and
+      (__ \ "userType").writeNullable[String] and
       (__ \ "reportDeadlines").write[List[ReportDeadlineModel]](Writes.list[ReportDeadlineModel](ReportDeadlineModel.auditWrites))
     )(unlift(AuditDetail.unapply))
 
@@ -45,6 +54,9 @@ case class ReportDeadlinesResponseAuditModel(mtditid: String,
       mtditid,
       nino,
       incomeSourceId,
+      saUtr,
+      credId,
+      userType,
       reportDeadlines
     )
   )

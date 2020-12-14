@@ -35,7 +35,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         testMtditid,
         testNino,
         List(testSelfEmploymentId, testSelfEmploymentId2),
-        Some(testPropertyIncomeId)
+        Some(testPropertyIncomeId),
+        Some(testSaUtr),
+        Some(testCredId),
+        Some(testUserType)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
@@ -49,9 +52,12 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
-          "nino" -> testMtdItUser.nino,
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
           seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
-          propertyIdKey -> testPropertyIncomeId
+          propertyIdKey -> testPropertyIncomeId,
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> testUserType
         )
       }
     }
@@ -62,7 +68,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         testMtditid,
         testNino,
         List(testSelfEmploymentId),
-        Some(testPropertyIncomeId)
+        Some(testPropertyIncomeId),
+        Some(testSaUtr),
+        Some(testCredId),
+        Some(testUserType)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
@@ -76,9 +85,12 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
-          "nino" -> testMtdItUser.nino,
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
           seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
-          propertyIdKey -> testPropertyIncomeId
+          propertyIdKey -> testPropertyIncomeId,
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> testUserType
         )
       }
     }
@@ -89,7 +101,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         testMtditid,
         testNino,
         List(),
-        Some(testPropertyIncomeId)
+        Some(testPropertyIncomeId),
+        Some(testSaUtr),
+        Some(testCredId),
+        Some(testUserType)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
@@ -103,19 +118,22 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
-          "nino" -> testMtdItUser.nino,
-          propertyIdKey -> testPropertyIncomeId
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
+          propertyIdKey -> testPropertyIncomeId,
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> testUserType
         )
       }
     }
 
-    "Supplied with Single Business IDs and No Property ID" should {
+    "Supplied with Single Business IDs and No Property ID and No optional fields" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
         testMtditid,
         testNino,
         List(testSelfEmploymentId),
-        None
+        None, None, None, None
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
@@ -129,7 +147,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
-          "nino" -> testMtdItUser.nino,
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
           seIdsKey -> Json.toJson(List(testSelfEmploymentId))
         )
       }
@@ -141,7 +159,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         testMtditid,
         testNino,
         List(testSelfEmploymentId, testSelfEmploymentId2),
-        None
+        None,
+        Some(testSaUtr),
+        Some(testCredId),
+        Some(testUserType)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
@@ -155,8 +176,11 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
-          "nino" -> testMtdItUser.nino,
-          seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2))
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
+          seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> testUserType
         )
       }
     }
@@ -167,7 +191,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         testMtditid,
         testNino,
         List(),
-        None
+        None,
+        Some(testSaUtr),
+        Some(testCredId),
+        Some(testUserType)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
@@ -181,7 +208,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtdItUser.mtditid,
-          "nino" -> testMtdItUser.nino
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> testUserType
         )
       }
     }

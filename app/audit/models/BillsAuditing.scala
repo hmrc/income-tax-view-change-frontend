@@ -17,27 +17,48 @@
 package audit.models
 
 import auth.MtdItUser
-import models.calculation.{CalcDisplayModel, Calculation}
 import models.incomeSourceDetails.BusinessDetailsModel
+import play.api.libs.json.{JsValue, Json, Writes}
 
 object BillsAuditing {
 
-  case class BillsAuditModel[A](user: MtdItUser[A], dataModel: CalcDisplayModel) extends AuditModel {
+  case class BillsAuditModel(user: MtdItUser[_], calcAmount: BigDecimal) extends ExtendedAuditModel {
 
-    override val auditType: String = "billsPageView"
-    override val transactionName: String = "bills-page-view"
+    override val auditType: String = "TaxYearBillView"
+    override val transactionName: String = "view-tax-year_bill"
 
     val business: Option[BusinessDetailsModel] = user.incomeSources.businesses.headOption
-    override val detail: Seq[(String, String)] = Seq(
-      "mtditid" -> user.mtditid,
-      "nino" -> user.nino,
-      "hasBusiness" -> user.incomeSources.hasBusinessIncome.toString,
-      "hasProperty" -> user.incomeSources.hasPropertyIncome.toString,
-      "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.end}"),
-      "propAccPeriodStart" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.start}"),
-      "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}"),
-      "currentBill" -> dataModel.calcAmount.toString()
+
+    private case class AuditDetail(mtditid: String,
+                                   nationalInsuranceNumber: String,
+                                   hasBusiness: Boolean,
+                                   hasProperty: Boolean,
+                                   bizAccPeriodStart: String,
+                                   bizAccPeriodEnd: String,
+                                   propAccPeriodStart: String,
+                                   propAccPeriodEnd: String,
+                                   currentBill: String,
+                                   saUtr: Option[String],
+                                   credId: Option[String],
+                                   userType: Option[String])
+
+    private implicit val auditDetailWrites: Writes[AuditDetail] = Json.writes[AuditDetail]
+
+    override val detail: JsValue = Json.toJson(
+      AuditDetail(
+        user.mtditid,
+        user.nino,
+        user.incomeSources.hasBusinessIncome,
+        user.incomeSources.hasPropertyIncome,
+        business.fold("-")(x => s"${x.accountingPeriod.start}"),
+        business.fold("-")(x => s"${x.accountingPeriod.end}"),
+        user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.start}"),
+        user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.end}"),
+        calcAmount.toString(),
+        user.saUtr,
+        user.credId,
+        user.userType
+      )
     )
   }
 }

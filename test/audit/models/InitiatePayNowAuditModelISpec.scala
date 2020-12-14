@@ -20,26 +20,26 @@ import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, t
 import play.api.libs.json.Json
 import testUtils.TestSupport
 
-class IncomeSourceDetailsRequestAuditModelSpec extends TestSupport {
+class InitiatePayNowAuditModelISpec extends TestSupport {
 
-  val transactionName = "income-source-details-request"
-  val auditEvent = "incomeSourceDetailsRequest"
+  val transactionName = "initiate-pay-now"
+  val auditEvent = "InitiatePayNow"
 
-  "The IncomeSourceDetailsRequestAuditModel" should {
+  "The InitiatePayNowAuditModel" should {
 
-    lazy val testIncomeSourceDetailsRequestAuditModel = IncomeSourceDetailsRequestAuditModel(testMtditid, testNino,
+    lazy val testInitiatePayNowAuditModel = InitiatePayNowAuditModel(testMtditid, Some(testNino),
       Some(testSaUtr), Some(testCredId), Some(testUserType))
 
     s"Have the correct transaction name of '$transactionName'" in {
-      testIncomeSourceDetailsRequestAuditModel.transactionName shouldBe transactionName
+      testInitiatePayNowAuditModel.transactionName shouldBe transactionName
     }
 
     s"Have the correct audit event type of '$auditEvent'" in {
-      testIncomeSourceDetailsRequestAuditModel.auditType shouldBe auditEvent
+      testInitiatePayNowAuditModel.auditType shouldBe auditEvent
     }
 
     "Have the correct details for the audit event" in {
-      testIncomeSourceDetailsRequestAuditModel.detail shouldBe Json.obj(
+      testInitiatePayNowAuditModel.detail shouldBe Json.obj(
         "mtditid" -> testMtditid,
         "nationalInsuranceNumber" -> testNino,
         "saUtr" -> testSaUtr,

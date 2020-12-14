@@ -19,16 +19,17 @@ package audit.models
 import assets.BaseTestConstants._
 import assets.CalcBreakdownTestConstants._
 import audit.models.BillsAuditing.BillsAuditModel
+import play.api.libs.json.Json
 import testUtils.TestSupport
 
 class BillsAuditModelSpec extends TestSupport {
 
-  val transactionName = "bills-page-view"
-  val auditType = "billsPageView"
+  val transactionName = "view-tax-year_bill"
+  val auditType = "TaxYearBillView"
 
   "The BillsAuditModel" should {
 
-    lazy val testBillsAuditModel = BillsAuditModel(testMtdItUser, testCalcDisplayModel)
+    lazy val testBillsAuditModel = BillsAuditModel(testMtdItUser, testCalcDisplayModel.calcAmount)
 
     s"Have the correct transaction name of '$transactionName'" in {
       testBillsAuditModel.transactionName shouldBe transactionName
@@ -39,16 +40,19 @@ class BillsAuditModelSpec extends TestSupport {
     }
 
     "Have the correct details for the audit event" in {
-      testBillsAuditModel.detail shouldBe Seq(
+      testBillsAuditModel.detail shouldBe Json.obj(
         "mtditid" -> testMtditid,
-        "nino" -> testNino,
-        "hasBusiness" -> "true",
-        "hasProperty" -> "true",
+        "nationalInsuranceNumber" -> testNino,
+        "hasBusiness" -> true,
+        "hasProperty" -> true,
         "bizAccPeriodStart" -> "2017-06-01",
         "bizAccPeriodEnd" -> "2018-05-30",
         "propAccPeriodStart" -> "2017-04-06",
         "propAccPeriodEnd" -> "2018-04-05",
-        "currentBill" -> "123.45"
+        "currentBill" -> "123.45",
+        "saUtr" -> "saUtr",
+        "credId" -> "credId",
+        "userType" -> "individual"
       )
     }
   }
