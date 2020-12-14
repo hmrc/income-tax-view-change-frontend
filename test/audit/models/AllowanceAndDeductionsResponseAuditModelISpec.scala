@@ -20,31 +20,33 @@ import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, t
 import play.api.libs.json.Json
 import testUtils.TestSupport
 
-class IncomeSourceDetailsRequestAuditModelSpec extends TestSupport {
+class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
 
-  val transactionName = "income-source-details-request"
-  val auditEvent = "incomeSourceDetailsRequest"
+  val transactionName = "allowances-deductions-details-response"
+  val auditEvent = "AllowancesDeductionsDetailsResponse"
 
-  "The IncomeSourceDetailsRequestAuditModel" should {
+  "The AllowanceAndDeductionsResponseAuditModel" should {
 
-    lazy val testIncomeSourceDetailsRequestAuditModel = IncomeSourceDetailsRequestAuditModel(testMtditid, testNino,
-      Some(testSaUtr), Some(testCredId), Some(testUserType))
+    lazy val testAllowanceAndDeductionsResponseAuditModel = AllowanceAndDeductionsResponseAuditModel(testMtditid, testNino,
+      Some(testSaUtr), Some(testCredId), Some(testUserType), Some(BigDecimal(123.12)), Some(BigDecimal(456.78)))
 
     s"Have the correct transaction name of '$transactionName'" in {
-      testIncomeSourceDetailsRequestAuditModel.transactionName shouldBe transactionName
+      testAllowanceAndDeductionsResponseAuditModel.transactionName shouldBe transactionName
     }
 
     s"Have the correct audit event type of '$auditEvent'" in {
-      testIncomeSourceDetailsRequestAuditModel.auditType shouldBe auditEvent
+      testAllowanceAndDeductionsResponseAuditModel.auditType shouldBe auditEvent
     }
 
     "Have the correct details for the audit event" in {
-      testIncomeSourceDetailsRequestAuditModel.detail shouldBe Json.obj(
+      testAllowanceAndDeductionsResponseAuditModel.detail shouldBe Json.obj(
         "mtditid" -> testMtditid,
         "nationalInsuranceNumber" -> testNino,
         "saUtr" -> testSaUtr,
         "credId" -> testCredId,
-        "userType" -> testUserType
+        "userType" -> testUserType,
+        "personalAllowance" -> "123.12",
+        "pensionContributions" -> "456.78"
       )
     }
   }

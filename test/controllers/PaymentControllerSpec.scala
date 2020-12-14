@@ -18,7 +18,10 @@ package controllers
 
 
 import assets.BaseTestConstants
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
 import assets.PaymentDataTestConstants._
+import audit.mocks.MockAuditingService
+import audit.models.InitiatePayNowAuditModel
 import connectors.PayApiConnector
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.MockAuthenticationPredicate
@@ -34,7 +37,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate {
+class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate with MockAuditingService {
 
 
   class SetupTestPaymentController(response: Future[PaymentJourneyResponse]) {
@@ -50,7 +53,8 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
       ec,
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
-      mockPayApiConnector
+      mockPayApiConnector,
+      mockAuditingService
     )
   }
 
@@ -67,11 +71,12 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
 
     "redirect the user to the payments page" when {
 
-      "a successful payments journey is started" in new SetupTestPaymentController(Future.successful(PaymentJourneyModel("id", "redirect-url"))){
+      "a successful payments journey is started with audit events" in new SetupTestPaymentController(Future.successful(PaymentJourneyModel("id", "redirect-url"))){
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse)
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("redirect-url")
+        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditid, Some(testNino), Some(testSaUtr), Some(testCredId), Some("Individual")))
       }
     }
 

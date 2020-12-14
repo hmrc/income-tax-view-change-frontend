@@ -60,7 +60,10 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     mtditid = testMtditid,
     nino = testNino,
     userName = Some(testRetrievedUserName),
-    incomeSources = businessAndPropertyAligned
+    incomeSources = businessAndPropertyAligned,
+    saUtr =  Some("saUtr"),
+    credId = Some("credId"),
+    userType = Some("individual")
   )(FakeRequest())
 
   implicit val serviceInfo: Html = Html("")

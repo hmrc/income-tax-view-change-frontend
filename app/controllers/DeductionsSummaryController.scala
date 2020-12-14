@@ -17,6 +17,7 @@
 package controllers
 
 import audit.AuditingService
+import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{DeductionBreakdown, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
@@ -57,10 +58,17 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     action.async {
       implicit user =>
         if (isEnabled(DeductionBreakdown)) {
+          auditingService.extendedAudit(AllowanceAndDeductionsRequestAuditModel(user.mtditid, user.nino,
+            user.saUtr, user.credId, user.userType))
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
-            case calcDisplayModel: CalcDisplayModel =>
-              Future.successful(Ok(views.html.deductionBreakdown(calcDisplayModel, taxYear)))
+            case calcDisplayModel: CalcDisplayModel => {
+              auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user.mtditid, user.nino,
+                user.saUtr, user.credId, user.userType,
+                calcDisplayModel.calcDataModel.allowancesAndDeductions.personalAllowance,
+                calcDisplayModel.calcDataModel.allowancesAndDeductions.totalPensionContributions))
 
+              Future.successful(Ok(views.html.deductionBreakdown(calcDisplayModel, taxYear)))
+            }
             case CalcDisplayNoDataFound =>
               Logger.warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
               Future.successful(itvcErrorHandler.showInternalServerError())

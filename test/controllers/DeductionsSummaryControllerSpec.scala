@@ -16,10 +16,12 @@
 
 package controllers
 
-import assets.BaseTestConstants.testMtdUserNino
+import assets.BaseTestConstants.{testCredId, testMtdUserNino, testMtditid, testNino, testSaUtr, testUserType}
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.AuditingService
+import audit.mocks.MockAuditingService
+import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
 import config.featureswitch.{DeductionBreakdown, FeatureSwitching}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -31,7 +33,8 @@ import play.api.test.Helpers.{charset, contentType, _}
 import testUtils.TestSupport
 
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService with FeatureSwitching {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+  with MockFinancialTransactionsService with FeatureSwitching with MockAuditingService {
 
   object TestDeductionsSummaryController extends DeductionsSummaryController(
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -40,7 +43,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     MockIncomeSourceDetailsPredicate,
     mockCalculationService,
     app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
-    app.injector.instanceOf[AuditingService],
+    mockAuditingService,
     mockFinancialTransactionsService,
     app.injector.instanceOf[ItvcErrorHandler]
   )(
@@ -59,10 +62,14 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
-        "return Status OK (200)" in {
+        "return Status OK (200) with audit events" in {
           mockCalculationSuccess()
           setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
           status(result) shouldBe Status.OK
+
+          verifyExtendedAudit(AllowanceAndDeductionsRequestAuditModel(testMtditid, testNino, None, Some(testCredId), Some("Individual")))
+          verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(testMtditid, testNino, None, Some(testCredId),
+            Some("Individual"), Some(BigDecimal("11500")), Some(BigDecimal("11501"))))
         }
 
         "return HTML" in {

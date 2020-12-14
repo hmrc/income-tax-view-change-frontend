@@ -16,17 +16,19 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{testMtditid, testNino, testSelfEmploymentId}
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
+import play.api.libs.json.Json
 import testUtils.TestSupport
 
 class ReportDeadlinesRequestAuditModelSpec extends TestSupport {
 
-  val transactionName = "report-deadlines-request"
-  val auditEvent = "reportDeadlinesRequest"
+  val transactionName = "view-obligations"
+  val auditEvent = "ViewObligations"
 
   "The ReportDeadlinesRequestAuditModel" should {
 
-    lazy val testReportDeadlinesRequestAuditModel = ReportDeadlinesRequestAuditModel(testMtditid, testNino)
+    lazy val testReportDeadlinesRequestAuditModel = ReportDeadlinesRequestAuditModel(testMtditid, testNino,
+      Some(testSaUtr), Some(testCredId), Some(testUserType))
 
     s"Have the correct transaction name of '$transactionName'" in {
       testReportDeadlinesRequestAuditModel.transactionName shouldBe transactionName
@@ -37,9 +39,12 @@ class ReportDeadlinesRequestAuditModelSpec extends TestSupport {
     }
 
     "Have the correct details for the audit event" in {
-      testReportDeadlinesRequestAuditModel.detail shouldBe Seq(
+      testReportDeadlinesRequestAuditModel.detail shouldBe Json.obj(
         "mtditid" -> testMtditid,
-        "nino" -> testNino
+        "nationalInsuranceNumber" -> testNino,
+        "saUtr" -> testSaUtr,
+        "credId" -> testCredId,
+        "userType" -> testUserType
       )
     }
   }

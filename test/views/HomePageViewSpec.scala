@@ -43,7 +43,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     testMtditid,
     testNino,
     Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(Nil, None)
+    IncomeSourceDetailsModel(Nil, None),
+    Some("testUtr"),
+    Some("testCredId"),
+    Some("individual")
   )(FakeRequest())
 
   val updateDate: LocalDate = LocalDate.of(2018, 1, 1)

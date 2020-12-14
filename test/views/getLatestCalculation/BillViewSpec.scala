@@ -36,9 +36,12 @@ import testUtils.TestSupport
 
 class BillViewSpec extends TestSupport with FeatureSwitching {
 
-  val bizAndPropertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned)(FakeRequest())
-  val bizUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome)(FakeRequest())
-  val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), propertyIncomeOnly)(FakeRequest())
+  val bizAndPropertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+    businessAndPropertyAligned, Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
+  val bizUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+    singleBusinessIncome, Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
+  val propertyUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+    propertyIncomeOnly, Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
 
 
   private def pageSetup(model: BillsViewModel, paymentsEnabled: Boolean = false, user: MtdItUser[_]) = new {
