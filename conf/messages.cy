@@ -234,7 +234,7 @@ paymentDue.viewBill                                             = Bwrw golwg dro
 paymentDue.no-bills                                             = Dim taliadau’n ddyledus
 paymentDue.payNow                                               = Talu nawr
 paymentDue.tax-year                                             = Blwyddyn dreth {0} i {1}
-
+paymentDue.due                                                  = ddyledus
 
 ## Regimes
 regimes.UK = Y DU
