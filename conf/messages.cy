@@ -229,10 +229,12 @@ obligations.contents                                            = Cynnwys
 
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm
-paymentDue.description                                                   = Os ydych wedi gwneud taliad yn ystod y 7 diwrnod diwethaf, mae’n bosibl na fydd y symiau a ddangosir yma yn gywir.
+paymentDue.description                                          = Os ydych wedi gwneud taliad yn ystod y 7 diwrnod diwethaf, mae’n bosibl na fydd y symiau a ddangosir yma yn gywir.
 paymentDue.viewBill                                             = Bwrw golwg dros y bil
 paymentDue.no-bills                                             = Dim taliadau’n ddyledus
-
+paymentDue.payNow                                               = Talu nawr
+paymentDue.tax-year                                             = Blwyddyn dreth {0} i {1}
+paymentDue.due                                                  = ddyledus
 
 ## Regimes
 regimes.UK = Y DU
