@@ -169,7 +169,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct guidance" in new Setup(view) {
-        val guidance: Element = content.select("h2").first()
+        val guidance: Element = content.getElementById("explanation")
         guidance.text() shouldBe TaxCalcBreakdown.guidance
       }
 
@@ -219,7 +219,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct guidance" in new Setup(view) {
-        val guidance: Element = content.select("h2").first()
+        val guidance: Element = content.getElementById("explanation")
         guidance.text() shouldBe TaxCalcBreakdown.guidance
       }
 

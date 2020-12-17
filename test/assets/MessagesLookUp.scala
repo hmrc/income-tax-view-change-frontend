@@ -103,7 +103,7 @@ object MessagesLookUp {
     def taxpayerReference(mtditid: String): String = s"Unique Taxpayer Reference - $mtditid"
     val updatesHeading = "Next update due"
     val updatesLink = "View updates"
-    val taxYearsHeading = "My tax years"
+    val taxYearsHeading = "Your tax years"
     val taxYearsDescription = "Check the status of each tax year."
     val taxYearsLink = "View tax years"
   }
@@ -123,7 +123,7 @@ object MessagesLookUp {
     val dividends = "Dividends from UK companies"
 		val occupationalPensions = "Occupational pensions"
 		val stateBenefits = "State benefit income"
-    val total = "Total income"
+    val total = "Total income received"
   }
 
   object DeductionBreakdown {
@@ -414,10 +414,9 @@ object MessagesLookUp {
     val linksSummary = "Click on each link for more detail about each section."
     val noLinksSummary = "This page shows a summary of your tax year."
     val income = "Income"
-    val deductions = "Deduction"
-    val taxableIncome = "Total taxable income"
-    val taxDue = "Tax due"
-    val payment = "Payment"
+    val deductions = "Allowances and deductions"
+    val taxableIncome = "Total income on which tax is due"
+    val taxDue = "Income Tax and Class 4 National Insurance contributions due"
     val totalRemaining = "Total remaining due"
   }
 
