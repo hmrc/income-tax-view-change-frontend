@@ -95,27 +95,6 @@ class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
       status.select("span").hasClass("govUk-tag") shouldBe true
     }
 
-    "have a summary of the tables on the page" which {
-      "describes links" when {
-        "incomeBreakdown and deductionBreakdown feature switch are enabled" in new Setup(deductionBreakdown = true,
-          incomeBreakdown = true) {
-          content.select("#tax-year-summary").text shouldBe TaxYearOverview.linksSummary
-        }
-        "incomeBreakdown feature switch is enabled and deductionBreakdown is disabled" in new Setup(
-          incomeBreakdown = true, deductionBreakdown = false) {
-          content.select("#tax-year-summary").text shouldBe TaxYearOverview.linksSummary
-        }
-        "incomeBreakdown feature switch is disabled and deductionBreakdown is enabled" in new Setup(
-          deductionBreakdown = true, incomeBreakdown = false) {
-          content.select("#tax-year-summary").text shouldBe TaxYearOverview.linksSummary
-        }
-      }
-      "describes the page" when {
-        "none of the feature switches are enabled" in new Setup(incomeBreakdown = false, deductionBreakdown = false) {
-          content.select("#tax-year-summary").text shouldBe TaxYearOverview.noLinksSummary
-        }
-      }
-    }
 
     "have a table of income and deductions" which {
       "has a row but no link for income when FS IncomeBreakdown is disabled " in new Setup {
@@ -153,7 +132,7 @@ class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
       "has a total row for total taxable income" in new Setup {
         val row: Elements = content.select("#income-deductions-table tr:nth-child(3)")
         row.select("td:nth-child(1)").text shouldBe TaxYearOverview.taxableIncome
-        row.select("td[class=numeric]").text shouldBe completeOverview.totalTaxableIncome.toCurrencyString
+        row.select("td:nth-child(2)").text shouldBe completeOverview.totalTaxableIncome.toCurrencyString
       }
     }
 
@@ -161,17 +140,7 @@ class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
       "has a row for tax due" in new Setup {
         val row: Elements = content.select("#taxdue-payments-table tr:nth-child(1)")
         row.select("td:nth-child(1)").text shouldBe TaxYearOverview.taxDue
-        row.select("td[class=numeric]").text shouldBe completeOverview.taxDue.toCurrencyString
-      }
-      "has a row for payments" in new Setup {
-        val row: Elements = content.select("#taxdue-payments-table tr:nth-child(2)")
-        row.select("td:nth-child(1)").text shouldBe TaxYearOverview.payment
-        row.select("td[class=numeric]").text shouldBe completeOverview.payment.toNegativeCurrencyString
-      }
-      "has a row for total remaining due" in new Setup {
-        val row: Elements = content.select("#taxdue-payments-table tr:nth-child(3)")
-        row.select("td:nth-child(1)").text shouldBe TaxYearOverview.totalRemaining
-        row.select("td[class=numeric]").text shouldBe completeOverview.totalRemainingDue.toCurrencyString
+        row.select("td:nth-child(2)").text shouldBe completeOverview.taxDue.toCurrencyString
       }
     }
   }

@@ -68,12 +68,12 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
         @messages("taxCal_breakdown.heading")
     </h1>
 
-    <h2 class="heading-large">
+    <div class="govuk-body-l" id="explanation">
         @messages(
-            "taxCal_breakdown.explanation",
-            calcModel.calcDataModel.totalTaxableIncome.getOrElse(BigDecimal(0)).toCurrencyString
-        )
-    </h2>
+            "taxCal_breakdown.explanation")
+        <strong class="bold">@calcModel.calcDataModel.totalTaxableIncome.getOrElse(BigDecimal(0)).toCurrencyString</strong>
+
+    </div>
 
     @if(calcModel.calcDataModel.payPensionsProfit.bands.nonEmpty){
         @calcModel.calcDataModel.nationalRegime.map { regime =>

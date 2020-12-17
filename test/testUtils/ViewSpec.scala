@@ -50,6 +50,7 @@ trait ViewSpec extends TestSupport {
     val link: String = "a"
     val table: String = "table"
     val tableRow: String = "td"
+    val p: String = "p"
   }
 
   implicit def elementsToHeadOption(elements: Elements): Option[Element] = {
