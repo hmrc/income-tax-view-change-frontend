@@ -23,7 +23,7 @@ home.payments.no-payments-due                                   = No payments du
 home.payments.view                                              = View payments
 home.updates.heading                                            = Next update due
 home.updates.view                                               = View updates
-home.tax-years.heading                                          = My tax years
+home.tax-years.heading                                          = Your tax years
 home.tax-years.description                                      = Check the status of each tax year.
 home.tax-years.view                                             = View tax years
 
@@ -51,10 +51,9 @@ tax-year-overview.calculation-date                              = Calculation da
 tax-year-overview.links-summary                                 = Click on each link for more detail about each section.
 tax-year-overview.no-links-summary                              = This page shows a summary of your tax year.
 tax-year-overview.income                                        = Income
-tax-year-overview.deductions                                    = Deduction
-tax-year-overview.taxable-income                                = Total taxable income
-tax-year-overview.tax-due                                       = Tax due
-tax-year-overview.payment                                       = Payment
+tax-year-overview.deductions                                    = Allowances and deductions
+tax-year-overview.taxable-income                                = Total income on which tax is due
+tax-year-overview.tax-due                                       = Income Tax and Class 4 National Insurance contributions due
 tax-year-overview.total-remaining                               = Total remaining due
 
 ## Income Breakdown Page ##
@@ -70,7 +69,7 @@ income_breakdown.table.bbsi                                     = Interest from 
 income_breakdown.table.dividends                                = Dividends from UK companies
 income_breakdown.table.occupational_pensions                    = Occupational pensions
 income_breakdown.table.state_benefit                            = State benefit income
-income_breakdown.total                                          = Total income
+income_breakdown.total                                          = Total income received
 
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Allowances and deductions
@@ -85,7 +84,7 @@ deduction_breakdown.total                                              = Total a
 ## Tax Calculation Breakdown Page ##
 taxCal_breakdown.heading                                            = Tax calculation
 taxCal_breakdown.dates                                              = 6 April {0} to 5 April {1}
-taxCal_breakdown.explanation                                        = This calculation is based on your taxable income of {0}
+taxCal_breakdown.explanation                                        = This calculation is based on your taxable income of
 taxCal-breakdown.national-regime                                    = Tax regime: {0}
 taxCal_breakdown.pay_pensions_profit                                = Pay, pensions and profit
 taxCal_breakdown.savings                                            = Savings

@@ -64,10 +64,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDate("6 July 2017")),
           elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505"),
           elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(3) td[class=numeric]")("£198,500"),
-          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td[class=numeric]")("£90,500"),
-          elementTextBySelector("#taxdue-payments-table tr:nth-child(2) td[class=numeric]")("£0"),
-          elementTextBySelector("#taxdue-payments-table tr:nth-child(3) td[class=numeric]")("£90,500")
+          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500")
         )
       }
 
@@ -105,10 +102,7 @@ class CalculationControllerISpec extends ComponentSpecBase {
           elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDate("6 July 2017")),
           elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505"),
           elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(3) td[class=numeric]")("£198,500"),
-          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td[class=numeric]")("£90,500"),
-          elementTextBySelector("#taxdue-payments-table tr:nth-child(2) td[class=numeric]")("-£2,000"),
-          elementTextBySelector("#taxdue-payments-table tr:nth-child(3) td[class=numeric]")("£1,000")
+          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500")
         )
       }
 

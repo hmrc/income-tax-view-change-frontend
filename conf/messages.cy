@@ -23,7 +23,7 @@ home.payments.no-payments-due                                   = Dim taliadau�
 home.payments.view                                              = Bwrw golwg dros daliadau
 home.updates.heading                                            = Diweddariad nesaf i’w gyflwyno erbyn
 home.updates.view                                               = Bwrw golwg dros ddiweddariadau
-home.tax-years.heading                                          = Fy mlynyddoedd treth
+home.tax-years.heading                                          = Eich blynyddoedd treth
 home.tax-years.description                                      = Gwirio statws pob blwyddyn dreth
 home.tax-years.view                                             = Bwrw golwg dros flynyddoedd treth
 
@@ -51,10 +51,9 @@ tax-year-overview.calculation-date                              = Dyddiad y cyfr
 tax-year-overview.links-summary                                 = Cliciwch ar bob cysylltiad i gael rhagor o fanylion am bob adran.
 tax-year-overview.no-links-summary                              = Mae’r dudalen hon yn dangos crynodeb o’ch blwyddyn dreth.
 tax-year-overview.income                                        = Incwm
-tax-year-overview.deductions                                    = Didyniad
-tax-year-overview.taxable-income                                = Cyfanswm eich incwm trethadwy
-tax-year-overview.tax-due                                       = Y dreth sy’n ddyledus
-tax-year-overview.payment                                       = Taliad
+tax-year-overview.deductions                                    = Lwfansau a didyniadau
+tax-year-overview.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus ar ei gyfer
+tax-year-overview.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 sy’n ddyledus
 tax-year-overview.total-remaining                               = Cyfanswm sy’n ddyledus sy’n weddill
 
 ## Income Breakdown Page ##
@@ -70,7 +69,7 @@ income_breakdown.table.bbsi                                     = Llog o fanciau
 income_breakdown.table.dividends                                = Difidendau o gwmnïau yn y DU
 income_breakdown.table.occupational_pensions                    = Pensiynau galwedigaethol
 income_breakdown.table.state_benefit                            = Incwm o fudd-daliadau’r Wladwriaeth
-income_breakdown.total                                          = Cyfanswm yr incwm
+income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Lwfansau a didyniadau
@@ -85,7 +84,7 @@ deduction_breakdown.total                                              = Cyfansw
 ## Tax Calculation Breakdown Page ##
 taxCal_breakdown.heading                                            = Cyfrifiad Treth
 taxCal_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
-taxCal_breakdown.explanation                                        = Mae’r cyfrifiad hwn yn seiliedig ar eich incwm trethadwy o {0}
+taxCal_breakdown.explanation                                        = Mae’r cyfrifiad hwn yn seiliedig ar eich incwm trethadwy o
 taxCal-breakdown.national-regime                                    = Cyfundrefn dreth: {0}
 taxCal_breakdown.pay_pensions_profit                                = Cyflog, pensiynau ac elw
 taxCal_breakdown.savings                                            = Cynilion

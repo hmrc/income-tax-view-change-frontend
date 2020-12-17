@@ -65,14 +65,6 @@
                 </p>
             }
 
-            <p id="tax-year-summary">
-                @if(incomeBreakdown || deductionBreakdown || taxDue) {
-                    @messages("tax-year-overview.links-summary")
-                } else {
-                    @messages("tax-year-overview.no-links-summary")
-                }
-            </p>
-
             <table id="income-deductions-table">
                 <tr>
                     <td>
@@ -94,30 +86,22 @@
                     </td>
                     <td class="numeric">@{overview.deductions.toNegativeCurrencyString}</td>
                 </tr>
-                <tr class="no-border-bottom table__row--bold">
-                    <td>@messages("tax-year-overview.taxable-income")</td>
-                    <td class="numeric">@{overview.totalTaxableIncome.toCurrencyString}</td>
+                <tr>
+                    <td class="total-section">@messages("tax-year-overview.taxable-income")</td>
+                    <td class="numeric total-section">@{overview.totalTaxableIncome.toCurrencyString}</td>
                 </tr>
             </table>
 
             <table id="taxdue-payments-table" class="table--spaced-top">
                 <tr>
-                    <td>
+                    <td class="bold">
                         @if(taxDue) {
                             <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages("tax-year-overview.tax-due")</a>
                         } else {
                             @messages("tax-year-overview.tax-due")
                         }
                     </td>
-                    <td class="numeric">@{overview.taxDue.toCurrencyString}</td>
-                </tr>
-                <tr>
-                    <td>@messages("tax-year-overview.payment")</td>
-                    <td class="numeric">@{overview.payment.toNegativeCurrencyString}</td>
-                </tr>
-                <tr class="no-border-bottom table__row--bold">
-                    <td>@messages("tax-year-overview.total-remaining")</td>
-                    <td class="numeric">@{overview.totalRemainingDue.toCurrencyString}</td>
+                    <td  class="bold">@{overview.taxDue.toCurrencyString}</td>
                 </tr>
             </table>
         </div>
