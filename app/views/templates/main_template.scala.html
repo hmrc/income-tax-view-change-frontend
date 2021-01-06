@@ -56,18 +56,10 @@
     <script type="text/javascript" src=@routes.Assets.at("javascripts/skipToMainContent.js")></script>
     <script type="text/javascript" src=@routes.Assets.at("javascripts/ga-reporting.js")></script>
     <script type="text/javascript" src=@routes.Assets.at("javascripts/ga-accordion.js")></script>
-    <script type="text/javascript" src=@routes.Assets.at("javascripts/ga-tag-manager.js")></script>
     @scriptElem.fold(HtmlFormat.empty)(x => x)
 }
 
 @mainContentWithGA = {
-    <noscript>
-        <iframe src='https://www.googletagmanager.com/ns.html?id=GTM-TSFTCWZ'
-                height='0'
-                width='0'
-                style='display:none;visibility:hidden'>
-        </iframe>
-    </noscript>
     @mainContent
 }
 

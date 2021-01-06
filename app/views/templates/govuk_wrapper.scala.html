@@ -37,8 +37,8 @@
 }
 
 @head = {
-    @uiLayouts.head(
-      linkElem = Some(linksElem),
+    @uiLayouts.headWithTrackingConsent(
+        linkElem = Some(linksElem),
       headScripts = None)
     <meta name="format-detection" content="telephone=no" />
 }
@@ -60,8 +60,8 @@
 
 @bodyEnd = {
     @uiLayouts.footer(
-      analyticsToken = Some(appConfig.analyticsToken),
-      analyticsHost = appConfig.analyticsHost,
+      analyticsToken = None,
+      analyticsHost = "",
       ssoUrl = None,
       scriptElem = scriptElem,
       gaCalls = None)
