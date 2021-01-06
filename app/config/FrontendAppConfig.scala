@@ -50,10 +50,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Individual Calculation Service
   lazy val individualCalculationsService: String = servicesConfig.baseUrl("individual-calculations")
 
-  //GA
-  lazy val analyticsToken: String = servicesConfig.getString(s"google-analytics.token")
-  lazy val analyticsHost: String = servicesConfig.getString(s"google-analytics.host")
-
   //GG Sign In via Company Auth Frontend
   lazy val ggSignInContinueUrl: String = servicesConfig.getString("government-gateway.continue.url")
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
