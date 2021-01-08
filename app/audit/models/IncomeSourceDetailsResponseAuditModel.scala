@@ -21,15 +21,21 @@ import play.api.libs.json.{JsValue, Json, Writes}
 case class IncomeSourceDetailsResponseAuditModel(mtditid: String,
                                                  nino: String,
                                                  selfEmploymentIds: List[String],
-                                                 propertyIncomeId: Option[String]) extends ExtendedAuditModel {
+                                                 propertyIncomeId: Option[String],
+                                                 saUtr: Option[String],
+                                                 credId: Option[String],
+                                                 userType: Option[String]) extends ExtendedAuditModel {
 
   override val transactionName: String = "income-source-details-response"
   override val auditType: String = "incomeSourceDetailsResponse"
 
   private case class AuditDetail(mtditid: String,
-                                 nino: String,
+                                 nationalInsuranceNumber: String,
                                  selfEmploymentIncomeSourceIds: Option[List[String]],
-                                 propertyIncomeSourceId: Option[String])
+                                 propertyIncomeSourceId: Option[String],
+                                 saUtr: Option[String],
+                                 credId: Option[String],
+                                 userType: Option[String])
   private implicit val auditDetailWrites: Writes[AuditDetail] = Json.writes[AuditDetail]
 
   private val seIds = if (selfEmploymentIds.nonEmpty) Some(selfEmploymentIds) else None
@@ -39,7 +45,10 @@ case class IncomeSourceDetailsResponseAuditModel(mtditid: String,
       mtditid,
       nino,
       seIds,
-      propertyIncomeId
+      propertyIncomeId,
+      saUtr,
+      credId,
+      userType
     )
   )
 }

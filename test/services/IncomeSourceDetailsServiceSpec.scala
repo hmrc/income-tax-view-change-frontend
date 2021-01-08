@@ -25,7 +25,7 @@ import mocks.services.MockReportDeadlinesService
 import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
 
-
+//scalastyle:off
 class IncomeSourceDetailsServiceSpec @Inject() (val languageUtils: LanguageUtils) extends TestSupport with MockIncomeTaxViewChangeConnector with MockReportDeadlinesService with MockAuditingService {
 
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector)
@@ -35,35 +35,35 @@ class IncomeSourceDetailsServiceSpec @Inject() (val languageUtils: LanguageUtils
     "a result with both business and property details is returned" should {
 
       "return an IncomeSourceDetailsModel with business and property options" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(businessesAndPropertyIncome)
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(businessesAndPropertyIncome)
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe businessesAndPropertyIncome
       }
     }
 
     "a result with just business details is returned" should {
       "return an IncomeSourceDetailsModel with just a business option" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(singleBusinessIncome)
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(singleBusinessIncome)
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe singleBusinessIncome
       }
     }
 
     "a result with just property details is returned" should {
       "return an IncomeSourceDetailsModel with just a property option" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(propertyIncomeOnly)
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(propertyIncomeOnly)
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe propertyIncomeOnly
       }
     }
 
     "a result with no income source details is returned" should {
       "return an IncomeSourceDetailsModel with no options" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(noIncomeDetails)
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(noIncomeDetails)
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe noIncomeDetails
       }
     }
 
     "a result where the Income Source Details are error" should {
       "return an IncomeSourceError" in {
-        setupMockIncomeSourceDetailsResponse(testMtditid, testNino)(errorResponse)
+        setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(errorResponse)
         await(TestIncomeSourceDetailsService.getIncomeSourceDetails()) shouldBe errorResponse
       }
     }

@@ -16,6 +16,8 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.InitiatePayNowAuditModel
 import config.FrontendAppConfig
 import connectors.PayApiConnector
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
@@ -33,12 +35,17 @@ class PaymentController @Inject()(implicit val config: FrontendAppConfig,
                                   implicit val executionContext: ExecutionContext,
                                   val checkSessionTimeout: SessionTimeoutPredicate,
                                   val authenticate: AuthenticationPredicate,
-                                  payApiConnector: PayApiConnector) extends BaseController {
+                                  payApiConnector: PayApiConnector,
+                                  val auditingService: AuditingService
+                                 ) extends BaseController {
 
   val action = checkSessionTimeout andThen authenticate
 
   val paymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => action.async {
     implicit user =>
+      auditingService.extendedAudit(
+        InitiatePayNowAuditModel(user.mtditid, user.nino, user.saUtr, user.credId, user.userType)
+      )
       user.saUtr match {
         case Some(utr) =>
           payApiConnector.startPaymentJourney(utr, paymentAmountInPence).map {

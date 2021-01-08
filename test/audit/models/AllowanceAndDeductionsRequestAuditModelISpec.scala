@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,26 +20,26 @@ import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, t
 import play.api.libs.json.Json
 import testUtils.TestSupport
 
-class ReportDeadlinesRequestAuditModelSpec extends TestSupport {
+class AllowanceAndDeductionsRequestAuditModelISpec extends TestSupport {
 
-  val transactionName = "view-obligations"
-  val auditEvent = "ViewObligations"
+  val transactionName = "allowances-deductions-details-request"
+  val auditEvent = "AllowancesDeductionsDetailsRequest"
 
-  "The ReportDeadlinesRequestAuditModel" should {
+  "The AllowanceAndDeductionsRequestAuditModel" should {
 
-    lazy val testReportDeadlinesRequestAuditModel = ReportDeadlinesRequestAuditModel(testMtditid, testNino,
+    lazy val testAllowanceAndDeductionsRequestAuditModel = AllowanceAndDeductionsRequestAuditModel(testMtditid, testNino,
       Some(testSaUtr), Some(testCredId), Some(testUserType))
 
     s"Have the correct transaction name of '$transactionName'" in {
-      testReportDeadlinesRequestAuditModel.transactionName shouldBe transactionName
+      testAllowanceAndDeductionsRequestAuditModel.transactionName shouldBe transactionName
     }
 
     s"Have the correct audit event type of '$auditEvent'" in {
-      testReportDeadlinesRequestAuditModel.auditType shouldBe auditEvent
+      testAllowanceAndDeductionsRequestAuditModel.auditType shouldBe auditEvent
     }
 
     "Have the correct details for the audit event" in {
-      testReportDeadlinesRequestAuditModel.detail shouldBe Json.obj(
+      testAllowanceAndDeductionsRequestAuditModel.detail shouldBe Json.obj(
         "mtditid" -> testMtditid,
         "nationalInsuranceNumber" -> testNino,
         "saUtr" -> testSaUtr,

@@ -31,10 +31,14 @@ class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLooku
 
   "The NinoPredicate" when {
 
-    lazy val userNoNino = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName), Some("testUtr"))(fakeRequestWithActiveSession)
-    lazy val userNinoInSession = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName), Some("testUtr"))(fakeRequestWithNino)
-    lazy val userWithNino = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName), Some("testUtr"))(fakeRequestWithActiveSession)
-    lazy val successResponse = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName))
+    lazy val userNoNino = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName),
+      Some("testUtr"), Some("testCredId"), Some("individual"))(fakeRequestWithActiveSession)
+    lazy val userNinoInSession = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName),
+      Some("testUtr"), Some("testCredId"), Some("individual"))(fakeRequestWithNino)
+    lazy val userWithNino = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName),
+      Some("testUtr"), Some("testCredId"), Some("individual"))(fakeRequestWithActiveSession)
+    lazy val successResponse = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
+      Some("testUtr"), Some("testCredId"), Some("individual"))
 
     lazy val ninoServiceSuccess = Nino(testNino)
     lazy val ninoServiceError   = NinoResponseError(testErrorStatus, testErrorMessage)

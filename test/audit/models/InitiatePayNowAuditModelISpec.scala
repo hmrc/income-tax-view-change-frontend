@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,39 +16,36 @@
 
 package audit.models
 
-import assets.BaseTestConstants._
-import assets.CalcBreakdownTestConstants._
-import audit.models.BillsAuditing.BillsAuditModel
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
 import play.api.libs.json.Json
 import testUtils.TestSupport
 
-class BillsAuditModelSpec extends TestSupport {
+class InitiatePayNowAuditModelISpec extends TestSupport {
 
-  val transactionName = "view-tax-year_bill"
-  val auditType = "TaxYearBillView"
+  val transactionName = "initiate-pay-now"
+  val auditEvent = "InitiatePayNow"
 
-  "The BillsAuditModel" should {
+  "The InitiatePayNowAuditModel" should {
 
-    lazy val testBillsAuditModel = BillsAuditModel(testMtdItUser, testCalcDisplayModel.calcAmount)
+    lazy val testInitiatePayNowAuditModel = InitiatePayNowAuditModel(testMtditid, Some(testNino),
+      Some(testSaUtr), Some(testCredId), Some(testUserType))
 
     s"Have the correct transaction name of '$transactionName'" in {
-      testBillsAuditModel.transactionName shouldBe transactionName
+      testInitiatePayNowAuditModel.transactionName shouldBe transactionName
     }
 
-    s"Have the correct audit event type of '$auditType'" in {
-      testBillsAuditModel.auditType shouldBe auditType
+    s"Have the correct audit event type of '$auditEvent'" in {
+      testInitiatePayNowAuditModel.auditType shouldBe auditEvent
     }
 
     "Have the correct details for the audit event" in {
-      testBillsAuditModel.detail shouldBe Json.obj(
+      testInitiatePayNowAuditModel.detail shouldBe Json.obj(
         "mtditid" -> testMtditid,
         "nationalInsuranceNumber" -> testNino,
-        "currentBill" -> "123.45",
-        "saUtr" -> "saUtr",
-        "credId" -> "credId",
-        "userType" -> "individual"
+        "saUtr" -> testSaUtr,
+        "credId" -> testCredId,
+        "userType" -> testUserType
       )
     }
   }
 }
-

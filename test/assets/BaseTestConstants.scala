@@ -20,20 +20,24 @@ import assets.IncomeSourceDetailsTestConstants._
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import play.api.http.Status
 import play.api.test.FakeRequest
-import uk.gov.hmrc.auth.core.retrieve.{Name, ~}
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, EnrolmentIdentifier, Enrolments}
 
 object BaseTestConstants {
 
   val testMtditid = "XAIT0000123456"
   val testNino = "AB123456C"
+  val testSaUtr = "saUtr"
+  val testCredId  = "credId"
+  val testUserType = "individual"
   val testTaxYear = 2018
   val testUserName = "Albert Einstein"
   val testRetrievedUserName: Name = Name(Some(testUserName), None)
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
-  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some("saUtr"))(FakeRequest())
-  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None)(FakeRequest())
-  lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessesAndPropertyIncome)(FakeRequest())
+  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
+  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
+  lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+    businessesAndPropertyIncome, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
   val testSelfEmploymentId  = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"
@@ -45,15 +49,18 @@ object BaseTestConstants {
   val testPaymentLotItem = "000001"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
-  val testAuthSuccessResponse = new ~(Enrolments(Set(
+
+  val testAuthSuccessResponse = new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
-  )),Option(testRetrievedUserName))
-  val testAuthSuccessWithSaUtrResponse = new ~(Enrolments(Set(
+  )), Option(testRetrievedUserName)), Some(Credentials(testCredId,""))), Some(AffinityGroup.Individual))
+
+  val testAuthSuccessWithSaUtrResponse = new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
     Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "saUtr")), "activated")
-  )),Option(testRetrievedUserName))
+  )),Option(testRetrievedUserName)), Some(Credentials(testCredId,""))), Some(AffinityGroup.Individual))
+
   val testReferrerUrl = "/test/url"
 
 }

@@ -211,7 +211,8 @@ object CalcBreakdownTestConstants {
     ),
 
     allowancesAndDeductions = AllowancesAndDeductions(
-      personalAllowance = Some(11500)
+      personalAllowance = Some(11500),
+      totalPensionContributions = Some(11501)
     ),
     nic = Nic(
       class2 = Some(10000.00),

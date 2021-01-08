@@ -16,10 +16,15 @@
 
 package controllers
 
+import assets.BaseTestConstants.{testCredId, testMtdItUser, testMtditid, testNino, testReferrerUrl, testRetrievedUserName, testSaUtr, testUserType}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
 import assets.FinancialTransactionsTestConstants.transactionModel
+import assets.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, singleBusinessIncome}
 import assets.MessagesLookUp
+import audit.mocks.MockAuditingService
+import audit.models.BillsAuditing.BillsAuditModel
+import auth.MtdItUser
 import config.ItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -31,11 +36,13 @@ import play.api.http.Status
 import play.api.i18n.Lang
 import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockFinancialTransactionsService with FeatureSwitching {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+  with MockFinancialTransactionsService with FeatureSwitching with MockAuditingService {
 
   object TestCalculationController extends CalculationController(
     MockAuthenticationPredicate,
@@ -44,7 +51,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     mockFinancialTransactionsService,
     app.injector.instanceOf[ItvcErrorHandler],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NinoPredicate]
+    app.injector.instanceOf[NinoPredicate],
+    mockAuditingService
   )(appConfig,
     mockLanguageUtils,
     app.injector.instanceOf[MessagesControllerComponents],
@@ -119,6 +127,11 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           status(result) shouldBe Status.OK
           contentAsString(result) shouldBe expectedContent
           contentType(result) shouldBe Some("text/html")
+
+          lazy val expectedTestMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+            singleBusinessIncome, None, Some("credId"), Some("Individual"))(FakeRequest())
+
+          verifyExtendedAudit(BillsAuditModel(expectedTestMtdItUser, BigDecimal(2010.00)))
         }
       }
 

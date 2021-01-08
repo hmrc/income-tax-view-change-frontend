@@ -77,7 +77,10 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
         )
       },
       property = None
-    )
+    ),
+    Some("testUtr"),
+    Some("testCredId"),
+    Some("individual")
   )(FakeRequest())
 
   object TestFinancialTransactionsService extends FinancialTransactionsService(mockFinancialTransactionsConnector)

@@ -42,7 +42,12 @@ object AuthStub extends ComponentSpecBase {
           | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
           | }
           | ],
-          | "userDetailsUri":"$testUserDetailsWiremockUrl"
+          | "userDetailsUri":"$testUserDetailsWiremockUrl",
+          | "affinityGroup" : "Individual",
+          | "optionalCredentials": {
+          |  "providerId": "12345-credId",
+          |  "providerType": "GovernmentGateway"
+          | }
           |}""".stripMargin).toString())
   }
 
@@ -55,7 +60,8 @@ object AuthStub extends ComponentSpecBase {
          |  "key":"$testMtditidEnrolmentKey",
          |  "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
          |}],
-         | "userDetailsUri":"$testUserDetailsWiremockUrl"
+         | "userDetailsUri":"$testUserDetailsWiremockUrl",
+         | "affinityGroup" : "Individual"
          |}
        """.stripMargin).toString
     )
