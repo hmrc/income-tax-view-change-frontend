@@ -86,6 +86,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val ftUrl: String = servicesConfig.baseUrl("financial-transactions")
 
+  lazy val citizenDetailsUrl: String = servicesConfig.baseUrl("citizen-details")
+
   lazy val paymentsUrl: String = servicesConfig.baseUrl("pay-api")
 
   lazy val enterSurveyUrl: String = servicesConfig.getString("enter-survey.url")
