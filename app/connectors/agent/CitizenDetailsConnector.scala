@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package connectors
+package connectors.agent
 
 import config.FrontendAppConfig
+import connectors.RawResponseReads
 import javax.inject.{Inject, Singleton}
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.api.Logger

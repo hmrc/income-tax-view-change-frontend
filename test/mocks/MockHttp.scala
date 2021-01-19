@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.partials.HtmlPartial
 import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 trait MockHttp extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
@@ -46,6 +46,12 @@ trait MockHttp extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
   def setupMockHttpGet(url: String)(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
     when(mockHttpGet.GET[HttpResponse](ArgumentMatchers.eq(url))
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
+
+  def setupAgentMockHttpGet(url: Option[String] = None)(status: Int, response: Option[JsValue]): Unit = {
+    lazy val urlMatcher = url.fold(ArgumentMatchers.any[String]())(x => ArgumentMatchers.eq(x))
+    when(mockHttpGet.GET[HttpResponse](urlMatcher)
+      (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any[ExecutionContext])).thenReturn(Future.successful(HttpResponse(status, response)))
+  }
 
   def setupMockHttpGetWithParams(url: String, params: Seq[(String, String)])(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
     when(mockHttpGet.GET[HttpResponse](ArgumentMatchers.eq(url),ArgumentMatchers.eq(params))
