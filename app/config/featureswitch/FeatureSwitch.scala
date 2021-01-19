@@ -34,7 +34,8 @@ object FeatureSwitch {
     IncomeBreakdown,
     DeductionBreakdown,
     TaxDue,
-    API5
+    API5,
+    ITSASubmissionIntegration
   )
 
   def apply(str: String): FeatureSwitch =
@@ -85,4 +86,9 @@ case object TaxDue extends FeatureSwitch {
 case object API5 extends FeatureSwitch {
   override val name = s"$prefix.enable-API5"
   override val displayText = "Enable API5 Calls"
+}
+
+case object ITSASubmissionIntegration extends FeatureSwitch {
+  override val name = s"$prefix.enable-itsa-submission-integration"
+  override val displayText = "ITSA Submission Integration"
 }
