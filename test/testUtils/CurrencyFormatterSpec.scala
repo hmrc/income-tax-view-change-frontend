@@ -31,7 +31,7 @@ class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
         }
         "the number is 0" in {
           val amount: BigDecimal = 0.00
-          amount.toNegativeCurrencyString shouldBe "£0"
+          amount.toNegativeCurrencyString shouldBe "£0.00"
         }
       }
     }
@@ -48,7 +48,6 @@ class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
         amount.toPence shouldBe 1255
       }
     }
-
 
     "given the value is 12123.55" should {
 
@@ -68,8 +67,8 @@ class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
       val amount: BigDecimal = 134432
 
       s"format with leading pound sign (£) and commas in correct place with trailing zeros" in {
-        amount.toCurrency shouldBe Html("&pound;134,432")
-        amount.toCurrencyString shouldBe "£134,432"
+        amount.toCurrency shouldBe Html("&pound;134,432.00")
+        amount.toCurrencyString shouldBe "£134,432.00"
       }
       "return the same value in pence" in {
         amount.toPence shouldBe 13443200
@@ -81,8 +80,9 @@ class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
       val amount: BigDecimal = 555134432
 
       s"format large numbers with leading pound sign (£) and commas in correct place" in {
-        amount.toCurrency shouldBe Html("&pound;555,134,432")
-        amount.toCurrencyString shouldBe "£555,134,432"      }
+        amount.toCurrency shouldBe Html("&pound;555,134,432.00")
+        amount.toCurrencyString shouldBe "£555,134,432.00"
+      }
       "return the same value in pence" in {
         amount.toPence shouldBe 55513443200L
       }
@@ -93,8 +93,8 @@ class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
       val amount: BigDecimal = 12.00
 
       s"format numbers with trailing zeros without the zeros" in {
-        amount.toCurrency shouldBe Html("&pound;12")
-        amount.toCurrencyString shouldBe "£12"
+        amount.toCurrency shouldBe Html("&pound;12.00")
+        amount.toCurrencyString shouldBe "£12.00"
       }
       "return the same value in pence" in {
         amount.toPence shouldBe 1200
@@ -113,8 +113,5 @@ class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
         amount.toPence shouldBe 1240
       }
     }
-
-
-
   }
 }

@@ -89,7 +89,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
         "has a total line with a zero value" in new Setup(view) {
           val row: Element = content.table().select("tr").first()
           row.select("td").first().text() shouldBe IncomeBreakdown.total
-          row.select("td").last().text() shouldBe "£0"
+          row.select("td").last().text() shouldBe "£0.00"
         }
       }
     }

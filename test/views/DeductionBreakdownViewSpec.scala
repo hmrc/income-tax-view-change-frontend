@@ -89,7 +89,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         "has a total line with a zero value" in new Setup(view) {
           val row: Element = content.table().select("tr").first()
           row.select("td").first().text() shouldBe DeductionBreakdown.total
-          row.select("td").last().text() shouldBe "£0"
+          row.select("td").last().text() shouldBe "£0.00"
         }
       }
     }
@@ -147,32 +147,32 @@ class DeductionBreakdownViewSpec extends ViewSpec {
         "has a personal allowance line with the correct value" in new Setup(view) {
           val row: Element = content.table().select("tr").get(0)
           row.select("td").first().text() shouldBe DeductionBreakdown.personalAllowance
-          row.select("td").last().text() shouldBe "£11,500"
+          row.select("td").last().text() shouldBe "£11,500.00"
         }
 
         "has a pensions contributions line with the correct value" in new Setup(view) {
           val row: Element = content.table().select("tr").get(1)
           row.select("td").first().text() shouldBe DeductionBreakdown.totalPensionContributions
-          row.select("td").last().text() shouldBe "£12,500"
+          row.select("td").last().text() shouldBe "£12,500.00"
         }
 
         "has a loss relief line with the correct value" in new Setup(view) {
           val row: Element = content.table().select("tr").get(2)
           row.select("td").first().text() shouldBe DeductionBreakdown.lossesAppliedToGeneralIncome
-          row.select("td").last().text() shouldBe "£12,500"
+          row.select("td").last().text() shouldBe "£12,500.00"
 
         }
 
         "has a gift of investments and property to charity line with the correct value" in new Setup(view) {
           val row: Element = content.table().select("tr").get(3)
           row.select("td").first().text() shouldBe DeductionBreakdown.giftOfInvestmentsAndPropertyToCharity
-          row.select("td").last().text() shouldBe "£10,000"
+          row.select("td").last().text() shouldBe "£10,000.00"
         }
 
         "has a total deductions line with the correct value" in new Setup(view) {
           val row: Element = content.table().select("tr").get(4)
           row.select("td").first().text() shouldBe DeductionBreakdown.total
-          row.select("td").last().text() shouldBe "£47,500"
+          row.select("td").last().text() shouldBe "£47,500.00"
         }
       }
     }

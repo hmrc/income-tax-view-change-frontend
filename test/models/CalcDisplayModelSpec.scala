@@ -38,7 +38,7 @@ class CalcDisplayModelSpec extends TestSupport with Matchers {
     "display the calculation amount" when {
 
       "calculation data does not exist" in {
-        CalcDisplayModel("", 2, calculation, Estimate).whatYouOwe shouldBe "&pound;2"
+        CalcDisplayModel("", 2, calculation, Estimate).whatYouOwe shouldBe "&pound;2.00"
       }
     }
   }

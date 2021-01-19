@@ -62,9 +62,9 @@ class CalculationControllerISpec extends ComponentSpecBase {
           pageTitle(TaxYearOverviewMessages.title(testYearInt - 1, testYearInt)),
           elementTextBySelector("h1")(TaxYearOverviewMessages.heading(testYearInt - 1, testYearInt)),
           elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDate("6 July 2017")),
-          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500"),
-          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500")
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
+          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
         )
       }
 
@@ -100,9 +100,9 @@ class CalculationControllerISpec extends ComponentSpecBase {
           pageTitle(TaxYearOverviewMessages.title(testYearInt - 1, testYearInt)),
           elementTextBySelector("h1")(TaxYearOverviewMessages.heading(testYearInt - 1, testYearInt)),
           elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDate("6 July 2017")),
-          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505"),
-          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500"),
-          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500")
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
+          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
         )
       }
 
