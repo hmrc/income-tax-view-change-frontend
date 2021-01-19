@@ -18,6 +18,7 @@ package connectors
 
 import assets.BaseTestConstants.{testMtditid, testSaUtr, testTaxYear}
 import assets.CitizenDetailsTestConstants._
+import connectors.agent.CitizenDetailsConnector
 import mocks.MockHttp
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.api.libs.json.Json

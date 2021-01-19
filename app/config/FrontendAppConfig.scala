@@ -92,6 +92,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val enterSurveyUrl: String = servicesConfig.getString("enter-survey.url")
 
+  lazy val agentClientRelationshipUrl: String = servicesConfig.baseUrl("agent-client-relationships")
+
   //Payment Redirect route
   lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/payments-due"
 
