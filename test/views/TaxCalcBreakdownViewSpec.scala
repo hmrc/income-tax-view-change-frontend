@@ -95,31 +95,31 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         "has a basic rate threshold(SRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(1).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_Scot_SRT
-          row.select("td").last().text() shouldBe "£2,000"
+          row.select("td").last().text() shouldBe "£2,000.00"
         }
 
         "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(1).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_Scot_BRT
-          row.select("td").last().text() shouldBe "£4,000"
+          row.select("td").last().text() shouldBe "£4,000.00"
         }
 
         "has a basic rate threshold(IRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(1).select("tr").get(2)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_Scot_IRT
-          row.select("td").last().text() shouldBe "£45,000"
+          row.select("td").last().text() shouldBe "£45,000.00"
         }
 
         "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(1).select("tr").get(3)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_Scot_HRT
-          row.select("td").last().text() shouldBe "£40,000"
+          row.select("td").last().text() shouldBe "£40,000.00"
         }
 
         "has a top rate threshold(ART) line with the correct value" in new Setup(view) {
           val row: Element = content.table(1).select("tr").get(4)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_Scot_ART
-          row.select("td").last().text() shouldBe "£22,500"
+          row.select("td").last().text() shouldBe "£22,500.00"
         }
       }
     }
@@ -174,7 +174,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
       }
 
       "show the total tax due amount" in new Setup(view) {
-        content.select(".total-heading").text() shouldBe s"${TaxCalcBreakdown.sectionHeadingTotal} £0"
+        content.select(".total-heading").text() shouldBe s"${TaxCalcBreakdown.sectionHeadingTotal} £0.00"
       }
     }
 
@@ -241,19 +241,19 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(1).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_BRT
-          row.select("td").last().text() shouldBe "£4,000"
+          row.select("td").last().text() shouldBe "£4,000.00"
         }
 
         "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(1).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_HRT
-          row.select("td").last().text() shouldBe "£40,000"
+          row.select("td").last().text() shouldBe "£40,000.00"
         }
 
         "has a additional rate threshold(ART) line with the correct value" in new Setup(view) {
           val row: Element = content.table(1).select("tr").get(2)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_ART
-          row.select("td").last().text() shouldBe "£22,500"
+          row.select("td").last().text() shouldBe "£22,500.00"
         }
       }
 
@@ -270,37 +270,37 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         "has a Starting rate threshold(SSR) line with the correct value" in new Setup(view) {
           val row: Element = content.table(2).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_SSR
-          row.select("td").last().text() shouldBe "£0"
+          row.select("td").last().text() shouldBe "£0.00"
         }
 
         "has a Basic rate band at nil rate threshold(ZRTBR) line with the correct value" in new Setup(view) {
           val row: Element = content.table(2).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_ZRTBR
-          row.select("td").last().text() shouldBe "£0"
+          row.select("td").last().text() shouldBe "£0.00"
         }
 
         "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(2).select("tr").get(2)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_BRT
-          row.select("td").last().text() shouldBe "£2"
+          row.select("td").last().text() shouldBe "£2.00"
         }
 
         "has a Higher rate band at nil rate threshold(ZRTHR) line with the correct value" in new Setup(view) {
           val row: Element = content.table(2).select("tr").get(3)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_ZRTHR
-          row.select("td").last().text() shouldBe "£0"
+          row.select("td").last().text() shouldBe "£0.00"
         }
 
         "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(2).select("tr").get(4)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_HRT
-          row.select("td").last().text() shouldBe "£800"
+          row.select("td").last().text() shouldBe "£800.00"
         }
 
         "has a Additional rate threshold(ART) line with the correct value" in new Setup(view) {
           val row: Element = content.table(2).select("tr").get(5)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.saving_ART
-          row.select("td").last().text() shouldBe "£5,000"
+          row.select("td").last().text() shouldBe "£5,000.00"
         }
       }
 
@@ -317,37 +317,37 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         "has a basic rate band at nil rate threshold(ZRTBR) line with the correct value" in new Setup(view) {
           val row: Element = content.table(3).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_ZRTBR
-          row.select("td").last().text() shouldBe "£0"
+          row.select("td").last().text() shouldBe "£0.00"
         }
 
         "has a basic rate threshold(BRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(3).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_BRT
-          row.select("td").last().text() shouldBe "£75"
+          row.select("td").last().text() shouldBe "£75.00"
         }
 
         "has a higher rate band at nil rate threshold(ZRTHR) line with the correct value" in new Setup(view) {
           val row: Element = content.table(3).select("tr").get(2)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_ZRTHR
-          row.select("td").last().text() shouldBe "£0"
+          row.select("td").last().text() shouldBe "£0.00"
         }
 
         "has a higher rate threshold(HRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(3).select("tr").get(3)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_HRT
-          row.select("td").last().text() shouldBe "£750"
+          row.select("td").last().text() shouldBe "£750.00"
         }
 
         "has a additional rate band at nil rate threshold(ZRTAR) line with the correct value" in new Setup(view) {
           val row: Element = content.table(3).select("tr").get(4)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_ZRTAR
-          row.select("td").last().text() shouldBe "£0"
+          row.select("td").last().text() shouldBe "£0.00"
         }
 
         "has a additional rate threshold(ART) line with the correct value" in new Setup(view) {
           val row: Element = content.table(3).select("tr").get(5)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.dividend_ART
-          row.select("td").last().text() shouldBe "£1,143"
+          row.select("td").last().text() shouldBe "£1,143.00"
         }
 
 
@@ -362,43 +362,43 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         "has a Nic4 zero rate threshold(ZRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(4).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic4_ZRT
-          row.select("td").last().text() shouldBe "£100"
+          row.select("td").last().text() shouldBe "£100.00"
         }
 
         "has a Nic4 basic rate band threshold(BRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(4).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic4_BRT
-          row.select("td").last().text() shouldBe "£200"
+          row.select("td").last().text() shouldBe "£200.00"
         }
 
         "has a Nic4 higher rate threshold(HRT) line with the correct value" in new Setup(view) {
           val row: Element = content.table(4).select("tr").get(2)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic4_HRT
-          row.select("td").last().text() shouldBe "£300"
+          row.select("td").last().text() shouldBe "£300.00"
         }
 
         "has a giftAidTaxCharge line with the correct value" in new Setup(view) {
           val row: Element = content.table(4).select("tr").get(3)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.giftAidTaxCharge
-          row.select("td").last().text() shouldBe "£400"
+          row.select("td").last().text() shouldBe "£400.00"
         }
 
         "has a totalPensionSavingCharges line with the correct value" in new Setup(view) {
           val row: Element = content.table(4).select("tr").get(4)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.totalPensionSavingCharges
-          row.select("td").last().text() shouldBe "£500"
+          row.select("td").last().text() shouldBe "£500.00"
         }
 
         "has a statePensionLumpSum line with the correct value" in new Setup(view) {
           val row: Element = content.table(4).select("tr").get(5)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.statePensionLumpSum
-          row.select("td").last().text() shouldBe "£600"
+          row.select("td").last().text() shouldBe "£600.00"
         }
 
         "has a totalStudentLoansRepaymentAmount line with the correct value" in new Setup(view) {
           val row: Element = content.table(4).select("tr").get(6)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.totalStudentLoansRepaymentAmount
-          row.select("td").last().text() shouldBe "£700"
+          row.select("td").last().text() shouldBe "£700.00"
         }
       }
 
@@ -423,7 +423,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         "has a Nic2 line with the correct value" in new Setup(view) {
           val row: Element = content.table(6).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic2
-          row.select("td").last().text() shouldBe "£10,000"
+          row.select("td").last().text() shouldBe "£10,000.00"
         }
       }
 
@@ -440,42 +440,42 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         "has an employments line with the correct value" in new Setup(view) {
           val row: Element = content.table(8).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.employments
-          row.select("td").last().text() shouldBe "-£100"
+          row.select("td").last().text() shouldBe "-£100.00"
         }
 
         "has a UK pensions line with the correct value" in new Setup(view) {
           val row: Element = content.table(8).select("tr").get(1)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.ukPensions
-          row.select("td").last().text() shouldBe "-£200"
+          row.select("td").last().text() shouldBe "-£200.00"
         }
         "has a state benefits line with the correct value" in new Setup(view) {
           val row: Element = content.table(8).select("tr").get(2)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.stateBenefits
-          row.select("td").last().text() shouldBe "-£300"
+          row.select("td").last().text() shouldBe "-£300.00"
         }
 
         "has a CIS line with the correct value" in new Setup(view) {
           val row: Element = content.table(8).select("tr").get(3)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.cis
-          row.select("td").last().text() shouldBe "-£400"
+          row.select("td").last().text() shouldBe "-£400.00"
         }
 
         "has a UK land and property line with the correct value" in new Setup(view) {
           val row: Element = content.table(8).select("tr").get(4)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.ukLandAndProperty
-          row.select("td").last().text() shouldBe "-£500"
+          row.select("td").last().text() shouldBe "-£500.00"
         }
 
         "has a UK banks and building societies line with the correct value" in new Setup(view) {
           val row: Element = content.table(8).select("tr").get(5)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.BBSI
-          row.select("td").last().text() shouldBe "-£600"
+          row.select("td").last().text() shouldBe "-£600.00"
         }
 
         "has a total deductions line with the correct value" in new Setup(view) {
           val row: Element = content.table(8).select("tr").get(6)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.totalDeductions
-          row.select("td").last().text() shouldBe "£700"
+          row.select("td").last().text() shouldBe "£700.00"
         }
       }
 
