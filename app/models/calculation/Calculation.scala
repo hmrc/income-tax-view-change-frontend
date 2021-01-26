@@ -91,9 +91,15 @@ case class ReductionsAndCharges(giftAidTax: Option[BigDecimal] = None,
                                 statePensionLumpSumCharges: Option[BigDecimal] = None,
                                 totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
                                 propertyFinanceRelief: Option[BigDecimal] = None,
+																totalForeignTaxCreditRelief: Option[BigDecimal] = None,
+																reliefsClaimed: Option[Seq[ReliefsClaimed]] = None,
+																totalNotionalTax: Option[BigDecimal] = None,
                                 incomeTaxDueAfterTaxReductions: Option[BigDecimal] = None,
                                 totalIncomeTaxDue: Option[BigDecimal] = None
-                               )
+                               ) {
+	val reliefsClaimedMap: Map[String, Option[BigDecimal]] = reliefsClaimed.getOrElse(Seq()).map(relief => relief.`type` -> relief.amountUsed).toMap
+
+}
 
 object ReductionsAndCharges{
   implicit val reads: Reads[ReductionsAndCharges] = (
@@ -102,11 +108,21 @@ object ReductionsAndCharges{
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax"  \ "statePensionLumpSumCharges") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "totalStudentLoansRepaymentAmount") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "residentialFinanceCosts" \ "propertyFinanceRelief") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "foreignTaxCreditRelief" \ "totalForeignTaxCreditRelief") and
+      readNullable[Seq[ReliefsClaimed]](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "reliefsClaimed") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax" \ "totalNotionalTax") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax" \ "incomeTaxDueAfterTaxReductions") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax" \ "totalIncomeTaxDue")
     ) (ReductionsAndCharges.apply _)
   implicit val writes: OWrites[ReductionsAndCharges] = Json.writes[ReductionsAndCharges]
 }
+
+case class ReliefsClaimed(`type`: String, amountUsed: Option[BigDecimal])
+
+object ReliefsClaimed {
+	implicit val format: OFormat[ReliefsClaimed] = Json.format[ReliefsClaimed]
+}
+
 
 case class ResidentialFinanceCosts(rate: BigDecimal,
                                    propertyFinanceRelief: BigDecimal)

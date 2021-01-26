@@ -50,7 +50,16 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       totalPensionSavingsTaxCharges = Some(2.0),
       statePensionLumpSumCharges = Some(3.0),
       totalStudentLoansRepaymentAmount = Some(4.0),
-      propertyFinanceRelief = Some(5.0)
+      propertyFinanceRelief = Some(5.0),
+      totalForeignTaxCreditRelief = Some(6.0),
+      totalNotionalTax = Some(7.0),
+      reliefsClaimed = Some(Seq(ReliefsClaimed("deficiencyRelief", Some(1.0)), ReliefsClaimed("vctSubscriptions", Some(2.0)),
+        ReliefsClaimed("eisSubscriptions", Some(3.0)), ReliefsClaimed("seedEnterpriseInvestment", Some(4.0)),
+        ReliefsClaimed("communityInvestment", Some(5.0)), ReliefsClaimed("socialEnterpriseInvestment", Some(6.0)),
+        ReliefsClaimed("maintenancePayments", Some(7.0)),
+        ReliefsClaimed("qualifyingDistributionRedemptionOfSharesAndSecurities", Some(8.0)),
+        ReliefsClaimed("nonDeductibleLoanInterest", Some(9.0))
+      ))
     ),
     dividends = Dividends(
       incomeTaxAmount = Some(1.0),
@@ -102,7 +111,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         ),
         "incomeTax" -> Json.obj(
           "totalPensionSavingsTaxCharges"-> 2.0,
-          "statePensionLumpSumCharges"-> 3.0
+          "statePensionLumpSumCharges"-> 3.0,
+          "totalNotionalTax" -> 7.0
         ),
         "totalTaxDeducted" -> 700.0
       ),
@@ -207,7 +217,51 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         "reliefs" -> Json.obj(
           "residentialFinanceCosts" -> Json.obj(
             "propertyFinanceRelief" -> 5.0
-          )
+          ),
+          "foreignTaxCreditRelief" -> Json.obj(
+            "totalForeignTaxCreditRelief" -> 6.0
+          ),
+          "reliefsClaimed" -> Json.arr(
+            Json.obj(
+              "type" -> "deficiencyRelief",
+              "amountClaimed" -> 1.1,
+              "allowableAmount" -> 1.2,
+              "amountUsed" -> 1.0,
+              "rate" -> 2
+            ),
+            Json.obj(
+              "type" -> "vctSubscriptions",
+              "amountUsed" -> 2.0
+            ),
+            Json.obj(
+              "type" -> "eisSubscriptions",
+              "amountUsed" -> 3.0
+            ),
+            Json.obj(
+              "type" -> "seedEnterpriseInvestment",
+              "amountUsed" -> 4.0
+            ),
+            Json.obj(
+              "type" -> "communityInvestment",
+              "amountUsed" -> 5.0
+            ),
+            Json.obj(
+              "type" -> "socialEnterpriseInvestment",
+              "amountUsed" -> 6.0
+            ),
+            Json.obj(
+              "type" -> "maintenancePayments",
+              "amountUsed" -> 7.0
+            ),
+            Json.obj(
+              "type" -> "qualifyingDistributionRedemptionOfSharesAndSecurities",
+              "amountUsed" -> 8.0
+            ),
+            Json.obj(
+              "type" -> "nonDeductibleLoanInterest",
+              "amountUsed" -> 9.0
+            )
+        )
       )
 
     )
@@ -258,7 +312,47 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "totalPensionSavingsTaxCharges" -> 2.0,
       "statePensionLumpSumCharges" -> 3.0,
       "totalStudentLoansRepaymentAmount" -> 4.0,
-      "propertyFinanceRelief" -> 5.0
+      "propertyFinanceRelief" -> 5.0,
+      "totalForeignTaxCreditRelief" -> 6.0,
+      "totalNotionalTax" -> 7.0,
+      "reliefsClaimed" -> Json.arr(
+        Json.obj(
+          "type" -> "deficiencyRelief",
+          "amountUsed" -> 1.0
+        ),
+        Json.obj(
+          "type" -> "vctSubscriptions",
+          "amountUsed" -> 2.0
+        ),
+        Json.obj(
+          "type" -> "eisSubscriptions",
+          "amountUsed" -> 3.0
+        ),
+        Json.obj(
+          "type" -> "seedEnterpriseInvestment",
+          "amountUsed" -> 4.0
+        ),
+        Json.obj(
+          "type" -> "communityInvestment",
+          "amountUsed" -> 5.0
+        ),
+        Json.obj(
+          "type" -> "socialEnterpriseInvestment",
+          "amountUsed" -> 6.0
+        ),
+        Json.obj(
+          "type" -> "maintenancePayments",
+          "amountUsed" -> 7.0
+        ),
+        Json.obj(
+          "type" -> "qualifyingDistributionRedemptionOfSharesAndSecurities",
+          "amountUsed" -> 8.0
+        ),
+        Json.obj(
+          "type" -> "nonDeductibleLoanInterest",
+          "amountUsed" -> 9.0
+        )
+      )
     ),
     "dividends" -> Json.obj(
       "incomeTaxAmount" -> 1.0,

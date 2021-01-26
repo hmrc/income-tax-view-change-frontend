@@ -402,6 +402,83 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
       }
 
+      "have a Tax reductions table" which {
+        "has all three table rows" in new Setup(view) {
+          content hasTableWithCorrectSize(5, 12)
+        }
+
+        "has a Deficiency Relief line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(0)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.deficiencyRelief
+          row.select("td").last().text() shouldBe "-£1,000.00"
+        }
+
+        "has a Venture Capital Trust relief line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(1)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.vctRelief
+          row.select("td").last().text() shouldBe "-£2,000.00"
+        }
+
+        "has a Enterprise Investment Scheme relief line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(2)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.eisRelief
+          row.select("td").last().text() shouldBe "-£3,000.00"
+        }
+
+        "has a Seed Enterprise Scheme relief line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(3)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.seedRelief
+          row.select("td").last().text() shouldBe "-£4,000.00"
+        }
+
+        "has a Community Investment Tax Relief line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(4)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.citRelief
+          row.select("td").last().text() shouldBe "-£5,000.00"
+        }
+
+        "has a Social Investment Tax Relief line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(5)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.sitRelief
+          row.select("td").last().text() shouldBe "-£6,000.00"
+        }
+
+        "has a Maintenance and alimony paid line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(6)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.maintenanceRelief
+          row.select("td").last().text() shouldBe "-£7,000.00"
+        }
+
+        "has a Relief for finance costs line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(7)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.reliefForFinanceCosts
+          row.select("td").last().text() shouldBe "-£5,000.00"
+        }
+
+        "has a Notional tax from gains on life policies etc line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(8)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.notionalTax
+          row.select("td").last().text() shouldBe "-£7,000.00"
+        }
+
+        "has a Foreign Tax Credit Relief with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(9)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.foreignTaxCreditRelief
+          row.select("td").last().text() shouldBe "-£6,000.00"
+        }
+
+        "has a Relief claimed on a qualifying distribution line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(10)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.reliefClaimedOnQualifyingDis
+          row.select("td").last().text() shouldBe "-£8,000.00"
+        }
+
+        "has a non deductible loan interest line with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(11)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.nonDeductibleLoanInterest
+          row.select("td").last().text() shouldBe "-£9,000.00"
+        }
+      }
       "have an additional charges table" which {
 
         "has all four table rows" in new Setup(view) {
