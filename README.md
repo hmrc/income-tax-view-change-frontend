@@ -30,8 +30,11 @@ sm --start ITVC_FRONTEND_ALL -f
 ```
 sbt 'run 9081'
 ```
+### To run the application locally execute in test mode the following:
 
-
+```
+sbt "run 9081 -Dapplication.router=testOnlyDoNotUseInAppConf.Routes"
+```
 
 ## Test the application
 
