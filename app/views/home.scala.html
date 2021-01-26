@@ -21,69 +21,91 @@
 @import views.html.templates.main_template
 @import views.html.helpers.breadcrumbHelper
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, paymentEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @breadcrumb = {
-    @breadcrumbHelper(Breadcrumb(Vector(
-        BreadcrumbItem("breadcrumb-it", None)
-    )), "HomePage")
+@breadcrumbHelper(Breadcrumb(Vector(
+BreadcrumbItem("breadcrumb-it", None)
+)), "HomePage")
 }
 
 @paymentsTile = {
-    <div id="payments-tile" class="tile tile-no-border">
-        <div class="tile-body">
-            <h2 class="heading-medium">@messages("home.payments.heading")</h2>
-            <p>@nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due"))</p>
-            <p><a href=@controllers.routes.PaymentDueController.viewPaymentsDue().url>@messages("home.payments.view")</a></p>
-        </div>
+<div id="payments-tile" class="tile tile-no-border">
+    <div class="tile-body">
+        <h2 class="heading-medium">@messages("home.payments.heading")</h2>
+        <p>@nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due"))</p>
+        <p><a href=@controllers.routes.PaymentDueController.viewPaymentsDue().url>@messages("home.payments.view")</a>
+        </p>
     </div>
+</div>
 }
 
 @updatesTile = {
-    <div id="updates-tile" class="tile tile-no-border">
-        <div class="tile-body">
-            <h2 class="heading-medium">@messages("home.updates.heading")</h2>
-            <p>@nextUpdate.toLongDate</p>
-            <p><a href=@controllers.routes.ReportDeadlinesController.getReportDeadlines().url>@messages("home.updates.view")</a></p>
-        </div>
+<div id="updates-tile" class="tile tile-no-border">
+    <div class="tile-body">
+        <h2 class="heading-medium">@messages("home.updates.heading")</h2>
+        <p>@nextUpdate.toLongDate</p>
+        <p>
+            <a href=@controllers.routes.ReportDeadlinesController.getReportDeadlines().url>@messages("home.updates.view")</a>
+        </p>
     </div>
+</div>
 }
 
 @taxYearsTile = {
-    <div id="tax-years-tile" class="tile tile-no-border">
-        <div class="tile-body">
+<div id="tax-years-tile" class="tile tile-no-border">
+    <div class="tile-body">
+        <ul class="list">
             <h2 class="heading-medium">@messages("home.tax-years.heading")</h2>
-            <p>@messages("home.tax-years.description")</p>
-            <p><a href=@controllers.routes.TaxYearsController.viewTaxYears().url>@messages("home.tax-years.view")</a></p>
-        </div>
+            <li><a href=@controllers.routes.TaxYearsController.viewTaxYears().url>@messages("home.tax-years.view")</a>
+            </li>
+            @if(ITSASubmissionIntegrationEnabled){
+            <li><a href=@controllers.routes.HomeController.home.url>@messages("home.tax-years.viewPayments")</a></li>
+            }
+        </ul>
     </div>
+</div>
+}
+
+@YourIncomeTaxReturnTile= {
+@if(ITSASubmissionIntegrationEnabled){
+<div id="your-returns-tile" class="grid-row">
+    <div class="column-one-third">
+        <h3 class="heading-medium">@messages("home.your-returns.heading")</h3>
+        <p>@messages("home.your-returns.description")</p>
+        <p><a href=@controllers.routes.HomeController.home.url>@messages("home.your-returns.updatesLink")</a></p>
+    </div>
+</div>
+}
 }
 
 @main_template(
-    title = messages("home.heading"),
-    mainClass = Some("full-width"),
-    contentHeader = Some(breadcrumb)
+title = messages("home.heading"),
+mainClass = Some("full-width"),
+contentHeader = Some(breadcrumb)
 ) {
 
-    <h1 class="heading-xlarge">
-        <span id="income-tax-heading">@messages("home.heading")</span>
-        <span id="sub-heading" class="heading-secondary">@user.userName.map(_.name)</span>
-    </h1>
+<h1 class="heading-xlarge">
+    <span id="income-tax-heading">@messages("home.heading")</span>
+    <span id="sub-heading" class="heading-secondary">@user.userName.map(_.name)</span>
+</h1>
 
-    <span id="utr-reference-heading" class="form-hint heading-xl-addon">
+<span id="utr-reference-heading" class="form-hint heading-xl-addon">
         @messages("home.unique.taxpayer.reference", user.mtditid)
     </span>
 
-    <div class="flex-container grid-row">
+<div class="flex-container grid-row">
 
-        @if(paymentEnabled) {
-            @paymentsTile
-        }
-        @updatesTile
-        @taxYearsTile
-
-    </div>
-
+    @if(paymentEnabled) {
+    @paymentsTile
+    }
+    @updatesTile
+    @taxYearsTile
+</div>
+@if(ITSASubmissionIntegrationEnabled) {
+@YourIncomeTaxReturnTile
 }
+}
+
 

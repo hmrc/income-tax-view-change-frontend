@@ -101,11 +101,14 @@ object MessagesLookUp {
     val title = "Income Tax - Business Tax account - GOV.UK"
     val heading = "Income Tax"
     def taxpayerReference(mtditid: String): String = s"Unique Taxpayer Reference - $mtditid"
-    val updatesHeading = "Next update due"
-    val updatesLink = "View updates"
-    val taxYearsHeading = "Your tax years"
-    val taxYearsDescription = "Check the status of each tax year."
+    val updatesHeading = "Next updates due"
+    val updatesLink = "View next updates"
+    val taxYearsHeading = "Tax years"
     val taxYearsLink = "View tax years"
+    val viewPaymentslink = "View payment history"
+    val yourIncomeTaxReturnHeading = "Your Income Tax return"
+    val yourIncomeTaxReturnDescription = "Send updates to HMRC and declare income for a tax year."
+    val sendUpdatesLink = "Send updates"
   }
 
   object IncomeBreakdown {

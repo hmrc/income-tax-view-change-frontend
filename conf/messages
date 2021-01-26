@@ -20,12 +20,15 @@ home.heading                                                    = Income Tax
 home.unique.taxpayer.reference                                  = Unique Taxpayer Reference - {0}
 home.payments.heading                                           = Next payment due
 home.payments.no-payments-due                                   = No payments due.
-home.payments.view                                              = View payments
-home.updates.heading                                            = Next update due
-home.updates.view                                               = View updates
-home.tax-years.heading                                          = Your tax years
-home.tax-years.description                                      = Check the status of each tax year.
+home.payments.view                                              = View what you owe
+home.updates.heading                                            = Next updates due
+home.updates.view                                               = View next updates
+home.tax-years.heading                                          = Tax years
 home.tax-years.view                                             = View tax years
+home.tax-years.viewPayments                                     = View payment history
+home.your-returns.heading                                       = Your Income Tax return
+home.your-returns.description                                   = Send updates to HMRC and declare income for a tax year.
+home.your-returns.updatesLink                                   = Send updates
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service

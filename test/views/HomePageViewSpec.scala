@@ -55,12 +55,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
 
-  class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), paymentEnabled: Boolean = true) {
+  class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), paymentEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
 
     lazy val page: HtmlFormat.Appendable = views.html.home(
       nextPaymentDueDate = paymentDueDate,
       nextUpdate = updateDate,
       paymentEnabled = paymentEnabled,
+      ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       implicitDateFormatter = mockImplicitDateFormatter
     )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
@@ -115,16 +116,27 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has a heading" in new Setup {
         getElementById("tax-years-tile").map(_.select("h2").text) shouldBe Some(homeMessages.taxYearsHeading)
       }
-      "has a description" in new Setup {
-        getElementById("tax-years-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(homeMessages.taxYearsDescription)
-      }
       "has a link to the tax years page" in new Setup {
-        val link: Option[Elements] = getElementById("tax-years-tile").map(_.select("a"))
+        val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").first)
         link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.viewTaxYears().url)
         link.map(_.text) shouldBe Some(homeMessages.taxYearsLink)
       }
+      "has a link to the view payments page" in new Setup {
+        val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").get(1))
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.HomeController.home().url)
+        link.map(_.text) shouldBe Some(homeMessages.viewPaymentslink)
+      }
+
     }
-
   }
-
+  "have an your income tax returns tile" when {
+      "has a heading" in new Setup {
+        getElementById("your-returns-tile").map(_.select("h3").text) shouldBe Some(homeMessages.yourIncomeTaxReturnHeading)
+      }
+      "has a link to the send updates page" in new Setup {
+        val link: Option[Elements] = getElementById("your-returns-tile").map(_.select("a"))
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.HomeController.home().url)
+        link.map(_.text) shouldBe Some(homeMessages.sendUpdatesLink)
+      }
+    }
 }
