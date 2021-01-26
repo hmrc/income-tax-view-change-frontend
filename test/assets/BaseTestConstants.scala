@@ -21,11 +21,12 @@ import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
-import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
 
 object BaseTestConstants {
 
   val testMtditid = "XAIT0000123456"
+  val testArn = "XAIT0000123456"
   val testNino = "AB123456C"
   val testSaUtr = "saUtr"
   val testCredId  = "credId"
@@ -62,5 +63,13 @@ object BaseTestConstants {
   )),Option(testRetrievedUserName)), Some(Credentials(testCredId,""))), Some(AffinityGroup.Individual))
 
   val testReferrerUrl = "/test/url"
+
+  val arnEnrolment = Enrolment(
+    "HMRC-AS-AGENT",
+    Seq(EnrolmentIdentifier("ARN", testArn)),
+    "Activated"
+  )
+
+  val testConfidenceLevel = ConfidenceLevel.L200
 
 }
