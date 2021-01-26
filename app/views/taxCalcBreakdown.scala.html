@@ -40,6 +40,14 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
     </tr>
 }
 
+@taxReductionsTableRow(reliefsClaimedType: String) = {
+    @if(calcModel.calcDataModel.reductionsAndCharges.reliefsClaimed.isDefined) {
+        @if(calcModel.calcDataModel.reductionsAndCharges.reliefsClaimedMap.get(s"$reliefsClaimedType").isDefined) {
+            @tableRow(s"$reliefsClaimedType", calcModel.calcDataModel.reductionsAndCharges.reliefsClaimedMap(s"$reliefsClaimedType"), isNegative = true)
+        }
+    }
+}
+
 @tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
     @if(dataItem.isDefined) {
     <tr id="@messageCode">
@@ -154,7 +162,18 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
     <caption>
         <h3 class="heading-medium">@messages("taxCal_breakdown.table.tax_reductions")</h3>
     </caption>
+    @taxReductionsTableRow("deficiencyRelief")
+    @taxReductionsTableRow("vctSubscriptions")
+    @taxReductionsTableRow("eisSubscriptions")
+    @taxReductionsTableRow("seedEnterpriseInvestment")
+    @taxReductionsTableRow("communityInvestment")
+    @taxReductionsTableRow("socialEnterpriseInvestment")
+    @taxReductionsTableRow("maintenancePayments")
     @tableRow("property_finance_relief", calcModel.calcDataModel.reductionsAndCharges.propertyFinanceRelief, isNegative = true)
+    @tableRow("total_notional_tax", calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax, isNegative = true)
+    @tableRow("total_foreign_tax_credit_relief", calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief, isNegative = true)
+    @taxReductionsTableRow("qualifyingDistributionRedemptionOfSharesAndSecurities")
+    @taxReductionsTableRow("nonDeductibleLoanInterest")
 </table>
 
 
