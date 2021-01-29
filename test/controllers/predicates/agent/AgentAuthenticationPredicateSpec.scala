@@ -59,8 +59,8 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
       arnPredicate(FakeRequest())(userWithArnIdEnrolment).right.value mustBe AuthPredicateSuccess
     }
 
-    "return a NotFoundException where an arn enrolment does not already exist" in {
-      intercept[NotFoundException](await(arnPredicate(FakeRequest())(blankUser).left.value))
+    "return a MissingAgentReferenceNumber where a user does not have it in their enrolments" in {
+      intercept[MissingAgentReferenceNumber](await(arnPredicate(FakeRequest())(blankUser).left.value))
     }
   }
 

@@ -20,6 +20,7 @@ import cats.implicits._
 import controllers.predicates.AuthPredicate.{AuthPredicate, AuthPredicateSuccess}
 import controllers.predicates.IncomeTaxAgentUser
 import play.api.mvc.{Result, Results}
+import uk.gov.hmrc.auth.core.AuthorisationException
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.http.SessionKeys.{authToken, lastRequestTimestamp}
 
@@ -29,9 +30,6 @@ object AgentAuthenticationPredicate extends Results {
 
   lazy val timeoutRoute: Result = Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
 
-  // Redirects to individual home for now until agent home logic is implemented.
-  lazy val homeRoute: Result = Redirect(controllers.routes.HomeController.home())
-
   val timeoutPredicate: AuthPredicate[IncomeTaxAgentUser] = request => user =>
     if (request.session.get(lastRequestTimestamp).nonEmpty && request.session.get(authToken).isEmpty) {
       Left(Future.successful(timeoutRoute))
@@ -40,10 +38,10 @@ object AgentAuthenticationPredicate extends Results {
 
   val arnPredicate: AuthPredicate[IncomeTaxAgentUser] = request => user =>
     if (user.arn.nonEmpty) Right(AuthPredicateSuccess)
-    else Left(Future.failed(new NotFoundException("AuthPredicates.arnPredicate")))
-
+    else Left(Future.failed(MissingAgentReferenceNumber()))
 
   val defaultPredicates: AuthPredicate[IncomeTaxAgentUser] = timeoutPredicate |+| arnPredicate
 
+  case class MissingAgentReferenceNumber(msg: String = "Agent Reference Number was not found in user's enrolments") extends AuthorisationException(msg)
 
 }

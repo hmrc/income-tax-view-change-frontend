@@ -28,50 +28,50 @@ object AuthStub extends ComponentSpecBase {
   def stubAuthorised(): Unit = {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
       Json.parse(
-          s"""{
-          | "allEnrolments": [{
-          | "key":"$testMtditidEnrolmentKey",
-          | "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
-          | },
-          | {
-          | "key":"$testNinoEnrolmentKey",
-          | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
-          | },
-          | {
-          | "key":"$testSaUtrEnrolmentKey",
-          | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
-          | }
-          | ],
-          | "userDetailsUri":"$testUserDetailsWiremockUrl",
-          | "affinityGroup" : "Individual",
-          | "optionalCredentials": {
-          |  "providerId": "12345-credId",
-          |  "providerType": "GovernmentGateway"
-          | }
-          |}""".stripMargin).toString())
+        s"""{
+           | "allEnrolments": [{
+           | "key":"$testMtditidEnrolmentKey",
+           | "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
+           | },
+           | {
+           | "key":"$testNinoEnrolmentKey",
+           | "identifiers": [{"key":"$testNinoEnrolmentIdentifier", "value":"$testNino"}]
+           | },
+           | {
+           | "key":"$testSaUtrEnrolmentKey",
+           | "identifiers": [{"key":"$testSaUtrEnrolmentIdentifier", "value":"$testSaUtr"}]
+           | }
+           | ],
+           | "userDetailsUri":"$testUserDetailsWiremockUrl",
+           | "affinityGroup" : "Individual",
+           | "optionalCredentials": {
+           |  "providerId": "12345-credId",
+           |  "providerType": "GovernmentGateway"
+           | }
+           |}""".stripMargin).toString())
   }
 
   def stubAuthorisedNoNino(): Unit = {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
       Json.parse(
-      s"""
-         |{
-         |"allEnrolments": [{
-         |  "key":"$testMtditidEnrolmentKey",
-         |  "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
-         |}],
-         | "userDetailsUri":"$testUserDetailsWiremockUrl",
-         | "affinityGroup" : "Individual"
-         |}
+        s"""
+           |{
+           |"allEnrolments": [{
+           |  "key":"$testMtditidEnrolmentKey",
+           |  "identifiers": [{"key":"$testMtditidEnrolmentIdentifier", "value":"$testMtditid"}]
+           |}],
+           | "userDetailsUri":"$testUserDetailsWiremockUrl",
+           | "affinityGroup" : "Individual"
+           |}
        """.stripMargin).toString
     )
   }
 
-  def stubUnauthorised():Unit = {
+  def stubUnauthorised(): Unit = {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.UNAUTHORIZED, "{}")
   }
 
-  def stubInsufficientEnrolments():Unit = {
+  def stubInsufficientEnrolments(): Unit = {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.INTERNAL_SERVER_ERROR,
       Json.parse(
         s"""{
@@ -93,6 +93,41 @@ object AuthStub extends ComponentSpecBase {
            | "userDetailsUri":"$testUserDetailsWiremockUrl"
            |}""".stripMargin).toString())
   }
+
+  def stubAuthorisedAgent(): Unit = {
+    WiremockHelper.stubPost(
+      url = postAuthoriseUrl,
+      status = Status.OK,
+      responseBody = Json.stringify(Json.obj(
+        "allEnrolments" -> Json.arr(
+          Json.obj(
+            "key" -> "HMRC-AS-AGENT",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> "AgentReferenceNumber",
+                "value" -> "1"
+              )
+            )
+          )
+        ),
+        "affinityGroup" -> "Agent",
+        "confidenceLevel" -> 200
+      ))
+    )
+  }
+
+  def stubAuthorisedAgentNoARN(): Unit = {
+    WiremockHelper.stubPost(
+      url = postAuthoriseUrl,
+      status = Status.OK,
+      responseBody = Json.stringify(Json.obj(
+        "allEnrolments" -> Json.arr(),
+        "affinityGroup" -> "Agent",
+        "confidenceLevel" -> 200
+      ))
+    )
+  }
+
 }
 
 

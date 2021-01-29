@@ -16,19 +16,23 @@
 
 package auth
 
+import config.ItvcErrorHandler
 import controllers.predicates.AuthPredicate._
 import controllers.predicates.IncomeTaxUser
+import controllers.predicates.agent.AgentAuthenticationPredicate.MissingAgentReferenceNumber
 import javax.inject.Inject
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class BaseFrontendController @Inject()(implicit val mcc: MessagesControllerComponents)
+abstract class BaseFrontendController @Inject()(implicit val mcc: MessagesControllerComponents, itvcErrorHandler: ItvcErrorHandler)
   extends FrontendController(mcc) with I18nSupport {
 
   val authorisedFunctions: AuthorisedFunctions
@@ -54,11 +58,26 @@ abstract class BaseFrontendController @Inject()(implicit val mcc: MessagesContro
               case Right(AuthPredicateSuccess) => action(request)(user)
               case Left(failureResult) => failureResult
             }
-        }
+        }.recover(handleExceptions(request))
       }
 
     def async: AuthenticatedAction[User]
 
+  }
+
+  private def handleExceptions(request: Request[_]): PartialFunction[Throwable, Result] = {
+    case _: BearerTokenExpired =>
+      Logger.info("[BaseFrontendController][handleExceptions] - User's bearer token expired, redirecting to timeout page")
+      Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
+    case ex: MissingAgentReferenceNumber =>
+      Logger.warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
+      itvcErrorHandler.showOkTechnicalDifficulties()(request)
+    case ex: AuthorisationException =>
+      Logger.warn(s"[BaseFrontendController][handleExceptions] - AuthorisationException occured - ${ex.reason}")
+      Redirect(controllers.routes.SignInController.signIn())
+    case _: NotFoundException =>
+      NotFound(itvcErrorHandler.notFoundTemplate(request))
+    case ex => throw ex
   }
 
 }

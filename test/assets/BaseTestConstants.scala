@@ -16,8 +16,6 @@
 
 package assets
 
-import java.util.UUID
-
 import assets.IncomeSourceDetailsTestConstants._
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import play.api.http.Status
@@ -31,7 +29,7 @@ object BaseTestConstants {
   val testNino = "AB123456C"
   val testSaUtr = "saUtr"
   val testArn = "XAIT0000123456"
-  val testCredId  = "credId"
+  val testCredId = "credId"
   val testUserType = "individual"
   val testTaxYear = 2018
   val testUserName = "Albert Einstein"
@@ -41,7 +39,7 @@ object BaseTestConstants {
   lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
     businessesAndPropertyIncome, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
-  val testSelfEmploymentId  = "XA00001234"
+  val testSelfEmploymentId = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"
   val testTaxCalculationId = "CALCID"
@@ -56,22 +54,25 @@ object BaseTestConstants {
   val testAuthSuccessResponse = new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
-  )), Option(testRetrievedUserName)), Some(Credentials(testCredId,""))), Some(AffinityGroup.Individual))
+  )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Individual))
 
   val testAuthSuccessWithSaUtrResponse = new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
     Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "saUtr")), "activated")
-  )),Option(testRetrievedUserName)), Some(Credentials(testCredId,""))), Some(AffinityGroup.Individual))
+  )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Individual))
 
-  val testReferrerUrl = "/test/url"
-
-  val arnEnrolment = Enrolment(
+  val arnEnrolment: Enrolment = Enrolment(
     "HMRC-AS-AGENT",
     Seq(EnrolmentIdentifier("ARN", testArn)),
     "Activated"
   )
 
-  val testConfidenceLevel = ConfidenceLevel.L200
+  val testConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
+
+  val testAgentAuthRetrievalSuccess = new ~(new ~(Enrolments(Set(arnEnrolment)), Some(AffinityGroup.Agent)), testConfidenceLevel)
+  val testAgentAuthRetrievalSuccessNoEnrolment = new ~(new ~(Enrolments(Set()), Some(AffinityGroup.Agent)), testConfidenceLevel)
+
+  val testReferrerUrl = "/test/url"
 
 }

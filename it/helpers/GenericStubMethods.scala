@@ -19,12 +19,27 @@ import helpers.servicemocks._
 
 trait GenericStubMethods extends CustomMatchers {
 
-  def isAuthorisedUser(bool: Boolean): Unit = {
-    if(bool){
+  def isAuthorisedUser(authorised: Boolean): Unit = {
+    if(authorised){
       Given("I wiremock stub an isAuthorisedUser user response")
       AuthStub.stubAuthorised()
     } else {
       Given("I wiremock stub an unauthorised user response")
+      AuthStub.stubUnauthorised()
+    }
+  }
+
+  def stubAuthorisedAgentUser(authorised: Boolean, hasAgentEnrolment: Boolean = true): Unit = {
+    if(authorised) {
+      if(hasAgentEnrolment) {
+        Given("I stub the agent is authorised with an agent reference number")
+        AuthStub.stubAuthorisedAgent()
+      } else {
+        Given("I stub the agent is authorised without an agent reference number")
+        AuthStub.stubAuthorisedAgentNoARN()
+      }
+    } else {
+      Given("I stub the agent is unauthorised")
       AuthStub.stubUnauthorised()
     }
   }

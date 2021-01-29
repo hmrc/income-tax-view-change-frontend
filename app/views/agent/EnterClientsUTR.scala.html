@@ -1,0 +1,55 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.templates.agent.MainTemplate
+@import views.html.helpers.injected.InputHelper
+@import views.html.helpers.injected.ContinueButton
+@import views.html.helpers.injected.BackLink
+@import views.html.helpers.injected.ErrorSummary
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+
+@this(
+        mainTemplate: MainTemplate,
+        inputHelper: InputHelper,
+        continueButton: ContinueButton,
+        backLink: BackLink,
+        form: FormWithCSRF,
+        errorSummary: ErrorSummary
+)
+
+@(clientUTRForm: Form[String], postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+
+@mainTemplate(title = messages("agent.enter_clients_utr.heading"), form = Some(clientUTRForm)) {
+
+    @errorSummary(
+        form = clientUTRForm
+    )
+
+    @form(action = postAction) {
+
+        @inputHelper(
+            field = clientUTRForm("utr"),
+            label = messages("agent.enter_clients_utr.heading"),
+            isPageHeading = true,
+            formHint = Some(messages("agent.enter_clients_utr.info"))
+        )
+
+        @continueButton()
+
+    }
+
+}
