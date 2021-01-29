@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 trait TestAgentClientRelationshipsConnector extends TestSupport with MockHttp {
 
-  object TestAgentClientRelationshipsConnector extends AgentClientRelationshipsConnector(mockHttpGet,appConfig)
+  object TestAgentClientRelationshipsConnector extends AgentClientRelationshipsConnector(mockHttpGet, appConfig)
 
   def mockAgentClientRelationship(arn: String, mtditid: String)(status: Int, response: Option[JsValue] = None): Unit =
     setupAgentMockHttpGet(Some(TestAgentClientRelationshipsConnector.agentClientURL(arn, mtditid)))(status, response)

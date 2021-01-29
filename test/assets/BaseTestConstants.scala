@@ -16,6 +16,8 @@
 
 package assets
 
+import java.util.UUID
+
 import assets.IncomeSourceDetailsTestConstants._
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import play.api.http.Status
@@ -25,6 +27,7 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, EnrolmentIdentifier, Enr
 
 object BaseTestConstants {
 
+  val testArn: String = UUID.randomUUID().toString
   val testMtditid = "XAIT0000123456"
   val testNino = "AB123456C"
   val testSaUtr = "saUtr"
