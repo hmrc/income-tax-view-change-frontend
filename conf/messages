@@ -7,6 +7,9 @@ base.submit                                                     = Submit
 base.error_heading                                              = There’s a problem
 base.backToHome                                                 = Back to Income Tax home
 
+# Agent Base
+agent.base.service_name                                         = Your client’s Income Tax details
+
 ## BTA Links ##
 bta.home                                                        = Business tax home
 bta.messages                                                    = Messages
@@ -276,3 +279,4 @@ notFound.message = Please check that you have entered the correct web address.
 
 ## Title pattern
 titlePattern.serviceName.govUk = {0} - Business Tax account - GOV.UK
+agent.titlePattern.serviceName.govUk = {0} - Your client’s Income Tax details - GOV.UK

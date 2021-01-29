@@ -1,6 +1,7 @@
 # Add all the application routes to the app.routes file
-->         /report-quarterly/income-and-expenses/view       app.Routes
-->         /                                                health.Routes
-->     	   /template                                        template.Routes
+->         /report-quarterly/income-and-expenses/view               app.Routes
+->         /report-quarterly/income-and-expenses/view/agents        agent.Routes
+->         /                                                        health.Routes
+->         /template                                                template.Routes
 
-GET        /admin/metrics                                   com.kenshoo.play.metrics.MetricsController.metrics
+GET        /admin/metrics                                           com.kenshoo.play.metrics.MetricsController.metrics
