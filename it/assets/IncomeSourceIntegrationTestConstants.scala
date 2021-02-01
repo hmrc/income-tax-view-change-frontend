@@ -23,16 +23,19 @@ import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetails
 object IncomeSourceIntegrationTestConstants {
 
   val singleBusinessResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
     businesses = List(business1),
     property = None
   )
 
   val misalignedBusinessWithPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
     businesses = List(business2),
     property = Some(property)
   )
 
   val multipleBusinessesResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
     businesses = List(
       business1,
       business2
@@ -41,11 +44,13 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val businessAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
     businesses = List(business1),
     property = Some(property)
   )
 
   val multipleBusinessesAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
     businesses = List(
       business1,
       business2
@@ -54,11 +59,13 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val propertyOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
     businesses = List(),
     property = Some(property)
   )
 
   val noPropertyOrBusinessResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
     List(), None
   )
 

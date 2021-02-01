@@ -51,6 +51,7 @@ object BusinessDetailsIntegrationTestConstants {
   val b2AddressLine4 = "USA"
   val b2AddressLine5 = "51MP 50N5"
   val b2CountryCode = "USA"
+  val testMtdItId = "XIAT0000000000A"
 
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,

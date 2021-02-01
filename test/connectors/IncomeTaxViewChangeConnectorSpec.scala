@@ -56,6 +56,12 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   }
 
+  "getBusinessDetailsUrl" should {
+    "return the correct url" in new Setup {
+      getBusinessDetailsUrl(testNino) shouldBe s"$baseUrl/income-tax-view-change/get-business-details/nino/$testNino"
+    }
+  }
+
   "getIncomeSourcesUrl" should {
     "return the correct url" in new Setup {
       getIncomeSourcesUrl(testMtditid) shouldBe s"$baseUrl/income-tax-view-change/income-sources/$testMtditid"
@@ -79,6 +85,44 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       getPreviousObligationsUrl(testNino) shouldBe s"$baseUrl/income-tax-view-change/$testNino/fulfilled-report-deadlines"
     }
   }
+
+  "getBusinessDetails" should {
+
+    val successResponse = HttpResponse(Status.OK, Some(Json.toJson(singleBusinessIncome)))
+    val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
+    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+
+    val getBusinessDetailsTestUrl = s"http://localhost:9999/income-tax-view-change/get-business-details/nino/$testNino"
+
+    "return an IncomeSourceDetailsModel when successful JSON is received" in new Setup {
+      setupMockHttpGet(getBusinessDetailsTestUrl)(successResponse)
+
+      val result: Future[IncomeSourceDetailsResponse] = getBusinessDetails(testNino)
+      await(result) shouldBe singleBusinessIncome
+    }
+
+    "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {
+      setupMockHttpGet(getBusinessDetailsTestUrl)(successResponseBadJson)
+
+      val result: Future[IncomeSourceDetailsResponse] = getBusinessDetails(testNino)
+      await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
+    }
+
+    "return IncomeSourceDetailsError model in case of failure" in new Setup {
+      setupMockHttpGet(getBusinessDetailsTestUrl)(badResponse)
+
+      val result: Future[IncomeSourceDetailsResponse] = getBusinessDetails(testNino)
+      await(result) shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
+    }
+
+    "return IncomeSourceDetailsError model in case of future failed scenario" in new Setup {
+      setupMockFailedHttpGet(getBusinessDetailsTestUrl)(badResponse)
+
+      val result: Future[IncomeSourceDetailsResponse] = getBusinessDetails(testNino)
+      await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
+    }
+  }
+
 
   "getIncomeSources" should {
 
