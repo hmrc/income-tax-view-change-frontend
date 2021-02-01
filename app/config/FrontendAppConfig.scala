@@ -66,6 +66,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val mtdItEnrolmentKey: String = servicesConfig.getString("enrolments.mtd.key")
   lazy val mtdItIdentifierKey: String = servicesConfig.getString("enrolments.mtd.identifier")
 
+  //ARN Enrolment
+  lazy val arnEnrolmentKey: String = servicesConfig.getString("enrolments.arn.key")
+  lazy val arnIdentifierKey: String = servicesConfig.getString("enrolments.arn.identifier")
+
   //NINO Enrolment
   lazy val ninoEnrolmentKey: String = servicesConfig.getString("enrolments.nino.key")
   lazy val ninoIdentifierKey: String = servicesConfig.getString("enrolments.nino.identifier")

@@ -17,6 +17,7 @@ val playPartialsVersion       = "6.10.0-play-26"
 val authClientVersion         = "3.2.0-play-26"
 val playUiVersion             = "8.15.0-play-26"
 val playLanguageVersion       = "4.2.0-play-26"
+val catsVersion               = "0.9.0"
 
 val scalaTestPlusVersion      = "3.1.3"
 val hmrcTestVersion           = "3.9.0-play-26"
@@ -34,6 +35,7 @@ val compile = Seq(
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "uk.gov.hmrc" %% "auth-client" % authClientVersion,
+  "org.typelevel" %% "cats" % catsVersion,
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
   "uk.gov.hmrc" %% "logback-json-logger" % "4.8.0",
   "com.typesafe.play" %% "play-json-joda" % "2.6.10"
