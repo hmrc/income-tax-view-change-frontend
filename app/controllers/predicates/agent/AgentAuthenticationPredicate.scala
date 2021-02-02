@@ -17,26 +17,20 @@
 package controllers.predicates.agent
 
 import cats.implicits._
-import controllers.predicates.agent.AuthPredicate._
-import play.api.mvc._
+import controllers.predicates.AuthPredicate.{AuthPredicate, AuthPredicateSuccess}
+import controllers.predicates.IncomeTaxAgentUser
+import play.api.mvc.{Result, Results}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.http.SessionKeys.{authToken, lastRequestTimestamp}
 
 import scala.concurrent.Future
 
-object AgentAuthenticationPredicate  extends Results {
+object AgentAuthenticationPredicate extends Results {
 
   lazy val timeoutRoute: Result = Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
 
   // Redirects to individual home for now until agent home logic is implemented.
   lazy val homeRoute: Result = Redirect(controllers.routes.HomeController.home())
-
-  // Redirects to home for now until confirmation logic is implemented.
-  lazy val confirmationRoute: Result = Redirect(controllers.routes.HomeController.home())
-
-  val hasAgentEnrolment: AuthPredicate[IncomeTaxAgentUser] = request => user =>
-    if (user.arn.nonEmpty) Right(AuthPredicateSuccess)
-    else Left(Future.failed(new NotFoundException("auth.AuthPredicates.hasSubmitted")))
 
   val timeoutPredicate: AuthPredicate[IncomeTaxAgentUser] = request => user =>
     if (request.session.get(lastRequestTimestamp).nonEmpty && request.session.get(authToken).isEmpty) {
@@ -51,6 +45,5 @@ object AgentAuthenticationPredicate  extends Results {
 
   val defaultPredicates: AuthPredicate[IncomeTaxAgentUser] = timeoutPredicate |+| arnPredicate
 
-  val confirmationPredicates: AuthPredicate[IncomeTaxAgentUser] = defaultPredicates |+| hasAgentEnrolment
 
 }

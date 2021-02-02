@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.predicates.agent
+package controllers.predicates
 
-import play.api.mvc.{AnyContent, Request, Result}
 import cats.Monoid
-
+import play.api.mvc.{AnyContent, Request, Result}
 
 import scala.concurrent.Future
 
@@ -34,6 +33,6 @@ object AuthPredicate {
     override def combine(x: AuthPredicateSuccess, y: AuthPredicateSuccess): AuthPredicateSuccess = AuthPredicateSuccess
   }
 
-  type AuthPredicate[User <: IncomeTaxAgentUser] = Request[AnyContent] => User => Either[Future[Result], AuthPredicateSuccess]
+  type AuthPredicate[User <: IncomeTaxUser] = Request[AnyContent] => User => Either[Future[Result], AuthPredicateSuccess]
 
 }
