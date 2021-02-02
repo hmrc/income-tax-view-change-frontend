@@ -17,8 +17,9 @@
 package controllers.predicates.agent
 
 import assets.BaseTestConstants._
+import controllers.predicates.AuthPredicate.AuthPredicateSuccess
+import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate._
-import controllers.predicates.agent.AuthPredicate.AuthPredicateSuccess
 import org.scalatest.EitherValues
 import org.scalatest.MustMatchers.convertToAnyMustWrapper
 import org.scalatest.concurrent.ScalaFutures
@@ -31,7 +32,6 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.http.SessionKeys.{authToken, lastRequestTimestamp}
 
 
-
 class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar with ScalaFutures with EitherValues {
 
   private def testUser(affinityGroup: Option[AffinityGroup],
@@ -42,8 +42,8 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
     confidenceLevel: ConfidenceLevel,
   )
 
-  private def testUser(affinityGroup: Option[AffinityGroup],enrolments: Enrolment*): IncomeTaxAgentUser =
-    testUser(affinityGroup,testConfidenceLevel,enrolments: _*)
+  private def testUser(affinityGroup: Option[AffinityGroup], enrolments: Enrolment*): IncomeTaxAgentUser =
+    testUser(affinityGroup, testConfidenceLevel, enrolments: _*)
 
   val blankUser: IncomeTaxAgentUser = testUser(None, confidenceLevel = ConfidenceLevel.L0)
 
@@ -53,16 +53,6 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
     authToken -> "",
     lastRequestTimestamp -> ""
   )
-
-  "hasAgentEnrolment" should {
-    "return an AuthPredicateSuccess where an arn enrolment already exists" in {
-      hasAgentEnrolment(FakeRequest())(userWithArnIdEnrolment).right.value mustBe AuthPredicateSuccess
-    }
-
-    "return a NotFoundException where an arn enrolment does not already exist" in {
-      intercept[NotFoundException](await(hasAgentEnrolment(FakeRequest())(blankUser).left.value))
-    }
-  }
 
   "arnPredicate" should {
     "return an AuthPredicateSuccess where an arn enrolment already exists" in {

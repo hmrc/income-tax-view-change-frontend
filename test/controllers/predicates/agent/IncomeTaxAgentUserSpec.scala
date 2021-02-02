@@ -16,6 +16,7 @@
 
 package controllers.predicates.agent
 
+import controllers.predicates.IncomeTaxAgentUser
 import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 

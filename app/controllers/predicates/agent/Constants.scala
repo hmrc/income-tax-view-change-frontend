@@ -17,16 +17,8 @@
 package controllers.predicates.agent
 
 object Constants {
-  val mtdItsaEnrolmentName = "HMRC-MTD-IT"
+
   val agentServiceEnrolmentName = "HMRC-AS-AGENT"
-  val mtdItsaEnrolmentIdentifierKey = "MTDITID"
   val agentServiceIdentifierKey = "AgentReferenceNumber"
-
-  val ninoIdentifierKey = "NINO"
-
-
-  object GovernmentGateway {
-    val GGProviderId = "GovernmentGateway"
-  }
 
 }

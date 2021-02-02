@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.predicates.agent
+package controllers.predicates
 
-import play.api.mvc.{AnyContent, Request}
+import controllers.predicates.agent.Constants
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.Name
-
-import scala.collection.immutable.::
 
 trait IncomeTaxUser {
   val enrolments: Enrolments
@@ -28,19 +25,14 @@ trait IncomeTaxUser {
   val confidenceLevel: ConfidenceLevel
 }
 
-case class IncomeTaxAgentUser(enrolments: Enrolments, affinityGroup: Option[AffinityGroup], confidenceLevel: ConfidenceLevel) {
+case class IncomeTaxAgentUser(enrolments: Enrolments,
+                              affinityGroup: Option[AffinityGroup],
+                              confidenceLevel: ConfidenceLevel) extends IncomeTaxUser {
+
   lazy val arn: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
-
-  def clientNino(implicit request: Request[AnyContent]): Option[String] =
-    request.session.get(ITSASessionKeys.NINO)
-
-  def clientUtr(implicit request: Request[AnyContent]): Option[String] =
-    request.session.get(ITSASessionKeys.UTR)
-
-  def clientName(implicit request: Request[AnyContent]): Name =
-    Name(request.session.get(ITSASessionKeys.clientFirstName), request.session.get(ITSASessionKeys.clientLastName))
 
   private def getEnrolment(key: String) = enrolments.enrolments.collectFirst {
     case Enrolment(`key`, EnrolmentIdentifier(_, value) :: _, _, _) => value
   }
+
 }
