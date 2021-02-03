@@ -22,12 +22,12 @@ import assets.PropertyDetailsTestConstants._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 
 object IncomeSourceDetailsTestConstants {
-  val businessesAndPropertyIncome = IncomeSourceDetailsModel(List(business1, business2), Some(propertyDetails))
-  val singleBusinessIncome = IncomeSourceDetailsModel(List(business1), None)
-  val businessIncome2018and2019 = IncomeSourceDetailsModel(List(business2018, business2019), None)
-  val propertyIncomeOnly = IncomeSourceDetailsModel(List(), Some(propertyDetails))
-  val businessAndPropertyAligned = IncomeSourceDetailsModel(List(alignedBusiness), Some(propertyDetails))
-  val noIncomeDetails = IncomeSourceDetailsModel(List(), None)
+  val businessesAndPropertyIncome = IncomeSourceDetailsModel(testMtdItId,List(business1, business2), Some(propertyDetails))
+  val singleBusinessIncome = IncomeSourceDetailsModel(testMtdItId, List(business1), None)
+  val businessIncome2018and2019 = IncomeSourceDetailsModel(testMtdItId, List(business2018, business2019), None)
+  val propertyIncomeOnly = IncomeSourceDetailsModel(testMtdItId, List(), Some(propertyDetails))
+  val businessAndPropertyAligned = IncomeSourceDetailsModel(testMtdItId, List(alignedBusiness), Some(propertyDetails))
+  val noIncomeDetails = IncomeSourceDetailsModel(testMtdItId, List(), None)
   val errorResponse = IncomeSourceDetailsError(testErrorStatus, testErrorMessage)
-  val businessIncome2018and2019AndProp = IncomeSourceDetailsModel(List(business2018, business2019), Some(propertyDetails))
+  val businessIncome2018and2019AndProp = IncomeSourceDetailsModel(testMtdItId, List(business2018, business2019), Some(propertyDetails))
 }

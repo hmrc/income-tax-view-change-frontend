@@ -22,10 +22,10 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.core.{Nino, NinoResponse, NinoResponseError}
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, FinancialDetailsModel}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsErrorModel, PaymentAllocationsModel, PaymentAllocationsResponseModel}
-import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
+import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
@@ -35,8 +35,8 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeTaxViewChangeConnectorImpl @Inject()(val http: HttpClient,
-                                                  val auditingService: AuditingService,
-                                                  val config: FrontendAppConfig
+                                                 val auditingService: AuditingService,
+                                                 val config: FrontendAppConfig
                                                 )(implicit val ec: ExecutionContext) extends IncomeTaxViewChangeConnector
 
 trait IncomeTaxViewChangeConnector extends RawResponseReads {
@@ -45,6 +45,10 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
   val auditingService: AuditingService
   val config: FrontendAppConfig
   implicit val ec: ExecutionContext
+
+  def getBusinessDetailsUrl(nino: String): String = {
+    s"${config.itvcProtectedService}/income-tax-view-change/get-business-details/nino/$nino"
+  }
 
   def getIncomeSourcesUrl(mtditid: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"
@@ -72,6 +76,39 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   def getPaymentsUrl(nino: String, from: String, to: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
+  }
+
+  def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
+
+    val url = getBusinessDetailsUrl(nino)
+    Logger.debug(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - GET $url")
+
+    http.GET[HttpResponse](url) map { response =>
+      response.status match {
+        case OK =>
+          Logger.debug(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - RESPONSE status: ${response.status}, json: ${response.json}")
+          response.json.validate[IncomeSourceDetailsModel].fold(
+            invalid => {
+              Logger.error(s"[IncomeTaxViewChangeConnector][getBusinessDetails] $invalid")
+              IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
+            },
+            valid => valid
+          )
+        case status =>
+          if (status == 404) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+          } else if (status >= 500) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - RESPONSE status: ${response.status}, body: ${response.body}")
+          }
+          IncomeSourceDetailsError(response.status, response.body)
+      }
+    } recover {
+      case ex =>
+        Logger.error(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - Unexpected future failed error, ${ex.getMessage}")
+        IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
+    }
   }
 
   def getIncomeSources(mtditid: String, nino: String,
@@ -106,7 +143,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             }
           )
         case status =>
-          if(status >= 500) {
+          if (status >= 500) {
             Logger.error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
             Logger.warn(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, body: ${response.body}")
@@ -137,7 +174,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             valid => valid
           )
         case status =>
-          if(status >= 500) {
+          if (status >= 500) {
             Logger.error(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
             Logger.warn(s"[IncomeTaxViewChangeConnector][getNino] - RESPONSE status: ${response.status}, body: ${response.body}")
@@ -177,7 +214,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             }
           )
         case status =>
-          if(status >= 500) {
+          if (status >= 500) {
             Logger.error(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
             Logger.warn(s"[IncomeTaxViewChangeConnector][getReportDeadlines] - RESPONSE status: ${response.status}, body: ${response.body}")
@@ -216,7 +253,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             }
           )
         case status =>
-          if(status >= 500) {
+          if (status >= 500) {
             Logger.error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
           } else {
             Logger.warn(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
@@ -249,7 +286,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             valid => valid
           )
         case status =>
-          if(status >= 500) {
+          if (status >= 500) {
             Logger.error(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Status: ${response.status}, body: ${response.body}")
           } else {
             Logger.warn(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Status: ${response.status}, body: ${response.body}")
@@ -282,7 +319,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
             valid => valid
           )
         case status =>
-          if(status >= 500) {
+          if (status >= 500) {
             Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, body: ${response.body}")
           } else {
             Logger.warn(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, body: ${response.body}")

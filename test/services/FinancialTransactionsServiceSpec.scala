@@ -65,6 +65,7 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
     testNino,
     Some(testRetrievedUserName),
     IncomeSourceDetailsModel(
+      testMtditid,
       businesses = (1 to numYears).toList.map { count =>
         BusinessDetailsModel(
           incomeSourceId = s"income-id-$count",

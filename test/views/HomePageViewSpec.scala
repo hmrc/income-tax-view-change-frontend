@@ -43,7 +43,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     testMtditid,
     testNino,
     Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(Nil, None),
+    IncomeSourceDetailsModel(testMtditid,Nil, None),
     Some("testUtr"),
     Some("testCredId"),
     Some("individual")

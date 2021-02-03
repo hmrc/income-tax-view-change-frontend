@@ -45,7 +45,7 @@ object BusinessDetailsTestConstants {
   )
   val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
   val testCessation = CessationModel(Some(LocalDate.of(2018,1,1)), Some("It was a stupid idea anyway"))
-
+  val testMtdItId = "XIAT0000000000A"
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = testBusinessAccountingPeriod,
