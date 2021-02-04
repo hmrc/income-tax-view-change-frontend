@@ -17,22 +17,27 @@
 package helpers.agent
 
 import config.FrontendAppConfig
+import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.http.HeaderNames
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
-  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods {
+  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods with SessionCookieBaker {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
+
+  override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -80,15 +85,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   object IncomeTaxViewChangeFrontend {
 
-    def get(uri: String): WSResponse = {
+    def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents" + uri)
-      await(buildClient("/agents" + uri).get())
+      await(buildClient("/agents" + uri)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies))
+        .get())
     }
 
-    def post(uri: String)(body: Map[String, Seq[String]]): WSResponse = {
+    def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
       await(buildClient("/agents" + uri)
-        .withHttpHeaders("Csrf-Token" -> "nocheck")
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
         .post(body)
       )
     }
@@ -100,6 +107,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         utr => ClientsUTRForm.form.fill(utr).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
+
+    def getConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = get("/confirm-client", clientDetails)
+
+    def postConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = post("/confirm-client", clientDetails)(Map.empty)
 
   }
 

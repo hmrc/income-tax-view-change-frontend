@@ -156,11 +156,18 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 
 .govuk-heading-m {
     font-weight: 700;
-    font-size: 24px;
+    font-size: 18px;
     line-height: 1.11111;
     display: block;
-    margin-top: 45px;
+    margin-top: 0px;
     margin-bottom: 15px;
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-heading-m {
+        font-size: 24px;
+        line-height: 1.31579
+    }
 }
 
 .govuk-body-l {

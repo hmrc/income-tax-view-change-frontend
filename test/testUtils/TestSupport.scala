@@ -20,6 +20,7 @@ import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import controllers.agent.utils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.{BeforeAndAfterEach, Suite}
@@ -82,7 +83,20 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
   lazy val fakeRequestWithTimeoutSession = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
+
+  lazy val fakeRequestWithClientDetails = fakeRequestWithActiveSession.withSession(
+    utils.SessionKeys.clientFirstName -> "Test",
+    utils.SessionKeys.clientLastName -> "User",
+    utils.SessionKeys.clientUTR -> "1234567890"
+  )
+
   lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> testNino)
   lazy val fakeRequestNoSession = FakeRequest()
+
+  implicit class FakeRequestUtil[C](fakeRequest: FakeRequest[C]) {
+    def addingToSession(newSessions: (String, String)*): FakeRequest[C] = {
+      fakeRequest.withSession(fakeRequest.session.data ++: newSessions: _*)
+    }
+  }
 
 }

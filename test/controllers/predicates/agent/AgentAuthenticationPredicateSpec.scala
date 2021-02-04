@@ -17,6 +17,7 @@
 package controllers.predicates.agent
 
 import assets.BaseTestConstants._
+import controllers.agent.utils.SessionKeys.{clientFirstName, clientLastName, clientUTR}
 import controllers.predicates.AuthPredicate.AuthPredicateSuccess
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate._
@@ -28,7 +29,6 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, Enrolments}
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.http.SessionKeys.{authToken, lastRequestTimestamp}
 
 
@@ -54,6 +54,12 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
     lastRequestTimestamp -> ""
   )
 
+  lazy val clientDetailsPopulated: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+    clientFirstName -> "",
+    clientLastName -> "",
+    clientUTR -> ""
+  )
+
   "arnPredicate" should {
     "return an AuthPredicateSuccess where an arn enrolment already exists" in {
       arnPredicate(FakeRequest())(userWithArnIdEnrolment).right.value mustBe AuthPredicateSuccess
@@ -69,13 +75,23 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
       timeoutPredicate(FakeRequest())(blankUser).right.value mustBe AuthPredicateSuccess
     }
 
-    "return an AuthPredicateSuccess where the authToken is set and hte lastRequestTimestamp is set" in {
+    "return an AuthPredicateSuccess where the authToken is set and the lastRequestTimestamp is set" in {
       timeoutPredicate(authorisedRequest)(blankUser).right.value mustBe AuthPredicateSuccess
     }
 
     "return the timeout page where the lastRequestTimestamp is set but the auth token is not" in {
       lazy val request = FakeRequest().withSession(lastRequestTimestamp -> "")
       await(timeoutPredicate(request)(blankUser).left.value) mustBe timeoutRoute
+    }
+  }
+
+  "detailsPredicate" should {
+    "return an AuthPredicateSuccess where the client's details are in session" in {
+      detailsPredicate(clientDetailsPopulated)(blankUser).right.value mustBe AuthPredicateSuccess
+    }
+
+    "return the Enter Client UTR page where the client's details are not in session" in {
+      await(detailsPredicate(FakeRequest())(blankUser).left.value) mustBe noClientDetailsRoute
     }
   }
 }
