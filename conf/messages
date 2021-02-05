@@ -6,9 +6,21 @@ base.sign-out                                                   = Sign out
 base.submit                                                     = Submit
 base.error_heading                                              = There’s a problem
 base.backToHome                                                 = Back to Income Tax home
+base.continue                                                   = Continue
+base.error_summary.heading                                      = There is a problem
+base.error-prefix                                               = Error:
 
 # Agent Base
 agent.base.service_name                                         = Your client’s Income Tax details
+agent.title_pattern.service_name.govuk                          = {0} - Your client’s Income Tax details - GOV.UK
+agent.error.title_pattern.service_name.govuk                    = Error: {0} - Your client’s Income Tax details - GOV.UK
+
+# Agent - Enter clients details
+agent.enter_clients_utr.heading                                 = What is your client’s Unique Taxpayer Reference?
+agent.enter_clients_utr.info                                    = This is the 10-digit number they received when they registered for Self Assessment. For example, 1234567890.
+agent.error.enter_clients_utr.empty                             = Enter your client’s Unique Taxpayer Reference
+agent.error.enter_clients_utr.length                            = Your client’s Unique Taxpayer Reference must be 10 digits long
+agent.error.enter_clients_utr.non_numeric                       = A Unique Taxpayer Reference must only contain numbers
 
 ## BTA Links ##
 bta.home                                                        = Business tax home
@@ -279,4 +291,3 @@ notFound.message = Please check that you have entered the correct web address.
 
 ## Title pattern
 titlePattern.serviceName.govUk = {0} - Business Tax account - GOV.UK
-agent.titlePattern.serviceName.govUk = {0} - Your client’s Income Tax details - GOV.UK

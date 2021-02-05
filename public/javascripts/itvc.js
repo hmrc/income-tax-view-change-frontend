@@ -26,6 +26,10 @@ $(document).ready(function() {
         item.addEventListener("click", enableTab);
     }
 
+    if(document.getElementById("error-summary-display")) {
+        document.getElementById("error-summary-display").focus()
+    }
+
 });
 
 

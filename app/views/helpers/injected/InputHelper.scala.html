@@ -1,0 +1,70 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import play.api.data.Field
+
+@this()
+@(field: Field, label: String, isPageHeading: Boolean, formHint: Option[String] = None)(implicit messages: Messages)
+
+@fieldError = @{
+    field.error
+}
+
+@inputLabel = {
+    <label class="govuk-label govuk-label--l" for="@field.name">
+        @label
+    </label>
+}
+
+<div class="form-group form-field @if(fieldError.isDefined) {form-field--error}">
+
+    @if(isPageHeading) {
+        <h1 class="govuk-label-wrapper">
+            @inputLabel
+        </h1>
+    } else {
+        @inputLabel
+    }
+
+    @formHint.map { hint =>
+        <div class="form-hint" id="@field.name-hint">
+            @hint
+        </div>
+    }
+
+    @fieldError.map { error =>
+        <span id="@field.name-error" class="error-notification">
+            <span class="visuallyhidden">@messages("base.error-prefix")</span>
+            @messages(s"${error.message}", error.args:_*)
+        </span>
+    }
+
+    <input
+        name="@field.name"
+        class="form-control"
+        id="@field.name"
+        type="text"
+        @if(formHint.isDefined && fieldError.isDefined) {
+            aria-describedby="@field.name-hint @field.name-error"
+        } else {
+            @if(formHint.isDefined) {
+                aria-describedby="@field.name-hint"
+            }
+        }
+        value="@field.value.getOrElse("")"
+    >
+
+</div>

@@ -16,11 +16,10 @@
 
 package testUtils
 
-import scala.collection.JavaConversions._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import org.scalatest.Assertion
+import org.scalatest.{Assertion, Succeeded}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Call
 import play.twirl.api.Html
@@ -78,6 +77,7 @@ trait ViewSpec extends TestSupport {
     def h3: Element = {
       element.select(s"${Selectors.h3}") getOrElse fail("h3 not found")
     }
+
     //scalastyle:on
 
     def backLink: Element = {
@@ -111,6 +111,8 @@ trait ViewSpec extends TestSupport {
 
   implicit class ElementTests(element: Element) {
 
+    private val errorSummaryHeadingText: String = "There is a problem"
+
     def hasPageHeading(heading: String): Assertion = element.h1.text shouldBe heading
 
     def hasBackLinkTo(href: String): Assertion = element.backLink.attr("href") shouldBe href
@@ -138,6 +140,24 @@ trait ViewSpec extends TestSupport {
 
     def hasTableWithCorrectSize(table: Int = 1, size: Int): Assertion = {
       element.table(table).select("tr").size() shouldBe size
+    }
+
+    def hasErrorSummary(fieldErrors: (String, String)*): Assertion = {
+      val errorSummary: Element = element.selectHead("#error-summary-display")
+      errorSummary.attr("role") shouldBe "alert"
+      errorSummary.attr("tabindex") shouldBe "-1"
+
+      val errorSummaryHeading: Element = errorSummary.selectHead("h2")
+      errorSummaryHeading.text shouldBe errorSummaryHeadingText
+      errorSummary.attr("aria-labelledby") shouldBe errorSummaryHeading.attr("id")
+
+      fieldErrors.zipWithIndex.map {
+        case ((field, error), index) =>
+          val listItem: Element = errorSummary.selectHead("div").selectHead("ul").selectNth("li", index + 1)
+          val errorLink = listItem.selectHead("a")
+          errorLink.attr("href") shouldBe s"#$field"
+          errorLink.text shouldBe error
+      }.forall(_ == Succeeded) shouldBe true
     }
   }
 
