@@ -16,36 +16,105 @@
 
 package services.agent
 
-import assets.BaseTestConstants.{testArn, testMtditid}
-import services.agent.mocks.TestClientRelationshipService
+import mocks.connectors.{MockAgentClientRelationshipsConnector, MockCitizenDetailsConnector, MockIncomeTaxViewChangeConnector}
+import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
+import services.agent.ClientRelationshipService.{BusinessDetailsNotFound, CitizenDetailsNotFound, NoAgentClientRelationship, UnexpectedResponse}
+import testUtils.TestSupport
 
+import scala.concurrent.Future
 
-class ClientRelationshipServiceSpec extends TestClientRelationshipService {
-  "isAgentClientRelationship" should {
-    "return true if the connector returns true" in {
-      preExistingRelationship(testArn, testMtditid)(agentClientRelationship = true)
+class ClientRelationshipServiceSpec extends TestSupport with MockAgentClientRelationshipsConnector
+  with MockCitizenDetailsConnector with MockIncomeTaxViewChangeConnector {
 
-      val res = TestClientRelationshipService.isAgentClientRelationship(testArn, testMtditid)
+  object TestClientRelationshipService extends ClientRelationshipService(
+    mockAgentClientRelationshipsConnector,
+    mockCitizenDetailsConnector,
+    mockIncomeTaxViewChangeConnector
+  )
 
-      await(res) shouldBe true
+  ".checkAgentClientRelationship" should {
+    "return client details" when {
+      "a successful citizen details response contains a nino" when {
+        "income source details are returned with an mtdbsa identifer" when {
+          "an agent client relationship exists" in {
+
+            setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
+            setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", List(), None)))
+            mockAgentClientRelationship("testArn", "mtdbsaId")(Future.successful(true))
+
+            val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn"))
+
+            result shouldBe Right(ClientRelationshipService.ClientDetails(Some("James"), Some("Bond"), "TESTNINO123", "mtdbsaId"))
+          }
+        }
+      }
     }
 
-    "return false if the connector returns false" in {
-      preExistingRelationship(testArn, testMtditid)(agentClientRelationship = false)
+    "return a NoAgentClientRelationship error" when {
+      "an agent client relationship does not exist" in {
 
-      val res = TestClientRelationshipService.isAgentClientRelationship(testArn, testMtditid)
+        setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
+        setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", List(), None)))
+        mockAgentClientRelationship("testArn", "mtdbsaId")(Future.successful(false))
 
-      await(res) shouldBe false
+        val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn"))
+
+        result shouldBe Left(NoAgentClientRelationship)
+
+      }
     }
 
-    "return a failed future if the connection fails" in {
-      val exception = new Exception()
+    "return a BusinessDetailsNotFound" when {
+      "a successful citizen details response contains a nino" when {
+        "an income source details error is returned and the code is 404" in {
 
-      preExistingRelationshipFailure(testArn, testMtditid)(exception)
+          setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
+          setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsError(404, "not found")))
 
-      val res = TestClientRelationshipService.isAgentClientRelationship(testArn, testMtditid)
+          val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn"))
 
-      intercept[Exception](await(res)) shouldBe exception
+          result shouldBe Left(BusinessDetailsNotFound)
+        }
+      }
+    }
+
+    "return a UnexpectedResponse" when {
+      "a successful citizen details response contains a nino" when {
+        "an income source details error is returned and the code is 500" in {
+
+          setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
+          setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsError(500, "internal server error")))
+
+          val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn"))
+
+          result shouldBe Left(UnexpectedResponse)
+        }
+      }
+    }
+
+    "return a CitizenDetailsNotFound" when {
+      "an citizen details error is returned and the code is 404" in {
+
+        setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsErrorModel(404, "not found")))
+
+        val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn"))
+
+        result shouldBe Left(CitizenDetailsNotFound)
+      }
+
+    }
+
+    "return a UnexpectedResponse" when {
+      "an citizen details error is returned and the code is 500" in {
+
+        setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsErrorModel(500, "internal server error")))
+
+        val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn"))
+
+        result shouldBe Left(UnexpectedResponse)
+      }
+
     }
   }
 

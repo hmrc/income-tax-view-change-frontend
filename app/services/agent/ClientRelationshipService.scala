@@ -16,16 +16,52 @@
 
 package services.agent
 
-import connectors.agent.AgentClientRelationshipsConnector
+import connectors.IncomeTaxViewChangeConnector
+import connectors.agent.{AgentClientRelationshipsConnector, CitizenDetailsConnector}
 import javax.inject.{Inject, Singleton}
+import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
+import services.agent.ClientRelationshipService._
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ClientRelationshipService @Inject()(val agentClientRelationshipsConnector: AgentClientRelationshipsConnector) {
+class ClientRelationshipService @Inject()(agentClientRelationshipsConnector: AgentClientRelationshipsConnector,
+                                          citizenDetailsConnector: CitizenDetailsConnector,
+                                          incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
+                                         (implicit ec: ExecutionContext) {
 
-  def isAgentClientRelationship(arn: String, mtditid: String)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    agentClientRelationshipsConnector.agentClientRelationship(arn, mtditid)
-  }
+  def checkAgentClientRelationship(utr: String, arn: String)(implicit hc: HeaderCarrier): Future[Either[ClientRelationshipFailure, ClientDetails]] =
+    citizenDetailsConnector.getCitizenDetailsBySaUtr(utr) flatMap {
+      case CitizenDetailsModel(optionalFirstName, optionalLastName, Some(nino)) =>
+        incomeTaxViewChangeConnector.getBusinessDetails(nino) flatMap {
+          case IncomeSourceDetailsModel(mtdbsa, _, _) =>
+            agentClientRelationshipsConnector.agentClientRelationship(arn, mtdbsa) map {
+              case true => Right(ClientRelationshipService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa))
+              case false => Left(NoAgentClientRelationship)
+            }
+          case IncomeSourceDetailsError(code, _) if code == 404 => Future.successful(Left(BusinessDetailsNotFound))
+          case _ => Future.successful(Left(UnexpectedResponse))
+        }
+      case CitizenDetailsErrorModel(code, _) if code == 404 => Future.successful(Left(CitizenDetailsNotFound))
+      case _ => Future.successful(Left(UnexpectedResponse))
+    }
+
+}
+
+object ClientRelationshipService {
+
+  sealed trait ClientRelationshipFailure
+
+  case object BusinessDetailsNotFound extends ClientRelationshipFailure
+
+  case object CitizenDetailsNotFound extends ClientRelationshipFailure
+
+  case object UnexpectedResponse extends ClientRelationshipFailure
+
+  case object NoAgentClientRelationship extends ClientRelationshipFailure
+
+  case class ClientDetails(firstName: Option[String], lastName: Option[String], nino: String, mtdItId: String)
+
 }
