@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.ReportDeadlinesAuditing.ReportDeadlinesAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
+import config.featureswitch.{FeatureSwitching, NextUpdates, ObligationsPage, ReportDeadlines}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
@@ -50,10 +50,12 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
 
   val getReportDeadlines: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      if (isEnabled(ReportDeadlines)) {
-          renderViewBothObligations
-      }
-      else fRedirectToHome
+      if (isEnabled(ReportDeadlines) && isEnabled(NextUpdates)) {
+				renderViewNextUpdates
+			} else if (isEnabled(ReportDeadlines)) {
+        renderViewBothObligations
+      } else
+        fRedirectToHome
   }
 
   private def renderViewBothObligations[A](implicit user: MtdItUser[A]): Future[Result] = {
@@ -80,6 +82,29 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
       Future.successful(Ok(views.html.noReportDeadlines()))
     }
   }
+
+  private def renderViewNextUpdates[A](implicit user: MtdItUser[A]): Future[Result] = {
+    if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
+      auditReportDeadlines(user)
+      for {
+        nextUpdates <- reportDeadlinesService.getReportDeadlines().map {
+          case nextUpdates: ObligationsModel => nextUpdates
+          case _ => ObligationsModel(List())
+
+      }
+    } yield {
+        if (nextUpdates.obligations.nonEmpty) {
+					Ok(views.html.nextUpdates(nextUpdates, dateFormatter))
+				} else {
+					itvcErrorHandler.showInternalServerError
+        }
+      }
+    }
+    else {
+      Future.successful(Ok(views.html.noReportDeadlines()))
+    }
+  }
+
 
   private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(ReportDeadlinesAuditModel(user), Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url))

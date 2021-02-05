@@ -28,6 +28,8 @@
 
 @import views.html.obligationTemplates.currentObligationsHelper
 @import views.html.obligationTemplates.previousObligationsHelper
+@import views.html.obligationTemplates.nextUpdatesHelper
+
 
 @(currentObligations: models.reportDeadlines.ObligationsModel, previousObligations: models.reportDeadlines.ObligationsModel, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
@@ -70,6 +72,5 @@ contentHeader = Some(breadcrumb)
         @previousObligationsHelper(previousObligations, implicitDateFormatter)
     </div>
 </div>
-
 
 }

@@ -32,4 +32,14 @@ $(document).ready(function() {
 
 });
 
+var accordianMessages = {
+	accordianOpenMessage: "Open all",
+	accordianCloseMessage: "Close all"
+}
 
+function setAccordianMessages(openMessage, closeMessage) {
+	accordianMessages = {
+		accordianOpenMessage: openMessage,
+		accordianCloseMessage: closeMessage
+	}
+}

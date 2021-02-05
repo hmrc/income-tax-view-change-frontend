@@ -52,6 +52,9 @@ case class ObligationsModel(obligations: Seq[ReportDeadlinesModel]) extends Repo
 
   def allCrystallised(implicit mtdItUser: MtdItUser[_]): Seq[ReportDeadlineModelWithIncomeType] =
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Crystallised")
+
+	def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[ReportDeadlineModelWithIncomeType])] =
+		allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x,y) => x._1.isBefore(y._1))
 }
 
 object ObligationsModel {

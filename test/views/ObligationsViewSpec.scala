@@ -83,10 +83,6 @@ class ObligationsViewSpec extends TestSupport {
       s"showing the first tab ${obligationsMessages.updatesDue} on the page" in new Setup(businessIncomeSource, obligationModelWithSingleBusiness) {
         pageDocument.getElementById("tab_current").text shouldBe obligationsMessages.updatesDue
       }
-
-      s"showing the second tab ${obligationsMessages.previousUpdates} on the page" in new Setup(businessIncomeSource, obligationModelWithSingleBusiness) {
-        pageDocument.getElementById("tab_previous").text shouldBe obligationsMessages.previousUpdates
-      }
     }
   }
 }
