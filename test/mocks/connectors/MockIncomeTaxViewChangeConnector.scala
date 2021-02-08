@@ -65,4 +65,8 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
       .thenReturn(Future.successful(response))
   }
 
+  def setupBusinessDetails(nino: String)(response: Future[IncomeSourceDetailsResponse]): Unit = {
+    when(mockIncomeTaxViewChangeConnector.getBusinessDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
+  }
 }
