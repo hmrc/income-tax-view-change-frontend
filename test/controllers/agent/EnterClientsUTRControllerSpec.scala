@@ -158,7 +158,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
             )))
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(routes.EnterClientsUTRController.show().url) //TODO: Update this when the next page is available
+            redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
 
             result.session.get(SessionKeys.clientFirstName) shouldBe Some("first name")
             result.session.get(SessionKeys.clientLastName) shouldBe Some("last name")

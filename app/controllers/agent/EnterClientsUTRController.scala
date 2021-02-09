@@ -63,7 +63,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
           ))),
           validUTR => {
             Future.successful(
-              Redirect(routes.EnterClientsUTRController.show()).addingToSession(
+              Redirect(routes.ConfirmClientUTRController.show()).addingToSession(
                 SessionKeys.clientFirstName -> "first name",
                 SessionKeys.clientLastName -> "last name",
                 SessionKeys.clientMTDID -> "mtditid",

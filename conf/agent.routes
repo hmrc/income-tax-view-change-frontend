@@ -2,3 +2,7 @@
 
 GET        /client-utr        controllers.agent.EnterClientsUTRController.show
 POST       /client-utr        controllers.agent.EnterClientsUTRController.submit
+
+# Confirm Client
+GET         /confirm-client             controllers.agent.ConfirmClientUTRController.show
+POST        /confirm-client             controllers.agent.ConfirmClientUTRController.submit

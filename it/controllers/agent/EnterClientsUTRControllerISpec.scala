@@ -15,20 +15,9 @@
  */
 package controllers.agent
 
-import java.time.LocalDateTime
-
-import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
-import assets.FinancialTransactionsIntegrationTestConstants.financialTransactionsJson
-import assets.IncomeSourceIntegrationTestConstants._
-import assets.messages.{MyTaxYearsMessages => messages}
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks._
-import models.calculation.{CalculationItem, ListCalculationItems}
-import play.api.http.Status
 import play.api.http.Status._
-import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 
 class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -206,7 +195,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
         )
       }
     }

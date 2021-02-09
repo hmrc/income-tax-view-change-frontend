@@ -125,5 +125,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       }
     }
   }
+
 }
 
