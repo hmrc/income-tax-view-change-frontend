@@ -45,9 +45,6 @@ class PreviousObligationsHelperSpec extends ViewSpec {
     val submittedOn: String = "Submitted on"
   }
 
-  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
-
-
   class TestSetup(previousObligations: ObligationsModel) extends Setup(previousObligationsHelper(previousObligations, mockImplicitDateFormatter))
 
   val date: LocalDate = LocalDate.now.minusYears(1)

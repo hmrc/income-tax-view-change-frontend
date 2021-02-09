@@ -19,21 +19,22 @@ package controllers
 import audit.AuditingService
 import audit.models.BillsAuditing.BillsAuditModel
 import auth.MtdItUser
-import config.featureswitch.{DeductionBreakdown, FeatureSwitching, IncomeBreakdown, TaxDue}
+import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import javax.inject.{Inject, Singleton}
 import models.calculation._
+import models.financialDetails.{Charge, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, TransactionModel}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Lang}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{CalculationService, FinancialTransactionsService}
+import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService}
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.taxYearOverview
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -41,6 +42,7 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
                                       calculationService: CalculationService,
                                       checkSessionTimeout: SessionTimeoutPredicate,
                                       financialTransactionsService: FinancialTransactionsService,
+                                      financialDetailsService: FinancialDetailsService,
                                       itvcErrorHandler: ItvcErrorHandler,
                                       retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                       retrieveNino: NinoPredicate,
@@ -58,12 +60,13 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
   private def view(taxYear: Int,
                    calculation: Calculation,
                    transaction: Option[TransactionModel] = None,
-                   incomeBreakdown: Boolean = false,
-                   taxDue: Boolean = false)(implicit request: Request[_]): Html = {
+                   charge: Option[Charge] = None
+                  )(implicit request: Request[_]): Html = {
     taxYearOverview(
       taxYear = taxYear,
       overview = CalcOverview(calculation, transaction),
       transaction = transaction,
+      charge = charge,
       incomeBreakdown = isEnabled(IncomeBreakdown),
       deductionBreakdown = isEnabled(DeductionBreakdown),
       taxDue = isEnabled(TaxDue),
@@ -77,13 +80,24 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
         case CalcDisplayModel(_, calcAmount, calculation, _) =>
           auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
           if (calculation.crystallised) {
-            financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear) map {
-              case _: FinancialTransactionsErrorModel =>
-                Logger.error(s"[CalculationController][showCalculationForYear] - Could not retrieve financial transactions model for year: $taxYear")
-                itvcErrorHandler.showInternalServerError()
-              case financialTransactionsModel: FinancialTransactionsModel =>
-                val transaction = financialTransactionsModel.findChargeForTaxYear(taxYear)
-                Ok(view(taxYear, calculation, transaction))
+            if(isEnabled(NewFinancialDetailsApi)) {
+              financialDetailsService.getFinancialDetails(taxYear) map {
+                case _: FinancialDetailsErrorModel =>
+                  Logger.error(s"[CalculationController][showCalculationForYear] - Could not retrieve financial details model for year: $taxYear")
+                  itvcErrorHandler.showInternalServerError()
+                case financialDetailsModel: FinancialDetailsModel =>
+                  val charge = financialDetailsModel.findChargeForTaxYear(taxYear)
+                  Ok(view(taxYear, calculation, charge = charge))
+              }
+            } else {
+              financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear) map {
+                case _: FinancialTransactionsErrorModel =>
+                  Logger.error(s"[CalculationController][showCalculationForYear] - Could not retrieve financial transactions model for year: $taxYear")
+                  itvcErrorHandler.showInternalServerError()
+                case financialTransactionsModel: FinancialTransactionsModel =>
+                  val transaction = financialTransactionsModel.findChargeForTaxYear(taxYear)
+                  Ok(view(taxYear, calculation, transaction))
+              }
             }
           } else {
             Future.successful(Ok(view(taxYear, calculation)))

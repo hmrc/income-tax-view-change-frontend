@@ -46,6 +46,7 @@ class CalculationService @Inject()(val individualCalculationsConnector: Individu
 
   def getAllLatestCalculations(nino: String, orderedYears: List[Int])
                               (implicit headerCarrier: HeaderCarrier): Future[List[CalculationResponseModelWithYear]] = {
+
     Future.sequence(
       orderedYears.map { year =>
         for {

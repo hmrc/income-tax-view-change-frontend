@@ -23,11 +23,9 @@ import javax.inject.Inject
 import play.api.i18n.{Lang, Messages}
 import uk.gov.hmrc.play.language.LanguageUtils
 
-class DateFormatterSpec @Inject() (val languageUtils: LanguageUtils) extends TestSupport with ImplicitDateFormatter {
+class DateFormatterSpec extends TestSupport with ImplicitDateFormatter {
 
-  private trait Test {
-    val dateFormatter = app.injector.instanceOf[ImplicitDateFormatter]
-  }
+  private trait Test
 
   "The implicit date formatter" when {
 

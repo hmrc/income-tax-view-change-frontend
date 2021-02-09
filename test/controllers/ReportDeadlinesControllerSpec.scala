@@ -42,7 +42,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.Future
 
-class ReportDeadlinesControllerSpec @Inject() (val languageUtils: LanguageUtils) extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
                                             with MockReportDeadlinesService with FeatureSwitching{
 
   object TestReportDeadlinesController extends ReportDeadlinesController(

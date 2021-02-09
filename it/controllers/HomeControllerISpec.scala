@@ -15,34 +15,29 @@
  */
 package controllers
 
-import java.time.LocalDateTime
-
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
-import assets.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
-import config.featureswitch.{Bills, FeatureSwitching}
+import config.featureswitch.{Bills, NewFinancialDetailsApi, Payment}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
-import implicits.ImplicitDateFormatter
-import javax.inject.{Inject, Singleton}
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
-import uk.gov.hmrc.play.language.LanguageUtils
 
-@Singleton
-class HomeControllerISpec @Inject() (val languageUtils: LanguageUtils) extends ComponentSpecBase with ImplicitDateFormatter with FeatureSwitching {
+import java.time.LocalDateTime
+
+class HomeControllerISpec extends ComponentSpecBase {
 
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
-
+    enable(Payment)
     "Authorised" should {
-
       "render the home page with the payment due date" in {
-
+        disable(NewFinancialDetailsApi)
         enable(Bills)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -101,6 +96,72 @@ class HomeControllerISpec @Inject() (val languageUtils: LanguageUtils) extends C
           elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
           elementTextBySelector("#payments-tile > div > p:nth-child(2)")("14 February 2018")
         )
+      }
+
+      "render the home page with the payment due date with NewFinancialDetailsApi FS enabled" in {
+        enable(NewFinancialDetailsApi)
+        enable(Bills)
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+        And("I wiremock stub obligation responses")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(
+          singleObligationQuarterlyReturnModel(testSelfEmploymentId),
+          singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
+          singleObligationOverdueModel(testPropertyId),
+          singleObligationCrystallisationModel
+        )))
+
+        And("I stub a successful calculation response for 2017-18")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = crystallisedCalculationFullJson
+        )
+
+        And("I stub a successful calculation response for 2018-19")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
+          status = OK,
+          body = crystallisedCalculationFullJson
+        )
+
+        And("I stub a successful financial details response")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2017-04-06", "2018-04-05")(OK,
+          testValidFinancialDetailsModelJson(3400.00, 2000.00))
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2018-04-06", "2019-04-05")(OK,
+          testValidFinancialDetailsModelJson(3400.00, 1000.00, "2019"))
+
+
+        When("I call GET /report-quarterly/income-and-expenses/view")
+        val res = IncomeTaxViewChangeFrontend.getHome
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+        verifyReportDeadlinesCall(testNino, otherTestSelfEmploymentId)
+        verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
+        verifyReportDeadlinesCall(testNino, testMtditid)
+
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
+
+        Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+        res should have(
+          httpStatus(OK),
+          pageTitle(title),
+          elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
+          elementTextBySelector("#payments-tile > div > p:nth-child(2)")("14 February 2018")
+        )
+        disable(NewFinancialDetailsApi)
       }
 
       "render the home page without the payment due date" when {

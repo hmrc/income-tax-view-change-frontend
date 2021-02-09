@@ -355,28 +355,28 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return a FinancialDetails model when successful JSON is received" in new Setup {
       setupMockHttpGet(getChargesTestUrl)(successResponse)
 
-      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testFrom, testTo)
+      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testYear2017)
       await(result) shouldBe testValidFinancialDetailsModel
     }
 
     "return FinancialDetails model in case of bad/malformed JSON response" in new Setup {
       setupMockHttpGet(getChargesTestUrl)(successResponseBadJson)
 
-      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testFrom, testTo)
+      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testYear2017)
       await(result) shouldBe testFinancialDetailsErrorModelParsing
     }
 
     "return FinancialDetailsErrorResponse model in case of failure" in new Setup {
       setupMockHttpGet(getChargesTestUrl)(badResponse)
 
-      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testFrom, testTo)
+      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testYear2017)
       await(result) shouldBe FinancialDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return FinancialDetailsErrorModel model in case of future failed scenario" in new Setup {
       setupMockFailedHttpGet(getChargesTestUrl)(badResponse)
 
-      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testFrom, testTo)
+      val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testYear2017)
       await(result) shouldBe FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
     }
 

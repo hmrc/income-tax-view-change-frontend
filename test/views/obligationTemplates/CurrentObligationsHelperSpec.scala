@@ -34,9 +34,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.obligationTemplates.currentObligationsHelper
 
-class CurrentObligationsHelperSpec @Inject() (val languageUtils: LanguageUtils) extends TestSupport with ImplicitDateFormatter {
-
-  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
+class CurrentObligationsHelperSpec extends TestSupport with ImplicitDateFormatter {
 
   class Setup(model: ObligationsModel) {
     val pageDocument: Document = Jsoup.parse(contentAsString(currentObligationsHelper(model, mockImplicitDateFormatter)))

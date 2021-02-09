@@ -15,15 +15,24 @@
  *@
 
 @import models.financialTransactions.TransactionModel
+@import models.financialDetails.Charge
 
-@(transaction: Option[TransactionModel])(implicit messages: Messages)
+@(transaction: Option[TransactionModel], charge: Option[Charge] = None)(implicit messages: Messages)
 
 @statusLabel(message: String, status: Option[String] = None) = {
   <span class="@{s"govUk-tag${status.getOrElse("")}"}">@message</span>
 }
 
-@{transaction match {
-    case Some(bill) if bill.isPaid => statusLabel(messages("taxYears.complete"), Some(" govUk-tag--complete"))
-    case Some(bill) if bill.isOverdue => statusLabel(messages("taxYears.overdue"), Some(" govUk-tag--overdue"))
-    case _ => statusLabel(messages("taxYears.ongoing"))
-}}
+@if(charge.isDefined) {
+    @{charge match {
+        case Some(bill) if bill.isPaid => statusLabel(messages("taxYears.complete"), Some(" govUk-tag--complete"))
+        case Some(bill) if bill.isOverdue => statusLabel(messages("taxYears.overdue"), Some(" govUk-tag--overdue"))
+        case _ => statusLabel(messages("taxYears.ongoing"))
+    }}
+} else {
+    @{transaction match {
+        case Some(bill) if bill.isPaid => statusLabel(messages("taxYears.complete"), Some(" govUk-tag--complete"))
+        case Some(bill) if bill.isOverdue => statusLabel(messages("taxYears.overdue"), Some(" govUk-tag--overdue"))
+        case _ => statusLabel(messages("taxYears.ongoing"))
+    }}
+}

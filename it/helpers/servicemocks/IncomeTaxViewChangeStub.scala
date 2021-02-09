@@ -91,4 +91,16 @@ object IncomeTaxViewChangeStub {
   def verifyStubPayApi(url: String, requestBody: JsValue): Unit = {
     WiremockHelper.verifyPost(url, requestBody.toString())
   }
+
+  //FinancialDetails Stubs
+  def financialDetailsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
+
+  def stubGetFinancialDetailsResponse(nino: String, from: String  =  "2017-04-06" , to: String =  "2018-04-05")
+                                     (status: Int, response: JsValue): StubMapping = {
+    WiremockHelper.stubGet(financialDetailsUrl(nino, from, to), status, response.toString())
+  }
+
+  def verifyGetFinancialDetails(nino: String, from: String  =  "2017-04-06" , to: String =  "2018-04-05"): Unit = {
+    WiremockHelper.verifyGet(financialDetailsUrl(nino, from, to))
+  }
 }

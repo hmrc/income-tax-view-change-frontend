@@ -30,7 +30,7 @@ class ItvcLanguageControllerSpec extends TestSupport {
   object TestItvcLanguageController extends ItvcLanguageController()(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
-    mockLanguageUtils,
+    languageUtils,
     app.injector.instanceOf[Configuration]
   )
 

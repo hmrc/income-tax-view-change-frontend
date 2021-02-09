@@ -28,7 +28,7 @@ import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
 import play.api.http.Status._
 
-class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class IncomeSummaryControllerISpec extends ComponentSpecBase {
 
   "Calling the IncomeSummaryController.showIncomeSummary(taxYear)" when {
 

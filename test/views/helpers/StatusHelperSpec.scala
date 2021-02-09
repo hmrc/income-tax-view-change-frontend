@@ -29,7 +29,7 @@ class StatusHelperSpec extends TestSupport {
 
   "The status helper" should {
 
-    "return the correct status" when {
+    "return the correct status with Transaction model" when {
 
       "provided with no matching financial transaction for an ongoing status" which {
         val result = Jsoup.parse(statusHelper(None).toString())
@@ -69,6 +69,57 @@ class StatusHelperSpec extends TestSupport {
 
       "provided with an unpaid financial transaction for an overdue status" which {
         val result = Jsoup.parse(statusHelper(Some(EstimatesTestConstants.transactionModelStatus(false, true))).toString())
+
+        "has the correct class" in {
+          result.select("span").attr("class") shouldBe "govUk-tag govUk-tag--overdue"
+        }
+
+        "has the correct message" in {
+          result.select("span").text() shouldBe MessagesLookUp.TaxYears.overdue
+        }
+      }
+    }
+
+    "return the correct status with Charge model" when {
+
+      "provided with no matching financial details for an ongoing status" which {
+        val result = Jsoup.parse(statusHelper(None).toString())
+
+        "has the correct class" in {
+          result.select("span").attr("class") shouldBe "govUk-tag"
+        }
+
+        "has the correct message" in {
+          result.select("span").text() shouldBe MessagesLookUp.TaxYears.ongoing
+        }
+      }
+
+      "provided with an unpaid financial details for an ongoing status" which {
+        val result = Jsoup.parse(statusHelper(None, Some(EstimatesTestConstants.chargeModelStatus(false, false))).toString())
+
+        "has the correct class" in {
+          result.select("span").attr("class") shouldBe "govUk-tag"
+        }
+
+        "has the correct message" in {
+          result.select("span").text() shouldBe MessagesLookUp.TaxYears.ongoing
+        }
+      }
+
+      "provided with a paid financial detail for a complete status" which {
+        val result = Jsoup.parse(statusHelper(None, Some(EstimatesTestConstants.chargeModelStatus(true, false))).toString())
+
+        "has the correct class" in {
+          result.select("span").attr("class") shouldBe "govUk-tag govUk-tag--complete"
+        }
+
+        "has the correct message" in {
+          result.select("span").text() shouldBe MessagesLookUp.TaxYears.complete
+        }
+      }
+
+      "provided with an unpaid financial detail for an overdue status" which {
+        val result = Jsoup.parse(statusHelper(None, Some(EstimatesTestConstants.chargeModelStatus(false, true))).toString())
 
         "has the correct class" in {
           result.select("span").attr("class") shouldBe "govUk-tag govUk-tag--overdue"

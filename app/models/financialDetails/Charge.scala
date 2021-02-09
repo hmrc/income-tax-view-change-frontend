@@ -18,14 +18,31 @@ package models.financialDetails
 
 import play.api.libs.json.{Format, Json}
 
-case class Charge(taxYear: Option[String],
-                  transactionId: Option[String],
-                  transactionDate: Option[String],
-                  `type`: Option[String],
-                  totalAmount: Option[BigDecimal],
-                  outstandingAmount: Option[BigDecimal],
-                  items: Option[Seq[SubItem]]
-                 )
+import java.time.LocalDate
+
+case class Charge(taxYear: Option[String] = None,
+                  transactionId: Option[String] = None,
+                  transactionDate: Option[String] = None,
+                  `type`: Option[String] = None,
+                  totalAmount: Option[BigDecimal] = None,
+                  originalAmount: Option[BigDecimal] = None,
+                  outstandingAmount: Option[BigDecimal] =None,
+                  items: Option[Seq[SubItem]] = None
+                 ) {
+  val isPaid: Boolean = outstandingAmount.fold(true)(_ <= 0)
+
+  def charges(): Seq[SubItem] = items.getOrElse(Seq()).filter(_.dueDate.isDefined)
+
+  def payments(): Seq[SubItem] = items.getOrElse(Seq()).filter(_.paymentReference.isDefined)
+
+  def eligibleToPay(paymentEnabled: Boolean) :Boolean = {
+    !isPaid && paymentEnabled
+  }
+
+  val due: Option[LocalDate] = charges().headOption.flatMap(_.dueDate).map(due => LocalDate.parse(due))
+
+  def isOverdue: Boolean = due.exists(dueDate => dueDate.isBefore(LocalDate.now()))
+}
 
 object Charge {
 

@@ -17,14 +17,17 @@
 package controllers
 
 import audit.AuditingService
-import config.featureswitch.{API5, FeatureSwitching}
+import config.featureswitch.{API5, FeatureSwitching, NewFinancialDetailsApi}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
+
 import javax.inject.Inject
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{CalculationService, FinancialTransactionsService}
+import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,8 +42,9 @@ class TaxYearsController @Inject()(implicit val appConfig: FrontendAppConfig,
                                    val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                    val itvcErrorHandler: ItvcErrorHandler,
                                    val auditingService: AuditingService,
-                                   val financialTransactionsService: FinancialTransactionsService
-                                  ) extends BaseController with I18nSupport with FeatureSwitching{
+                                   val financialTransactionsService: FinancialTransactionsService,
+                                   val financialDetailsService: FinancialDetailsService
+                                  ) extends BaseController with I18nSupport with FeatureSwitching {
 
   val viewTaxYears: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
@@ -48,17 +52,36 @@ class TaxYearsController @Inject()(implicit val appConfig: FrontendAppConfig,
         case taxYearCalResponse if taxYearCalResponse.exists(_.isError) =>
           Future.successful(itvcErrorHandler.showInternalServerError)
         case taxYearCalResponse =>
-          financialTransactionsService.getAllFinancialTransactions.map { transactions =>
-            transactions.map(x => x._2) match {
-              case x if x.exists(_.isInstanceOf[FinancialTransactionsErrorModel]) =>
-                itvcErrorHandler.showInternalServerError()
-              case x => {
-                val transactions = x.map(_.asInstanceOf[FinancialTransactionsModel]).flatMap(_.withYears())
-                Ok(views.html.taxYears(taxYearCalResponse.filter(_.isCalculation), transactions))
-                  .addingToSession("singleEstimate" -> "false")
+          if(isEnabled(NewFinancialDetailsApi)) {
+            financialDetailsService.getAllFinancialDetails.map { charges =>
+              charges.map(x => x._2) match {
+                case x if x.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
+                  itvcErrorHandler.showInternalServerError()
+                case x => {
+                  val charges = x.map(_.asInstanceOf[FinancialDetailsModel]).flatMap(_.withYears())
+                  Ok(views.html.taxYears(taxYears = taxYearCalResponse.filter(_.isCalculation), charges = charges))
+                    .addingToSession("singleEstimate" -> "false")
+                }
+              }
+            }
+          } else {
+              financialTransactionsService.getAllFinancialTransactions.map { transactions =>
+              transactions.map(x => x._2) match {
+                case x if x.exists(_.isInstanceOf[FinancialTransactionsErrorModel]) =>
+                  itvcErrorHandler.showInternalServerError()
+                case x => {
+                  val transactions = x.map(_.asInstanceOf[FinancialTransactionsModel]).flatMap(_.withYears())
+                  Ok(views.html.taxYears(taxYears = taxYearCalResponse.filter(_.isCalculation), transactions = transactions))
+                    .addingToSession("singleEstimate" -> "false")
+                }
               }
             }
           }
+      }.recover {
+        case ex => {
+          Logger.error(s"[TaxYearsController][viewTaxYears] Downstream error, ${ex.getMessage}")
+          itvcErrorHandler.showInternalServerError()
+        }
       }
   }
 }

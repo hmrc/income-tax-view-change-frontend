@@ -27,7 +27,7 @@ import implicits.ImplicitDateFormatter
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
 
-class ReportDeadlinesControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class ReportDeadlinesControllerISpec extends ComponentSpecBase {
 
   "Calling the ReportDeadlinesController" when {
 

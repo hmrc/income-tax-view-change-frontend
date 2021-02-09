@@ -17,15 +17,17 @@
 package controllers
 
 import audit.AuditingService
-import config.featureswitch.{FeatureSwitching, Payment}
+import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+
 import javax.inject.Inject
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.FinancialTransactionsService
+import services.{FinancialDetailsService, FinancialTransactionsService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
@@ -35,6 +37,7 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      val retrieveNino: NinoPredicate,
                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                      val financialTransactionsService: FinancialTransactionsService,
+                                     val financialDetailsService: FinancialDetailsService,
                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val auditingService: AuditingService,
@@ -48,16 +51,25 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     transactionModels.exists(_.isInstanceOf[FinancialTransactionsErrorModel])
   }
 
-
-  val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
-    implicit user =>
-      financialTransactionsService.getAllUnpaidFinancialTransactions.map {
-        case transactions if hasFinancialTransactionsError(transactions) =>
-          itvcErrorHandler.showInternalServerError()
-        case transactions: List[FinancialTransactionsModel] => Ok(views.html.paymentDue(transactions, isEnabled(Payment), dateFormatter))
-      }
-
+  def hasFinancialDetailsError(financialDetails: List[FinancialDetailsResponseModel]): Boolean = {
+    financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel])
   }
 
 
+  val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+    implicit user =>
+      if(isEnabled(NewFinancialDetailsApi)) {
+        financialDetailsService.getAllUnpaidFinancialDetails map {
+          case charges if hasFinancialDetailsError(charges) => itvcErrorHandler.showInternalServerError()
+          case financialDetails: List[FinancialDetailsModel] => Ok(views.html.paymentDue(financialDetails = financialDetails,
+            paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter))
+        }
+      } else {
+        financialTransactionsService.getAllUnpaidFinancialTransactions.map {
+          case transactions if hasFinancialTransactionsError(transactions) => itvcErrorHandler.showInternalServerError()
+          case transactions: List[FinancialTransactionsModel] => Ok(views.html.paymentDue(financialTransactions = transactions,
+            paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter))
+        }
+      }
+  }
 }
