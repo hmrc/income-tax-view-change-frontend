@@ -1,11 +1,12 @@
 # agent specific routes
 
-GET        /client-utr                  controllers.agent.EnterClientsUTRController.show
-POST       /client-utr                  controllers.agent.EnterClientsUTRController.submit
+# Language
+GET         /language/:lang        controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
+
+# Enter Clients UTR
+GET         /client-utr            controllers.agent.EnterClientsUTRController.show
+POST        /client-utr            controllers.agent.EnterClientsUTRController.submit
 
 # Confirm Client
-GET         /confirm-client             controllers.agent.ConfirmClientUTRController.show
-POST        /confirm-client             controllers.agent.ConfirmClientUTRController.submit
-
-#Language
-GET         /language/:lang             controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
+GET         /confirm-client        controllers.agent.ConfirmClientUTRController.show
+POST        /confirm-client        controllers.agent.ConfirmClientUTRController.submit

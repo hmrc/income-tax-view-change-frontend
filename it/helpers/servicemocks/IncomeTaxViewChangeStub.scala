@@ -40,6 +40,17 @@ object IncomeTaxViewChangeStub {
     WiremockHelper.verifyGet(ninoLookupUrl(mtditid))
 
 
+  // Get Business Details Stubs
+  // ==========================
+  def getBusinessDetailsUrl(nino: String): String = s"/income-tax-view-change/get-business-details/nino/$nino"
+
+  def stubGetBusinessDetails(nino: String)(status: Int, response: JsValue): Unit = {
+    WiremockHelper.stubGet(getBusinessDetailsUrl(nino), status, response.toString())
+  }
+
+  def verifyGetBusinessDetails(nino: String): Unit = {
+    WiremockHelper.verifyGet(getBusinessDetailsUrl(nino))
+  }
 
   // Income Source Details Stubs
   // ===========================

@@ -32,7 +32,7 @@ class AgentClientRelationshipsConnector @Inject()(val http: HttpClient,
 
 
   def agentClientURL(arn: String, mtditid: String): String = {
-    AgentClientRelationshipConnector.agentClientURI(arn, mtditid)
+    config.agentClientRelationshipUrl + AgentClientRelationshipConnector.agentClientURI(arn, mtditid)
   }
 
   def agentClientRelationship(arn: String, mtditid: String)(implicit hc: HeaderCarrier): Future[Boolean] = {

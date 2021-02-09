@@ -23,7 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 
 object IncomeSourceIntegrationTestConstants {
 
-  val singleBusinessResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+  val singleBusinessResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(business1),
     property = None

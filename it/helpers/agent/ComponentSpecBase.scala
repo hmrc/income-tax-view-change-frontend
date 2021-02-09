@@ -56,7 +56,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.pay-api.host" -> mockHost,
     "microservice.services.pay-api.port" -> mockPort,
     "microservice.services.individual-calculations.host" -> mockHost,
-    "microservice.services.individual-calculations.port" -> mockPort
+    "microservice.services.individual-calculations.port" -> mockPort,
+    "microservice.services.citizen-details.host" -> mockHost,
+    "microservice.services.citizen-details.port" -> mockPort,
+    "microservice.services.agent-client-relationships.host" -> mockHost,
+    "microservice.services.agent-client-relationships.port" -> mockPort
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"

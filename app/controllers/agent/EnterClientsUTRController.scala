@@ -24,14 +24,17 @@ import forms.agent.ClientsUTRForm
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.agent.ClientRelationshipService
+import services.agent.ClientRelationshipService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails, NoAgentClientRelationship}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.http.{InternalServerException, NotFoundException}
 import views.html.agent.EnterClientsUTR
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
+                                          clientRelationshipService: ClientRelationshipService,
                                           val authorisedFunctions: AuthorisedFunctions)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
@@ -62,15 +65,23 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
             postAction = routes.EnterClientsUTRController.submit()
           ))),
           validUTR => {
-            Future.successful(
-              Redirect(routes.ConfirmClientUTRController.show()).addingToSession(
-                SessionKeys.clientFirstName -> "first name",
-                SessionKeys.clientLastName -> "last name",
-                SessionKeys.clientMTDID -> "mtditid",
-                SessionKeys.clientNino -> "nino",
-                SessionKeys.clientUTR -> validUTR
-              )
-            )
+            clientRelationshipService.checkAgentClientRelationship(
+              utr = validUTR,
+              arn = user.agentReferenceNumber.getOrElse(throw new InternalServerException("[EnterClientsUTRController][submit] - arn not found"))
+            ) map {
+              case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
+                val sessionValues: Seq[(String, String)] = Seq(
+                  SessionKeys.clientMTDID -> mtdItId,
+                  SessionKeys.clientNino -> nino,
+                  SessionKeys.clientUTR -> validUTR
+                ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
+                Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionValues: _*)
+              case Left(CitizenDetailsNotFound | BusinessDetailsNotFound | NoAgentClientRelationship) =>
+                //todo: error page(s) will be implemented for these in future story
+                throw new InternalServerException("[EnterClientsUTRController][submit] - unable to verify client relationship")
+              case Left(_) =>
+                throw new InternalServerException("[EnterClientsUTRController][submit] - Unexpected response received")
+            }
           }
         )
       }

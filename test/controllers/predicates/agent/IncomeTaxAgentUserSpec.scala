@@ -39,7 +39,7 @@ class IncomeTaxAgentUserSpec extends UnitSpec with WithFakeApplication {
     )
 
     s"have the expected ARN '${testArn}'" in {
-      user.arn shouldBe Some(testArn)
+      user.agentReferenceNumber shouldBe Some(testArn)
     }
 
   }

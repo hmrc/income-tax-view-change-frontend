@@ -29,7 +29,7 @@ case class IncomeTaxAgentUser(enrolments: Enrolments,
                               affinityGroup: Option[AffinityGroup],
                               confidenceLevel: ConfidenceLevel) extends IncomeTaxUser {
 
-  lazy val arn: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
+  lazy val agentReferenceNumber: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
 
   private def getEnrolment(key: String) = enrolments.enrolments.collectFirst {
     case Enrolment(`key`, EnrolmentIdentifier(_, value) :: _, _, _) => value

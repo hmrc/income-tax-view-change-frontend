@@ -42,7 +42,7 @@ object AgentAuthenticationPredicate extends Results {
     else Right(AuthPredicateSuccess)
 
   val arnPredicate: AuthPredicate[IncomeTaxAgentUser] = request => user =>
-    if (user.arn.nonEmpty) Right(AuthPredicateSuccess)
+    if (user.agentReferenceNumber.nonEmpty) Right(AuthPredicateSuccess)
     else Left(Future.failed(MissingAgentReferenceNumber()))
 
   // Redirects to Select Client Page if client details aren't in session
