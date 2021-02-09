@@ -17,10 +17,10 @@
 package assets
 
 import java.time.LocalDate
-
 import assets.BaseTestConstants._
 import enums.Estimate
 import models.calculation._
+import models.financialDetails.{Charge, ChargeModelWithYear, SubItem}
 import models.financialTransactions.{SubItemModel, TransactionModel, TransactionModelWithYear}
 import play.api.http.Status
 
@@ -76,12 +76,27 @@ object EstimatesTestConstants {
     TransactionModelWithYear(transactionModelStatus(false, true), testYearPlusTwo)
   )
 
+  val lastThreeTaxYearFinancialCharges = List(
+    ChargeModelWithYear(chargeModelStatus(false, false), testYear),
+    ChargeModelWithYear(chargeModelStatus(true, false), testYearPlusOne),
+    ChargeModelWithYear(chargeModelStatus(false, true), testYearPlusTwo)
+  )
+
   def transactionModelStatus(paid: Boolean, overdue: Boolean): TransactionModel = {
     val outstandingAmount = if (paid) 0 else 1
     val dueDate = if (overdue) LocalDate.now().minusDays(1) else LocalDate.now().plusDays(1)
     TransactionModel(
       outstandingAmount = Some(outstandingAmount),
       items = Some(Seq(SubItemModel(dueDate = Some(dueDate))))
+    )
+  }
+
+  def chargeModelStatus(paid: Boolean, overdue: Boolean): Charge = {
+    val outstandingAmount = if (paid) 0 else 1
+    val dueDate = if (overdue) LocalDate.now().minusDays(1).toString else LocalDate.now().plusDays(1).toString
+    Charge(
+      outstandingAmount = Some(outstandingAmount),
+      items = Some(Seq(SubItem(dueDate = Some(dueDate))))
     )
   }
 }

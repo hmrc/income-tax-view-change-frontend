@@ -44,7 +44,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     mockFinancialTransactionsService,
     app.injector.instanceOf[ItvcErrorHandler])(
     ec,
-    mockLanguageUtils,
+    languageUtils,
     appConfig,
     app.injector.instanceOf[MessagesControllerComponents])
 

@@ -40,7 +40,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
     MockIncomeSourceDetailsPredicate,
     mockCalculationService,
     app.injector.instanceOf[ItvcErrorHandler]
-  )(appConfig, mockLanguageUtils, app.injector.instanceOf[MessagesControllerComponents], ec)
+  )(appConfig, languageUtils, app.injector.instanceOf[MessagesControllerComponents], ec)
 
 
   "showTaxDueSummary" when {

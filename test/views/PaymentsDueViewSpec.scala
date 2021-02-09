@@ -16,10 +16,8 @@
 
 package views
 
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-
-import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName, testTimeStampString}
+import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName, testTaxYear, testTimeStampString}
+import assets.FinancialDetailsTestConstants.chargeModel
 import assets.FinancialTransactionsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages, PaymentDue => paymentDueMessages}
@@ -27,30 +25,28 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitCurrencyFormatter._
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import javax.inject.Inject
+import implicits.ImplicitDateFormatter
+import models.financialDetails.FinancialDetailsModel
 import models.financialTransactions.FinancialTransactionsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import uk.gov.hmrc.play.language.LanguageUtils
 
-class PaymentsDueViewSpec @Inject() (val languageUtils: LanguageUtils) extends TestSupport with FeatureSwitching with ImplicitDateFormatter {
+class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-
-  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
 
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
     Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
 
-  class Setup(model: List[FinancialTransactionsModel], paymentEnabled: Boolean = false) {
-    val html: HtmlFormat.Appendable = views.html.paymentDue(model, paymentEnabled, mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
+  class Setup(transactionsModel: List[FinancialTransactionsModel] = List(), charges: List[FinancialDetailsModel] = List(),
+              paymentEnabled: Boolean = false) {
+    val html: HtmlFormat.Appendable = views.html.paymentDue(transactionsModel, charges,
+      paymentEnabled, mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
@@ -70,12 +66,12 @@ class PaymentsDueViewSpec @Inject() (val languageUtils: LanguageUtils) extends T
     None
   ))
 
+  val unpaidFinancialDetails: List[FinancialDetailsModel] = List(FinancialDetailsModel(List(chargeModel())))
 
-  "The Payments due view" should {
+  val noFinancialDetails: List[FinancialDetailsModel] = List(FinancialDetailsModel(List()))
 
-
+  "The Payments due view with Financial transactions model" should {
     "when the user has bills for a single taxYear" should {
-
       s"have the title '${paymentDueMessages.title}'" in new Setup(unpaidFinancialTransactions) {
         pageDocument.title() shouldBe paymentDueMessages.title
       }
@@ -85,7 +81,7 @@ class PaymentsDueViewSpec @Inject() (val languageUtils: LanguageUtils) extends T
       }
 
       s"have the description  ${paymentDueMessages.description}" in new Setup(unpaidFinancialTransactions) {
-        pageDocument.select("p1").text shouldBe paymentDueMessages.description
+        pageDocument.getElementById("p1").text shouldBe paymentDueMessages.description
       }
 
       "display current unpaid bills" in new Setup(unpaidFinancialTransactions) {
@@ -126,6 +122,76 @@ class PaymentsDueViewSpec @Inject() (val languageUtils: LanguageUtils) extends T
 
         pageDocument.select(s"#payment-link-$testTaxYearTo a")
           .attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(unpaidFinancialTransactions.head.financialTransactions.get.head.outstandingAmount.get.toPence).url
+      }
+
+    }
+
+    "without any bills" should {
+
+      s"have the title '${paymentDueMessages.title}'" in new Setup(List.empty) {
+
+        pageDocument.title() shouldBe paymentDueMessages.title
+      }
+
+      "state that you've had no bills" in new Setup(List.empty) {
+        pageDocument.getElementById("payments-due-none").text shouldBe paymentDueMessages.noBills
+      }
+
+
+    }
+  }
+  "The Payments due view with financial details model" should {
+    "when the user has bills for a single taxYear" should {
+      s"have the title '${paymentDueMessages.title}'" in new Setup(charges = unpaidFinancialDetails) {
+        pageDocument.title() shouldBe paymentDueMessages.title
+      }
+
+      s"have the heading '${paymentDueMessages.heading}'" in new Setup(charges = unpaidFinancialDetails) {
+        pageDocument.getElementsByTag("h1").text shouldBe paymentDueMessages.heading
+      }
+
+      s"have the description  ${paymentDueMessages.description}" in new Setup(charges = unpaidFinancialDetails) {
+        pageDocument.getElementById("p1").text shouldBe paymentDueMessages.description
+      }
+
+      "display current unpaid bills" in new Setup(charges = unpaidFinancialDetails) {
+        val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.get.toInt
+        val testTaxYearFrom = testTaxYear - 1
+        pageDocument.getElementById(s"payments-due-$testTaxYearTo").text shouldBe paymentDueMessages.taxYearPeriod(testTaxYearFrom.toString, testTaxYearTo.toString)
+
+        pageDocument.getElementById(s"payments-due-outstanding-$testTaxYearTo").text shouldBe unpaidFinancialDetails.head.financialDetails.head.outstandingAmount.get.toCurrencyString
+
+        pageDocument.getElementById(s"payments-due-on-$testTaxYearTo").text shouldBe s"${paymentDueMessages.due} ${unpaidFinancialDetails.head.financialDetails.head.due.get.toLongDate}"
+
+      }
+
+      "have a breadcrumb trail" in new Setup(charges = unpaidFinancialDetails) {
+        pageDocument.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+        pageDocument.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+        pageDocument.getElementById("breadcrumb-payments-due").text shouldBe breadcrumbMessages.payementsDue
+      }
+
+
+      "have a link to the bill" in new Setup(charges = unpaidFinancialDetails) {
+        val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.get.toInt
+        val testTaxYearFrom = testTaxYearTo - 1
+
+        pageDocument.getElementById(s"bills-link-$testTaxYearTo").text shouldBe paymentDueMessages.billLink
+        pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("aria-label") shouldBe paymentDueMessages.billLinkAria(testTaxYearFrom.toString, testTaxYearTo.toString)
+
+        val expectedUrl = controllers.routes.CalculationController.renderCalculationPage(testTaxYearTo).url
+        pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("href") shouldBe expectedUrl
+      }
+
+      "have a link to payments" in new Setup(charges = unpaidFinancialDetails, paymentEnabled = true) {
+        val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.get.toInt
+        val testTaxYearFrom = testTaxYearTo - 1
+
+        pageDocument.getElementById(s"payment-link-$testTaxYearTo").text shouldBe paymentDueMessages.payNow
+        pageDocument.select(s"#payment-link-$testTaxYearTo a").attr("aria-label") shouldBe paymentDueMessages.payNowAria(testTaxYearFrom.toString, testTaxYearTo.toString)
+
+        pageDocument.select(s"#payment-link-$testTaxYearTo a")
+          .attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(unpaidFinancialDetails.head.financialDetails.head.outstandingAmount.get.toPence).url
       }
 
     }

@@ -20,8 +20,9 @@
 @import models.calculation.CalculationResponseModelWithYear
 @import views.html.helpers.statusHelper
 @import models.financialTransactions.TransactionModelWithYear
+@import models.financialDetails.ChargeModelWithYear
 
-@(taxYears: List[CalculationResponseModelWithYear], transactions: List[TransactionModelWithYear] = List())(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(taxYears: List[CalculationResponseModelWithYear], transactions: List[TransactionModelWithYear] = List(), charges: Seq[ChargeModelWithYear] = Seq())(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @main_template(
     title = messages("taxYears.heading"),
@@ -53,7 +54,7 @@
                         </a>
                     </td>
                     <td>
-                        @statusHelper(transactions.find(_.taxYear == calc.year).map(_.model))
+                        @statusHelper(transactions.find(_.taxYear == calc.year).map(_.model), charges.find(_.taxYear == calc.year).map(_.model))
                     </td>
                 </tr>
             }

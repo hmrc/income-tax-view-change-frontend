@@ -20,6 +20,7 @@ import audit.AuditingService
 import audit.models._
 import auth.MtdItUser
 import config.FrontendAppConfig
+
 import javax.inject.Inject
 import models.core.{Nino, NinoResponse, NinoResponseError}
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
@@ -29,6 +30,7 @@ import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, Repo
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
+import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -301,10 +303,13 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   }
 
-  def getFinancialDetails(from: String, to: String)
+  def getFinancialDetails(taxYear: Int)
                          (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
 
-    val url = getChargesUrl(mtdUser.nino, from, to)
+    val dateFrom: String = (taxYear-1).toString + "-04-06"
+    val dateTo: String = taxYear.toString + "-04-05"
+
+    val url = getChargesUrl(mtdUser.nino, dateFrom, dateTo)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>

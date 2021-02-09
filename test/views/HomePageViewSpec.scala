@@ -53,8 +53,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val updateDateLongDate = "1 January 2018"
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
 
-  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
-
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), paymentEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
 
     lazy val page: HtmlFormat.Appendable = views.html.home(

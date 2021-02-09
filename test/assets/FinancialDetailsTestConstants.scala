@@ -29,6 +29,7 @@ object FinancialDetailsTestConstants {
         "transactionDate" -> "2019-05-15",
         "type" -> "Balancing Charge Debit",
         "totalAmount" -> 12.34,
+        "originalAmount" -> 10.33,
         "outstandingAmount" -> 10.33,
         "items" -> Json.arr(
           Json.obj(
@@ -37,6 +38,7 @@ object FinancialDetailsTestConstants {
             "clearingDate" -> "2019-05-15",
             "clearingReason" -> "01",
             "outgoingPaymentMethod" -> "A",
+            "paymentReference" -> "A",
             "paymentAmount" -> 2000,
             "dueDate" -> "2019-05-15",
             "paymentMethod" -> "A",
@@ -48,6 +50,7 @@ object FinancialDetailsTestConstants {
             "clearingDate" -> "2019-05-16",
             "clearingReason" -> "02",
             "outgoingPaymentMethod" -> "B",
+            "paymentReference" -> "B",
             "paymentAmount" -> 3000,
             "dueDate" -> "2019-05-17",
             "paymentMethod" -> "B",
@@ -61,6 +64,7 @@ object FinancialDetailsTestConstants {
         "transactionDate" -> "2019-05-16",
         "type" -> "Balancing Charge Debit",
         "totalAmount" -> 43.21,
+        "originalAmount" -> 10.34,
         "outstandingAmount" -> 10.34,
         "items" -> Json.arr(
           Json.obj(
@@ -69,6 +73,7 @@ object FinancialDetailsTestConstants {
             "clearingDate" -> "2019-05-17",
             "clearingReason" -> "03",
             "outgoingPaymentMethod" -> "C",
+            "paymentReference" -> "C",
             "paymentAmount" -> 5000,
             "dueDate" -> "2019-05-18",
             "paymentMethod" -> "C",
@@ -79,15 +84,28 @@ object FinancialDetailsTestConstants {
     )
   )
 
+
+  def chargeModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), originalAmount: Option[BigDecimal] = Some(1400.0)): Charge =
+    Charge(Some(taxYear.toString), Some("1040000123"), Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), originalAmount, outstandingAmount,
+      Some(Seq(
+        SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some("A"), Some(2000), Some("2019-05-15"), Some("A"), Some("081203010024-000001")),
+        SubItem(Some("002"), Some(101), Some("2019-05-16"), Some("02"), Some("B"), Some("B"), Some(3000), Some("2019-05-17"), Some("B"), Some("081203010025-000002"))
+      )))
+
+  val fullChargeModel: Charge = chargeModel()
+
+  def financialDetailsModel(taxYear: Int, outstandingAmount: Option[BigDecimal] = Some(1400.0)): FinancialDetailsModel =
+    FinancialDetailsModel(List(chargeModel(taxYear, outstandingAmount)))
+
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(List(
-    Charge(Some("2019"), Some("1040000123"), Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), Some(10.33),
+    Charge(Some("2019"), Some("1040000123"), Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), Some(10.33), Some(10.33),
       Some(Seq(
-        SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some(2000), Some("2019-05-15"), Some("A"), Some("081203010024-000001")),
-        SubItem(Some("002"), Some(101), Some("2019-05-16"), Some("02"), Some("B"), Some(3000), Some("2019-05-17"), Some("B"), Some("081203010025-000002"))
+        SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some("A"), Some(2000), Some("2019-05-15"), Some("A"), Some("081203010024-000001")),
+        SubItem(Some("002"), Some(101), Some("2019-05-16"), Some("02"), Some("B"), Some("B"), Some(3000), Some("2019-05-17"), Some("B"), Some("081203010025-000002"))
       ))),
-    Charge(Some("2020"), Some("1040000124"), Some("2019-05-16"), Some("Balancing Charge Debit"), Some(43.21), Some(10.34),
+    Charge(Some("2020"), Some("1040000124"), Some("2019-05-16"), Some("Balancing Charge Debit"), Some(43.21), Some(10.34), Some(10.34),
       Some(Seq(
-        SubItem(Some("003"), Some(110), Some("2019-05-17"), Some("03"), Some("C"), Some(5000), Some("2019-05-18"), Some("C"), Some("081203010026-000003"))
+        SubItem(Some("003"), Some(110), Some("2019-05-17"), Some("03"), Some("C"), Some("C"), Some(5000), Some("2019-05-18"), Some("C"), Some("081203010026-000003"))
       )))
   ))
   val testInvalidFinancialDetailsJson: JsValue = Json.obj(

@@ -50,7 +50,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
     ec,
-    mockLanguageUtils
+    languageUtils
   )
 
   "showDeductionsSummary" when {

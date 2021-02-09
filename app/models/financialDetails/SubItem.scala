@@ -18,15 +18,16 @@ package models.financialDetails
 
 import play.api.libs.json._
 
-case class SubItem(subItemId: Option[String],
-                   amount: Option[BigDecimal],
-                   clearingDate: Option[String],
-                   clearingReason: Option[String],
-                   outgoingPaymentMethod: Option[String],
-                   paymentAmount: Option[BigDecimal],
-                   dueDate: Option[String],
-                   paymentMethod: Option[String],
-                   paymentId: Option[String])
+case class SubItem(subItemId: Option[String] = None,
+                   amount: Option[BigDecimal] = None,
+                   clearingDate: Option[String] = None,
+                   clearingReason: Option[String] = None,
+                   outgoingPaymentMethod: Option[String] = None,
+                   paymentReference: Option[String] = None,
+                   paymentAmount: Option[BigDecimal] = None,
+                   dueDate: Option[String] = None,
+                   paymentMethod: Option[String] = None,
+                   paymentId: Option[String] = None)
 
 object SubItem {
 

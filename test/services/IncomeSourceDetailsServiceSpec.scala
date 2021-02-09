@@ -26,7 +26,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
 
 //scalastyle:off
-class IncomeSourceDetailsServiceSpec @Inject() (val languageUtils: LanguageUtils) extends TestSupport with MockIncomeTaxViewChangeConnector with MockReportDeadlinesService with MockAuditingService {
+class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockReportDeadlinesService with MockAuditingService {
 
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector)
 

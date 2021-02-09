@@ -17,11 +17,12 @@
 @import implicits.ImplicitDateFormatter
 @import implicits.ImplicitCurrencyFormatter._
 @import models.financialTransactions.FinancialTransactionsModel
+@import models.financialDetails.FinancialDetailsModel
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import views.html.helpers.breadcrumbHelper
 @import views.html.templates.main_template
 
-@(financialTransactions: List[FinancialTransactionsModel], paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(financialTransactions: List[FinancialTransactionsModel] = List(), financialDetails: List[FinancialDetailsModel] = List(), paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @main_template(
@@ -39,32 +40,55 @@
 </header>
 
 <p id="p1">@messages("paymentDue.description")</p>
-    @if(financialTransactions.isEmpty) {
+    @if(financialTransactions.isEmpty && financialDetails.isEmpty) {
         <h3 id="payments-due-none">@messages("paymentDue.no-bills")</h3>
     } else {
-    @for(financialTransaction <- financialTransactions){
-        @for(transaction <- financialTransaction.financialTransactions.get){
-            <div class="form-group divider--bottom">
-               <div class="column-half soft--left">
-                <h3 class="heading-large" >
-                    <span class="heading-secondary" id="payments-due-@{transaction.taxPeriodTo.get.getYear}">@messages("paymentDue.tax-year", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)</span>
-                    <div id="payments-due-outstanding-@transaction.taxPeriodTo.get.getYear"> @{transaction.outstandingAmount.get.toCurrency} </div>
-                    <span class="heading-secondary" id="payments-due-on-@{transaction.taxPeriodTo.get.getYear}">@{messages("paymentDue.due") + " " + transaction.due.get.toLongDate}</span>
-                </h3>
-               </div>
-               <div class="column-half heading-large">
-                    <div class="font-small text--right link-style form-group" id="bills-link-@{transaction.taxPeriodTo.get.getYear}">
-                        <a href="@controllers.routes.CalculationController.renderCalculationPage(transaction.taxPeriodTo.get.getYear).url" aria-label='@messages("paymentDue.view-bill-aria", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)'>@messages("paymentDue.viewBill")</a>
+        @for(financialTransaction <- financialTransactions){
+            @for(transaction <- financialTransaction.financialTransactions.get){
+                <div class="form-group divider--bottom">
+                   <div class="column-half soft--left">
+                    <h3 class="heading-large" >
+                        <span class="heading-secondary" id="payments-due-@{transaction.taxPeriodTo.get.getYear}">@messages("paymentDue.tax-year", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)</span>
+                        <div id="payments-due-outstanding-@transaction.taxPeriodTo.get.getYear"> @{transaction.outstandingAmount.get.toCurrency} </div>
+                        <span class="heading-secondary" id="payments-due-on-@{transaction.taxPeriodTo.get.getYear}">@{messages("paymentDue.due") + " " + transaction.due.get.toLongDate}</span>
+                    </h3>
+                   </div>
+                   <div class="column-half heading-large">
+                        <div class="font-small text--right link-style form-group" id="bills-link-@{transaction.taxPeriodTo.get.getYear}">
+                            <a href="@controllers.routes.CalculationController.renderCalculationPage(transaction.taxPeriodTo.get.getYear).url" aria-label='@messages("paymentDue.view-bill-aria", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)'>@messages("paymentDue.viewBill")</a>
+                        </div>
+                       @if(paymentEnabled && transaction.outstandingAmount.isDefined){
+                           <div id="payment-link-@{transaction.taxPeriodTo.get.getYear}" class="font-small text--right link-style">
+                               <a href="@controllers.routes.PaymentController.paymentHandoff(transaction.outstandingAmount.get.toPence)" aria-label='@messages("paymentDue.pay-now-aria", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)'>@messages("paymentDue.payNow")</a>
+                           </div>
+                       }
                     </div>
-                   @if(paymentEnabled && transaction.outstandingAmount.isDefined){
-                       <div id="payment-link-@{transaction.taxPeriodTo.get.getYear}" class="font-small text--right link-style">
-                           <a href="@controllers.routes.PaymentController.paymentHandoff(transaction.outstandingAmount.get.toPence)" aria-label='@messages("paymentDue.pay-now-aria", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)'>@messages("paymentDue.payNow")</a>
-                       </div>
-                   }
                 </div>
-            </div>
+            }
         }
-}
+        @for(financialDetail <- financialDetails){
+            @for(charge <- financialDetail.financialDetails){
+                <div class="form-group divider--bottom">
+                    <div class="column-half soft--left">
+                        <h3 class="heading-large" >
+                            <span class="heading-secondary" id="payments-due-@{charge.taxYear.get}">@messages("paymentDue.tax-year", (charge.taxYear.get.toInt - 1).toString, charge.taxYear.get)</span>
+                            <div id="payments-due-outstanding-@charge.taxYear.get"> @{charge.outstandingAmount.get.toCurrency} </div>
+                            <span class="heading-secondary" id="payments-due-on-@{charge.taxYear.get}">@{messages("paymentDue.due") + " " + charge.due.get.toLongDate}</span>
+                        </h3>
+                    </div>
+                    <div class="column-half heading-large">
+                        <div class="font-small text--right link-style form-group" id="bills-link-@{charge.taxYear.get}">
+                            <a href="@controllers.routes.CalculationController.renderCalculationPage(charge.taxYear.get.toInt).url" aria-label='@messages("paymentDue.view-bill-aria", (charge.taxYear.get.toInt - 1).toString, charge.taxYear.get)'>@messages("paymentDue.viewBill")</a>
+                        </div>
+                        @if(paymentEnabled && charge.outstandingAmount.isDefined){
+                        <div id="payment-link-@{charge.taxYear.get}" class="font-small text--right link-style">
+                            <a href="@controllers.routes.PaymentController.paymentHandoff(charge.outstandingAmount.get.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (charge.taxYear.get.toInt - 1).toString, charge.taxYear.get)'>@messages("paymentDue.payNow")</a>
+                        </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
     }
 
 

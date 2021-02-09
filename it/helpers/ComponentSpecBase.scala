@@ -17,26 +17,30 @@
 package helpers
 
 import config.FrontendAppConfig
-import implicits.ImplicitDateFormatter
+import config.featureswitch.{FeatureSwitch, FeatureSwitching}
+import implicits.ImplicitDateFormatterImpl
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
-import org.scalatestplus.play.PortNumber
-import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneServerPerSuite}
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.Status.SEE_OTHER
-import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
+import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
+import uk.gov.hmrc.play.language.LanguageUtils
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
-  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods {
+  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods with FeatureSwitching {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
 
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
+  val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
+  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
+
 
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,
@@ -79,6 +83,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def afterAll(): Unit = {
     stopWiremock()
     super.afterAll()
+    FeatureSwitch.switches foreach disable
   }
 
   object IncomeTaxViewChangeFrontend {

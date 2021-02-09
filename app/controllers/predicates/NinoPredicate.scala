@@ -45,7 +45,6 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
 
     def buildMtdUserWithNino(nino: String) = MtdItUserWithNino(request.mtditid, nino, request.userName,
       request.saUtr, request.credId, request.userType)
-
     (request.nino, request.session.get("nino")) match {
       case (Some(nino), _) =>
         Logger.debug(s"[NinoPredicate][buildMtdUserWithNino] NINO retrieved from request")

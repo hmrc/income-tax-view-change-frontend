@@ -19,6 +19,7 @@ package assets
 import assets.BusinessDetailsIntegrationTestConstants._
 import assets.PropertyDetailsIntegrationTestConstants._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import play.api.libs.json.{JsValue, Json}
 
 object IncomeSourceIntegrationTestConstants {
 
@@ -71,4 +72,86 @@ object IncomeSourceIntegrationTestConstants {
 
   val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500,"ISE")
 
+  val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("financialDetails" -> Json.arr())
+
+  def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018"): JsValue = Json.obj(
+    "financialDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000123",
+        "transactionDate" -> "2019-05-15",
+        "type" -> "Balancing Charge Debit",
+        "totalAmount" -> 3400,
+        "originalAmount" -> originalAmount,
+        "outstandingAmount" -> outstandingAmount,
+        "items" -> Json.arr(
+          Json.obj(
+            "subItemId" -> "001",
+            "amount" ->  100,
+            "clearingDate" -> "2019-05-15",
+            "clearingReason" -> "01",
+            "outgoingPaymentMethod" -> "A",
+            "outgoingPaymentMethod" -> "A",
+            "paymentAmount" -> 2000,
+            "dueDate" -> s"2018-02-14",
+            "paymentMethod" -> "A",
+            "paymentId" -> "081203010024-000001"
+          ),
+          Json.obj(
+            "subItemId" -> "002",
+            "amount" ->  101,
+            "clearingDate" -> "2019-05-16",
+            "clearingReason" -> "02",
+            "outgoingPaymentMethod" -> "B",
+            "paymentAmount" -> 3000,
+            "dueDate" -> "2018-02-14",
+            "paymentMethod" -> "B",
+            "paymentId" -> "081203010025-000002"
+          )
+        )
+      )
+    )
+  )
+
+  def chargeJson(originalAmount: Option[BigDecimal], outstandingAmount: Option[BigDecimal],
+                 totalAmount: Option[BigDecimal], taxYear: String = "2018"): JsValue = Json.obj(
+    "taxYear" -> taxYear,
+    "transactionId" -> "1040000123",
+    "transactionDate" -> "2019-05-15",
+    "type" -> "Balancing Charge Debit",
+    "totalAmount" -> totalAmount,
+    "originalAmount" -> originalAmount,
+    "outstandingAmount" -> outstandingAmount,
+    "items" -> Json.arr(
+      Json.obj(
+        "subItemId" -> "001",
+        "amount" ->  100,
+        "clearingDate" -> "2019-05-15",
+        "clearingReason" -> "01",
+        "outgoingPaymentMethod" -> "A",
+        "paymentReference" -> "A",
+        "paymentAmount" -> 2000,
+        "dueDate" -> s"$taxYear-02-14",
+        "paymentMethod" -> "A",
+        "paymentId" -> "081203010024-000001"
+      ),
+      Json.obj(
+        "subItemId" -> "002",
+        "amount" ->  101,
+        "clearingDate" -> "2019-05-16",
+        "clearingReason" -> "02",
+        "outgoingPaymentMethod" -> "B",
+        "paymentReference" -> "B",
+        "paymentAmount" -> 3000,
+        "dueDate" -> s"$taxYear-02-14",
+        "paymentMethod" -> "B",
+        "paymentId" -> "081203010025-000002"
+      )
+    )
+  )
+
+  def testFinancialDetailsErrorModelJson(status: String = "500"): JsValue = Json.obj(
+    "code" -> status,
+    "message" -> "ERROR MESSAGE"
+  )
 }

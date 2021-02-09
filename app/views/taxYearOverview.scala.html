@@ -17,12 +17,13 @@
 @import implicits.ImplicitDateFormatter
 @import implicits.ImplicitCurrencyFormatter._
 @import models.calculation.CalcOverview
+@import models.financialDetails.Charge
 @import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import models.financialTransactions.TransactionModel
 @import views.html.helpers.{breadcrumbHelper, statusHelper}
 @import views.html.templates.main_template
 
-@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None, incomeBreakdown: Boolean = false, deductionBreakdown: Boolean = false, taxDue: Boolean = false, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None, charge: Option[Charge] = None, incomeBreakdown: Boolean = false, deductionBreakdown: Boolean = false, taxDue: Boolean = false, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter._
 
 @breadcrumb = @{
@@ -55,7 +56,7 @@
         <div class="column-two-thirds">
             <p id="tax-year-status">
                 @messages("tax-year-overview.status")
-                @statusHelper(transaction)
+                @statusHelper(transaction, charge)
             </p>
 
             @overview.timestamp.map { timestamp =>

@@ -37,8 +37,6 @@ class ObligationsViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
-
   class Setup(currentObligations: ObligationsModel, previousObligations: ObligationsModel) {
     val html: HtmlFormat.Appendable = views.html.obligations(currentObligations, previousObligations, mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
     val pageDocument: Document = Jsoup.parse(contentAsString(views.html.obligations(currentObligations, previousObligations, mockImplicitDateFormatter)))

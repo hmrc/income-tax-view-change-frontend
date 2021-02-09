@@ -17,21 +17,25 @@
 package controllers
 
 import java.time.LocalDate
-
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
+import models.financialDetails.FinancialDetailsModel
+
 import javax.inject.{Inject, Singleton}
 import models.financialTransactions.FinancialTransactionsModel
+import play.api.Logger
+import play.api.http.Status
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{CalculationService, FinancialTransactionsService, ReportDeadlinesService}
+import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -42,6 +46,7 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val calculationService: CalculationService,
                                val itvcErrorHandler: ItvcErrorHandler,
                                val financialTransactionsService: FinancialTransactionsService,
+                               val financialDetailsService: FinancialDetailsService,
                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                implicit val appConfig: FrontendAppConfig,
                                mcc: MessagesControllerComponents,
@@ -67,23 +72,41 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
           case lastTaxCalcs if lastTaxCalcs.exists(_.isError) => Future.successful(itvcErrorHandler.showInternalServerError())
           case lastTaxCalcs if lastTaxCalcs.nonEmpty =>
             Future.sequence(lastTaxCalcs.filter(_.isCrystallised).map { crystallisedTaxCalc =>
-              financialTransactionsService.getFinancialTransactions(user.mtditid, crystallisedTaxCalc.year) map { transactions =>
-                (crystallisedTaxCalc, transactions)
+              if (isEnabled(NewFinancialDetailsApi)) {
+                financialDetailsService.getFinancialDetails(crystallisedTaxCalc.year) map { charges =>
+                  (crystallisedTaxCalc, charges)
+                }
+              }
+              else {
+                financialTransactionsService.getFinancialTransactions(user.mtditid, crystallisedTaxCalc.year) map { transactions =>
+                  (crystallisedTaxCalc, transactions)
+                }
               }
             }).map { billDetails =>
               billDetails.filter(_._2 match {
                 case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty => {
                   ftm.financialTransactions.get.exists(!_.isPaid)
                 }
+                case fdm: FinancialDetailsModel if fdm.financialDetails.nonEmpty => {
+                  fdm.financialDetails.exists(!_.isPaid)
+                }
                 case _ => false
               }).sortBy(_._1.year).headOption match {
                 case Some((bill, transaction: FinancialTransactionsModel)) =>
-                  val date = transaction.findChargeForTaxYear(bill.year).get.items.get.head.dueDate
+                  val date = Try(transaction.findChargeForTaxYear(bill.year).get.items.get.head.dueDate.get).toOption
+                  Ok(view(date, latestDeadlineDate))
+                case Some((bill, charges: FinancialDetailsModel)) =>
+                  val date: Option[LocalDate] = Try(LocalDate.parse(charges.findChargeForTaxYear(bill.year).get.items.get.head.dueDate.get)).toOption
                   Ok(view(date, latestDeadlineDate))
                 case _ => Ok(view(None, latestDeadlineDate))
               }
             }
           case _ => Future.successful(Ok(view(None, latestDeadlineDate)))
+        }
+      }.recover {
+        case ex => {
+          Logger.error(s"[HomeController][home] Downstream error, ${ex.getMessage}")
+          itvcErrorHandler.showInternalServerError()
         }
       }
   }

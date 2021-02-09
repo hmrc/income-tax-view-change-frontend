@@ -16,29 +16,30 @@
 
 package controllers
 
+import assets.FinancialDetailsTestConstants._
 import assets.FinancialTransactionsTestConstants._
 import audit.AuditingService
+import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import javax.inject.Inject
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
-import services.FinancialTransactionsService
-import uk.gov.hmrc.play.language.LanguageUtils
+import services.{FinancialDetailsService, FinancialTransactionsService}
 
 import scala.concurrent.Future
 
-class PaymentDueControllerSpec @Inject() (val languageUtils: LanguageUtils) extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter {
+class PaymentDueControllerSpec extends MockAuthenticationPredicate
+  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching {
 
 
   trait Setup {
 
     val financialTransactionsService: FinancialTransactionsService = mock[FinancialTransactionsService]
+    val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
 
     val controller = new PaymentDueController(
       app.injector.instanceOf[SessionTimeoutPredicate],
@@ -46,6 +47,7 @@ class PaymentDueControllerSpec @Inject() (val languageUtils: LanguageUtils) exte
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       financialTransactionsService,
+      financialDetailsService,
       app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AuditingService],
@@ -56,68 +58,105 @@ class PaymentDueControllerSpec @Inject() (val languageUtils: LanguageUtils) exte
     )
   }
 
-  def testFinancialTransaction(taxYear: Int) = (financialTransactionsModel(s"$taxYear-04-05"))
+  def testFinancialTransaction(taxYear: Int) = financialTransactionsModel(s"$taxYear-04-05")
+  def testFinancialDetail(taxYear: Int) = financialDetailsModel(taxYear)
 
   val noFinancialTransactionErrors = List(testFinancialTransaction(2018))
   val hasFinancialTransactionErrors = List(testFinancialTransaction(2018), financialTransactionsErrorModel)
   val hasAFinancialTransactionError = List(financialTransactionsErrorModel)
 
+  val noFinancialDetailErrors = List(testFinancialDetail(2018))
+  val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
+  val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
+
   "The PaymentDueControllerSpec.hasFinancialTransactionsError function" when {
     "checking the list of transactions" should {
-
       "produce false if there are no errors are present" in new Setup {
-
-
         val result = controller.hasFinancialTransactionsError(noFinancialTransactionErrors)
-
         result shouldBe false
       }
-
       "produce true if any errors are present" in new Setup {
-
-
         val result = controller.hasFinancialTransactionsError(hasFinancialTransactionErrors)
-
         result shouldBe true
       }
-
     }
   }
 
 
   "The PaymentDueControllerSpec.viewPaymentsDue function" when {
-    "obtaining a users transaction" should {
-      "send the user to the paymentsDue page with transactions" in new Setup {
-        mockSingleBusinessIncomeSource()
-        when(financialTransactionsService.getAllUnpaidFinancialTransactions(any(), any(), any()))
-          .thenReturn(Future.successful(noFinancialTransactionErrors))
+    "NewFinancialDetailsApi FS is disbaled" when {
+      disable(NewFinancialDetailsApi)
+      "obtaining a users transaction" should {
+        "send the user to the paymentsDue page with transactions" in new Setup {
+          mockSingleBusinessIncomeSource()
+          when(financialTransactionsService.getAllUnpaidFinancialTransactions(any(), any(), any()))
+            .thenReturn(Future.successful(noFinancialTransactionErrors))
 
 
-        val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
+          val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
 
-        status(result) shouldBe Status.OK
+          status(result) shouldBe Status.OK
+        }
+
+        "send the user to the Internal error page with internal server errors" in new Setup {
+          mockSingleBusinessIncomeSource()
+          when(financialTransactionsService.getAllUnpaidFinancialTransactions(any(), any(), any()))
+            .thenReturn(Future.successful(hasAFinancialTransactionError))
+
+          val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "send the user to the Internal error page with internal server errors and transactions" in new Setup {
+          mockBothIncomeSources()
+          when(financialTransactionsService.getAllUnpaidFinancialTransactions(any(), any(), any()))
+            .thenReturn(Future.successful(hasFinancialTransactionErrors))
+
+          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+
+        }
       }
+    }
+    "NewFinancialDetailsApi FS is enabled" when {
+      "obtaining a users transaction" should {
+        "send the user to the paymentsDue page with transactions" in new Setup {
+          enable(NewFinancialDetailsApi)
+          mockSingleBusinessIncomeSource()
+          when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            .thenReturn(Future.successful(noFinancialDetailErrors))
 
-      "send the user to the Internal error page with internal server errors" in new Setup {
-        mockSingleBusinessIncomeSource()
-        when(financialTransactionsService.getAllUnpaidFinancialTransactions(any(), any(), any()))
-          .thenReturn(Future.successful(hasAFinancialTransactionError))
+          val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
 
-        val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
+          status(result) shouldBe Status.OK
+        }
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        "send the user to the Internal error page with internal server errors" in new Setup {
+          enable(NewFinancialDetailsApi)
+          mockSingleBusinessIncomeSource()
+          when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            .thenReturn(Future.successful(hasAFinancialDetailError))
+
+          val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "send the user to the Internal error page with internal server errors and transactions" in new Setup {
+          enable(NewFinancialDetailsApi)
+          mockBothIncomeSources()
+          when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            .thenReturn(Future.successful(hasFinancialDetailErrors))
+
+          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+
+        }
       }
-
-      "send the user to the Internal error page with internal server errors and transactions" in new Setup {
-        mockBothIncomeSources()
-        when(financialTransactionsService.getAllUnpaidFinancialTransactions(any(), any(), any()))
-          .thenReturn(Future.successful(hasFinancialTransactionErrors))
-
-        val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-
-      }
+      disable(NewFinancialDetailsApi)
     }
   }
 

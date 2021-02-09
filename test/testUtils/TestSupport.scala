@@ -18,8 +18,9 @@ package testUtils
 
 import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserWithNino}
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import implicits.ImplicitDateFormatterImpl
 import controllers.agent.utils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -44,7 +45,9 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
 
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
-  val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
+  val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
+
+  implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(languageUtils)
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 

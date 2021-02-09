@@ -35,4 +35,6 @@ trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorise
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[MessagesControllerComponents]
   )
+
+
 }
