@@ -106,10 +106,12 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Translation
   def languageMap: Map[String, Lang] = Map(
-      "english" -> Lang("en"),
-      "cymraeg" -> Lang("cy")
+    "english" -> Lang("en"),
+    "cymraeg" -> Lang("cy")
   )
 
   def routeToSwitchLanguage: String => Call = (lang: String) => controllers.routes.ItvcLanguageController.switchToLanguage(lang)
+
+  def routeToSwitchAgentLanguage: String => Call = (lang: String) => controllers.agent.routes.AgentLanguageController.switchToLanguage(lang)
 
 }

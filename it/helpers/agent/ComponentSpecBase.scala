@@ -83,6 +83,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     super.afterAll()
   }
 
+  def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
+    await(
+      buildClient(uri)
+        .withHttpHeaders(headers: _*)
+        .get()
+    )
+  }
+
   object IncomeTaxViewChangeFrontend {
 
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {

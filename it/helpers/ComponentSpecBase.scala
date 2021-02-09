@@ -86,6 +86,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     FeatureSwitch.switches foreach disable
   }
 
+  def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
+    await(
+      buildClient(uri)
+        .withHttpHeaders(headers: _*)
+        .get()
+    )
+  }
+
   object IncomeTaxViewChangeFrontend {
     def get(uri: String): WSResponse = await(buildClient(uri).get())
 
