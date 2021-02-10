@@ -16,7 +16,7 @@ val govTemplateVersion        = "5.61.0-play-26"
 val playPartialsVersion       = "6.10.0-play-26"
 val authClientVersion         = "3.2.0-play-26"
 val playUiVersion             = "8.15.0-play-26"
-val playLanguageVersion       = "4.2.0-play-26"
+val playLanguageVersion       = "4.10.0-play-26"
 val catsVersion               = "0.9.0"
 
 val scalaTestPlusVersion      = "3.1.3"
