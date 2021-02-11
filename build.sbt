@@ -38,7 +38,9 @@ val compile = Seq(
   "org.typelevel" %% "cats" % catsVersion,
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
   "uk.gov.hmrc" %% "logback-json-logger" % "4.8.0",
-  "com.typesafe.play" %% "play-json-joda" % "2.6.10"
+  "com.typesafe.play" %% "play-json-joda" % "2.6.10",
+  "uk.gov.hmrc" %% "mongo-lock" % "6.23.0-play-26",
+  "uk.gov.hmrc" %% "simple-reactivemongo" % "7.30.0-play-26"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
@@ -51,7 +53,8 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
-  "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope
+  "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
+  "uk.gov.hmrc" %% "reactivemongo-test" % "4.21.0-play-26" % scope
 )
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
