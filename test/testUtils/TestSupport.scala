@@ -87,6 +87,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
 
+
   lazy val fakeRequestWithClientDetails = fakeRequestWithActiveSession.withSession(
     utils.SessionKeys.clientFirstName -> "Test",
     utils.SessionKeys.clientLastName -> "User",
@@ -94,6 +95,20 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
   )
 
   lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> testNino)
+
+  implicit val calcId: String = "calculationId"
+
+  lazy val fakeRequestWithNinoAndCalc = fakeRequestWithActiveSession.withSession(
+    calcId -> "1234567890",
+    "nino" -> testNino
+  )
+
+  lazy val fakeRequestWithoutNinoOrCalc = fakeRequestWithActiveSession.withSession(
+    calcId -> "Test",
+  )
+
+
+
   lazy val fakeRequestNoSession = FakeRequest()
 
   implicit class FakeRequestUtil[C](fakeRequest: FakeRequest[C]) {
