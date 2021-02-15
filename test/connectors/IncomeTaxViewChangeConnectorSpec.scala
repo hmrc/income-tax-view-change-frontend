@@ -30,7 +30,7 @@ import mocks.MockHttp
 import models.core.{NinoResponse, NinoResponseError}
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
-import models.paymentAllocations.{PaymentAllocationsErrorModel, PaymentAllocationsResponseModel}
+import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
@@ -316,29 +316,29 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return a PaymentAllocations model when successful JSON is received" in new Setup {
       setupMockHttpGet(getPaymentAllocationTestUrl)(successResponse)
 
-      val result: Future[PaymentAllocationsResponseModel] = getPaymentAllocations(testPaymentLot, testPaymentLotItem)
+      val result: Future[PaymentAllocationsResponse] = getPaymentAllocations(testPaymentLot, testPaymentLotItem)
       await(result) shouldBe testValidPaymentAllocationsModel
     }
 
     "return PaymentAllocationsErrorResponse model in case of bad/malformed JSON response" in new Setup {
       setupMockHttpGet(getPaymentAllocationTestUrl)(successResponseBadJson)
 
-      val result: Future[PaymentAllocationsResponseModel] = getPaymentAllocations(testPaymentLot, testPaymentLotItem)
+      val result: Future[PaymentAllocationsResponse] = getPaymentAllocations(testPaymentLot, testPaymentLotItem)
       await(result) shouldBe testPaymentAllocationsErrorModelParsing
     }
 
     "return PaymentAllocationsErrorResponse model in case of failure" in new Setup {
       setupMockHttpGet(getPaymentAllocationTestUrl)(badResponse)
 
-      val result: Future[PaymentAllocationsResponseModel] = getPaymentAllocations(testPaymentLot, testPaymentLotItem)
-      await(result) shouldBe PaymentAllocationsErrorModel(Status.BAD_REQUEST, "Error Message")
+      val result: Future[PaymentAllocationsResponse] = getPaymentAllocations(testPaymentLot, testPaymentLotItem)
+      await(result) shouldBe PaymentAllocationsError(Status.BAD_REQUEST, "Error Message")
     }
 
     "return PaymentAllocationsErrorModel model in case of future failed scenario" in new Setup {
       setupMockFailedHttpGet(getPaymentAllocationTestUrl)(badResponse)
 
-      val result: Future[PaymentAllocationsResponseModel] = getPaymentAllocations(testPaymentLot, testPaymentLotItem)
-      await(result) shouldBe PaymentAllocationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
+      val result: Future[PaymentAllocationsResponse] = getPaymentAllocations(testPaymentLot, testPaymentLotItem)
+      await(result) shouldBe PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
     }
 
   }

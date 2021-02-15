@@ -25,7 +25,7 @@ import javax.inject.Inject
 import models.core.{Nino, NinoResponse, NinoResponseError}
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import models.paymentAllocations.{PaymentAllocationsErrorModel, PaymentAllocationsModel, PaymentAllocationsResponseModel}
+import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocations, PaymentAllocationsResponse}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
@@ -271,7 +271,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
   }
 
   def getPaymentAllocations(paymentLot: String, paymentLotItem: String)
-                           (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentAllocationsResponseModel] = {
+                           (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentAllocationsResponse] = {
 
     val url = getPaymentAllocationsUrl(mtdUser.nino, paymentLot, paymentLotItem)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - GET $url")
@@ -280,10 +280,10 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
       response.status match {
         case OK =>
           Logger.debug(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Status: ${response.status}, json: ${response.json}")
-          response.json.validate[PaymentAllocationsModel].fold(
+          response.json.validate[PaymentAllocations].fold(
             invalid => {
               Logger.error(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Json Validation Error: $invalid")
-              PaymentAllocationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Payment Allocations Data Response")
+              PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Payment Allocations Data Response")
             },
             valid => valid
           )
@@ -293,12 +293,12 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
           } else {
             Logger.warn(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Status: ${response.status}, body: ${response.body}")
           }
-          PaymentAllocationsErrorModel(response.status, response.body)
+          PaymentAllocationsError(response.status, response.body)
       }
     } recover {
       case ex =>
         Logger.error(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - Unexpected failure, ${ex.getMessage}", ex)
-        PaymentAllocationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+        PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }
 
   }
