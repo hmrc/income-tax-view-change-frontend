@@ -16,37 +16,24 @@
 
 package models
 
-import assets.BaseTestConstants._
 import assets.PaymentAllocationsTestConstants._
 import models.paymentAllocations._
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
-class PaymentAllocationsResponseModelSpec  extends UnitSpec with Matchers {
+class PaymentAllocationsSpec extends UnitSpec with Matchers {
 
-  "The PaymentAllocationsModel" should {
+  "PaymentAllocations" should {
 
     "be formatted to JSON correctly" in {
-      Json.toJson[PaymentAllocationsModel](testValidPaymentAllocationsModel) shouldBe testValidPaymentAllocationsModelJson
+      Json.toJson[PaymentAllocations](testValidPaymentAllocationsModel) shouldBe testValidPaymentAllocationsModelJson
     }
 
     "be able to parse a JSON into the Model" in {
-      Json.fromJson[PaymentAllocationsModel](testValidPaymentAllocationsModelJson).fold(
-        invalid => invalid,
-        valid => valid) shouldBe testValidPaymentAllocationsModel
+      Json.fromJson[PaymentAllocations](testValidPaymentAllocationsModelJson) shouldBe JsSuccess(testValidPaymentAllocationsModel)
     }
 
   }
 
-  "The PaymentAllocationsErrorModel" should {
-
-    "be formatted to JSON correctly" in {
-      Json.toJson[PaymentAllocationsErrorModel](testPaymentAllocationsErrorModel) shouldBe testPaymentAllocationsErrorModelJson
-    }
-
-    "be able to parse a JSON into the Model" in {
-      Json.fromJson[PaymentAllocationsErrorModel](testPaymentAllocationsErrorModelJson) shouldBe JsSuccess(testPaymentAllocationsErrorModel)
-    }
-  }
 }

@@ -17,43 +17,20 @@
 package assets
 
 import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
+import assets.PaymentAllocationsTestConstants
+import models.paymentAllocations.{PaymentAllocationsError, PaymentDetails}
 import play.api.libs.json.{JsValue, Json}
 
-object PaymentAllocationsTestConstants {
+object PaymentDetailsTestConstants {
 
-  val testValidPaymentAllocationsModelJson: JsValue = Json.obj(
-    "amount" -> 110.10,
-    "method" -> "Payment by Card",
-    "transactionDate" -> "2019-05-27",
-    "reference" -> "reference",
-    "allocations" -> Json.arr(
-      Json.obj(
-        "transactionId" -> "1040000872",
-        "from" -> "2019-06-27",
-        "to" -> "2019-08-27",
-        "type" -> "1481",
-        "amount" -> 10.10,
-        "clearedAmount" -> 5.50
-      ),
-      Json.obj(
-        "transactionId" -> "1040000873",
-        "from" -> "2019-07-28",
-        "to" -> "2019-09-28",
-        "type" -> "1482",
-        "amount" -> 10.90,
-        "clearedAmount" -> 5.90
-      )
-    )
+  val testValidPaymentDetailsJson: JsValue = Json.obj(
+    "paymentDetails" -> Json.arr(PaymentAllocationsTestConstants.testValidPaymentAllocationsModelJson)
   )
 
-  val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
-    Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
-    Seq(
-      AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("1481"), Some(10.10), Some(5.50)),
-      AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("1482"), Some(10.90), Some(5.90))
-    )
+  val testValidPaymentDetails: PaymentDetails = PaymentDetails(
+    paymentDetails = Seq(PaymentAllocationsTestConstants.testValidPaymentAllocationsModel)
   )
+
   val testInvalidPaymentAllocationsModelJson: JsValue = Json.obj(
     "amount" -> "invalidAmount",
     "payMethod" -> "Payment by Card",
