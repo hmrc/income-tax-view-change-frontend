@@ -16,23 +16,27 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testMtditid, testNino}
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.services.MockClientRelationshipService
 import mocks.views.MockEnterClientsUTR
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import services.agent.ClientRelationshipService._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
+import uk.gov.hmrc.http.InternalServerException
 
 class EnterClientsUTRControllerSpec extends TestSupport
   with MockEnterClientsUTR
   with MockFrontendAuthorisedFunctions
   with MockItvcErrorHandler
+  with MockClientRelationshipService
   with FeatureSwitching {
 
   override def beforeEach(): Unit = {
@@ -42,6 +46,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
   object TestEnterClientsUTRController extends EnterClientsUTRController(
     enterClientsUTR,
+    mockClientRelationshipService,
     mockAuthService
   )(
     app.injector.instanceOf[MessagesControllerComponents],
@@ -150,21 +155,26 @@ class EnterClientsUTRControllerSpec extends TestSupport
       "the agent viewer feature switch is enabled" should {
         "redirect to the confirm client details page and add client details to session" when {
           "the utr entered is valid" in {
+            val validUTR: String = "1234567890"
+
             enable(AgentViewer)
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            mockCheckAgentClientRelationship(validUTR, testArn)(
+              response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+            )
 
             val result = await(TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-              ClientsUTRForm.utr -> "1234567890"
+              ClientsUTRForm.utr -> validUTR
             )))
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
 
-            result.session.get(SessionKeys.clientFirstName) shouldBe Some("first name")
-            result.session.get(SessionKeys.clientLastName) shouldBe Some("last name")
-            result.session.get(SessionKeys.clientUTR) shouldBe Some("1234567890")
-            result.session.get(SessionKeys.clientNino) shouldBe Some("nino")
-            result.session.get(SessionKeys.clientMTDID) shouldBe Some("mtditid")
+            result.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
+            result.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
+            result.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
+            result.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
+            result.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
           }
         }
         "return a bad request" when {
@@ -179,6 +189,68 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
             status(result) shouldBe BAD_REQUEST
             contentType(result) shouldBe Some(HTML)
+          }
+        }
+        "return an exception" when {
+          "a client details not found error is returned from the relationship check" in {
+            val validUTR: String = "1234567890"
+
+            enable(AgentViewer)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            mockCheckAgentClientRelationship(validUTR, testArn)(
+              response = Left(CitizenDetailsNotFound)
+            )
+
+            val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            ))
+
+            intercept[InternalServerException](await(result)).message shouldBe "[EnterClientsUTRController][submit] - unable to verify client relationship"
+          }
+          "a business details not found error is returned from the relationship check" in {
+            val validUTR: String = "1234567890"
+
+            enable(AgentViewer)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            mockCheckAgentClientRelationship(validUTR, testArn)(
+              response = Left(BusinessDetailsNotFound)
+            )
+
+            val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            ))
+
+            intercept[InternalServerException](await(result)).message shouldBe "[EnterClientsUTRController][submit] - unable to verify client relationship"
+          }
+          "an agent client relationship not found error is returned from the relationship check" in {
+            val validUTR: String = "1234567890"
+
+            enable(AgentViewer)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            mockCheckAgentClientRelationship(validUTR, testArn)(
+              response = Left(NoAgentClientRelationship)
+            )
+
+            val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            ))
+
+            intercept[InternalServerException](await(result)).message shouldBe "[EnterClientsUTRController][submit] - unable to verify client relationship"
+          }
+          "an unexpected response is returned from the relationship check" in {
+            val validUTR: String = "1234567890"
+
+            enable(AgentViewer)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            mockCheckAgentClientRelationship(validUTR, testArn)(
+              response = Left(UnexpectedResponse)
+            )
+
+            val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            ))
+
+            intercept[InternalServerException](await(result)).message shouldBe "[EnterClientsUTRController][submit] - Unexpected response received"
           }
         }
       }

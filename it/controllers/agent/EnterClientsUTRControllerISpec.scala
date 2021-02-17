@@ -15,9 +15,14 @@
  */
 package controllers.agent
 
+import assets.BaseIntegrationTestConstants._
+import assets.BusinessDetailsIntegrationTestConstants.testMtdItId
+import assets.IncomeSourceIntegrationTestConstants._
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.{AgentClientRelationshipStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
+import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 
 class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -186,16 +191,174 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       }
     }
     s"redirect ($SEE_OTHER) to the next page" when {
-      "the utr submitted is valid" in {
+      "the utr submitted is valid and there is an agent client relationship" in {
+        val validUTR: String = "1234567890"
         enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+        AgentClientRelationshipStub.stubAgentClientRelationship(testMtdItId, "1")(status = OK)
 
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some("1234567890"))
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
 
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
+        )
+      }
+    }
+    s"return $INTERNAL_SERVER_ERROR with technical difficulties" when {
+      "the client details could not be found" in {
+        val validUTR: String = "1234567890"
+
+        enable(AgentViewer)
+        stubAuthorisedAgentUser(authorised = true)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = NOT_FOUND,
+          response = Json.obj()
+        )
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR),
+          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+        )
+      }
+      "there was an unexpected response retrieving the client details" in {
+        val validUTR: String = "1234567890"
+
+        enable(AgentViewer)
+        stubAuthorisedAgentUser(authorised = true)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = INTERNAL_SERVER_ERROR,
+          response = Json.obj()
+        )
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR),
+          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+        )
+      }
+      "the business details could not be found" in {
+        val validUTR: String = "1234567890"
+
+        enable(AgentViewer)
+        stubAuthorisedAgentUser(authorised = true)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = NOT_FOUND,
+          response = Json.obj()
+        )
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR),
+          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+        )
+      }
+      "there was an unexpected response retrieving the business details" in {
+        val validUTR: String = "1234567890"
+
+        enable(AgentViewer)
+        stubAuthorisedAgentUser(authorised = true)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = INTERNAL_SERVER_ERROR,
+          response = Json.obj()
+        )
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR),
+          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+        )
+      }
+      "the agent client relationship was not found" in {
+        val validUTR: String = "1234567890"
+
+        enable(AgentViewer)
+        stubAuthorisedAgentUser(authorised = true)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+        AgentClientRelationshipStub.stubAgentClientRelationship(testMtdItId, "1")(status = NOT_FOUND)
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR),
+          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+        )
+      }
+      "there was an unexpected response retrieving the agent client relationship" in {
+        val validUTR: String = "1234567890"
+
+        enable(AgentViewer)
+        stubAuthorisedAgentUser(authorised = true)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = OK,
+          response = CitizenDetailsStub.validCitizenDetailsResponse(
+            firstName = "testFirstName",
+            lastName = "testLastName",
+            nino = testNino
+          )
+        )
+        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
+          status = OK,
+          response = Json.toJson(singleBusinessResponse)
+        )
+        AgentClientRelationshipStub.stubAgentClientRelationship(testMtdItId, "1")(status = INTERNAL_SERVER_ERROR)
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR),
+          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
         )
       }
     }

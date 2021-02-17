@@ -36,13 +36,19 @@ class CitizenDetailsConnector @Inject()(val http: HttpClient,
 
   private[connectors] lazy val getCitizenDetailsBySaUtrUrl: String => String = saUtr => s"${config.citizenDetailsUrl}/citizen-details/sautr/$saUtr"
 
+  def updatedHeaderCarrier(hc: HeaderCarrier): HeaderCarrier = if(config.hasEnabledTestOnlyRoutes) {
+    hc.copy(trueClientIp = Some("ITVC"))
+  } else {
+    hc
+  }
+
   def getCitizenDetailsBySaUtr(saUtr: String)(implicit headerCarrier: HeaderCarrier):Future[CitizenDetailsResponseModel] = {
 
     val url = getCitizenDetailsBySaUtrUrl(saUtr)
 
     Logger.debug(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - GET $url")
 
-    http.GET[HttpResponse](url) map { response =>
+    http.GET[HttpResponse](url)(implicitly, updatedHeaderCarrier(headerCarrier), implicitly) map { response =>
       response.status match {
         case OK =>
           Logger.debug(s"[CitizenDetailsConnector][getCitizenDetailsBySaUtr] - RESPONSE status: ${response.status}, json: ${response.json}")

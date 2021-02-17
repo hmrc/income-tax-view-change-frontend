@@ -26,6 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 @Singleton
 class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) {
 
+  lazy val hasEnabledTestOnlyRoutes: Boolean = config.get[String]("play.http.router") == "testOnlyDoNotUseInAppConf.Routes"
 
   //App
   private lazy val baseUrl: String = "report-quarterly/income-and-expenses/view"
