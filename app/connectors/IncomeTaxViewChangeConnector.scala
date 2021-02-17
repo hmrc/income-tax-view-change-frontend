@@ -20,17 +20,15 @@ import audit.AuditingService
 import audit.models._
 import auth.MtdItUser
 import config.FrontendAppConfig
-
 import javax.inject.Inject
 import models.core.{Nino, NinoResponse, NinoResponseError}
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocations, PaymentAllocationsResponse}
+import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK
-import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -306,7 +304,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
   def getFinancialDetails(taxYear: Int)
                          (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
 
-    val dateFrom: String = (taxYear-1).toString + "-04-06"
+    val dateFrom: String = (taxYear - 1).toString + "-04-06"
     val dateTo: String = taxYear.toString + "-04-05"
 
     val url = getChargesUrl(mtdUser.nino, dateFrom, dateTo)
@@ -338,4 +336,35 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     }
 
   }
+
+  def getPayments(taxYear: Int)
+                 (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
+    val dateFrom: String = s"${taxYear - 1}-04-06"
+    val dateTo: String = s"$taxYear-04-05"
+
+    val url: String = getPaymentsUrl(mtdUser.nino, dateFrom, dateTo)
+    Logger.debug(s"[IncomeTaxViewChangeConnector][getPayments] - GET $url")
+
+    http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
+      response.status match {
+        case OK =>
+          Logger.debug(s"[IncomeTaxViewChangeConnector][getPayments] - Status: ${response.status}, json: ${response.json}")
+          response.json.validate[Seq[Payment]].fold(
+            invalid => {
+              Logger.error(s"[IncomeTaxViewChangeConnector][getPayments] - Json validation error: $invalid")
+              PaymentsError(response.status, "Json validation error")
+            },
+            valid => Payments(valid)
+          )
+        case status =>
+          if (status >= 500) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getPayments] - Status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getPayments] - Status ${response.status}, body: ${response.body}")
+          }
+          PaymentsError(status, response.body)
+      }
+    }
+  }
+
 }
