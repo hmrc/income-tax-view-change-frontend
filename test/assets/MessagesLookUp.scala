@@ -86,14 +86,16 @@ object MessagesLookUp {
 
   //Tax Years Page Messages
   object TaxYears {
-    val title = "My tax years - Business Tax account - GOV.UK"
-    val heading = "My tax years"
+    val title = "Tax years - Business Tax account - GOV.UK"
+    val heading = "Tax years"
     val noEstimates = "You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software."
     val p1 = "Below is a list of tax years you have submitted updates for. Click on the tax years to view a summary."
-    val taxYearLink: (String, String) => String = (year, yearPlusOne) => s"$year to $yearPlusOne"
+    val taxYear: (String, String) => String = (year, yearPlusOne) => s"6 April $year to 5 April $yearPlusOne"
     val ongoing = "ONGOING"
     val complete = "COMPLETE"
     val overdue = "OVERDUE"
+    val updateReturn = "Update return"
+    val viewReturn = "View return"
   }
 
   // Home Page Messages
@@ -353,7 +355,7 @@ object MessagesLookUp {
   object Breadcrumbs {
     val bta = "Business tax account"
     val it = "Income Tax account"
-    val taxYears = "My tax years"
+    val taxYears = "Tax years"
     val basicItEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
     val itEstimate: Int => String = taxYear => s"Tax estimate for ${taxYear-1} - $taxYear"
     val finalisedBill: Int => String = taxYear => s"Income tax bill for ${taxYear-1} to $taxYear"

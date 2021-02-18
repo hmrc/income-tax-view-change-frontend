@@ -58,11 +58,10 @@ banner.recruitment.link                                         = Join our resea
 banner.recruitment.dismiss                                      = No, thankyou.
 
 ## Tax Years Page ##
-taxYears.heading                                               = My tax years
-taxYears.viewTaxYears                                          = Below is a list of tax years you have submitted updates for. Click on the tax years to view a summary.
-taxYears.taxYear                                               = Tax year
-taxYears.status                                                = Status
-taxYears.taxYearsLink                                          = {0} to {1}
+taxYears.heading                                               = Tax years
+taxYears.viewReturn                                            = View return
+taxYears.updateReturn                                          = Update return
+taxYears.taxYears                                              = 6 April {0} to 5 April {1}
 taxYears.ongoing                                               = ONGOING
 taxYears.overdue                                               = OVERDUE
 taxYears.complete                                              = COMPLETE
@@ -215,7 +214,7 @@ not_enrolled.sign-up.3                                          = before you can
 breadcrumb.landmark-label                                       = breadcrumbs
 breadcrumb-bta                                                  = Business tax account
 breadcrumb-it                                                   = Income Tax account
-breadcrumb-tax-years                                            = My tax years
+breadcrumb-tax-years                                            = Tax years
 breadcrumb-obligations                                          = Report deadlines
 breadcrumb-updates                                              = Updates
 breadcrumb-payments-due                                         = Payments due
