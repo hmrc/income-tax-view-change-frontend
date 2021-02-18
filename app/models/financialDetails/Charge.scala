@@ -27,6 +27,7 @@ case class Charge(taxYear: Option[String] = None,
                   totalAmount: Option[BigDecimal] = None,
                   originalAmount: Option[BigDecimal] = None,
                   outstandingAmount: Option[BigDecimal] =None,
+                  clearedAmount: Option[BigDecimal] =None,
                   items: Option[Seq[SubItem]] = None
                  ) {
   val isPaid: Boolean = outstandingAmount.fold(true)(_ <= 0)
