@@ -29,7 +29,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
   object Breadcrumbs {
     val businessTaxAccount = "Business tax account"
     val home = "Income Tax account"
-    val taxYears = "My tax years"
+    val taxYears = "Tax years"
     def taxYear(start: Int, end: Int): String = s"6 April $start to 5 April $end"
     val deductions = "Allowances and deductions"
   }

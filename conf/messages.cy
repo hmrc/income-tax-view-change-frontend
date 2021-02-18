@@ -33,11 +33,10 @@ banner.recruitment.link                                         = Ymuno â’n p
 banner.recruitment.dismiss                                      = Na, dim diolch.
 
 ## Tax Years Page ##
-taxYears.heading                                               = Fy mlynyddoedd treth
-taxYears.viewTaxYears                                          = Ceir rhestr o’r blynyddoedd treth rydych wedi cyflwyno diweddariadau ar eu cyfer isod. Cliciwch ar flwyddyn dreth i fwrw golwg dros grynodeb.
-taxYears.taxYear                                               = Blwyddyn dreth
-taxYears.status                                                = Statws
-taxYears.taxYearsLink                                          = Blwyddyn dreth {0} i {1}
+taxYears.heading                                               = Mlynyddoedd treth
+taxYears.viewReturn                                            = Bwrw ffurflen
+taxYears.updateReturn                                          = Diweddariad ffurflen
+taxYears.taxYears                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
 taxYears.ongoing                                               = AR Y GWEILL
 taxYears.complete                                              = WEDI CWBLHAU
 taxYears.overdue                                               = YN HWYR
@@ -185,7 +184,7 @@ not_enrolled.sign-up.3                                          = cyn i chi allu
 breadcrumb.landmark-label                                       = briwsion bara
 breadcrumb-bta                                                  = Cyfrif Treth Busnes
 breadcrumb-it                                                   = Cyfrif Treth Incwm
-breadcrumb-tax-years                                            = Fy mlynyddoedd treth
+breadcrumb-tax-years                                            = Mlynyddoedd treth
 breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
 breadcrumb-updates                                              = Diweddariadau
 breadcrumb-payments-due                                         = Taliadau sy’n ddyledus

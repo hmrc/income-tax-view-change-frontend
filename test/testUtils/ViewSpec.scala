@@ -163,6 +163,14 @@ trait ViewSpec extends TestSupport {
           errorLink.text shouldBe error
       }.forall(_ == Succeeded) shouldBe true
     }
+
+    def getSummaryListValueNth(index: Int = 0): Element = {
+      element.getElementsByClass("govuk-summary-list__value").get(index)
+    }
+
+    def getSummaryListActions(id: String): Element = {
+      element.getElementById(id)
+    }
   }
 
 }

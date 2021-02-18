@@ -21,32 +21,27 @@ import assets.MessagesLookUp
 import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages}
 import config.FrontendAppConfig
 import models.calculation.CalculationResponseModelWithYear
-import models.financialDetails.ChargeModelWithYear
-import models.financialTransactions.TransactionModelWithYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testUtils.TestSupport
+import testUtils.{TestSupport, ViewSpec}
 
-
-class TaxYearsViewSpec extends TestSupport {
+class TaxYearsViewSpec extends ViewSpec {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   private def pageSetup(calcs: List[CalculationResponseModelWithYear],
-                        transactions: List[TransactionModelWithYear] = List(),
-                        charges: List[ChargeModelWithYear] = List(),
+                        itsaSubmissionFeatureSwitch: Boolean = false
                        ) = new {
     lazy val page: HtmlFormat.Appendable =
-      views.html.taxYears(calcs, transactions, charges)(FakeRequest(), implicitly, mockAppConfig)
+      views.html.taxYears(calcs, itsaSubmissionFeatureSwitch)(FakeRequest(), implicitly, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
-  "The TaxYears view with NewFinancialDetailsApi FS disabled" when {
-    "the user has two tax years with no financial transactions" should {
+  "The TaxYears view with itsaSubmissionFeatureSwitch FS disabled" when {
+    "the user has two tax years" should {
       val setup = pageSetup(lastTaxCalcWithYearList)
       import setup._
       val messages = MessagesLookUp.TaxYears
@@ -65,18 +60,28 @@ class TaxYearsViewSpec extends TestSupport {
         document.getElementById("heading").text shouldBe messages.heading
       }
 
-      s"have the paragraph '${messages.p1}'" in {
-        document.getElementById("view-taxYears").text shouldBe messages.p1
+      "display two tax years" in {
+        document.getSummaryListValueNth(0).text() shouldBe messages.taxYear(testYear.toString, testYearPlusOne.toString)
+        document.getSummaryListValueNth(1).text() shouldBe messages.taxYear((testYear-1).toString, testYear.toString)
       }
 
-      "display the links for both of the tax years with taxYears" in {
-        document.getElementById(s"taxYears-link-$testYear").text shouldBe messages.taxYearLink((testYear - 1).toString, testYear.toString)
-        document.getElementById(s"taxYears-link-$testYearPlusOne").text shouldBe messages.taxYearLink(testYear.toString, testYearPlusOne.toString)
+      "display two view return links for the correct tax year" in {
+        document.getSummaryListActions("viewReturn-link-2018").text() shouldBe
+          messages.viewReturn + messages.taxYear((testYear-1).toString, testYear.toString)
+
+        document.getSummaryListActions("viewReturn-link-2019").text() shouldBe
+          messages.viewReturn + messages.taxYear(testYear.toString, testYearPlusOne.toString)
+
+      }
+
+      "not display any update return link" in {
+        document.getSummaryListActions("updateReturn-link-2018") shouldBe null
+        document.getSummaryListActions("updateReturn-link-2019") shouldBe null
       }
     }
 
-    "the user has three tax years with different financial information" should {
-      val setup = pageSetup(lastThreeTaxCalcWithYear, lastThreeTaxYearFinancialTransactions)
+    "the user has three tax years records" should {
+      val setup = pageSetup(lastThreeTaxCalcWithYear)
       import setup._
       val messages = MessagesLookUp.TaxYears
 
@@ -88,17 +93,28 @@ class TaxYearsViewSpec extends TestSupport {
         document.getElementById("heading").text shouldBe messages.heading
       }
 
-      "display the links for all three of the tax years with taxYears" in {
-        document.getElementById(s"taxYears-link-$testYear").text shouldBe messages.taxYearLink((testYear - 1).toString, testYear.toString)
-        document.getElementById(s"taxYears-link-$testYearPlusOne").text shouldBe messages.taxYearLink(testYear.toString, testYearPlusOne.toString)
-        document.getElementById(s"taxYears-link-$testYearPlusTwo").text shouldBe messages.taxYearLink(testYearPlusOne.toString, testYearPlusTwo.toString)
+      "display three tax years" in {
+        document.getSummaryListValueNth(0).text() shouldBe messages.taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)
+        document.getSummaryListValueNth(1).text() shouldBe messages.taxYear(testYear.toString, testYearPlusOne.toString)
+        document.getSummaryListValueNth(2).text() shouldBe messages.taxYear((testYear-1).toString, testYear.toString)
       }
 
-      "display the correct status for all three of the tax years" in {
-        val statuses = document.select(".govUk-tag")
-        statuses.get(0).text() shouldBe messages.overdue
-        statuses.get(1).text() shouldBe messages.complete
-        statuses.get(2).text() shouldBe messages.ongoing
+       "display three view return links for the correct tax year" in {
+        document.getSummaryListActions("viewReturn-link-2018").text() shouldBe
+          messages.viewReturn + messages.taxYear((testYear-1).toString, testYear.toString)
+
+        document.getSummaryListActions("viewReturn-link-2019").text() shouldBe
+          messages.viewReturn + messages.taxYear(testYear.toString, testYearPlusOne.toString)
+
+        document.getSummaryListActions("viewReturn-link-2020").text() shouldBe
+          messages.viewReturn + messages.taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)
+
+      }
+
+      "not display any update return link" in {
+        document.getSummaryListActions("updateReturn-link-2018") shouldBe null
+        document.getSummaryListActions("updateReturn-link-2019") shouldBe null
+        document.getSummaryListActions("updateReturn-link-2020") shouldBe null
       }
     }
 
@@ -121,79 +137,47 @@ class TaxYearsViewSpec extends TestSupport {
     }
   }
 
-  "The TaxYears view with NewFinancialDetailsApi FS enabled" when {
-    "the user has two tax years with no financial transactions" should {
-      val setup = pageSetup(lastTaxCalcWithYearList)
-      import setup._
-      val messages = MessagesLookUp.TaxYears
+   "The TaxYears view with itsaSubmissionFeatureSwitch FS enabled" when {
+     "the user has two tax years" should {
+       val setup = pageSetup(lastTaxCalcWithYearList, true)
+       import setup._
+       val messages = MessagesLookUp.TaxYears
 
-      s"have the title '${messages.title}'" in {
-        document.title() shouldBe messages.title
-      }
+       s"have the title '${messages.title}'" in {
+         document.title() shouldBe messages.title
+       }
 
-      "have a breadcrumb trail" in {
-        document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-        document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        document.getElementById("breadcrumb-tax-years").text shouldBe breadcrumbMessages.taxYears
-      }
+       "have a breadcrumb trail" in {
+         document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
+         document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
+         document.getElementById("breadcrumb-tax-years").text shouldBe breadcrumbMessages.taxYears
+       }
 
-      "have a header" in {
-        document.getElementById("heading").text shouldBe messages.heading
-      }
+       "have a header" in {
+         document.getElementById("heading").text shouldBe messages.heading
+       }
 
-      s"have the paragraph '${messages.p1}'" in {
-        document.getElementById("view-taxYears").text shouldBe messages.p1
-      }
+       "display two tax years" in {
+         document.getSummaryListValueNth(0).text() shouldBe messages.taxYear(testYear.toString, testYearPlusOne.toString)
+         document.getSummaryListValueNth(1).text() shouldBe messages.taxYear((testYear - 1).toString, testYear.toString)
+       }
 
-      "display the links for both of the tax years with taxYears" in {
-        document.getElementById(s"taxYears-link-$testYear").text shouldBe messages.taxYearLink((testYear - 1).toString, testYear.toString)
-        document.getElementById(s"taxYears-link-$testYearPlusOne").text shouldBe messages.taxYearLink(testYear.toString, testYearPlusOne.toString)
-      }
-    }
+       "display two view return links for the correct tax year" in {
+         document.getSummaryListActions("viewReturn-link-2018").text() shouldBe
+           messages.viewReturn + messages.taxYear((testYear - 1).toString, testYear.toString)
 
-    "the user has three tax years with different financial information" should {
-      val setup = pageSetup(calcs = lastThreeTaxCalcWithYear, charges = lastThreeTaxYearFinancialCharges)
-      import setup._
-      val messages = MessagesLookUp.TaxYears
+         document.getSummaryListActions("viewReturn-link-2019").text() shouldBe
+           messages.viewReturn + messages.taxYear(testYear.toString, testYearPlusOne.toString)
 
-      s"have the title '${messages.title}'" in {
-        document.title() shouldBe messages.title
-      }
+       }
 
-      "have a header" in {
-        document.getElementById("heading").text shouldBe messages.heading
-      }
+       "display two update return links for the correct tax year" in {
+         document.getSummaryListActions("updateReturn-link-2018") .text() shouldBe
+           messages.updateReturn + messages.taxYear((testYear - 1).toString, testYear.toString)
+         document.getSummaryListActions("updateReturn-link-2019") .text() shouldBe
+           messages.updateReturn + messages.taxYear(testYear.toString, testYearPlusOne.toString)
+       }
+     }
+   }
 
-      "display the links for all three of the tax years with taxYears" in {
-        document.getElementById(s"taxYears-link-$testYear").text shouldBe messages.taxYearLink((testYear - 1).toString, testYear.toString)
-        document.getElementById(s"taxYears-link-$testYearPlusOne").text shouldBe messages.taxYearLink(testYear.toString, testYearPlusOne.toString)
-        document.getElementById(s"taxYears-link-$testYearPlusTwo").text shouldBe messages.taxYearLink(testYearPlusOne.toString, testYearPlusTwo.toString)
-      }
-
-      "display the correct status for all three of the tax years" in {
-        val statuses = document.select(".govUk-tag")
-        statuses.get(0).text() shouldBe messages.overdue
-        statuses.get(1).text() shouldBe messages.complete
-        statuses.get(2).text() shouldBe messages.ongoing
-      }
-    }
-
-    "the user has no taxYears" should {
-      val setup = pageSetup(List())
-      import setup._
-      val messages = MessagesLookUp.TaxYears
-
-      s"have the title '${messages.title}'" in {
-        document.title() shouldBe messages.title
-      }
-
-      "have a header" in {
-        document.getElementById("heading").text shouldBe messages.heading
-      }
-
-      s"have the paragraph '${messages.noEstimates}'" in {
-        document.getElementById("no-taxYears").text shouldBe messages.noEstimates
-      }
-    }
-  }
 }

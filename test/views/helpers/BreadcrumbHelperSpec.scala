@@ -62,7 +62,7 @@ class BreadcrumbHelperSpec extends ViewSpec {
     }
 
     "have a breadcrumb without a link as the third added item, text comes from messages using breadcrumb id" in new Test {
-      document.breadcrumbNav.selectNth("li", 4).selectHead("span").text shouldBe "My tax years"
+      document.breadcrumbNav.selectNth("li", 4).selectHead("span").text shouldBe "Tax years"
     }
   }
 }

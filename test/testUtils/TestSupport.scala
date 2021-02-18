@@ -18,15 +18,15 @@ package testUtils
 
 import assets.BaseTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import implicits.ImplicitDateFormatterImpl
 import controllers.agent.utils
+import implicits.ImplicitDateFormatterImpl
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneServerPerSuite}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Result
@@ -65,7 +65,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     nino = testNino,
     userName = Some(testRetrievedUserName),
     incomeSources = businessAndPropertyAligned,
-    saUtr =  Some("saUtr"),
+    saUtr = Some("saUtr"),
     credId = Some("credId"),
     userType = Some("individual")
   )(FakeRequest())
