@@ -18,10 +18,11 @@ package mocks.connectors
 
 import connectors.IncomeTaxViewChangeConnector
 import models.core.NinoResponse
-import models.financialDetails.FinancialDetailsResponseModel
+import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ReportDeadlinesResponseModel
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -75,4 +76,10 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
     when(mockIncomeTaxViewChangeConnector.getBusinessDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
+
+  def setupGetPayments(taxYear: Int)(response: PaymentsResponse): Unit = {
+    when(mockIncomeTaxViewChangeConnector.getPayments(ArgumentMatchers.eq(taxYear))(any(), any()))
+      .thenReturn(Future.successful(response))
+  }
+
 }

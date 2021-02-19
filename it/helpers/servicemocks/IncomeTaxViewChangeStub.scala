@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
 import models.core.{Nino, NinoResponseError}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import models.reportDeadlines.{ObligationsModel, ReportDeadlinesModel}
+import models.reportDeadlines.ObligationsModel
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 
@@ -82,7 +82,7 @@ object IncomeTaxViewChangeStub {
   //=====================
   def reportDeadlinesUrl(nino: String): String = s"/income-tax-view-change/$nino/report-deadlines"
 
-  def stubGetReportDeadlines(nino: String , deadlines: ObligationsModel): Unit =
+  def stubGetReportDeadlines(nino: String, deadlines: ObligationsModel): Unit =
     WiremockHelper.stubGet(reportDeadlinesUrl(nino), Status.OK, Json.toJson(deadlines).toString())
 
   def stubGetReportDeadlinesError(incomeSourceId: String, nino: String): Unit =
@@ -106,12 +106,25 @@ object IncomeTaxViewChangeStub {
   //FinancialDetails Stubs
   def financialDetailsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
 
-  def stubGetFinancialDetailsResponse(nino: String, from: String  =  "2017-04-06" , to: String =  "2018-04-05")
+  def stubGetFinancialDetailsResponse(nino: String, from: String = "2017-04-06", to: String = "2018-04-05")
                                      (status: Int, response: JsValue): StubMapping = {
     WiremockHelper.stubGet(financialDetailsUrl(nino, from, to), status, response.toString())
   }
 
-  def verifyGetFinancialDetails(nino: String, from: String  =  "2017-04-06" , to: String =  "2018-04-05"): Unit = {
+  def verifyGetFinancialDetails(nino: String, from: String = "2017-04-06", to: String = "2018-04-05"): Unit = {
     WiremockHelper.verifyGet(financialDetailsUrl(nino, from, to))
   }
+
+  //Payments Stubs
+  def paymentsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
+
+  def stubGetPaymentsResponse(nino: String, from: String, to: String)
+                             (status: Int, response: JsValue): StubMapping = {
+    WiremockHelper.stubGet(financialDetailsUrl(nino, from, to), status, response.toString())
+  }
+
+  def verifyGetPayments(nino: String, from: String, to: String): Unit = {
+    WiremockHelper.verifyGet(financialDetailsUrl(nino, from, to))
+  }
+
 }

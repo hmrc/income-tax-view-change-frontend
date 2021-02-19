@@ -17,18 +17,19 @@
 package connectors
 
 import assets.BaseTestConstants._
+import assets.FinancialDetailsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.NinoLookupTestConstants.{testNinoModelJson, _}
 import assets.PaymentAllocationsTestConstants._
-import assets.FinancialDetailsTestConstants._
 import assets.ReportDeadlinesTestConstants._
 import audit.AuditingService
 import audit.mocks.MockAuditingService
 import audit.models._
 import config.FrontendAppConfig
+import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import mocks.MockHttp
 import models.core.{NinoResponse, NinoResponseError}
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, Payment, Payments, PaymentsError, PaymentsResponse}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
@@ -381,4 +382,75 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
   }
+
+  "getPayments" should {
+
+    val getPaymentsTestUrl: String = {
+      s"http://localhost:9999/income-tax-view-change/$testNino/financial-details/payments/from/$testFrom/to/$testTo"
+    }
+
+    val payments: Seq[Payment] = Seq(Payment(
+      reference = Some("reference"),
+      amount = Some(100.00),
+      method = Some("method"),
+      lot = Some("lot"),
+      lotItem = Some("lotItem"),
+      date = Some("date")
+    ))
+
+    val successResponse: HttpResponse = HttpResponse(
+      responseStatus = OK,
+      responseJson = Some(Json.toJson(payments))
+    )
+
+    val successResponseInvalidJson: HttpResponse = HttpResponse(
+      responseStatus = OK,
+      responseJson = Some(Json.toJson("test"))
+    )
+
+    val notFoundResponse: HttpResponse = HttpResponse(
+      responseStatus = NOT_FOUND,
+      responseString = Some("Not Found")
+    )
+
+    val internalServerErrorResponse: HttpResponse = HttpResponse(
+      responseStatus = INTERNAL_SERVER_ERROR,
+      responseString = Some("Internal Server Error")
+    )
+
+    "return Payments" when {
+      "a successful response is received with valid json" in new Setup {
+        setupMockHttpGet(getPaymentsTestUrl)(successResponse)
+
+        val result: Future[PaymentsResponse] = getPayments(testYear2017)
+
+        await(result) shouldBe Payments(payments)
+      }
+    }
+
+    "return a PaymentsError" when {
+      "a successful response is received with invalid json" in new Setup {
+        setupMockHttpGet(getPaymentsTestUrl)(successResponseInvalidJson)
+
+        val result: Future[PaymentsResponse] = getPayments(testYear2017)
+
+        await(result) shouldBe PaymentsError(OK, "Json validation error")
+      }
+      "a 4xx response is returned" in new Setup {
+        setupMockHttpGet(getPaymentsTestUrl)(notFoundResponse)
+
+        val result: Future[PaymentsResponse] = getPayments(testYear2017)
+
+        await(result) shouldBe PaymentsError(NOT_FOUND, "Not Found")
+      }
+      "a 5xx response is returned" in new Setup {
+        setupMockHttpGet(getPaymentsTestUrl)(internalServerErrorResponse)
+
+        val result: Future[PaymentsResponse] = getPayments(testYear2017)
+
+        await(result) shouldBe PaymentsError(INTERNAL_SERVER_ERROR, "Internal Server Error")
+      }
+    }
+  }
+
 }
