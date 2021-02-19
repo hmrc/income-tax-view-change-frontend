@@ -32,9 +32,9 @@ import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService}
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.taxYearOverview
-
+import views.html.{taxYearOverview, taxYearOverviewOld}
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -62,16 +62,24 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
                    transaction: Option[TransactionModel] = None,
                    charge: Option[Charge] = None
                   )(implicit request: Request[_]): Html = {
-    taxYearOverview(
-      taxYear = taxYear,
-      overview = CalcOverview(calculation, transaction),
-      transaction = transaction,
-      charge = charge,
-      incomeBreakdown = isEnabled(IncomeBreakdown),
-      deductionBreakdown = isEnabled(DeductionBreakdown),
-      taxDue = isEnabled(TaxDue),
-      dateFormatter
-    )
+    if(isEnabled(TaxYearOverviewUpdate)) {
+      taxYearOverview(
+        taxYear = taxYear,
+        overview = CalcOverview(calculation, transaction),
+        dateFormatter
+      )
+    } else {
+      taxYearOverviewOld(
+        taxYear = taxYear,
+        overview = CalcOverview(calculation, transaction),
+        transaction = transaction,
+        charge = charge,
+        incomeBreakdown = isEnabled(IncomeBreakdown),
+        deductionBreakdown = isEnabled(DeductionBreakdown),
+        taxDue = isEnabled(TaxDue),
+        dateFormatter
+      )
+    }
   }
 
   private def showCalculationForYear(taxYear: Int): Action[AnyContent] = action.async {

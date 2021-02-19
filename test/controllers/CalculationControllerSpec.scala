@@ -19,23 +19,21 @@ package controllers
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
-import assets.FinancialTransactionsTestConstants.transactionModel
 import assets.FinancialDetailsTestConstants.chargeModel
+import assets.FinancialTransactionsTestConstants.transactionModel
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.MessagesLookUp
 import audit.mocks.MockAuditingService
 import audit.models.BillsAuditing.BillsAuditModel
 import auth.MtdItUser
 import config.ItvcErrorHandler
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
+import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, TaxYearOverviewUpdate}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockFinancialTransactionsService}
 import models.calculation.CalcOverview
 import play.api.http.Status
-import play.api.i18n.Lang
-import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -68,8 +66,49 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
   val testDeductionBreakdown: Boolean = false
   val testTaxDue: Boolean = false
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disable(TaxYearOverviewUpdate)
+    disable(NewFinancialDetailsApi)
+  }
+
 
   "The CalculationController.renderCalculationPage(year) action" when {
+
+    "TaxYearOverviewUpdate FS is enabled" should {
+      "show the updated Tax Year Overview Page" in {
+        enable(TaxYearOverviewUpdate)
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccess()
+
+        val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
+        val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, mockImplicitDateFormatter).toString
+
+        val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some("text/html")
+      }
+    }
+
+    "TaxYearOverviewUpdate FS is enabled" should {
+      "show the old Tax Year Overview Page" in {
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccess()
+
+        val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
+        val expectedContent: String = views.html.taxYearOverviewOld(
+          testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter).toString
+
+        val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some("text/html")
+      }
+    }
+
     "NewFinancialDetailsApi FS is disabled" when {
       "Called with an Unauthenticated User" should {
         "return redirect SEE_OTHER (303)" in {
@@ -120,9 +159,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
             mockCalculationSuccess()
 
             val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
-            val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter)(
-              implicitly, applicationMessages(Lang("en"), implicitly), implicitly
-            ).toString
+            val expectedContent: String = views.html.taxYearOverviewOld(
+              testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter).toString
 
             val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
 
@@ -158,9 +196,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
               mockFinancialTransactionSuccess()
 
               val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
-              val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, Some(transactionModel()), None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter)(
-                implicitly, applicationMessages(Lang("en"), implicitly), implicitly
-              ).toString
+              val expectedContent: String = views.html.taxYearOverviewOld(
+                testYear, calcOverview, Some(transactionModel()), None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter).toString
 
               val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
 
@@ -228,9 +265,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
             mockCalculationSuccess()
 
             val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
-            val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter)(
-              implicitly, applicationMessages(Lang("en"), implicitly), implicitly
-            ).toString
+            val expectedContent: String = views.html.taxYearOverviewOld(
+              testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter).toString
 
             val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
 
@@ -268,9 +304,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
               mockFinancialDetailsSuccess()
 
               val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
-              val expectedContent: String = views.html.taxYearOverview(testYear, calcOverview, None, Some(chargeModel()), testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter)(
-                implicitly, applicationMessages(Lang("en"), implicitly), implicitly
-              ).toString
+              val expectedContent: String = views.html.taxYearOverviewOld(
+                testYear, calcOverview, None, Some(chargeModel()), testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter).toString
 
               val result = TestCalculationController.renderCalculationPage(testYear)(fakeRequestWithActiveSession)
 
@@ -281,7 +316,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           }
         }
       }
-      disable(NewFinancialDetailsApi)
     }
   }
 }

@@ -24,7 +24,8 @@ case class CalcOverview(timestamp: Option[String],
                         totalTaxableIncome: BigDecimal,
                         taxDue: BigDecimal,
                         payment: BigDecimal,
-                        totalRemainingDue: BigDecimal)
+                        totalRemainingDue: BigDecimal,
+                        crystallised: Boolean)
 
 object CalcOverview {
 
@@ -37,7 +38,8 @@ object CalcOverview {
       totalTaxableIncome = calculation.totalTaxableIncome.getOrElse(0.00),
       taxDue = calculation.totalIncomeTaxAndNicsDue.getOrElse(0.00),
       payment = transaction.flatMap(_.clearedAmount).getOrElse(0.00),
-      totalRemainingDue = transaction.flatMap(_.outstandingAmount).getOrElse(valueDue)
+      totalRemainingDue = transaction.flatMap(_.outstandingAmount).getOrElse(valueDue),
+      crystallised = calculation.crystallised
     )
   }
 }

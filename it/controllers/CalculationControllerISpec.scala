@@ -17,12 +17,13 @@
 package controllers
 
 import java.time.LocalDateTime
+
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.TaxYearOverviewMessages
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
+import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, TaxYearOverviewUpdate}
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
@@ -33,6 +34,82 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
   unauthorisedTest(s"/calculation/$testYear")
 
   s"GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}" when {
+
+    "TaxYearOverviewUpdate FS is enabled" should {
+      "should show the updated Tax Year Overview page" in {
+        enable(TaxYearOverviewUpdate)
+
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+        And("A non crystallised calculation for 2017-18 is returned")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = estimatedCalculationFullJson
+        )
+
+        When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+
+        And("The expected result is returned")
+        res should have(
+          httpStatus(OK),
+          pageTitle(TaxYearOverviewMessages.title),
+          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextBySelector("#calculation-date")("6 July 2017"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
+          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
+        )
+      }
+    }
+
+    "TaxYearOverviewUpdate is disabled" should {
+      "show the old Tax Year Overview page" in {
+        disable(TaxYearOverviewUpdate)
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+        And("A non crystallised calculation for 2017-18 is returned")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = estimatedCalculationFullJson
+        )
+
+        When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+
+        And("The expected result is returned")
+        res should have(
+          httpStatus(OK),
+          pageTitle(TaxYearOverviewMessages.titleOld(testYearInt - 1, testYearInt)),
+          elementTextBySelector("h1")(TaxYearOverviewMessages.headingOld(testYearInt - 1, testYearInt)),
+          elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDateOld("6 July 2017")),
+          elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
+          elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
+          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
+        )
+      }
+    }
+
     "NewFinancialDetailsApi is disabled" when {
       "the user is authorised with an active enrolment" when {
         "a non-crystallised calculation is returned" in {
@@ -60,9 +137,9 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("The expected result is returned")
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title(testYearInt - 1, testYearInt)),
-            elementTextBySelector("h1")(TaxYearOverviewMessages.heading(testYearInt - 1, testYearInt)),
-            elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDate("6 July 2017")),
+            pageTitle(TaxYearOverviewMessages.titleOld(testYearInt - 1, testYearInt)),
+            elementTextBySelector("h1")(TaxYearOverviewMessages.headingOld(testYearInt - 1, testYearInt)),
+            elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDateOld("6 July 2017")),
             elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
             elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
             elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
@@ -98,9 +175,9 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("The expected result is returned")
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title(testYearInt - 1, testYearInt)),
-            elementTextBySelector("h1")(TaxYearOverviewMessages.heading(testYearInt - 1, testYearInt)),
-            elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDate("6 July 2017")),
+            pageTitle(TaxYearOverviewMessages.titleOld(testYearInt - 1, testYearInt)),
+            elementTextBySelector("h1")(TaxYearOverviewMessages.headingOld(testYearInt - 1, testYearInt)),
+            elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDateOld("6 July 2017")),
             elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
             elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
             elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
@@ -190,9 +267,9 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("The expected result is returned")
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title(testYearInt - 1, testYearInt)),
-            elementTextBySelector("h1")(TaxYearOverviewMessages.heading(testYearInt - 1, testYearInt)),
-            elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDate("6 July 2017")),
+            pageTitle(TaxYearOverviewMessages.titleOld(testYearInt - 1, testYearInt)),
+            elementTextBySelector("h1")(TaxYearOverviewMessages.headingOld(testYearInt - 1, testYearInt)),
+            elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDateOld("6 July 2017")),
             elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
             elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
             elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
@@ -229,9 +306,9 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("The expected result is returned")
           res should have(
             httpStatus(OK),
-            pageTitle(TaxYearOverviewMessages.title(testYearInt - 1, testYearInt)),
-            elementTextBySelector("h1")(TaxYearOverviewMessages.heading(testYearInt - 1, testYearInt)),
-            elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDate("6 July 2017")),
+            pageTitle(TaxYearOverviewMessages.titleOld(testYearInt - 1, testYearInt)),
+            elementTextBySelector("h1")(TaxYearOverviewMessages.headingOld(testYearInt - 1, testYearInt)),
+            elementTextBySelector("#calculation-date")(TaxYearOverviewMessages.calculationDateOld("6 July 2017")),
             elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
             elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
             elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")

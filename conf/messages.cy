@@ -42,18 +42,18 @@ taxYears.complete                                              = WEDI CWBLHAU
 taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 
-## Tax Year Overview Page ##
-tax-year-overview.heading                                       = 6 Ebrill {0} hyd at 5 Ebrill {1}
-tax-year-overview.heading-secondary                             = Trosolwg blwyddyn dreth
-tax-year-overview.status                                        = Statws y flwyddyn dreth:
-tax-year-overview.calculation-date                              = Dyddiad y cyfrifiad:
-tax-year-overview.links-summary                                 = Cliciwch ar bob cysylltiad i gael rhagor o fanylion am bob adran.
-tax-year-overview.no-links-summary                              = Mae’r dudalen hon yn dangos crynodeb o’ch blwyddyn dreth.
-tax-year-overview.income                                        = Incwm
-tax-year-overview.deductions                                    = Lwfansau a didyniadau
-tax-year-overview.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus ar ei gyfer
-tax-year-overview.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 sy’n ddyledus
-tax-year-overview.total-remaining                               = Cyfanswm sy’n ddyledus sy’n weddill
+## Tax Year Overview Page Old##
+tax-year-overview-old.heading                                       = 6 Ebrill {0} hyd at 5 Ebrill {1}
+tax-year-overview-old.heading-secondary                             = Trosolwg blwyddyn dreth
+tax-year-overview-old.status                                        = Statws y flwyddyn dreth:
+tax-year-overview-old.calculation-date                              = Dyddiad y cyfrifiad:
+tax-year-overview-old.links-summary                                 = Cliciwch ar bob cysylltiad i gael rhagor o fanylion am bob adran.
+tax-year-overview-old.no-links-summary                              = Mae’r dudalen hon yn dangos crynodeb o’ch blwyddyn dreth.
+tax-year-overview-old.income                                        = Incwm
+tax-year-overview-old.deductions                                    = Lwfansau a didyniadau
+tax-year-overview-old.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus ar ei gyfer
+tax-year-overview-old.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 sy’n ddyledus
+tax-year-overview-old.total-remaining                               = Cyfanswm sy’n ddyledus sy’n weddill
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm

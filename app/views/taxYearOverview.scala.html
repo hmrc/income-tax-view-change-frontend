@@ -23,7 +23,7 @@
 @import views.html.helpers.{breadcrumbHelper, statusHelper}
 @import views.html.templates.main_template
 
-@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None, charge: Option[Charge] = None, incomeBreakdown: Boolean = false, deductionBreakdown: Boolean = false, taxDue: Boolean = false, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(taxYear: Int, overview: CalcOverview, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter._
 
 @breadcrumb = @{
@@ -38,74 +38,135 @@
 }
 
 @heading = @{
-    messages("tax-year-overview.heading", (taxYear - 1).toString, taxYear.toString)
+    messages("tax-year-overview.heading")
+}
+
+@taxCalculationContent = {
+    <h2 class="heading-large">
+        @if(overview.crystallised){
+            @messages("tax-year-overview.tax-calculation")
+        } else {
+            @overview.timestamp.map { timestamp =>
+                @{messages("tax-year-overview.estimate", (taxYear - 1).toString, timestamp.toZonedDateTime.toLocalDate.toLongDate)}
+            }
+        }
+    </h2>
+    <table id="income-deductions-table">
+        <tr>
+            <td>
+                <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
+            </td>
+            <td class="numeric">@{overview.income.toCurrencyString}</td>
+        </tr>
+        <tr>
+            <td>
+                <a href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
+            </td>
+            <td class="numeric">@{overview.deductions.toNegativeCurrencyString}</td>
+        </tr>
+        <tr>
+            <td class="total-section">@messages("tax-year-overview.taxable-income")</td>
+            <td class="numeric total-section">@{overview.totalTaxableIncome.toCurrencyString}</td>
+        </tr>
+    </table>
+
+    <table id="taxdue-payments-table" class="table--spaced-top">
+        <tr>
+            <td class="bold">
+                <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages("tax-year-overview.tax-due")</a>
+            </td>
+            <td  class="bold">@{overview.taxDue.toCurrencyString}</td>
+        </tr>
+    </table>
+}
+
+@paymentsContent = {
+    <h2 class="heading-large">@messages("tax-year-overview.payments")</h2>
+
+}
+
+@updatesContent = {
+    <h2 class="heading-large">@messages("tax-year-overview.updates")</h2>
+
 }
 
 @main_template(
     title = heading,
-    mainClass = Some("full-width"),
     contentHeader = Some(breadcrumb)
 ) {
 
-    <h1 class="heading-xlarge">
-        <span class="heading-secondary">@messages("tax-year-overview.heading-secondary")</span>
-        @heading
-    </h1>
+    <header class="hmrc-page-heading heading-xlarge">
+        <h1 class="heading-xlarge">@heading</h1>
+        <p class="heading-secondary">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</p>
+    </header>
 
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <p id="tax-year-status">
-                @messages("tax-year-overview.status")
-                @statusHelper(transaction, charge)
-            </p>
 
-            @overview.timestamp.map { timestamp =>
-                <p id="calculation-date">
-                    @messages("tax-year-overview.calculation-date")
-                    <span class="bold">@{timestamp.toZonedDateTime.toLocalDate.toLongDate}</span>
-                </p>
-            }
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dd class="govuk-summary-list__value bold">
+                @messages("tax-year-overview.calculation-date")
+            </dd>
+            <dd class="govuk-summary-list__value">
+                @overview.timestamp.map { timestamp =>
+                    <p id="calculation-date">
+                        <span>@{timestamp.toZonedDateTime.toLocalDate.toLongDate}</span>
+                    </p>
+                }
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dd class="govuk-summary-list__value bold">
+                @if(overview.crystallised){
+                    @messages("tax-year-overview.total-due")
 
-            <table id="income-deductions-table">
-                <tr>
-                    <td>
-                        @if(incomeBreakdown) {
-                            <a href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
-                        } else {
-                            @messages("tax-year-overview.income")
-                        }
-                    </td>
-                    <td class="numeric">@{overview.income.toCurrencyString}</td>
-                </tr>
-                <tr>
-                    <td>
-                        @if(deductionBreakdown) {
-                            <a href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
-                        } else {
-                            @messages("tax-year-overview.deductions")
-                        }
-                    </td>
-                    <td class="numeric">@{overview.deductions.toNegativeCurrencyString}</td>
-                </tr>
-                <tr>
-                    <td class="total-section">@messages("tax-year-overview.taxable-income")</td>
-                    <td class="numeric total-section">@{overview.totalTaxableIncome.toCurrencyString}</td>
-                </tr>
-            </table>
+                } else {
+                    @overview.timestamp.map { timestamp =>
+                        @{messages("tax-year-overview.estimate", (taxYear - 1).toString, timestamp.toZonedDateTime.toLocalDate.toLongDate)}
+                    }
+                }
+            </dd>
+            <dd class="govuk-summary-list__value">
+                @{overview.taxDue.toCurrencyString}
+            </dd>
+        </div>
+    </dl>
 
-            <table id="taxdue-payments-table" class="table--spaced-top">
-                <tr>
-                    <td class="bold">
-                        @if(taxDue) {
-                            <a href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages("tax-year-overview.tax-due")</a>
-                        } else {
-                            @messages("tax-year-overview.tax-due")
-                        }
-                    </td>
-                    <td  class="bold">@{overview.taxDue.toCurrencyString}</td>
-                </tr>
-            </table>
+    @if(!overview.crystallised){
+        <div class="panel panel-indent panel-border-wide">@messages("tax-year-overview.calc-from-last-time")</div>
+    }
+
+    <div class="govuk-tabs govuk-tabs-upper-padding" data-module="govuk-tabs">
+        <h2 class="govuk-tabs__title">
+            @messages("tax-year-overview.contents")
+        </h2>
+        <ul class="govuk-tabs__list" role="tablist">
+            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected" role="presentation">
+                <a class="govuk-tabs__tab" href="#taxCalculation" id="tab_taxCalculation" role="tab" aria-controls="taxCalculation" aria-selected="true">
+                    @messages("tax-year-overview.tax-calculation")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item" role="presentation">
+                <a class="govuk-tabs__tab" href="#payments" id="tab_payments" role="tab" aria-controls="payments" aria-selected="false">
+                    @messages("tax-year-overview.payments")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item" role="presentation">
+                <a class="govuk-tabs__tab" href="#updates" id="tab_updates" role="tab" aria-controls="updates" aria-selected="false">
+                    @messages("tax-year-overview.updates")
+                </a>
+            </li>
+        </ul>
+        <div class="govuk-tabs__panel" id="taxCalculation" role="tabpanel" aria-labelledby="tab_taxCalculation">
+            @taxCalculationContent
+        </div>
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="payments" role="tabpanel" aria-labelledby="tab_payments">
+            @paymentsContent
+        </div>
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="updates" role="tabpanel" aria-labelledby="tab_updates">
+            @updatesContent
         </div>
     </div>
-
 }
+
+
+
