@@ -38,7 +38,8 @@ object FeatureSwitch {
     ITSASubmissionIntegration,
     NewFinancialDetailsApi,
     AgentViewer,
-    NextUpdates
+    NextUpdates,
+    TaxYearOverviewUpdate
   )
 
   def apply(str: String): FeatureSwitch =
@@ -105,7 +106,13 @@ case object AgentViewer extends FeatureSwitch {
   override val name = s"$prefix.enable-agent-viewer"
   override val displayText = "Enable Agent Viewer"
 }
+
 case object NextUpdates extends FeatureSwitch {
   override val name = s"$prefix.enable-next-updates"
   override val displayText = "Enable Next Updates Feature"
+}
+
+case object TaxYearOverviewUpdate extends FeatureSwitch {
+  override val name = s"$prefix.enable-tax-year-overview-update"
+  override val displayText = "Tax Year Overview Update"
 }
