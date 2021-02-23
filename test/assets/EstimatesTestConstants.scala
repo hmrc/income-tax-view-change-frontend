@@ -95,6 +95,8 @@ object EstimatesTestConstants {
     val outstandingAmount = if (paid) 0 else 1
     val dueDate = if (overdue) LocalDate.now().minusDays(1).toString else LocalDate.now().plusDays(1).toString
     Charge(
+			taxYear = "2019",
+			transactionId = "id",
       outstandingAmount = Some(outstandingAmount),
       items = Some(Seq(SubItem(dueDate = Some(dueDate))))
     )

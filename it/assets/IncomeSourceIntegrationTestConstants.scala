@@ -81,6 +81,7 @@ object IncomeSourceIntegrationTestConstants {
         "transactionId" -> "1040000123",
         "transactionDate" -> "2019-05-15",
         "type" -> "Balancing Charge Debit",
+        "chargeType" -> "Balancing Charge debit",
         "totalAmount" -> 3400,
         "originalAmount" -> originalAmount,
         "outstandingAmount" -> outstandingAmount,

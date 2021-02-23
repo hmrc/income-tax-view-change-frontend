@@ -19,6 +19,8 @@ package views
 import assets.MessagesLookUp.Breadcrumbs
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.calculation.CalcOverview
+import models.financialDetails.Charge
+import models.financialTransactions.TransactionModel
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.taxYearOverview
@@ -36,6 +38,18 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     payment = 5.05,
     totalRemainingDue = 6.06,
     crystallised = crystallised
+  )
+
+  val transactionModel: TransactionModel = TransactionModel(
+    clearedAmount = Some(7.07),
+    outstandingAmount = Some(8.08)
+  )
+
+  val chargeModel: Charge = Charge(
+		taxYear = "2018",
+		transactionId = "id",
+    totalAmount = Some(7.07),
+    outstandingAmount = Some(8.08)
   )
 
   def estimateView: Html = taxYearOverview(testYear, completeOverview(false), mockImplicitDateFormatter)

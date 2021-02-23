@@ -22,9 +22,9 @@ import play.api.libs.json.{Format, Json}
 sealed trait FinancialDetailsResponseModel
 
 case class FinancialDetailsModel(financialDetails: List[Charge]) extends FinancialDetailsResponseModel {
-  def withYears(): Seq[ChargeModelWithYear] = financialDetails.map(fd => ChargeModelWithYear(fd, fd.taxYear.get.toInt))
+  def withYears(): Seq[ChargeModelWithYear] = financialDetails.map(fd => ChargeModelWithYear(fd, fd.taxYear.toInt))
 
-  def findChargeForTaxYear(taxYear: Int): Option[Charge] = financialDetails.find(_.taxYear.fold(false)(_.toInt == taxYear))
+  def findChargeForTaxYear(taxYear: Int): Option[Charge] = financialDetails.find(_.taxYear.toInt == taxYear)
   def isAllPaid()(implicit user: MtdItUser[_]): Boolean = financialDetails.forall(_.isPaid)
 
 }

@@ -155,7 +155,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
       }
 
       "display current unpaid bills" in new Setup(charges = unpaidFinancialDetails) {
-        val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.get.toInt
+        val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.toInt
         val testTaxYearFrom = testTaxYear - 1
         pageDocument.getElementById(s"payments-due-$testTaxYearTo").text shouldBe paymentDueMessages.taxYearPeriod(testTaxYearFrom.toString, testTaxYearTo.toString)
 
@@ -173,7 +173,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
 
 
       "have a link to the bill" in new Setup(charges = unpaidFinancialDetails) {
-        val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.get.toInt
+        val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.toInt
         val testTaxYearFrom = testTaxYearTo - 1
 
         pageDocument.getElementById(s"bills-link-$testTaxYearTo").text shouldBe paymentDueMessages.billLink
@@ -184,7 +184,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
       }
 
       "have a link to payments" in new Setup(charges = unpaidFinancialDetails, paymentEnabled = true) {
-        val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.get.toInt
+        val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.toInt
         val testTaxYearFrom = testTaxYearTo - 1
 
         pageDocument.getElementById(s"payment-link-$testTaxYearTo").text shouldBe paymentDueMessages.payNow

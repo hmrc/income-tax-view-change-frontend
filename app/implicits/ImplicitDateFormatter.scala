@@ -67,4 +67,7 @@ trait ImplicitDateFormatter {
 
   implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
 
+	def toTaxYearStartDate(year: String): LocalDate = localDate(s"$year-4-6").toLocalDate
+	def toTaxYearEndDate(year: String): LocalDate = localDate(s"$year-4-5").toLocalDate
+
 }

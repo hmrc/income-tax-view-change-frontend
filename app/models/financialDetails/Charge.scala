@@ -17,17 +17,19 @@
 package models.financialDetails
 
 import play.api.libs.json.{Format, Json}
-
 import java.time.LocalDate
 
-case class Charge(taxYear: Option[String] = None,
-                  transactionId: Option[String] = None,
+import play.api.Logger
+
+case class Charge(taxYear: String,
+                  transactionId: String,
                   transactionDate: Option[String] = None,
                   `type`: Option[String] = None,
                   totalAmount: Option[BigDecimal] = None,
                   originalAmount: Option[BigDecimal] = None,
                   outstandingAmount: Option[BigDecimal] =None,
                   clearedAmount: Option[BigDecimal] =None,
+									chargeType: Option[String] = None,
                   items: Option[Seq[SubItem]] = None
                  ) {
   val isPaid: Boolean = outstandingAmount.fold(true)(_ <= 0)
@@ -43,6 +45,16 @@ case class Charge(taxYear: Option[String] = None,
   val due: Option[LocalDate] = charges().headOption.flatMap(_.dueDate).map(due => LocalDate.parse(due))
 
   def isOverdue: Boolean = due.exists(dueDate => dueDate.isBefore(LocalDate.now()))
+
+	def getChargeTypeKey: String = chargeType match {
+		case Some("POA1") => "paymentOnAccount1.text"
+		case Some("POA2") => "paymentOnAccount2.text"
+		case Some("Balancing Charge debit") => "balancingCharge.text"
+		case error => {
+			Logger.error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
+			"unknownCharge"
+		}
+	}
 }
 
 object Charge {

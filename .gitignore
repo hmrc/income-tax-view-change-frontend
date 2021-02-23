@@ -33,3 +33,5 @@ test-result
 tmp
 .idea_modules
 bin
+
+*.log
