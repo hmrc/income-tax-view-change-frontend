@@ -18,12 +18,12 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import controllers.BaseController
-import javax.inject.Inject
-import play.api.i18n.MessagesApi
+import forms.utils.SessionKeys
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.forms.TestHeadersForm
 import testOnly.models.TestHeadersModel
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class TestHeadersController @Inject()(implicit appConfig: FrontendAppConfig, mcc: MessagesControllerComponents,
@@ -37,8 +37,16 @@ class TestHeadersController @Inject()(implicit appConfig: FrontendAppConfig, mcc
   def submitTestHeaders: Action[AnyContent] = Action { implicit request =>
     TestHeadersForm.form.bindFromRequest().fold(
       _ => Redirect(routes.TestHeadersController.showTestHeaders()),
-      success => Redirect(routes.TestHeadersController.showTestHeaders())
-        .withSession(request.session.data.updated("Gov-Test-Scenario", success.headerName).toSeq:_*)
+      success => {
+        if (success.headerName == "ITVC_CRYSTALLISATION_METADATA") {
+          Redirect(routes.TestHeadersController.showTestHeaders())
+            .withSession(request.session.data.updated("Gov-Test-Scenario", success.headerName).toSeq: _*)
+            .withSession(request.session + (SessionKeys.calculationId -> "041f7e4d-87d9-4d4a-a296-3cfbdf92f7e1")) //Cald ID from MTD Stubs
+        } else {
+          Redirect(routes.TestHeadersController.showTestHeaders())
+            .withSession(request.session.data.updated("Gov-Test-Scenario", success.headerName).toSeq: _*)
+        }
+      }
     )
   }
 }

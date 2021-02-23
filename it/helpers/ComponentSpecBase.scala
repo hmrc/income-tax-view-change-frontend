@@ -18,19 +18,25 @@ package helpers
 
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
+import helpers.agent.SessionCookieBaker
 import implicits.ImplicitDateFormatterImpl
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import uk.gov.hmrc.play.language.LanguageUtils
 
+import scala.concurrent.Future
+
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
-  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods with FeatureSwitching {
+  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
+  with GenericStubMethods with FeatureSwitching with SessionCookieBaker {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
@@ -41,6 +47,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
 
+  override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,
@@ -56,7 +63,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.pay-api.host" -> mockHost,
     "microservice.services.pay-api.port" -> mockPort,
     "microservice.services.individual-calculations.host" -> mockHost,
-    "microservice.services.individual-calculations.port" -> mockPort
+    "microservice.services.individual-calculations.port" -> mockPort,
+    "calculation-polling.interval" -> "500",
+    "calculation-polling.timeout" -> "3000"
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -94,12 +103,31 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     )
   }
 
+  def getWithCalcIdInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    await(
+      buildClient(uri)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+        .get()
+    )
+  }
+
+  def getWithCalcIdInSessionAndWithoutAwait(uri: String, additionalCookies: Map[String, String] = Map.empty): Future[WSResponse] = {
+    buildClient(uri)
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .get()
+  }
+
   object IncomeTaxViewChangeFrontend {
     def get(uri: String): WSResponse = await(buildClient(uri).get())
 
     def getTaxYears: WSResponse = get("/tax-years")
 
     def getCalculation(year: String): WSResponse = get(s"/calculation/$year")
+
+    def getCalculationPoller(year: String, additionalCookies: Map[String, String]): WSResponse =
+      getWithCalcIdInSession(s"/calculationPoller/$year", additionalCookies)
+    def getCalculationPollerWithoutAwait(year: String, additionalCookies: Map[String, String]): Future[WSResponse] =
+      getWithCalcIdInSessionAndWithoutAwait(s"/calculationPoller/$year", additionalCookies)
 
     def getIncomeSummary(year: String): WSResponse = get(s"/calculation/$year/income")
 

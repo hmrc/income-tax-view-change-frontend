@@ -19,10 +19,12 @@ package config
 import auth.FrontendAuthorisedFunctions
 import com.google.inject.AbstractModule
 import connectors.{IncomeTaxViewChangeConnector, IncomeTaxViewChangeConnectorImpl}
+import repositories.{MongoLockRepository, MongoLockRepositoryImpl}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 class DIModule extends AbstractModule{
   def configure(): Unit = {
+    bind(classOf[MongoLockRepository]).to(classOf[MongoLockRepositoryImpl]).asEagerSingleton()
     bind(classOf[AuthorisedFunctions]).to(classOf[FrontendAuthorisedFunctions]).asEagerSingleton()
     bind(classOf[IncomeTaxViewChangeConnector]).to(classOf[IncomeTaxViewChangeConnectorImpl]).asEagerSingleton()
   }

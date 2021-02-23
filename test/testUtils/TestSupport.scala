@@ -94,6 +94,12 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
   )
 
   lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> testNino)
+
+  lazy val fakeRequestWithNinoAndCalc = fakeRequestWithActiveSession.withSession(
+    forms.utils.SessionKeys.calculationId -> "1234567890",
+    "nino" -> testNino
+  )
+
   lazy val fakeRequestNoSession = FakeRequest()
 
   implicit class FakeRequestUtil[C](fakeRequest: FakeRequest[C]) {
