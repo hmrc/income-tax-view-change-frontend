@@ -21,7 +21,7 @@ import java.time.LocalDate
 import assets.BaseTestConstants
 import assets.MessagesLookUp.{NoReportDeadlines, Obligations => obligationsMessages}
 import audit.AuditingService
-import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
+import config.featureswitch.{FeatureSwitching, NextUpdates, ObligationsPage, ReportDeadlines}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -283,5 +283,31 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
         }
       }
     }
+
+		"the Next Updates feature switch is enabled" should {
+			lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
+			lazy val document = Jsoup.parse(bodyOf(result))
+
+			"set Report Deadlines enabled" in {
+				enable(ReportDeadlines)
+				enable(NextUpdates)
+			}
+
+			"return Status OK (200)" in {
+				mockSingleBusinessIncomeSource()
+				mockSingleBusinessIncomeSourceWithDeadlines()
+				mockPreviousObligations
+				status(result) shouldBe Status.OK
+			}
+
+			"return HTML" in {
+				contentType(result) shouldBe Some("text/html")
+				charset(result) shouldBe Some("utf-8")
+			}
+
+			"render the next updates page" in {
+				document.title shouldBe obligationsMessages.nextTitle
+			}
+		}
   }
 }

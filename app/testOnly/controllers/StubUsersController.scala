@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
+class 	StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
                                     override val config: Configuration,
                                     override val env: Environment,
                                     implicit val mcc: MessagesControllerComponents,

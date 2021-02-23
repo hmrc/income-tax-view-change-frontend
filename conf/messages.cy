@@ -234,6 +234,25 @@ obligations.finalDeclarationUpdate                              = Datganiad terf
 obligation.dropdown.finalDeclaration.text.v2                    = Mae eich datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu cyflwyno yn gywir ac eich bod wedi cyflwyno pob ffynhonnell incwm, hyd eithaf eich gwybodaeth, gan ddefnyddio eich {0}.
 obligation.dropdown.finalDeclaration.info.v2                    = Beth yw datganiad terfynol?
 obligations.contents                                            = Cynnwys
+nextUpdates.heading                                             = Next updates
+nextUpdates.sub-heading                                         = Updates due by
+nextUpdates.dropdown.info                                       = What are the update types?
+nextUpdates.info                                       			= All updates need to be sent using your record keeping software by each date shown.
+nextUpdates.dropdown.quarterlyReturn.text                       = A quarterly update is a record of all your business income in a 3 month period.
+nextUpdates.dropdown.quarterlyReturn.text.lin2                  = Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income.
+nextUpdates.dropdown.annualReturn.text                          = In an annual update you need to declare that the 4 quarterly updates you have sent are correct. You can also change any previous errors.
+nextUpdates.dropdown.annualReturn.text.lin2                     = Using your record-keeping software, you need to send one annual update for each source of income at the end of each accounting period.
+nextUpdates.dropdown.finalDeclaration.text                      = Your final declaration confirms that the annual updates you have sent are correct and that you have submitted every source of income and expenses true to your knowledge. This is done using your record-keeping software.
+nextUpdates.table.header.type									= Update type
+nextUpdates.table.header.source									= Income source
+nextUpdates.section.heading.updates								= Update for: {0} to {1}
+nextUpdates.section.heading.taxYear								= Tax year: {0} to {1}
+nextUpdates.previousYears.textOne								= To view previously submitted updates visit the
+nextUpdates.previousYears.textTwo								= page.
+nextUpdates.previousYears.link									= tax years
+
+sections.open.all												= Open all
+sections.close.all												= Close all
 
 
 ## Payment Due Page ##
