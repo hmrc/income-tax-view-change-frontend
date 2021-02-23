@@ -23,7 +23,8 @@ case class BreadcrumbItem(id: String, url: Option[String] = None, customText: Op
     "breadcrumb-bills" -> "ToBillsPage",
     "breadcrumb-tax-years" -> "ToTaxYearsPage",
     "breadcrumb-payments-due" -> "ToPaymentsDue",
-    "breadcrumb-tax-year-overview" -> "ToTaxYearOverview"
+    "breadcrumb-tax-year-overview" -> "ToTaxYearOverview",
+    "breadcrumb-payment-history" -> "ToPaymentHistory"
   ).apply(id)
 
 }

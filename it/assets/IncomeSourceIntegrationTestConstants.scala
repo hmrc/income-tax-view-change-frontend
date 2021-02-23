@@ -17,6 +17,7 @@
 package assets
 
 import assets.BusinessDetailsIntegrationTestConstants._
+import assets.PaymentHistoryTestConstraints.oldBusiness1
 import assets.PropertyDetailsIntegrationTestConstants._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.libs.json.{JsValue, Json}
@@ -48,6 +49,12 @@ object IncomeSourceIntegrationTestConstants {
     testMtdItId,
     businesses = List(business1),
     property = Some(property)
+  )
+
+  val paymentHistoryBusinessAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(oldBusiness1),
+    property = Some(oldProperty)
   )
 
   val multipleBusinessesAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(

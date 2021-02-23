@@ -60,3 +60,6 @@ GET         /calculation/:taxYear/submitted         controllers.CalculationPolli
 
 #Language Controller
 GET         /language/:lang                         controllers.ItvcLanguageController.switchToLanguage(lang: String)
+
+#Payment history
+GET         /payments/history                       controllers.PaymentHistoryController.viewPaymentHistory

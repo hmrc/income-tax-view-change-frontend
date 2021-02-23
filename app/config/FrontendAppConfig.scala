@@ -99,6 +99,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val agentClientRelationshipUrl: String = servicesConfig.baseUrl("agent-client-relationships")
 
+  lazy val paymentHistoryLimit: Int = config.get[Int]("payment-history.number-of-years")
+
   //Payment Redirect route
   lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/payments-due"
 

@@ -59,6 +59,7 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
       nextUpdate = nextUpdate,
       paymentEnabled = isEnabled(Payment),
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+      PaymentHistoryEnabled = isEnabled(PaymentHistory),
       implicitDateFormatter = dateFormatter
     )
   }

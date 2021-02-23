@@ -60,7 +60,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       nextUpdate = updateDate,
       paymentEnabled = paymentEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
-      implicitDateFormatter = mockImplicitDateFormatter
+      implicitDateFormatter = mockImplicitDateFormatter,
+      PaymentHistoryEnabled = paymentEnabled
     )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
@@ -121,7 +122,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to the view payments page" in new Setup {
         val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").get(1))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.HomeController.home().url)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.viewPaymentHistory().url)
         link.map(_.text) shouldBe Some(homeMessages.viewPaymentslink)
       }
 

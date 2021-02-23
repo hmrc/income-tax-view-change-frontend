@@ -21,7 +21,7 @@
 @import views.html.templates.main_template
 @import views.html.helpers.breadcrumbHelper
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, paymentEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, paymentEnabled: Boolean, PaymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @breadcrumb = {
@@ -60,8 +60,8 @@ BreadcrumbItem("breadcrumb-it", None)
             <h2 class="heading-medium">@messages("home.tax-years.heading")</h2>
             <li><a href=@controllers.routes.TaxYearsController.viewTaxYears().url>@messages("home.tax-years.view")</a>
             </li>
-            @if(ITSASubmissionIntegrationEnabled){
-            <li><a href=@controllers.routes.HomeController.home.url>@messages("home.tax-years.viewPayments")</a></li>
+            @if(PaymentHistoryEnabled){
+            <li><a href=@controllers.routes.PaymentHistoryController.viewPaymentHistory().url>@messages("home.tax-years.viewPayments")</a></li>
             }
         </ul>
     </div>

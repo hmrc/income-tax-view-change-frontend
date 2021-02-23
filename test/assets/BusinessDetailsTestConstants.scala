@@ -30,6 +30,14 @@ import scala.concurrent.ExecutionContext
 
 object BusinessDetailsTestConstants {
 
+
+  val getCurrentTaxYearEnd: LocalDate = {
+    val currentDate: LocalDate = LocalDate.now
+    if(currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6)))LocalDate.of(currentDate.getYear, 4, 5)
+    else LocalDate.of(currentDate.getYear + 1, 4, 5)
+
+  }
+
   val testBusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017,6,1), end = LocalDate.of(2018,5,30))
   val test2019BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(2018,3,5), end = LocalDate.of(2019,3,6))
   val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(2019,3,6), end = LocalDate.of(2018,3,6))
@@ -114,7 +122,7 @@ object BusinessDetailsTestConstants {
     contactDetails = None,
     seasonal = None,
     paperless = None,
-    firstAccountingPeriodEndDate = None
+    firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   val ceasedBusiness = BusinessDetailsModel(
@@ -129,6 +137,20 @@ object BusinessDetailsTestConstants {
     seasonal = None,
     paperless = None,
     firstAccountingPeriodEndDate = None
+  )
+
+  val oldUseralignedBusiness = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017,4,6), end = LocalDate.of(2018,4,5)),
+    cashOrAccruals = Some("CASH"),
+    tradingStartDate = Some("2017-1-1"),
+    cessation = None,
+    tradingName = Some(testTradeName),
+    address = Some(testBizAddress),
+    contactDetails = None,
+    seasonal = None,
+    paperless = None,
+    firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
