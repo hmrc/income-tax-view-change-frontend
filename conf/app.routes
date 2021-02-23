@@ -53,7 +53,7 @@ GET         /not-enrolled                           controllers.notEnrolled.NotE
 GET         /partial                                controllers.BTAPartialController.setupPartial
 
 #Calculationd details poller
-GET         /calculationPoller/:taxYear             controllers.CalculationPollingController.calculationPoller(taxYear: Int)
+GET         /calculation/:taxYear/submitted         controllers.CalculationPollingController.calculationPoller(taxYear: Int)
 
 #Language Controller
 GET         /language/:lang                         controllers.ItvcLanguageController.switchToLanguage(lang: String)

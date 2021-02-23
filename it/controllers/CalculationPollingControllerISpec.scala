@@ -31,7 +31,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
   val mongoDbConnection = app.injector.instanceOf[MongoLockRepositoryImpl]
   implicit val ec = app.injector.instanceOf[ExecutionContext]
 
-  unauthorisedTest(s"/calculationPoller/$testYear")
+  unauthorisedTest(s"/calculation/$testYear/submitted")
 
   s"GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt).url}" when {
       "the user is authorised with an active enrolment" when {
