@@ -105,6 +105,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Accounting software guidance
   lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
 
+  //Calculation Polling config
+  lazy val calcPollSchedulerInterval: Int = servicesConfig.getInt("calculation-polling.interval")
+  lazy val calcPollSchedulerTimeout: Int = servicesConfig.getInt("calculation-polling.timeout")
+
   //Translation
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

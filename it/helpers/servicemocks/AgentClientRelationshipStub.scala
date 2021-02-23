@@ -17,7 +17,6 @@
 package helpers.servicemocks
 
 import helpers.WiremockHelper
-import play.api.libs.json.{JsValue, Json}
 
 object AgentClientRelationshipStub {
 
