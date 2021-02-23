@@ -16,239 +16,136 @@
 
 package views
 
-import assets.MessagesLookUp.{Breadcrumbs, TaxYearOverview}
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
-import implicits.ImplicitCurrencyFormatter._
+import assets.MessagesLookUp.Breadcrumbs
+import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.calculation.CalcOverview
-import models.financialDetails.Charge
-import models.financialTransactions.TransactionModel
-import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
-import org.jsoup.select.Elements
 import play.twirl.api.Html
-import testUtils.TestSupport
+import testUtils.ViewSpec
 import views.html.taxYearOverview
 
-class TaxYearOverviewViewSpec extends TestSupport with FeatureSwitching {
+class TaxYearOverviewViewSpec extends ViewSpec {
 
   val testYear: Int = 2020
-  val completeOverview: CalcOverview = CalcOverview(
+
+  def completeOverview(crystallised: Boolean): CalcOverview = CalcOverview(
     timestamp = Some("2020-01-01T00:35:34.185Z"),
     income = 1.01,
     deductions = 2.02,
     totalTaxableIncome = 3.03,
     taxDue = 4.04,
     payment = 5.05,
-    totalRemainingDue = 6.06
+    totalRemainingDue = 6.06,
+    crystallised = crystallised
   )
 
-  val transactionModel: TransactionModel = TransactionModel(
-    clearedAmount = Some(7.07),
-    outstandingAmount = Some(8.08)
-  )
+  def estimateView: Html = taxYearOverview(testYear, completeOverview(false), mockImplicitDateFormatter)
 
-  val chargeModel: Charge = Charge(
-    totalAmount = Some(7.07),
-    outstandingAmount = Some(8.08)
-  )
+  def crystallisedView: Html = taxYearOverview(testYear, completeOverview(true), mockImplicitDateFormatter)
 
-  class Setup(taxYear: Int = testYear,
-              overview: CalcOverview = completeOverview,
-              transaction: Option[TransactionModel] = Some(transactionModel),
-              charge: Option[Charge] = Some(chargeModel),
-              incomeBreakdown: Boolean = false,
-              deductionBreakdown: Boolean = false,
-              taxDue: Boolean = false) {
-
-    val page: Html = taxYearOverview(taxYear, overview, transaction, charge, incomeBreakdown, deductionBreakdown, taxDue, mockImplicitDateFormatter)
-    val document: Document = Jsoup.parse(page.body)
-    val content: Element = document.selectFirst("#content")
-
-    def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
-
-    def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
-
-    def getElementByCss(selector: String): Option[Element] = Option(document.select(selector).first())
+  object taxYearOverviewMessages{
+    val title: String = "Tax year overview - Business Tax account - GOV.UK"
+    val heading: String = "Tax year overview"
+    val secondaryHeading: String = s"6 April ${testYear - 1} to 5 April $testYear"
+    val calculationDate: String = "Calculation date"
+    val calcDate: String = "1 January 2020"
+    val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
+    val totalDue: String = "Total Due"
+    val taxDue: String = "£4.04"
+    val calcDateInfo: String = "This calculation is from the last time you viewed your tax calculation in your own software. You will need to view it in your software for the most up to date version."
+    val taxCalculation: String = "Tax Calculation"
+    val payments: String = "Payments"
+    val updates: String = "Updates"
+    val income: String = "Income"
+    val allowancesAndDeductions: String = "Allowances and deductions"
+    val totalIncomeDue: String = "Total income on which tax is due"
+    val incomeTaxNationalInsuranceDue: String = "Income Tax and National Insurance contributions due"
   }
 
-  "taxYearOverview with NewFinancialDetailsApi disabled" must {
-    disable(NewFinancialDetailsApi)
-    "have the correct title" in new Setup {
-      document.title shouldBe TaxYearOverview.title(testYear - 1, testYear)
+  "taxYearOverview" should {
+    "have the correct title" in new Setup(estimateView) {
+      document.title shouldBe taxYearOverviewMessages.title
     }
 
-    "have a breadcrumb trail" in new Setup(taxYear = testYear) {
-      content.select("#breadcrumb-bta").text shouldBe Breadcrumbs.bta
-      content.select("#breadcrumb-bta").attr("href") shouldBe appConfig.businessTaxAccount
-      content.select("#breadcrumb-it").text shouldBe Breadcrumbs.it
-      content.select("#breadcrumb-it").attr("href") shouldBe controllers.routes.HomeController.home().url
-      content.select("#breadcrumb-tax-years").text shouldBe Breadcrumbs.taxYears
-      content.select("#breadcrumb-tax-years").attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
-      content.select("#breadcrumb-tax-year-overview").text shouldBe Breadcrumbs.taxYearOverview(testYear - 1, testYear)
-      content.select("#breadcrumb-tax-year-overview").hasAttr("href") shouldBe false
+    "have a breadcrumb trail" in new Setup(estimateView) {
+      content.selectHead("#breadcrumb-bta").text shouldBe Breadcrumbs.bta
+      content.selectHead("#breadcrumb-bta").attr("href") shouldBe appConfig.businessTaxAccount
+      content.selectHead("#breadcrumb-it").text shouldBe Breadcrumbs.it
+      content.selectHead("#breadcrumb-it").attr("href") shouldBe controllers.routes.HomeController.home().url
+      content.selectHead("#breadcrumb-tax-years").text shouldBe Breadcrumbs.taxYears
+      content.selectHead("#breadcrumb-tax-years").attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
+      content.selectHead("#breadcrumb-tax-year-overview").text shouldBe Breadcrumbs.taxYearOverview(testYear - 1, testYear)
+      content.selectHead("#breadcrumb-tax-year-overview").hasAttr("href") shouldBe false
     }
 
-    "have the correct heading" in new Setup(taxYear = testYear) {
-      content.select("h1").text shouldBe TaxYearOverview.heading(testYear - 1, testYear)
+    "have the correct heading" in new Setup(estimateView) {
+      content.selectHead("  h1").text shouldBe taxYearOverviewMessages.heading
     }
 
-    "have a status of the tax year" in new Setup {
-      val status: Elements = content.select("#tax-year-status")
-      status.text shouldBe TaxYearOverview.status("ONGOING")
-      status.select("span").hasClass("govUk-tag") shouldBe true
+    "have the correct secondary heading" in new Setup(estimateView) {
+      content.selectHead("header > p").text shouldBe taxYearOverviewMessages.secondaryHeading
     }
 
-
-    "have a table of income and deductions" which {
-      "has a row but no link for income when FS IncomeBreakdown is disabled " in new Setup {
-
-        val row: Elements = content.select("#income-deductions-table tr:nth-child(1)")
-        row.select("td:nth-child(1)").text shouldBe TaxYearOverview.income
-        row.select("td[class=numeric]").text shouldBe completeOverview.income.toCurrencyString
-        val link: Option[Element] =
-          getElementByCss("#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a")
-        link shouldBe None
-      }
-      "has a row and link to view updates when FS IncomeBreakdown is enabled" in new Setup(incomeBreakdown = true) {
-
-        val link: Option[Element] =
-          getElementByCss("#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a")
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url)
-        link.map(_.text) shouldBe Some(TaxYearOverview.income)
-      }
-      "has a row but no link for deductions when FS DeductionsBreakdown is disabled " in new Setup {
-
-        val row: Elements = content.select("#income-deductions-table tr:nth-child(2)")
-        row.select("td:nth-child(1)").text shouldBe TaxYearOverview.deductions
-        row.select("td[class=numeric]").text shouldBe completeOverview.deductions.toNegativeCurrencyString
-        val link: Option[Element] =
-          getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")
-        link shouldBe None
-      }
-      "has a row and link to view updates when FS DeductionsBreakdown is enabled" in new Setup(deductionBreakdown = true) {
-
-        val link: Option[Element] =
-          getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")
-        link.map(_.text) shouldBe Some(TaxYearOverview.deductions)
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url)
-      }
-      "has a total row for total taxable income" in new Setup {
-        val row: Elements = content.select("#income-deductions-table tr:nth-child(3)")
-        row.select("td:nth-child(1)").text shouldBe TaxYearOverview.taxableIncome
-        row.select("td:nth-child(2)").text shouldBe completeOverview.totalTaxableIncome.toCurrencyString
-      }
+    "display the calculation date" in new Setup(estimateView) {
+      content.selectHead("dl > div:nth-child(1) > dd:nth-child(1)").text shouldBe taxYearOverviewMessages.calculationDate
+      content.selectHead("dl > div:nth-child(1) > dd:nth-child(2)").text shouldBe taxYearOverviewMessages.calcDate
     }
 
-    "have a table for tax due and payments" which {
-      "has a row for tax due" in new Setup {
-        val row: Elements = content.select("#taxdue-payments-table tr:nth-child(1)")
-        row.select("td:nth-child(1)").text shouldBe TaxYearOverview.taxDue
-        row.select("td:nth-child(2)").text shouldBe completeOverview.taxDue.toCurrencyString
-      }
+    "display the estimate due for an ongoing tax year" in new Setup(estimateView) {
+      content.selectHead("dl > div:nth-child(2) > dd:nth-child(1)").text shouldBe taxYearOverviewMessages.estimate
+      content.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
     }
 
-    "a timestamp is present in the calculation" must {
-      "display the date of the calculation" in new Setup {
-        content.select("#calculation-date").text shouldBe TaxYearOverview.calculationDate("1 January 2020")
-      }
+    "display the total due for a crystallised year" in new Setup(crystallisedView) {
+      content.selectHead("dl > div:nth-child(2) > dd:nth-child(1)").text shouldBe taxYearOverviewMessages.totalDue
+      content.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(true).taxDue.toCurrencyString
     }
 
-    "a timestamp is not present in the calculation" must {
-      "not show any calculation date" in new Setup(overview = completeOverview.copy(timestamp = None)) {
-        content.select("#calculation-date").isEmpty shouldBe true
-      }
+    "have a paragraph explaining the calc date for an ongoing year" in new Setup(estimateView) {
+      content.selectHead(".panel").text shouldBe taxYearOverviewMessages.calcDateInfo
+    }
+
+    "not have a paragraph explaining the calc date for a crystallised year" in new Setup(crystallisedView) {
+      content.getOptionalSelector(".panel") shouldBe None
+    }
+
+    "show three tabs with the correct tab headings" in new Setup(estimateView) {
+      content.selectHead("#tab_taxCalculation").text shouldBe taxYearOverviewMessages.taxCalculation
+      content.selectHead("#tab_payments").text shouldBe taxYearOverviewMessages.payments
+      content.selectHead("#tab_updates").text shouldBe taxYearOverviewMessages.updates
+    }
+
+    "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView) {
+      content.selectHead("#taxCalculation > h2").text shouldBe taxYearOverviewMessages.estimate
+    }
+
+    "when in a crystallised year should display the correct heading in the Tax Calculation tab" in new Setup(crystallisedView) {
+      content.selectHead("#taxCalculation > h2").text shouldBe taxYearOverviewMessages.taxCalculation
+    }
+
+    "display the income row" in new Setup(estimateView) {
+      val incomeLink = content.selectHead(" #income-deductions-table tr:nth-child(1) td:nth-child(1) a")
+      incomeLink.text shouldBe taxYearOverviewMessages.income
+      incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
+      content.selectHead("#income-deductions-table tr:nth-child(1) .numeric").text shouldBe completeOverview(false).income.toCurrencyString
+    }
+
+    "display the Allowances and deductions row" in new Setup(estimateView) {
+      val allowancesLink = content.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
+      allowancesLink.text shouldBe taxYearOverviewMessages.allowancesAndDeductions
+      allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
+      content.selectHead("#income-deductions-table tr:nth-child(2) .numeric").text shouldBe completeOverview(false).deductions.toNegativeCurrencyString
+    }
+
+    "display the Total income on which tax is due row" in new Setup(estimateView) {
+      content.selectHead(".total-section:nth-child(1)").text shouldBe taxYearOverviewMessages.totalIncomeDue
+      content.selectHead(".total-section:nth-child(2)").text shouldBe completeOverview(false).totalTaxableIncome.toCurrencyString
+    }
+
+    "display the Income Tax and National Insurance Contributions Due row" in new Setup(estimateView) {
+      val totalTaxDueLink = content.selectHead("#taxdue-payments-table td:nth-child(1) a")
+      totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
+      totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
+      content.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
     }
   }
-
-  "taxYearOverview with NewFinancialDetailsApi FS enabled" must {
-    enable(NewFinancialDetailsApi)
-    "have the correct title" in new Setup {
-      document.title shouldBe TaxYearOverview.title(testYear - 1, testYear)
-    }
-
-    "have a breadcrumb trail" in new Setup(taxYear = testYear) {
-      content.select("#breadcrumb-bta").text shouldBe Breadcrumbs.bta
-      content.select("#breadcrumb-bta").attr("href") shouldBe appConfig.businessTaxAccount
-      content.select("#breadcrumb-it").text shouldBe Breadcrumbs.it
-      content.select("#breadcrumb-it").attr("href") shouldBe controllers.routes.HomeController.home().url
-      content.select("#breadcrumb-tax-years").text shouldBe Breadcrumbs.taxYears
-      content.select("#breadcrumb-tax-years").attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
-      content.select("#breadcrumb-tax-year-overview").text shouldBe Breadcrumbs.taxYearOverview(testYear - 1, testYear)
-      content.select("#breadcrumb-tax-year-overview").hasAttr("href") shouldBe false
-    }
-
-    "have the correct heading" in new Setup(taxYear = testYear) {
-      content.select("h1").text shouldBe TaxYearOverview.heading(testYear - 1, testYear)
-    }
-
-    "have a status of the tax year" in new Setup {
-      val status: Elements = content.select("#tax-year-status")
-      status.text shouldBe TaxYearOverview.status("ONGOING")
-      status.select("span").hasClass("govUk-tag") shouldBe true
-    }
-
-
-    "have a table of income and deductions" which {
-      "has a row but no link for income when FS IncomeBreakdown is disabled " in new Setup {
-
-        val row: Elements = content.select("#income-deductions-table tr:nth-child(1)")
-        row.select("td:nth-child(1)").text shouldBe TaxYearOverview.income
-        row.select("td[class=numeric]").text shouldBe completeOverview.income.toCurrencyString
-        val link: Option[Element] =
-          getElementByCss("#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a")
-        link shouldBe None
-      }
-      "has a row and link to view updates when FS IncomeBreakdown is enabled" in new Setup(incomeBreakdown = true) {
-
-        val link: Option[Element] =
-          getElementByCss("#income-deductions-table > tbody > tr:nth-child(1) > td:nth-child(1) > a")
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url)
-        link.map(_.text) shouldBe Some(TaxYearOverview.income)
-      }
-      "has a row but no link for deductions when FS DeductionsBreakdown is disabled " in new Setup {
-
-        val row: Elements = content.select("#income-deductions-table tr:nth-child(2)")
-        row.select("td:nth-child(1)").text shouldBe TaxYearOverview.deductions
-        row.select("td[class=numeric]").text shouldBe completeOverview.deductions.toNegativeCurrencyString
-        val link: Option[Element] =
-          getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")
-        link shouldBe None
-      }
-      "has a row and link to view updates when FS DeductionsBreakdown is enabled" in new Setup(deductionBreakdown = true) {
-
-        val link: Option[Element] =
-          getElementByCss("#income-deductions-table > tbody > tr:nth-child(2) > td:nth-child(1) > a")
-        link.map(_.text) shouldBe Some(TaxYearOverview.deductions)
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url)
-      }
-      "has a total row for total taxable income" in new Setup {
-        val row: Elements = content.select("#income-deductions-table tr:nth-child(3)")
-        row.select("td:nth-child(1)").text shouldBe TaxYearOverview.taxableIncome
-        row.select("td:nth-child(2)").text shouldBe completeOverview.totalTaxableIncome.toCurrencyString
-      }
-    }
-
-    "have a table for tax due and payments" which {
-      "has a row for tax due" in new Setup {
-        val row: Elements = content.select("#taxdue-payments-table tr:nth-child(1)")
-        row.select("td:nth-child(1)").text shouldBe TaxYearOverview.taxDue
-        row.select("td:nth-child(2)").text shouldBe completeOverview.taxDue.toCurrencyString
-      }
-    }
-
-    "a timestamp is present in the calculation" must {
-      "display the date of the calculation" in new Setup {
-        content.select("#calculation-date").text shouldBe TaxYearOverview.calculationDate("1 January 2020")
-      }
-    }
-
-    "a timestamp is not present in the calculation" must {
-      "not show any calculation date" in new Setup(overview = completeOverview.copy(timestamp = None)) {
-        content.select("#calculation-date").isEmpty shouldBe true
-      }
-    }
-
-    disable(NewFinancialDetailsApi)
-  }
-
 }

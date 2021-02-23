@@ -65,6 +65,8 @@ trait ViewSpec extends TestSupport {
 
     def selectNth(selector: String, nth: Int): Element = element.selectHead(s"$selector:nth-of-type($nth)")
 
+    def getOptionalSelector(selector: String): Option[Element] = element.select(selector).headOption
+
     //scalastyle:off
     def h1: Element = {
       element.select(s"${Selectors.h1}") getOrElse fail("h1 not found")

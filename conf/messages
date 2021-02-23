@@ -67,18 +67,34 @@ taxYears.overdue                                               = OVERDUE
 taxYears.complete                                              = COMPLETE
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 
+## Tax Year Overview Old##
+tax-year-overview-old.heading                                       = 6 April {0} to 5 April {1}
+tax-year-overview-old.heading-secondary                             = Tax year overview
+tax-year-overview-old.status                                        = Tax year status:
+tax-year-overview-old.calculation-date                              = Calculation date:
+tax-year-overview-old.links-summary                                 = Click on each link for more detail about each section.
+tax-year-overview-old.no-links-summary                              = This page shows a summary of your tax year.
+tax-year-overview-old.income                                        = Income
+tax-year-overview-old.deductions                                    = Allowances and deductions
+tax-year-overview-old.taxable-income                                = Total income on which tax is due
+tax-year-overview-old.tax-due                                       = Income Tax and Class 4 National Insurance contributions due
+tax-year-overview-old.total-remaining                               = Total remaining due
+
 ## Tax Year Overview ##
-tax-year-overview.heading                                       = 6 April {0} to 5 April {1}
-tax-year-overview.heading-secondary                             = Tax year overview
-tax-year-overview.status                                        = Tax year status:
-tax-year-overview.calculation-date                              = Calculation date:
-tax-year-overview.links-summary                                 = Click on each link for more detail about each section.
-tax-year-overview.no-links-summary                              = This page shows a summary of your tax year.
-tax-year-overview.income                                        = Income
-tax-year-overview.deductions                                    = Allowances and deductions
-tax-year-overview.taxable-income                                = Total income on which tax is due
-tax-year-overview.tax-due                                       = Income Tax and Class 4 National Insurance contributions due
-tax-year-overview.total-remaining                               = Total remaining due
+tax-year-overview.heading                                           = Tax year overview
+tax-year-overview.heading-secondary                                 = 6 April {0} to 5 April {1}
+tax-year-overview.calculation-date                                  = Calculation date
+tax-year-overview.estimate                                          = 6 April {0} to {1} estimate
+tax-year-overview.calc-from-last-time                               = This calculation is from the last time you viewed your tax calculation in your own software. You will need to view it in your software for the most up to date version.
+tax-year-overview.total-due                                         = Total Due
+tax-year-overview.contents                                          = Contents
+tax-year-overview.tax-calculation                                   = Tax Calculation
+tax-year-overview.payments                                          = Payments
+tax-year-overview.updates                                           = Updates
+tax-year-overview.income                                            = Income
+tax-year-overview.deductions                                        = Allowances and deductions
+tax-year-overview.taxable-income                                    = Total income on which tax is due
+tax-year-overview.tax-due                                           = Income Tax and National Insurance contributions due
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Income

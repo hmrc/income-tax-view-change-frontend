@@ -498,6 +498,23 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
     margin: 0;
 }
 
+.hmrc-page-heading {
+    margin-top: 10px;
+    display: table;
+}
+
+.hmrc-page-heading .heading-xlarge {
+    margin: 0px;
+}
+
+.hmrc-page-heading .heading-secondary{
+    display: table-header-group;
+}
+
+.govuk-tabs-upper-padding {
+    padding-top: 25px;
+}
+
 /* govuk summary list pattern */
 .govuk-summary-list {
     font-weight: 400;
