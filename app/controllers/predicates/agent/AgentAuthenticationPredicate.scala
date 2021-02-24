@@ -53,10 +53,17 @@ object AgentAuthenticationPredicate extends Results {
       Right(AuthPredicateSuccess)
     } else Left(Future.successful(noClientDetailsRoute))
 
+  // Redirects to Select Client Page if the agent hasn't confirmed the client
+  val selectedClientPredicate: AuthPredicate[IncomeTaxAgentUser] = request => user =>
+    if (request.session.get(SessionKeys.confirmedClient).nonEmpty) Right(AuthPredicateSuccess)
+    else Left(Future.successful(noClientDetailsRoute))
+
 
   val defaultPredicates: AuthPredicate[IncomeTaxAgentUser] = timeoutPredicate |+| arnPredicate
 
   val clientDetailsPredicates: AuthPredicate[IncomeTaxAgentUser] = defaultPredicates |+| detailsPredicate
+
+  val confirmedClientPredicates: AuthPredicate[IncomeTaxAgentUser] = clientDetailsPredicates |+| selectedClientPredicate
 
   case class MissingAgentReferenceNumber(msg: String = "Agent Reference Number was not found in user's enrolments") extends AuthorisationException(msg)
 

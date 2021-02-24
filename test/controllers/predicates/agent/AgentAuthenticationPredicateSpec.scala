@@ -17,7 +17,7 @@
 package controllers.predicates.agent
 
 import assets.BaseTestConstants._
-import controllers.agent.utils.SessionKeys.{clientFirstName, clientLastName, clientUTR}
+import controllers.agent.utils.SessionKeys.{clientFirstName, clientLastName, clientUTR, confirmedClient}
 import controllers.predicates.AuthPredicate.AuthPredicateSuccess
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate._
@@ -60,6 +60,10 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
     clientUTR -> ""
   )
 
+  lazy val confirmedClientPopulated: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+    confirmedClient -> ""
+  )
+
   "arnPredicate" should {
     "return an AuthPredicateSuccess where an arn enrolment already exists" in {
       arnPredicate(FakeRequest())(userWithArnIdEnrolment).right.value mustBe AuthPredicateSuccess
@@ -92,6 +96,16 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
 
     "return the Enter Client UTR page where the client's details are not in session" in {
       await(detailsPredicate(FakeRequest())(blankUser).left.value) mustBe noClientDetailsRoute
+    }
+  }
+
+  "selectedClientPredicate" should {
+    "return an AuthPredicateSuccess where the confirmedClient key is in session" in {
+      selectedClientPredicate(confirmedClientPopulated)(blankUser).right.value mustBe AuthPredicateSuccess
+    }
+
+    "return an Enter Client UTR page where the confirmedClient key is not in session" in {
+      await(selectedClientPredicate(FakeRequest())(blankUser).left.value) mustBe noClientDetailsRoute
     }
   }
 }
