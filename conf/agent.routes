@@ -13,3 +13,7 @@ POST        /confirm-client                     controllers.agent.ConfirmClientU
 
 # Client Relationship Failure
 GET         /client-relationship-problem        controllers.agent.ClientRelationshipFailureController.show
+
+# UTR Error
+GET         /utr-problem                        controllers.agent.UTRErrorController.show
+POST        /utr-problem                        controllers.agent.UTRErrorController.submit
