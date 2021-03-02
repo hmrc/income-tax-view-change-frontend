@@ -52,16 +52,22 @@ object BaseTestConstants {
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
   val testErrorMessage = "Dummy Error Message"
 
-  val testAuthSuccessResponse = new ~(new ~(new ~(Enrolments(Set(
+  def testAuthSuccessResponse(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,
+															affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
-  )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Individual))
+  )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
 
-  val testAuthSuccessWithSaUtrResponse = new ~(new ~(new ~(Enrolments(Set(
+	def testAuthSuccessResponseOrgNoNino(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200) = new ~(new ~(new ~(new ~(Enrolments(Set(
+		Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated")
+	)), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Organisation)), confidenceLevel)
+
+  def testAuthSuccessWithSaUtrResponse(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,
+																			 affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
     Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "saUtr")), "activated")
-  )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Individual))
+  )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
 
   val arnEnrolment: Enrolment = Enrolment(
     "HMRC-AS-AGENT",

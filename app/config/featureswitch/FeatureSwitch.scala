@@ -40,7 +40,8 @@ object FeatureSwitch {
     AgentViewer,
     NextUpdates,
     TaxYearOverviewUpdate,
-    PaymentHistory
+    PaymentHistory,
+		IvUplift
   )
 
   def apply(str: String): FeatureSwitch =
@@ -119,6 +120,11 @@ case object TaxYearOverviewUpdate extends FeatureSwitch {
 }
 
 case object PaymentHistory extends FeatureSwitch {
-  override val name = s"$prefix.enable-payment-history-page"
-  override val displayText = "Payment History"
+	override val name = s"$prefix.enable-payment-history-page"
+	override val displayText = "Payment History"
+}
+
+case object IvUplift extends FeatureSwitch {
+	override val name = s"$prefix.enable-iv-uplift"
+	override val displayText = "IV Uplift"
 }

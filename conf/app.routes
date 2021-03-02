@@ -50,7 +50,13 @@ GET         /sign-out                               controllers.SignOutControlle
 GET         /sign-in                                controllers.SignInController.signIn
 
 #Not Enrolled
-GET         /not-enrolled                           controllers.notEnrolled.NotEnrolledController.show
+GET         /not-enrolled                           controllers.errors.NotEnrolledController.show
+
+#Uplift Failed
+GET			/uplift-failed							controllers.errors.UpliftFailedController.show
+
+#Uplift Success
+GET			/uplift-success							controllers.UpliftSuccessController.success
 
 #BTA Partial
 GET         /partial                                controllers.BTAPartialController.setupPartial

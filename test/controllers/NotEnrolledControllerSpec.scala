@@ -18,7 +18,7 @@ package controllers
 
 import assets.MessagesLookUp.{NotEnrolled => notEnrolleMessages}
 import config.FrontendAppConfig
-import controllers.notEnrolled.NotEnrolledController
+import controllers.errors.NotEnrolledController
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.i18n.MessagesApi

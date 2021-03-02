@@ -29,7 +29,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val hasEnabledTestOnlyRoutes: Boolean = config.get[String]("play.http.router") == "testOnlyDoNotUseInAppConf.Routes"
 
   //App
-  private lazy val baseUrl: String = "report-quarterly/income-and-expenses/view"
+  lazy val baseUrl: String = "report-quarterly/income-and-expenses/view"
   lazy val itvcFrontendEnvironment: String = servicesConfig.getString("base.url")
   lazy val appName: String = servicesConfig.getString("appName")
 
@@ -118,6 +118,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy")
   )
+
+	//Auth variables
+	lazy val requiredConfidenceLevel: Int = servicesConfig.getInt("auth.confidenceLevel")
 
   def routeToSwitchLanguage: String => Call = (lang: String) => controllers.routes.ItvcLanguageController.switchToLanguage(lang)
 

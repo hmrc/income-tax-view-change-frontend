@@ -47,7 +47,8 @@ object AuthStub extends ComponentSpecBase {
            | "optionalCredentials": {
            |  "providerId": "12345-credId",
            |  "providerType": "GovernmentGateway"
-           | }
+           | },
+           | "confidenceLevel": 200
            |}""".stripMargin).toString())
   }
 

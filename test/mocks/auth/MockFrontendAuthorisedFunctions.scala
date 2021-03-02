@@ -36,7 +36,7 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach with MockitoSug
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockAuthService)
-    setupMockAuthRetrievalSuccess(testAuthSuccessResponse)
+    setupMockAuthRetrievalSuccess(testAuthSuccessResponse())
   }
 
   def setupMockAuthRetrievalSuccess[X,Y](retrievalValue: X~Y): Unit = {
