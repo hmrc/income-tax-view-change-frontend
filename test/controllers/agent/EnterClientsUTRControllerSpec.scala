@@ -235,7 +235,8 @@ class EnterClientsUTRControllerSpec extends TestSupport
               ClientsUTRForm.utr -> validUTR
             ))
 
-            intercept[InternalServerException](await(result)).message shouldBe "[EnterClientsUTRController][submit] - unable to verify client relationship"
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(routes.ClientRelationshipFailureController.show().url)
           }
           "an unexpected response is returned from the relationship check" in {
             val validUTR: String = "1234567890"

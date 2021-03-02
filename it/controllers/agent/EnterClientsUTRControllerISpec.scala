@@ -328,10 +328,10 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
 
-        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        Then(s"The user is redirected to the client relationship failure page")
         result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+          httpStatus(SEE_OTHER),
+          redirectURI(routes.ClientRelationshipFailureController.show().url)
         )
       }
       "there was an unexpected response retrieving the agent client relationship" in {

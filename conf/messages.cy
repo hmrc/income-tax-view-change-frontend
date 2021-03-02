@@ -7,6 +7,12 @@ base.submit                                                     = Cyflwyno
 base.error_heading                                              = Mae problem wedi codi
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 
+# Agent - Client Relationship Failure
+agent.client_relationship_failure.heading                       = Mae problem wedi codi
+agent.client_relationship_failure.info                          = Nid ydych wedi’ch awdurdodi i fwrw golwg dros wybodaeth y cleient hwn. {0} cyn i chi allu mewngofnodi i’r gwasanaeth hwn.
+agent.client_relationship_failure.info.link                     = Mae’n rhaid i’ch cleient eich awdurdodi fel ei asiant (yn agor tab newydd)
+agent.client_relationship_failure.enter_different_details       = Nodwch UTR cleient gwahanol
+
 ## BTA Links ##
 bta.home                                                        = Treth Busnes – Hafan
 bta.messages                                                    = Negeseuon
