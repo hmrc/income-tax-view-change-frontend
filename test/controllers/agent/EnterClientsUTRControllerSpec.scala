@@ -177,6 +177,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
             result.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
           }
         }
+
         "return a bad request" when {
           "the submitted utr is invalid" in {
             enable(AgentViewer)
@@ -191,7 +192,8 @@ class EnterClientsUTRControllerSpec extends TestSupport
             contentType(result) shouldBe Some(HTML)
           }
         }
-        "return an exception" when {
+
+        "redirect to the UTR Error page" when {
           "a client details not found error is returned from the relationship check" in {
             val validUTR: String = "1234567890"
 
@@ -205,8 +207,10 @@ class EnterClientsUTRControllerSpec extends TestSupport
               ClientsUTRForm.utr -> validUTR
             ))
 
-            intercept[InternalServerException](await(result)).message shouldBe "[EnterClientsUTRController][submit] - unable to verify client relationship"
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
           }
+
           "a business details not found error is returned from the relationship check" in {
             val validUTR: String = "1234567890"
 
@@ -220,8 +224,12 @@ class EnterClientsUTRControllerSpec extends TestSupport
               ClientsUTRForm.utr -> validUTR
             ))
 
-            intercept[InternalServerException](await(result)).message shouldBe "[EnterClientsUTRController][submit] - unable to verify client relationship"
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
           }
+        }
+
+        "return an exception" when {
           "an agent client relationship not found error is returned from the relationship check" in {
             val validUTR: String = "1234567890"
 

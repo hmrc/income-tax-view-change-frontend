@@ -1,0 +1,52 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.agent.MainTemplate
+@import views.html.helpers.injected.ContinueButton
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+
+@this(
+    mainTemplate: MainTemplate,
+    continueButton: ContinueButton,
+    form: FormWithCSRF
+)
+
+@(clientUtr: String, postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+
+@mainTemplate(
+    title = messages("agent.utr_error.heading")
+) {
+
+    <h1 class="heading-xlarge">@messages("agent.utr_error.heading")</h1>
+
+    <p>@messages("agent.utr_error.utr_wrong.part1")
+        <span class="bold">@clientUtr</span>
+        @messages("agent.utr_error.utr_wrong.part2")</p>
+
+    <ul class="list list-bullet">
+        <li>@messages("agent.utr_error.reason.bullet1")</li>
+        <li>@Html(messages("agent.utr_error.reason.bullet2",
+            <a href="https://www.gov.uk/government/collections/making-tax-digital-for-income-tax" target="_blank">{messages("agent.utr_error.reason.bullet2_link")}</a>
+            ))
+        </li>
+    </ul>
+
+
+    @form(postAction){
+        @continueButton(Some(messages("agent.utr_error.go_back")))
+    }
+
+}

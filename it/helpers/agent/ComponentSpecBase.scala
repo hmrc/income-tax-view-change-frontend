@@ -126,6 +126,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getClientRelationshipFailure: WSResponse = get("/client-relationship-problem")
 
+    def getUTRError(clientUTR: Map[String, String] = Map.empty): WSResponse = get("/utr-problem", clientUTR)
+
+    def postUTRError: WSResponse = post("/utr-problem")(Map.empty)
+
   }
 
 }

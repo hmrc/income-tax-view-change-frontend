@@ -218,7 +218,8 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
       }
     }
-    s"return $INTERNAL_SERVER_ERROR with technical difficulties" when {
+
+    s"redirect $SEE_OTHER to the UTR Error page" when {
       "the client details could not be found" in {
         val validUTR: String = "1234567890"
 
@@ -233,28 +234,11 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.UTRErrorController.show().url)
         )
       }
-      "there was an unexpected response retrieving the client details" in {
-        val validUTR: String = "1234567890"
 
-        enable(AgentViewer)
-        stubAuthorisedAgentUser(authorised = true)
-        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
-          status = INTERNAL_SERVER_ERROR,
-          response = Json.obj()
-        )
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
-
-        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
-        result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
-        )
-      }
       "the business details could not be found" in {
         val validUTR: String = "1234567890"
 
@@ -270,6 +254,27 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
         IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
           status = NOT_FOUND,
+          response = Json.obj()
+        )
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.agent.routes.UTRErrorController.show().url)
+        )
+      }
+    }
+
+    s"return $INTERNAL_SERVER_ERROR with technical difficulties" when {
+      "there was an unexpected response retrieving the client details" in {
+        val validUTR: String = "1234567890"
+
+        enable(AgentViewer)
+        stubAuthorisedAgentUser(authorised = true)
+        CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
+          status = INTERNAL_SERVER_ERROR,
           response = Json.obj()
         )
 

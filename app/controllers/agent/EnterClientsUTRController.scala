@@ -77,8 +77,8 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                 ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
                 Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionValues: _*)
               case Left(CitizenDetailsNotFound | BusinessDetailsNotFound) =>
-                //todo: error page(s) will be implemented for these in future story
-                throw new InternalServerException("[EnterClientsUTRController][submit] - unable to verify client relationship")
+                val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
+                Redirect(routes.UTRErrorController.show()).addingToSession(sessionValue: _*)
               case Left(NoAgentClientRelationship) =>
                 Redirect(routes.ClientRelationshipFailureController.show())
               case Left(_) =>

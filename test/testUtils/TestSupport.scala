@@ -87,6 +87,10 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
 
+  lazy val fakeRequestWithClientUTR = FakeRequest().withSession(
+    utils.SessionKeys.clientUTR -> "1234567890"
+  )
+
   lazy val fakeRequestWithClientDetails = fakeRequestWithActiveSession.withSession(
     utils.SessionKeys.clientFirstName -> "Test",
     utils.SessionKeys.clientLastName -> "User",

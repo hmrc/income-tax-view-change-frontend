@@ -21,27 +21,26 @@ import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.views.MockConfirmClient
-import play.api.http.Status
+import mocks.views.MockUTRError
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 
-class ConfirmClientUTRControllerSpec extends TestSupport
-  with MockConfirmClient
+class UTRErrorControllerSpec extends TestSupport
+  with MockUTRError
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
-  with MockItvcErrorHandler {
+  with MockItvcErrorHandler{
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     disable(AgentViewer)
   }
 
-  object TestConfirmClientUTRController extends ConfirmClientUTRController(
-    confirmClient,
+  object TestUTRErrorController extends UTRErrorController(
+    utrError,
     mockAuthService
   )(
     app.injector.instanceOf[MessagesControllerComponents],
@@ -55,7 +54,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       "redirect the user to authenticate" in {
         setupMockAgentAuthorisationException()
 
-        val result = TestConfirmClientUTRController.show()(fakeRequestWithActiveSession)
+        val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
@@ -63,10 +62,10 @@ class ConfirmClientUTRControllerSpec extends TestSupport
     }
 
     "the user has timed out" should {
-      "redirect to the session timeout page" in {
+      "redirect to the session time out page" in {
         setupMockAgentAuthorisationException(exception = BearerTokenExpired())
 
-        val result = TestConfirmClientUTRController.show()(fakeRequestWithTimeoutSession)
+        val result = TestUTRErrorController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
@@ -78,21 +77,10 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment)
         mockShowOkTechnicalDifficulties()
 
-        val result = TestConfirmClientUTRController.show()(fakeRequestWithActiveSession)
+        val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
-      }
-    }
-
-    "there are no client details in session" should {
-      "redirect to the Enter Client UTR page" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result = TestConfirmClientUTRController.show()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
       }
     }
 
@@ -101,19 +89,30 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockNotFound()
 
-        val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
+        val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe NOT_FOUND
       }
     }
 
     "the agent viewer feature switch is enabled" should {
-      "return OK and display confirm Client details page" in {
+      "redirect to the Enter Client UTR page when there is no client UTR in session" in {
         enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockConfirmClient(HtmlFormat.empty)
+        mockUTRError(HtmlFormat.empty)
 
-        val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
+        val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+      }
+
+      "return OK and display the UTR Error page" in {
+        enable(AgentViewer)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockUTRError(HtmlFormat.empty)
+
+        val result = TestUTRErrorController.show()(fakeRequestWithClientUTR)
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
@@ -126,7 +125,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       "redirect the user to authenticate" in {
         setupMockAgentAuthorisationException()
 
-        val result = TestConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
+        val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
@@ -137,7 +136,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       "redirect to the session timeout page" in {
         setupMockAgentAuthorisationException(exception = BearerTokenExpired())
 
-        val result = TestConfirmClientUTRController.submit()(fakeRequestWithTimeoutSession)
+        val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
@@ -149,21 +148,10 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment)
         mockShowOkTechnicalDifficulties()
 
-        val result = TestConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
+        val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
-      }
-    }
-
-    "there are no client details in session" should {
-      "redirect to the Enter Client UTR page" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result = TestConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
       }
     }
 
@@ -172,25 +160,22 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockNotFound()
 
-        val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
+        val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe NOT_FOUND
       }
     }
 
     "the agent viewer feature switch is enabled" should {
-
-      lazy val request = fakeRequestWithClientDetails.addingToSession(SessionKeys.confirmedClient -> "false")
-
-      "redirect to Home page and add confirmedClient: true flag to session" in {
+      "redirect to the Enter Client UTR page and remove the clientUTR from session" in {
         enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
+        val result = TestUTRErrorController.submit()(fakeRequestWithClientUTR)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.ConfirmClientUTRController.show().url) //Will need to changed when Agent Home page is made
-        result.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
+        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+        result.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
       }
     }
   }

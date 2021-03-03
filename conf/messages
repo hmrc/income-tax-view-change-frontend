@@ -35,6 +35,15 @@ agent.client_relationship_failure.info                          = You are not au
 agent.client_relationship_failure.info.link                     = authorise you as their agent (opens in new tab)
 agent.client_relationship_failure.enter_different_details       = Enter a different client’s details
 
+## Agent - UTR Error
+agent.utr_error.heading                                         = There’s a problem
+agent.utr_error.utr_wrong.part1                                 = The UTR you have entered
+agent.utr_error.utr_wrong.part2                                 = may be wrong because:
+agent.utr_error.reason.bullet1                                  = you have entered it incorrectly
+agent.utr_error.reason.bullet2                                  = you or your client have not signed up to {0} yet
+agent.utr_error.reason.bullet2_link                             = Making Tax Digital for Income Tax (opens in new tab)
+agent.utr_error.go_back                                         = Go back and enter a different UTR
+
 ## BTA Links ##
 bta.home                                                        = Business tax home
 bta.messages                                                    = Messages

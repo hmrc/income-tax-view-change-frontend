@@ -13,6 +13,15 @@ agent.client_relationship_failure.info                          = Nid ydych wedi
 agent.client_relationship_failure.info.link                     = Mae’n rhaid i’ch cleient eich awdurdodi fel ei asiant (yn agor tab newydd)
 agent.client_relationship_failure.enter_different_details       = Nodwch UTR cleient gwahanol
 
+## Agent - UTR Error
+agent.utr_error.heading                                         = Mae problem wedi codi
+agent.utr_error.utr_wrong.part1                                 = Mae’n bosibl bod yr UTR yr ydych wedi’i nodi, sef
+agent.utr_error.utr_wrong.part2                                 = , yn anghywir oherwydd:
+agent.utr_error.reason.bullet1                                  = eich bod wedi’i nodi’n anghywir
+agent.utr_error.reason.bullet2                                  = nid ydych chi na’ch cleient wedi cofrestru ar gyfer y cynllun {0} hyd yn hyn
+agent.utr_error.reason.bullet2_link                             = Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
+agent.utr_error.go_back                                         = Ewch yn ôl a nodwch UTR gwahanol
+
 ## BTA Links ##
 bta.home                                                        = Treth Busnes – Hafan
 bta.messages                                                    = Negeseuon
