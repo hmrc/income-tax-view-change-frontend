@@ -76,9 +76,11 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                   SessionKeys.clientUTR -> validUTR
                 ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
                 Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionValues: _*)
-              case Left(CitizenDetailsNotFound | BusinessDetailsNotFound | NoAgentClientRelationship) =>
+              case Left(CitizenDetailsNotFound | BusinessDetailsNotFound) =>
                 //todo: error page(s) will be implemented for these in future story
                 throw new InternalServerException("[EnterClientsUTRController][submit] - unable to verify client relationship")
+              case Left(NoAgentClientRelationship) =>
+                Redirect(routes.ClientRelationshipFailureController.show())
               case Left(_) =>
                 throw new InternalServerException("[EnterClientsUTRController][submit] - Unexpected response received")
             }

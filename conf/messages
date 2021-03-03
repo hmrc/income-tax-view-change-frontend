@@ -29,6 +29,12 @@ agent.confirmClient.clientUtr                                   = Client’s Uni
 agent.confirmClient.changeClient                                = Change Client
 agent.confirmClient.confirmContinue                             = Confirm and continue
 
+# Agent - Client Relationship Failure
+agent.client_relationship_failure.heading                       = There’s a problem
+agent.client_relationship_failure.info                          = You are not authorised to view this client’s information. Your client needs to {0} before you can log in to this service.
+agent.client_relationship_failure.info.link                     = authorise you as their agent (opens in new tab)
+agent.client_relationship_failure.enter_different_details       = Enter a different client’s details
+
 ## BTA Links ##
 bta.home                                                        = Business tax home
 bta.messages                                                    = Messages
