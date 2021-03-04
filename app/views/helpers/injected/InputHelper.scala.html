@@ -23,8 +23,8 @@
     field.error
 }
 
-@inputLabel = {
-    <label class="govuk-label govuk-label--l" for="@field.name">
+@inputLabel(isPageHeading: Boolean) = {
+    <label @if(isPageHeading) {class="govuk-label govuk-label--l"} for="@field.name">
         @label
     </label>
 }
@@ -33,10 +33,10 @@
 
     @if(isPageHeading) {
         <h1 class="govuk-label-wrapper">
-            @inputLabel
+            @inputLabel(true)
         </h1>
     } else {
-        @inputLabel
+        @inputLabel(false)
     }
 
     @formHint.map { hint =>
