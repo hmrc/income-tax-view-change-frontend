@@ -11,6 +11,8 @@
 
 # Add all the application routes to the prod.routes file
 
+GET         /report-quarterly/income-and-expenses/view/test-only/stub-client                          testOnly.controllers.StubClientDetailsController.show
+POST        /report-quarterly/income-and-expenses/view/test-only/stub-client                          testOnly.controllers.StubClientDetailsController.submit
 
 GET         /report-quarterly/income-and-expenses/view/test-only/stub-schema                          testOnly.controllers.StubSchemaController.show
 POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema                          testOnly.controllers.StubSchemaController.submit
