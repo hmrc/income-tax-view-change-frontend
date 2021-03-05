@@ -327,6 +327,18 @@ paymentDue.view-bill-aria                                          = View bill f
 paymentDue.pay-now-aria                                            = Pay now for Tax year {0} to {1}
 paymentDue.no-bills                                                = No payments due.
 
+## Charge Summary ##
+chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
+chargeSummary.paymentOnAccount2.text							   = Payment on account 2 of 2
+chargeSummary.balancingCharge.text  							   = Remaining balance
+chargeSummary.dueDate											   = Due date
+chargeSummary.paymentAmount   									   = Payment amount
+chargeSummary.paidToDate    									   = Paid to date
+chargeSummary.remainingDue   									   = Remaining to pay
+chargeSummary.whatYouOwe.textOne								   = View
+chargeSummary.whatYouOwe.textTwo								   = to check if you have any other payments due.
+chargeSummary.whatYouOwe.linkText								   = what you owe
+
 ## Regimes
 regimes.UK = UK
 regimes.Scotland = Scotland

@@ -1,0 +1,69 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.financialDetails.Charge
+@import views.html.templates.main_template
+@import implicits.ImplicitDateFormatter
+@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import views.html.helpers.backLinkHelper
+@(charge: Charge, implicitDateFormatter: ImplicitDateFormatter, paymentEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@import implicitDateFormatter.longDate
+@import implicitDateFormatter.toTaxYearEndDate
+@import implicitDateFormatter.toTaxYearStartDate
+
+@main_template(title = messages(s"chargeSummary.${charge.getChargeTypeKey}"),bodyClasses = None, scriptElem = None){
+	@backLinkHelper(controllers.routes.PaymentDueController.viewPaymentsDue().url)
+
+	<h1 class="heading-xlarge">
+		<span class="heading-secondary">@messages("paymentDue.tax-year", toTaxYearStartDate((charge.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(charge.taxYear).toLongDate)</span>
+		@messages(s"chargeSummary.${charge.getChargeTypeKey}")
+	</h1>
+
+	<dl class="govuk-summary-list">
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
+			<dd class="govuk-summary-list__value">@{charge.due.get.toLongDate}</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">@messages("chargeSummary.paymentAmount")</dt>
+			<dd class="govuk-summary-list__value">@{charge.originalAmount.get.toCurrency}</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">@messages("chargeSummary.paidToDate")</dt>
+			<dd class="govuk-summary-list__value">@{charge.clearedAmount.getOrElse(BigDecimal(0)).toCurrency}</dd>
+		</div>
+		<div class="govuk-summary-list__row">
+			<dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
+			<dd class="govuk-summary-list__value">@{
+				if(charge.clearedAmount.isDefined) {
+					charge.outstandingAmount.getOrElse(BigDecimal(0)).toCurrency
+				} else charge.originalAmount.get.toCurrency
+			}</dd>
+		</div>
+	</dl>
+
+	<p>
+		@messages("chargeSummary.whatYouOwe.textOne")
+		<a href="@controllers.routes.PaymentDueController.viewPaymentsDue().url">@messages("chargeSummary.whatYouOwe.linkText")</a>
+		@messages("chargeSummary.whatYouOwe.textTwo")
+	</p>
+
+	@if(paymentEnabled && charge.outstandingAmount.exists(_ > 0)){
+		<div id="payment-link-@{charge.taxYear}">
+			<a class="button" href="@controllers.routes.PaymentController.paymentHandoff(charge.outstandingAmount.get.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.payNow")</a>
+		</div>
+	}
+}

@@ -49,6 +49,8 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
   )
 
   val chargeModel: Charge = Charge(
+		taxYear = "2018",
+		transactionId = "transactionId",
     totalAmount = Some(7.07),
     outstandingAmount = Some(8.08)
   )

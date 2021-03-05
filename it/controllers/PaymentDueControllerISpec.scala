@@ -247,7 +247,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
 
           And("I wiremock stub a single financial transaction response")
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(2000, 2000))
+					IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(2000, 2000))
 
           And("the payment feature switch is set to false")
           disable(Payment)

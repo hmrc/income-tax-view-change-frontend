@@ -64,9 +64,9 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
   val updateDate: LocalDate = LocalDate.of(2018, 1, 1)
   val nextPaymentDate: LocalDate = LocalDate.of(2019, 1, 31)
   val nextPaymentDate2: LocalDate = LocalDate.of(2018, 1, 31)
-  val updateYear: Option[String] = Some("2018")
-  val nextPaymentYear: Option[String] = Some("2019")
-  val nextPaymentYear2: Option[String] = Some("2018")
+  val updateYear: String = "2018"
+  val nextPaymentYear: String = "2019"
+  val nextPaymentYear2: String = "2018"
   val emptyEstimateCalculation: Calculation = Calculation(crystallised = false)
   val emptyCrystallisedCalculation: Calculation = Calculation(crystallised = true)
 
@@ -247,7 +247,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
           when(financialDetailsService.getFinancialDetails(any())(any(), any()))
-            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(taxYear = nextPaymentYear, outstandingAmount = Some(1000),
+            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(taxYear = nextPaymentYear, "id", outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
 
@@ -267,10 +267,10 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2018), CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
 
           when(financialDetailsService.getFinancialDetails(matches(2018))(any(), any()))
-            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(taxYear = nextPaymentYear2, outstandingAmount = Some(1000),
+            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(taxYear = nextPaymentYear2, "id", outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))))
           when(financialDetailsService.getFinancialDetails(matches(2019))(any(), any()))
-            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, outstandingAmount = Some(1000),
+            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
           val result = controller.home(fakeRequestWithActiveSession)
@@ -327,7 +327,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
 
             when(financialDetailsService.getFinancialDetails(any())(any(), any()))
-              .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, outstandingAmount = Some(0), items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
+              .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(0), items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
             val result = controller.home(fakeRequestWithActiveSession)
 
@@ -375,7 +375,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyEstimateCalculation, 2019))))
 
             when(financialDetailsService.getFinancialDetails(any())(any(), any()))
-              .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, outstandingAmount = Some(1000),
+              .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(1000),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
             val result = controller.home(fakeRequestWithActiveSession)
@@ -411,7 +411,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
 
           when(financialDetailsService.getFinancialDetails(any())(any(), any()))
-            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, outstandingAmount = Some(1000),
+            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
           val result = controller.home(fakeRequestWithActiveSession)

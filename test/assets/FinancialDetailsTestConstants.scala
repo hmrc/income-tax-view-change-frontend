@@ -32,6 +32,7 @@ object FinancialDetailsTestConstants {
         "originalAmount" -> 10.33,
         "outstandingAmount" -> 10.33,
         "clearedAmount" -> 10.33,
+				"chargeType" -> "Balancing Charge Debit",
         "items" -> Json.arr(
           Json.obj(
             "subItemId" -> "001",
@@ -68,6 +69,7 @@ object FinancialDetailsTestConstants {
         "originalAmount" -> 10.34,
         "outstandingAmount" -> 10.34,
         "clearedAmount" -> 10.34,
+				"chargeType" -> "Balancing Charge Debit",
         "items" -> Json.arr(
           Json.obj(
             "subItemId" -> "003",
@@ -87,8 +89,8 @@ object FinancialDetailsTestConstants {
   )
 
 
-  def chargeModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), originalAmount: Option[BigDecimal] = Some(1400.0),clearedAmount: Option[BigDecimal] = Some(1400.0)): Charge =
-    Charge(Some(taxYear.toString), Some("1040000123"), Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), originalAmount, outstandingAmount, clearedAmount,
+  def chargeModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), originalAmount: Option[BigDecimal] = Some(1400.0),clearedAmount: Option[BigDecimal] = Some(1400.0), chargeType: Option[String] = Some("POA1")): Charge =
+    Charge(taxYear.toString, "1040000123", Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), originalAmount, outstandingAmount, clearedAmount, chargeType,
       Some(Seq(
         SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some("A"), Some(2000), Some("2019-05-15"), Some("A"), Some("081203010024-000001")),
         SubItem(Some("002"), Some(101), Some("2019-05-16"), Some("02"), Some("B"), Some("B"), Some(3000), Some("2019-05-17"), Some("B"), Some("081203010025-000002"))
@@ -100,12 +102,12 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(List(chargeModel(taxYear, outstandingAmount)))
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(List(
-    Charge(Some("2019"), Some("1040000123"), Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), Some(10.33), Some(10.33),Some(10.33),
+    Charge("2019", "1040000123", Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), Some(10.33), Some(10.33),Some(10.33), Some("Balancing Charge Debit"),
       Some(Seq(
         SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some("A"), Some(2000), Some("2019-05-15"), Some("A"), Some("081203010024-000001")),
         SubItem(Some("002"), Some(101), Some("2019-05-16"), Some("02"), Some("B"), Some("B"), Some(3000), Some("2019-05-17"), Some("B"), Some("081203010025-000002"))
       ))),
-    Charge(Some("2020"), Some("1040000124"), Some("2019-05-16"), Some("Balancing Charge Debit"), Some(43.21), Some(10.34), Some(10.34),Some(10.34),
+    Charge("2020", "1040000124", Some("2019-05-16"), Some("Balancing Charge Debit"), Some(43.21), Some(10.34), Some(10.34),Some(10.34), Some("Balancing Charge Debit"),
       Some(Seq(
         SubItem(Some("003"), Some(110), Some("2019-05-17"), Some("03"), Some("C"), Some("C"), Some(5000), Some("2019-05-18"), Some("C"), Some("081203010026-000003"))
       )))
