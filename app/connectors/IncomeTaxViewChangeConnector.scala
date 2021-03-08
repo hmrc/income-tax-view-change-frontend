@@ -24,6 +24,7 @@ import javax.inject.Inject
 import models.core.{Nino, NinoResponse, NinoResponseError}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.outstandingCharges._
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.Logger
@@ -72,6 +73,10 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   def getChargesUrl(nino: String, from: String, to: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
+  }
+
+  def getOutstandingChargesUrl(idType: String, idNumber: Int, taxYear: String): String = {
+    s"${config.itvcProtectedService}/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
   }
 
   def getPaymentsUrl(nino: String, from: String, to: String): String = {
@@ -333,6 +338,39 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
       case ex =>
         Logger.error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Unexpected failure, ${ex.getMessage}", ex)
         FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+    }
+
+  }
+
+  def getOutstandingCharges(idType: String, idNumber: Int, taxYear: String)
+                         (implicit headerCarrier: HeaderCarrier): Future[OutstandingChargesResponseModel] = {
+
+    val url = getOutstandingChargesUrl(idType,idNumber, taxYear)
+    Logger.debug(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - GET $url")
+
+    http.GET[HttpResponse](url) map { response =>
+      response.status match {
+        case OK =>
+          Logger.debug(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Status: ${response.status}, json: ${response.json}")
+          response.json.validate[OutstandingChargesModel].fold(
+            invalid => {
+              Logger.error(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Json Validation Error: $invalid")
+              OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing OutstandingCharges Data Response")
+            },
+            valid => valid
+          )
+        case status =>
+          if (status >= 500) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Status: ${response.status}, body: ${response.body}")
+          }
+          OutstandingChargesErrorModel(response.status, response.body)
+      }
+    } recover {
+      case ex =>
+        Logger.error(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Unexpected failure, ${ex.getMessage}", ex)
+        OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }
 
   }
