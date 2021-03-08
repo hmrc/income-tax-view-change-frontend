@@ -992,3 +992,10 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 			line-height: 1.31579;
 		}
 	}
+
+    .govuk-table td:first-of-type {
+        width: 160px;
+    }
+    .govuk-table td:nth-of-type(3) {
+        width: 80px;
+    }

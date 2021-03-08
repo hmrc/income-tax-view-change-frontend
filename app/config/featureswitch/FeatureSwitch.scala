@@ -39,7 +39,8 @@ object FeatureSwitch {
     NewFinancialDetailsApi,
     AgentViewer,
     NextUpdates,
-    TaxYearOverviewUpdate
+    TaxYearOverviewUpdate,
+    PaymentHistory
   )
 
   def apply(str: String): FeatureSwitch =
@@ -115,4 +116,9 @@ case object NextUpdates extends FeatureSwitch {
 case object TaxYearOverviewUpdate extends FeatureSwitch {
   override val name = s"$prefix.enable-tax-year-overview-update"
   override val displayText = "Tax Year Overview Update"
+}
+
+case object PaymentHistory extends FeatureSwitch {
+  override val name = s"$prefix.enable-payment-history-page"
+  override val displayText = "Payment History"
 }

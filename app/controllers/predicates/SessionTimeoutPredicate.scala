@@ -45,6 +45,8 @@ class SessionTimeoutPredicate @Inject()(implicit mcc: MessagesControllerComponen
       case _ => request.headers
     }
 
+
+
     (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {
       case (Some(_), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.

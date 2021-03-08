@@ -299,3 +299,11 @@ notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
 
 ## Title pattern
 titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK
+
+## Payment History Page ##
+
+paymentHistory.heading                                          = Payment history
+paymentHistory.info                                             = If you cannot see all your previous payments here, you can find them in your classic {0}.
+paymentHistory.textLink1                                        = Self Assessment service
+paymentHistory.button                                           = {0} payments
+paymentsHistory.CardRef                                         = Payment made by debit card ref:

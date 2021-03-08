@@ -19,6 +19,7 @@ package assets
 import java.time.LocalDate
 
 import assets.BaseIntegrationTestConstants.testPropertyIncomeId
+import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
 import implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
@@ -42,6 +43,19 @@ object PropertyDetailsIntegrationTestConstants {
     cessation = None,
     paperless = None,
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate)
+  )
+
+  val oldProperty: PropertyDetailsModel = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = AccountingPeriodModel(
+      start = propertyAccountingStartLocalDate,
+      end = propertyAccounringEndLocalDate
+    ),
+    contactDetails = None,
+    propertiesRented = None,
+    cessation = None,
+    paperless = None,
+    firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
   val propertySuccessResponse: JsValue = Json.obj(

@@ -120,11 +120,11 @@ object IncomeTaxViewChangeStub {
 
   def stubGetPaymentsResponse(nino: String, from: String, to: String)
                              (status: Int, response: JsValue): StubMapping = {
-    WiremockHelper.stubGet(financialDetailsUrl(nino, from, to), status, response.toString())
+    WiremockHelper.stubGet(paymentsUrl(nino, from, to), status, response.toString())
   }
 
   def verifyGetPayments(nino: String, from: String, to: String): Unit = {
-    WiremockHelper.verifyGet(financialDetailsUrl(nino, from, to))
+    WiremockHelper.verifyGet(paymentsUrl(nino, from, to))
   }
 
 }
