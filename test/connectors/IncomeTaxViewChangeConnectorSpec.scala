@@ -20,6 +20,7 @@ import assets.BaseTestConstants._
 import assets.FinancialDetailsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.NinoLookupTestConstants.{testNinoModelJson, _}
+import assets.OutstandingChargesTestConstants.{testInvalidOutstandingChargesJson, testOutstandingChargesErrorModelParsing, testValidOutStandingChargeModelJson, testValidOutstandingChargesModel}
 import assets.PaymentAllocationsTestConstants._
 import assets.ReportDeadlinesTestConstants._
 import audit.AuditingService
@@ -29,8 +30,9 @@ import config.FrontendAppConfig
 import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import mocks.MockHttp
 import models.core.{NinoResponse, NinoResponseError}
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, Payment, Payments, PaymentsError, PaymentsResponse}
+import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
+import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesResponseModel}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import org.mockito.Mockito.when
@@ -63,6 +65,11 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
   }
 
+  "getOutstandingChargesUrl" should {
+    "return the correct url" in new Setup {
+      getOutstandingChargesUrl(testSaUtr,testSaUtrId,testTo) shouldBe s"$baseUrl/income-tax-view-change/out-standing-charges/$testSaUtr/$testSaUtrId/$testTo"
+    }
+  }
   "getIncomeSourcesUrl" should {
     "return the correct url" in new Setup {
       getIncomeSourcesUrl(testMtditid) shouldBe s"$baseUrl/income-tax-view-change/income-sources/$testMtditid"
@@ -379,6 +386,47 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
       val result: Future[FinancialDetailsResponseModel] = getFinancialDetails(testYear2017)
       await(result) shouldBe FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
+    }
+
+  }
+
+  "getOutstandingCharges" should {
+
+    val successResponse = HttpResponse(Status.OK, Some(testValidOutStandingChargeModelJson))
+    val successResponseBadJson = HttpResponse(Status.OK, Some(testInvalidOutstandingChargesJson))
+    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+
+    val getOutstandingChargesTestUrl =
+      s"http://localhost:9999/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
+
+    "return a OutstandingCharges model when successful JSON is received" in new Setup {
+      setupMockHttpGet(getOutstandingChargesTestUrl)(successResponse)
+
+      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear)
+      await(result) shouldBe testValidOutstandingChargesModel
+
+    }
+
+    "return a OutstandingCharges model in case of future failed scenario" in new Setup {
+      setupMockFailedHttpGet(getOutstandingChargesTestUrl)(badResponse)
+
+      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear)
+      await(result) shouldBe OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
+    }
+
+
+    "return OutstandingChargesErrorResponse model in case of failure" in new Setup {
+      setupMockHttpGet(getOutstandingChargesTestUrl)(badResponse)
+
+      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear)
+      await(result) shouldBe OutstandingChargesErrorModel(Status.BAD_REQUEST, "Error Message")
+    }
+
+    "return OutstandingChargesErrorResponse model in case of bad/malformed JSON response" in new Setup {
+      setupMockHttpGet(getOutstandingChargesTestUrl)(successResponseBadJson)
+
+      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear)
+      await(result) shouldBe testOutstandingChargesErrorModelParsing
     }
 
   }

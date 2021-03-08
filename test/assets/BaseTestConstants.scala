@@ -27,7 +27,11 @@ object BaseTestConstants {
 
   val testMtditid = "XAIT0000123456"
   val testNino = "AB123456C"
+  val testSaUtrId = 1234567890
   val testSaUtr = "saUtr"
+  val taxYear: String = "2020-04-05"
+  val idNumber: Int = 1234567890
+  val idType: String = "utr"
   val testArn = "XAIT0000123456"
   val testCredId = "credId"
   val testUserType = "individual"
