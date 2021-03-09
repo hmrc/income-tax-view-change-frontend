@@ -34,6 +34,10 @@
  )), "Updates")
 }
 
+@groupedPayments = @{
+payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toList.sortBy(_._1).reverse
+}
+
 @main_template(
  title = messages("paymentHistory.heading"),
  contentHeader = Some(breadcrumb)
@@ -46,7 +50,7 @@
 @if(payments.nonEmpty) {
 <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
 
- @payments.groupBy{payment =>@LocalDate.parse(payment.date.get).getYear}.map{case (year, yearPayments) =>
+ @groupedPayments.map{case (year, yearPayments) =>
  <div class="govuk-accordion__section">
   <div class="govuk-accordion__section-header">
    <h3 class="govuk-accordion__section-heading">
