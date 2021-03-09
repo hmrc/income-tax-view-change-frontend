@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.notEnrolled
+package audit.models
 
-import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
-import scala.concurrent.Future
-
-@Singleton
-class NotEnrolledController @Inject()(implicit val config: FrontendAppConfig,
-                                      mcc: MessagesControllerComponents) extends FrontendController(mcc){
-  val show: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.html.notEnrolled.notEnrolled()))
-  }
+case class IvOutcomeFailureAuditModel(journeyId: String) extends AuditModel() {
+	override val transactionName: String = "IV-uplift-failure-outcome"
+	override val detail: Seq[(String, String)] = Seq(
+		"ivJourneyId" -> journeyId
+	)
+	override val auditType: String = "LowConfidenceLevelIvOutcomeFail"
 }

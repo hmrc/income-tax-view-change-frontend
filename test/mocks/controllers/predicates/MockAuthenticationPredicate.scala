@@ -16,6 +16,7 @@
 
 package mocks.controllers.predicates
 
+import audit.mocks.MockAuditingService
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.AuthenticationPredicate
 import mocks.auth._
@@ -24,7 +25,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.{Configuration, Environment}
 import testUtils.TestSupport
 
-trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorisedFunctions {
+trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorisedFunctions with MockAuditingService {
 
   object MockAuthenticationPredicate extends AuthenticationPredicate()(
     ec,
@@ -33,7 +34,8 @@ trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorise
     app.injector.instanceOf[Configuration],
     app.injector.instanceOf[Environment],
     app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[MessagesControllerComponents]
+    app.injector.instanceOf[MessagesControllerComponents],
+		mockAuditingService
   )
 
 

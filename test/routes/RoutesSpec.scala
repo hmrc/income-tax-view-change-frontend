@@ -60,7 +60,7 @@ class RoutesSpec extends TestSupport {
   //Not-Enrolled route
   "The URL for the NotEnrolledController.show action" should {
     s"be equal to $contextRoute/not-enrolled" in {
-      controllers.notEnrolled.routes.NotEnrolledController.show().url shouldBe s"$contextRoute/not-enrolled"
+      controllers.errors.routes.NotEnrolledController.show().url shouldBe s"$contextRoute/not-enrolled"
     }
   }
 
