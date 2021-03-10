@@ -101,16 +101,24 @@ object MessagesLookUp {
   // Home Page Messages
   object HomePage {
     val title = "Income Tax - Business Tax account - GOV.UK"
+    val agentTitle = "Your client’s Income Tax - Your client’s Income Tax details - GOV.UK"
     val heading = "Income Tax"
+    val agentHeading = "Your client’s Income Tax"
     def taxpayerReference(mtditid: String): String = s"Unique Taxpayer Reference - $mtditid"
     val updatesHeading = "Next updates due"
+    val paymentsHeading = "Next payments due"
     val updatesLink = "View next updates"
+    val paymentLink = "View what you owe"
     val taxYearsHeading = "Tax years"
     val taxYearsLink = "View tax years"
     val viewPaymentslink = "View payment history"
     val yourIncomeTaxReturnHeading = "Your Income Tax return"
+    val ManageYourIncomeTaxReturnHeading = "Manage Income Tax"
     val yourIncomeTaxReturnDescription = "Send updates to HMRC and declare income for a tax year."
     val sendUpdatesLink = "Send updates"
+    val submitYourReturnsLink = "Update and submit your income tax"
+    val changeClientLink = "Change client"
+    val backLink = "Back"
   }
 
   object IncomeBreakdown {

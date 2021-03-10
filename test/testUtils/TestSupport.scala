@@ -97,6 +97,15 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     utils.SessionKeys.clientUTR -> "1234567890"
   )
 
+  lazy val fakeRequestConfirmedClient = fakeRequestWithActiveSession.withSession(
+    utils.SessionKeys.clientFirstName -> "Test",
+    utils.SessionKeys.clientLastName -> "User",
+    utils.SessionKeys.clientUTR -> "1234567890",
+    utils.SessionKeys.clientMTDID -> "XAIT00000000015",
+    utils.SessionKeys.clientNino -> "AA111111A",
+    utils.SessionKeys.confirmedClient -> "true"
+  )
+
   lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> testNino)
 
   lazy val fakeRequestWithNinoAndCalc = fakeRequestWithActiveSession.withSession(

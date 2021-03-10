@@ -39,7 +39,7 @@ with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwi
 	class Setup(financialDetails: FinancialDetailsResponseModel, featureSwitch: Boolean = true) {
 		val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
 
-		when(financialDetailsService.getFinancialDetails(any())(any(), any()))
+		when(financialDetailsService.getFinancialDetails(any(), any())(any()))
 			.thenReturn(Future.successful(financialDetails))
 
 		mockBothIncomeSources()

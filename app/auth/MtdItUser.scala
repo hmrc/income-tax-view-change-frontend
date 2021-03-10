@@ -18,7 +18,7 @@ package auth
 
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
+import uk.gov.hmrc.auth.core.retrieve.Name
 
 case class MtdItUserOptionNino[A](mtditid: String,
                                   nino: Option[String],

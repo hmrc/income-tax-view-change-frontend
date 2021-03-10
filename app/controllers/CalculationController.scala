@@ -89,7 +89,7 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
           auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
           if (calculation.crystallised) {
             if(isEnabled(NewFinancialDetailsApi)) {
-              financialDetailsService.getFinancialDetails(taxYear) map {
+              financialDetailsService.getFinancialDetails(taxYear, user.nino) map {
                 case _: FinancialDetailsErrorModel =>
                   Logger.error(s"[CalculationController][showCalculationForYear] - Could not retrieve financial details model for year: $taxYear")
                   itvcErrorHandler.showInternalServerError()

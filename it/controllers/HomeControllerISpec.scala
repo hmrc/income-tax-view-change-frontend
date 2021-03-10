@@ -15,6 +15,8 @@
  */
 package controllers
 
+import java.time.LocalDateTime
+
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
@@ -27,8 +29,6 @@ import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub,
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
-
-import java.time.LocalDateTime
 
 class HomeControllerISpec extends ComponentSpecBase {
 
@@ -79,10 +79,7 @@ class HomeControllerISpec extends ComponentSpecBase {
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
-        verifyReportDeadlinesCall(testNino, otherTestSelfEmploymentId)
-        verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
-        verifyReportDeadlinesCall(testNino, testMtditid)
+        verifyReportDeadlinesCall(testNino)
 
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
@@ -144,10 +141,7 @@ class HomeControllerISpec extends ComponentSpecBase {
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
-        verifyReportDeadlinesCall(testNino, otherTestSelfEmploymentId)
-        verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
-        verifyReportDeadlinesCall(testNino, testMtditid)
+        verifyReportDeadlinesCall(testNino)
 
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
@@ -203,10 +197,7 @@ class HomeControllerISpec extends ComponentSpecBase {
 
           verifyIncomeSourceDetailsCall(testMtditid)
 
-          verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
-          verifyReportDeadlinesCall(testNino, otherTestSelfEmploymentId)
-          verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
-          verifyReportDeadlinesCall(testNino, testMtditid)
+          verifyReportDeadlinesCall(testNino)
 
           IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
           IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
@@ -253,10 +244,7 @@ class HomeControllerISpec extends ComponentSpecBase {
 
           verifyIncomeSourceDetailsCall(testMtditid)
 
-          verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
-          verifyReportDeadlinesCall(testNino, otherTestSelfEmploymentId)
-          verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
-          verifyReportDeadlinesCall(testNino, testMtditid)
+          verifyReportDeadlinesCall(testNino)
 
           IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
           IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
@@ -304,10 +292,7 @@ class HomeControllerISpec extends ComponentSpecBase {
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
-        verifyReportDeadlinesCall(testNino, otherTestSelfEmploymentId)
-        verifyReportDeadlinesCall(testNino, testPropertyIncomeId)
-        verifyReportDeadlinesCall(testNino, testMtditid)
+        verifyReportDeadlinesCall(testNino)
 
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")

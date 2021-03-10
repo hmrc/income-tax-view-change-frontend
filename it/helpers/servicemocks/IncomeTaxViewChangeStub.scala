@@ -85,13 +85,13 @@ object IncomeTaxViewChangeStub {
   def stubGetReportDeadlines(nino: String, deadlines: ObligationsModel): Unit =
     WiremockHelper.stubGet(reportDeadlinesUrl(nino), Status.OK, Json.toJson(deadlines).toString())
 
-  def stubGetReportDeadlinesError(incomeSourceId: String, nino: String): Unit =
+  def stubGetReportDeadlinesError(nino: String): Unit =
     WiremockHelper.stubGet(reportDeadlinesUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
 
-  def stubGetReportDeadlinesNotFound(incomeSourceId: String, nino: String): Unit =
+  def stubGetReportDeadlinesNotFound(nino: String): Unit =
     WiremockHelper.stubGet(reportDeadlinesUrl(nino), Status.NO_CONTENT, "")
 
-  def verifyGetReportDeadlines(incomeSourceId: String, nino: String): Unit =
+  def verifyGetReportDeadlines(nino: String): Unit =
     WiremockHelper.verifyGet(reportDeadlinesUrl(nino))
 
   //PayApi Stubs

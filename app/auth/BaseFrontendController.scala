@@ -20,7 +20,6 @@ import config.ItvcErrorHandler
 import controllers.predicates.AuthPredicate._
 import controllers.predicates.IncomeTaxUser
 import controllers.predicates.agent.AgentAuthenticationPredicate.MissingAgentReferenceNumber
-import javax.inject.Inject
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -32,7 +31,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class BaseFrontendController @Inject()(implicit val mcc: MessagesControllerComponents, itvcErrorHandler: ItvcErrorHandler)
+abstract class BaseFrontendController(implicit val mcc: MessagesControllerComponents, itvcErrorHandler: ItvcErrorHandler)
   extends FrontendController(mcc) with I18nSupport {
 
   val authorisedFunctions: AuthorisedFunctions

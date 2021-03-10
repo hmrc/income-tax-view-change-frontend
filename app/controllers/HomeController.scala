@@ -67,14 +67,14 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
 
-      reportDeadlinesService.getNextDeadlineDueDate(user.incomeSources).flatMap { latestDeadlineDate =>
+      reportDeadlinesService.getNextDeadlineDueDate().flatMap { latestDeadlineDate =>
 
         calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears(isEnabled(API5))) flatMap {
           case lastTaxCalcs if lastTaxCalcs.exists(_.isError) => Future.successful(itvcErrorHandler.showInternalServerError())
           case lastTaxCalcs if lastTaxCalcs.nonEmpty =>
             Future.sequence(lastTaxCalcs.filter(_.isCrystallised).map { crystallisedTaxCalc =>
               if (isEnabled(NewFinancialDetailsApi)) {
-                financialDetailsService.getFinancialDetails(crystallisedTaxCalc.year) map { charges =>
+                financialDetailsService.getFinancialDetails(crystallisedTaxCalc.year, user.nino) map { charges =>
                   (crystallisedTaxCalc, charges)
                 }
               }

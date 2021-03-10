@@ -16,17 +16,19 @@
 
 package mocks.services
 
-import assets.BaseTestConstants.testTaxYear
+import java.time.LocalDate
+
+import assets.BaseTestConstants.{testNino, testTaxYear}
 import assets.FinancialDetailsTestConstants._
 import models.financialDetails.FinancialDetailsResponseModel
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import services.FinancialDetailsService
 import uk.gov.hmrc.play.test.UnitSpec
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
@@ -40,17 +42,22 @@ trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with Before
   }
 
   def setupMockGetFinancialDetails(taxYear: Int)(response: FinancialDetailsResponseModel): Unit =
-    when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear))
-    (ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
+    when(mockFinancialDetailsService.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(testNino))
+    (ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
-  def mockFinancialDetailsSuccess(taxYear: LocalDate = LocalDate.of(2018,4,5)): Unit =
+  def mockFinancialDetailsSuccess(taxYear: LocalDate = LocalDate.of(2018, 4, 5)): Unit =
     setupMockGetFinancialDetails(testTaxYear)(financialDetailsModel(taxYear.getYear))
 
   def mockFinancialDetailsFailed(): Unit =
     setupMockGetFinancialDetails(testTaxYear)(testFinancialDetailsErrorModel)
 
-  def mockGetAllFinancialDetails(response: List[(Int, FinancialDetailsResponseModel)]) = {
+  def mockGetAllFinancialDetails(response: List[(Int, FinancialDetailsResponseModel)]): Unit = {
     when(mockFinancialDetailsService.getAllFinancialDetails(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
+  }
+
+  def mockGetChargeDueDates(response: Future[Option[Either[(LocalDate, Boolean), Int]]]): Unit = {
+    when(mockFinancialDetailsService.getChargeDueDates(any(), any()))
+      .thenReturn(response)
   }
 }

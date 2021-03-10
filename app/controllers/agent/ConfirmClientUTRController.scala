@@ -56,7 +56,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
     implicit user =>
     if (isEnabled(AgentViewer)){
       Future.successful(
-        Redirect(routes.ConfirmClientUTRController.show()).addingToSession(
+        Redirect(routes.HomeController.show()).addingToSession(
         SessionKeys.confirmedClient -> "true"
         )
       )
