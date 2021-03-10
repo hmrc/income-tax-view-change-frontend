@@ -51,13 +51,19 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
   val updateDate: LocalDate = LocalDate.of(2018, 1, 1)
   val updateDateLongDate = "1 January 2018"
+  val multipleOverdueUpdates = "3 OVERDUE UPDATES"
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
+	val paymentDateLongDate = "31 January 2019"
+	val multipleOverduePayments = "3 OVERDUE PAYMENTS"
 
-  class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), paymentEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
+	class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePayments: Option[Int] = Some(0),
+              overDueUpdates: Option[Int] = Some(0), paymentEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
 
     lazy val page: HtmlFormat.Appendable = views.html.home(
       nextPaymentDueDate = paymentDueDate,
       nextUpdate = updateDate,
+      overDuePayments = overDuePayments,
+      overDueUpdates = overDueUpdates,
       paymentEnabled = paymentEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       implicitDateFormatter = mockImplicitDateFormatter,
@@ -104,12 +110,38 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has the date of the next update due" in new Setup {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDateLongDate)
       }
+			"display an overdue tag when a single update is overdue" in new Setup(overDueUpdates = Some(1)) {
+				getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + updateDateLongDate)
+			}
+      "has the correct number of overdue updates when three updates are overdue" in new Setup(overDueUpdates = Some(3)) {
+        getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverdueUpdates)
+      }
       "has a link to view updates" in new Setup {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
         link.map(_.attr("href")) shouldBe Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url)
         link.map(_.text) shouldBe Some(homeMessages.updatesLink)
       }
     }
+
+		"have a payments due tile" which {
+			"has a heading" in new Setup {
+				getElementById("payments-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentsHeading)
+			}
+			"has the date of the next update due" in new Setup {
+				getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
+			}
+			"display an overdue tag when a single update is overdue" in new Setup(overDuePayments = Some(1)) {
+				getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + paymentDateLongDate)
+			}
+			"has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePayments = Some(3)) {
+				getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverduePayments)
+			}
+			"has a link to view payments" in new Setup {
+				val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
+				link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentDueController.viewPaymentsDue().url)
+				link.map(_.text) shouldBe Some(homeMessages.paymentLink)
+			}
+		}
 
     "have a tax years tile" which {
       "has a heading" in new Setup {
@@ -129,13 +161,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
   }
   "have an your income tax returns tile" when {
-      "has a heading" in new Setup {
-        getElementById("your-returns-tile").map(_.select("h3").text) shouldBe Some(homeMessages.yourIncomeTaxReturnHeading)
-      }
-      "has a link to the send updates page" in new Setup {
-        val link: Option[Elements] = getElementById("your-returns-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.HomeController.home().url)
-        link.map(_.text) shouldBe Some(homeMessages.sendUpdatesLink)
-      }
+    "has a heading" in new Setup {
+      getElementById("your-returns-tile").map(_.select("h3").text) shouldBe Some(homeMessages.yourIncomeTaxReturnHeading)
     }
+    "has a link to the send updates page" in new Setup {
+      val link: Option[Elements] = getElementById("your-returns-tile").map(_.select("a"))
+      link.map(_.attr("href")) shouldBe Some(controllers.routes.HomeController.home().url)
+      link.map(_.text) shouldBe Some(homeMessages.sendUpdatesLink)
+    }
+  }
 }

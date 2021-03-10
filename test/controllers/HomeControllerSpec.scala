@@ -16,8 +16,12 @@
 
 package controllers
 
-import assets.MessagesLookUp
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
+import java.time.{LocalDate, ZonedDateTime}
+
+import assets.{BaseTestConstants, MessagesLookUp}
+import auth.MtdItUserWithNino
+import config.featureswitch.{API5, Bills, FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
@@ -31,6 +35,7 @@ import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
+import utils.CurrentDateProvider
 
 import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
@@ -39,16 +44,15 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
   trait Setup {
     val reportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]
-    val calculationService: CalculationService = mock[CalculationService]
     val financialTransactionsService: FinancialTransactionsService = mock[FinancialTransactionsService]
     val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
+    val currentDateProvider: CurrentDateProvider = mock[CurrentDateProvider]
     val controller = new HomeController(
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       reportDeadlinesService,
-      calculationService,
       app.injector.instanceOf[ItvcErrorHandler],
       financialTransactionsService,
       financialDetailsService,
@@ -56,11 +60,13 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[MessagesControllerComponents],
       ec,
+      currentDateProvider,
       app.injector.instanceOf[ImplicitDateFormatterImpl]
     )
+    when(currentDateProvider.getCurrentDate()) thenReturn(LocalDate.of(2018, 1, 20))
   }
 
-  val updateDate: LocalDate = LocalDate.of(2018, 1, 1)
+  val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2018, 1, 1), Seq.empty[LocalDate])
   val nextPaymentDate: LocalDate = LocalDate.of(2019, 1, 31)
   val nextPaymentDate2: LocalDate = LocalDate.of(2018, 1, 31)
   val updateYear: String = "2018"
@@ -75,11 +81,9 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       "return ok (200)" which {
         "there is a next payment due date to display" in new Setup {
           enable(Payment)
-          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+          when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-          when(calculationService.getAllLatestCalculations(any(), any())(any()))
-            .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
-          when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
+         	when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
             .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
 
           val result = controller.home(fakeRequestWithActiveSession)
@@ -91,11 +95,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         }
 
         "display the oldest next payment due day when there multiple payment due" in new Setup {
-          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+					enable(API5)
+          when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-          when(calculationService.getAllLatestCalculations(any(), any())(any()))
-            .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2018), CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
-          when(financialTransactionsService.getFinancialTransactions(any(), matches(2018))(any()))
+					when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
+						.thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2018, 4, 5)), outstandingAmount = Some(0), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
+					when(financialTransactionsService.getFinancialTransactions(any(), matches(2018))(any()))
             .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2018, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate2))))))))))
           when(financialTransactionsService.getFinancialTransactions(any(), matches(2019))(any()))
             .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
@@ -110,11 +115,9 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
         "Not display the next payment due date" when {
           "there is a problem getting financial transaction" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
             mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
-            when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
+		when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
               .thenReturn(Future.successful(FinancialTransactionsErrorModel(1, "testString")))
 
             val result = controller.home(fakeRequestWithActiveSession)
@@ -127,10 +130,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           }
 
           "There are no financial transaction" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
             mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
             when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
               .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), None)))
 
@@ -143,10 +144,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           }
 
           "All financial transaction bill are paid" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
             mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
             when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
               .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(0), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
 
@@ -157,58 +156,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             document.title shouldBe MessagesLookUp.HomePage.title
             document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
           }
-
-          "There is no calculation data" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
-            mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List()))
-
-            val result = controller.home(fakeRequestWithActiveSession)
-
-            status(result) shouldBe Status.OK
-            val document = Jsoup.parse(bodyOf(result))
-            document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
-          }
-
-          s"All calculation error models from the service have a status of ${Status.NOT_FOUND}" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
-            mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(CalculationErrorModel(Status.NOT_FOUND, "Not Found"), 2019))))
-
-            val result = controller.home(fakeRequestWithActiveSession)
-
-            status(result) shouldBe Status.OK
-            val document = Jsoup.parse(bodyOf(result))
-            document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
-          }
-
-          "There are no crystallised calculation data" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
-            mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyEstimateCalculation, 2019))))
-            when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
-              .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
-
-            val result = controller.home(fakeRequestWithActiveSession)
-
-            status(result) shouldBe Status.OK
-            val document = Jsoup.parse(bodyOf(result))
-            document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text() shouldBe "No payments due"
-          }
         }
 
         "return ISE (500)" when {
           "A calculation error model has returned from the service" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
             mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(CalculationErrorModel(500, "errorMsg"), 2019))))
 
             val result = controller.home(fakeRequestWithActiveSession)
 
@@ -219,10 +172,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       }
       "return OK (200)" when {
         "there is a update date to display" in new Setup {
-          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+          when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-          when(calculationService.getAllLatestCalculations(any(), any())(any()))
-            .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
           when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
             .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
 
@@ -241,13 +192,10 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         "there is a next payment due date to display" in new Setup {
           enable(NewFinancialDetailsApi)
           enable(Payment)
-          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+          when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-          when(calculationService.getAllLatestCalculations(any(), any())(any()))
-            .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
-
-          when(financialDetailsService.getFinancialDetails(any(),any())(any()))
-            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(taxYear = nextPaymentYear, "id", outstandingAmount = Some(1000),
+          when(financialDetailsService.getFinancialDetails(any(), any())(any()))
+            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(transactionId = "testId", taxYear = nextPaymentYear, outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
 
@@ -261,13 +209,15 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
         "display the oldest next payment due day when there multiple payment due" in new Setup {
           enable(NewFinancialDetailsApi)
-          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+					enable(API5)
+          when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-          when(calculationService.getAllLatestCalculations(any(), any())(any()))
-            .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2018), CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
 
+					when(financialDetailsService.getFinancialDetails(any(), any())(any()))
+						.thenReturn(Future.successful(FinancialDetailsModel(List(Charge(transactionId = "testId", taxYear = nextPaymentYear2, outstandingAmount = Some(1000),
+							items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))))
           when(financialDetailsService.getFinancialDetails(matches(2018), any())(any()))
-            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(taxYear = nextPaymentYear2, "id", outstandingAmount = Some(1000),
+            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(transactionId = "testId", taxYear = nextPaymentYear2, outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))))
           when(financialDetailsService.getFinancialDetails(matches(2019), any())(any()))
             .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(1000),
@@ -284,11 +234,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         "Not display the next payment due date" when {
           "there is a problem getting financial detalis" in new Setup {
             enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
             mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
-
             when(financialDetailsService.getFinancialDetails(any(), any())(any()))
               .thenReturn(Future.successful(FinancialDetailsErrorModel(1, "testString")))
 
@@ -303,11 +250,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           "There are no financial detail" in new Setup {
             enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
             mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
-
             when(financialDetailsService.getFinancialDetails(any(), any())(any()))
               .thenReturn(Future.successful(FinancialDetailsModel(List())))
 
@@ -321,13 +265,10 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           "All financial detail bill are paid" in new Setup {
             enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
             mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
-
             when(financialDetailsService.getFinancialDetails(any(), any())(any()))
-              .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(0), items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
+              .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, transactionId = "testId", outstandingAmount = Some(0), items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
             val result = controller.home(fakeRequestWithActiveSession)
 
@@ -335,83 +276,16 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
             document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
-          }
-
-          "There is no calculation data" in new Setup {
-            enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
-            mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List()))
-
-            val result = controller.home(fakeRequestWithActiveSession)
-
-            status(result) shouldBe Status.OK
-            val document = Jsoup.parse(bodyOf(result))
-            document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
-          }
-
-          s"All calculation error models from the service have a status of ${Status.NOT_FOUND}" in new Setup {
-            enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
-            mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(CalculationErrorModel(Status.NOT_FOUND, "Not Found"), 2019))))
-
-            val result = controller.home(fakeRequestWithActiveSession)
-
-            status(result) shouldBe Status.OK
-            val document = Jsoup.parse(bodyOf(result))
-            document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
-          }
-
-          "There are no crystallised calculation data" in new Setup {
-            enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
-            mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyEstimateCalculation, 2019))))
-
-            when(financialDetailsService.getFinancialDetails(any(),any())(any()))
-              .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(1000),
-                items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
-
-            val result = controller.home(fakeRequestWithActiveSession)
-
-            status(result) shouldBe Status.OK
-            val document = Jsoup.parse(bodyOf(result))
-            document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text() shouldBe "No payments due"
           }
         }
-
-        "return ISE (500)" when {
-          "A calculation error model has returned from the service" in new Setup {
-            enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
-            mockSingleBusinessIncomeSource()
-            when(calculationService.getAllLatestCalculations(any(), any())(any()))
-              .thenReturn(Future.successful(List(CalculationResponseModelWithYear(CalculationErrorModel(500, "errorMsg"), 2019))))
-
-            val result = controller.home(fakeRequestWithActiveSession)
-
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
-        }
-
       }
       "return OK (200)" when {
         "there is a update date to display" in new Setup {
           enable(NewFinancialDetailsApi)
-          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
+          when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-          when(calculationService.getAllLatestCalculations(any(), any())(any()))
-            .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
-
           when(financialDetailsService.getFinancialDetails(any(), any())(any()))
-            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(1000),
+            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, transactionId = "testId", outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
           val result = controller.home(fakeRequestWithActiveSession)

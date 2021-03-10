@@ -32,7 +32,6 @@ import play.api.http.Status._
 
 class HomeControllerISpec extends ComponentSpecBase {
 
-
   "Navigating to /report-quarterly/income-and-expenses/view" when {
     enable(Payment)
     "Authorised" should {
@@ -50,26 +49,6 @@ class HomeControllerISpec extends ComponentSpecBase {
           singleObligationCrystallisationModel
         )))
 
-        And("I stub a successful calculation response for 2017-18")
-        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-          status = OK,
-          body = crystallisedCalculationFullJson
-        )
-
-        And("I stub a successful calculation response for 2018-19")
-        IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
-          status = OK,
-          body = crystallisedCalculationFullJson
-        )
-
         And("I stub a successful financial transactions response")
         FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2017-04-06", "2018-04-05")(OK, financialTransactionsJson(2000.0))
         FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid, "2018-04-06", "2019-04-05")(OK, financialTransactionsJson(1000.0))
@@ -81,17 +60,12 @@ class HomeControllerISpec extends ComponentSpecBase {
 
         verifyReportDeadlinesCall(testNino)
 
-        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-        IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
-        IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
-
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
           httpStatus(OK),
           pageTitle(title),
-          elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
-          elementTextBySelector("#payments-tile > div > p:nth-child(2)")("14 February 2018")
+          elementTextBySelector("#updates-tile > div > p:nth-child(2)")("4 OVERDUE UPDATES"),
+          elementTextBySelector("#payments-tile > div > p:nth-child(2)")("2 OVERDUE PAYMENTS")
         )
       }
 
@@ -109,26 +83,6 @@ class HomeControllerISpec extends ComponentSpecBase {
           singleObligationCrystallisationModel
         )))
 
-        And("I stub a successful calculation response for 2017-18")
-        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-          status = OK,
-          body = crystallisedCalculationFullJson
-        )
-
-        And("I stub a successful calculation response for 2018-19")
-        IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
-          status = OK,
-          body = crystallisedCalculationFullJson
-        )
-
         And("I stub a successful financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2017-04-06", "2018-04-05")(OK,
           testValidFinancialDetailsModelJson(3400.00, 2000.00))
@@ -143,122 +97,14 @@ class HomeControllerISpec extends ComponentSpecBase {
 
         verifyReportDeadlinesCall(testNino)
 
-        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-        IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
-        IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
-
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
         res should have(
           httpStatus(OK),
           pageTitle(title),
-          elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
-          elementTextBySelector("#payments-tile > div > p:nth-child(2)")("14 February 2018")
+          elementTextBySelector("#updates-tile > div > p:nth-child(2)")("4 OVERDUE UPDATES"),
+          elementTextBySelector("#payments-tile > div > p:nth-child(2)")("6 OVERDUE PAYMENTS")
         )
         disable(NewFinancialDetailsApi)
-      }
-
-      "render the home page without the payment due date" when {
-        "there are no crystallised payments" in {
-
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-          And("I wiremock stub obligation responses")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(
-            singleObligationQuarterlyReturnModel(testSelfEmploymentId),
-            singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
-            singleObligationOverdueModel(testPropertyIncomeId),
-            singleObligationCrystallisationModel
-          )))
-
-          And("I stub a successful estimated calculation response for 2017-18")
-          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
-            status = OK,
-            body = estimatedCalculationFullJson
-          )
-
-          And("I stub a successful estimated calculation response for 2018-19")
-          IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculation(testNino, "idTwo")(
-            status = OK,
-            body = estimatedCalculationFullJson
-          )
-
-          When("I call GET /report-quarterly/income-and-expenses/view")
-          val res = IncomeTaxViewChangeFrontend.getHome
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          verifyReportDeadlinesCall(testNino)
-
-          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-          IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
-
-          Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
-          res should have(
-            httpStatus(OK),
-            pageTitle(title),
-            elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
-            elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due")
-          )
-        }
-
-        "Received a not found from DES for the calculations" in {
-          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-          And("I wiremock stub a single business obligation response")
-          IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(
-            singleObligationQuarterlyReturnModel(testSelfEmploymentId),
-            singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
-            singleObligationOverdueModel(testPropertyIncomeId),
-            singleObligationCrystallisationModel
-          )))
-
-          And("I stub a not found calculation response for 2017-18")
-          IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculationNotFound(testNino, "idOne")
-
-          And("I stub a not found calculation response for 2018-19")
-          IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
-            status = OK,
-            body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
-          )
-          IndividualCalculationStub.stubGetCalculationNotFound(testNino, "idTwo")
-
-          When("I call GET /report-quarterly/income-and-expenses/view")
-          val res = IncomeTaxViewChangeFrontend.getHome
-
-          verifyIncomeSourceDetailsCall(testMtditid)
-
-          verifyReportDeadlinesCall(testNino)
-
-          IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-          IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
-          IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
-
-          Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
-          res should have(
-            httpStatus(OK),
-            pageTitle(title),
-            elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
-            elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due")
-          )
-        }
       }
 
       "render the ISE page when receive an error from the backend" in {
@@ -266,26 +112,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         And("I wiremock stub a single business obligation response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(
-          singleObligationQuarterlyReturnModel(testSelfEmploymentId),
-          singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
-          singleObligationOverdueModel(testPropertyIncomeId),
-          singleObligationCrystallisationModel
-        )))
-
-        And("I stub an error calculation response for 2017-18")
-        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculationError(testNino, "idOne")
-
-        And("I stub an error calculation response for 2018-19")
-        IndividualCalculationStub.stubGetCalculationList(testNino, "2018-19")(
-          status = OK,
-          body = ListCalculationItems(Seq(CalculationItem("idTwo", LocalDateTime.now())))
-        )
-        IndividualCalculationStub.stubGetCalculationError(testNino, "idTwo")
+				IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
 
         When("I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.getHome
@@ -293,11 +120,6 @@ class HomeControllerISpec extends ComponentSpecBase {
         verifyIncomeSourceDetailsCall(testMtditid)
 
         verifyReportDeadlinesCall(testNino)
-
-        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
-        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
-        IndividualCalculationStub.verifyGetCalculationList(testNino, "2018-19")
-        IndividualCalculationStub.verifyGetCalculation(testNino, "idTwo")
 
         Then("the result should have a HTTP status of ISE (500) and the Income Tax home page")
         res should have(

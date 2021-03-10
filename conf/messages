@@ -77,6 +77,9 @@ home.your-returns.agent.description                             = Use this servi
 home.your-returns.updatesLink                                   = Send updates
 home.update-and-submit-your-returns.Link                        = Update and submit your income tax
 
+home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
+home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
+
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service
 banner.recruitment.link                                         = Join our research panel by answering a few questions.

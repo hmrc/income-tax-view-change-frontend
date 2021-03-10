@@ -17,13 +17,13 @@
 package controllers
 
 import java.time.LocalDate
+
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.FinancialDetailsModel
-
 import javax.inject.{Inject, Singleton}
 import models.financialTransactions.FinancialTransactionsModel
 import play.api.Logger
@@ -33,6 +33,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.CurrentDateProvider
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -43,7 +44,6 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val retrieveNino: NinoPredicate,
                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                val reportDeadlinesService: ReportDeadlinesService,
-                               val calculationService: CalculationService,
                                val itvcErrorHandler: ItvcErrorHandler,
                                val financialTransactionsService: FinancialTransactionsService,
                                val financialDetailsService: FinancialDetailsService,
@@ -51,12 +51,15 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                implicit val appConfig: FrontendAppConfig,
                                mcc: MessagesControllerComponents,
                                implicit val ec: ExecutionContext,
+                               val currentDateProvider: CurrentDateProvider,
                                dateFormatter: ImplicitDateFormatterImpl) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate)(implicit request: Request[_], user: MtdItUser[_]): Html = {
+  private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int])(implicit request: Request[_], user: MtdItUser[_]): Html = {
     views.html.home(
       nextPaymentDueDate = nextPaymentDueDate,
       nextUpdate = nextUpdate,
+      overDuePayments = overDuePayments,
+      overDueUpdates = overDueUpdates,
       paymentEnabled = isEnabled(Payment),
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       PaymentHistoryEnabled = isEnabled(PaymentHistory),
@@ -67,43 +70,38 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
   val home: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
 
-      reportDeadlinesService.getNextDeadlineDueDate().flatMap { latestDeadlineDate =>
-
-        calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears(isEnabled(API5))) flatMap {
-          case lastTaxCalcs if lastTaxCalcs.exists(_.isError) => Future.successful(itvcErrorHandler.showInternalServerError())
-          case lastTaxCalcs if lastTaxCalcs.nonEmpty =>
-            Future.sequence(lastTaxCalcs.filter(_.isCrystallised).map { crystallisedTaxCalc =>
-              if (isEnabled(NewFinancialDetailsApi)) {
-                financialDetailsService.getFinancialDetails(crystallisedTaxCalc.year, user.nino) map { charges =>
-                  (crystallisedTaxCalc, charges)
-                }
-              }
-              else {
-                financialTransactionsService.getFinancialTransactions(user.mtditid, crystallisedTaxCalc.year) map { transactions =>
-                  (crystallisedTaxCalc, transactions)
-                }
-              }
-            }).map { billDetails =>
-              billDetails.filter(_._2 match {
-                case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty => {
-                  ftm.financialTransactions.get.exists(!_.isPaid)
-                }
-                case fdm: FinancialDetailsModel if fdm.financialDetails.nonEmpty => {
-                  fdm.financialDetails.exists(!_.isPaid)
-                }
-                case _ => false
-              }).sortBy(_._1.year).headOption match {
-                case Some((bill, transaction: FinancialTransactionsModel)) =>
-                  val date = Try(transaction.findChargeForTaxYear(bill.year).get.items.get.head.dueDate.get).toOption
-                  Ok(view(date, latestDeadlineDate))
-                case Some((bill, charges: FinancialDetailsModel)) =>
-                  val date: Option[LocalDate] = Try(LocalDate.parse(charges.findChargeForTaxYear(bill.year).get.items.get.head.dueDate.get)).toOption
-                  Ok(view(date, latestDeadlineDate))
-                case _ => Ok(view(None, latestDeadlineDate))
-              }
+      reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(user.incomeSources).flatMap { latestDeadlineDate =>
+        val allCharges: Future[Seq[LocalDate]] = Future.sequence(user.incomeSources.orderedTaxYears(isEnabled(API5)).map { taxYear =>
+          if (isEnabled(NewFinancialDetailsApi)) {
+            financialDetailsService.getFinancialDetails(taxYear, user.nino)
+          }
+          else {
+						financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear)
+          }
+        }) map {
+          _.filter(_ match {
+            case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty => {
+							ftm.financialTransactions.get.exists(!_.isPaid)
             }
-          case _ => Future.successful(Ok(view(None, latestDeadlineDate)))
+            case fdm: FinancialDetailsModel if fdm.financialDetails.nonEmpty => {
+							fdm.financialDetails.exists(!_.isPaid)
+            }
+            case _ =>
+							false
+          }) flatMap {
+            case ftm: FinancialTransactionsModel =>
+							ftm.financialTransactions.get.flatMap(_.charges().map(_.dueDate.get))
+						case fdm: FinancialDetailsModel =>
+							fdm.financialDetails.flatMap(_.charges().map(b => LocalDate.parse(b.dueDate.get)))
+					}
         }
+
+        allCharges.map(_.sortBy(_.toEpochDay())).map { paymentsDue =>
+          val overDuePayments = paymentsDue.count(_.isBefore(currentDateProvider.getCurrentDate()))
+          val overDueUpdates = latestDeadlineDate._2.size
+          Ok(view(paymentsDue.headOption, latestDeadlineDate._1, Some(overDuePayments), Some(overDueUpdates)))
+        }
+
       }.recover {
         case ex => {
           Logger.error(s"[HomeController][home] Downstream error, ${ex.getMessage}")
@@ -112,5 +110,3 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
       }
   }
 }
-
-

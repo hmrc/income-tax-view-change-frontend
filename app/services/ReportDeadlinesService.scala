@@ -21,6 +21,7 @@ import java.time.LocalDate
 import auth.MtdItUser
 import connectors._
 import javax.inject.{Inject, Singleton}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.reportDeadlines._
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
@@ -30,15 +31,18 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
 
-  def getNextDeadlineDueDate()
-                            (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[LocalDate] = {
+
+  def getNextDeadlineDueDateAndOverDueObligations(incomeSourceResponse: IncomeSourceDetailsModel)
+                                                 (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[(LocalDate, Seq[LocalDate])] = {
     getReportDeadlines().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
-        deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _).head
+        val latestDeadline = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _).head
+        val overdueObligations = deadlines.obligations.flatMap(_.obligations.map(_.due)).filter(_.isBefore(LocalDate.now()))
+        (latestDeadline, overdueObligations)
       case error: ReportDeadlinesErrorModel => throw new Exception(s"${error.message}")
       case _ =>
-        Logger.error("Unexpected Exception getting next deadline due")
-        throw new Exception(s"Unexpected Exception getting next deadline due")
+        Logger.error("Unexpected Exception getting next deadline due and Overdue Obligations")
+        throw new Exception(s"Unexpected Exception getting next deadline due and Overdue Obligations")
     }
   }
 

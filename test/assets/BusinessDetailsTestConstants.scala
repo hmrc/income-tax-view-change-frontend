@@ -64,7 +64,7 @@ object BusinessDetailsTestConstants {
     contactDetails = None,
     seasonal = None,
     paperless = None,
-    firstAccountingPeriodEndDate = None
+    firstAccountingPeriodEndDate = Some(LocalDate.of(2018, 4, 5))
   )
 
 
