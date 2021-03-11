@@ -63,6 +63,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     Some(testRetrievedUserName),
     IncomeSourceDetailsModel(
       testMtditid,
+      None,
       businesses = (1 to numYears).toList.map { count =>
         BusinessDetailsModel(
           incomeSourceId = s"income-id-$count",
@@ -85,6 +86,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
   val testUserWithRecentYears: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
+    yearOfMigration = None,
     businesses = List(
       BusinessDetailsModel(
         "testId",

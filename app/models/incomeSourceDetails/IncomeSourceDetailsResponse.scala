@@ -26,6 +26,7 @@ sealed trait IncomeSourceDetailsResponse {
 }
 
 case class IncomeSourceDetailsModel(mtdbsa:String,
+                                    yearOfMigration: Option[String],
                                     businesses: List[BusinessDetailsModel],
                                     property: Option[PropertyDetailsModel]
                                    ) extends IncomeSourceDetailsResponse {

@@ -263,6 +263,7 @@ breadcrumb-tax-year-overview                                    = 6 April {0} to
 breadcrumb-income                                               = Income
 breadcrumb-deductions                                           = Allowances and deductions
 breadcrumb-tax-calc                                             = Tax calculation
+breadcrumb-what-you-owe                                         = What you owe
 breadcrumb-payment-history                                      = Payment history
 
 ## Standard Error Page ##
@@ -338,6 +339,37 @@ paymentDue.view-bill-aria                                          = View bill f
 paymentDue.pay-now-aria                                            = Pay now for Tax year {0} to {1}
 paymentDue.no-bills                                                = No payments due.
 
+
+## What you owe
+whatYouOwe.heading                                                 = What you owe
+whatYouOwe.no-payments-due                                         = You have no payments due.
+whatYouOwe.sa-note                                                 = You still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous Self Assessment online account.
+whatYouOwe.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
+whatYouOwe.dropdown.info                                           = What are the payment types?
+whatYouOwe.payment-days-note                                       = Payments can take up to 7 days to process.
+whatYouOwe.credit-on-account                                       = If you make a payment more than 30 days before a payment is due, you will see it as credit on account.
+whatYouOwe.payNow                                                  = Pay now
+whatYouOwe.pay-now-aria                                            = Pay now for Tax year {0} to {1}
+whatYouOwe.pre-mtd-payments                                        = Tax year {0} to {1} pre-Making Tax Digital payments
+whatYouOwe.tableHead.due-date                                      = Due date
+whatYouOwe.tableHead.payment-type                                  = Payment type
+whatYouOwe.tableHead.amount-due                                    = Amount due
+whatYouOwe.paymentOnAccount1.text							       = Payment on account 1 of 2
+whatYouOwe.paymentOnAccount2.text							       = Payment on account 2 of 2
+whatYouOwe.balancingCharge.text  							       = Remaining balance
+whatYouOwe.balancingCharge.interest.line1.text                     = Interest on remaining balance
+whatYouOwe.balancingCharge.interest.line2.text                     = From {0} to {1}
+whatYouOwe.remaining-balance.heading                               = Remaining balance
+whatYouOwe.remaining-balance.line1                                 = The remaining balance is the tax you still need to pay for a tax year.
+whatYouOwe.payment-on-account.heading                              = Payment on account
+whatYouOwe.payment-on-account.line1                                = This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill.
+whatYouOwe.over-due-payments                                       = Overdue payments
+whatYouOwe.over-due                                                = OVERDUE
+whatYouOwe.future-payments                                         = Future payments
+whatYouOwe.due-in-thirty-days-payments                             = Due within 30 days
+whatYouOwe.payment-type.taxYear                                    = Tax year {0} to {1}
+
+
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
 chargeSummary.paymentOnAccount2.text							   = Payment on account 2 of 2
@@ -349,6 +381,7 @@ chargeSummary.remainingDue   									   = Remaining to pay
 chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other payments due.
 chargeSummary.whatYouOwe.linkText								   = what you owe
+
 
 ## Regimes
 regimes.UK = UK

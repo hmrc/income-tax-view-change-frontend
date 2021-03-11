@@ -102,4 +102,24 @@ object OutstandingChargesTestConstants {
       |  }
       |""".stripMargin)
 
+  val validOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
+    """
+      |{
+      |  "outstandingCharges": [{
+      |         "chargeName": "BCD",
+      |         "relevantDueDate": "2021-01-31",
+      |         "chargeAmount": 123456789012345.67,
+      |         "tieBreaker": 1234
+      |       },
+      |       {
+      |         "chargeName": "ACI",
+      |         "relevantDueDate": "2021-01-31",
+      |         "chargeAmount": 12.67,
+      |         "tieBreaker": 1234
+      |       }
+      |  ]
+      |}
+      |""".stripMargin)
+
+
 }

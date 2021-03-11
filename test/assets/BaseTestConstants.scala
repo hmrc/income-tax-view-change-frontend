@@ -30,6 +30,7 @@ object BaseTestConstants {
   val testSaUtrId = 1234567890
   val testSaUtr = "saUtr"
   val taxYear: String = "2020-04-05"
+  val taxYear2020: String = "2020"
   val idNumber: Int = 1234567890
   val idType: String = "utr"
   val testArn = "XAIT0000123456"
@@ -70,7 +71,7 @@ object BaseTestConstants {
 																			 affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
-    Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "saUtr")), "activated")
+    Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567890")), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
 
   val arnEnrolment: Enrolment = Enrolment(

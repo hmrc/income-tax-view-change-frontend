@@ -21,7 +21,23 @@ import play.api.libs.json.{Format, Json}
 sealed trait OutstandingChargesResponseModel
 
 
-case class OutstandingChargesModel(outstandingCharges: List[OutstandingChargeModel]) extends OutstandingChargesResponseModel
+case class OutstandingChargesModel(outstandingCharges: List[OutstandingChargeModel]) extends OutstandingChargesResponseModel {
+  def bcdChargeType: Option[OutstandingChargeModel] = outstandingCharges.find(_.chargeName == "BCD")
+  def aciChargeType: Option[OutstandingChargeModel] = outstandingCharges.find(_.chargeName == "ACI")
+
+  def getBcdAndAciTieBreakerChargesModelList: List[OutstandingChargeModel] = {
+    if(bcdChargeType.isDefined
+      && aciChargeType.isDefined
+      && (bcdChargeType.get.tieBreaker == aciChargeType.get.tieBreaker)
+      && bcdChargeType.get.chargeAmount > 0
+      && aciChargeType.get.chargeAmount > 0
+    ) {
+      List(bcdChargeType.get, aciChargeType.get)
+    } else {
+      List()
+    }
+  }
+}
 
 
 object OutstandingChargesModel {

@@ -40,7 +40,7 @@ class ClientRelationshipServiceSpec extends TestSupport with MockAgentClientRela
           "an agent client relationship exists" in {
 
             setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
-            setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", List(), None)))
+            setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", None, List(), None)))
             mockAgentClientRelationship("testArn", "mtdbsaId")(Future.successful(true))
 
             val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn"))
@@ -55,7 +55,7 @@ class ClientRelationshipServiceSpec extends TestSupport with MockAgentClientRela
       "an agent client relationship does not exist" in {
 
         setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
-        setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", List(), None)))
+        setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", None, List(), None)))
         mockAgentClientRelationship("testArn", "mtdbsaId")(Future.successful(false))
 
         val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn"))

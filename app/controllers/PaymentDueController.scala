@@ -19,6 +19,7 @@ package controllers
 import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
@@ -26,18 +27,20 @@ import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsMode
 import javax.inject.Inject
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{FinancialDetailsService, FinancialTransactionsService}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import services.{FinancialDetailsService, FinancialTransactionsService, PaymentDueService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import models.outstandingCharges.OutstandingChargesModel
+import play.api.Logger
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
                                      val retrieveNino: NinoPredicate,
                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                      val financialTransactionsService: FinancialTransactionsService,
-                                     val financialDetailsService: FinancialDetailsService,
+                                     val paymentDueService: PaymentDueService,
                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val auditingService: AuditingService,
@@ -59,10 +62,14 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
   val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       if(isEnabled(NewFinancialDetailsApi)) {
-        financialDetailsService.getAllUnpaidFinancialDetails map {
-          case charges if hasFinancialDetailsError(charges) => itvcErrorHandler.showInternalServerError()
-          case financialDetails: List[FinancialDetailsModel] => Ok(views.html.paymentDue(financialDetails = financialDetails,
-            paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter))
+        paymentDueService.getWhatYouOweChargesList().map {
+          whatYouOweChargesList =>
+            Ok(views.html.whatYouOwe(chargesList = whatYouOweChargesList, yearOfMigration = user.incomeSources.yearOfMigration.map(_.toInt),
+              paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter))
+        } recover {
+          case ex: Exception =>
+            Logger.error(s"Error received while getting what you page details: ${ex.getMessage}")
+            itvcErrorHandler.showInternalServerError()
         }
       } else {
         financialTransactionsService.getAllUnpaidFinancialTransactions.map {
@@ -72,4 +79,5 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         }
       }
   }
+
 }

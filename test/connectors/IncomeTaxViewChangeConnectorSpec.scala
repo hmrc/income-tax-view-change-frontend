@@ -402,7 +402,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return a OutstandingCharges model when successful JSON is received" in new Setup {
       setupMockHttpGet(getOutstandingChargesTestUrl)(successResponse)
 
-      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear)
+      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear2020)
       await(result) shouldBe testValidOutstandingChargesModel
 
     }
@@ -410,7 +410,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return a OutstandingCharges model in case of future failed scenario" in new Setup {
       setupMockFailedHttpGet(getOutstandingChargesTestUrl)(badResponse)
 
-      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear)
+      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear2020)
       await(result) shouldBe OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
     }
 
@@ -418,14 +418,14 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return OutstandingChargesErrorResponse model in case of failure" in new Setup {
       setupMockHttpGet(getOutstandingChargesTestUrl)(badResponse)
 
-      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear)
+      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear2020)
       await(result) shouldBe OutstandingChargesErrorModel(Status.BAD_REQUEST, "Error Message")
     }
 
     "return OutstandingChargesErrorResponse model in case of bad/malformed JSON response" in new Setup {
       setupMockHttpGet(getOutstandingChargesTestUrl)(successResponseBadJson)
 
-      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear)
+      val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear2020)
       await(result) shouldBe testOutstandingChargesErrorModelParsing
     }
 

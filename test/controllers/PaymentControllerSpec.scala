@@ -18,7 +18,7 @@ package controllers
 
 
 import assets.BaseTestConstants
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testSaUtrId, testUserType}
 import assets.PaymentDataTestConstants._
 import audit.mocks.MockAuditingService
 import audit.models.InitiatePayNowAuditModel
@@ -44,7 +44,7 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
 
     val mockPayApiConnector: PayApiConnector = mock[PayApiConnector]
 
-    when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq("saUtr"), ArgumentMatchers.eq(BigDecimal(10000)))
+    when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtrId.toString), ArgumentMatchers.eq(BigDecimal(10000)))
     (ArgumentMatchers.any[HeaderCarrier])).thenReturn(response)
 
     val testController = new PaymentController()(
@@ -76,7 +76,7 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("redirect-url")
-        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditid, Some(testNino), Some(testSaUtr), Some(testCredId), Some("Individual")))
+        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditid, Some(testNino), Some(testSaUtrId.toString), Some(testCredId), Some("Individual")))
       }
     }
 

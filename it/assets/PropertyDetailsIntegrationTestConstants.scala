@@ -32,6 +32,10 @@ object PropertyDetailsIntegrationTestConstants {
   val propertyAccountingEnd = "2017-12-31"
   val propertyAccounringEndLocalDate = LocalDate.of(2017, 12, 31)
 
+  def propertyAccountingStartLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 1, 1)
+  def propertyAccounringEndLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 12, 31)
+
+
   val property: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
     accountingPeriod = AccountingPeriodModel(
@@ -56,6 +60,19 @@ object PropertyDetailsIntegrationTestConstants {
     cessation = None,
     paperless = None,
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
+  )
+
+  def propertyWithCurrentYear(endYear: Int): PropertyDetailsModel = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = AccountingPeriodModel(
+      start = propertyAccountingStartLocalDateOfCurrentYear(endYear),
+      end = propertyAccounringEndLocalDateOfCurrentYear(endYear)
+    ),
+    contactDetails = None,
+    propertiesRented = None,
+    cessation = None,
+    paperless = None,
+    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDateOfCurrentYear(endYear))
   )
 
   val propertySuccessResponse: JsValue = Json.obj(

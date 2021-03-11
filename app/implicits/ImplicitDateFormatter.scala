@@ -35,7 +35,9 @@ trait ImplicitDateFormatter {
 
   implicit class localDate(s: String) {
     def toLocalDate: LocalDate = LocalDate.parse(s, DateTimeFormatter.ofPattern("uuuu-M-d"))
+
     def toLocalDateTime: LocalDateTime = LocalDateTime.parse(s, DateTimeFormatter.ISO_DATE_TIME)
+
     def toZonedDateTime: ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
   }
 
@@ -60,7 +62,7 @@ trait ImplicitDateFormatter {
   }
 
   implicit class longDateTime(dt: LocalDateTime)(implicit messages: Messages) {
-    def toLongDateTime:String = {
+    def toLongDateTime: String = {
       languageUtils.Dates.formatDate(org.joda.time.LocalDate.parse(dt.toLocalDate.toString))(messages)
     }
   }

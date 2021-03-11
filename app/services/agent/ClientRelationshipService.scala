@@ -36,7 +36,7 @@ class ClientRelationshipService @Inject()(agentClientRelationshipsConnector: Age
     citizenDetailsConnector.getCitizenDetailsBySaUtr(utr) flatMap {
       case CitizenDetailsModel(optionalFirstName, optionalLastName, Some(nino)) =>
         incomeTaxViewChangeConnector.getBusinessDetails(nino) flatMap {
-          case IncomeSourceDetailsModel(mtdbsa, _, _) =>
+          case IncomeSourceDetailsModel(mtdbsa, _, _, _) =>
             agentClientRelationshipsConnector.agentClientRelationship(arn, mtdbsa) map {
               case true => Right(ClientRelationshipService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa))
               case false => Left(NoAgentClientRelationship)
