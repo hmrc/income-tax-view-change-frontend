@@ -268,7 +268,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 httpStatus(OK),
                 pageTitle(agentTitle),
                 elementTextBySelector("#updates-tile > div > p:nth-child(2)")(LocalDate.now.toLongDate),
-                elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due."),
+                elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due"),
                 elementTextBySelector(".form-hint")("UTR: 1234567890 Client’s name Test User")
               )
             }

@@ -209,7 +209,7 @@ class HomeControllerISpec extends ComponentSpecBase {
             httpStatus(OK),
             pageTitle(title),
             elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
-            elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due.")
+            elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due")
           )
         }
 
@@ -256,7 +256,7 @@ class HomeControllerISpec extends ComponentSpecBase {
             httpStatus(OK),
             pageTitle(title),
             elementTextBySelector("#updates-tile > div > p:nth-child(2)")(veryOverDueLongDate),
-            elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due.")
+            elementTextBySelector("#payments-tile > div > p:nth-child(2)")("No payments due")
           )
         }
       }
