@@ -35,7 +35,6 @@ object BusinessDetailsTestConstants {
     val currentDate: LocalDate = LocalDate.now
     if(currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6)))LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
-
   }
 
   val testBusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017,6,1), end = LocalDate.of(2018,5,30))

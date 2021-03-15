@@ -17,3 +17,17 @@ GET         /client-relationship-problem        controllers.agent.ClientRelation
 # UTR Error
 GET         /utr-problem                        controllers.agent.UTRErrorController.show
 POST        /utr-problem                        controllers.agent.UTRErrorController.submit
+
+GET         /language/:lang            controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
+
+# Enter Clients UTR
+GET         /client-utr                controllers.agent.EnterClientsUTRController.show
+POST        /client-utr                controllers.agent.EnterClientsUTRController.submit
+
+# Confirm Client
+GET         /confirm-client            controllers.agent.ConfirmClientUTRController.show
+POST        /confirm-client            controllers.agent.ConfirmClientUTRController.submit
+
+#Home Controller
+GET         /income-tax-account        controllers.agent.HomeController.show
+GET         /remove-client-sessions    controllers.agent.RemoveClientDetailsSessionsController.show

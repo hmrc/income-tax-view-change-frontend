@@ -306,13 +306,13 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   }
 
-  def getFinancialDetails(taxYear: Int)
-                         (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+  def getFinancialDetails(taxYear: Int, nino:String)
+                         (implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsResponseModel] = {
 
     val dateFrom: String = (taxYear - 1).toString + "-04-06"
     val dateTo: String = taxYear.toString + "-04-05"
 
-    val url = getChargesUrl(mtdUser.nino, dateFrom, dateTo)
+    val url = getChargesUrl(nino, dateFrom, dateTo)
     Logger.debug(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>

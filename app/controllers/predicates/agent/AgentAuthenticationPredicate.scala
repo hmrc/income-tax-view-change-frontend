@@ -17,14 +17,12 @@
 package controllers.predicates.agent
 
 import cats.implicits._
-import controllers.agent.routes
 import controllers.agent.utils.SessionKeys
 import controllers.agent.routes
 import controllers.predicates.AuthPredicate.{AuthPredicate, AuthPredicateSuccess}
 import controllers.predicates.IncomeTaxAgentUser
 import play.api.mvc.{Result, Results}
 import uk.gov.hmrc.auth.core.AuthorisationException
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.http.SessionKeys.{authToken, lastRequestTimestamp}
 
 import scala.concurrent.Future
@@ -35,18 +33,18 @@ object AgentAuthenticationPredicate extends Results {
 
   lazy val noClientDetailsRoute: Result = Redirect(routes.EnterClientsUTRController.show())
 
-  val timeoutPredicate: AuthPredicate[IncomeTaxAgentUser] = request => user =>
+  val timeoutPredicate: AuthPredicate[IncomeTaxAgentUser] = request => _ =>
     if (request.session.get(lastRequestTimestamp).nonEmpty && request.session.get(authToken).isEmpty) {
       Left(Future.successful(timeoutRoute))
     }
     else Right(AuthPredicateSuccess)
 
-  val arnPredicate: AuthPredicate[IncomeTaxAgentUser] = request => user =>
+  val arnPredicate: AuthPredicate[IncomeTaxAgentUser] = _ => user =>
     if (user.agentReferenceNumber.nonEmpty) Right(AuthPredicateSuccess)
     else Left(Future.failed(MissingAgentReferenceNumber()))
 
   // Redirects to Select Client Page if client details aren't in session
-  val detailsPredicate: AuthPredicate[IncomeTaxAgentUser] = request => user =>
+  val detailsPredicate: AuthPredicate[IncomeTaxAgentUser] = request => _ =>
     if (request.session.get(SessionKeys.clientFirstName).nonEmpty
       && request.session.get(SessionKeys.clientLastName).nonEmpty
       && request.session.get(SessionKeys.clientUTR).nonEmpty) {
@@ -54,10 +52,9 @@ object AgentAuthenticationPredicate extends Results {
     } else Left(Future.successful(noClientDetailsRoute))
 
   // Redirects to Select Client Page if the agent hasn't confirmed the client
-  val selectedClientPredicate: AuthPredicate[IncomeTaxAgentUser] = request => user =>
+  val selectedClientPredicate: AuthPredicate[IncomeTaxAgentUser] = request => _ =>
     if (request.session.get(SessionKeys.confirmedClient).nonEmpty) Right(AuthPredicateSuccess)
     else Left(Future.successful(noClientDetailsRoute))
-
 
   val defaultPredicates: AuthPredicate[IncomeTaxAgentUser] = timeoutPredicate |+| arnPredicate
 

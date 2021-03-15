@@ -50,7 +50,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
 
           verifyIncomeSourceDetailsCall(testMtditid)
 
-          verifyReportDeadlinesCall(testNino, testPropertyIncomeId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
 
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
@@ -86,7 +86,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
 
           verifyIncomeSourceDetailsCall(testMtditid)
 
-          verifyReportDeadlinesCall(testNino, testPropertyIncomeId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
 
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
@@ -119,13 +119,13 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testMtditid, testNino)
+          IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testNino)
 
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
 
-          verifyReportDeadlinesCall(testNino, testMtditid)
+          verifyReportDeadlinesCall(testNino)
 
           Then("the view displays the correct title, username and links")
           res should have(
@@ -151,7 +151,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testNino, testPropertyIncomeId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
           Then("the view displays the correct title, username and links")
@@ -187,7 +187,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testNino, testPropertyIncomeId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
           Then("the view displays the correct title, username and links")
@@ -227,7 +227,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
 
           verifyIncomeSourceDetailsCall(testMtditid)
 
-          verifyReportDeadlinesCall(testNino, testPropertyIncomeId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
 
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
@@ -263,7 +263,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
 
           verifyIncomeSourceDetailsCall(testMtditid)
 
-          verifyReportDeadlinesCall(testNino, testPropertyIncomeId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
 
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
@@ -303,7 +303,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testNino, testPropertyIncomeId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
           Then("the view displays the correct title, username and links")
@@ -338,7 +338,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testNino, testPropertyIncomeId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
           Then("the view displays the correct title, username and links")
@@ -376,7 +376,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testNino, testSelfEmploymentId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
           Then("the view displays the correct title")
@@ -411,7 +411,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testNino, testSelfEmploymentId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
           Then("the view displays the correct title")
@@ -452,7 +452,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testNino, testSelfEmploymentId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
           Then("the view displays the correct title")
@@ -491,7 +491,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          verifyReportDeadlinesCall(testNino, testSelfEmploymentId, testMtditid)
+          verifyReportDeadlinesCall(testNino)
           IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino)
 
           Then("the view displays the correct title")
@@ -544,7 +544,7 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyReportDeadlinesCall(testNino, testSelfEmploymentId)
+        verifyReportDeadlinesCall(testNino)
 
         Then("the result should have a HTTP status of SEE_OTHER (303) and redirect to the Income Tax home page")
         res should have(

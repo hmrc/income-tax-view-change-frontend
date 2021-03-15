@@ -16,9 +16,8 @@
 
 package controllers
 
-import java.time.{LocalDate, ZonedDateTime}
 import assets.MessagesLookUp
-import config.featureswitch.{Bills, FeatureSwitching, NewFinancialDetailsApi, Payment}
+import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
@@ -30,10 +29,10 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
 
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
 class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching{
@@ -76,7 +75,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       "return ok (200)" which {
         "there is a next payment due date to display" in new Setup {
           enable(Payment)
-          when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
           mockSingleBusinessIncomeSource()
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
@@ -92,7 +91,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         }
 
         "display the oldest next payment due day when there multiple payment due" in new Setup {
-          when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
           mockSingleBusinessIncomeSource()
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2018), CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
@@ -111,7 +110,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
         "Not display the next payment due date" when {
           "there is a problem getting financial transaction" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
@@ -128,7 +127,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           }
 
           "There are no financial transaction" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
@@ -144,7 +143,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           }
 
           "All financial transaction bill are paid" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
@@ -160,7 +159,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           }
 
           "There is no calculation data" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List()))
@@ -174,7 +173,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           }
 
           s"All calculation error models from the service have a status of ${Status.NOT_FOUND}" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(CalculationErrorModel(Status.NOT_FOUND, "Not Found"), 2019))))
@@ -188,7 +187,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           }
 
           "There are no crystallised calculation data" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyEstimateCalculation, 2019))))
@@ -206,7 +205,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
         "return ISE (500)" when {
           "A calculation error model has returned from the service" in new Setup {
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(CalculationErrorModel(500, "errorMsg"), 2019))))
@@ -220,7 +219,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       }
       "return OK (200)" when {
         "there is a update date to display" in new Setup {
-          when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
           mockSingleBusinessIncomeSource()
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
@@ -242,11 +241,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         "there is a next payment due date to display" in new Setup {
           enable(NewFinancialDetailsApi)
           enable(Payment)
-          when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
           mockSingleBusinessIncomeSource()
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
-          when(financialDetailsService.getFinancialDetails(any())(any(), any()))
+
+          when(financialDetailsService.getFinancialDetails(any(),any())(any()))
             .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(taxYear = nextPaymentYear, "id", outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
@@ -261,15 +261,15 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
         "display the oldest next payment due day when there multiple payment due" in new Setup {
           enable(NewFinancialDetailsApi)
-          when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
           mockSingleBusinessIncomeSource()
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2018), CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
 
-          when(financialDetailsService.getFinancialDetails(matches(2018))(any(), any()))
+          when(financialDetailsService.getFinancialDetails(matches(2018), any())(any()))
             .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(taxYear = nextPaymentYear2, "id", outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))))
-          when(financialDetailsService.getFinancialDetails(matches(2019))(any(), any()))
+          when(financialDetailsService.getFinancialDetails(matches(2019), any())(any()))
             .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
@@ -284,12 +284,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         "Not display the next payment due date" when {
           "there is a problem getting financial detalis" in new Setup {
             enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
 
-            when(financialDetailsService.getFinancialDetails(any())(any(), any()))
+            when(financialDetailsService.getFinancialDetails(any(), any())(any()))
               .thenReturn(Future.successful(FinancialDetailsErrorModel(1, "testString")))
 
             val result = controller.home(fakeRequestWithActiveSession)
@@ -303,12 +303,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           "There are no financial detail" in new Setup {
             enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
 
-            when(financialDetailsService.getFinancialDetails(any())(any(), any()))
+            when(financialDetailsService.getFinancialDetails(any(), any())(any()))
               .thenReturn(Future.successful(FinancialDetailsModel(List())))
 
             val result = controller.home(fakeRequestWithActiveSession)
@@ -321,12 +321,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           "All financial detail bill are paid" in new Setup {
             enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
 
-            when(financialDetailsService.getFinancialDetails(any())(any(), any()))
+            when(financialDetailsService.getFinancialDetails(any(), any())(any()))
               .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(0), items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
             val result = controller.home(fakeRequestWithActiveSession)
@@ -339,7 +339,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           "There is no calculation data" in new Setup {
             enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List()))
@@ -354,7 +354,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           s"All calculation error models from the service have a status of ${Status.NOT_FOUND}" in new Setup {
             enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(CalculationErrorModel(Status.NOT_FOUND, "Not Found"), 2019))))
@@ -369,12 +369,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
           "There are no crystallised calculation data" in new Setup {
             enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyEstimateCalculation, 2019))))
 
-            when(financialDetailsService.getFinancialDetails(any())(any(), any()))
+            when(financialDetailsService.getFinancialDetails(any(),any())(any()))
               .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(1000),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 
@@ -390,7 +390,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         "return ISE (500)" when {
           "A calculation error model has returned from the service" in new Setup {
             enable(NewFinancialDetailsApi)
-            when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+            when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
             mockSingleBusinessIncomeSource()
             when(calculationService.getAllLatestCalculations(any(), any())(any()))
               .thenReturn(Future.successful(List(CalculationResponseModelWithYear(CalculationErrorModel(500, "errorMsg"), 2019))))
@@ -405,12 +405,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       "return OK (200)" when {
         "there is a update date to display" in new Setup {
           enable(NewFinancialDetailsApi)
-          when(reportDeadlinesService.getNextDeadlineDueDate(any())(any(), any(), any())) thenReturn Future.successful(updateDate)
+          when(reportDeadlinesService.getNextDeadlineDueDate()(any(), any(), any())) thenReturn Future.successful(updateDate)
           mockSingleBusinessIncomeSource()
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(List(CalculationResponseModelWithYear(emptyCrystallisedCalculation, 2019))))
 
-          when(financialDetailsService.getFinancialDetails(any())(any(), any()))
+          when(financialDetailsService.getFinancialDetails(any(), any())(any()))
             .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(nextPaymentYear, "id", outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))))
 

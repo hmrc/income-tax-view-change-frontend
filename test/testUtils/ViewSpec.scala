@@ -173,6 +173,7 @@ trait ViewSpec extends TestSupport {
     def getSummaryListActions(id: String): Element = {
       element.getElementById(id)
     }
+
   }
 
 }

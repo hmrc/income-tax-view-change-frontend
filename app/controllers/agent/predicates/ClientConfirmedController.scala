@@ -17,11 +17,14 @@
 package controllers.agent.predicates
 
 import auth.BaseFrontendController
+import controllers.agent.utils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Request}
+import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolments}
+import uk.gov.hmrc.http.InternalServerException
 
 trait ClientConfirmedController extends BaseFrontendController {
 
@@ -37,4 +40,28 @@ trait ClientConfirmedController extends BaseFrontendController {
 
   }
 
+  def getClientUtr(implicit request: Request[_]): Option[String] = {
+    request.session.get(SessionKeys.clientUTR)
+  }
+
+  def getClientMtditid(implicit request: Request[_]): String = {
+    request.session.get(SessionKeys.clientMTDID)
+      .getOrElse(throw new InternalServerException("[ClientConfirmedController][getClientMtditid] client mtditid not found"))
+  }
+
+  def getClientNino(implicit request: Request[_]): String = {
+    request.session.get(SessionKeys.clientNino)
+      .getOrElse(throw new InternalServerException("[ClientConfirmedController][getClientNino] client nino not found"))
+  }
+
+  def getClientName(implicit request: Request[_]): Option[Name] = {
+    val firstName = request.session.get(SessionKeys.clientFirstName)
+    val lastName = request.session.get(SessionKeys.clientLastName)
+
+    if(firstName.isDefined && lastName.isDefined) {
+      Some(Name(firstName, lastName))
+    } else {
+      None
+    }
+  }
 }

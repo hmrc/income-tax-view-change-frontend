@@ -21,17 +21,16 @@ import java.time.LocalDate
 import auth.MtdItUser
 import connectors._
 import javax.inject.{Inject, Singleton}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.reportDeadlines._
 import play.api.Logger
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
 
-  def getNextDeadlineDueDate(incomeSourceResponse: IncomeSourceDetailsModel)
+  def getNextDeadlineDueDate()
                             (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[LocalDate] = {
     getReportDeadlines().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
@@ -40,6 +39,27 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
       case _ =>
         Logger.error("Unexpected Exception getting next deadline due")
         throw new Exception(s"Unexpected Exception getting next deadline due")
+    }
+  }
+
+  def getObligationDueDates()
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[Either[(LocalDate, Boolean), Int]] = {
+    getReportDeadlines().map {
+
+      case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) => {
+        val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
+        val overdueDates = dueDates.filter(_ isBefore LocalDate.now)
+        val nextDueDates = dueDates.diff(overdueDates)
+        val overdueDatesCount = overdueDates.size
+
+        overdueDatesCount match {
+          case 0 => Left(nextDueDates.head -> false)
+          case 1 => Left(overdueDates.head -> true)
+          case _ => Right(overdueDatesCount)
+        }
+      }
+      case _ =>
+        throw new InternalServerException(s"Unexpected Exception getting obligation due dates")
     }
   }
 

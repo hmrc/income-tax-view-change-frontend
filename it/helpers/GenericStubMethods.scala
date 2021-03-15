@@ -20,7 +20,7 @@ import helpers.servicemocks._
 trait GenericStubMethods extends CustomMatchers {
 
   def isAuthorisedUser(authorised: Boolean): Unit = {
-    if(authorised){
+    if (authorised) {
       Given("I wiremock stub an isAuthorisedUser user response")
       AuthStub.stubAuthorised()
     } else {
@@ -30,8 +30,8 @@ trait GenericStubMethods extends CustomMatchers {
   }
 
   def stubAuthorisedAgentUser(authorised: Boolean, hasAgentEnrolment: Boolean = true): Unit = {
-    if(authorised) {
-      if(hasAgentEnrolment) {
+    if (authorised) {
+      if (hasAgentEnrolment) {
         Given("I stub the agent is authorised with an agent reference number")
         AuthStub.stubAuthorisedAgent()
       } else {
@@ -49,7 +49,7 @@ trait GenericStubMethods extends CustomMatchers {
     UserDetailsStub.stubGetUserDetails()
   }
 
-  def stubUserDetailsError(): Unit= {
+  def stubUserDetailsError(): Unit = {
     And("I wiremock stub a Error Response from the User Details service")
     UserDetailsStub.stubGetUserDetailsError()
   }
@@ -59,14 +59,11 @@ trait GenericStubMethods extends CustomMatchers {
     IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(mtditid)
   }
 
-  def verifyReportDeadlinesCall(nino: String, incomeSourceIds: String*): Unit = {
-    for(incomeSourceId <- incomeSourceIds) {
-      Then(s"Verify that Report Deadlines has been called for incomeSourceID = $incomeSourceId")
-      IncomeTaxViewChangeStub.verifyGetReportDeadlines(incomeSourceId, nino)
-    }
+  def verifyReportDeadlinesCall(nino: String): Unit = {
+    IncomeTaxViewChangeStub.verifyGetReportDeadlines(nino)
   }
 
-  def verifyFinancialTransactionsCall(mtditid: String, from: String  =  "2017-04-06" , to: String =  "2018-04-05"): Unit = {
+  def verifyFinancialTransactionsCall(mtditid: String, from: String = "2017-04-06", to: String = "2018-04-05"): Unit = {
     Then("Verify that Financial Transactions has been called")
     FinancialTransactionsStub.verifyGetFinancialTransactions(mtditid, from, to)
   }

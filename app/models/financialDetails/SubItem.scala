@@ -30,6 +30,5 @@ case class SubItem(subItemId: Option[String] = None,
                    paymentId: Option[String] = None)
 
 object SubItem {
-
   implicit val format: Format[SubItem] = Json.format[SubItem]
 }

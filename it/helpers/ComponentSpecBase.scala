@@ -103,6 +103,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     )
   }
 
+  def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    await(
+      buildClient(uri)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+        .get()
+    )
+  }
+
   def getWithCalcIdInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     await(
       buildClient(uri)
@@ -126,6 +134,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getCalculationPoller(year: String, additionalCookies: Map[String, String]): WSResponse =
       getWithCalcIdInSession(s"/calculation/$year/submitted", additionalCookies)
+
     def getCalculationPollerWithoutAwait(year: String, additionalCookies: Map[String, String]): Future[WSResponse] =
       getWithCalcIdInSessionAndWithoutAwait(s"/calculation/$year/submitted", additionalCookies)
 

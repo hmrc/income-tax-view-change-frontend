@@ -54,18 +54,28 @@ feedback.title                                                  = Give feedback
 
 ## Home Page ##
 home.heading                                                    = Income Tax
+home.agent.heading                                              = Your client’s Income Tax
+home.agent.changeClientLink                                     = Change client
+home.agent.visualHidden.clientsName                             = Client’s name
 home.unique.taxpayer.reference                                  = Unique Taxpayer Reference - {0}
-home.payments.heading                                           = Next payment due
+home.utr                                                        = UTR: {0}
+home.payments.heading                                           = Next payments due
 home.payments.no-payments-due                                   = No payments due.
 home.payments.view                                              = View what you owe
 home.updates.heading                                            = Next updates due
 home.updates.view                                               = View next updates
+home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
+home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
+home.overdue.date                                               = OVERDUE
 home.tax-years.heading                                          = Tax years
 home.tax-years.view                                             = View tax years
 home.tax-years.viewPayments                                     = View payment history
+home.manage-income-tax.heading                                  = Manage Income Tax
 home.your-returns.heading                                       = Your Income Tax return
 home.your-returns.description                                   = Send updates to HMRC and declare income for a tax year.
+home.your-returns.agent.description                             = Use this service to report untaxed income and any tax relief you’re claiming.
 home.your-returns.updatesLink                                   = Send updates
+home.update-and-submit-your-returns.Link                        = Update and submit your income tax
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Help improve this service

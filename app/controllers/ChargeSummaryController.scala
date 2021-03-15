@@ -16,10 +16,12 @@
 
 package controllers
 
+import auth.MtdItUser
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+
 import javax.inject.Inject
 import models.financialDetails.{Charge, FinancialDetailsModel}
 import play.api.Logger
@@ -51,7 +53,7 @@ class ChargeSummaryController@Inject()(authenticate: AuthenticationPredicate,
 		(checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
 			implicit user =>
 				if (isEnabled(NewFinancialDetailsApi)) {
-					financialDetailsService.getFinancialDetails(taxYear).map {
+					financialDetailsService.getFinancialDetails(taxYear, user.nino).map {
 						case success: FinancialDetailsModel if success.financialDetails.exists(_.transactionId == chargeId) =>
 								Ok(view(success.financialDetails.find(_.transactionId == chargeId).get))
 							//Should not happen unless url is changed manually so redirect to home

@@ -17,8 +17,8 @@
 package helpers.agent
 
 import config.FrontendAppConfig
-import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
+import helpers.servicemocks.AuthStub.getWithClientDetailsInSession
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
@@ -124,11 +124,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = post("/confirm-client", clientDetails)(Map.empty)
 
+
     def getClientRelationshipFailure: WSResponse = get("/client-relationship-problem")
 
     def getUTRError(clientUTR: Map[String, String] = Map.empty): WSResponse = get("/utr-problem", clientUTR)
 
     def postUTRError: WSResponse = post("/utr-problem")(Map.empty)
+
+    def getAgentHome(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      getWithClientDetailsInSession("/agents/income-tax-account", additionalCookies)
 
   }
 

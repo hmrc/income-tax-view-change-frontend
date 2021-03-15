@@ -189,7 +189,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.ConfirmClientUTRController.show().url) //Will need to changed when Agent Home page is made
+        redirectLocation(result) shouldBe Some(controllers.agent.routes.HomeController.show().url)
         result.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
       }
     }

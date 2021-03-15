@@ -57,18 +57,18 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
         ArgumentMatchers.eq(mtdRef))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
-  def setupMockReportDeadlines(incomeSourceId: String)(response: ReportDeadlinesResponseModel): Unit = {
+  def setupMockReportDeadlines(response: ReportDeadlinesResponseModel): Unit = {
     when(mockIncomeTaxViewChangeConnector.getReportDeadlines()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockPreviousObligations(incomeSourceId: String)(response: ReportDeadlinesResponseModel): Unit = {
+  def setupMockPreviousObligations(response: ReportDeadlinesResponseModel): Unit = {
     when(mockIncomeTaxViewChangeConnector.getPreviousObligations()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockGetFinancialDetails(taxYear: Int)(response: FinancialDetailsResponseModel): Unit = {
-    when(mockIncomeTaxViewChangeConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+  def setupMockGetFinancialDetails(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
+    when(mockIncomeTaxViewChangeConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 

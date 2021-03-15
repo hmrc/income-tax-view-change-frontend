@@ -32,15 +32,26 @@ feedback.title                                                  = Rhoi adborth
 
 ## Home Page ##
 home.heading                                                    = Treth Incwm
+home.agent.heading                                              = Treth Incwm eich cleient
+home.agent.changeClientLink                                     = Newid cleient
+home.agent.visualHidden.clientsName                             = Enw’r cleient
 home.unique.taxpayer.reference                                  = Cyfeirnod Unigryw y Trethdalwr - {0}
-home.payments.heading                                           = Taliad nesaf yn ddyledus
+home.utr                                                        = UTR: {0}
+home.payments.heading                                           = Taliadau nesaf yn ddyledus
 home.payments.no-payments-due                                   = Dim taliadau’n ddyledus
-home.payments.view                                              = Bwrw golwg dros daliadau
+home.payments.view                                              = Bwrw golwg dros yr hyn sydd arnoch
+home.overdue.date.payment.count                                 = {0} YN HWYR TALIADAU
+home.overdue.date.update.count                                  = {0} YN HWYR DIWEDDARIADAU
+home.overdue.date                                               = YN HWYR
 home.updates.heading                                            = Diweddariad nesaf i’w gyflwyno erbyn
 home.updates.view                                               = Bwrw golwg dros ddiweddariadau
 home.tax-years.heading                                          = Eich blynyddoedd treth
 home.tax-years.description                                      = Gwirio statws pob blwyddyn dreth
+home.your-returns.agent.description                             = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
 home.tax-years.view                                             = Bwrw golwg dros flynyddoedd treth
+home.tax-years.viewPayments                                     = Bwrw golwg dros hanes eich taliadau
+home.manage-income-tax.heading                                  = Rheoli Treth Incwm
+home.update-and-submit-your-returns.Link                        = Diweddaru a chyflwyno’ch Treth Incwm
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Helpu i wella’r gwasanaeth hwn
@@ -307,10 +318,16 @@ upliftFailure.bullet.3 = nid oeddem yn gallu paru’ch manylion â’r hyn sydd 
 ## Title pattern
 titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK
 
-## Payment History Page ##
 
+## Payment History Page ##
 paymentHistory.heading                                          = Payment history
 paymentHistory.info                                             = If you cannot see all your previous payments here, you can find them in your classic {0}.
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
+
+# Agent Base
+agent.base.service_name                                         = Treth Incwm fanylion eich cleient
+agent.title_pattern.service_name.govuk                          = {0} - Treth Incwm fanylion eich cleient - GOV.UK
+agent.error.title_pattern.service_name.govuk                    = Error: {0} - Treth Incwm fanylion eich cleient - GOV.UK
+
