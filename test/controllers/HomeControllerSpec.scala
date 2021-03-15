@@ -122,7 +122,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
 
           }
 
@@ -139,7 +139,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
           }
 
           "All financial transaction bill are paid" in new Setup {
@@ -155,7 +155,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
           }
 
           "There is no calculation data" in new Setup {
@@ -169,7 +169,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
           }
 
           s"All calculation error models from the service have a status of ${Status.NOT_FOUND}" in new Setup {
@@ -183,7 +183,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
           }
 
           "There are no crystallised calculation data" in new Setup {
@@ -199,7 +199,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text() shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text() shouldBe "No payments due"
           }
         }
 
@@ -297,7 +297,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
 
           }
 
@@ -316,7 +316,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
           }
 
           "All financial detail bill are paid" in new Setup {
@@ -334,7 +334,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
           }
 
           "There is no calculation data" in new Setup {
@@ -349,7 +349,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
           }
 
           s"All calculation error models from the service have a status of ${Status.NOT_FOUND}" in new Setup {
@@ -364,7 +364,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text shouldBe "No payments due"
           }
 
           "There are no crystallised calculation data" in new Setup {
@@ -383,7 +383,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
             status(result) shouldBe Status.OK
             val document = Jsoup.parse(bodyOf(result))
             document.title shouldBe MessagesLookUp.HomePage.title
-            document.select("#payments-tile > div > p:nth-child(2)").text() shouldBe "No payments due."
+            document.select("#payments-tile > div > p:nth-child(2)").text() shouldBe "No payments due"
           }
         }
 

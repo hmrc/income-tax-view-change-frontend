@@ -129,7 +129,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
             getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE PAYMENTS")
           }
           "has no next payment" in new Setup(nextPaymentOrOverdue = None) {
-            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"No payments due.")
+            getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"No payments due")
           }
         }
         "has the date of the next payment due" in new Setup {
