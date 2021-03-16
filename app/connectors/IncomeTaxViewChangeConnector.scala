@@ -75,7 +75,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     s"${config.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/from/$from/to/$to"
   }
 
-  def getOutstandingChargesUrl(idType: String, idNumber: Int, taxYear: String): String = {
+  def getOutstandingChargesUrl(idType: String, idNumber: Long, taxYear: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
   }
 
@@ -342,10 +342,12 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   }
 
-  def getOutstandingCharges(idType: String, idNumber: Int, taxYear: String)
+  def getOutstandingCharges(idType: String, idNumber: Long, taxYear: String)
                          (implicit headerCarrier: HeaderCarrier): Future[OutstandingChargesResponseModel] = {
 
-    val url = getOutstandingChargesUrl(idType,idNumber, taxYear)
+
+    val url = getOutstandingChargesUrl(idType,idNumber, s"$taxYear-04-05")
+
     Logger.debug(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - GET $url")
 
     http.GET[HttpResponse](url) map { response =>

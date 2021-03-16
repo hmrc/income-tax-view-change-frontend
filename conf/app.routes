@@ -29,7 +29,7 @@ GET         /tax-years                              controllers.TaxYearsControll
 GET         /payment                                controllers.PaymentController.paymentHandoff(amountInPence: Long)
 
 #Payments due
-GET         /payments-due                           controllers.PaymentDueController.viewPaymentsDue
+GET         /payments-owed                           controllers.PaymentDueController.viewPaymentsDue
 
 #Charge summary
 GET			/tax-years/:taxYear/charge				controllers.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String)

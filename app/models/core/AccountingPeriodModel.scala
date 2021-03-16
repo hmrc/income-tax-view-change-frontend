@@ -16,12 +16,9 @@
 
 package models.core
 
-import java.time.LocalDate
-import java.time.chrono.ChronoLocalDate
-
-import implicits.ImplicitDateFormatter
 import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.play.language.LanguageUtils
+
+import java.time.LocalDate
 
 
 case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {

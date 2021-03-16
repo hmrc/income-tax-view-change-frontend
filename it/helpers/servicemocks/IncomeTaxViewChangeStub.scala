@@ -127,4 +127,16 @@ object IncomeTaxViewChangeStub {
     WiremockHelper.verifyGet(paymentsUrl(nino, from, to))
   }
 
+  //Outstanding charges Stubs
+  def getOutstandingChargesUrl(idType: String, idNumber: Long, taxYear: String): String = {
+    s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
+  }
+  def stubGetOutstandingChargesResponse(idType: String, idNumber: Long, taxYear: String)
+                             (status: Int, response: JsValue): StubMapping = {
+    WiremockHelper.stubGet(getOutstandingChargesUrl(idType, idNumber, s"${taxYear.toInt}-04-05"), status, response.toString())
+  }
+
+  def verifyGetOutstandingChargesResponse(idType: String, idNumber: Long, taxYear: String): Unit = {
+    WiremockHelper.verifyGet(getOutstandingChargesUrl(idType, idNumber, s"${taxYear.toInt}-04-05"))
+  }
 }

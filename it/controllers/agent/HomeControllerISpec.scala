@@ -150,6 +150,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 status = OK,
                 response = IncomeSourceDetailsModel(
                   mtdbsa = testMtditid,
+                  yearOfMigration = None,
                   businesses = List(BusinessDetailsModel(
                     "testId",
                     AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
@@ -217,6 +218,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 status = OK,
                 response = IncomeSourceDetailsModel(
                   mtdbsa = testMtditid,
+                  yearOfMigration = None,
                   businesses = List(BusinessDetailsModel(
                     "testId",
                     AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
@@ -284,6 +286,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 status = OK,
                 response = IncomeSourceDetailsModel(
                   mtdbsa = testMtditid,
+                  yearOfMigration = None,
                   businesses = List(BusinessDetailsModel(
                     "testId",
                     AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
@@ -351,6 +354,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 status = OK,
                 response = IncomeSourceDetailsModel(
                   mtdbsa = testMtditid,
+                  yearOfMigration = None,
                   businesses = List(BusinessDetailsModel(
                     "testId",
                     AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
@@ -431,6 +435,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
             status = OK,
             response = IncomeSourceDetailsModel(
               mtdbsa = testMtditid,
+              yearOfMigration = None,
               businesses = List(BusinessDetailsModel(
                 "testId",
                 AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
@@ -479,6 +484,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
           status = OK,
           response = IncomeSourceDetailsModel(
             mtdbsa = testMtditid,
+            yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
               "testId",
               AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
@@ -509,6 +515,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
         status = INTERNAL_SERVER_ERROR,
         response = IncomeSourceDetailsModel(
           mtdbsa = testMtditid,
+          yearOfMigration = None,
           businesses = List(BusinessDetailsModel(
             "testId",
             AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),

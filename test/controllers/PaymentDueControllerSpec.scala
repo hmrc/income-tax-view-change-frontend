@@ -16,30 +16,39 @@
 
 package controllers
 
+import assets.BaseTestConstants
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import assets.FinancialDetailsTestConstants._
 import assets.FinancialTransactionsTestConstants._
+import assets.OutstandingChargesTestConstants.{invalidOutStandingChargeJson, validOutStandingChargeResponseJsonWithAciAndBcdCharges}
 import audit.AuditingService
+import audit.mocks.MockAuditingService
+import auth.FrontendAuthorisedFunctions
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import models.financialDetails.WhatYouOweChargesList
+import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
+import play.api.{Configuration, Environment}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import services.{FinancialDetailsService, FinancialTransactionsService}
+import services.{FinancialDetailsService, FinancialTransactionsService, PaymentDueService}
 
 import scala.concurrent.Future
 
 class PaymentDueControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching {
+  with MockIncomeSourceDetailsPredicate with MockIncomeTaxViewChangeConnector with ImplicitDateFormatter with FeatureSwitching {
 
 
   trait Setup {
 
     val financialTransactionsService: FinancialTransactionsService = mock[FinancialTransactionsService]
-    val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
+    val paymentDueService: PaymentDueService = mock[PaymentDueService]
 
     val controller = new PaymentDueController(
       app.injector.instanceOf[SessionTimeoutPredicate],
@@ -47,7 +56,7 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       financialTransactionsService,
-      financialDetailsService,
+      paymentDueService,
       app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AuditingService],
@@ -60,6 +69,12 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
 
   def testFinancialTransaction(taxYear: Int) = financialTransactionsModel(s"$taxYear-04-05")
   def testFinancialDetail(taxYear: Int) = financialDetailsModel(taxYear)
+
+  def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(List(chargeModel(2019)), List(chargeModel(2020)),
+    List(chargeModel(2021)), Some(OutstandingChargesModel(List(
+      OutstandingChargeModel("BCD", "2020-12-31", 10.23, 1234), OutstandingChargeModel("OCI", "2020-12-31", 1.23, 1234)))))
+
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList()
 
   val noFinancialTransactionErrors = List(testFinancialTransaction(2018))
   val hasFinancialTransactionErrors = List(testFinancialTransaction(2018), financialTransactionsErrorModel)
@@ -121,39 +136,49 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
       }
     }
     "NewFinancialDetailsApi FS is enabled" when {
-      "obtaining a users transaction" should {
-        "send the user to the paymentsDue page with transactions" in new Setup {
+      "obtaining a users charge" should {
+        "send the user to the paymentsOwe page with full data of charges" in new Setup {
           enable(NewFinancialDetailsApi)
-          mockSingleBusinessIncomeSource()
-          when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-            .thenReturn(Future.successful(noFinancialDetailErrors))
+          mockSingleBISWithCurrentYearAsMigrationYear()
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+
+          when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
+            .thenReturn(Future.successful(whatYouOweChargesListFull))
 
           val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
 
           status(result) shouldBe Status.OK
         }
 
-        "send the user to the Internal error page with internal server errors" in new Setup {
+        "return success page with empty data in WhatYouOwe model" in new Setup {
+
           enable(NewFinancialDetailsApi)
-          mockSingleBusinessIncomeSource()
-          when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-            .thenReturn(Future.successful(hasAFinancialDetailError))
+          mockSingleBISWithCurrentYearAsMigrationYear()
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+          when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
+            .thenReturn(Future.successful(whatYouOweChargesListEmpty))
+
+          val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
+
+          status(result) shouldBe Status.OK
+        }
+
+        "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {
+
+          enable(NewFinancialDetailsApi)
+          mockSingleBISWithCurrentYearAsMigrationYear()
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+          when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
+            .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
           val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-
-        "send the user to the Internal error page with internal server errors and transactions" in new Setup {
-          enable(NewFinancialDetailsApi)
-          mockBothIncomeSources()
-          when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
-            .thenReturn(Future.successful(hasFinancialDetailErrors))
-
-          val result = controller.viewPaymentsDue(fakeRequestWithActiveSession)
-
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-
         }
       }
       disable(NewFinancialDetailsApi)

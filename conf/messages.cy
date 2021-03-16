@@ -290,6 +290,34 @@ paymentDue.payNow                                               = Talu nawr
 paymentDue.tax-year                                             = Blwyddyn dreth {0} i {1}
 paymentDue.due                                                  = ddyledus
 
+## What you owe
+whatYouOwe.heading                                              = What you owe
+whatYouOwe.no-payments-due                                      = You have no payments due.
+whatYouOwe.sa-note                                              = You still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous Self Assessment online account.
+whatYouOwe.outstanding-charges-note                             = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
+whatYouOwe.dropdown.info                                        = What are the payment types?
+whatYouOwe.payment-days-note                                    = Payments can take up to 7 days to process.
+whatYouOwe.credit-on-account                                    = If you make a payment more than 30 days before a payment is due, you will see it as credit on account.
+whatYouOwe.payNow                                               = Pay now
+whatYouOwe.pay-now-aria                                         = Pay now for Tax year {0} to {1}
+whatYouOwe.pre-mtd-payments                                     = Tax year {0} to {1} pre-Making Tax Digital payments
+whatYouOwe.tableHead.due-date                                   = Due date
+whatYouOwe.tableHead.payment-type                               = Payment type
+whatYouOwe.tableHead.amount-due                                 = Amount due
+whatYouOwe.paymentOnAccount1.text							    = Payment on account 1 of 2
+whatYouOwe.paymentOnAccount2.text							    = Payment on account 2 of 2
+whatYouOwe.balancingCharge.text  							    = Remaining balance
+whatYouOwe.remaining-balance.heading                            = Remaining balance
+whatYouOwe.remaining-balance.line1                              = The remaining balance is the tax you still need to pay for a tax year.
+whatYouOwe.payment-on-account.heading                           = Payment on account
+whatYouOwe.payment-on-account.line1                             = This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill.
+whatYouOwe.over-due-payments                                    = Overdue payments
+whatYouOwe.over-due                                             = OVERDUE
+whatYouOwe.due-in-thirty-days-payments                          = Due within 30 days
+whatYouOwe.future-payments                                      = Future payments
+whatYouOwe.payment-type.taxYear                                 = Tax year {0} to {1}
+
+
 ## Regimes
 regimes.UK = Y DU
 regimes.Scotland = Yr Alban

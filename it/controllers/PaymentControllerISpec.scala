@@ -28,7 +28,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
   val submissionJson: JsValue = Json.parse(
     s"""
        |{
-       | "utr": "saUtr",
+       | "utr": "1234567890",
        | "amountInPence": 10000,
        | "returnUrl": "${appConfig.paymentRedirectUrl}",
        | "backUrl": "${appConfig.paymentRedirectUrl}"

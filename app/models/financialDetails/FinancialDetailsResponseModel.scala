@@ -26,7 +26,6 @@ case class FinancialDetailsModel(financialDetails: List[Charge]) extends Financi
 
   def findChargeForTaxYear(taxYear: Int): Option[Charge] = financialDetails.find(_.taxYear.toInt == taxYear)
   def isAllPaid()(implicit user: MtdItUser[_]): Boolean = financialDetails.forall(_.isPaid)
-
 }
 
 
