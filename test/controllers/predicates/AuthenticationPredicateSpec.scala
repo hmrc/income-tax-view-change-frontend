@@ -139,6 +139,15 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
 
 					redirectLocation(result) shouldBe Some(ivUpliftRedirectUrl)
 				}
+
+				"the feature switch is enabled for an organisation without a nino" in {
+					enable(IvUplift)
+					setupMockAuthRetrievalSuccess(testAuthSuccessResponseOrgNoNino(ConfidenceLevel.L50))
+
+					def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
+
+					redirectLocation(result) shouldBe Some(ivUpliftRedirectUrl)
+				}
 			}
 
 			"return Ok (200)" when {
@@ -146,15 +155,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
 				"the feature switch is disabled" in {
 					disable(IvUplift)
 					setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L50))
-
-					def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
-
-					status(result) shouldBe Status.OK
-				}
-
-				"the feature switch is enabled for an organisation without a nino" in {
-					enable(IvUplift)
-					setupMockAuthRetrievalSuccess(testAuthSuccessResponseOrgNoNino(ConfidenceLevel.L50))
 
 					def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
 
