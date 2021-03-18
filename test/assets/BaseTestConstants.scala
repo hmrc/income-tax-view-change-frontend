@@ -55,6 +55,7 @@ object BaseTestConstants {
   val testPaymentLot = "081203010024"
   val testPaymentLotItem = "000001"
   val testErrorStatus = Status.INTERNAL_SERVER_ERROR
+  val testErrorNotFoundStatus = Status.NOT_FOUND
   val testErrorMessage = "Dummy Error Message"
 
   def testAuthSuccessResponse(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,

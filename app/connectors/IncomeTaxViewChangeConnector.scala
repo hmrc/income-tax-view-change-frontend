@@ -29,7 +29,7 @@ import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, P
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, NOT_FOUND}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 

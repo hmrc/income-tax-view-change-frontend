@@ -52,7 +52,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           And("The expected result is returned")
           res should have(
             httpStatus(SEE_OTHER),
-            redirectURI(routes.CalculationController.renderCalculationPage(testYearInt).url)
+            redirectURI(routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url)
           )
 
           await(mongoDbConnection.repo.findById("idOne")) shouldBe None
@@ -114,7 +114,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           And("The expected result is returned")
           await(res) should have(
             httpStatus(SEE_OTHER),
-            redirectURI(routes.CalculationController.renderCalculationPage(testYearInt).url)
+            redirectURI(routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url)
           )
 
           Then("I check all calls expected were made")

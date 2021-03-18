@@ -109,7 +109,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
         pageDocument.getElementById(s"bills-link-$testTaxYearTo").text shouldBe paymentDueMessages.billLink
         pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("aria-label") shouldBe paymentDueMessages.billLinkAria(testTaxYearFrom.toString, testTaxYearTo.toString)
 
-        val expectedUrl = controllers.routes.CalculationController.renderCalculationPage(testTaxYearTo).url
+        val expectedUrl = controllers.routes.CalculationController.renderTaxYearOverviewPage(testTaxYearTo).url
         pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("href") shouldBe expectedUrl
       }
 
@@ -179,7 +179,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
         pageDocument.getElementById(s"bills-link-$testTaxYearTo").text shouldBe paymentDueMessages.billLink
         pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("aria-label") shouldBe paymentDueMessages.billLinkAria(testTaxYearFrom.toString, testTaxYearTo.toString)
 
-        val expectedUrl = controllers.routes.CalculationController.renderCalculationPage(testTaxYearTo).url
+        val expectedUrl = controllers.routes.CalculationController.renderTaxYearOverviewPage(testTaxYearTo).url
         pageDocument.select(s"#bills-link-$testTaxYearTo a").attr("href") shouldBe expectedUrl
       }
 

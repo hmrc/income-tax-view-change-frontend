@@ -22,6 +22,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates._
+import forms.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation._
 import models.financialDetails.{Charge, FinancialDetailsErrorModel, FinancialDetailsModel}
@@ -57,29 +58,22 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
-  private def view(taxYear: Int,
-                   calculation: Calculation,
-                   transaction: Option[TransactionModel] = None,
-                   charge: Option[Charge] = None
-                  )(implicit request: Request[_]): Html = {
-    if(isEnabled(TaxYearOverviewUpdate)) {
-      taxYearOverview(
-        taxYear = taxYear,
-        overview = CalcOverview(calculation, transaction),
-        dateFormatter
-      )
-    } else {
-      taxYearOverviewOld(
-        taxYear = taxYear,
-        overview = CalcOverview(calculation, transaction),
-        transaction = transaction,
-        charge = charge,
-        incomeBreakdown = isEnabled(IncomeBreakdown),
-        deductionBreakdown = isEnabled(DeductionBreakdown),
-        taxDue = isEnabled(TaxDue),
-        dateFormatter
-      )
-    }
+  private def viewOld(
+                     taxYear: Int,
+                     calculation: Calculation,
+                     transaction: Option[TransactionModel] = None,
+                     charge: Option[Charge] = None
+                     )(implicit request: Request[_]): Html = {
+    taxYearOverviewOld(
+      taxYear = taxYear,
+      overview = CalcOverview(calculation, transaction),
+      transaction = transaction,
+      charge = charge,
+      incomeBreakdown = isEnabled(IncomeBreakdown),
+      deductionBreakdown = isEnabled(DeductionBreakdown),
+      taxDue = isEnabled(TaxDue),
+      dateFormatter
+    )
   }
 
   private def showCalculationForYear(taxYear: Int): Action[AnyContent] = action.async {
@@ -95,7 +89,7 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
                   itvcErrorHandler.showInternalServerError()
                 case financialDetailsModel: FinancialDetailsModel =>
                   val charge = financialDetailsModel.findChargeForTaxYear(taxYear)
-                  Ok(view(taxYear, calculation, charge = charge))
+                  Ok(viewOld(taxYear, calculation, charge = charge))
               }
             } else {
               financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear) map {
@@ -104,11 +98,11 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
                   itvcErrorHandler.showInternalServerError()
                 case financialTransactionsModel: FinancialTransactionsModel =>
                   val transaction = financialTransactionsModel.findChargeForTaxYear(taxYear)
-                  Ok(view(taxYear, calculation, transaction))
+                  Ok(viewOld(taxYear, calculation, transaction))
               }
             }
           } else {
-            Future.successful(Ok(view(taxYear, calculation)))
+            Future.successful(Ok(viewOld(taxYear, calculation)))
           }
         case CalcDisplayNoDataFound | CalcDisplayError =>
           Logger.error(s"[CalculationController][showCalculationForYear] - Could not retrieve calculation for year $taxYear")
@@ -116,9 +110,49 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
       }
   }
 
-  def renderCalculationPage(taxYear: Int): Action[AnyContent] = {
+
+  private def view(taxYear: Int,
+                   calculation: Calculation,
+                   transaction: Option[TransactionModel] = None,
+                   charge: List[Charge]
+                  )(implicit request: Request[_]): Html = {
+    taxYearOverview(
+      taxYear = taxYear,
+      overview = CalcOverview(calculation, transaction),
+      charges = charge,
+      dateFormatter
+    )
+  }
+
+  private def withTaxYearFinancials(taxYear: Int)(f: List[Charge] => Result)(implicit user: MtdItUser[AnyContent]) = {
+    financialDetailsService.getFinancialDetails(taxYear, user.nino) map {
+      case FinancialDetailsModel(charges) => f(charges)
+      case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
+      case _ => itvcErrorHandler.showInternalServerError()
+    }
+  }
+
+  private def showTaxYearOverview(taxYear: Int): Action[AnyContent] = action.async {
+    implicit user =>
+      calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
+        case CalcDisplayModel(_, calcAmount, calculation, _) =>
+          auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
+          withTaxYearFinancials(taxYear){ charges =>
+            Ok(view(taxYear, calculation, charge = charges)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
+          }
+        case CalcDisplayNoDataFound | CalcDisplayError =>
+          Logger.error(s"[CalculationController][showTaxYearOverview] - Could not retrieve calculation for year $taxYear")
+          Future.successful(itvcErrorHandler.showInternalServerError())
+      }
+  }
+
+  def renderTaxYearOverviewPage(taxYear: Int): Action[AnyContent] = {
     if (taxYear > 0) {
-      showCalculationForYear(taxYear)
+      if (isEnabled(TaxYearOverviewUpdate)) {
+        showTaxYearOverview(taxYear)
+      } else {
+        showCalculationForYear(taxYear)
+      }
     } else {
       action.async { implicit request =>
         Future.successful(BadRequest(views.html.errorPages.standardError(

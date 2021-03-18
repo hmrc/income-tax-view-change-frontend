@@ -26,7 +26,7 @@ import FinancialDetailsTestConstants._
 class ChargeSummarySpec extends ViewSpec {
 
 	class Setup(charge: Charge, paymentEnabled: Boolean = true) {
-		val view = chargeSummary(charge, mockImplicitDateFormatter, paymentEnabled)
+		val view = chargeSummary(charge, mockImplicitDateFormatter, paymentEnabled, "testBackURL")
 		val document = Jsoup.parse(view.toString())
 	}
 

@@ -16,7 +16,7 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testErrorNotFoundStatus}
 import models.financialDetails.{Charge, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem}
 import play.api.libs.json.{JsValue, Json}
 
@@ -155,4 +155,7 @@ object FinancialDetailsTestConstants {
     "code" -> testErrorStatus,
     "message" -> testErrorMessage
   )
+
+  val testFinancialDetailsNotFoundErrorModel: FinancialDetailsErrorModel = FinancialDetailsErrorModel(testErrorNotFoundStatus, testErrorMessage)
+
 }

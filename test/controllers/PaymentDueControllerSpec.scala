@@ -27,6 +27,7 @@ import auth.FrontendAuthorisedFunctions
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -111,6 +112,8 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
           val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
 
           status(result) shouldBe Status.OK
+          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+
         }
 
         "send the user to the Internal error page with internal server errors" in new Setup {
@@ -149,6 +152,7 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
           val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
 
           status(result) shouldBe Status.OK
+          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
         }
 
         "return success page with empty data in WhatYouOwe model" in new Setup {
@@ -164,6 +168,7 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
           val result = await(controller.viewPaymentsDue(fakeRequestWithActiveSession))
 
           status(result) shouldBe Status.OK
+          result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
         }
 
         "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {

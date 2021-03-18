@@ -16,10 +16,11 @@
 
 package views
 
+import assets.FinancialDetailsTestConstants.{financialDetailsModel, fullChargeModel, testValidFinancialDetailsModel}
 import assets.MessagesLookUp.Breadcrumbs
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.calculation.CalcOverview
-import models.financialDetails.Charge
+import models.financialDetails.{Charge, FinancialDetailsModel}
 import models.financialTransactions.TransactionModel
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -27,7 +28,7 @@ import views.html.taxYearOverview
 
 class TaxYearOverviewViewSpec extends ViewSpec {
 
-  val testYear: Int = 2020
+  val testYear: Int = 2018
 
   def completeOverview(crystallised: Boolean): CalcOverview = CalcOverview(
     timestamp = Some("2020-01-01T00:35:34.185Z"),
@@ -45,16 +46,13 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     outstandingAmount = Some(8.08)
   )
 
-  val chargeModel: Charge = Charge(
-		taxYear = "2018",
-		transactionId = "id",
-    totalAmount = Some(7.07),
-    outstandingAmount = Some(8.08)
-  )
+  val testChargesList: List[Charge] = List(fullChargeModel)
+  val emptyChargeList: List[Charge] = List.empty
 
-  def estimateView: Html = taxYearOverview(testYear, completeOverview(false), mockImplicitDateFormatter)
+  def estimateView(chargeList: List[Charge] = testChargesList): Html = taxYearOverview(
+    testYear, completeOverview(false), chargeList, mockImplicitDateFormatter)
 
-  def crystallisedView: Html = taxYearOverview(testYear, completeOverview(true), mockImplicitDateFormatter)
+  def crystallisedView: Html = taxYearOverview(testYear, completeOverview(true), testChargesList, mockImplicitDateFormatter)
 
   object taxYearOverviewMessages{
     val title: String = "Tax year overview - Business Tax account - GOV.UK"
@@ -73,14 +71,21 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val allowancesAndDeductions: String = "Allowances and deductions"
     val totalIncomeDue: String = "Total income on which tax is due"
     val incomeTaxNationalInsuranceDue: String = "Income Tax and National Insurance contributions due"
+    val paymentType: String = "Payment type"
+    val dueDate: String = "Due date"
+    val status: String = "Status"
+    val amount: String = "Amount"
+    val paymentOnAccount1: String = "Payment on account 1 of 2"
+    val unpaid: String = "Unpaid"
+    val noPaymentsDue: String = "No payments currently due."
   }
 
   "taxYearOverview" should {
-    "have the correct title" in new Setup(estimateView) {
+    "have the correct title" in new Setup(estimateView()) {
       document.title shouldBe taxYearOverviewMessages.title
     }
 
-    "have a breadcrumb trail" in new Setup(estimateView) {
+    "have a breadcrumb trail" in new Setup(estimateView()) {
       content.selectHead("#breadcrumb-bta").text shouldBe Breadcrumbs.bta
       content.selectHead("#breadcrumb-bta").attr("href") shouldBe appConfig.businessTaxAccount
       content.selectHead("#breadcrumb-it").text shouldBe Breadcrumbs.it
@@ -91,20 +96,20 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       content.selectHead("#breadcrumb-tax-year-overview").hasAttr("href") shouldBe false
     }
 
-    "have the correct heading" in new Setup(estimateView) {
+    "have the correct heading" in new Setup(estimateView()) {
       content.selectHead("  h1").text shouldBe taxYearOverviewMessages.heading
     }
 
-    "have the correct secondary heading" in new Setup(estimateView) {
+    "have the correct secondary heading" in new Setup(estimateView()) {
       content.selectHead("header > p").text shouldBe taxYearOverviewMessages.secondaryHeading
     }
 
-    "display the calculation date" in new Setup(estimateView) {
+    "display the calculation date" in new Setup(estimateView()) {
       content.selectHead("dl > div:nth-child(1) > dd:nth-child(1)").text shouldBe taxYearOverviewMessages.calculationDate
       content.selectHead("dl > div:nth-child(1) > dd:nth-child(2)").text shouldBe taxYearOverviewMessages.calcDate
     }
 
-    "display the estimate due for an ongoing tax year" in new Setup(estimateView) {
+    "display the estimate due for an ongoing tax year" in new Setup(estimateView()) {
       content.selectHead("dl > div:nth-child(2) > dd:nth-child(1)").text shouldBe taxYearOverviewMessages.estimate
       content.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
     }
@@ -114,7 +119,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       content.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe completeOverview(true).taxDue.toCurrencyString
     }
 
-    "have a paragraph explaining the calc date for an ongoing year" in new Setup(estimateView) {
+    "have a paragraph explaining the calc date for an ongoing year" in new Setup(estimateView()) {
       content.selectHead(".panel").text shouldBe taxYearOverviewMessages.calcDateInfo
     }
 
@@ -122,13 +127,13 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       content.getOptionalSelector(".panel") shouldBe None
     }
 
-    "show three tabs with the correct tab headings" in new Setup(estimateView) {
+    "show three tabs with the correct tab headings" in new Setup(estimateView()) {
       content.selectHead("#tab_taxCalculation").text shouldBe taxYearOverviewMessages.taxCalculation
       content.selectHead("#tab_payments").text shouldBe taxYearOverviewMessages.payments
       content.selectHead("#tab_updates").text shouldBe taxYearOverviewMessages.updates
     }
 
-    "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView) {
+    "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {
       content.selectHead("#taxCalculation > h2").text shouldBe taxYearOverviewMessages.estimate
     }
 
@@ -136,30 +141,59 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       content.selectHead("#taxCalculation > h2").text shouldBe taxYearOverviewMessages.taxCalculation
     }
 
-    "display the income row" in new Setup(estimateView) {
+    "display the income row in the Tax Calculation tab" in new Setup(estimateView()) {
       val incomeLink = content.selectHead(" #income-deductions-table tr:nth-child(1) td:nth-child(1) a")
       incomeLink.text shouldBe taxYearOverviewMessages.income
       incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
       content.selectHead("#income-deductions-table tr:nth-child(1) .numeric").text shouldBe completeOverview(false).income.toCurrencyString
     }
 
-    "display the Allowances and deductions row" in new Setup(estimateView) {
+    "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {
       val allowancesLink = content.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
       allowancesLink.text shouldBe taxYearOverviewMessages.allowancesAndDeductions
       allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
       content.selectHead("#income-deductions-table tr:nth-child(2) .numeric").text shouldBe completeOverview(false).deductions.toNegativeCurrencyString
     }
 
-    "display the Total income on which tax is due row" in new Setup(estimateView) {
+    "display the Total income on which tax is due row in the Tax Calculation tab" in new Setup(estimateView()) {
       content.selectHead(".total-section:nth-child(1)").text shouldBe taxYearOverviewMessages.totalIncomeDue
       content.selectHead(".total-section:nth-child(2)").text shouldBe completeOverview(false).totalTaxableIncome.toCurrencyString
     }
 
-    "display the Income Tax and National Insurance Contributions Due row" in new Setup(estimateView) {
+    "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView()) {
       val totalTaxDueLink = content.selectHead("#taxdue-payments-table td:nth-child(1) a")
       totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
       totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
       content.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
+    }
+
+    "display the table headings in the Payments tab" in new Setup(estimateView()) {
+      content.selectHead("#paymentTypeHeading").text shouldBe taxYearOverviewMessages.paymentType
+      content.selectHead("#paymentDueDateHeading").text shouldBe taxYearOverviewMessages.dueDate
+      content.selectHead("#paymentStatusHeading").text shouldBe taxYearOverviewMessages.status
+      content.selectHead("#paymentAmountHeading").text shouldBe taxYearOverviewMessages.amount
+    }
+
+    "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView()) {
+      val paymentTypeLink = content.selectHead("#payments-table tr:nth-child(2) td:nth-child(1) a")
+      paymentTypeLink.text shouldBe taxYearOverviewMessages.paymentOnAccount1
+      paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(testYear, fullChargeModel.transactionId).url
+    }
+
+    "display the Due date in the Payments tab" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 May 2019"
+    }
+
+    "display the Status in the payments tab" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe taxYearOverviewMessages.unpaid
+    }
+
+    "display the Amount in the payments tab" in new Setup(estimateView()) {
+      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(4)").text shouldBe "£1,400.00"
+    }
+
+    "display No payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
+      content.selectHead("#payments p").text shouldBe taxYearOverviewMessages.noPaymentsDue
     }
   }
 }
