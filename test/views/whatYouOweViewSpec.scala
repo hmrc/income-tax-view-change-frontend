@@ -52,8 +52,8 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
-  def outstandingChargesModel(dueDate: String) = OutstandingChargesModel(
-    List(OutstandingChargeModel("BCD", dueDate, 123456.67, 1234), OutstandingChargeModel("ACI", dueDate, 12.67, 1234)))
+  def outstandingChargesModel(dueDate: String, aciAmount: BigDecimal = 12.67) = OutstandingChargesModel(
+    List(OutstandingChargeModel("BCD", dueDate, 123456.67, 1234), OutstandingChargeModel("ACI", dueDate, aciAmount, 1234)))
 
   val financialDetailsDueInMoreThan30Days = testFinancialDetailsModel(List(Some("POA1"), Some("POA2")),
     List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
@@ -82,8 +82,14 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val whatYouOweDataWithMixedData = WhatYouOweChargesList(overduePaymentList = List(financialDetailsWithMixedData.financialDetails(2)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData.financialDetails(1)), futurePayments = List(financialDetailsWithMixedData.financialDetails(0)))
 
+  val outstandingChargesWithAciValueZeroAndOverdue = outstandingChargesModel(LocalDate.now().minusDays(15).toString, 0.00)
+  val whatYouOweDataWithWithAciValueZeroAndOverdue = WhatYouOweChargesList(overduePaymentList = List(financialDetailsWithMixedData.financialDetails(2)),
+    dueInThirtyDaysList = List(financialDetailsWithMixedData.financialDetails(1)), futurePayments = List(financialDetailsWithMixedData.financialDetails(0)),
+    outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
+  )
+
   "The What you owe view with financial details model" should {
-    "when the user has charges for year 1 of migration and access viewer before 30 days of due date" should {
+    "when the user has charges and access viewer before 30 days of due date" should {
       s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days,
         Some(LocalDate.now().getYear), true) {
 
@@ -109,12 +115,6 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         remainingBalanceTable.select("td").get(1).text() shouldBe whatYouOwe.remainingBalance
         remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
 
-        val interestTable: Element = pageDocument.select("tr").get(2)
-        interestTable.select("td").first().text() shouldBe ""
-        interestTable.select("td").get(1).text() shouldBe whatYouOwe.interestOnRemainingBalance + " " + whatYouOwe
-          .interestOnRemainingBalanceYear(LocalDate.now().plusDays(35).toLongDateShort, LocalDate.now().toLongDateShort)
-        interestTable.select("td").last().text() shouldBe "£12.67"
-
         pageDocument.getElementById("balancing-charge-type-overdue") shouldBe null
       }
       s"payment type drop down and content exists" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days,
@@ -128,12 +128,12 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"table header and data for future payments" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days,
         Some(LocalDate.now().getYear), true) {
         pageDocument.getElementById("future-payments-heading").text shouldBe whatYouOwe.futurePayments
-        val futurePaymentsHeader: Element = pageDocument.select("tr").get(3)
+        val futurePaymentsHeader: Element = pageDocument.select("tr").get(2)
         futurePaymentsHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
         futurePaymentsHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
         futurePaymentsHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
-        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
+        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
         futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(45).toLongDateShort
         futurePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + " " +
           whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
@@ -143,7 +143,7 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("future-payments-type-0-overdue") shouldBe null
 
-        val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(5)
+        val futurePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
         futurePaymentsTableRow2.select("td").first().text() shouldBe LocalDate.now().plusDays(50).toLongDateShort
         futurePaymentsTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2Text + " " +
           whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
@@ -164,7 +164,7 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "when the user has charges for year 1 of migration and access viewer within 30 days of due date" should {
+    "when the user has charges and access viewer within 30 days of due date" should {
       s"have the title '${whatYouOwe.title}' and notes" in new Setup(whatYouOweDataWithDataDueIn30Days, Some(LocalDate.now().getYear), true) {
 
         pageDocument.title() shouldBe whatYouOwe.title
@@ -184,11 +184,6 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         remainingBalanceTable.select("td").get(1).text() shouldBe whatYouOwe.remainingBalance
         remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
 
-        val interestTable: Element = pageDocument.select("tr").get(2)
-        interestTable.select("td").first().text() shouldBe ""
-        interestTable.select("td").get(1).text() shouldBe whatYouOwe.interestOnRemainingBalance + " " + whatYouOwe
-          .interestOnRemainingBalanceYear(LocalDate.now().plusDays(30).toLongDateShort, LocalDate.now().toLongDateShort)
-        interestTable.select("td").last().text() shouldBe "£12.67"
       }
       s"have payment type drop down details" in new Setup(whatYouOweDataWithDataDueIn30Days, Some(LocalDate.now().getYear), true) {
         pageDocument.getElementById("payment-type-dropdown-title").text shouldBe whatYouOwe.dropDownInfo
@@ -201,12 +196,12 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"have table header and data for due within 30 days" in new Setup(whatYouOweDataWithDataDueIn30Days, Some(LocalDate.now().getYear), true) {
         pageDocument.getElementById("due-in-thirty-days-payments-heading").text shouldBe whatYouOwe.dueInThirtyDays
 
-        val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(3)
+        val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(2)
         dueWithInThirtyDaysHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
         dueWithInThirtyDaysHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
         dueWithInThirtyDaysHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
 
-        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(4)
+        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(3)
         dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().toLongDateShort
         dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + " " +
           whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
@@ -217,7 +212,7 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("due-in-thirty-days-type-0-overdue") shouldBe null
       }
       s"have data with POA2 with hyperlink and no overdue" in new Setup(whatYouOweDataWithDataDueIn30Days, Some(LocalDate.now().getYear), true) {
-        val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(5)
+        val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(4)
         dueWithInThirtyDaysTableRow2.select("td").first().text() shouldBe LocalDate.now().plusDays(1).toLongDateShort
         dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe whatYouOwe.poa2Text + " " +
           whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
@@ -239,7 +234,7 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("over-due-payments-heading") shouldBe null
       }
     }
-    "when the user has charges for year 1 of migration and access viewer after due date" should {
+    "when the user has charges and access viewer after due date" should {
       s"have the title '${whatYouOwe.title}' and notes" in new Setup(whatYouOweDataWithOverdueData, Some(LocalDate.now().getYear), true) {
 
         pageDocument.title() shouldBe whatYouOwe.title
@@ -317,7 +312,7 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "when the user has charges for year 1 of migration and access viewer with mixed dates" should {
+    "when the user has charges and access viewer with mixed dates" should {
       s"have the title '${whatYouOwe.title}' and notes" in new Setup(whatYouOweDataWithMixedData, Some(LocalDate.now().getYear), true) {
 
         pageDocument.title() shouldBe whatYouOwe.title
@@ -387,6 +382,91 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(7500).url
 
         pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
+      }
+    }
+
+    "when the user has charges and access viewer with mixed dates and ACI value of zero" should {
+      s"have the title '${whatYouOwe.title}' and notes" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue, Some(LocalDate.now().getYear), true) {
+
+        pageDocument.title() shouldBe whatYouOwe.title
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
+      }
+      s"have the mtd payments header, table header and data with remaining balance data with no hyperlink but have overdue tag" in new Setup(
+        whatYouOweDataWithWithAciValueZeroAndOverdue, Some(LocalDate.now().getYear), true) {
+        pageDocument.getElementById("pre-mtd-payments-heading").text shouldBe whatYouOwe.preMtdPayments(
+          (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
+        val remainingBalanceHeader: Element = pageDocument.select("tr").first()
+        remainingBalanceHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
+        remainingBalanceHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+        remainingBalanceHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+
+        val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
+        remainingBalanceTable.select("td").first().text() shouldBe LocalDate.now().minusDays(15).toLongDateShort
+        remainingBalanceTable.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " + whatYouOwe.remainingBalance
+        remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
+
+        pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe whatYouOwe.overdueTag
+      }
+      s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue, Some(LocalDate.now().getYear), true) {
+        val overdueTableHeader: Element = pageDocument.select("tr").get(2)
+        overdueTableHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
+        overdueTableHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+        overdueTableHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+
+        val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
+        overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
+        overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " + whatYouOwe.poa2Text + " " +
+          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+        overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
+
+        pageDocument.getElementById("over-due-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          LocalDate.now().getYear, "1040000125").url
+        pageDocument.getElementById("over-due-type-0-overdue").text shouldBe whatYouOwe.overdueTag
+      }
+      s"have due within thirty days header and data with hyperlink and no overdue tag" in new Setup(
+        whatYouOweDataWithWithAciValueZeroAndOverdue, Some(LocalDate.now().getYear), true) {
+        val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(4)
+        dueWithInThirtyDaysHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
+        dueWithInThirtyDaysHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+        dueWithInThirtyDaysHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+
+        val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(5)
+        dueWithInThirtyDaysTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(30).toLongDateShort
+        dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + " " +
+          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+        dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
+
+        pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          LocalDate.now().getYear, "1040000124").url
+        pageDocument.getElementById("due-in-thirty-days-type-0-overdue") shouldBe null
+      }
+      s"have future payments with table header, data and hyperlink without overdue tag" in new Setup(
+        whatYouOweDataWithWithAciValueZeroAndOverdue, Some(LocalDate.now().getYear), true) {
+        pageDocument.getElementById("future-payments-heading").text shouldBe whatYouOwe.futurePayments
+
+        val futurePaymentsHeader: Element = pageDocument.select("tr").get(6)
+        futurePaymentsHeader.select("th").first().text() shouldBe whatYouOwe.dueDate
+        futurePaymentsHeader.select("th").get(1).text() shouldBe whatYouOwe.paymentType
+        futurePaymentsHeader.select("th").last().text() shouldBe whatYouOwe.amountDue
+
+        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(7)
+        futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
+        futurePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.poa1Text + " " +
+          whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
+        futurePaymentsTableRow1.select("td").last().text() shouldBe "£25.00"
+
+        pageDocument.getElementById("future-payments-type-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(
+          LocalDate.now().getYear, "1040000123").url
+        pageDocument.getElementById("future-payments-type-0-overdue") shouldBe null
+      }
+      s"have payment data with button" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue, Some(LocalDate.now().getYear), true) {
+        pageDocument.getElementById("payment-days-note").text shouldBe whatYouOwe.paymentDaysNote
+        pageDocument.getElementById("credit-on-account").text shouldBe whatYouOwe.creditOnAccount
+        pageDocument.getElementById("payment-button").text shouldBe whatYouOwe.payNow
+
+        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
+        
       }
     }
     "have a breadcrumb trail" in new Setup(whatYouOweDataWithMixedData, Some(LocalDate.now().getYear), true) {

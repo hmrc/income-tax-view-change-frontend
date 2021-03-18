@@ -30,7 +30,6 @@ case class OutstandingChargesModel(outstandingCharges: List[OutstandingChargeMod
       && aciChargeType.isDefined
       && (bcdChargeType.get.tieBreaker == aciChargeType.get.tieBreaker)
       && bcdChargeType.get.chargeAmount > 0
-      && aciChargeType.get.chargeAmount > 0
     ) {
       List(bcdChargeType.get, aciChargeType.get)
     } else {

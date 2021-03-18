@@ -110,19 +110,24 @@
                                 </td>
                                 <td class="govuk-table__cell">@{chargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency}</td>
                             </tr>
-                            <tr class="govuk-table__row" id="balancing-charge-type-1">
-                                <td class="govuk-table__cell"></td>
-                                <td class="govuk-table__cell">
-                                    @messages(s"whatYouOwe.balancingCharge.interest.line1.text")
-                                    <div>
+                            @if(LocalDate.parse(chargesList.outstandingChargesModel.get.aciChargeType.get.relevantDueDate).isBefore(LocalDate.now()) &&
+                                    chargesList.outstandingChargesModel.get.aciChargeType.get.chargeAmount > 0) {
+                                <tr class="govuk-table__row" id="balancing-charge-type-1">
+                                    <td class="govuk-table__cell"></td>
+                                    <td class="govuk-table__cell">
+                                        @messages(s"whatYouOwe.balancingCharge.interest.line1.text")
+                                        <div>
                                         @messages(s"whatYouOwe.balancingCharge.interest.line2.text",
-                                        LocalDate.parse(chargesList.outstandingChargesModel.get.aciChargeType.get.relevantDueDate).toLongDateShort,
-                                        LocalDate.now().toLongDateShort
+                                            LocalDate.parse(chargesList.outstandingChargesModel.get.aciChargeType.get.relevantDueDate).toLongDateShort,
+                                            LocalDate.now().toLongDateShort
                                         )
-                                    </div>
-                                </td>
-                                <td class="govuk-table__cell">@{chargesList.outstandingChargesModel.get.aciChargeType.get.chargeAmount.toCurrency}</td>
-                            </tr>
+                                        </div>
+                                    </td>
+                                    <td class="govuk-table__cell">@{
+                                        chargesList.outstandingChargesModel.get.aciChargeType.get.chargeAmount.toCurrency
+                                    }</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
