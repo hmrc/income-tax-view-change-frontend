@@ -64,12 +64,8 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
 				if (confidenceLevel.level < requiredConfidenceLevel  && isEnabled(IvUplift)) {
 					affinityGroup match {
 						case Some(Organisation) => {
-							val nino = enrolments.getEnrolment(appConfig.ninoEnrolmentKey).flatMap(_.getIdentifier(appConfig.ninoIdentifierKey)).map(_.value)
-							if(nino.isDefined) {
-								auditingService.audit(IvUpliftRequiredAuditModel("organisationWithNino", confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
-								Future.successful(Redirect(ivUpliftRedirectUrl))
-							}
-							else f(buildMtdUserOptionNino(enrolments, userName, credentials, affinityGroup))
+							auditingService.audit(IvUpliftRequiredAuditModel("organisation", confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
+							Future.successful(Redirect(ivUpliftRedirectUrl))
 						}
 						case Some(Individual) => {
 							auditingService.audit(IvUpliftRequiredAuditModel("individual", confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
