@@ -1000,6 +1000,27 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
         width: 80px;
     }
 
+    .govuk-table-whatYouOwe th:first-of-type {
+        width: 170px;
+    }
+    .govuk-table-whatYouOwe th:nth-of-type(2) {
+        width: 550px;
+    }
+    .govuk-table-whatYouOwe th:nth-of-type(3) {
+        width: 150px;
+        text-align: right;
+    }
+    .govuk-table-whatYouOwe td:first-of-type {
+        width: 170px;
+    }
+    .govuk-table-whatYouOwe td:nth-of-type(2) {
+        width: 550px;
+    }
+    .govuk-table-whatYouOwe td:nth-of-type(3) {
+        width: 150px;
+        text-align: right;
+    }
+
 .govuk-accordion {
     margin-bottom: 20px;
 }

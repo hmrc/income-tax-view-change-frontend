@@ -56,8 +56,8 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
   "The WhatYouOweChargesList model" when {
 
     "all values in model exists with tie breaker matching in OutstandingCharges Model" should  {
-      "isBcdAndAciChargesListEmpty is false" in {
-        whatYouOweAllData.isBcdAndAciChargesListEmpty shouldBe false
+      "bcdChargeTypeDefinedAndGreaterThanZero is true" in {
+        whatYouOweAllData.bcdChargeTypeDefinedAndGreaterThanZero shouldBe true
       }
       "isChargesListEmpty is false" in {
         whatYouOweAllData.isChargesListEmpty shouldBe false
@@ -69,8 +69,8 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
     }
 
     "all values in model exists except outstanding charges" should  {
-      "isBcdAndAciChargesListEmpty is false" in {
-        whatYouOweFinancialDataWithoutOutstandingCharges.isBcdAndAciChargesListEmpty shouldBe true
+      "bcdChargeTypeDefinedAndGreaterThanZero is false" in {
+        whatYouOweFinancialDataWithoutOutstandingCharges.bcdChargeTypeDefinedAndGreaterThanZero shouldBe false
       }
       "isChargesListEmpty is false" in {
         whatYouOweFinancialDataWithoutOutstandingCharges.isChargesListEmpty shouldBe false

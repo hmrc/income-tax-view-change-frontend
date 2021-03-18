@@ -19,21 +19,18 @@ package controllers
 import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel}
+import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
+import play.api.Logger
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{FinancialTransactionsService, PaymentDueService}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import javax.inject.Inject
-import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
-import services.{FinancialDetailsService, FinancialTransactionsService, PaymentDueService}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import models.outstandingCharges.OutstandingChargesModel
-import play.api.Logger
-
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
@@ -64,7 +61,7 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
       if(isEnabled(NewFinancialDetailsApi)) {
         paymentDueService.getWhatYouOweChargesList().map {
           whatYouOweChargesList =>
-            Ok(views.html.whatYouOwe(chargesList = whatYouOweChargesList, yearOfMigration = user.incomeSources.yearOfMigration.map(_.toInt),
+            Ok(views.html.whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear,
               paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter))
         } recover {
           case ex: Exception =>

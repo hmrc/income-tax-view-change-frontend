@@ -25,11 +25,12 @@ case class WhatYouOweChargesList(overduePaymentList: List[Charge] = List(), dueI
 
   private def getAllCharges: List[Charge] = overduePaymentList ++ dueInThirtyDaysList ++ futurePayments
 
-  def isBcdAndAciChargesListEmpty: Boolean =
-    if(outstandingChargesModel.isDefined) outstandingChargesModel.get.getBcdAndAciTieBreakerChargesModelList.isEmpty
-    else true
+  def bcdChargeTypeDefinedAndGreaterThanZero: Boolean =
+    if(outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined
+      && outstandingChargesModel.get.bcdChargeType.get.chargeAmount > 0) true
+    else false
 
-  def isChargesListEmpty: Boolean = getAllCharges.isEmpty && isBcdAndAciChargesListEmpty
+  def isChargesListEmpty: Boolean = getAllCharges.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
 
 
   def getEarliestTaxYearAndAmountByDueDate: (Int, BigDecimal) = {
