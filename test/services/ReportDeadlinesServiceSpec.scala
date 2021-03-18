@@ -19,6 +19,7 @@ package services
 import java.time.LocalDate
 
 import assets.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
+import assets.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, noIncomeDetails, propertyIncomeOnly}
 import assets.ReportDeadlinesTestConstants._
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
@@ -103,30 +104,25 @@ class ReportDeadlinesServiceSpec extends TestSupport with MockIncomeTaxViewChang
     "return the next report deadline due date" when {
       "there are income sources from property, business with crystallisation" in new Setup {
         setupMockReportDeadlines(obligationsAllDeadlinesSuccessModel)
-
-        await(getNextDeadlineDueDate()) shouldBe LocalDate.of(2017, 10, 1)
+        await(getNextDeadlineDueDateAndOverDueObligations(businessAndPropertyAligned))._1 shouldBe LocalDate.of(2017, 10, 1)
       }
       "there is just one report deadline from an income source" in new Setup {
         setupMockReportDeadlines(obligationsPropertyOnlySuccessModel)
-
-        await(getNextDeadlineDueDate()) shouldBe LocalDate.of(2017, 10, 1)
+        await(getNextDeadlineDueDateAndOverDueObligations(propertyIncomeOnly))._1  shouldBe LocalDate.of(2017, 10, 1)
       }
       "there is just a crystallisation deadline" in new Setup {
         setupMockReportDeadlines(obligationsCrystallisedOnlySuccessModel)
-
-        await(getNextDeadlineDueDate()) shouldBe LocalDate.of(2017, 10, 31)
+        await(getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails))._1  shouldBe LocalDate.of(2017, 10, 31)
       }
 
       "there are no deadlines available" in new Setup {
         setupMockReportDeadlines(emptyObligationsSuccessModel)
-
-        the[Exception] thrownBy await(getNextDeadlineDueDate()) should have message "Unexpected Exception getting next deadline due"
+        the[Exception] thrownBy await(getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails)) should have message "Unexpected Exception getting next deadline due and Overdue Obligations"
       }
 
       "the report deadlines returned back an error model" in new Setup {
         setupMockReportDeadlines(obligationsDataErrorModel)
-
-        the[Exception] thrownBy await(getNextDeadlineDueDate()) should have message "Dummy Error Message"
+        the[Exception] thrownBy await(getNextDeadlineDueDateAndOverDueObligations(noIncomeDetails)) should have message "Dummy Error Message"
       }
     }
   }

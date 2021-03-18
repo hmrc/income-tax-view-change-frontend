@@ -21,7 +21,7 @@
 @import views.html.templates.main_template
 @import views.html.helpers.breadcrumbHelper
 
-@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, paymentEnabled: Boolean, PaymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int], paymentEnabled: Boolean, PaymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @breadcrumb = {
@@ -34,8 +34,20 @@ BreadcrumbItem("breadcrumb-it", None)
 <div id="payments-tile" class="tile tile-no-border">
     <div class="tile-body">
         <h2 class="heading-medium">@messages("home.payments.heading")</h2>
-        <p>@nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due"))</p>
-        <p><a href=@controllers.routes.PaymentDueController.viewPaymentsDue().url>@messages("home.payments.view")</a>
+        @{overDuePayments.getOrElse(0) match {
+			case 0 => <p>{nextPaymentDueDate.map(_.toLongDate).getOrElse(messages("home.payments.no-payments-due"))}</p>
+			case 1 =>
+				<p>
+					<span class="govuk-tag govuk-tag--red"> {messages("taxYears.overdue")} </span>
+					{nextPaymentDueDate.get.toLongDate}
+				</p>
+			case _ =>
+				<p>
+					<span class="govuk-tag govuk-tag--red"> {messages("home.updates.overdue.payments", overDuePayments.get)}</span>
+				</p>
+        }}
+        <p>
+			<a href=@controllers.routes.PaymentDueController.viewPaymentsDue().url>@messages("home.payments.view")</a>
         </p>
     </div>
 </div>
@@ -45,7 +57,20 @@ BreadcrumbItem("breadcrumb-it", None)
 <div id="updates-tile" class="tile tile-no-border">
     <div class="tile-body">
         <h2 class="heading-medium">@messages("home.updates.heading")</h2>
-        <p>@nextUpdate.toLongDate</p>
+		@{overDueUpdates.getOrElse(0) match {
+			case 0 => <p>{nextUpdate.toLongDate}</p>
+			case 1 => {
+				<p>
+					<span class="govuk-tag govuk-tag--red">{messages("taxYears.overdue")}</span>
+					{nextUpdate.toLongDate}
+				</p>
+			}
+			case _ => {
+				<p>
+					<span class="govuk-tag govuk-tag--red">{messages("home.updates.overdue.updates", overDueUpdates.get)}</span>
+				</p>
+			}
+		}}
         <p>
             <a href=@controllers.routes.ReportDeadlinesController.getReportDeadlines().url>@messages("home.updates.view")</a>
         </p>
