@@ -25,15 +25,16 @@ case class OutstandingChargesModel(outstandingCharges: List[OutstandingChargeMod
   def bcdChargeType: Option[OutstandingChargeModel] = outstandingCharges.find(_.chargeName == "BCD")
   def aciChargeType: Option[OutstandingChargeModel] = outstandingCharges.find(_.chargeName == "ACI")
 
-  def getBcdAndAciTieBreakerChargesModelList: List[OutstandingChargeModel] = {
+  def getAciChargeWithTieBreaker: Option[OutstandingChargeModel] = {
     if(bcdChargeType.isDefined
+      && bcdChargeType.get.chargeAmount > 0
       && aciChargeType.isDefined
       && (bcdChargeType.get.tieBreaker == aciChargeType.get.tieBreaker)
-      && bcdChargeType.get.chargeAmount > 0
+      && aciChargeType.get.chargeAmount > 0
     ) {
-      List(bcdChargeType.get, aciChargeType.get)
+      aciChargeType
     } else {
-      List()
+      None
     }
   }
 }

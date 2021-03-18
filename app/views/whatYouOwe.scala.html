@@ -25,7 +25,7 @@
 @import java.time.LocalDate
 @import models.outstandingCharges.OutstandingChargesModel
 
-@(chargesList: WhatYouOweChargesList, yearOfMigration: Option[Int] = None, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @paymentTypesDropdown = {
@@ -47,26 +47,26 @@
 }
 
 @tableHead(headId: String) = {
-    <thead class="govuk-table__head" id="@headId">
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header">@messages("whatYouOwe.tableHead.due-date")</th>
-            <th class="govuk-table__header">@messages("whatYouOwe.tableHead.payment-type")</th>
-            <th class="govuk-table__header">@messages("whatYouOwe.tableHead.amount-due")</th>
+    <thead id="@headId">
+        <tr>
+            <th>@messages("whatYouOwe.tableHead.due-date")</th>
+            <th>@messages("whatYouOwe.tableHead.payment-type")</th>
+            <th>@messages("whatYouOwe.tableHead.amount-due")</th>
         </tr>
     </thead>
 }
 
 @tableRow(rowId: String, charge: Charge, isOverduePayment: Boolean = false, isChargeTypeHyperlinked: Boolean = true) = {
-    <tr class="govuk-table__row" id="@rowId">
-        <td class="govuk-table__cell">@charge.due.get.toLongDateShort</td>
-        <td class="govuk-table__cell">
+    <tr id="@rowId">
+        <td>@charge.due.get.toLongDateShort</td>
+        <td>
+            @if(isOverduePayment){<span id="@rowId-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>}
             @if(isChargeTypeHyperlinked){<a id="@rowId-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(charge.taxYear.toInt, charge.transactionId)">}
-            @if(isOverduePayment){<span id="@rowId-overdue" class="govUk-tag govUk-tag--overdue">@messages("whatYouOwe.over-due")</span>}
             @messages(s"whatYouOwe.${charge.getChargeTypeKey}")
             @if(isChargeTypeHyperlinked){</a>}
             <div>@messages("whatYouOwe.payment-type.taxYear", (charge.taxYear.toInt - 1).toString, charge.taxYear)</div>
         </td>
-        <td class="govuk-table__cell">@{charge.outstandingAmount.get.toCurrency}</td>
+        <td class="numeric">@{charge.outstandingAmount.get.toCurrency}</td>
     </tr>
 }
 
@@ -94,38 +94,36 @@
             <p id ="outstanding-charges-note-migrated">@messages("whatYouOwe.outstanding-charges-note")</p>
         </div>
         <div>
-            @if(!chargesList.isBcdAndAciChargesListEmpty && yearOfMigration.isDefined){
-                <h3 id="pre-mtd-payments-heading" class="heading-large">@messages("whatYouOwe.pre-mtd-payments", (yearOfMigration.get.toLong - 2).toString, (yearOfMigration.get.toLong - 1).toString)</h3>
+            @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero){
+                <h3 id="pre-mtd-payments-heading" class="heading-large">@messages("whatYouOwe.pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)</h3>
                 <div id="balancing-charge-type-table">
-                    <table>
+                    <table class="govuk-table-whatYouOwe">
                         @tableHead("balancing-charge-type-table-head")
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row" id="balancing-charge-type-0">
-                                <td class="govuk-table__cell">@LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate).toLongDateShort</td>
-                                <td class="govuk-table__cell">
+                        <tbody>
+                            <tr id="balancing-charge-type-0">
+                                <td>@LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate).toLongDateShort</td>
+                                <td>
                                     @if(LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate).isBefore(LocalDate.now())){
-                                        <span id="balancing-charge-type-overdue" class="govUk-tag govUk-tag--overdue">@messages("whatYouOwe.over-due")</span>
+                                        <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>
                                     }
                                     @messages(s"whatYouOwe.balancingCharge.text")
                                 </td>
-                                <td class="govuk-table__cell">@{chargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency}</td>
+                                <td class="numeric">@{chargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency}</td>
                             </tr>
-                            @if(LocalDate.parse(chargesList.outstandingChargesModel.get.aciChargeType.get.relevantDueDate).isBefore(LocalDate.now()) &&
-                                    chargesList.outstandingChargesModel.get.aciChargeType.get.chargeAmount > 0) {
-                                <tr class="govuk-table__row" id="balancing-charge-type-1">
-                                    <td class="govuk-table__cell"></td>
-                                    <td class="govuk-table__cell">
+                            @if(chargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
+                                && LocalDate.parse(chargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.get.relevantDueDate).isBefore(LocalDate.now())) {
+                                <tr id="balancing-charge-type-1">
+                                    <td></td>
+                                    <td>
                                         @messages(s"whatYouOwe.balancingCharge.interest.line1.text")
                                         <div>
                                         @messages(s"whatYouOwe.balancingCharge.interest.line2.text",
-                                            LocalDate.parse(chargesList.outstandingChargesModel.get.aciChargeType.get.relevantDueDate).toLongDateShort,
+                                            LocalDate.parse(chargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.get.relevantDueDate).toLongDateShort,
                                             LocalDate.now().toLongDateShort
                                         )
                                         </div>
                                     </td>
-                                    <td class="govuk-table__cell">@{
-                                        chargesList.outstandingChargesModel.get.aciChargeType.get.chargeAmount.toCurrency
-                                    }</td>
+                                    <td class="numeric">@{chargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.get.chargeAmount.toCurrency}</td>
                                 </tr>
                             }
                         </tbody>
@@ -138,9 +136,9 @@
             @if(chargesList.overduePaymentList.nonEmpty){
                 <h2 id="over-due-payments-heading" class="heading-large">@messages("whatYouOwe.over-due-payments")</h2>
                 <div id="over-due-payments-table">
-                    <table>
+                    <table class="govuk-table-whatYouOwe">
                         @tableHead("over-due-payments-table-head")
-                        <tbody class="govuk-table__body">
+                        <tbody>
                             @for((charge, index) <- chargesList.overduePaymentList.zipWithIndex) {
                                 @tableRow(s"over-due-type-$index", charge, true, true)
                             }
@@ -148,15 +146,15 @@
                     </table>
                 </div>
                 <p>
-                    @if(chargesList.isBcdAndAciChargesListEmpty) {@paymentTypesDropdown}
+                    @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {@paymentTypesDropdown}
                 </p>
             }
             @if(chargesList.dueInThirtyDaysList.nonEmpty){
                 <h3 id="due-in-thirty-days-payments-heading" class="heading-large">@messages("whatYouOwe.due-in-thirty-days-payments")</h3>
                 <div id="due-in-thirty-days-payments-table">
-                    <table class="govuk-table">
+                    <table class="govuk-table-whatYouOwe">
                         @tableHead("due-in-thirty-days-payments-table-head")
-                        <tbody class="govuk-table__body">
+                        <tbody>
                             @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
                                 @tableRow(s"due-in-thirty-days-type-$index", charge, false, true)
                             }
@@ -164,7 +162,7 @@
                     </table>
                 </div>
                 <p>
-                    @if(chargesList.isBcdAndAciChargesListEmpty
+                    @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero
                         && chargesList.overduePaymentList.isEmpty) { @paymentTypesDropdown }
                 </p>
             }
@@ -173,7 +171,7 @@
                 <div id="future-payments-table">
                     <table>
                         @tableHead("future-payments-table-head")
-                        <tbody class="govuk-table__body">
+                        <tbody class="govuk-table-whatYouOwe">
                             @for((charge, index) <- chargesList.futurePayments.zipWithIndex) {
                                 @tableRow(s"future-payments-type-$index", charge, false, true)
                             }
@@ -181,7 +179,7 @@
                     </table>
                 </div>
                 <p>
-                    @if(chargesList.isBcdAndAciChargesListEmpty && chargesList.overduePaymentList.isEmpty && chargesList.dueInThirtyDaysList.isEmpty) {
+                    @if(!chargesList.bcdChargeTypeDefinedAndGreaterThanZero && chargesList.overduePaymentList.isEmpty && chargesList.dueInThirtyDaysList.isEmpty) {
                         @paymentTypesDropdown
                     }
                 </p>

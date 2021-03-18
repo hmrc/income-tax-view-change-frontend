@@ -37,21 +37,20 @@ class OutstandingChargesModelSpec extends UnitSpec with Matchers {
 
   "The OutstandingChargesModel" when {
 
-    "getBcdAndAciTieBreakerChargesModelList return right values when valid model with tie breaker values is passed" in {
-      validOutstandingChargesModel.getBcdAndAciTieBreakerChargesModelList shouldBe List(
-        OutstandingChargeModel("BCD", "2021-12-01", 123456.67, 1234), OutstandingChargeModel("ACI", "2021-12-01", 12.67, 1234))
+    "getAciChargeWithTieBreaker return right values when valid model with tie breaker values is passed" in {
+      validOutstandingChargesModel.getAciChargeWithTieBreaker shouldBe Some(OutstandingChargeModel("ACI", "2021-12-01", 12.67, 1234))
     }
 
-    "getBcdAndAciTieBreakerChargesModelList return right values when valid model with no tie breaker values is passed" in {
-      validOutstandingChargesModelWithNoMatchingTieBreaker.getBcdAndAciTieBreakerChargesModelList shouldBe List()
+    "getAciChargeWithTieBreaker return right values when valid model with no tie breaker values is passed" in {
+      validOutstandingChargesModelWithNoMatchingTieBreaker.getAciChargeWithTieBreaker shouldBe None
     }
 
-    "getBcdAndAciTieBreakerChargesModelList return right values when valid model with bcd charge type value as zero is passed" in {
-      validOutstandingChargesModelWithOneChargeValueZero.getBcdAndAciTieBreakerChargesModelList shouldBe List()
+    "getAciChargeWithTieBreaker return right values when valid model with bcd charge type value as zero is passed" in {
+      validOutstandingChargesModelWithOneChargeValueZero.getAciChargeWithTieBreaker shouldBe None
     }
 
-    "getBcdAndAciTieBreakerChargesModelList return right values when valid model with no BCD charge type is passed" in {
-      validOutstandingChargesModelWithNoBcdCharges.getBcdAndAciTieBreakerChargesModelList shouldBe List()
+    "getAciChargeWithTieBreaker return right values when valid model with no BCD charge type is passed" in {
+      validOutstandingChargesModelWithNoBcdCharges.getAciChargeWithTieBreaker shouldBe None
     }
   }
 }
