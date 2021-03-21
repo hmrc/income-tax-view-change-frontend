@@ -117,11 +117,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     "a financial detail returned from the connector returns a non 404 error model" should {
       "return an InternalServerException" in {
         val financialDetails: FinancialDetailsModel = FinancialDetailsModel(List(
-          Charge("testYear", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+          Charge("testYear", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
             SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString), None, None),
             SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(1).toString), None, None)
           ))),
-          Charge("testYear", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+          Charge("testYear", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
             SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(2).toString), None, None),
             SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(3).toString), None, None)
           )))
@@ -146,22 +146,22 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       "return a single overdue date" when {
         "there is only one overdue date" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(List(
-            Charge("testYear1", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+            Charge("testYear1", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.minusDays(1).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString), None, None)
             ))),
-            Charge("testYear1", "testTransactionId", None, None, None, None, Some(200.00), None, None, Some(Seq(
+            Charge("testYear1", "testTransactionId", None, None, None, None, Some(200.00), None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(1).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(2).toString), None, None)
             )))
           ))
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(List(
-            Charge("testYear2", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+            Charge("testYear2", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(3).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(4).toString), None, None)
             ))),
-            Charge("testYear2", "testTransactionId", None, None, None, None, None, None, None, Some(Seq(
+            Charge("testYear2", "testTransactionId", None, None, None, None, None, None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(5).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(6).toString), None, None)
             )))
@@ -184,22 +184,22 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       "return a single non-overdue date" when {
         "there are no overdue dates, but there are dates upcoming" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(List(
-            Charge("testYear1", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+            Charge("testYear1", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(7).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString), None, None)
             ))),
-            Charge("testYear1", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+            Charge("testYear1", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(1).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(2).toString), None, None)
             )))
           ))
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(List(
-            Charge("testYear2", "testTransactionId", None, None, None, None, None, None, None, Some(Seq(
+            Charge("testYear2", "testTransactionId", None, None, None, None, None, None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(3).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(4).toString), None, None)
             ))),
-            Charge("testYear2", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+            Charge("testYear2", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(5).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(6).toString), None, None)
             )))
@@ -222,22 +222,22 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       "return the count of overdue dates" when {
         "there are more than one overdue dates" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(List(
-            Charge("testYear1", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+            Charge("testYear1", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.minusDays(1).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString), None, None)
             ))),
-            Charge("testYear1", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+            Charge("testYear1", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(1).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(2).toString), None, None)
             )))
           ))
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(List(
-            Charge("testYear2", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+            Charge("testYear2", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(3).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(4).toString), None, None)
             ))),
-            Charge("testYear2", "testTransactionId", None, None, None, None, Some(100.00), None, None, Some(Seq(
+            Charge("testYear2", "testTransactionId", None, None, None, None, Some(100.00), None, None, None, Some(Seq(
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.plusDays(5).toString), None, None),
               SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.minusDays(2).toString), None, None)
             )))
