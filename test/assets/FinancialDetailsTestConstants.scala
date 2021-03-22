@@ -33,6 +33,7 @@ object FinancialDetailsTestConstants {
         "outstandingAmount" -> 10.33,
         "clearedAmount" -> 10.33,
 				"chargeType" -> "Balancing Charge Debit",
+				"mainType" -> "4910",
         "items" -> Json.arr(
           Json.obj(
             "subItemId" -> "001",
@@ -70,6 +71,7 @@ object FinancialDetailsTestConstants {
         "outstandingAmount" -> 10.34,
         "clearedAmount" -> 10.34,
 				"chargeType" -> "Balancing Charge Debit",
+				"mainType" -> "4910",
         "items" -> Json.arr(
           Json.obj(
             "subItemId" -> "003",
@@ -89,8 +91,9 @@ object FinancialDetailsTestConstants {
   )
 
 
-  def chargeModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), originalAmount: Option[BigDecimal] = Some(1400.0),clearedAmount: Option[BigDecimal] = Some(1400.0), chargeType: Option[String] = Some("POA1")): Charge =
-    Charge(taxYear.toString, "1040000123", Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), originalAmount, outstandingAmount, clearedAmount, chargeType,
+  def chargeModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), originalAmount: Option[BigDecimal] = Some(1400.0),clearedAmount: Option[BigDecimal] = Some(1400.0), mainType: Option[String] = Some("4920")): Charge =
+    Charge(taxYear.toString, "1040000123", Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), originalAmount,
+      outstandingAmount, clearedAmount, Some("POA1"), mainType,
       Some(Seq(
         SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some("A"), Some(2000), Some("2019-05-15"), Some("A"), Some("081203010024-000001")),
         SubItem(Some("002"), Some(101), Some("2019-05-16"), Some("02"), Some("B"), Some("B"), Some(3000), Some("2019-05-17"), Some("B"), Some("081203010025-000002"))
@@ -102,39 +105,41 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(List(chargeModel(taxYear, outstandingAmount)))
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(List(
-    Charge("2019", "1040000123", Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), Some(10.33), Some(10.33),Some(10.33), Some("Balancing Charge Debit"),
+    Charge("2019", "1040000123", Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), Some(10.33), Some(10.33),Some(10.33),
+      Some("Balancing Charge Debit"), Some("4910"),
       Some(Seq(
         SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some("A"), Some(2000), Some("2019-05-15"), Some("A"), Some("081203010024-000001")),
         SubItem(Some("002"), Some(101), Some("2019-05-16"), Some("02"), Some("B"), Some("B"), Some(3000), Some("2019-05-17"), Some("B"), Some("081203010025-000002"))
       ))),
-    Charge("2020", "1040000124", Some("2019-05-16"), Some("Balancing Charge Debit"), Some(43.21), Some(10.34), Some(10.34),Some(10.34), Some("Balancing Charge Debit"),
+    Charge("2020", "1040000124", Some("2019-05-16"), Some("Balancing Charge Debit"), Some(43.21), Some(10.34), Some(10.34),Some(10.34),
+      Some("Balancing Charge Debit"), Some("4910"),
       Some(Seq(
         SubItem(Some("003"), Some(110), Some("2019-05-17"), Some("03"), Some("C"), Some("C"), Some(5000), Some("2019-05-18"), Some("C"), Some("081203010026-000003"))
       )))
   ))
 
-  def testFinancialDetailsModel(chargeType: List[Option[String]], dueDate: List[Option[String]], outstandingAmount: List[Option[BigDecimal]], taxYear: String): FinancialDetailsModel = FinancialDetailsModel(List(
-    Charge(taxYear, "1040000124", Some("2019-05-16"), Some("POA1"), Some(43.21), Some(10.34), outstandingAmount(0),Some(10.34), chargeType(0),
+  def testFinancialDetailsModel(mainType: List[Option[String]], dueDate: List[Option[String]], outstandingAmount: List[Option[BigDecimal]], taxYear: String): FinancialDetailsModel = FinancialDetailsModel(List(
+    Charge(taxYear, "1040000124", Some("2019-05-16"), Some("POA1"), Some(43.21), Some(10.34), outstandingAmount(0),Some(10.34), Some("POA1"), mainType(0),
       Some(Seq(
         SubItem(Some("003"), Some(110), Some("2019-05-17"), Some("03"), Some("C"), Some("C"), Some(5000), dueDate(0), Some("C"), Some("081203010026-000003"))
       ))),
-    Charge(taxYear, "1040000125", Some("2019-05-15"), Some("POA2"), Some(12.34), Some(10.33), outstandingAmount(1),Some(10.33), chargeType(1),
+    Charge(taxYear, "1040000125", Some("2019-05-15"), Some("POA2"), Some(12.34), Some(10.33), outstandingAmount(1),Some(10.33), Some("POA2"), mainType(1),
       Some(Seq(
         SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some("A"), Some(2000), dueDate(1), Some("A"), Some("081203010024-000001")),
         SubItem(Some("002"), Some(101), Some("2019-05-16"), Some("02"), Some("B"), Some("B"), Some(3000), Some("2019-05-17"), Some("B"), Some("081203010025-000002"))
       ))),
   ))
 
-  def testFinancialDetailsModelWithChargesOfSameType(chargeType: List[Option[String]], dueDate: List[Option[String]], outstandingAmount: List[Option[BigDecimal]], taxYear: String): FinancialDetailsModel = FinancialDetailsModel(List(
-    Charge(taxYear, "1040000123", Some("2019-05-16"), Some("POA1"), Some(43.21), Some(10.34), outstandingAmount(0),Some(10.34), chargeType(0),
+  def testFinancialDetailsModelWithChargesOfSameType(mainType: List[Option[String]], dueDate: List[Option[String]], outstandingAmount: List[Option[BigDecimal]], taxYear: String): FinancialDetailsModel = FinancialDetailsModel(List(
+    Charge(taxYear, "1040000123", Some("2019-05-16"), Some("POA1"), Some(43.21), Some(10.34), outstandingAmount(0),Some(10.34), Some("POA1"), mainType(0),
       Some(Seq(
         SubItem(Some("003"), Some(110), Some("2019-05-17"), Some("03"), Some("C"), Some("C"), Some(5000), dueDate(0), Some("C"), Some("081203010026-000003"))
       ))),
-    Charge(taxYear, "1040000124", Some("2019-05-16"), Some("POA1"), Some(43.21), Some(10.34), outstandingAmount(1),Some(10.34), chargeType(1),
+    Charge(taxYear, "1040000124", Some("2019-05-16"), Some("POA1"), Some(43.21), Some(10.34), outstandingAmount(1),Some(10.34), Some("POA2"), mainType(1),
       Some(Seq(
         SubItem(Some("003"), Some(110), Some("2019-05-17"), Some("03"), Some("C"), Some("C"), Some(5000), dueDate(1), Some("C"), Some("081203010026-000003"))
       ))),
-    Charge(taxYear, "1040000125", Some("2019-05-15"), Some("POA2"), Some(12.34), Some(10.33), outstandingAmount(2),Some(10.33), chargeType(2),
+    Charge(taxYear, "1040000125", Some("2019-05-15"), Some("POA2"), Some(12.34), Some(10.33), outstandingAmount(2),Some(10.33), Some("POA2"), mainType(2),
       Some(Seq(
         SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some("A"), Some(2000), dueDate(2), Some("A"), Some("081203010024-000001")),
         SubItem(Some("002"), Some(101), Some("2019-05-16"), Some("02"), Some("B"), Some("B"), Some(3000), Some("2019-05-17"), Some("B"), Some("081203010025-000002"))

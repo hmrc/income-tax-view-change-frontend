@@ -38,15 +38,15 @@ class ChargeSummarySpec extends ViewSpec {
 
 	"The charge summary view" should {
 
-		"have the correct heading for a POA 1" in new Setup(chargeModel(chargeType = Some("POA1"))) {
+		"have the correct heading for a POA 1" in new Setup(chargeModel(mainType = Some("4920"))) {
 			document.select("h1").text() shouldBe Messages.poaHeading(2018, 1)
 		}
 
-		"have the correct heading for a POA 2" in new Setup(chargeModel(chargeType = Some("POA2"))) {
+		"have the correct heading for a POA 2" in new Setup(chargeModel(mainType = Some("4930"))) {
 			document.select("h1").text() shouldBe Messages.poaHeading(2018, 2)
 		}
 
-		"have the correct heading for a balancing charge" in new Setup(chargeModel(taxYear = 2019, chargeType = Some("Balancing Charge debit"))) {
+		"have the correct heading for a balancing charge" in new Setup(chargeModel(taxYear = 2019, mainType = Some("4910"))) {
 			document.select("h1").text() shouldBe Messages.balancingChargeHeading(2019)
 		}
 

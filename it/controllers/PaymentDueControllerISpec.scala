@@ -352,8 +352,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             val mixedJson = Json.obj(
               "financialDetails" -> Json.arr(
                 chargeJson(Some(3400), Some(1000), Some(3400), testTaxYear.toString),
-                chargeJson(Some(1000.00), Some(100.00), Some(3400), testTaxYear.toString, "POA1", LocalDate.now().plusDays(1).toString),
-                chargeJson(Some(1000.00), Some(0.00), Some(3400), testTaxYear.toString, "POA2", LocalDate.now().minusDays(1).toString)
+                chargeJson(Some(1000.00), Some(100.00), Some(3400), testTaxYear.toString, "4920", LocalDate.now().plusDays(1).toString),
+                chargeJson(Some(1000.00), Some(0.00), Some(3400), testTaxYear.toString, "4930", LocalDate.now().minusDays(1).toString)
               ))
 
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
@@ -604,8 +604,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             val mixedJson = Json.obj(
               "financialDetails" -> Json.arr(
                 chargeJson(Some(3400), Some(1000), Some(3400), testTaxYear.toString, "test"),
-                chargeJson(Some(1000.00), None, Some(3400), testTaxYear.toString, "POA3"),
-                chargeJson(Some(1000.00), Some(3000.00), Some(3400), testTaxYear.toString, "POA4")
+                chargeJson(Some(1000.00), None, Some(3400), testTaxYear.toString, "4444"),
+                chargeJson(Some(1000.00), Some(3000.00), Some(3400), testTaxYear.toString, "5555")
               ))
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -660,8 +660,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             val mixedJson = Json.obj(
               "financialDetails" -> Json.arr(
                 chargeJson(Some(3400), Some(1000), Some(3400), testTaxYear.toString, "test"),
-                chargeJson(Some(1000.00), None, Some(3400), testTaxYear.toString, "POA3"),
-                chargeJson(Some(1000.00), Some(3000.00), Some(3400), testTaxYear.toString, "POA4")
+                chargeJson(Some(1000.00), None, Some(3400), testTaxYear.toString, "3333"),
+                chargeJson(Some(1000.00), Some(3000.00), Some(3400), testTaxYear.toString, "4444")
               ))
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
