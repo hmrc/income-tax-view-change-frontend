@@ -161,13 +161,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
   }
   "have an your income tax returns tile" when {
-    "has a heading" in new Setup {
-      getElementById("your-returns-tile").map(_.select("h3").text) shouldBe Some(homeMessages.yourIncomeTaxReturnHeading)
+      "has a heading" in new Setup {
+        getElementById("your-returns-tile").map(_.select("h3").text) shouldBe Some(homeMessages.yourIncomeTaxReturnHeading)
+      }
+      "has a link to the send updates page" in new Setup {
+        val link: Option[Elements] = getElementById("your-returns-tile").map(_.select("a"))
+        link.map(_.attr("href")) shouldBe Some("http://localhost:9302/income-through-software/return/2022/start")
+        link.map(_.text) shouldBe Some(homeMessages.sendUpdatesLink)
+      }
     }
-    "has a link to the send updates page" in new Setup {
-      val link: Option[Elements] = getElementById("your-returns-tile").map(_.select("a"))
-      link.map(_.attr("href")) shouldBe Some(controllers.routes.HomeController.home().url)
-      link.map(_.text) shouldBe Some(homeMessages.sendUpdatesLink)
-    }
-  }
 }
