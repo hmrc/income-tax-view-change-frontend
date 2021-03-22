@@ -51,6 +51,9 @@ trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with Before
   def mockFinancialDetailsFailed(): Unit =
     setupMockGetFinancialDetails(testTaxYear)(testFinancialDetailsErrorModel)
 
+  def mockFinancialDetailsNotFound(): Unit =
+    setupMockGetFinancialDetails(testTaxYear)(testFinancialDetailsNotFoundErrorModel)
+
   def mockGetAllFinancialDetails(response: List[(Int, FinancialDetailsResponseModel)]): Unit = {
     when(mockFinancialDetailsService.getAllFinancialDetails(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))

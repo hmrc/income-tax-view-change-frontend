@@ -22,8 +22,9 @@
 @import models.financialTransactions.TransactionModel
 @import views.html.helpers.{breadcrumbHelper, statusHelper}
 @import views.html.templates.main_template
+@import models.financialDetails.FinancialDetailsModel
 
-@(taxYear: Int, overview: CalcOverview, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(taxYear: Int, overview: CalcOverview, charges: List[Charge], implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter._
 
 @breadcrumb = @{
@@ -82,7 +83,34 @@
 
 @paymentsContent = {
     <h2 class="heading-large">@messages("tax-year-overview.payments")</h2>
+    @if(charges.isEmpty){
+        <p>@messages("tax-year-overview.payments.no-payments")</p>
+    } else {
+        <table class="govuk-table-paymentsTab" id="payments-table">
+            <tr>
+                <th id="paymentTypeHeading" class="bold">@messages("tax-year-overview.payments.payment-type")</th>
+                <th id="paymentDueDateHeading" class="bold">@messages("tax-year-overview.payments.due-date")</th>
+                <th id="paymentStatusHeading" class="bold">@messages("tax-year-overview.payments.status")</th>
+                <th id="paymentAmountHeading" class="bold">@messages("tax-year-overview.payments.amount")</th>
+            </tr>
 
+            @for((charge, index) <- charges.zipWithIndex) {
+                <tr>
+                    <td>
+                        @if(charge.isOverdue && !charge.isPaid) {
+                            <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
+                        }
+                        <div>
+                            <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear,charge.transactionId).url">@messages(s"tax-year-overview.payments.${charge.getChargeTypeKey}")</a>
+                        </div>
+                    </td>
+                    <td>@charge.due.get.toLongDate</td>
+                    <td>@messages(s"tax-year-overview.payments.${charge.getChargePaidStatus}")</td>
+                    <td>@charge.originalAmount.get.toCurrencyString</td>
+                </tr>
+            }
+        }
+    </table>
 }
 
 @updatesContent = {

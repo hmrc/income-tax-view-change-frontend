@@ -27,8 +27,10 @@ import models.financialDetails.{Charge, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.mvc.Controller.request
 import services.FinancialDetailsService
 import uk.gov.hmrc.play.language.LanguageUtils
+import forms.utils.SessionKeys
 import views.html.chargeSummary
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,8 +47,8 @@ class ChargeSummaryController@Inject()(authenticate: AuthenticationPredicate,
 																																					 dateFormatter: ImplicitDateFormatterImpl)
 	extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
-	private def view(charge: Charge)(implicit request: Request[_]) = {
-		chargeSummary(charge, dateFormatter, isEnabled(Payment))
+	private def view(charge: Charge, backLocation: Option[String], taxYear: Int)(implicit request: Request[_]) = {
+		chargeSummary(charge, dateFormatter, isEnabled(Payment), backUrl(backLocation, taxYear))
 	}
 
 	def showChargeSummary(taxYear: Int, chargeId: String): Action[AnyContent] =
@@ -55,7 +57,8 @@ class ChargeSummaryController@Inject()(authenticate: AuthenticationPredicate,
 				if (isEnabled(NewFinancialDetailsApi)) {
 					financialDetailsService.getFinancialDetails(taxYear, user.nino).map {
 						case success: FinancialDetailsModel if success.financialDetails.exists(_.transactionId == chargeId) =>
-								Ok(view(success.financialDetails.find(_.transactionId == chargeId).get))
+							val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
+								Ok(view(success.financialDetails.find(_.transactionId == chargeId).get, backLocation, taxYear))
 							//Should not happen unless url is changed manually so redirect to home
 						case _: FinancialDetailsModel =>
 							Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
@@ -67,4 +70,10 @@ class ChargeSummaryController@Inject()(authenticate: AuthenticationPredicate,
 				}
 				else Future.successful(Redirect(controllers.routes.HomeController.home().url))
 		}
+
+	def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
+		case Some("taxYearOverview") => controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url + "#payments"
+		case Some("paymentDue") => controllers.routes.PaymentDueController.viewPaymentsDue().url
+		case _ => controllers.routes.HomeController.home().url
+	}
 }

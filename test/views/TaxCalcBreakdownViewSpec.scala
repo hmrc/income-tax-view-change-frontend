@@ -156,7 +156,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         third.text shouldBe Breadcrumbs.taxYears
 
         val forth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 4).selectHead("a")
-        forth.attr("href") shouldBe controllers.routes.CalculationController.renderCalculationPage(taxYear).url
+        forth.attr("href") shouldBe controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url
         forth.text shouldBe Breadcrumbs.taxYear(taxYear - 1, taxYear)
 
         val fifth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 5)
@@ -206,7 +206,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         third.text shouldBe Breadcrumbs.taxYears
 
         val forth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 4).selectHead("a")
-        forth.attr("href") shouldBe controllers.routes.CalculationController.renderCalculationPage(taxYear).url
+        forth.attr("href") shouldBe controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url
         forth.text shouldBe Breadcrumbs.taxYear(taxYear - 1, taxYear)
 
         val fifth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 5)

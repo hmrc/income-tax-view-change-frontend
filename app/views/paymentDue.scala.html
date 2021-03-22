@@ -55,7 +55,7 @@
                    </div>
                    <div class="column-half heading-large">
                         <div class="font-small text--right link-style form-group" id="bills-link-@{transaction.taxPeriodTo.get.getYear}">
-                            <a href="@controllers.routes.CalculationController.renderCalculationPage(transaction.taxPeriodTo.get.getYear).url" aria-label='@messages("paymentDue.view-bill-aria", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)'>@messages("paymentDue.viewBill")</a>
+                            <a href="@controllers.routes.CalculationController.renderTaxYearOverviewPage(transaction.taxPeriodTo.get.getYear).url" aria-label='@messages("paymentDue.view-bill-aria", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)'>@messages("paymentDue.viewBill")</a>
                         </div>
                        @if(paymentEnabled && transaction.outstandingAmount.isDefined){
                            <div id="payment-link-@{transaction.taxPeriodTo.get.getYear}" class="font-small text--right link-style">
@@ -78,7 +78,7 @@
                     </div>
                     <div class="column-half heading-large">
                         <div class="font-small text--right link-style form-group" id="bills-link-@{charge.taxYear}">
-                            <a href="@controllers.routes.CalculationController.renderCalculationPage(charge.taxYear.toInt).url" aria-label='@messages("paymentDue.view-bill-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.viewBill")</a>
+                            <a href="@controllers.routes.CalculationController.renderTaxYearOverviewPage(charge.taxYear.toInt).url" aria-label='@messages("paymentDue.view-bill-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.viewBill")</a>
                         </div>
                         @if(paymentEnabled && charge.outstandingAmount.isDefined){
                         <div id="payment-link-@{charge.taxYear}" class="font-small text--right link-style">

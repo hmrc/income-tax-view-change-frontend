@@ -123,6 +123,18 @@ tax-year-overview.income                                            = Income
 tax-year-overview.deductions                                        = Allowances and deductions
 tax-year-overview.taxable-income                                    = Total income on which tax is due
 tax-year-overview.tax-due                                           = Income Tax and National Insurance contributions due
+tax-year-overview.payments.payment-type                             = Payment type
+tax-year-overview.payments.due-date                                 = Due date
+tax-year-overview.payments.status                                   = Status
+tax-year-overview.payments.amount                                   = Amount
+tax-year-overview.payments.paymentOnAccount1.text                   = Payment on account 1 of 2
+tax-year-overview.payments.paymentOnAccount2.text                   = Payment on account 2 of 2
+tax-year-overview.payments.balancingCharge.text                     = Remaining balance
+tax-year-overview.payments.paid                                     = Paid
+tax-year-overview.payments.unpaid                                   = Unpaid
+tax-year-overview.payments.part-paid                                = Part Paid
+tax-year-overview.payments.overdue                                  = Overdue
+tax-year-overview.payments.no-payments                              = No payments currently due.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Income

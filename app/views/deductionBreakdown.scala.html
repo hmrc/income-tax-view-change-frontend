@@ -36,7 +36,7 @@
     contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
         BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
         BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears.url)),
-        BreadcrumbItem("breadcrumb-tax-year-overview", Some(controllers.routes.CalculationController.renderCalculationPage(taxYear).url), Some(messages("breadcrumb-tax-year-overview", s"${taxYear - 1}", s"$taxYear"))),
+        BreadcrumbItem("breadcrumb-tax-year-overview", Some(controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url), Some(messages("breadcrumb-tax-year-overview", s"${taxYear - 1}", s"$taxYear"))),
         BreadcrumbItem("breadcrumb-deductions")
     )), "DeductionsPage"))
 ) {

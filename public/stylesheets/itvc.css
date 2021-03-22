@@ -1021,6 +1021,10 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
         text-align: right;
     }
 
+    .govuk-table-paymentsTab td:nth-of-type(1) {
+        width: 220px;
+    }
+
 .govuk-accordion {
     margin-bottom: 20px;
 }

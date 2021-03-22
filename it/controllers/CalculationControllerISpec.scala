@@ -33,7 +33,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
 
   unauthorisedTest(s"/calculation/$testYear")
 
-  s"GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}" when {
+  s"GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}" when {
 
     "TaxYearOverviewUpdate FS is enabled" should {
       "should show the updated Tax Year Overview page" in {
@@ -52,7 +52,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           body = estimatedCalculationFullJson
         )
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -69,6 +69,97 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
           elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
           elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
+        )
+      }
+
+      s"financial details service returns a $NOT_FOUND" in {
+        enable(TaxYearOverviewUpdate)
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+        And("A non crystallised calculation for 2017-18 is returned")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = crystallisedCalculationFullJson
+        )
+
+        And("A financial transaction call fails")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(NOT_FOUND, testFinancialDetailsErrorModelJson())
+
+        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino)
+
+
+        And("Page is displayed with no payments due")
+        res should have(
+          httpStatus(OK),
+          pageTitle(TaxYearOverviewMessages.title),
+          elementTextBySelector("#payments p")("No payments currently due.")
+        )
+      }
+
+      "financial details service returns an error" in {
+        enable(TaxYearOverviewUpdate)
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+        And("A non crystallised calculation for 2017-18 is returned")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = crystallisedCalculationFullJson
+        )
+
+        And("A financial transaction call fails")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
+
+        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+        IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino)
+
+
+        And("Internal server error is returned")
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
+      }
+
+      "retrieving a calculation failed" in {
+        enable(TaxYearOverviewUpdate)
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+        And("A calculation call for 2017-18 fails")
+        IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "2017-18")
+
+        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+
+        And("Internal server error is returned")
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
     }
@@ -89,7 +180,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           body = estimatedCalculationFullJson
         )
 
-        When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
         Then("I check all calls expected were made")
@@ -126,7 +217,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
             body = estimatedCalculationFullJson
           )
 
-          When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           Then("I check all calls expected were made")
@@ -163,7 +254,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("A financial transaction is returned")
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(OK, financialTransactionsJson(1000.00))
 
-          When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           Then("I check all calls expected were made")
@@ -191,7 +282,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("A calculation call for 2017-18 fails")
           IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "2017-18")
 
-          When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           Then("I check all calls expected were made")
@@ -221,7 +312,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("A financial transaction call fails")
           FinancialTransactionsStub.stubGetFinancialTransactions(testMtditid)(INTERNAL_SERVER_ERROR, financialTransactionsSingleErrorJson())
 
-          When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           Then("I check all calls expected were made")
@@ -256,7 +347,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
             body = estimatedCalculationFullJson
           )
 
-          When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           Then("I check all calls expected were made")
@@ -294,7 +385,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("A financial transaction is returned")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(OK, testValidFinancialDetailsModelJson(1000.00, 1000.00))
 
-          When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           Then("I check all calls expected were made")
@@ -323,7 +414,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("A calculation call for 2017-18 fails")
           IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "2017-18")
 
-          When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           Then("I check all calls expected were made")
@@ -354,7 +445,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           And("A financial transaction call fails")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
-          When(s"I call GET ${controllers.routes.CalculationController.renderCalculationPage(testYearInt).url}")
+          When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
           val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
           Then("I check all calls expected were made")

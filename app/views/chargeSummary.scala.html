@@ -19,13 +19,13 @@
 @import implicits.ImplicitDateFormatter
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import views.html.helpers.backLinkHelper
-@(charge: Charge, implicitDateFormatter: ImplicitDateFormatter, paymentEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(charge: Charge, implicitDateFormatter: ImplicitDateFormatter, paymentEnabled: Boolean, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 @import implicitDateFormatter.toTaxYearEndDate
 @import implicitDateFormatter.toTaxYearStartDate
 
 @main_template(title = messages(s"chargeSummary.${charge.getChargeTypeKey}"),bodyClasses = None, scriptElem = None){
-	@backLinkHelper(controllers.routes.PaymentDueController.viewPaymentsDue().url)
+	@backLinkHelper(backUrl)
 
 	<h1 class="heading-xlarge">
 		<span class="heading-secondary">@messages("paymentDue.tax-year", toTaxYearStartDate((charge.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(charge.taxYear).toLongDate)</span>

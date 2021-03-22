@@ -55,6 +55,12 @@ case class Charge(taxYear: String,
 			"unknownCharge"
 		}
 	}
+
+  def getChargePaidStatus: String = {
+    if(outstandingAmount.fold(true)(_ <= 0)) "paid"
+    else if(outstandingAmount.exists(_ < originalAmount.getOrElse(0))) "part-paid"
+    else "unpaid"
+  }
 }
 
 object Charge {
