@@ -104,7 +104,7 @@
                             <a id="paymentTypeLink-@{index}" href="@controllers.routes.ChargeSummaryController.showChargeSummary(taxYear,charge.transactionId).url">@messages(s"tax-year-overview.payments.${charge.getChargeTypeKey}")</a>
                         </div>
                     </td>
-                    <td>@charge.due.get.toLongDate</td>
+                    <td>@charge.due.get.toLongDateShort</td>
                     <td>@messages(s"tax-year-overview.payments.${charge.getChargePaidStatus}")</td>
                     <td>@charge.originalAmount.get.toCurrencyString</td>
                 </tr>
