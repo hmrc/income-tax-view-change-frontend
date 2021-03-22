@@ -91,18 +91,18 @@ object FinancialDetailsTestConstants {
   )
 
 
-  def chargeModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0), originalAmount: Option[BigDecimal] = Some(1400.0),clearedAmount: Option[BigDecimal] = Some(1400.0), mainType: Option[String] = Some("4920")): Charge =
+  def chargeModel(taxYear: Int = 2018, dueDate: Option[String] = Some("2019-05-15"), outstandingAmount: Option[BigDecimal] = Some(1400.0), originalAmount: Option[BigDecimal] = Some(1400.0),clearedAmount: Option[BigDecimal] = Some(1400.0), mainType: Option[String] = Some("4920")): Charge =
     Charge(taxYear.toString, "1040000123", Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), originalAmount,
       outstandingAmount, clearedAmount, Some("POA1"), mainType,
       Some(Seq(
-        SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some("A"), Some(2000), Some("2019-05-15"), Some("A"), Some("081203010024-000001")),
+        SubItem(Some("001"), Some(100), Some("2019-05-15"), Some("01"), Some("A"), Some("A"), Some(2000), dueDate, Some("A"), Some("081203010024-000001")),
         SubItem(Some("002"), Some(101), Some("2019-05-16"), Some("02"), Some("B"), Some("B"), Some(3000), Some("2019-05-17"), Some("B"), Some("081203010025-000002"))
       )))
 
   val fullChargeModel: Charge = chargeModel()
 
   def financialDetailsModel(taxYear: Int, outstandingAmount: Option[BigDecimal] = Some(1400.0)): FinancialDetailsModel =
-    FinancialDetailsModel(List(chargeModel(taxYear, outstandingAmount)))
+    FinancialDetailsModel(List(chargeModel(taxYear, outstandingAmount = outstandingAmount)))
 
   val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(List(
     Charge("2019", "1040000123", Some("2019-05-15"), Some("Balancing Charge Debit"), Some(12.34), Some(10.33), Some(10.33),Some(10.33),

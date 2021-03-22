@@ -16,7 +16,7 @@
 
 package views
 
-import assets.FinancialDetailsTestConstants.{financialDetailsModel, fullChargeModel, testValidFinancialDetailsModel}
+import assets.FinancialDetailsTestConstants.{chargeModel, financialDetailsModel, fullChargeModel, testValidFinancialDetailsModel}
 import assets.MessagesLookUp.Breadcrumbs
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.calculation.CalcOverview
@@ -46,7 +46,9 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     outstandingAmount = Some(8.08)
   )
 
-  val testChargesList: List[Charge] = List(fullChargeModel)
+  val testChargeModel: Charge = chargeModel(dueDate = Some("2019-02-12"))
+
+  val testChargesList: List[Charge] = List(testChargeModel)
   val emptyChargeList: List[Charge] = List.empty
 
   def estimateView(chargeList: List[Charge] = testChargesList): Html = taxYearOverview(
@@ -181,7 +183,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Due date in the Payments tab" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 May 2019"
+      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "12 Feb 2019"
     }
 
     "display the Status in the payments tab" in new Setup(estimateView()) {
