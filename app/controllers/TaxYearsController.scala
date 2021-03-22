@@ -47,7 +47,7 @@ class TaxYearsController @Inject()(implicit val appConfig: FrontendAppConfig,
         case taxYearCalResponse if taxYearCalResponse.exists(_.isError) =>
           Future.successful(itvcErrorHandler.showInternalServerError)
         case taxYearCalResponse =>
-          Future.successful(Ok(views.html.taxYears(taxYears = taxYearCalResponse.filter(_.isCalculation), isEnabled(ITSASubmissionIntegration)))
+          Future.successful(Ok(views.html.taxYears(taxYears = taxYearCalResponse.filter(_.isCalculation), isEnabled(ITSASubmissionIntegration), currentTaxYear = user.incomeSources.getCurrentTaxEndYear))
             .addingToSession("singleEstimate" -> "false"))
       }.recover {
           case ex => {

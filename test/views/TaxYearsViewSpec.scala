@@ -33,10 +33,12 @@ class TaxYearsViewSpec extends ViewSpec {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   private def pageSetup(calcs: List[CalculationResponseModelWithYear],
-                        itsaSubmissionFeatureSwitch: Boolean = false
+                        itsaSubmissionFeatureSwitch: Boolean = false,
+
+
                        ) = new {
     lazy val page: HtmlFormat.Appendable =
-      views.html.taxYears(calcs, itsaSubmissionFeatureSwitch)(FakeRequest(), implicitly, mockAppConfig)
+      views.html.taxYears(calcs, itsaSubmissionFeatureSwitch, 2021)(FakeRequest(), implicitly, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
@@ -171,12 +173,13 @@ class TaxYearsViewSpec extends ViewSpec {
 
        }
 
-       "display two update return links for the correct tax year" in {
-         document.getSummaryListActions("updateReturn-link-2018") .text() shouldBe
-           messages.updateReturn + messages.taxYear((testYear - 1).toString, testYear.toString)
-         document.getSummaryListActions("updateReturn-link-2019") .text() shouldBe
-           messages.updateReturn + messages.taxYear(testYear.toString, testYearPlusOne.toString)
+       "not display any update return links for any year that is not current" in {
+         document.getSummaryListActions("updateReturn-link-2018") shouldBe null
+         document.getSummaryListActions("updateReturn-link-2019") shouldBe null
+         document.getSummaryListActions("updateReturn-link-2020") shouldBe null
+
        }
+
      }
    }
 

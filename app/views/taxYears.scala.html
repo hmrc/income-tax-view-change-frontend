@@ -21,7 +21,7 @@
 @import views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers.form
 
-@(taxYears: List[CalculationResponseModelWithYear], itsaSubmissionIntegrationEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(taxYears: List[CalculationResponseModelWithYear], itsaSubmissionIntegrationEnabled: Boolean, currentTaxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @main_template(title = messages("taxYears.heading"), bodyClasses = None, contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
                             BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
@@ -40,14 +40,16 @@
                     <dd class="govuk-summary-list__value">
                       @messages("taxYears.taxYears", s"${calc.year - 1}", s"${calc.year}")
                     </dd>
-                    @if(itsaSubmissionIntegrationEnabled) {
+                    @if(itsaSubmissionIntegrationEnabled && calc.year == currentTaxYear) {
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@{calc.year}"
-                           id="updateReturn-link-@{calc.year}" href="">
+                           id="updateReturn-link-@{calc.year}" href= @appConfig.fullSubmissionUrl >
                             @messages("taxYears.updateReturn")<span class="visuallyhidden">@messages("taxYears.taxYears", s"${calc.year - 1}", s"${calc.year}")</span>
                         </a>
                     </dd>
                     } else {
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
 
                     }
                     <dd class="govuk-summary-list__actions">

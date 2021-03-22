@@ -42,6 +42,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val reportAProblemNonJSUrl: String = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrl = s"/$baseUrl/feedback"
 
+
+
   //SA-API Config
   lazy val saApiService: String = servicesConfig.baseUrl("self-assessment-api")
 
@@ -50,6 +52,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Individual Calculation Service
   lazy val individualCalculationsService: String = servicesConfig.baseUrl("individual-calculations")
+
+
 
   //GG Sign In via Company Auth Frontend
   lazy val ggSignInContinueUrl: String = servicesConfig.getString("government-gateway.continue.url")
@@ -112,6 +116,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Calculation Polling config
   lazy val calcPollSchedulerInterval: Int = servicesConfig.getInt("calculation-polling.interval")
   lazy val calcPollSchedulerTimeout: Int = servicesConfig.getInt("calculation-polling.timeout")
+
+  // Submission service
+  lazy val submissionUrl: String = servicesConfig.baseUrl("income-tax-submission-frontend")
+  lazy val fullSubmissionUrl: String = s"$submissionUrl/income-through-software/return/2022/start"
 
   //Translation
   def languageMap: Map[String, Lang] = Map(
