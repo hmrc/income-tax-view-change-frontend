@@ -43,7 +43,7 @@
                     @if(itsaSubmissionIntegrationEnabled && calc.year == currentTaxYear) {
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@{calc.year}"
-                           id="updateReturn-link-@{calc.year}" href= @appConfig.fullSubmissionUrl >
+                           id="updateReturn-link-@{calc.year}" href= @appConfig.submissionFrontendUrl >
                             @messages("taxYears.updateReturn")<span class="visuallyhidden">@messages("taxYears.taxYears", s"${calc.year - 1}", s"${calc.year}")</span>
                         </a>
                     </dd>
@@ -64,3 +64,4 @@
         </dl>
     }
 }
+

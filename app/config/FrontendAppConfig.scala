@@ -118,8 +118,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val calcPollSchedulerTimeout: Int = servicesConfig.getInt("calculation-polling.timeout")
 
   // Submission service
-  lazy val submissionUrl: String = servicesConfig.baseUrl("income-tax-submission-frontend")
-  lazy val fullSubmissionUrl: String = s"$submissionUrl/income-through-software/return/2022/start"
+  lazy val submissionFrontendUrl: String = servicesConfig.getString("income-tax-submission-frontend.url")
+
 
   //Translation
   def languageMap: Map[String, Lang] = Map(
