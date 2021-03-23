@@ -99,7 +99,7 @@ BreadcrumbItem("breadcrumb-it", None)
     <div class="column-one-third">
         <h3 class="heading-medium">@messages("home.your-returns.heading")</h3>
         <p>@messages("home.your-returns.description")</p>
-        <p><a href= @appConfig.fullSubmissionUrl>@messages("home.your-returns.updatesLink")</a></p>
+        <p><a href= @appConfig.submissionFrontendUrl>@messages("home.your-returns.updatesLink")</a></p>
     </div>
 </div>
 }
@@ -132,5 +132,6 @@ contentHeader = Some(breadcrumb)
 @YourIncomeTaxReturnTile
 }
 }
+
 
 
