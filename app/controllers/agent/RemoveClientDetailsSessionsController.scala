@@ -18,7 +18,7 @@ package controllers.agent
 
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.SelectClientController
+import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +34,7 @@ class RemoveClientDetailsSessionsController @Inject()(val authorisedFunctions: A
                                                       val appConfig: FrontendAppConfig,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val ec: ExecutionContext)
-  extends SelectClientController with I18nSupport with FeatureSwitching {
+  extends BaseAgentController with I18nSupport with FeatureSwitching {
 
 
   def show: Action[AnyContent] = Authenticated.async { implicit request =>

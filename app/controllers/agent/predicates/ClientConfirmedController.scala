@@ -16,29 +16,24 @@
 
 package controllers.agent.predicates
 
-import auth.BaseFrontendController
+import auth.{MtdItUser, MtdItUserWithNino}
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate
-import play.api.mvc.{MessagesControllerComponents, Request}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
+import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
+import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.retrieve.Name
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolments}
-import uk.gov.hmrc.http.InternalServerException
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
-trait ClientConfirmedController extends BaseFrontendController {
+import scala.concurrent.Future
+
+trait ClientConfirmedController extends BaseAgentController  {
+
+  override protected def baseAgentPredicates: AuthPredicate[IncomeTaxAgentUser] = AgentAuthenticationPredicate.confirmedClientPredicates
 
   val mcc: MessagesControllerComponents
-
-  protected def baseAgentPredicates: AuthPredicate[IncomeTaxAgentUser] = AgentAuthenticationPredicate.confirmedClientPredicates
-
-  object Authenticated extends AuthenticatedActions[IncomeTaxAgentUser] {
-
-    override def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel) => IncomeTaxAgentUser = IncomeTaxAgentUser.apply
-
-    override def async: AuthenticatedAction[IncomeTaxAgentUser] = asyncInternal(baseAgentPredicates)
-
-  }
 
   def getClientUtr(implicit request: Request[_]): Option[String] = {
     request.session.get(SessionKeys.clientUTR)
@@ -62,6 +57,19 @@ trait ClientConfirmedController extends BaseFrontendController {
       Some(Name(firstName, lastName))
     } else {
       None
+    }
+  }
+
+  def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService)(
+    implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[_]] = {
+    val userWithNino: MtdItUserWithNino[_] = MtdItUserWithNino(
+      getClientMtditid, getClientNino, getClientName, getClientUtr, None, Some("Agent")
+    )
+
+    incomeSourceDetailsService.getIncomeSourceDetails()(hc = hc, mtdUser = userWithNino) map {
+      case model@IncomeSourceDetailsModel(_, _, _, _) => MtdItUser(
+        userWithNino.mtditid, userWithNino.nino, userWithNino.userName, model, userWithNino.saUtr, userWithNino.credId, userWithNino.userType)
+      case _ => throw new InternalServerException("[HomeController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
     }
   }
 }

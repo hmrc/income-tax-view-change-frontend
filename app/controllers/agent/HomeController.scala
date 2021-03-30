@@ -60,23 +60,11 @@ class HomeController @Inject()(home: Home,
     )
   }
 
-  def getMtdItUserWithIncomeSources()(implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[_]] = {
-    val userWithNino: MtdItUserWithNino[_] = MtdItUserWithNino(
-      getClientMtditid, getClientNino, getClientName, getClientUtr, None, Some("Agent")
-    )
-
-    incomeSourceDetailsService.getIncomeSourceDetails()(hc = hc, mtdUser = userWithNino) map {
-      case model@IncomeSourceDetailsModel(_, _, _, _) => MtdItUser(
-        userWithNino.mtditid, userWithNino.nino, userWithNino.userName, model, userWithNino.saUtr, userWithNino.credId, userWithNino.userType)
-      case _ => throw new InternalServerException("[HomeController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
-    }
-  }
-
   def show(): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       if (isEnabled(AgentViewer)) {
         for {
-          mtdItUser <- getMtdItUserWithIncomeSources()
+          mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
           dueObligationDetails <- reportDeadlinesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
           dueChargesDetails <- financialDetailsService.getChargeDueDates(implicitly, mtdItUser)
         } yield {

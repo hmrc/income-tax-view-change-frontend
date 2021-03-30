@@ -52,7 +52,7 @@ class RemoveClientDetailsSessionsControllerSpec extends TestSupport
       "redirect the user to authenticate" in {
         setupMockAgentAuthorisationException()
 
-        val result = TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient)
+        val result = TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
@@ -63,7 +63,7 @@ class RemoveClientDetailsSessionsControllerSpec extends TestSupport
       "redirect to the session timeout page" in {
         setupMockAgentAuthorisationException(exception = BearerTokenExpired())
 
-        val result = TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient)
+        val result = TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
@@ -88,7 +88,7 @@ class RemoveClientDetailsSessionsControllerSpec extends TestSupport
         enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = await(TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient))
+        val result = await(TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient()))
 
         val removedSessionKeys: List[String] =
           List(

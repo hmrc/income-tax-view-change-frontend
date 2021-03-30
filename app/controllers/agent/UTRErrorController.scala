@@ -18,16 +18,15 @@ package controllers.agent
 
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.predicates.{ConfirmClientController, SelectClientController}
+import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
-import controllers.predicates.agent.AgentAuthenticationPredicate.Redirect
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.NotFoundException
 import views.html.agent.UTRError
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -37,7 +36,7 @@ class UTRErrorController @Inject()(utrError: UTRError,
                                    val appConfig: FrontendAppConfig,
                                    val itvcErrorHandler: ItvcErrorHandler,
                                    val ec: ExecutionContext)
-  extends SelectClientController with FeatureSwitching with I18nSupport {
+  extends BaseAgentController with FeatureSwitching with I18nSupport {
 
   def show: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>

@@ -29,7 +29,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.Result
+import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
@@ -97,14 +97,15 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     utils.SessionKeys.clientUTR -> "1234567890"
   )
 
-  lazy val fakeRequestConfirmedClient = fakeRequestWithActiveSession.withSession(
+  def fakeRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+    fakeRequestWithActiveSession.withSession(
     utils.SessionKeys.clientFirstName -> "Test",
     utils.SessionKeys.clientLastName -> "User",
     utils.SessionKeys.clientUTR -> "1234567890",
     utils.SessionKeys.clientMTDID -> "XAIT00000000015",
-    utils.SessionKeys.clientNino -> "AA111111A",
+    utils.SessionKeys.clientNino -> clientNino,
     utils.SessionKeys.confirmedClient -> "true"
-  )
+    )
 
   lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> testNino)
 
