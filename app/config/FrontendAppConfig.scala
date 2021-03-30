@@ -53,7 +53,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Individual Calculation Service
   lazy val individualCalculationsService: String = servicesConfig.baseUrl("individual-calculations")
 
-
+	//View L&P
+	def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
   //GG Sign In via Company Auth Frontend
   lazy val ggSignInContinueUrl: String = servicesConfig.getString("government-gateway.continue.url")

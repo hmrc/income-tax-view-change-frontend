@@ -30,4 +30,5 @@ POST        /confirm-client            controllers.agent.ConfirmClientUTRControl
 
 #Home Controller
 GET         /income-tax-account        controllers.agent.HomeController.show
+GET         /					       controllers.agent.HomeController.show
 GET         /remove-client-sessions    controllers.agent.RemoveClientDetailsSessionsController.show

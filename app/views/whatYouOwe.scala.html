@@ -25,7 +25,7 @@
 @import java.time.LocalDate
 @import models.outstandingCharges.OutstandingChargesModel
 
-@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter, utr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @paymentTypesDropdown = {
@@ -86,13 +86,15 @@
 
     @if(chargesList.isChargesListEmpty){
         <p id="no-payments-due">@messages("whatYouOwe.no-payments-due")</p>
-        <p id ="sa-note">@messages("whatYouOwe.sa-note")</p>
-        <p id ="outstanding-charges-note">@messages("whatYouOwe.outstanding-charges-note")</p>
     } else {
-        <div id="payments-due-note" class="panel panel-indent panel-border-wide">
-            <p id ="sa-note-migrated">@messages("whatYouOwe.sa-note")</p>
-            <p id ="outstanding-charges-note-migrated">@messages("whatYouOwe.outstanding-charges-note")</p>
-        </div>
+		@if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
+			<div id="payments-due-note" class="panel panel-indent panel-border-wide">
+			<p id ="sa-note-migrated">@messages("whatYouOwe.sa-note")
+				<a href="@{appConfig.saViewLandPService(utr.get)}">@messages("whatYouOwe.sa-link")</a>.
+			</p>
+			<p id ="outstanding-charges-note-migrated">@messages("whatYouOwe.outstanding-charges-note")</p>
+			</div>
+		}
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero){
                 <h3 id="pre-mtd-payments-heading" class="heading-large">@messages("whatYouOwe.pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)</h3>

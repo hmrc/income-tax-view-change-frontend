@@ -36,7 +36,7 @@ import models.outstandingCharges.OutstandingChargesModel
 
 import java.time.LocalDate
 
-class whatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter {
+class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -48,7 +48,7 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               currentTaxYear: Int = LocalDate.now().getYear,
               paymentEnabled: Boolean = true) {
     val html: HtmlFormat.Appendable = views.html.whatYouOwe(charges, currentTaxYear,
-      paymentEnabled, mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
+      paymentEnabled, mockImplicitDateFormatter, Some("1234567890"))(FakeRequest(), implicitly, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
@@ -93,6 +93,7 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
         pageDocument.title() shouldBe whatYouOwe.title
         pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+				pageDocument.select("#sa-note-migrated a").attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
       }
       s"have the remaining balance title, table header " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
@@ -305,8 +306,6 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "when the user has charges and access viewer with mixed dates" should {
       s"have the title '${whatYouOwe.title}' and notes" in new Setup(whatYouOweDataWithMixedData) {
         pageDocument.title() shouldBe whatYouOwe.title
-        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
-        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
       }
       s"not have MTD payments heading" in new Setup(whatYouOweDataWithMixedData) {
         pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
@@ -450,7 +449,7 @@ class whatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("payment-button").text shouldBe whatYouOwe.payNow
 
         pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
-        
+
       }
       s"does not have payment data payments is disabled" in new Setup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue,
         paymentEnabled = false) {

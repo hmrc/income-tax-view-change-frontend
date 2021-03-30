@@ -50,7 +50,7 @@ class PaymentHistoryController @Inject()(val checkSessionTimeout: SessionTimeout
         Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
       } else {
         paymentHistoryService.getPaymentHistory.map {
-          case Right(payments) => Ok(views.html.paymentHistory(payments, dateFormatter))
+          case Right(payments) => Ok(views.html.paymentHistory(payments, dateFormatter, user.saUtr))
           case Left(_) => itvcErrorHandler.showInternalServerError()
         }
       }
