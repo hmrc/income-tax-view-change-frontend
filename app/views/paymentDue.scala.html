@@ -18,22 +18,21 @@
 @import implicits.ImplicitCurrencyFormatter._
 @import models.financialTransactions.FinancialTransactionsModel
 @import models.financialDetails.FinancialDetailsModel
-@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
-@import views.html.helpers.breadcrumbHelper
 @import views.html.templates.main_template
+@import views.html.helpers.backLinkHelper
 
-@(financialTransactions: List[FinancialTransactionsModel] = List(), financialDetails: List[FinancialDetailsModel] = List(), paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+
+@(financialTransactions: List[FinancialTransactionsModel] = List(), financialDetails: List[FinancialDetailsModel] = List(), paymentEnabled: Boolean,backUrl: String, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @main_template(
     title = messages("paymentDue.heading"),
-    contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
-        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-payments-due", None)
-        )), "PaymentDuePage")),
     bodyClasses = None,
     scriptElem = None
 ) {
+
+@backLinkHelper(backUrl)
+
 
 <header class="page-heading">
     <h1 class="heading-xlarge" id="page-heading">@messages("paymentDue.heading")</h1>

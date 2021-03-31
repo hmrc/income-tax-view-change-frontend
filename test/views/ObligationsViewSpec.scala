@@ -20,14 +20,11 @@ import java.time.LocalDate
 
 import assets.BaseTestConstants.{testMtdItUser, testSelfEmploymentId}
 import assets.BusinessDetailsTestConstants.business1
-import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages}
 import assets.ReportDeadlinesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.i18n.Messages.Implicits.applicationMessages
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -38,8 +35,8 @@ class ObligationsViewSpec extends TestSupport {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   class Setup(currentObligations: ObligationsModel, previousObligations: ObligationsModel) {
-    val html: HtmlFormat.Appendable = views.html.obligations(currentObligations, previousObligations, mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
-    val pageDocument: Document = Jsoup.parse(contentAsString(views.html.obligations(currentObligations, previousObligations, mockImplicitDateFormatter)))
+    val html: HtmlFormat.Appendable = views.html.obligations(currentObligations, previousObligations, mockImplicitDateFormatter,"testBackURL")(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
+    val pageDocument: Document = Jsoup.parse(contentAsString(views.html.obligations(currentObligations, previousObligations, mockImplicitDateFormatter,"testBackURL")))
   }
 
   object obligationsMessages {
@@ -69,12 +66,6 @@ class ObligationsViewSpec extends TestSupport {
     }
 
     "display all of the correct information for the main elements/sections on the page" when {
-
-      "showing the breadcrumb trail on the page" in new Setup(businessIncomeSource, obligationModelWithSingleBusiness) {
-        pageDocument.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-        pageDocument.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        pageDocument.getElementById("breadcrumb-updates").text shouldBe breadcrumbMessages.updates
-      }
 
       s"showing the heading ${obligationsMessages.updates} on the page" in new Setup(businessIncomeSource, obligationModelWithSingleBusiness) {
         pageDocument.getElementById("page-heading").text shouldBe obligationsMessages.updates

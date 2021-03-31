@@ -63,7 +63,7 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
               deductionBreakdown: Boolean = false,
               taxDue: Boolean = false) {
 
-    val page: Html = taxYearOverviewOld(taxYear, overview, transaction, charge, incomeBreakdown, deductionBreakdown, taxDue, mockImplicitDateFormatter)
+    val page: Html = taxYearOverviewOld(taxYear, overview, transaction, charge, incomeBreakdown, deductionBreakdown, taxDue, mockImplicitDateFormatter,"testBackURL")
     val document: Document = Jsoup.parse(page.body)
     val content: Element = document.selectFirst("#content")
 
@@ -78,17 +78,6 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
     disable(NewFinancialDetailsApi)
     "have the correct title" in new Setup {
       document.title shouldBe TaxYearOverview.title(testYear - 1, testYear)
-    }
-
-    "have a breadcrumb trail" in new Setup(taxYear = testYear) {
-      content.select("#breadcrumb-bta").text shouldBe Breadcrumbs.bta
-      content.select("#breadcrumb-bta").attr("href") shouldBe appConfig.businessTaxAccount
-      content.select("#breadcrumb-it").text shouldBe Breadcrumbs.it
-      content.select("#breadcrumb-it").attr("href") shouldBe controllers.routes.HomeController.home().url
-      content.select("#breadcrumb-tax-years").text shouldBe Breadcrumbs.taxYears
-      content.select("#breadcrumb-tax-years").attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
-      content.select("#breadcrumb-tax-year-overview").text shouldBe Breadcrumbs.taxYearOverview(testYear - 1, testYear)
-      content.select("#breadcrumb-tax-year-overview").hasAttr("href") shouldBe false
     }
 
     "have the correct heading" in new Setup(taxYear = testYear) {
@@ -167,17 +156,6 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
     enable(NewFinancialDetailsApi)
     "have the correct title" in new Setup {
       document.title shouldBe TaxYearOverview.title(testYear - 1, testYear)
-    }
-
-    "have a breadcrumb trail" in new Setup(taxYear = testYear) {
-      content.select("#breadcrumb-bta").text shouldBe Breadcrumbs.bta
-      content.select("#breadcrumb-bta").attr("href") shouldBe appConfig.businessTaxAccount
-      content.select("#breadcrumb-it").text shouldBe Breadcrumbs.it
-      content.select("#breadcrumb-it").attr("href") shouldBe controllers.routes.HomeController.home().url
-      content.select("#breadcrumb-tax-years").text shouldBe Breadcrumbs.taxYears
-      content.select("#breadcrumb-tax-years").attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
-      content.select("#breadcrumb-tax-year-overview").text shouldBe Breadcrumbs.taxYearOverview(testYear - 1, testYear)
-      content.select("#breadcrumb-tax-year-overview").hasAttr("href") shouldBe false
     }
 
     "have the correct heading" in new Setup(taxYear = testYear) {

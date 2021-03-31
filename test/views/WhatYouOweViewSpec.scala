@@ -18,7 +18,7 @@ package views
 
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
-import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages, WhatYouOwe => whatYouOwe}
+import assets.MessagesLookUp.{WhatYouOwe => whatYouOwe}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -48,7 +48,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               currentTaxYear: Int = LocalDate.now().getYear,
               paymentEnabled: Boolean = true) {
     val html: HtmlFormat.Appendable = views.html.whatYouOwe(charges, currentTaxYear,
-      paymentEnabled, mockImplicitDateFormatter, Some("1234567890"))(FakeRequest(), implicitly, mockAppConfig)
+      paymentEnabled, mockImplicitDateFormatter, "testBackURL", Some("1234567890"))(FakeRequest(), implicitly, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
@@ -459,10 +459,5 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
     }
-    "have a breadcrumb trail" in new Setup(whatYouOweDataWithMixedData) {
-        pageDocument.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-        pageDocument.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        pageDocument.getElementById("breadcrumb-what-you-owe").text shouldBe breadcrumbMessages.whatYouOwe
-      }
     }
 }

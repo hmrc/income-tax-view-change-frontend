@@ -17,11 +17,10 @@
 @import models.calculation.{CalcDisplayModel, TaxBand}
 @import views.html.templates.main_template
 @import implicits.ImplicitCurrencyFormatter._
-@import views.html.helpers.breadcrumbHelper
-@import models.core.breadcrumb.BreadcrumbItem
-@import models.core.breadcrumb.Breadcrumb
+@import views.html.helpers.backLinkHelper
 
-@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages,
+
+@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages,
 appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @taxBandTableRow(band: TaxBand, scottishRegime: Boolean = false) = {
@@ -62,14 +61,10 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 
 @main_template(
-    messages("taxCal_breakdown.heading", s"${taxYear-1}", s"$taxYear"),
-    contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
-        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears.url)),
-        BreadcrumbItem("breadcrumb-tax-year-overview", Some(controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url), Some(messages("breadcrumb-tax-year-overview", (taxYear - 1).toString, taxYear.toString))),
-        BreadcrumbItem("breadcrumb-tax-calc")
-    )), "TaxCalcPage"))
+    messages("taxCal_breakdown.heading", s"${taxYear-1}", s"$taxYear")
 ){
+
+@backLinkHelper(backUrl)
 
     <h1 class="heading-xlarge">
         <span class="heading-secondary">@messages("taxCal_breakdown.dates", s"${taxYear-1}", s"$taxYear")</span>

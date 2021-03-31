@@ -52,9 +52,9 @@ class TaxYearOverviewViewSpec extends ViewSpec {
   val emptyChargeList: List[Charge] = List.empty
 
   def estimateView(chargeList: List[Charge] = testChargesList): Html = taxYearOverview(
-    testYear, completeOverview(false), chargeList, mockImplicitDateFormatter)
+    testYear, completeOverview(false), chargeList, mockImplicitDateFormatter,"testBackURL")
 
-  def crystallisedView: Html = taxYearOverview(testYear, completeOverview(true), testChargesList, mockImplicitDateFormatter)
+  def crystallisedView: Html = taxYearOverview(testYear, completeOverview(true), testChargesList, mockImplicitDateFormatter, "testBackURL")
 
   object taxYearOverviewMessages{
     val title: String = "Tax year overview - Business Tax account - GOV.UK"
@@ -85,17 +85,6 @@ class TaxYearOverviewViewSpec extends ViewSpec {
   "taxYearOverview" should {
     "have the correct title" in new Setup(estimateView()) {
       document.title shouldBe taxYearOverviewMessages.title
-    }
-
-    "have a breadcrumb trail" in new Setup(estimateView()) {
-      content.selectHead("#breadcrumb-bta").text shouldBe Breadcrumbs.bta
-      content.selectHead("#breadcrumb-bta").attr("href") shouldBe appConfig.businessTaxAccount
-      content.selectHead("#breadcrumb-it").text shouldBe Breadcrumbs.it
-      content.selectHead("#breadcrumb-it").attr("href") shouldBe controllers.routes.HomeController.home().url
-      content.selectHead("#breadcrumb-tax-years").text shouldBe Breadcrumbs.taxYears
-      content.selectHead("#breadcrumb-tax-years").attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
-      content.selectHead("#breadcrumb-tax-year-overview").text shouldBe Breadcrumbs.taxYearOverview(testYear - 1, testYear)
-      content.selectHead("#breadcrumb-tax-year-overview").hasAttr("href") shouldBe false
     }
 
     "have the correct heading" in new Setup(estimateView()) {

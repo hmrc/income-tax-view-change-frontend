@@ -73,13 +73,13 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
       } yield {
         (currentObligations, previousObligations) match {
           case (currentObligations, previousObligations) if currentObligations.obligations.nonEmpty =>
-            Ok(views.html.obligations(currentObligations, previousObligations, dateFormatter))
+            Ok(views.html.obligations(currentObligations, previousObligations, dateFormatter, backUrl = backUrl))
           case _ =>
             itvcErrorHandler.showInternalServerError
         }
       }
     } else {
-      Future.successful(Ok(views.html.noReportDeadlines()))
+      Future.successful(Ok(views.html.noReportDeadlines(backUrl = backUrl)))
     }
   }
 
@@ -94,19 +94,22 @@ class ReportDeadlinesController @Inject()(val checkSessionTimeout: SessionTimeou
       }
     } yield {
         if (nextUpdates.obligations.nonEmpty) {
-					Ok(views.html.nextUpdates(nextUpdates, dateFormatter))
+					Ok(views.html.nextUpdates(nextUpdates, dateFormatter, backUrl = backUrl))
 				} else {
 					itvcErrorHandler.showInternalServerError
         }
       }
     }
     else {
-      Future.successful(Ok(views.html.noReportDeadlines()))
+      Future.successful(Ok(views.html.noReportDeadlines(backUrl = backUrl)))
     }
   }
 
 
   private def auditReportDeadlines[A](user: MtdItUser[A])(implicit hc: HeaderCarrier): Unit =
     auditingService.audit(ReportDeadlinesAuditModel(user), Some(controllers.routes.ReportDeadlinesController.getReportDeadlines().url))
+
+  lazy val backUrl: String = controllers.routes.HomeController.home().url
+
 
 }

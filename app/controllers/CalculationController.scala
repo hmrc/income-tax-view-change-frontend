@@ -72,7 +72,8 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
       incomeBreakdown = isEnabled(IncomeBreakdown),
       deductionBreakdown = isEnabled(DeductionBreakdown),
       taxDue = isEnabled(TaxDue),
-      dateFormatter
+      dateFormatter,
+      backUrl = backUrl
     )
   }
 
@@ -120,7 +121,8 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
       taxYear = taxYear,
       overview = CalcOverview(calculation, transaction),
       charges = charge,
-      dateFormatter
+      dateFormatter,
+      backUrl = backUrl
     )
   }
 
@@ -162,6 +164,8 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
       }
     }
   }
+
+  lazy val backUrl: String = controllers.routes.TaxYearsController.viewTaxYears().url
 
 }
 

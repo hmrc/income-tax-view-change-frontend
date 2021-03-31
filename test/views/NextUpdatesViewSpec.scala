@@ -34,8 +34,8 @@ class NextUpdatesViewSpec extends TestSupport {
 	lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
 	class Setup(currentObligations: ObligationsModel) {
-		val html: HtmlFormat.Appendable = views.html.nextUpdates(currentObligations, mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
-		val pageDocument: Document = Jsoup.parse(contentAsString(views.html.nextUpdates(currentObligations, mockImplicitDateFormatter))(defaultTimeout))
+		val html: HtmlFormat.Appendable = views.html.nextUpdates(currentObligations, mockImplicitDateFormatter,"testBackURL")(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
+		val pageDocument: Document = Jsoup.parse(contentAsString(views.html.nextUpdates(currentObligations, mockImplicitDateFormatter,"testBackURL"))(defaultTimeout))
 	}
 
 	object obligationsMessages {

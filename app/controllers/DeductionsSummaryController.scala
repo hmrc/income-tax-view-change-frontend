@@ -67,7 +67,7 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                 calcDisplayModel.calcDataModel.allowancesAndDeductions.personalAllowance,
                 calcDisplayModel.calcDataModel.allowancesAndDeductions.totalPensionContributions))
 
-              Future.successful(Ok(views.html.deductionBreakdown(calcDisplayModel, taxYear)))
+              Future.successful(Ok(views.html.deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
             }
             case CalcDisplayNoDataFound =>
               Logger.warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
@@ -81,5 +81,8 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
         else Future.successful(NotFound(notFound()))
     }
   }
+
+  def backUrl(taxYear: Int): String = controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url
+
 
 }

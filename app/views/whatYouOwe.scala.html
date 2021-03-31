@@ -19,13 +19,13 @@
 @import models.financialDetails.FinancialDetailsModel
 @import models.financialDetails.Charge
 @import models.financialDetails.WhatYouOweChargesList
-@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
-@import views.html.helpers.breadcrumbHelper
 @import views.html.templates.main_template
 @import java.time.LocalDate
 @import models.outstandingCharges.OutstandingChargesModel
+@import views.html.helpers.backLinkHelper
 
-@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter, utr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+
+@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter,backUrl: String, utr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @paymentTypesDropdown = {
@@ -72,13 +72,11 @@
 
 @main_template(
     title = messages("whatYouOwe.heading"),
-    contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
-        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-what-you-owe", None)
-        )), "WhatYouOwePage")),
     bodyClasses = None,
     scriptElem = None
 ) {
+
+@backLinkHelper(backUrl)
 
     <header class="page-heading">
         <h1 class="heading-xlarge" id="page-heading">@messages("whatYouOwe.heading")</h1>

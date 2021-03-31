@@ -16,11 +16,11 @@
 
 @import implicits.ImplicitCurrencyFormatter._
 @import models.calculation.CalcDisplayModel
-@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
-@import views.html.helpers.breadcrumbHelper
 @import views.html.templates.main_template
+@import views.html.helpers.backLinkHelper
 
-@(calcModel: CalcDisplayModel, taxYear: Int)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+
+@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
     @if(dataItem.isDefined) {
@@ -34,14 +34,10 @@
     }
 }
 
-@main_template(messages("income_breakdown.heading", s"${taxYear - 1}", s"$taxYear"),
-    contentHeader = Some(breadcrumbHelper(Breadcrumb(Vector(
-        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears.url)),
-        BreadcrumbItem("breadcrumb-tax-year-overview", Some(controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url), Some(messages("breadcrumb-tax-year-overview", (taxYear - 1).toString, taxYear.toString))),
-        BreadcrumbItem("breadcrumb-income")
-    )), "IncomePage"))
+@main_template(messages("income_breakdown.heading", s"${taxYear - 1}", s"$taxYear")
 ) {
+
+@backLinkHelper(backUrl)
 
     <h1 class="heading-xlarge">
         <span class="heading-secondary">@messages("income_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>

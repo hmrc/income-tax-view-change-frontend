@@ -19,7 +19,7 @@ package views
 import java.time.LocalDate
 
 import assets.BaseTestConstants._
-import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages, Core => coreMessages, HomePage => homeMessages}
+import assets.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
@@ -84,11 +84,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
     "display the language selection switch" in new Setup {
       getTextOfElementById("cymraeg-switch") shouldBe Some(coreMessages.welsh)
-    }
-
-    "have a breadcrumb trail" in new Setup {
-      getTextOfElementById("breadcrumb-bta") shouldBe Some(breadcrumbMessages.bta)
-      getTextOfElementById("breadcrumb-it") shouldBe Some(breadcrumbMessages.it)
     }
 
     s"have the page heading '${homeMessages.heading}'" in new Setup {

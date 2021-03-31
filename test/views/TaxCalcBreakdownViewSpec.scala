@@ -26,6 +26,8 @@ import views.html.taxCalcBreakdown
 
 class TaxCalcBreakdownViewSpec extends ViewSpec {
 
+  val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
+
   object Breadcrumbs {
     val businessTaxAccount = "Business tax account"
     val home = "Income Tax account"
@@ -40,7 +42,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
     lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
       CalcBreakdownTestConstants.calculationBillWelshModel,
-      Crystallised), taxYear)
+      Crystallised), taxYear, backUrl)
 
     "have the correct tax regime: Wales" in new Setup(view) {
       val regime: Element = content.selectNth("h3", 1).selectFirst("span")
@@ -59,7 +61,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.calculationBillScotlandModel,
-        Crystallised), taxYear)
+        Crystallised), taxYear, backUrl)
 
       "have the correct tax regime: Scotland" in new Setup(view) {
         val regime: Element = content.selectNth("h3", 1).selectFirst("span")
@@ -75,7 +77,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.scottishTaxBandModelJustPPP,
-        Crystallised), taxYear)
+        Crystallised), taxYear, backUrl)
 
       "have the correct tax regime: Scotland" in new Setup(view) {
         val regime: Element = content.selectNth("h3", 1).selectFirst("span")
@@ -134,33 +136,10 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.calculationBillTaxableIncomeZeroModel,
-        Crystallised), taxYear)
+        Crystallised), taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
         document title() shouldBe TaxCalcBreakdown.title
-      }
-
-      "have the correct breadcrumbs" in new Setup(view) {
-        val breadcrumbNav: Element = content.selectHead("#breadcrumbs")
-
-        val first: Element = breadcrumbNav.selectHead("ol").selectNth("li", 1).selectHead("a")
-        first.attr("href") shouldBe appConfig.businessTaxAccount
-        first.text shouldBe Breadcrumbs.businessTaxAccount
-
-        val second: Element = breadcrumbNav.selectHead("ol").selectNth("li", 2).selectHead("a")
-        second.attr("href") shouldBe controllers.routes.HomeController.home().url
-        second.text shouldBe Breadcrumbs.home
-
-        val third: Element = breadcrumbNav.selectHead("ol").selectNth("li", 3).selectHead("a")
-        third.attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
-        third.text shouldBe Breadcrumbs.taxYears
-
-        val forth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 4).selectHead("a")
-        forth.attr("href") shouldBe controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url
-        forth.text shouldBe Breadcrumbs.taxYear(taxYear - 1, taxYear)
-
-        val fifth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 5)
-        fifth.text shouldBe Breadcrumbs.taxCalc
       }
 
       "have the correct heading" in new Setup(view) {
@@ -184,33 +163,10 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.testCalcModelCrystallised,
-        Crystallised), taxYear)
+        Crystallised), taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
         document title() shouldBe TaxCalcBreakdown.title
-      }
-
-      "have the correct breadcrumbs" in new Setup(view) {
-        val breadcrumbNav: Element = content.selectHead("#breadcrumbs")
-
-        val first: Element = breadcrumbNav.selectHead("ol").selectNth("li", 1).selectHead("a")
-        first.attr("href") shouldBe appConfig.businessTaxAccount
-        first.text shouldBe Breadcrumbs.businessTaxAccount
-
-        val second: Element = breadcrumbNav.selectHead("ol").selectNth("li", 2).selectHead("a")
-        second.attr("href") shouldBe controllers.routes.HomeController.home().url
-        second.text shouldBe Breadcrumbs.home
-
-        val third: Element = breadcrumbNav.selectHead("ol").selectNth("li", 3).selectHead("a")
-        third.attr("href") shouldBe controllers.routes.TaxYearsController.viewTaxYears().url
-        third.text shouldBe Breadcrumbs.taxYears
-
-        val forth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 4).selectHead("a")
-        forth.attr("href") shouldBe controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url
-        forth.text shouldBe Breadcrumbs.taxYear(taxYear - 1, taxYear)
-
-        val fifth: Element = breadcrumbNav.selectHead("ol").selectNth("li", 5)
-        fifth.text shouldBe Breadcrumbs.taxCalc
       }
 
       "have the correct heading" in new Setup(view) {

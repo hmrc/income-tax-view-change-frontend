@@ -14,24 +14,19 @@
  * limitations under the License.
  *@
 
-@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
-@import views.html.helpers.breadcrumbHelper
 @import views.html.templates.main_template
+@import views.html.helpers.backLinkHelper
 
-@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@breadcrumb = {
-    @breadcrumbHelper(Breadcrumb(Vector(
-        BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
-        BreadcrumbItem("breadcrumb-obligations", None)
-    )), "ReportDeadlinesPage")
-}
+@(backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @main_template(
     title = messages("obligations.heading"),
     bodyClasses = None,
-    serviceInfo = breadcrumb
 ) {
+
+@backLinkHelper(backUrl)
+
 
     <section id="estimated-tax">
 

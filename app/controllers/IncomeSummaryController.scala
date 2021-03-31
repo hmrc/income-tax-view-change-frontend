@@ -58,7 +58,7 @@ class IncomeSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutP
         if (isEnabled(IncomeBreakdown)) {
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>
-              Future.successful(Ok(views.html.incomeBreakdown(calcDisplayModel, taxYear)))
+              Future.successful(Ok(views.html.incomeBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
             case CalcDisplayNoDataFound =>
               Logger.warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
@@ -71,5 +71,8 @@ class IncomeSummaryController @Inject()(val checkSessionTimeout: SessionTimeoutP
         }
         else Future.successful(NotFound(notFound()))
     }
+
+  def backUrl(taxYear: Int): String = controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url
+
 
 }

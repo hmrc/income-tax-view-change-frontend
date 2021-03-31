@@ -17,18 +17,10 @@
 @import java.time.LocalDate
 @import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 @import implicits.ImplicitDateFormatter
-@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import views.html.templates.main_template
-@import views.html.helpers.breadcrumbHelper
 
 @(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int], paymentEnabled: Boolean, PaymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
-
-@breadcrumb = {
-@breadcrumbHelper(Breadcrumb(Vector(
-BreadcrumbItem("breadcrumb-it", None)
-)), "HomePage")
-}
 
 @paymentsTile = {
 <div id="payments-tile" class="tile tile-no-border">
@@ -107,8 +99,7 @@ BreadcrumbItem("breadcrumb-it", None)
 
 @main_template(
 title = messages("home.heading"),
-mainClass = Some("full-width"),
-contentHeader = Some(breadcrumb)
+mainClass = Some("full-width")
 ) {
 
 <h1 class="heading-xlarge">

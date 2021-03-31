@@ -18,7 +18,6 @@ package views
 
 import assets.EstimatesTestConstants._
 import assets.MessagesLookUp
-import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages}
 import config.FrontendAppConfig
 import models.calculation.CalculationResponseModelWithYear
 import org.jsoup.Jsoup
@@ -26,7 +25,7 @@ import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testUtils.{TestSupport, ViewSpec}
+import testUtils.ViewSpec
 
 class TaxYearsViewSpec extends ViewSpec {
 
@@ -38,7 +37,7 @@ class TaxYearsViewSpec extends ViewSpec {
 
                        ) = new {
     lazy val page: HtmlFormat.Appendable =
-      views.html.taxYears(calcs, itsaSubmissionFeatureSwitch, 2021)(FakeRequest(), implicitly, mockAppConfig)
+      views.html.taxYears(calcs, "testBackURL",itsaSubmissionFeatureSwitch, 2021)(FakeRequest(), implicitly, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
@@ -50,12 +49,6 @@ class TaxYearsViewSpec extends ViewSpec {
 
       s"have the title '${messages.title}'" in {
         document.title() shouldBe messages.title
-      }
-
-      "have a breadcrumb trail" in {
-        document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-        document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        document.getElementById("breadcrumb-tax-years").text shouldBe breadcrumbMessages.taxYears
       }
 
       "have a header" in {
@@ -147,12 +140,6 @@ class TaxYearsViewSpec extends ViewSpec {
 
        s"have the title '${messages.title}'" in {
          document.title() shouldBe messages.title
-       }
-
-       "have a breadcrumb trail" in {
-         document.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-         document.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-         document.getElementById("breadcrumb-tax-years").text shouldBe breadcrumbMessages.taxYears
        }
 
        "have a header" in {

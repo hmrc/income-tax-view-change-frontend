@@ -37,10 +37,6 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val info = "If you cannot see all your previous payments here, you can find them in your classic Self Assessment service."
     def button(year: Int): String = s"$year payments"
     val CardRef = "Payment made by debit card ref:"
-    val breadcrumbMessagesIt = "Income Tax account"
-    val breadcrumbMessageUrl = "Payment history"
-
-
   }
 
   val testPayments: List[Payment] = List(
@@ -49,7 +45,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    views.html.paymentHistory(testPayments, mockImplicitDateFormatter, saUtr)(FakeRequest(), implicitly, mockAppConfig)
+    views.html.paymentHistory(testPayments, mockImplicitDateFormatter,"testBackURL", saUtr)(FakeRequest(), implicitly, mockAppConfig)
   )
 
   "The payments history view with payment response model" should {
@@ -85,11 +81,6 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
               row.selectNth("td", 3).text shouldBe payment.amount.get.toCurrencyString
           }
         }
-      }
-
-      "have a breadcrumb trail" in new PaymentHistorySetup(testPayments) {
-        content.selectHead("#breadcrumb-it").text shouldBe PaymentHistoryMessages.breadcrumbMessagesIt
-        content.selectHead("#breadcrumb-payment-history").text shouldBe PaymentHistoryMessages.breadcrumbMessageUrl
       }
     }
   }
