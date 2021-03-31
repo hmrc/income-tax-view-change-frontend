@@ -101,7 +101,7 @@ class HomeControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockNotFound()
 
-        val result: Future[Result] = controller.show()(fakeRequestConfirmedClient)
+        val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
         status(result) shouldBe NOT_FOUND
         contentType(result) shouldBe Some(HTML)
@@ -115,7 +115,7 @@ class HomeControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockErrorIncomeSource()
 
-          val result: Future[Result] = controller.show()(fakeRequestConfirmedClient)
+          val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
           intercept[InternalServerException](await(result))
             .message shouldBe "[HomeController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
@@ -130,7 +130,7 @@ class HomeControllerSpec extends TestSupport
             mockSingleBusinessIncomeSource()
             mockGetObligationDueDates(Future.failed(new InternalServerException("obligation test exception")))
 
-            val result: Future[Result] = controller.show()(fakeRequestConfirmedClient)
+            val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
             intercept[InternalServerException](await(result))
               .message shouldBe "obligation test exception"
@@ -146,7 +146,7 @@ class HomeControllerSpec extends TestSupport
               mockGetObligationDueDates(Future.successful(Right(2)))
               mockGetChargeDueDates(Future.failed(new InternalServerException("charge test exception")))
 
-              val result: Future[Result] = controller.show()(fakeRequestConfirmedClient)
+              val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
               intercept[InternalServerException](await(result))
                 .message shouldBe "charge test exception"
@@ -162,7 +162,7 @@ class HomeControllerSpec extends TestSupport
               mockGetChargeDueDates(Future.successful(Some(Left(LocalDate.now -> true))))
               mockHome(Some(Left(LocalDate.now -> true)), Right(2))(HtmlFormat.empty)
 
-              val result: Future[Result] = controller.show()(fakeRequestConfirmedClient)
+              val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
               status(result) shouldBe OK
               contentType(result) shouldBe Some(HTML)

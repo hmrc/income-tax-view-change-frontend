@@ -16,27 +16,15 @@
 
 package controllers.agent.predicates
 
-import auth.BaseFrontendController
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolments}
+import play.api.mvc.{AnyContent, Request}
 
-trait ConfirmClientController extends BaseFrontendController {
+trait ConfirmClientController extends BaseAgentController {
 
-  val mcc: MessagesControllerComponents
-
-  protected def baseAgentPredicates: AuthPredicate[IncomeTaxAgentUser] = AgentAuthenticationPredicate.clientDetailsPredicates
-
-  object Authenticated extends AuthenticatedActions[IncomeTaxAgentUser] {
-
-    override def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel) => IncomeTaxAgentUser = IncomeTaxAgentUser.apply
-
-    override def async: AuthenticatedAction[IncomeTaxAgentUser] = asyncInternal(baseAgentPredicates)
-
-  }
+  override protected def baseAgentPredicates: AuthPredicate[IncomeTaxAgentUser] = AgentAuthenticationPredicate.clientDetailsPredicates
 
   def fetchClientName(implicit request: Request[AnyContent]): Option[String] =
     (request.session.get(SessionKeys.clientFirstName),

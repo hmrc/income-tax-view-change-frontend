@@ -32,3 +32,7 @@ POST        /confirm-client            controllers.agent.ConfirmClientUTRControl
 GET         /income-tax-account        controllers.agent.HomeController.show
 GET         /					       controllers.agent.HomeController.show
 GET         /remove-client-sessions    controllers.agent.RemoveClientDetailsSessionsController.show
+
+
+#Charge summary
+GET			/tax-years/:taxYear/charge controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String)

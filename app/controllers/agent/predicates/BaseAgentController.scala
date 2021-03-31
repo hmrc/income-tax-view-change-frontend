@@ -20,12 +20,9 @@ import auth.BaseFrontendController
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate
-import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolments}
 
-trait SelectClientController extends BaseFrontendController {
-
-  val mcc: MessagesControllerComponents
+trait BaseAgentController extends BaseFrontendController {
 
   protected def baseAgentPredicates: AuthPredicate[IncomeTaxAgentUser] = AgentAuthenticationPredicate.defaultPredicates
 
@@ -36,5 +33,4 @@ trait SelectClientController extends BaseFrontendController {
     override def async: AuthenticatedAction[IncomeTaxAgentUser] = asyncInternal(baseAgentPredicates)
 
   }
-
 }

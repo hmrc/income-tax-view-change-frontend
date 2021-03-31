@@ -134,6 +134,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAgentHome(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/income-tax-account", additionalCookies)
 
+    def getChargeSummary(taxYear: String, id: String, additionalCookies: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id", additionalCookies)
   }
 
 }
