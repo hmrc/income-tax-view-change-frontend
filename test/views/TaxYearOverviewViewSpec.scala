@@ -16,12 +16,18 @@
 
 package views
 
-import assets.FinancialDetailsTestConstants.{chargeModel, financialDetailsModel, fullChargeModel, testValidFinancialDetailsModel}
+import java.time.LocalDate
+
+import assets.FinancialDetailsTestConstants.fullChargeModel
 import assets.MessagesLookUp.Breadcrumbs
+import assets.ReportDeadlinesTestConstants._
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import implicits.ImplicitDateFormatterImpl
 import models.calculation.CalcOverview
-import models.financialDetails.{Charge, FinancialDetailsModel}
+import models.financialDetails.Charge
 import models.financialTransactions.TransactionModel
+import models.reportDeadlines.{ObligationsModel, ReportDeadlineModelWithIncomeType}
+import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.taxYearOverview
@@ -29,6 +35,11 @@ import views.html.taxYearOverview
 class TaxYearOverviewViewSpec extends ViewSpec {
 
   val testYear: Int = 2018
+
+
+  val implicitDateFormatter: ImplicitDateFormatterImpl = app.injector.instanceOf[ImplicitDateFormatterImpl]
+
+  import implicitDateFormatter._
 
   def completeOverview(crystallised: Boolean): CalcOverview = CalcOverview(
     timestamp = Some("2020-01-01T00:35:34.185Z"),
@@ -46,17 +57,19 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     outstandingAmount = Some(8.08)
   )
 
-  val testChargeModel: Charge = chargeModel(dueDate = Some("2019-02-12"))
-
-  val testChargesList: List[Charge] = List(testChargeModel)
+  val testChargesList: List[Charge] = List(fullChargeModel)
   val emptyChargeList: List[Charge] = List.empty
 
-  def estimateView(chargeList: List[Charge] = testChargesList): Html = taxYearOverview(
-    testYear, completeOverview(false), chargeList, mockImplicitDateFormatter,"testBackURL")
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel))
 
-  def crystallisedView: Html = taxYearOverview(testYear, completeOverview(true), testChargesList, mockImplicitDateFormatter, "testBackURL")
+  def estimateView(chargeList: List[Charge] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverview(
+    testYear, completeOverview(false), chargeList, obligations, mockImplicitDateFormatter, "testBackURL")
 
-  object taxYearOverviewMessages{
+  def crystallisedView: Html = taxYearOverview(testYear, completeOverview(true), testChargesList, testObligationsModel, mockImplicitDateFormatter, "testBackURL")
+
+  implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
+
+  object taxYearOverviewMessages {
     val title: String = "Tax year overview - Business Tax account - GOV.UK"
     val heading: String = "Tax year overview"
     val secondaryHeading: String = s"6 April ${testYear - 1} to 5 April $testYear"
@@ -80,6 +93,22 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val paymentOnAccount1: String = "Payment on account 1 of 2"
     val unpaid: String = "Unpaid"
     val noPaymentsDue: String = "No payments currently due."
+    val updateType: String = "Update type"
+    val updateIncomeSource: String = "Income source"
+    val updateDateSubmitted: String = "Date submitted"
+
+    def updateCaption(from: String, to: String): String = s"$from to $to"
+
+    def dueMessage(due: String): String = s"Due $due"
+
+    def incomeType(incomeType: String) = {
+      incomeType match {
+        case "Property" => "Property income"
+        case "Business" => "Business"
+        case "Crystallised" => "All income sources"
+        case other => other
+      }
+    }
   }
 
   "taxYearOverview" should {
@@ -133,14 +162,14 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the income row in the Tax Calculation tab" in new Setup(estimateView()) {
-      val incomeLink = content.selectHead(" #income-deductions-table tr:nth-child(1) td:nth-child(1) a")
+      val incomeLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(1) td:nth-child(1) a")
       incomeLink.text shouldBe taxYearOverviewMessages.income
       incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
       content.selectHead("#income-deductions-table tr:nth-child(1) .numeric").text shouldBe completeOverview(false).income.toCurrencyString
     }
 
     "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {
-      val allowancesLink = content.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
+      val allowancesLink: Element = content.selectHead(" #income-deductions-table tr:nth-child(2) td:nth-child(1) a")
       allowancesLink.text shouldBe taxYearOverviewMessages.allowancesAndDeductions
       allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
       content.selectHead("#income-deductions-table tr:nth-child(2) .numeric").text shouldBe completeOverview(false).deductions.toNegativeCurrencyString
@@ -152,7 +181,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView()) {
-      val totalTaxDueLink = content.selectHead("#taxdue-payments-table td:nth-child(1) a")
+      val totalTaxDueLink: Element = content.selectHead("#taxdue-payments-table td:nth-child(1) a")
       totalTaxDueLink.text shouldBe taxYearOverviewMessages.incomeTaxNationalInsuranceDue
       totalTaxDueLink.attr("href") shouldBe controllers.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
       content.selectHead("#taxdue-payments-table td:nth-child(2)").text shouldBe completeOverview(false).taxDue.toCurrencyString
@@ -166,13 +195,13 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView()) {
-      val paymentTypeLink = content.selectHead("#payments-table tr:nth-child(2) td:nth-child(1) a")
+      val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(2) td:nth-child(1) a")
       paymentTypeLink.text shouldBe taxYearOverviewMessages.paymentOnAccount1
       paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(testYear, fullChargeModel.transactionId).url
     }
 
     "display the Due date in the Payments tab" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "12 Feb 2019"
+      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 May 2019"
     }
 
     "display the Status in the payments tab" in new Setup(estimateView()) {
@@ -185,6 +214,30 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
     "display No payments due when there are no charges in the payments tab" in new Setup(estimateView(emptyChargeList)) {
       content.selectHead("#payments p").text shouldBe taxYearOverviewMessages.noPaymentsDue
+    }
+
+    "display updates by due-date" in new Setup(estimateView()) {
+
+      testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { reportDeadlineWithIncomeType =>
+        reportDeadlineWithIncomeType.obligation.due
+      }.toList.sortBy(_._1)(localDateOrdering).reverse.map { case (due: LocalDate, obligations: Seq[ReportDeadlineModelWithIncomeType]) =>
+        content.selectHead(s"#table-default-content-$due").text shouldBe taxYearOverviewMessages.dueMessage(due.toLongDate)
+        val sectionContent = content.selectHead(s"#updates")
+        obligations.zip(1 to obligations.length).foreach {
+          case (testObligation, index) =>
+            val divAccordion = sectionContent.selectHead(s"div:nth-of-type($index)")
+
+            divAccordion.selectHead("caption").text shouldBe
+              taxYearOverviewMessages.updateCaption(testObligation.obligation.start.toLongDate, testObligation.obligation.end.toLongDate)
+            divAccordion.selectHead("thead").selectNth("th", 1).text shouldBe taxYearOverviewMessages.updateType
+            divAccordion.selectHead("thead").selectNth("th", 2).text shouldBe taxYearOverviewMessages.updateIncomeSource
+            divAccordion.selectHead("thead").selectNth("th", 3).text shouldBe taxYearOverviewMessages.updateDateSubmitted
+            val row = divAccordion.selectHead("tbody").selectHead("tr")
+            row.selectNth("td", 1).text shouldBe testObligation.obligation.obligationType
+            row.selectNth("td", 2).text shouldBe taxYearOverviewMessages.incomeType(testObligation.incomeType)
+            row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDate).getOrElse("")
+        }
+      }
     }
   }
 }

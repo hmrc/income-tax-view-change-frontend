@@ -22,7 +22,7 @@ import assets.IncomeSourcesWithDeadlinesTestConstants._
 import implicits.ImplicitDateFormatter
 import models.reportDeadlines.{ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -69,6 +69,11 @@ trait MockReportDeadlinesService extends UnitSpec with MockitoSugar with BeforeA
 
   def mockGetObligationDueDates(response: Future[Either[(LocalDate, Boolean), Int]]): Unit = {
     when(mockReportDeadlinesService.getObligationDueDates()(any(), any(), any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def mockGetReportDeadlines(fromDate: LocalDate, toDate: LocalDate)(response: ReportDeadlinesResponseModel): Unit = {
+    when(mockReportDeadlinesService.getReportDeadlines(matches(fromDate), matches(toDate))(any(), any()))
       .thenReturn(Future.successful(response))
   }
 }

@@ -16,7 +16,7 @@
 
 package controllers
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
@@ -27,6 +27,7 @@ import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, TaxYearOv
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.calculation.{CalculationItem, ListCalculationItems}
+import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.http.Status._
 
 class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -52,6 +53,42 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           body = estimatedCalculationFullJson
         )
 
+        And("previous obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino,
+          LocalDate.of(2017, 4, 6),
+          LocalDate.of(2018, 4, 5),
+          ObligationsModel(Seq(
+            ReportDeadlinesModel(
+              "ABC123456789",
+              List(ReportDeadlineModel(
+                LocalDate.of(2017, 12, 28),
+                LocalDate.of(2018, 2, 3),
+                LocalDate.of(2018, 2,4),
+                "Quarterly",
+                Some(LocalDate.of(2018, 2, 2)),
+                "#001"
+              ))
+            )
+          ))
+        )
+
+        And("current obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino,
+          ObligationsModel(Seq(
+            ReportDeadlinesModel(
+              "ABC123456789",
+              List(ReportDeadlineModel(
+                LocalDate.of(2017, 11, 28),
+                LocalDate.of(2018, 1, 3),
+                LocalDate.of(2018, 1,4),
+                "Quarterly",
+                Some(LocalDate.of(2018, 1, 2)),
+                "#001"
+              ))
+            )
+          ))
+        )
+
         When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
 
@@ -68,7 +105,13 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           elementTextBySelector("#calculation-date")("6 July 2017"),
           elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
           elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
-          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00")
+          elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("2 February 2018"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(2)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(2)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(2)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("2 January 2018")
         )
       }
 
@@ -89,6 +132,42 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
 
         And("A financial transaction call fails")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino)(NOT_FOUND, testFinancialDetailsErrorModelJson())
+
+        And("previous obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino,
+          LocalDate.of(2017, 4, 6),
+          LocalDate.of(2018, 4, 5),
+          ObligationsModel(Seq(
+            ReportDeadlinesModel(
+              "ABC123456789",
+              List(ReportDeadlineModel(
+                LocalDate.of(2017, 12, 28),
+                LocalDate.of(2018, 2, 3),
+                LocalDate.of(2018, 2,4),
+                "Quarterly",
+                Some(LocalDate.of(2018, 2, 2)),
+                "#001"
+              ))
+            )
+          ))
+        )
+
+        And("current obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino,
+          ObligationsModel(Seq(
+            ReportDeadlinesModel(
+              "ABC123456789",
+              List(ReportDeadlineModel(
+                LocalDate.of(2017, 11, 28),
+                LocalDate.of(2018, 1, 3),
+                LocalDate.of(2018, 1,4),
+                "Quarterly",
+                Some(LocalDate.of(2018, 1, 2)),
+                "#001"
+              ))
+            )
+          ))
+        )
 
         When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
@@ -156,6 +235,84 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+
+        And("Internal server error is returned")
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
+      }
+
+      "retrieving a previous obligations error" in {
+        enable(TaxYearOverviewUpdate)
+
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+        And("A non crystallised calculation for 2017-18 is returned")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = estimatedCalculationFullJson
+        )
+
+        And("current obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino,
+        ObligationsModel(Nil))
+
+        And("previous obligations call failed")
+        IncomeTaxViewChangeStub.stubGetPreviousObligationsError(testNino,
+          LocalDate.of(2017, 4, 6),
+          LocalDate.of(2018, 4, 5))
+
+        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
+
+        And("Internal server error is returned")
+        res should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
+        )
+      }
+
+      "retrieving a current obligations error" in {
+        enable(TaxYearOverviewUpdate)
+
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+        And("A non crystallised calculation for 2017-18 is returned")
+        IndividualCalculationStub.stubGetCalculationList(testNino, "2017-18")(
+          status = OK,
+          body = ListCalculationItems(Seq(CalculationItem("idOne", LocalDateTime.now())))
+        )
+        IndividualCalculationStub.stubGetCalculation(testNino, "idOne")(
+          status = OK,
+          body = estimatedCalculationFullJson
+        )
+
+        And("previous obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino,
+          LocalDate.of(2017, 4, 6),
+          LocalDate.of(2018, 4, 5),
+          ObligationsModel(Nil))
+
+        And("current obligations call failed")
+        IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
+
+        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+        IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
         And("Internal server error is returned")
         res should have(

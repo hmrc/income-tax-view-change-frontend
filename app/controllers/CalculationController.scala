@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import audit.AuditingService
 import audit.models.BillsAuditing.BillsAuditModel
 import auth.MtdItUser
@@ -31,10 +33,11 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService}
+import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.{taxYearOverview, taxYearOverviewOld}
 import javax.inject.{Inject, Singleton}
+import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,6 +50,7 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
                                       itvcErrorHandler: ItvcErrorHandler,
                                       retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                       retrieveNino: NinoPredicate,
+                                      reportDeadlinesService: ReportDeadlinesService,
                                       val auditingService: AuditingService
                                      )
                                      (implicit val appConfig: FrontendAppConfig,
@@ -54,15 +58,15 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
                                       mcc: MessagesControllerComponents,
                                       val executionContext: ExecutionContext,
                                       dateFormatter: ImplicitDateFormatterImpl)
-                                      extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
+  extends BaseController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources
 
   private def viewOld(
-                     taxYear: Int,
-                     calculation: Calculation,
-                     transaction: Option[TransactionModel] = None,
-                     charge: Option[Charge] = None
+                       taxYear: Int,
+                       calculation: Calculation,
+                       transaction: Option[TransactionModel] = None,
+                       charge: Option[Charge] = None
                      )(implicit request: Request[_]): Html = {
     taxYearOverviewOld(
       taxYear = taxYear,
@@ -115,33 +119,48 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
   private def view(taxYear: Int,
                    calculation: Calculation,
                    transaction: Option[TransactionModel] = None,
-                   charge: List[Charge]
-                  )(implicit request: Request[_]): Html = {
+                   charge: List[Charge],
+                   obligations: ObligationsModel
+                  )(implicit request: Request[_],
+                    user: MtdItUser[_]): Html = {
     taxYearOverview(
       taxYear = taxYear,
       overview = CalcOverview(calculation, transaction),
       charges = charge,
+      obligations,
       dateFormatter,
       backUrl = backUrl
     )
   }
 
-  private def withTaxYearFinancials(taxYear: Int)(f: List[Charge] => Result)(implicit user: MtdItUser[AnyContent]) = {
-    financialDetailsService.getFinancialDetails(taxYear, user.nino) map {
+  private def withTaxYearFinancials(taxYear: Int)(f: List[Charge] => Future[Result])(implicit user: MtdItUser[AnyContent]): Future[Result] = {
+    financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case FinancialDetailsModel(charges) => f(charges)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
-      case _ => itvcErrorHandler.showInternalServerError()
+      case _ => Future.successful(itvcErrorHandler.showInternalServerError())
     }
+  }
+
+  private def withObligationsModel(taxYear: Int)(implicit user: MtdItUser[AnyContent]) = {
+    reportDeadlinesService.getReportDeadlines(
+      fromDate = LocalDate.of(taxYear-1, 4, 6),
+      toDate = LocalDate.of(taxYear,4,5)
+    )
   }
 
   private def showTaxYearOverview(taxYear: Int): Action[AnyContent] = action.async {
     implicit user =>
       calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
         case CalcDisplayModel(_, calcAmount, calculation, _) =>
-          auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
-          withTaxYearFinancials(taxYear){ charges =>
-            Ok(view(taxYear, calculation, charge = charges)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
-          }
+        auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
+          withTaxYearFinancials(taxYear) { charges =>
+            withObligationsModel(taxYear) map {
+              case obligationsModel: ObligationsModel => Ok(view(taxYear, calculation, charge = charges, obligations = obligationsModel))
+                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
+              case _ => itvcErrorHandler.showInternalServerError()
+            }
+        }
+
         case CalcDisplayNoDataFound | CalcDisplayError =>
           Logger.error(s"[CalculationController][showTaxYearOverview] - Could not retrieve calculation for year $taxYear")
           Future.successful(itvcErrorHandler.showInternalServerError())

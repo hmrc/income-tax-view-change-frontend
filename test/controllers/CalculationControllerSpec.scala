@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
@@ -32,9 +34,10 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockFinancialTransactionsService}
+import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockFinancialTransactionsService, MockReportDeadlinesService}
 import models.calculation.CalcOverview
 import models.financialDetails.{Charge, FinancialDetailsModel}
+import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
@@ -44,7 +47,7 @@ import testUtils.TestSupport
 class CalculationControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
   with MockFinancialTransactionsService with MockFinancialDetailsService
-  with FeatureSwitching with MockAuditingService {
+  with FeatureSwitching with MockAuditingService with MockReportDeadlinesService {
 
   object TestCalculationController extends CalculationController(
     MockAuthenticationPredicate,
@@ -55,6 +58,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
     app.injector.instanceOf[ItvcErrorHandler],
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
+    mockReportDeadlinesService,
     mockAuditingService
   )(appConfig,
     languageUtils,
@@ -69,6 +73,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
   val testTaxDue: Boolean = false
   val testChargesList: List[Charge] = List(fullChargeModel)
   val testEmptyChargesList: List[Charge] = List.empty
+  val testObligtionsModel: ObligationsModel = ObligationsModel(Nil)
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
 
   override def beforeEach(): Unit = {
@@ -86,14 +91,20 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         mockSingleBusinessIncomeSource()
         mockCalculationSuccess()
         mockFinancialDetailsSuccess()
+        mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
+          toDate = LocalDate.of(testYear , 4, 5))(
+          response = testObligtionsModel
+        )
 
         val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
         val expectedContent: String = views.html.taxYearOverview(
           testYear,
           calcOverview,
           testChargesList,
+          testObligtionsModel,
           mockImplicitDateFormatter,
           taxYearsBackLink).toString
+
 
         val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
@@ -109,12 +120,18 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           mockSingleBusinessIncomeSource()
           mockCalculationSuccess()
           mockFinancialDetailsNotFound()
+          mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
+            toDate = LocalDate.of(testYear , 4, 5))(
+            response = testObligtionsModel
+          )
+
 
           val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
           val expectedContent: String = views.html.taxYearOverview(
             testYear,
             calcOverview,
             testEmptyChargesList,
+            testObligtionsModel,
             mockImplicitDateFormatter,
             taxYearsBackLink).toString
 
@@ -133,6 +150,24 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           mockSingleBusinessIncomeSource()
           mockCalculationCrystalisationSuccess()
           mockFinancialDetailsFailed()
+
+          val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          contentType(result) shouldBe Some("text/html")
+        }
+      }
+
+      "getReportDeadlines returns an error" should {
+        "show the internal server error page" in {
+          enable(TaxYearOverviewUpdate)
+          mockSingleBusinessIncomeSource()
+          mockCalculationCrystalisationSuccess()
+          mockFinancialDetailsNotFound()
+          mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
+            toDate = LocalDate.of(testYear , 4, 5))(
+            response = ReportDeadlinesErrorModel(500, "INTERNAL_SERVER_ERROR")
+          )
 
           val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 

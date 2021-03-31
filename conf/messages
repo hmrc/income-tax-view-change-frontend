@@ -437,4 +437,13 @@ paymentHistory.textLink1                                        = Self Assessmen
 paymentHistory.button                                           = {0} payments
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
 
+##Tax Years Overview Update Tab##
+updateTab.due                                                   = Due {0}
+updateTab.updateType                                            = Update type
+updateTab.incomeSource                                          = Income source
+updateTab.dateSubmitted                                         = Date submitted
+updateTab.dateToDate                                            = {0} to {1}
+updateTab.obligationType.property                               = Property income
+updateTab.obligationType.business                               = Business
+updateTab.obligationType.crystallised                           = All income sources
 

@@ -16,6 +16,8 @@
 
 package connectors
 
+import java.time.LocalDate
+
 import audit.AuditingService
 import audit.models._
 import auth.MtdItUser
@@ -29,7 +31,7 @@ import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, P
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status.{OK, NOT_FOUND}
+import play.api.http.Status.{NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -69,6 +71,10 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   def getPaymentAllocationsUrl(nino: String, paymentLot: String, paymentLotItem: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/$nino/payment-allocations/$paymentLot/$paymentLotItem"
+  }
+
+  def getPreviousObligationsUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
+    s"${config.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines/from/$fromDate/to/$toDate"
   }
 
   def getChargesUrl(nino: String, from: String, to: String): String = {
@@ -272,6 +278,46 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
     }
 
   }
+
+  def getPreviousObligations(fromDate: LocalDate, toDate: LocalDate)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
+
+    val url = getPreviousObligationsUrl(fromDate, toDate, mtdUser.nino)
+    Logger.debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
+
+  auditingService.extendedAudit(ReportDeadlinesRequestAuditModel(mtdUser.mtditid, mtdUser.nino, mtdUser.saUtr, mtdUser.credId, mtdUser.userType))
+
+  http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
+    response.status match {
+      case OK =>
+        Logger.debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, json: ${response.json}")
+        response.json.validate[ObligationsModel].fold(
+          invalid => {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Json Validation Error: $invalid")
+            ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Report Deadlines Data Response")
+          },
+          valid => {
+            valid.obligations.foreach { data =>
+              auditingService.extendedAudit(ReportDeadlinesResponseAuditModel(
+                mtdUser.mtditid, mtdUser.nino, data.identification, data.obligations, mtdUser.saUtr, mtdUser.credId, mtdUser.userType))
+            }
+            valid
+          }
+        )
+      case status =>
+        if (status >= 500) {
+          Logger.error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
+        } else {
+          Logger.warn(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
+        }
+        ReportDeadlinesErrorModel(response.status, response.body)
+    }
+  } recover {
+    case ex =>
+      Logger.error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Unexpected failure, ${ex.getMessage}", ex)
+      ReportDeadlinesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+  }
+
+}
 
   def getPaymentAllocations(paymentLot: String, paymentLotItem: String)
                            (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentAllocationsResponse] = {
