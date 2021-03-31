@@ -22,9 +22,11 @@ import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails.{Charge, FinancialDetailsErrorModel, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
-
 import java.time.LocalDate
+
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
+
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -65,29 +67,23 @@ class PaymentDueService @Inject()(val financialDetailsService: FinancialDetailsS
 
   private def whatYourOwePageDataExists(charge: Charge): Boolean = charge.mainType.isDefined && charge.due.isDefined && charge.outstandingAmount.isDefined
 
-  private def getDueWithinThirtyDaysList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.map(
-    financialDetails =>
-      financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
-      && (charge.mainType.get == "4920" || charge.mainType.get == "4930")
-      && charge.outstandingAmount.get > 0
-      && LocalDate.now().isAfter(charge.due.get.minusDays(31))
-      && LocalDate.now().isBefore(charge.due.get.plusDays(1)))
-  ).flatten.sortBy(_.due.get)
+  private def getDueWithinThirtyDaysList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.flatMap(financialDetails =>
+		financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
+			&& (charge.mainType.get == "4920" || charge.mainType.get == "4930")
+			&& charge.outstandingAmount.get > 0
+			&& LocalDate.now().isAfter(charge.due.get.minusDays(31))
+			&& LocalDate.now().isBefore(charge.due.get.plusDays(1)))).sortBy(_.due.get)
 
-  private def getFuturePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.map(
-    financialDetails =>
-      financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
-        && (charge.mainType.get == "4920" || charge.mainType.get == "4930")
-        && charge.outstandingAmount.get > 0
-        && LocalDate.now().isBefore(charge.due.get.minusDays(30)))
-  ).flatten.sortBy(_.due.get)
+  private def getFuturePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.flatMap(financialDetails =>
+		financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
+			&& (charge.mainType.get == "4920" || charge.mainType.get == "4930")
+			&& charge.outstandingAmount.get > 0
+			&& LocalDate.now().isBefore(charge.due.get.minusDays(30)))).sortBy(_.due.get)
 
-  private def getOverduePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.map(
-    financialDetails =>
-      financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
-        && (charge.mainType.get == "4920" || charge.mainType.get == "4930")
-        && charge.outstandingAmount.get > 0
-        && charge.due.get.isBefore(LocalDate.now()))
-  ).flatten.sortBy(_.due.get)
+  private def getOverduePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.flatMap(financialDetails =>
+		financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
+			&& (charge.mainType.get == "4920" || charge.mainType.get == "4930")
+			&& charge.outstandingAmount.get > 0
+			&& charge.due.get.isBefore(LocalDate.now()))).sortBy(_.due.get)
 
 }

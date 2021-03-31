@@ -63,7 +63,7 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         paymentDueService.getWhatYouOweChargesList().map {
           whatYouOweChargesList =>
             Ok(views.html.whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear,
-              paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter)).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
+              paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter, user.saUtr)).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
         } recover {
           case ex: Exception =>
             Logger.error(s"Error received while getting what you page details: ${ex.getMessage}")

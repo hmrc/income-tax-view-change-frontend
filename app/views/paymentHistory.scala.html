@@ -24,7 +24,7 @@
 @import implicits.ImplicitDateFormatter
 
 
-@(payments: List[Payment],  implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(payments: List[Payment],  implicitDateFormatter: ImplicitDateFormatter, saUtr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @breadcrumb = {
@@ -45,7 +45,11 @@ payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toLi
 
 <h1 id="page-heading" class="heading-xlarge"> @messages("paymentHistory.heading")</h1>
 
-<p id="payment-history-info">@Html(messages("paymentHistory.info", <a href=""> {messages("paymentHistory.textLink1")}</a>))</p>
+@if(saUtr.isDefined) {
+	<p id="payment-history-info">@messages("paymentHistory.info")
+		<a href="@{appConfig.saViewLandPService(saUtr.get)}"> @{messages("paymentHistory.textLink1")}</a>.
+	</p>
+}
 
 @if(payments.nonEmpty) {
 <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">

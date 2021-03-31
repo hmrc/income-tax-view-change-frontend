@@ -48,8 +48,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     Payment(Some("BBBBB"), Some(5000), Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"))
   )
 
-  class PaymentHistorySetup(testPayments: List[Payment]) extends Setup(
-    views.html.paymentHistory(testPayments, mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
+  class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
+    views.html.paymentHistory(testPayments, mockImplicitDateFormatter, saUtr)(FakeRequest(), implicitly, mockAppConfig)
   )
 
   "The payments history view with payment response model" should {
@@ -64,7 +64,12 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       s"have the information  ${PaymentHistoryMessages.info}" in new PaymentHistorySetup(testPayments) {
         content.selectHead("#payment-history-info").text shouldBe PaymentHistoryMessages.info
+        content.selectHead("#payment-history-info a").attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
       }
+
+			s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(testPayments, None) {
+				content.select("#payment-history-info").text should not be PaymentHistoryMessages.info
+			}
 
       "display payment history by year" in new PaymentHistorySetup(testPayments) {
         testPayments.groupBy { payment => LocalDate.parse(payment.date.get).getYear }.map { case (year, payments) =>

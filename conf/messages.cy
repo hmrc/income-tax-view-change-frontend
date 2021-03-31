@@ -293,7 +293,8 @@ paymentDue.due                                                  = ddyledus
 ## What you owe
 whatYouOwe.heading                                              = What you owe
 whatYouOwe.no-payments-due                                      = You have no payments due.
-whatYouOwe.sa-note                                              = You still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous Self Assessment online account.
+whatYouOwe.sa-note                                              = You still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
+whatYouOwe.sa-link												= Self Assessment online account
 whatYouOwe.outstanding-charges-note                             = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
 whatYouOwe.dropdown.info                                        = What are the payment types?
 whatYouOwe.payment-days-note                                    = Payments can take up to 7 days to process.

@@ -335,8 +335,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"payment-days-note")(false),
               isElementVisibleById(s"credit-on-account")(false),
               isElementVisibleById(s"payment-button")(false),
-              isElementVisibleById(s"sa-note-migrated")(true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(true)
+              isElementVisibleById(s"sa-note-migrated")(false),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(false)
             )
 
           }
@@ -533,8 +533,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"credit-on-account")(false),
               isElementVisibleById(s"payment-button")(false),
               isElementVisibleById(s"no-payments-due")(true),
-              isElementVisibleById(s"sa-note")(true),
-              isElementVisibleById(s"outstanding-charges-note")(true)
+              isElementVisibleById(s"sa-note")(false),
+              isElementVisibleById(s"outstanding-charges-note")(false)
             )
 
           }
@@ -583,8 +583,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"credit-on-account")(false),
               isElementVisibleById(s"payment-button")(false),
               isElementVisibleById(s"no-payments-due")(true),
-              isElementVisibleById(s"sa-note")(true),
-              isElementVisibleById(s"outstanding-charges-note")(true)
+              isElementVisibleById(s"sa-note")(false),
+              isElementVisibleById(s"outstanding-charges-note")(false)
             )
 
           }
@@ -640,8 +640,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"credit-on-account")(false),
               isElementVisibleById(s"payment-button")(false),
               isElementVisibleById(s"no-payments-due")(true),
-              isElementVisibleById(s"sa-note")(true),
-              isElementVisibleById(s"outstanding-charges-note")(true)
+              isElementVisibleById(s"sa-note")(false),
+              isElementVisibleById(s"outstanding-charges-note")(false)
             )
 
           }
@@ -749,8 +749,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"credit-on-account")(true),
               isElementVisibleById(s"payment-button")(true),
               isElementVisibleById(s"no-payments-due")(false),
-              isElementVisibleById(s"sa-note-migrated")(true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(true)
+              isElementVisibleById(s"sa-note-migrated")(false),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(false)
             )
 
           }
