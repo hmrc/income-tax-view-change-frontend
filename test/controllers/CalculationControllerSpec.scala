@@ -69,6 +69,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
   val testTaxDue: Boolean = false
   val testChargesList: List[Charge] = List(fullChargeModel)
   val testEmptyChargesList: List[Charge] = List.empty
+  val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -91,7 +92,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           testYear,
           calcOverview,
           testChargesList,
-          mockImplicitDateFormatter).toString
+          mockImplicitDateFormatter,
+          taxYearsBackLink).toString
 
         val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
@@ -113,7 +115,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
             testYear,
             calcOverview,
             testEmptyChargesList,
-            mockImplicitDateFormatter).toString
+            mockImplicitDateFormatter,
+            taxYearsBackLink).toString
 
           val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
@@ -197,7 +200,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
         val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
         val expectedContent: String = views.html.taxYearOverviewOld(
-          testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter).toString
+          testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter, taxYearsBackLink).toString
 
         val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
@@ -259,7 +262,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
               val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
               val expectedContent: String = views.html.taxYearOverviewOld(
-                testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter).toString
+                testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter, taxYearsBackLink).toString
 
               val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
@@ -296,7 +299,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
                 val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
                 val expectedContent: String = views.html.taxYearOverviewOld(
-                  testYear, calcOverview, Some(transactionModel()), None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter).toString
+                  testYear, calcOverview, Some(transactionModel()), None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter, taxYearsBackLink).toString
 
                 val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
@@ -365,7 +368,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
               val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
               val expectedContent: String = views.html.taxYearOverviewOld(
-                testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter).toString
+                testYear, calcOverview, None, None, testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter, taxYearsBackLink).toString
 
               val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
@@ -404,7 +407,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
                 val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
                 val expectedContent: String = views.html.taxYearOverviewOld(
-                  testYear, calcOverview, None, Some(chargeModel()), testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter).toString
+                  testYear, calcOverview, None, Some(chargeModel()), testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter, taxYearsBackLink).toString
 
                 val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 

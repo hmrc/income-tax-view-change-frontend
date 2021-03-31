@@ -50,11 +50,13 @@ class PaymentHistoryController @Inject()(val checkSessionTimeout: SessionTimeout
         Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
       } else {
         paymentHistoryService.getPaymentHistory.map {
-          case Right(payments) => Ok(views.html.paymentHistory(payments, dateFormatter, user.saUtr))
+          case Right(payments) => Ok(views.html.paymentHistory(payments, dateFormatter,backUrl = backUrl, user.saUtr))
           case Left(_) => itvcErrorHandler.showInternalServerError()
         }
       }
   }
+
+  lazy val backUrl: String = controllers.routes.HomeController.home().url
 
 }
 

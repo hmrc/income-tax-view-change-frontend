@@ -20,7 +20,7 @@ import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName, t
 import assets.FinancialDetailsTestConstants.chargeModel
 import assets.FinancialTransactionsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
-import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages, PaymentDue => paymentDueMessages}
+import assets.MessagesLookUp.{PaymentDue => paymentDueMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -46,7 +46,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
   class Setup(transactionsModel: List[FinancialTransactionsModel] = List(), charges: List[FinancialDetailsModel] = List(),
               paymentEnabled: Boolean = false) {
     val html: HtmlFormat.Appendable = views.html.paymentDue(transactionsModel, charges,
-      paymentEnabled, mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
+      paymentEnabled,"testBackURL", mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
@@ -94,13 +94,6 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
         pageDocument.getElementById(s"payments-due-on-$testTaxYearTo").text shouldBe s"${paymentDueMessages.due} ${unpaidFinancialTransactions.head.financialTransactions.get.head.due.get.toLongDate}"
 
       }
-
-      "have a breadcrumb trail" in new Setup(unpaidFinancialTransactions) {
-        pageDocument.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-        pageDocument.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        pageDocument.getElementById("breadcrumb-payments-due").text shouldBe breadcrumbMessages.payementsDue
-      }
-
 
       "have a link to the bill" in new Setup(unpaidFinancialTransactions) {
         val testTaxYearTo = unpaidFinancialTransactions.head.financialTransactions.get.head.taxPeriodTo.get.getYear
@@ -164,13 +157,6 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
         pageDocument.getElementById(s"payments-due-on-$testTaxYearTo").text shouldBe s"${paymentDueMessages.due} ${unpaidFinancialDetails.head.financialDetails.head.due.get.toLongDate}"
 
       }
-
-      "have a breadcrumb trail" in new Setup(charges = unpaidFinancialDetails) {
-        pageDocument.getElementById("breadcrumb-bta").text shouldBe breadcrumbMessages.bta
-        pageDocument.getElementById("breadcrumb-it").text shouldBe breadcrumbMessages.it
-        pageDocument.getElementById("breadcrumb-payments-due").text shouldBe breadcrumbMessages.payementsDue
-      }
-
 
       "have a link to the bill" in new Setup(charges = unpaidFinancialDetails) {
         val testTaxYearTo = unpaidFinancialDetails.head.financialDetails.head.taxYear.toInt

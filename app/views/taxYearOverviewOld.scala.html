@@ -18,24 +18,14 @@
 @import implicits.ImplicitCurrencyFormatter._
 @import models.calculation.CalcOverview
 @import models.financialDetails.Charge
-@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
 @import models.financialTransactions.TransactionModel
-@import views.html.helpers.{breadcrumbHelper, statusHelper}
+@import views.html.helpers.{statusHelper}
 @import views.html.templates.main_template
+@import views.html.helpers.backLinkHelper
 
-@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None, charge: Option[Charge] = None, incomeBreakdown: Boolean = false, deductionBreakdown: Boolean = false, taxDue: Boolean = false, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+
+@(taxYear: Int, overview: CalcOverview, transaction: Option[TransactionModel] = None, charge: Option[Charge] = None, incomeBreakdown: Boolean = false, deductionBreakdown: Boolean = false, taxDue: Boolean = false, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter._
-
-@breadcrumb = @{
-    breadcrumbHelper(
-        page = "TaxYearOverviewPage",
-        breadcrumb = Breadcrumb(Vector(
-            BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home().url)),
-            BreadcrumbItem("breadcrumb-tax-years", Some(controllers.routes.TaxYearsController.viewTaxYears().url)),
-            BreadcrumbItem("breadcrumb-tax-year-overview", None, Some(messages("breadcrumb-tax-year-overview", (taxYear - 1).toString, taxYear.toString)))
-        ))
-    )
-}
 
 @heading = @{
     messages("tax-year-overview-old.heading", (taxYear - 1).toString, taxYear.toString)
@@ -43,9 +33,11 @@
 
 @main_template(
     title = heading,
-    mainClass = Some("full-width"),
-    contentHeader = Some(breadcrumb)
+    mainClass = Some("full-width")
 ) {
+
+@backLinkHelper(backUrl)
+
 
     <h1 class="heading-xlarge">
         <span class="heading-secondary">@messages("tax-year-overview-old.heading-secondary")</span>

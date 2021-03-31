@@ -31,7 +31,7 @@ class NoReportDeadlinesViewSpec extends TestSupport {
   "The noReportDeadlines view" should {
 
     lazy val page: HtmlFormat.Appendable =
-      views.html.noReportDeadlines()(FakeRequest(), implicitly, mockAppConfig)
+      views.html.noReportDeadlines("testBackURL")(FakeRequest(), implicitly, mockAppConfig)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title '${reportDeadlinesMessages.title}'" in {

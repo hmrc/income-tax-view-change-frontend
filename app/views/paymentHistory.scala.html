@@ -16,32 +16,25 @@
 
 @import views.html.helpers.accordionHelper
 @import models.financialDetails.Payment
-@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
-@import views.html.helpers.breadcrumbHelper
 @import views.html.templates.main_template
 @import java.time.LocalDate
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatter
+@import views.html.helpers.backLinkHelper
 
 
-@(payments: List[Payment],  implicitDateFormatter: ImplicitDateFormatter, saUtr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(payments: List[Payment],  implicitDateFormatter: ImplicitDateFormatter, backUrl: String, saUtr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
-
-@breadcrumb = {
- @breadcrumbHelper(Breadcrumb(Vector(
- BreadcrumbItem("breadcrumb-it", Some(controllers.routes.HomeController.home.url)),
- BreadcrumbItem("breadcrumb-payment-history", Some(controllers.routes.PaymentHistoryController.viewPaymentHistory().url))
- )), "Updates")
-}
 
 @groupedPayments = @{
 payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toList.sortBy(_._1).reverse
 }
 
 @main_template(
- title = messages("paymentHistory.heading"),
- contentHeader = Some(breadcrumb)
+ title = messages("paymentHistory.heading")
 ) {
+
+@backLinkHelper(backUrl)
 
 <h1 id="page-heading" class="heading-xlarge"> @messages("paymentHistory.heading")</h1>
 

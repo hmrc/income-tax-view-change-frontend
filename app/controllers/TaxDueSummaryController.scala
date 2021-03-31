@@ -54,7 +54,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
         if (isEnabled(TaxDue)) {
           calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
             case calcDisplayModel: CalcDisplayModel =>
-              Future.successful(Ok(views.html.taxCalcBreakdown(calcDisplayModel, taxYear)))
+              Future.successful(Ok(views.html.taxCalcBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
 
             case CalcDisplayNoDataFound =>
               Logger.warn(s"[TaxDueController][showTaxDueSummary[$taxYear]] No tax due data could be retrieved. Not found")
@@ -68,5 +68,7 @@ class TaxDueSummaryController @Inject()(checkSessionTimeout: SessionTimeoutPredi
         else Future.successful(NotFound(notFound()))
     }
   }
+
+  def backUrl(taxYear: Int): String = controllers.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url
 
 }

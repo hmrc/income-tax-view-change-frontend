@@ -63,7 +63,7 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         paymentDueService.getWhatYouOweChargesList().map {
           whatYouOweChargesList =>
             Ok(views.html.whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear,
-              paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter, user.saUtr)).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
+              paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter, backUrl = backUrl, user.saUtr)).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
         } recover {
           case ex: Exception =>
             Logger.error(s"Error received while getting what you page details: ${ex.getMessage}")
@@ -73,9 +73,12 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         financialTransactionsService.getAllUnpaidFinancialTransactions.map {
           case transactions if hasFinancialTransactionsError(transactions) => itvcErrorHandler.showInternalServerError()
           case transactions: List[FinancialTransactionsModel] => Ok(views.html.paymentDue(financialTransactions = transactions,
-            paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter)).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
+            paymentEnabled = isEnabled(Payment),backUrl = backUrl, implicitDateFormatter = dateFormatter)).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
         }
       }
   }
+
+
+  lazy val backUrl: String = controllers.routes.HomeController.home().url
 
 }
