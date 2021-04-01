@@ -67,7 +67,7 @@ class ChargeSummarySpec extends TestSupport with FeatureSwitching with ViewSpec 
 
     "display a due date" in new Setup(chargeModel()) {
       document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(1) .govuk-summary-list__value")
-        .text() shouldBe "15 May 2019"
+        .text() shouldBe "OVERDUE 15 May 2019"
     }
 
     "display a charge amount" in new Setup(chargeModel(originalAmount = Some(1500))) {
@@ -118,7 +118,7 @@ class ChargeSummarySpec extends TestSupport with FeatureSwitching with ViewSpec 
 
     "has a link to view what you owe" in new Setup(chargeModel(mainType = Some("4920"))) {
       val link: Option[Elements] = getElementById("what-you-owe-link").map(_.select("a"))
-      link.map(_.attr("href")) shouldBe Some("")
+      link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments-owed")
       ///report-quarterly/income-and-expenses/view/payments-owed (put link URL in " " above when what yoou owe page is ready))
       link.map(_.text) shouldBe Some("what you owe")
     }

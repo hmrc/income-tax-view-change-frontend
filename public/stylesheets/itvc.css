@@ -1407,3 +1407,7 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
     line-height: 1.25;
     margin-bottom:15px;
 }
+
+dd > .govuk-tag {
+margin-bottom: 0 !important;
+}

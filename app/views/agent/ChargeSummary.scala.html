@@ -40,8 +40,13 @@
 
 	<dl class="govuk-summary-list">
 		<div class="govuk-summary-list__row">
+
 			<dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
-			<dd class="govuk-summary-list__value">@{charge.due.get.toLongDate}</dd>
+
+			<dd class="govuk-summary-list__value">
+				@if(charge.isOverdue && !charge.isPaid) { <span class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>}
+				@{charge.due.get.toLongDate}
+			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">@messages("chargeSummary.paymentAmount")</dt>
@@ -63,7 +68,7 @@
 
 	<p>
 		@messages("chargeSummary.whatYouOwe.textOne")
-		<a id= "what-you-owe-link" href="">@messages("chargeSummary.whatYouOwe.linkText")</a>
+		<a id= "what-you-owe-link" href=@controllers.agent.nextPaymentDue.routes.PaymentDueController.show().url>@messages("chargeSummary.whatYouOwe.linkText")</a>
 		@messages("chargeSummary.whatYouOwe.textTwo")
 	</p>
 
