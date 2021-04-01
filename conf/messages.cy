@@ -360,3 +360,14 @@ agent.base.service_name                                         = Treth Incwm fa
 agent.title_pattern.service_name.govuk                          = {0} - Treth Incwm fanylion eich cleient - GOV.UK
 agent.error.title_pattern.service_name.govuk                    = Error: {0} - Treth Incwm fanylion eich cleient - GOV.UK
 
+##Tax Years Overview Update Tab##
+updateTab.due                                                   = Ddyledus {0}
+updateTab.updateType                                            = Math o ddiweddariad
+updateTab.incomeSource                                          = Ffynhonnell incwm
+updateTab.dateSubmitted                                         = Dyddiad cyflwyno
+updateTab.dateToDate                                            = {0} i {1}
+updateTab.obligationType.property                               = Incwm o eiddo
+updateTab.obligationType.business                               = Busnes
+updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
+
+

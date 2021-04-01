@@ -17,11 +17,15 @@
 package helpers
 
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 import org.scalatest._
 import org.scalatest.matchers._
 import play.api.libs.json.Reads
 import play.api.libs.ws.WSResponse
 import uk.gov.hmrc.play.test.UnitSpec
+
+import scala.annotation.tailrec
+import scala.collection.JavaConversions._
 
 trait CustomMatchers extends UnitSpec with GivenWhenThen {
 
@@ -119,6 +123,35 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         s"select($selector)",
         expectedValue,
         body.select(selector).text
+      )
+    }
+  }
+
+  def elementTextBySelectorList(selectors: String*)(expectedValue: String): HavePropertyMatcher[WSResponse, String] = {
+    HavePropertyMatcher[WSResponse, String] { response =>
+      val body: Element = Jsoup.parse(response.body).body()
+      Then(s"the text of the element should be '$expectedValue'")
+      def selectHead(element: Element, selector: String): Element = {
+        element.select(selector).headOption match {
+          case Some(element) => element
+          case None => fail(s"Could not find element with selector: $selector")
+        }
+      }
+
+      @tailrec
+      def recursiveSelector(selectors: List[String], currentElement: Element): Element = {
+        selectors match {
+          case head :: tail => recursiveSelector(tail, selectHead(currentElement, head))
+          case Nil => currentElement
+        }
+      }
+
+      val selectedText: String = recursiveSelector(selectors.toList, body).text
+      HavePropertyMatchResult(
+        selectedText == expectedValue,
+        s"selecting $selectors",
+        expectedValue,
+        selectedText
       )
     }
   }

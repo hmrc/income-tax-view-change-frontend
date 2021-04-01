@@ -24,12 +24,13 @@ import javax.inject.{Inject, Singleton}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.reportDeadlines._
 import play.api.Logger
+import play.api.Logger.logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
+class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)(implicit ec: ExecutionContext) {
 
 
   def getNextDeadlineDueDateAndOverDueObligations(incomeSourceResponse: IncomeSourceDetailsModel)
@@ -74,6 +75,33 @@ class ReportDeadlinesService @Inject()(val incomeTaxViewChangeConnector: IncomeT
     } else {
       Logger.debug(s"[ReportDeadlinesService][getReportDeadlines] - Requesting current Report Deadlines for nino: ${mtdUser.nino}")
       incomeTaxViewChangeConnector.getReportDeadlines()
+    }
+  }
+
+
+  private def obligationFilter(fromDate: LocalDate, toDate: LocalDate, obligationsModel: ObligationsModel): Seq[ReportDeadlinesModel] = {
+    obligationsModel.obligations map {
+      reportDeadlines =>
+        reportDeadlines.copy(obligations = reportDeadlines.obligations.filterNot {
+          reportDeadline => reportDeadline.start.isBefore(fromDate) || reportDeadline.end.isAfter(toDate)
+        })
+    }
+  }
+
+  def getReportDeadlines(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ReportDeadlinesResponseModel] = {
+
+    for {
+      previousObligations <- incomeTaxViewChangeConnector.getPreviousObligations(fromDate, toDate)
+      openObligations <- incomeTaxViewChangeConnector.getReportDeadlines()
+    } yield {
+      (previousObligations, openObligations) match {
+        case (ObligationsModel(previous), open: ObligationsModel) =>
+          ObligationsModel((previous ++ obligationFilter(fromDate, toDate, open)).filter(_.obligations.nonEmpty))
+        case (error: ReportDeadlinesErrorModel, open: ObligationsModel) if error.code == 404 =>
+          ObligationsModel(obligationFilter(fromDate, toDate, open).filter(_.obligations.nonEmpty))
+        case (error: ReportDeadlinesErrorModel, _) => error
+        case (_, error: ReportDeadlinesErrorModel) => error
+      }
     }
   }
 }

@@ -16,6 +16,8 @@
 
 package helpers.servicemocks
 
+import java.time.LocalDate
+
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
 import models.core.{Nino, NinoResponseError}
@@ -70,6 +72,17 @@ object IncomeTaxViewChangeStub {
 
   def stubGetPreviousObligations(nino: String, deadlines: ObligationsModel): Unit =
     WiremockHelper.stubGet(previousObligationsUrl(nino), Status.OK, Json.toJson(deadlines).toString())
+
+  def previousObligationsUrl(nino: String, fromDate: LocalDate, toDate: LocalDate): String = {
+    s"/income-tax-view-change/$nino/fulfilled-report-deadlines/from/$fromDate/to/$toDate"
+  }
+
+  def stubGetPreviousObligations(nino: String, fromDate: LocalDate, toDate: LocalDate, deadlines: ObligationsModel): Unit =
+    WiremockHelper.stubGet(previousObligationsUrl(nino, fromDate, toDate), Status.OK, Json.toJson(deadlines).toString())
+
+  def stubGetPreviousObligationsError(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
+    WiremockHelper.stubGet(previousObligationsUrl(nino, fromDate, toDate), Status.INTERNAL_SERVER_ERROR, "")
+
 
   def stubGetPreviousObligationsNotFound(nino: String): Unit =
     WiremockHelper.stubGet(previousObligationsUrl(nino), Status.NOT_FOUND, "")

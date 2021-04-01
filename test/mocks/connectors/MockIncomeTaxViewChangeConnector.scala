@@ -16,13 +16,15 @@
 
 package mocks.connectors
 
+import java.time.LocalDate
+
 import connectors.IncomeTaxViewChangeConnector
 import models.core.NinoResponse
 import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ReportDeadlinesResponseModel
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -33,6 +35,9 @@ import scala.concurrent.Future
 trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
+
+  val testFromDate = LocalDate.of(2018, 4, 6)
+  val testToDate = LocalDate.of(2018, 4, 5)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -64,6 +69,12 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
 
   def setupMockPreviousObligations(response: ReportDeadlinesResponseModel): Unit = {
     when(mockIncomeTaxViewChangeConnector.getPreviousObligations()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupMockPreviousObligationsWithDates(from: LocalDate, to: LocalDate)(response: ReportDeadlinesResponseModel): Unit = {
+    when(mockIncomeTaxViewChangeConnector.getPreviousObligations(
+      fromDate = matches(from), toDate = matches(to))(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
