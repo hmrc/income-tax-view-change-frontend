@@ -67,7 +67,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       paymentEnabled = paymentEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       implicitDateFormatter = mockImplicitDateFormatter,
-      PaymentHistoryEnabled = paymentEnabled
+      paymentHistoryEnabled = paymentEnabled
     )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 

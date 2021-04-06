@@ -136,7 +136,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getChargeSummary(taxYear: String, id: String, additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id", additionalCookies)
+
+
+    def getPaymentHistory(additionalCookies: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/agents/payments/history", additionalCookies)
   }
+
 
 }
 

@@ -55,10 +55,16 @@
         }
         var dialogOpen;
     </script>
-
     <script type="text/javascript" src=@routes.Assets.at("javascripts/itvc.js")></script>
-    <script type="text/javascript" src=@routes.Assets.at("javascripts/skipToMainContent.js")></script>
-    @scriptElem.fold(HtmlFormat.empty)(x => x)
+
+    <script>
+		setAccordianMessages("@messages("sections.open.all")", "@messages("sections.close.all")");
+	</script>
+<script type="text/javascript" src=@routes.Assets.at("javascripts/skipToMainContent.js")></script>
+    <script type="text/javascript" src=@routes.Assets.at("javascripts/accordian.js")></script>
+<script type="text/javascript" src=@routes.Assets.at("javascripts/govuk-frontend.js")></script>
+
+@scriptElem.fold(HtmlFormat.empty)(x => x)
 }
 
 @mainContentWithGA = {

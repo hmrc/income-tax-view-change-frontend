@@ -1,0 +1,81 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.helpers.accordionHelper
+@import models.financialDetails.Payment
+@import models.core.breadcrumb.{Breadcrumb, BreadcrumbItem}
+@import views.html.helpers.breadcrumbHelper
+@import views.html.templates.agent.MainTemplate
+@import java.time.LocalDate
+@import implicits.ImplicitCurrencyFormatter._
+@import implicits.ImplicitDateFormatter
+@import views.html.helpers.backLinkHelper
+
+
+@this(mainTemplate: MainTemplate)
+@(payments: List[Payment],  implicitDateFormatter: ImplicitDateFormatter, backUrl: String, saUtr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@import implicitDateFormatter.longDate
+
+@groupedPayments = @{
+payments.groupBy[Int]{payment => LocalDate.parse(payment.date.get).getYear}.toList.sortBy(_._1).reverse
+}
+
+@mainTemplate(
+title = messages("paymentHistory.heading"),bodyClasses = None
+) {
+
+@backLinkHelper(backUrl)
+
+<h1 id="page-heading" class="heading-xlarge"> @messages("paymentHistory.heading")</h1>
+
+@if(saUtr.isDefined) {
+<p id="payment-history-info">@messages("paymentHistory.info")
+    <a href="@{appConfig.saViewLandPService(saUtr.get)}"> @{messages("paymentHistory.textLink1")}</a>.
+</p>
+}
+
+@if(payments.nonEmpty) {
+<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+
+    @groupedPayments.map{case (year, yearPayments) =>
+    <div class="govuk-accordion__section">
+        <div class="govuk-accordion__section-header">
+            <h3 class="govuk-accordion__section-heading">
+    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-@year" >
+        @messages("paymentHistory.button", year.toString)
+      </span>
+            </h3>
+        </div>
+        <div class="govuk-accordion__section-content" id="accordion-default-content-@year" >
+            <table class="govuk-table">
+                <tbody>
+                @yearPayments.map{payment =>
+                <tr>
+                    <td>@LocalDate.parse(payment.date.get).toLongDate</td>
+                    <td>@payment.method @payment.reference</td>
+                    <td class="numeric"> @payment.amount.map(_.toCurrency) </td>
+                </tr>
+                }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    }
+</div>
+
+}
+}

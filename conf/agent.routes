@@ -36,3 +36,6 @@ GET         /remove-client-sessions    controllers.agent.RemoveClientDetailsSess
 
 #Charge summary
 GET			/tax-years/:taxYear/charge controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String)
+
+#Payment history
+GET         /payments/history          controllers.agent.PaymentHistoryController.viewPaymentHistory

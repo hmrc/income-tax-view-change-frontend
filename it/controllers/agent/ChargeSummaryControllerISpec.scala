@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import assets.BaseIntegrationTestConstants.{testMtditid, testNino}
+import assets.BaseIntegrationTestConstants._
 import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase

@@ -71,7 +71,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   val nextPaymentDue: LocalDate = LocalDate.of(2019, 1, 31)
 
   class Setup(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left(nextPaymentDue, false)),
-              nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left(nextUpdateDue, false), paymentEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
+              nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left(nextUpdateDue, false), paymentEnabled: Boolean = true, paymentHistoryEnabled:Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
@@ -79,6 +79,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       nextPaymentOrOverdue = nextPaymentOrOverdue,
       nextUpdateOrOverdue = nextUpdateOrOverdue,
       paymentEnabled = paymentEnabled,
+      paymentHistoryEnabled = paymentHistoryEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       implicitDateFormatter = mockImplicitDateFormatter
     )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
@@ -176,7 +177,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
         "has a link to the view payments page" in new Setup {
           val link: Option[Element] = getElementById("tax-years-tile").map(_.select("a").get(1))
-          link.map(_.attr("href")) shouldBe Some("")
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments/history")
           link.map(_.text) shouldBe Some(homeMessages.viewPaymentslink)
         }
 
