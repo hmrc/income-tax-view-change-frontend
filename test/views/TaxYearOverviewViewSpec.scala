@@ -109,6 +109,15 @@ class TaxYearOverviewViewSpec extends ViewSpec {
         case other => other
       }
     }
+
+    def updateType(updateType: String) = {
+      updateType match {
+        case "Quarterly" => "Quarterly Update"
+        case "EOPS" => "Annual Update"
+        case "Crystallised" => "Final Declaration"
+        case _ => updateType
+      }
+    }
   }
 
   "taxYearOverview" should {
@@ -233,9 +242,9 @@ class TaxYearOverviewViewSpec extends ViewSpec {
             divAccordion.selectHead("thead").selectNth("th", 2).text shouldBe taxYearOverviewMessages.updateIncomeSource
             divAccordion.selectHead("thead").selectNth("th", 3).text shouldBe taxYearOverviewMessages.updateDateSubmitted
             val row = divAccordion.selectHead("tbody").selectHead("tr")
-            row.selectNth("td", 1).text shouldBe testObligation.obligation.obligationType
+            row.selectNth("td", 1).text shouldBe taxYearOverviewMessages.updateType(testObligation.obligation.obligationType)
             row.selectNth("td", 2).text shouldBe taxYearOverviewMessages.incomeType(testObligation.incomeType)
-            row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDate).getOrElse("")
+            row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
         }
       }
     }

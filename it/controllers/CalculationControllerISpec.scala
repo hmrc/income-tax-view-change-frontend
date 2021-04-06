@@ -106,12 +106,12 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           elementTextBySelector("#income-deductions-table tr:nth-child(1) td[class=numeric]")("£199,505.00"),
           elementTextBySelector("#income-deductions-table tr:nth-child(2) td[class=numeric]")("-£500.00"),
           elementTextBySelector("#taxdue-payments-table tr:nth-child(1) td:nth-child(2)")("£90,500.00"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("2 February 2018"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(2)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("2 Jan 2018"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(2)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("Quarterly Update"),
           elementTextBySelectorList("#updates", "div:nth-of-type(2)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(2)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("2 January 2018")
+          elementTextBySelectorList("#updates", "div:nth-of-type(2)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("2 Feb 2018")
         )
       }
 

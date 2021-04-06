@@ -446,4 +446,7 @@ updateTab.dateToDate                                            = {0} to {1}
 updateTab.obligationType.property                               = Property income
 updateTab.obligationType.business                               = Business
 updateTab.obligationType.crystallised                           = All income sources
+updateTab.updateType.quarterly                                  = Quarterly Update
+updateTab.updateType.eops                                       = Annual Update
+updateTab.updateType.crystallised                               = Final Declaration
 
