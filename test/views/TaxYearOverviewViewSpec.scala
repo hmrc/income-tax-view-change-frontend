@@ -79,7 +79,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val totalDue: String = "Total Due"
     val taxDue: String = "£4.04"
     val calcDateInfo: String = "This calculation is from the last time you viewed your tax calculation in your own software. You will need to view it in your software for the most up to date version."
-    val taxCalculation: String = "Tax Calculation"
+    val taxCalculation: String = "Tax calculation"
     val payments: String = "Payments"
     val updates: String = "Updates"
     val income: String = "Income"

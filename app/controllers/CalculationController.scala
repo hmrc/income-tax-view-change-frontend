@@ -160,7 +160,6 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
               case _ => itvcErrorHandler.showInternalServerError()
             }
         }
-
         case CalcDisplayNoDataFound | CalcDisplayError =>
           Logger.error(s"[CalculationController][showTaxYearOverview] - Could not retrieve calculation for year $taxYear")
           Future.successful(itvcErrorHandler.showInternalServerError())

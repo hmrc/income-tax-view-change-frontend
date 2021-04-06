@@ -64,7 +64,6 @@ class ChargeSummaryController @Inject()(chargeSummary: ChargeSummary,
               case success: FinancialDetailsModel if success.financialDetails.exists(_.transactionId == chargeId) =>
                 val backLocation = request.session.get(SessionKeys.chargeSummaryBackPage)
                 Ok(view(success.financialDetails.find(_.transactionId == chargeId).get, backLocation, taxYear))
-              //Should not happen unless url is changed manually so redirect to home
               case _: FinancialDetailsModel =>
                 Logger.warn(s"[ChargeSummaryController][showChargeSummary] Transaction id not found for tax year $taxYear")
                 Redirect(controllers.agent.routes.HomeController.show())
@@ -82,10 +81,7 @@ class ChargeSummaryController @Inject()(chargeSummary: ChargeSummary,
     }
 
   def backUrl(backLocation: Option[String], taxYear: Int): String = backLocation match {
-
-      //need to be uncommented after tax year overview page payment tab be built
-//    case Some("taxYearOverview") => controllers.agent.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url + "#payments"
-
+    case Some("taxYearOverview") => controllers.agent.routes.TaxYearOverviewController.show(taxYear).url + "#payments"
     case Some("paymentDue") => controllers.agent.nextPaymentDue.routes.PaymentDueController.show().url
     case _ => controllers.agent.routes.HomeController.show().url
   }
