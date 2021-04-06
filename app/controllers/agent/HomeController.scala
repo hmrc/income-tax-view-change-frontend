@@ -18,19 +18,17 @@ package controllers.agent
 
 import java.time.LocalDate
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser, MtdItUserWithNino}
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.IncomeTaxAgentUser
 import implicits.ImplicitDateFormatterImpl
 import javax.inject.{Inject, Singleton}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, _}
 import play.twirl.api.Html
 import services._
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException, NotFoundException}
+import uk.gov.hmrc.http.NotFoundException
 import views.html.agent.Home
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -55,6 +53,7 @@ class HomeController @Inject()(home: Home,
       nextPaymentOrOverdue = nextPaymentOrOverdue,
       nextUpdateOrOverdue = nextUpdateOrOverdue,
       paymentEnabled = isEnabled(Payment),
+      paymentHistoryEnabled = isEnabled(PaymentHistory),
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       implicitDateFormatter = dateFormatter
     )

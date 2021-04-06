@@ -23,7 +23,7 @@
     mainTemplate: MainTemplate
 )
 
-@(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]], nextUpdateOrOverdue:Either[(LocalDate,Boolean),Int], paymentEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]], nextUpdateOrOverdue:Either[(LocalDate,Boolean),Int], paymentEnabled: Boolean, paymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {
@@ -61,8 +61,8 @@
             <ul class="list">
                 <h2 class="heading-medium">@messages("home.tax-years.heading")</h2>
                 <li><a href="">@messages("home.tax-years.view")</a></li>
-                @if(paymentEnabled){
-                    <li><a href="">@messages("home.tax-years.viewPayments")</a></li>
+                @if(paymentHistoryEnabled){
+                <li><a href=@controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url>@messages("home.tax-years.viewPayments")</a></li>
                 }
             </ul>
         </div>
