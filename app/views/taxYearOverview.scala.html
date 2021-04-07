@@ -107,16 +107,25 @@ messages("tax-year-overview.heading")
 }
 
 @obligationsTypeHelper(obligationType: String) = @{
-obligationType match {
-case "Property" => messages("updateTab.obligationType.property")
-case "Business" => messages("updateTab.obligationType.business")
-case "Crystallised" => messages("updateTab.obligationType.crystallised")
-case _ => obligationType
+    obligationType match {
+        case "Property" => messages("updateTab.obligationType.property")
+        case "Business" => messages("updateTab.obligationType.business")
+        case "Crystallised" => messages("updateTab.obligationType.crystallised")
+        case _ => obligationType
+    }
 }
+
+@updateTypeHelper(updateType: String) = @{
+    updateType match {
+        case "Quarterly" => messages("updateTab.updateType.quarterly")
+        case "EOPS" => messages("updateTab.updateType.eops")
+        case "Crystallised" => messages("updateTab.updateType.crystallised")
+        case _ => updateType
+    }
 }
 
 @groupedObligations = @{
-obligations.allDeadlinesWithSource(true).groupBy[LocalDate]{reportDeadlineWithIncomeType => reportDeadlineWithIncomeType.obligation.due}.toList.sortBy(_._1).reverse
+    obligations.allDeadlinesWithSource(true).reverse.groupBy[LocalDate]{reportDeadlineWithIncomeType => reportDeadlineWithIncomeType.obligation.due}.toList.sortBy(_._1)
 }
 
 @updatesContent = {
@@ -141,9 +150,9 @@ obligations.allDeadlinesWithSource(true).groupBy[LocalDate]{reportDeadlineWithIn
         <tbody>
         @dueObligations.map{reportDeadlineWithIncomeType =>
         <tr>
-            <td>@reportDeadlineWithIncomeType.obligation.obligationType</td>
+            <td>@updateTypeHelper(reportDeadlineWithIncomeType.obligation.obligationType)</td>
             <td>@obligationsTypeHelper(reportDeadlineWithIncomeType.incomeType)</td>
-            <td>@reportDeadlineWithIncomeType.obligation.dateReceived.map(_.toLongDate)</td>
+            <td>@reportDeadlineWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
         </tr>
         }
         </tbody>
