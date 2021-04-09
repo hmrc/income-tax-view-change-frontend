@@ -462,6 +462,36 @@ object MessagesLookUp {
     def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
   }
 
+  object AgentPaymentDue{
+    val title = "What you owe - Your client’s Income Tax details - GOV.UK"
+    val heading = "What you owe"
+    val noPaymentsDue = "You have no payments due."
+    val saNote = "You still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous Self Assessment online account."
+    val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
+    val dropDownInfo = "What are the payment types?"
+    val paymentDaysNote = "Payments can take up to 7 days to process."
+    val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
+    def preMtdPayments(from: String, to:String) = s"Tax year $from to $to pre-Making Tax Digital payments"
+    val paymentType = "Payment type"
+    val amountDue = "Amount due"
+    val poa1Text = "Payment on account 1 of 2"
+    val poa2Text = "Payment on account 2 of 2"
+    val remainingBalance = "Remaining balance"
+    val remainingBalanceLine1 = "The remaining balance is the tax you still need to pay for a tax year."
+    val interestOnRemainingBalance = "Interest on remaining balance"
+    def interestOnRemainingBalanceYear(from: String, to: String) = s"From $from to $to"
+    val poaHeading = "Payment on account"
+    val poaLine1 = "This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill."
+    val overduePayments = "Overdue payments"
+    val overdueTag = "OVERDUE"
+    val dueInThirtyDays = "Due within 30 days"
+    val futurePayments = "Future payments"
+    def taxYearForChargesText(from: String, to:String): String = s"Tax year $from to $to"
+    val dueDate = "Due date"
+    val payNow = "Pay now"
+    def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
+  }
+
   object TaxYearOverview {
     def title(firstYear: Int, secondYear: Int) = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
     def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"

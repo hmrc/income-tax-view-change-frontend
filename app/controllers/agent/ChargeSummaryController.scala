@@ -85,8 +85,8 @@ class ChargeSummaryController @Inject()(chargeSummary: ChargeSummary,
 
       //need to be uncommented after tax year overview page payment tab be built
 //    case Some("taxYearOverview") => controllers.agent.routes.CalculationController.renderTaxYearOverviewPage(taxYear).url + "#payments"
-    //need to be uncommented after what you owe page be built
-//    case Some("paymentDue") => controllers.agent.routes.PaymentDueController.viewPaymentsDue().url
+
+    case Some("paymentDue") => controllers.agent.nextPaymentDue.routes.PaymentDueController.show().url
     case _ => controllers.agent.routes.HomeController.show().url
   }
 

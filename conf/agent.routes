@@ -18,24 +18,26 @@ GET         /client-relationship-problem        controllers.agent.ClientRelation
 GET         /utr-problem                        controllers.agent.UTRErrorController.show
 POST        /utr-problem                        controllers.agent.UTRErrorController.submit
 
-GET         /language/:lang            controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
+GET         /language/:lang                     controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
 
 # Enter Clients UTR
-GET         /client-utr                controllers.agent.EnterClientsUTRController.show
-POST        /client-utr                controllers.agent.EnterClientsUTRController.submit
+GET         /client-utr                         controllers.agent.EnterClientsUTRController.show
+POST        /client-utr                         controllers.agent.EnterClientsUTRController.submit
 
 # Confirm Client
-GET         /confirm-client            controllers.agent.ConfirmClientUTRController.show
-POST        /confirm-client            controllers.agent.ConfirmClientUTRController.submit
+GET         /confirm-client                     controllers.agent.ConfirmClientUTRController.show
+POST        /confirm-client                     controllers.agent.ConfirmClientUTRController.submit
 
 #Home Controller
-GET         /income-tax-account        controllers.agent.HomeController.show
-GET         /					       controllers.agent.HomeController.show
-GET         /remove-client-sessions    controllers.agent.RemoveClientDetailsSessionsController.show
+GET         /income-tax-account                 controllers.agent.HomeController.show
+GET         /					                controllers.agent.HomeController.show
+GET         /remove-client-sessions             controllers.agent.RemoveClientDetailsSessionsController.show
 
+#Next Payments Due
+GET         /payments-owed                      controllers.agent.nextPaymentDue.PaymentDueController.show
 
 #Charge summary
-GET			/tax-years/:taxYear/charge controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String)
+GET			/tax-years/:taxYear/charge          controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String)
 
 #Payment history
 GET         /payments/history          controllers.agent.PaymentHistoryController.viewPaymentHistory

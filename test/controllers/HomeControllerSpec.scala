@@ -16,17 +16,15 @@
 
 package controllers
 
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
 import java.time.{LocalDate, ZonedDateTime}
 
-import assets.{BaseTestConstants, MessagesLookUp}
-import auth.MtdItUserWithNino
-import config.featureswitch.{API5, Bills, FeatureSwitching, NewFinancialDetailsApi, Payment}
+import assets.MessagesLookUp
+import config.featureswitch.{API5, FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.calculation.{Calculation, CalculationErrorModel, CalculationResponseModelWithYear}
+import models.calculation.Calculation
 import models.financialDetails.{Charge, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
 import org.jsoup.Jsoup
@@ -34,10 +32,9 @@ import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
+import services.{FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
 import utils.CurrentDateProvider
 
-import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
 class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching{

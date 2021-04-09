@@ -24,6 +24,7 @@ import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.HeaderNames
+import play.api.http.Status.SEE_OTHER
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
@@ -124,6 +125,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = post("/confirm-client", clientDetails)(Map.empty)
 
+    def getPaymentsDue: WSResponse = get("/payments-owed")
 
     def getClientRelationshipFailure: WSResponse = get("/client-relationship-problem")
 
@@ -134,12 +136,33 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAgentHome(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/income-tax-account", additionalCookies)
 
+    def getPaymentsDue(additionalCookies: Map[String, String]= Map.empty): WSResponse =
+      getWithClientDetailsInSession("/agents/payments-owed", additionalCookies)
+
     def getChargeSummary(taxYear: String, id: String, additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession(s"/agents/tax-years/$taxYear/charge?id=$id", additionalCookies)
 
-
     def getPaymentHistory(additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/agents/payments/history", additionalCookies)
+  }
+
+  def unauthorisedTest(uri: String): Unit = {
+    "unauthorised" should {
+
+      "redirect to sign in" in {
+
+        isAuthorisedUser(false)
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view/agents/$uri")
+        val res = IncomeTaxViewChangeFrontend.get(uri)
+
+        Then("the http response for an unauthorised user is returned")
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.SignInController.signIn().url)
+        )
+      }
+    }
   }
 
 
