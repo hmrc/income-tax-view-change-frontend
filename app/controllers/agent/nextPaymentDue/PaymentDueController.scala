@@ -23,8 +23,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartials
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
-import javax.inject.{Inject, Singleton}
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
+import models.financialDetails.WhatYouOweChargesList
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsResponseModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -35,6 +34,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.nextPaymentDue.paymentDue
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

@@ -50,7 +50,7 @@
                 case _@Left((date, true)) => {<p><strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date")</strong> @date.toLongDate</p>}
                 case _@Right(overdueCount) => {<p><strong class="govuk-tag govuk-tag--red">@messages("home.overdue.date.update.count", overdueCount)</strong></p>}
             }
-            <p><a href="">@messages("home.updates.view")</a></p>
+            <p><a href=@controllers.agent.routes.NextUpdatesController.getNextUpdates.url>@messages("home.updates.view")</a></p>
         </div>
     </div>
 }
