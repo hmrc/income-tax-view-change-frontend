@@ -155,7 +155,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
         pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
+        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(12345667).url
 
         pageDocument.getElementById("due-in-thirty-days-payments-heading") shouldBe null
         pageDocument.getElementById("over-due-payments-heading") shouldBe null
@@ -225,7 +225,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
         pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(5000).url
+        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(5000).url
 
         pageDocument.getElementById("future-payments-heading") shouldBe null
         pageDocument.getElementById("over-due-payments-heading") shouldBe null
@@ -299,7 +299,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
         pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
+        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(12345667).url
 
         pageDocument.getElementById("future-payments-heading") shouldBe null
         pageDocument.getElementById("due-in-thirty-days-payments-heading") shouldBe null
@@ -368,7 +368,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
         pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(7500).url
+        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(7500).url
 
         pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
       }
@@ -451,7 +451,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
         pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
+        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(12345667).url
 
       }
       s"does not have payment data payments is disabled" in new Setup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue,

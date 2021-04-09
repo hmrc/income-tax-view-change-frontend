@@ -168,16 +168,15 @@ class ChargeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
 //      }
 //    }
 
-    // need to be uncommented after the what you owe page be built
-//    "the user comes from what you owe page" should {
-//      "return what you owe page url string result" in new Setup(true, true) {
-//
-//        val result: String = chargeSummaryController.backUrl(backLocation = Some("paymentDue"), currentYear)
-//
-//        result shouldBe "/report-quarterly/income-and-expenses/view//agents/calculation/2021#payments]"
-//
-//      }
-//    }
+    "the user comes from what you owe page" should {
+      "return what you owe page url string result" in new Setup(true, true) {
+
+        val result: String = chargeSummaryController.backUrl(backLocation = Some("paymentDue"), currentYear)
+
+        result shouldBe "/report-quarterly/income-and-expenses/view/agents/payments-owed"
+
+      }
+    }
 
        "the user comes is not from tax overview payment tab and is not from what you owe page" should {
             "return agent home page url string result" in new Setup(true, true) {

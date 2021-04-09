@@ -50,8 +50,8 @@ class PaymentDueController @Inject()(paymentDue: paymentDue,
                                       val languageUtils: LanguageUtils,
                                       dateFormatter: ImplicitDateFormatterImpl,
                                       implicit val ec: ExecutionContext,
-                                      val itvcErrorHandler: ItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+                                      val itvcErrorHandler: ItvcErrorHandler
+                                    ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
 
   def hasFinancialTransactionsError(transactionModels: List[FinancialTransactionsResponseModel]): Boolean = {
