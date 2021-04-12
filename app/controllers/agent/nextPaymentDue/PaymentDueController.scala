@@ -44,7 +44,7 @@ class PaymentDueController @Inject()(paymentDue: paymentDue,
                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
                                      val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                      val auditingService: AuditingService,
-                                     val authorisedFunctions: FrontendAuthorisedFunctions,
+                                     val authorisedFunctions: FrontendAuthorisedFunctions
                                     )(implicit val appConfig: FrontendAppConfig,
                                       mcc: MessagesControllerComponents,
                                       val languageUtils: LanguageUtils,
