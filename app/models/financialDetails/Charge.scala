@@ -48,9 +48,9 @@ case class Charge(taxYear: String,
   def isOverdue: Boolean = due.exists(dueDate => dueDate.isBefore(LocalDate.now()))
 
 	def getChargeTypeKey: String = mainType match {
-		case Some("4920") => "paymentOnAccount1.text"
-		case Some("4930") => "paymentOnAccount2.text"
-		case Some("4910") => "balancingCharge.text"
+		case Some("SA Payment on Account 1") => "paymentOnAccount1.text"
+		case Some("SA Payment on Account 2") => "paymentOnAccount2.text"
+		case Some("SA Balancing Charge") => "balancingCharge.text"
 		case error => {
 			Logger.error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
 			"unknownCharge"
