@@ -29,15 +29,15 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
   def outstandingChargesModel(dueDate: String) = OutstandingChargesModel(
     List(OutstandingChargeModel("BCD", dueDate, 123456.67, 1234), OutstandingChargeModel("ACI", dueDate, 12.67, 1234)))
 
-  val financialDetailsDueInMoreThan30Days = testFinancialDetailsModel(List(Some("4920"), Some("4930")),
+  val financialDetailsDueInMoreThan30Days = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
     List(Some(50), Some(75)), LocalDate.now().getYear.toString)
 
-  val financialDetailsDueIn30Days = testFinancialDetailsModel(List(Some("4920"), Some("4930")),
+  val financialDetailsDueIn30Days = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString)),
     List(Some(50), Some(75)), LocalDate.now().getYear.toString)
 
-  val financialDetailsOverdueData = testFinancialDetailsModel(List(Some("4920"), Some("4930")),
+  val financialDetailsOverdueData = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
     List(Some(50), Some(75)), LocalDate.now().getYear.toString)
 

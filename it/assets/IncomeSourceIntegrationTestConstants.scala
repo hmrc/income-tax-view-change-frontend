@@ -135,7 +135,7 @@ object IncomeSourceIntegrationTestConstants {
         "transactionDate" -> "2019-05-15",
         "type" -> "Balancing Charge Debit",
         "chargeType" -> "Balancing Charge debit",
-        "mainType" -> "4910",
+        "mainType" -> "SA Balancing Charge",
         "totalAmount" -> 3400,
         "originalAmount" -> originalAmount,
         "outstandingAmount" -> outstandingAmount,
@@ -160,7 +160,7 @@ object IncomeSourceIntegrationTestConstants {
         "transactionDate" -> "2019-05-15",
         "type" -> "POA1",
         "chargeType" -> "POA1",
-        "mainType" -> "4920",
+        "mainType" -> "SA Payment on Account 1",
         "totalAmount" -> 3400,
         "originalAmount" -> originalAmount,
         "outstandingAmount" -> outstandingAmount,
@@ -185,7 +185,7 @@ object IncomeSourceIntegrationTestConstants {
         "transactionDate" -> "2019-05-15",
         "type" -> "POA2",
         "chargeType" -> "POA2",
-        "mainType" -> "4930",
+        "mainType" -> "SA Payment on Account 2",
         "totalAmount" -> 3400,
         "originalAmount" -> originalAmount,
         "outstandingAmount" -> outstandingAmount,
@@ -208,7 +208,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def chargeJson(originalAmount: Option[BigDecimal], outstandingAmount: Option[BigDecimal],
-                 totalAmount: Option[BigDecimal], taxYear: String = "2018", mainType: String = "4910", dueDate: String = "2018-02-14"): JsValue = Json.obj(
+                 totalAmount: Option[BigDecimal], taxYear: String = "2018", mainType: String = "SA Balancing Charge", dueDate: String = "2018-02-14"): JsValue = Json.obj(
     "taxYear" -> taxYear,
     "transactionId" -> "1040000123",
     "transactionDate" -> "2019-05-15",

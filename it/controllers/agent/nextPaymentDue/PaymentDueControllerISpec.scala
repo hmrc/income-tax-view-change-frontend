@@ -213,8 +213,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val mixedJson = Json.obj(
         "financialDetails" -> Json.arr(
           chargeJson(Some(3400), Some(1000), Some(3400), currentTaxYearEnd.toString),
-          chargeJson(Some(1000.00), Some(100.00), Some(3400), currentTaxYearEnd.toString, "4920", LocalDate.now().plusDays(1).toString),
-          chargeJson(Some(1000.00), Some(0.00), Some(3400), currentTaxYearEnd.toString, "4930", LocalDate.now().minusDays(1).toString)
+          chargeJson(Some(1000.00), Some(100.00), Some(3400), currentTaxYearEnd.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString),
+          chargeJson(Some(1000.00), Some(0.00), Some(3400), currentTaxYearEnd.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString)
         ))
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(

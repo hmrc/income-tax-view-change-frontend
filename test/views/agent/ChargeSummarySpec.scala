@@ -53,15 +53,15 @@ class ChargeSummarySpec extends TestSupport with FeatureSwitching with ViewSpec 
 
   "The agent charge summary view" should {
 
-    "have the correct heading for a POA 1" in new Setup(chargeModel(mainType = Some("4920"))) {
+    "have the correct heading for a POA 1" in new Setup(chargeModel(mainType = Some("SA Payment on Account 1"))) {
       document.select("h1").text() shouldBe Messages.poaHeading(2018, 1)
     }
 
-    "have the correct heading for a POA 2" in new Setup(chargeModel(mainType = Some("4930"))) {
+    "have the correct heading for a POA 2" in new Setup(chargeModel(mainType = Some("SA Payment on Account 2"))) {
       document.select("h1").text() shouldBe Messages.poaHeading(2018, 2)
     }
 
-    "have the correct heading for a balancing charge" in new Setup(chargeModel(taxYear = 2019, mainType = Some("4910"))) {
+    "have the correct heading for a balancing charge" in new Setup(chargeModel(taxYear = 2019, mainType = Some("SA Balancing Charge"))) {
       document.select("h1").text() shouldBe Messages.balancingChargeHeading(2019)
     }
 
@@ -116,14 +116,14 @@ class ChargeSummarySpec extends TestSupport with FeatureSwitching with ViewSpec 
       document.select("div#payment-link-2018").text() shouldBe ""
     }
 
-    "has a link to view what you owe" in new Setup(chargeModel(mainType = Some("4920"))) {
+    "has a link to view what you owe" in new Setup(chargeModel(mainType = Some("SA Payment on Account 1"))) {
       val link: Option[Elements] = getElementById("what-you-owe-link").map(_.select("a"))
       link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/payments-owed")
       ///report-quarterly/income-and-expenses/view/payments-owed (put link URL in " " above when what yoou owe page is ready))
       link.map(_.text) shouldBe Some("what you owe")
     }
 
-    "has a back link" in new Setup(chargeModel(mainType = Some("4920"))) {
+    "has a back link" in new Setup(chargeModel(mainType = Some("SA Payment on Account 1"))) {
       document.backLink.text shouldBe "Back"
     }
 

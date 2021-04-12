@@ -71,7 +71,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
               outstandingAmount = Some(500.00),
               clearedAmount = Some(500.00),
               chargeType = Some("POA1"),
-              mainType = Some("4920"),
+              mainType = Some("SA Payment on Account 1"),
               items = Some(Seq(SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString), None, None)))
             )
           )
