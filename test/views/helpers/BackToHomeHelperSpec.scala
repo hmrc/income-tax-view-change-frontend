@@ -27,7 +27,7 @@ class BackToHomeHelperSpec extends TestSupport {
 
     lazy val view = views.html.helpers.backToHomeHelper("unitTest")(implicitly)
     lazy val document = Jsoup.parse(view.body)
-    lazy val backToHomeLink = document.getElementById("it-home-back")
+    lazy val backToHomeLink = document.getElementById("back")
 
     s"Render the text ${MessagesLookUp.Base.backToHome}" in {
       backToHomeLink.text shouldBe MessagesLookUp.Base.backToHome
