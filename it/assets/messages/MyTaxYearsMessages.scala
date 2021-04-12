@@ -18,6 +18,8 @@ package assets.messages
 
 object MyTaxYearsMessages {
 
+  val agentTitle = "Tax years - Your client’s Income Tax details - GOV.UK"
+
   val taxYearsTitle = "Tax years - Business Tax account - GOV.UK"
   val viewTaxYears = "Below is a list of tax years you have submitted updates for. Click on the tax years to view a summary."
   val myTaxYearsLink: Int => String = year => s"${year - 1} to $year"

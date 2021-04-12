@@ -35,6 +35,9 @@ GET         /payment                            controllers.agent.PaymentControl
 # Tax Year Overview
 GET         /calculation/:taxYear               controllers.agent.TaxYearOverviewController.show(taxYear: Int)
 
+# Tax Years
+GET         /tax-years                          controllers.agent.TaxYearsController.show
+
 #Payment history
 GET         /payments/history                   controllers.agent.PaymentHistoryController.viewPaymentHistory
 

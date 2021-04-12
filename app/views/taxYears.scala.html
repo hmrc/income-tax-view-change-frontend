@@ -42,8 +42,9 @@
                     @if(itsaSubmissionIntegrationEnabled) {
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@{calc.year}"
-                           id="updateReturn-link-@{calc.year}" href= @appConfig.submissionFrontendUrl >
-                            @messages("taxYears.updateReturn")<span class="visuallyhidden">@messages("taxYears.taxYears", s"${calc.year - 1}", s"${calc.year}")</span>
+                           id="updateReturn-link-@{calc.year}" href="@appConfig.submissionFrontendUrl">
+                            @messages("taxYears.updateReturn")
+                            <span class="visuallyhidden">@messages("taxYears.taxYears", s"${calc.year - 1}", s"${calc.year}")</span>
                         </a>
                     </dd>
                     } else {
@@ -53,7 +54,8 @@
                         <a class="govuk-link" data-journey-click="EstimatesPage:ClickLink:@{calc.year}"
                            id="viewReturn-link-@{calc.year}"
                            href="@{controllers.routes.CalculationController.renderTaxYearOverviewPage(calc.year).url}">
-                            @messages("taxYears.viewReturn")<span class="visuallyhidden">@messages("taxYears.taxYears", s"${calc.year - 1}", s"${calc.year}")</span>
+                            @messages("taxYears.viewReturn")
+                            <span class="visuallyhidden">@messages("taxYears.taxYears", s"${calc.year - 1}", s"${calc.year}")</span>
                         </a>
                     </dd>
                 </div>

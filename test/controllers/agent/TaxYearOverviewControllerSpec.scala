@@ -70,7 +70,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
 
   "backUrl" should {
     "return to the home page" in new Setup {
-      controller.backUrl() shouldBe controllers.agent.routes.HomeController.show().url
+      controller.backUrl() shouldBe controllers.agent.routes.TaxYearsController.show().url
     }
   }
 
@@ -126,7 +126,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
           mockShowInternalServerError()
 
           intercept[InternalServerException](await(controller.show(taxYear = testYear)(fakeRequestConfirmedClient())))
-            .message shouldBe "[HomeController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+            .message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
         }
       }
       "there was a problem retrieving the calculation for the user" should {
@@ -191,7 +191,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
             calcOverview = CalcOverview(calculationDataSuccessModel, None),
             charges = financialDetailsModel(testYear).financialDetails,
             obligations = ObligationsModel(Nil),
-            backUrl = controllers.agent.routes.HomeController.show().url
+            backUrl = controllers.agent.routes.TaxYearsController.show().url
           )(HtmlFormat.empty)
 
           val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())

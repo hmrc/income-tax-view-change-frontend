@@ -62,11 +62,9 @@ class TaxYearsViewSpec extends ViewSpec {
 
       "display two view return links for the correct tax year" in {
         document.getSummaryListActions("viewReturn-link-2018").text() shouldBe
-          messages.viewReturn + messages.taxYear((testYear-1).toString, testYear.toString)
-
+          s"${messages.viewReturn} ${messages.taxYear((testYear-1).toString, testYear.toString)}"
         document.getSummaryListActions("viewReturn-link-2019").text() shouldBe
-          messages.viewReturn + messages.taxYear(testYear.toString, testYearPlusOne.toString)
-
+          s"${messages.viewReturn} ${messages.taxYear(testYear.toString, testYearPlusOne.toString)}"
       }
 
       "not display any update return link" in {
@@ -96,14 +94,11 @@ class TaxYearsViewSpec extends ViewSpec {
 
        "display three view return links for the correct tax year" in {
         document.getSummaryListActions("viewReturn-link-2018").text() shouldBe
-          messages.viewReturn + messages.taxYear((testYear-1).toString, testYear.toString)
-
+          s"${messages.viewReturn} ${messages.taxYear((testYear-1).toString, testYear.toString)}"
         document.getSummaryListActions("viewReturn-link-2019").text() shouldBe
-          messages.viewReturn + messages.taxYear(testYear.toString, testYearPlusOne.toString)
-
+          s"${messages.viewReturn} ${messages.taxYear(testYear.toString, testYearPlusOne.toString)}"
         document.getSummaryListActions("viewReturn-link-2020").text() shouldBe
-          messages.viewReturn + messages.taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)
-
+          s"${messages.viewReturn} ${messages.taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)}"
       }
 
       "not display any update return link" in {
@@ -153,19 +148,16 @@ class TaxYearsViewSpec extends ViewSpec {
 
        "display two view return links for the correct tax year" in {
          document.getSummaryListActions("viewReturn-link-2018").text() shouldBe
-           messages.viewReturn + messages.taxYear((testYear - 1).toString, testYear.toString)
-
+           s"${messages.viewReturn} ${messages.taxYear((testYear - 1).toString, testYear.toString)}"
          document.getSummaryListActions("viewReturn-link-2019").text() shouldBe
-           messages.viewReturn + messages.taxYear(testYear.toString, testYearPlusOne.toString)
-
+           s"${messages.viewReturn} ${messages.taxYear(testYear.toString, testYearPlusOne.toString)}"
        }
 
        "display two update return links for the correct tax year" in {
          document.getSummaryListActions("updateReturn-link-2018") .text() shouldBe
-           messages.updateReturn + messages.taxYear((testYear - 1).toString, testYear.toString)
+           s"${messages.updateReturn} ${messages.taxYear((testYear - 1).toString, testYear.toString)}"
          document.getSummaryListActions("updateReturn-link-2019") .text() shouldBe
-           messages.updateReturn + messages.taxYear(testYear.toString, testYearPlusOne.toString)
-
+           s"${messages.updateReturn} ${messages.taxYear(testYear.toString, testYearPlusOne.toString)}"
        }
 
      }
