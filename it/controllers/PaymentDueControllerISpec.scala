@@ -255,7 +255,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
               testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().toString))
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+              "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
             And("the payment feature switch is set to enabled")
             enable(Payment)
@@ -265,7 +265,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, testTaxYear)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(
@@ -304,7 +304,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
               testValidFinancialDetailsModelJson(2000, 2000, testTaxYear, LocalDate.now().minusDays(1).toString))
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+              "utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
             And("the payment feature switch is set to disbaled")
             disable(Payment)
@@ -314,7 +314,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, testTaxYear)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(
@@ -358,7 +358,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
             And("the payment feature switch is set to enabled")
             enable(Payment)
@@ -368,7 +368,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear}-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, testTaxYear.toString)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear -1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(
@@ -406,7 +406,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino,
               s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear.toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
 
 
             And("the payment feature switch is set to false")
@@ -437,7 +437,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino,
               s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
 
             And("the payment feature switch is set to false")
@@ -469,7 +469,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
               testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().toString))
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear.toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
 
 
             And("the payment feature switch is set to false")
@@ -499,13 +499,9 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             Given("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, None))
 
-
             And("I wiremock stub a single financial details response")
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06",
               s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
-            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
 
             And("the payment feature switch is set to enabled")
             enable(Payment)
@@ -536,7 +532,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               isElementVisibleById(s"sa-note")(false),
               isElementVisibleById(s"outstanding-charges-note")(false)
             )
-
           }
         }
 
@@ -554,7 +549,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino,
               s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
 
             And("the payment feature switch is set to enabled")
@@ -609,7 +604,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               ))
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
 
@@ -621,7 +616,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear}-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, testTaxYear.toString)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear -1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(
@@ -665,7 +660,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
               ))
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear}-04-05")(OK, mixedJson)
 
@@ -677,7 +672,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, testTaxYear.toString)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear -1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(
@@ -717,7 +712,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
               testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, s"${testTaxYear+1}-01-01"))
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-              "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
             And("the payment feature switch is set to enabled")
             enable(Payment)
@@ -727,7 +722,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, testTaxYear.toString)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear -1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(

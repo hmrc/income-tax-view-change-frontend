@@ -255,7 +255,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       `type` = None,
                       totalAmount = Some(1000.00),
                       originalAmount = Some(1000.00),
-                      outstandingAmount = None,
+                      outstandingAmount = Some(0),
                       clearedAmount = Some(1000.00),
                       chargeType = Some("POA1"),
                       items = Some(Seq(SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString), None, None)))
