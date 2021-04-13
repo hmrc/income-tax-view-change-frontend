@@ -70,6 +70,6 @@ class NextUpdatesController @Inject()(val incomeSourceDetailsService: IncomeSour
       }
   }
 
-  lazy val backUrl: String = controllers.routes.HomeController.home().url
+  lazy val backUrl: String = controllers.agent.routes.HomeController.show().url
 
 }

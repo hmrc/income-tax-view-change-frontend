@@ -80,5 +80,9 @@ class NextUpdatesViewSpec extends TestSupport {
 		"have an updates accordion" in  new Setup(obligationsModel) {
 			pageDocument.select("div .govuk-accordion").size() == 1
 		}
+
+		"has a link to view what you owe" in new Setup(obligationsModel) {
+			pageDocument.getElementById("back").attr("href") shouldBe "testBackURL"
+		}
 	}
 }
