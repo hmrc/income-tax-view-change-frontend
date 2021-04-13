@@ -39,8 +39,11 @@ GET         /payments-owed                      controllers.agent.nextPaymentDue
 #Charge summary
 GET			/tax-years/:taxYear/charge          controllers.agent.ChargeSummaryController.showChargeSummary(taxYear: Int, id: String)
 
+#Payment
+GET         /payment                            controllers.agent.PaymentController.paymentHandoff(amountInPence: Long)
+
 #Payment history
-GET         /payments/history          controllers.agent.PaymentHistoryController.viewPaymentHistory
+GET         /payments/history                   controllers.agent.PaymentHistoryController.viewPaymentHistory
 
 #Next updates
-GET         /next-updates              controllers.agent.NextUpdatesController.getNextUpdates
+GET         /next-updates                       controllers.agent.NextUpdatesController.getNextUpdates

@@ -186,7 +186,7 @@
             <p id ="payment-days-note">@messages("agent.paymentDue.payment-days-note")</p>
             <div id="credit-on-account" class="panel panel-indent panel-border-wide">@messages("agent.paymentDue.credit-on-account")</div>
             <div id="payment-button">
-                <a id="payment-button-link" class="button" href="@controllers.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence)"
+                <a id="payment-button-link" class="button" href="@controllers.agent.routes.PaymentController.paymentHandoff(chargesList.getEarliestTaxYearAndAmountByDueDate._2.toPence)"
                    aria-label='@messages("agent.paymentDue.pay-now-aria", (chargesList.getEarliestTaxYearAndAmountByDueDate._1 - 1).toString,
                                chargesList.getEarliestTaxYearAndAmountByDueDate._1.toString)'>@messages("agent.paymentDue.payNow")</a>
             </div>

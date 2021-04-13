@@ -30,6 +30,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //App
   lazy val baseUrl: String = "report-quarterly/income-and-expenses/view"
+  lazy val agentBaseUrl: String = s"$baseUrl/agents"
   lazy val itvcFrontendEnvironment: String = servicesConfig.getString("base.url")
   lazy val appName: String = servicesConfig.getString("appName")
 
@@ -108,6 +109,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Payment Redirect route
   lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/payments-owed"
+  //Payment Redirect route
+  lazy val agentPaymentRedirectUrl: String = s"$itvcFrontendEnvironment/$agentBaseUrl/payments-owed"
 
   //Accounting software guidance
   lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"

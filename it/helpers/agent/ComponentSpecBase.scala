@@ -17,6 +17,7 @@
 package helpers.agent
 
 import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import forms.agent.ClientsUTRForm
 import helpers.servicemocks.AuthStub.getWithClientDetailsInSession
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
@@ -32,7 +33,8 @@ import play.api.{Application, Environment, Mode}
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
-  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually with GenericStubMethods with SessionCookieBaker {
+  with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
+  with GenericStubMethods with SessionCookieBaker with FeatureSwitching{
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
@@ -147,6 +149,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAgentNextUpdates(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/next-updates", additionalCookies)
+
+    def getPay(amountInPence: BigDecimal, additionalCookies: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession(s"/agents/payment?amountInPence=$amountInPence", additionalCookies)
   }
 
   def unauthorisedTest(uri: String): Unit = {

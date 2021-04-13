@@ -26,6 +26,8 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, Enrolme
 object BaseTestConstants {
 
   val testMtditid = "XAIT0000123456"
+  val testMtditidAgent = "XAIT00000000015"
+  val testNinoAgent = "AA111111A"
   val testNino = "AB123456C"
   val testSaUtrId = 1234567890
   val testSaUtr = "saUtr"

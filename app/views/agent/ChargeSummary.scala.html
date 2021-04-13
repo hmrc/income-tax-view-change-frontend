@@ -74,7 +74,7 @@
 
 	@if(paymentEnabled && charge.outstandingAmount.exists(_ > 0)){
 		<div id="payment-link-@{charge.taxYear}">
-			<a class="button" href="@controllers.routes.PaymentController.paymentHandoff(charge.outstandingAmount.get.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.payNow")</a>
+			<a class="button" href="@controllers.agent.routes.PaymentController.paymentHandoff(charge.outstandingAmount.get.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.payNow")</a>
 		</div>
 	}
 }
