@@ -127,7 +127,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           2000, 2000, currentTaxYearEnd.toString, LocalDate.now().toString))
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-        "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+        "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
@@ -221,7 +221,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         OK, mixedJson)
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-        "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(
+        "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(
         OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
@@ -327,7 +327,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           2000, 2000, currentTaxYearEnd.toString, LocalDate.now().toString))
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-        "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(
+        "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(
         INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
@@ -358,7 +358,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           s"$currentTaxYearEnd-04-05")(OK, testEmptyFinancialDetailsModelJson)
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-          "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+          "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
         val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
@@ -499,13 +499,13 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-          "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+          "utr", testSaUtr.toLong, (currentTaxYearEnd -1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
         val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
-        IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, currentTaxYearEnd.toString)
+        IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         result should have(
@@ -552,7 +552,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")
-        IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, currentTaxYearEnd.toString)
+        IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)
 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         result should have(

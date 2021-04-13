@@ -33,7 +33,7 @@ case class Charge(taxYear: String,
                   mainType: Option[String] = None,
                   items: Option[Seq[SubItem]] = None
                  ) {
-  val isPaid: Boolean = outstandingAmount.fold(true)(_ <= 0)
+  val isPaid: Boolean = outstandingAmount.fold(false)(_ <= 0)
 
   def charges(): Seq[SubItem] = items.getOrElse(Seq()).filter(_.dueDate.isDefined)
 

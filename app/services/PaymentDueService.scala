@@ -55,7 +55,8 @@ class PaymentDueService @Inject()(val financialDetailsService: FinancialDetailsS
   private def callOutstandingCharges(saUtr: Option[String], yearOfMigration: Option[String], currentTaxYear: Int)
                             (implicit headerCarrier: HeaderCarrier): Future[Option[OutstandingChargesModel]] = {
     if(saUtr.isDefined && yearOfMigration.isDefined && yearOfMigration.get.toInt >= currentTaxYear - 1) {
-      incomeTaxViewChangeConnector.getOutstandingCharges("utr", saUtr.get.toLong, yearOfMigration.get) map {
+			val saPreviousYear = yearOfMigration.get.toInt - 1
+			incomeTaxViewChangeConnector.getOutstandingCharges("utr", saUtr.get.toLong, saPreviousYear.toString) map {
         case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
         case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == 404 => None
         case _ => throw new Exception("[PaymentDueService][callOutstandingCharges] Error response while getting outstanding charges")

@@ -562,15 +562,15 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
             charges = List(
-              fullChargeModel.copy(outstandingAmount = None),
-              fullChargeModel.copy(outstandingAmount = None)
+              fullChargeModel.copy(outstandingAmount = Some(0)),
+              fullChargeModel.copy(outstandingAmount = Some(0))
             )
           ))
           setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now),
             charges = List(
-              fullChargeModel.copy(outstandingAmount = None),
-              fullChargeModel.copy(outstandingAmount = None)
+              fullChargeModel.copy(outstandingAmount = Some(0)),
+              fullChargeModel.copy(outstandingAmount = Some(0))
             )
           ))
 
@@ -677,15 +677,15 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
             charges = List(
-              fullChargeModel.copy(outstandingAmount = None),
-              fullChargeModel.copy(outstandingAmount = None)
+              fullChargeModel.copy(outstandingAmount = Some(0)),
+              fullChargeModel.copy(outstandingAmount = Some(0))
             )
           ))
           setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now),
             charges = List(
-              fullChargeModel.copy(outstandingAmount = None),
-              fullChargeModel.copy(outstandingAmount = None)
+              fullChargeModel.copy(outstandingAmount = Some(0)),
+              fullChargeModel.copy(outstandingAmount = Some(0))
             )
           ))
 
