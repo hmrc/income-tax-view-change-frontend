@@ -480,3 +480,23 @@ updateTab.updateType.quarterly                                  = Quarterly Upda
 updateTab.updateType.eops                                       = Annual Update
 updateTab.updateType.crystallised                               = Final Declaration
 
+#Agent next updates
+agent.nextUpdates.heading                                       = Next updates
+agent.nextUpdates.sub-heading                                   = Updates due by
+agent.nextUpdates.dropdown.info                                 = What are the update types?
+agent.nextUpdates.info                                          = All updates need to be sent using your record keeping software by each date shown.
+agent.nextUpdates.dropdown.quarterlyReturn.text                 = A quarterly update is a record of all your business income in a 3 month period.
+agent.nextUpdates.dropdown.quarterlyReturn.text.lin2            = Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income.
+agent.nextUpdates.dropdown.annualReturn.text                    = In an annual update you need to declare that the 4 quarterly updates you have sent are correct. You can also change any previous errors.
+agent.nextUpdates.dropdown.annualReturn.text.lin2               = Using your record-keeping software, you need to send one annual update for each source of income at the end of each accounting period.
+agent.nextUpdates.dropdown.finalDeclaration.text                = Your final declaration confirms that the annual updates you have sent are correct and that you have submitted every source of income and expenses true to your knowledge. This is done using your record-keeping software.
+agent.nextUpdates.table.header.type					            = Update type
+agent.nextUpdates.table.header.source	                        = Income source
+agent.nextUpdates.section.heading.updates                       = Update for: {0} to {1}
+agent.nextUpdates.section.heading.taxYear                       = Tax year: {0} to {1}
+agent.nextUpdates.previousYears.textOne				            = To view previously submitted updates visit the
+agent.nextUpdates.previousYears.textTwo				            = page.
+agent.nextUpdates.previousYears.link	                        = tax years
+agent.obligations.quarterlyUpdates                              = Quarterly updates
+agent.obligations.annualUpdates                                 = Annual updates
+agent.obligations.finalDeclarationUpdate                        = Final declaration

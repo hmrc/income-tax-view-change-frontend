@@ -144,6 +144,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getPaymentHistory(additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/agents/payments/history", additionalCookies)
+
+    def getAgentNextUpdates(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      getWithClientDetailsInSession("/agents/next-updates", additionalCookies)
   }
 
   def unauthorisedTest(uri: String): Unit = {

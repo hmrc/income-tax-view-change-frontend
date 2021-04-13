@@ -41,3 +41,6 @@ GET			/tax-years/:taxYear/charge          controllers.agent.ChargeSummaryControl
 
 #Payment history
 GET         /payments/history          controllers.agent.PaymentHistoryController.viewPaymentHistory
+
+#Next updates
+GET         /next-updates              controllers.agent.NextUpdatesController.getNextUpdates

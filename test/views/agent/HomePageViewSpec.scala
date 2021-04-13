@@ -161,7 +161,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
         "has a link to view updates" in new Setup {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("")
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
           link.map(_.text) shouldBe Some(homeMessages.updatesLink)
         }
       }
