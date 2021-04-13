@@ -465,6 +465,7 @@ paymentHistory.heading                                          = Payment histor
 paymentHistory.info                                             = If you cannot see all your previous payments here, you can find them in your classic
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments
+paymentHistory.paymentToHmrc                                    = Payment made to HMRC
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
 
 ##Tax Years Overview Update Tab##

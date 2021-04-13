@@ -277,8 +277,8 @@ nextUpdates.previousYears.textOne								= To view previously submitted updates 
 nextUpdates.previousYears.textTwo								= page.
 nextUpdates.previousYears.link									= tax years
 
-sections.open.all												= Open all
-sections.close.all												= Close all
+sections.open.all												= Agor pob un
+sections.close.all												= Cau pob un
 
 
 ## Payment Due Page ##
@@ -349,11 +349,12 @@ titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK
 
 
 ## Payment History Page ##
-paymentHistory.heading                                          = Payment history
-paymentHistory.info                                             = If you cannot see all your previous payments here, you can find them in your classic {0}.
-paymentHistory.textLink1                                        = Self Assessment service
-paymentHistory.button                                           = {0} payments
-paymentsHistory.CardRef                                         = Payment made by debit card ref:
+paymentHistory.heading                                          = Hanes taliadau
+paymentHistory.info                                             = Os na allwch weld eich holl daliadau blaenorol yma, gallwch ddod o hyd iddynt yn eich
+paymentHistory.textLink1                                        = gwasanaeth Hunanasesiad arferol
+paymentHistory.button                                           = Taliadau ar gyfer {0}
+paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
+paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
 
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
