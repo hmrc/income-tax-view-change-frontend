@@ -27,7 +27,7 @@ import java.time.LocalDate
 class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
 
   def outstandingChargesModel(dueDate: String) = OutstandingChargesModel(
-    List(OutstandingChargeModel("BCD", dueDate, 123456.67, 1234), OutstandingChargeModel("ACI", dueDate, 12.67, 1234)))
+    List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
 
   val financialDetailsDueInMoreThan30Days = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),

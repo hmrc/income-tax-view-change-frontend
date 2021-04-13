@@ -43,7 +43,7 @@ object OutstandingChargesTestConstants {
   )))
 
   val testValidOutstandingChargesModel: OutstandingChargesModel = OutstandingChargesModel(List(
-    OutstandingChargeModel("LATE", "2021-01-31", 123456789012345.67, 1234)))
+    OutstandingChargeModel("LATE", Some("2021-01-31"), 123456789012345.67, 1234)))
 
 
   val testOutstandingChargesErrorModelParsing: OutstandingChargesErrorModel = OutstandingChargesErrorModel(
