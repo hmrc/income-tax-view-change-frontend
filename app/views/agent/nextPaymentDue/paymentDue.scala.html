@@ -97,9 +97,9 @@
                     @tableHead("balancing-charge-type-table-head")
                     <tbody>
                     <tr id="balancing-charge-type-0">
-                        <td>@LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate).toLongDateShort</td>
+                        <td>@LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).toLongDateShort</td>
                         <td>
-                            @if(LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate).isBefore(LocalDate.now())){
+                            @if(LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).isBefore(LocalDate.now())){
                             <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>
                             }
                             @messages(s"agent.paymentDue.balancingCharge.text")
@@ -107,14 +107,14 @@
                         <td class="numeric">@{chargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency}</td>
                     </tr>
                     @if(chargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
-                    && LocalDate.parse(chargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.get.relevantDueDate).isBefore(LocalDate.now())) {
+                    && LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).isBefore(LocalDate.now())) {
                     <tr id="balancing-charge-type-1">
                         <td></td>
                         <td>
                             @messages(s"agent.paymentDue.balancingCharge.interest.line1.text")
                             <div>
                                 @messages(s"agent.paymentDue.balancingCharge.interest.line2.text",
-                                LocalDate.parse(chargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.get.relevantDueDate).toLongDateShort,
+                                LocalDate.parse(chargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).toLongDateShort,
                                 LocalDate.now().toLongDateShort
                                 )
                             </div>

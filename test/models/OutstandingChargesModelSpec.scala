@@ -23,22 +23,22 @@ import uk.gov.hmrc.play.test.UnitSpec
 class OutstandingChargesModelSpec extends UnitSpec with Matchers {
 
   val validOutstandingChargesModel = OutstandingChargesModel(
-    List(OutstandingChargeModel("BCD", "2021-12-01", 123456.67, 1234), OutstandingChargeModel("ACI", "2021-12-01", 12.67, 1234),
-      OutstandingChargeModel("LATE", "2021-12-01", 123456.67, 1234)))
+    List(OutstandingChargeModel("BCD", Some("2021-12-01"), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234),
+      OutstandingChargeModel("LATE", Some("2021-12-01"), 123456.67, 1234)))
 
   val validOutstandingChargesModelWithNoMatchingTieBreaker = OutstandingChargesModel(
-    List(OutstandingChargeModel("BCD", "2021-12-01", 123456.67, 4321), OutstandingChargeModel("ACI", "2021-12-01", 12.67, 1234)))
+    List(OutstandingChargeModel("BCD", Some("2021-12-01"), 123456.67, 4321), OutstandingChargeModel("ACI", None, 12.67, 1234)))
 
   val validOutstandingChargesModelWithOneChargeValueZero = OutstandingChargesModel(
-    List(OutstandingChargeModel("BCD", "2021-12-01", 0, 1234), OutstandingChargeModel("ACI", "2021-12-01", 12.67, 1234)))
+    List(OutstandingChargeModel("BCD", Some("2021-12-01"), 0, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
 
   val validOutstandingChargesModelWithNoBcdCharges = OutstandingChargesModel(
-    List(OutstandingChargeModel("LATE", "2021-12-01", 123456.67, 1234), OutstandingChargeModel("ACI", "2021-12-01", 12.67, 1234)))
+    List(OutstandingChargeModel("LATE", Some("2021-12-01"), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
 
   "The OutstandingChargesModel" when {
 
     "getAciChargeWithTieBreaker return right values when valid model with tie breaker values is passed" in {
-      validOutstandingChargesModel.getAciChargeWithTieBreaker shouldBe Some(OutstandingChargeModel("ACI", "2021-12-01", 12.67, 1234))
+      validOutstandingChargesModel.getAciChargeWithTieBreaker shouldBe Some(OutstandingChargeModel("ACI", None, 12.67, 1234))
     }
 
     "getAciChargeWithTieBreaker return right values when valid model with no tie breaker values is passed" in {

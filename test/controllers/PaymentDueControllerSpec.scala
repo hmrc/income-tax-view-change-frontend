@@ -73,7 +73,7 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(List(chargeModel(2019)), List(chargeModel(2020)),
     List(chargeModel(2021)), Some(OutstandingChargesModel(List(
-      OutstandingChargeModel("BCD", "2020-12-31", 10.23, 1234), OutstandingChargeModel("OCI", "2020-12-31", 1.23, 1234)))))
+      OutstandingChargeModel("BCD", Some("2020-12-31"), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234)))))
 
   def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList()
 

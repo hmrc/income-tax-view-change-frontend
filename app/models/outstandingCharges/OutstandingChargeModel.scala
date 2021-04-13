@@ -19,7 +19,7 @@ package models.outstandingCharges
 import play.api.libs.json.{Format, Json}
 
 case class OutstandingChargeModel(chargeName: String,
-                                   relevantDueDate: String,
+                                   relevantDueDate: Option[String],
                                    chargeAmount: BigDecimal,
                                    tieBreaker: Int
                                   )
