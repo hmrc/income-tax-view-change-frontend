@@ -85,14 +85,12 @@
     @if(chargesList.isChargesListEmpty){
         <p id="no-payments-due">@messages("whatYouOwe.no-payments-due")</p>
     } else {
-		@if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
-			<div id="payments-due-note" class="panel panel-indent panel-border-wide">
-			<p id ="sa-note-migrated">@messages("whatYouOwe.sa-note")
-				<a href="@{appConfig.saViewLandPService(utr.get)}">@messages("whatYouOwe.sa-link")</a>.
-			</p>
-			<p id ="outstanding-charges-note-migrated">@messages("whatYouOwe.outstanding-charges-note")</p>
-			</div>
-		}
+        <div id="payments-due-note" class="panel panel-indent panel-border-wide">
+            <p id ="sa-note-migrated">@messages("whatYouOwe.sa-note")
+                <a href="@{appConfig.saViewLandPService(utr.get)}">@messages("whatYouOwe.sa-link")</a>.
+            </p>
+            <p id ="outstanding-charges-note-migrated">@messages("whatYouOwe.outstanding-charges-note")</p>
+        </div>
         <div>
             @if(chargesList.bcdChargeTypeDefinedAndGreaterThanZero){
                 <h3 id="pre-mtd-payments-heading" class="heading-large">@messages("whatYouOwe.pre-mtd-payments", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)</h3>
