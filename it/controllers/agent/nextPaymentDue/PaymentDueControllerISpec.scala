@@ -193,8 +193,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         isElementVisibleById(s"payment-days-note")(false),
         isElementVisibleById(s"credit-on-account")(false),
         isElementVisibleById(s"payment-button")(false),
-        isElementVisibleById(s"sa-note-migrated")(false),
-        isElementVisibleById(s"outstanding-charges-note-migrated")(false)
+        isElementVisibleById(s"sa-note-migrated")(true),
+        isElementVisibleById(s"outstanding-charges-note-migrated")(true)
       )
     }
 
@@ -574,8 +574,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById(s"credit-on-account")(true),
           isElementVisibleById(s"payment-button")(true),
           isElementVisibleById(s"no-payments-due")(false),
-          isElementVisibleById(s"sa-note-migrated")(false),
-          isElementVisibleById(s"outstanding-charges-note-migrated")(false)
+          isElementVisibleById(s"sa-note-migrated")(true),
+          isElementVisibleById(s"outstanding-charges-note-migrated")(true)
         )
       }
     }
