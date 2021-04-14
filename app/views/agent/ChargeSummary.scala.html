@@ -59,9 +59,7 @@
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
 			<dd class="govuk-summary-list__value">@{
-				if(charge.clearedAmount.isDefined) {
-					charge.outstandingAmount.getOrElse(BigDecimal(0)).toCurrency
-				} else charge.originalAmount.get.toCurrency
+				charge.remainingToPay.toCurrency
 			}</dd>
 		</div>
 	</dl>
@@ -72,9 +70,9 @@
 		@messages("chargeSummary.whatYouOwe.textTwo")
 	</p>
 
-	@if(paymentEnabled && charge.outstandingAmount.exists(_ > 0)){
+	@if(paymentEnabled && charge.remainingToPay > 0){
 		<div id="payment-link-@{charge.taxYear}">
-			<a class="button" href="@controllers.agent.routes.PaymentController.paymentHandoff(charge.outstandingAmount.get.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.payNow")</a>
+			<a class="button" href="@controllers.agent.routes.PaymentController.paymentHandoff(charge.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.payNow")</a>
 		</div>
 	}
 }
