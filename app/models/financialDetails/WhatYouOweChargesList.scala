@@ -44,13 +44,13 @@ case class WhatYouOweChargesList(overduePaymentList: List[Charge] = List(), dueI
       if(bcdDueDate.isBefore(sortedListOfCharges.get.due.get)) {
         (bcdDueDate.getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount)
       } else {
-        (sortedListOfCharges.get.due.get.getYear, sortedListOfCharges.get.outstandingAmount.get)
+        (sortedListOfCharges.get.due.get.getYear, sortedListOfCharges.get.remainingToPay)
       }
     } else {
       if(outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined) {
         (LocalDate.parse(outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get).getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount)
       } else {
-        (sortedListOfCharges.get.due.get.getYear, sortedListOfCharges.get.outstandingAmount.get)
+        (sortedListOfCharges.get.due.get.getYear, sortedListOfCharges.get.remainingToPay)
       }
     }
   }

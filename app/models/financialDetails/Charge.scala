@@ -33,7 +33,14 @@ case class Charge(taxYear: String,
                   mainType: Option[String] = None,
                   items: Option[Seq[SubItem]] = None
                  ) {
-  val isPaid: Boolean = outstandingAmount.fold(false)(_ <= 0)
+  val isPaid: Boolean = {
+		outstandingAmount.fold(clearedAmount.exists(_ >= 0) && clearedAmount == originalAmount)(_ <= 0)
+	}
+
+	def remainingToPay: BigDecimal = {
+		if (isPaid) BigDecimal(0)
+		else outstandingAmount.getOrElse(originalAmount.get)
+	}
 
   def charges(): Seq[SubItem] = items.getOrElse(Seq()).filter(_.dueDate.isDefined)
 
@@ -58,8 +65,8 @@ case class Charge(taxYear: String,
 	}
 
   def getChargePaidStatus: String = {
-    if(outstandingAmount.fold(true)(_ <= 0)) "paid"
-    else if(outstandingAmount.exists(_ < originalAmount.getOrElse(0))) "part-paid"
+    if(isPaid) "paid"
+    else if(outstandingAmount.isDefined) "part-paid"
     else "unpaid"
   }
 }

@@ -90,12 +90,12 @@ class ChargeSummarySpec extends TestSupport with FeatureSwitching with ViewSpec 
         .text() shouldBe "£1,600.00"
     }
 
-    "display a remaining amount of 0 if a cleared amount is present but an outstanding amount is not" in new Setup(chargeModel(outstandingAmount = None, clearedAmount = Some(600))) {
+    "display a remaining amount of 0 if a cleared amount is present equal to the charge but an outstanding amount is not" in new Setup(chargeModel(outstandingAmount = None, clearedAmount = Some(1400))) {
       document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(4) .govuk-summary-list__value")
         .text() shouldBe "£0.00"
     }
 
-    "display the original amount if no cleared amount is present" in new Setup(chargeModel(clearedAmount = None, originalAmount = Some(1700))) {
+    "display the original amount if no cleared amount or outstanding amount is present" in new Setup(chargeModel(outstandingAmount = None, clearedAmount = None, originalAmount = Some(1700))) {
       document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(4) .govuk-summary-list__value")
         .text() shouldBe "£1,700.00"
     }

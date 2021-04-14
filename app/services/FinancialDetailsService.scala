@@ -86,7 +86,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
         case (_, financialDetails: FinancialDetailsModel) if !financialDetails.isAllPaid =>
           financialDetails.copy(
             financialDetails = financialDetails.financialDetails.filterNot(
-              charge => charge.originalAmount.exists(_ <= 0) || charge.outstandingAmount.isEmpty)
+              charge => charge.originalAmount.exists(_ <= 0) || charge.remainingToPay <= 0)
           )
       }
     }

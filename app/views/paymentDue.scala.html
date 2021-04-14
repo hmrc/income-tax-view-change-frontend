@@ -71,7 +71,7 @@
                     <div class="column-half soft--left">
                         <h3 class="heading-large" >
                             <span class="heading-secondary" id="payments-due-@{charge.taxYear}">@messages("paymentDue.tax-year", (charge.taxYear.toInt - 1).toString, charge.taxYear)</span>
-                            <div id="payments-due-outstanding-@charge.taxYear"> @{charge.outstandingAmount.get.toCurrency} </div>
+                            <div id="payments-due-outstanding-@charge.taxYear"> @{charge.remainingToPay.toCurrency} </div>
                             <span class="heading-secondary" id="payments-due-on-@{charge.taxYear}">@{messages("paymentDue.due") + " " + charge.due.get.toLongDate}</span>
                         </h3>
                     </div>
@@ -79,9 +79,9 @@
                         <div class="font-small text--right link-style form-group" id="bills-link-@{charge.taxYear}">
                             <a href="@controllers.routes.CalculationController.renderTaxYearOverviewPage(charge.taxYear.toInt).url" aria-label='@messages("paymentDue.view-bill-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.viewBill")</a>
                         </div>
-                        @if(paymentEnabled && charge.outstandingAmount.isDefined){
+                        @if(paymentEnabled && charge.remainingToPay > 0){
                         <div id="payment-link-@{charge.taxYear}" class="font-small text--right link-style">
-                            <a href="@controllers.routes.PaymentController.paymentHandoff(charge.outstandingAmount.get.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.payNow")</a>
+                            <a href="@controllers.routes.PaymentController.paymentHandoff(charge.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.payNow")</a>
                         </div>
                         }
                     </div>

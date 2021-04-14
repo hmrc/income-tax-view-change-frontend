@@ -66,25 +66,25 @@ class PaymentDueService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def whatYourOwePageDataExists(charge: Charge): Boolean = charge.mainType.isDefined && charge.due.isDefined && charge.outstandingAmount.isDefined
+  private def whatYourOwePageDataExists(charge: Charge): Boolean = charge.mainType.isDefined && charge.due.isDefined
 
   private def getDueWithinThirtyDaysList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.flatMap(financialDetails =>
 		financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
 			&& (charge.mainType.get == "SA Payment on Account 1" || charge.mainType.get == "SA Payment on Account 2")
-			&& charge.outstandingAmount.get > 0
+			&& charge.remainingToPay > 0
 			&& LocalDate.now().isAfter(charge.due.get.minusDays(31))
 			&& LocalDate.now().isBefore(charge.due.get.plusDays(1)))).sortBy(_.due.get)
 
   private def getFuturePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.flatMap(financialDetails =>
 		financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
 			&& (charge.mainType.get == "SA Payment on Account 1" || charge.mainType.get == "SA Payment on Account 2")
-			&& charge.outstandingAmount.get > 0
+			&& charge.remainingToPay > 0
 			&& LocalDate.now().isBefore(charge.due.get.minusDays(30)))).sortBy(_.due.get)
 
   private def getOverduePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.flatMap(financialDetails =>
 		financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
 			&& (charge.mainType.get == "SA Payment on Account 1" || charge.mainType.get == "SA Payment on Account 2")
-			&& charge.outstandingAmount.get > 0
+			&& charge.remainingToPay > 0
 			&& charge.due.get.isBefore(LocalDate.now()))).sortBy(_.due.get)
 
 }

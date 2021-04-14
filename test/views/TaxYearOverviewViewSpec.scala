@@ -92,6 +92,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val amount: String = "Amount"
     val paymentOnAccount1: String = "Payment on account 1 of 2"
     val unpaid: String = "Unpaid"
+    val partPaid: String = "Part Paid"
     val noPaymentsDue: String = "No payments currently due."
     val updateType: String = "Update type"
     val updateIncomeSource: String = "Income source"
@@ -214,7 +215,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Status in the payments tab" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe taxYearOverviewMessages.unpaid
+      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe taxYearOverviewMessages.partPaid
     }
 
     "display the Amount in the payments tab" in new Setup(estimateView()) {

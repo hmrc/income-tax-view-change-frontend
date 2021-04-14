@@ -67,7 +67,7 @@
         @if(isChargeTypeHyperlinked){</a>}
         <div>@messages("agent.paymentDue.payment-type.taxYear", (charge.taxYear.toInt - 1).toString, charge.taxYear)</div>
     </td>
-    <td class="numeric">@{charge.outstandingAmount.get.toCurrency}</td>
+    <td class="numeric">@{charge.remainingToPay.toCurrency}</td>
 </tr>
 }
 
