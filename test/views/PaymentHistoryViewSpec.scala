@@ -36,6 +36,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val heading = "Payment history"
     val info = "If you cannot see all your previous payments here, you can find them in your classic Self Assessment service."
     def button(year: Int): String = s"$year payments"
+    val paymentToHmrc = "Payment made to HMRC"
     val CardRef = "Payment made by debit card ref:"
   }
 
@@ -77,7 +78,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             case (payment, index) =>
               val row = tbody.selectNth("tr", index +1 )
               row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date.get).toLongDate
-              row.selectNth("td", 2).text shouldBe s"${payment.method.get} ${payment.reference.get}"
+              row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc
               row.selectNth("td", 3).text shouldBe payment.amount.get.toCurrencyString
           }
         }
