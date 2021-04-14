@@ -80,6 +80,9 @@ object IncomeTaxViewChangeStub {
   def stubGetPreviousObligations(nino: String, fromDate: LocalDate, toDate: LocalDate, deadlines: ObligationsModel): Unit =
     WiremockHelper.stubGet(previousObligationsUrl(nino, fromDate, toDate), Status.OK, Json.toJson(deadlines).toString())
 
+  def stubGetPreviousObligationsNotFound(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
+    WiremockHelper.stubGet(previousObligationsUrl(nino, fromDate, toDate), Status.NOT_FOUND, Json.obj().toString())
+
   def stubGetPreviousObligationsError(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
     WiremockHelper.stubGet(previousObligationsUrl(nino, fromDate, toDate), Status.INTERNAL_SERVER_ERROR, "")
 

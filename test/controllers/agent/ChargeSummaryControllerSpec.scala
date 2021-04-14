@@ -157,17 +157,6 @@ class ChargeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
 
   ".backUrl" when {
 
-    // need to be uncommented after the tax overview page be built
-//    "the user comes from tax overview page payment tab" should {
-//      "return payment tab url string result" in new Setup(true, true) {
-//
-//        val result: String = chargeSummaryController.backUrl(backLocation = Some("taxYearOverview"), currentYear)
-//
-//        result shouldBe "/report-quarterly/income-and-expenses/view//agents/calculation/2021#payments]"
-//
-//      }
-//    }
-
     "the user comes from what you owe page" should {
       "return what you owe page url string result" in new Setup(true, true) {
 
@@ -178,15 +167,25 @@ class ChargeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
       }
     }
 
-       "the user comes is not from tax overview payment tab and is not from what you owe page" should {
-            "return agent home page url string result" in new Setup(true, true) {
+    "the user comes from tax overview page payment tab" should {
+      "return payment tab url string result" in new Setup(true, true) {
 
-              val result: String = chargeSummaryController.backUrl(backLocation = Some("_"), currentYear)
+        val result: String = chargeSummaryController.backUrl(backLocation = Some("taxYearOverview"), currentYear)
 
-              result shouldBe "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
+        result shouldBe "/report-quarterly/income-and-expenses/view/agents/calculation/2021#payments"
 
-            }
-          }
+      }
+    }
+
+    "the user comes is not from tax overview payment tab and is not from what you owe page" should {
+      "return agent home page url string result" in new Setup(true, true) {
+
+        val result: String = chargeSummaryController.backUrl(backLocation = Some("_"), currentYear)
+
+        result shouldBe "/report-quarterly/income-and-expenses/view/agents/income-tax-account"
+
+      }
+    }
 
   }
 }

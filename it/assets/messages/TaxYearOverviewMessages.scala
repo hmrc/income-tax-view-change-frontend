@@ -19,6 +19,7 @@ package assets.messages
 object TaxYearOverviewMessages {
 
   val title: String = "Tax year overview - Business Tax account - GOV.UK"
+  val agentTitle: String = "Tax year overview - Your client’s Income Tax details - GOV.UK"
   val heading: String = "Tax year overview"
 
   def titleOld(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
