@@ -174,6 +174,7 @@ object MessagesLookUp {
     val foreignTaxCreditRelief: String = "Foreign Tax Credit Relief"
     val reliefClaimedOnQualifyingDis: String = "Relief claimed on a qualifying distribution"
     val nonDeductibleLoanInterest: String = "Non deductible loan interest"
+    val incomeTaxDueAfterTaxReductions: String = "Income Tax due after tax reductions"
     val otherCharges: String = "Other charges"
     val sectionHeadingAdditionalDeduc: String = "Tax deductions"
     val sectionHeadingTotal: String = "Total tax due"
