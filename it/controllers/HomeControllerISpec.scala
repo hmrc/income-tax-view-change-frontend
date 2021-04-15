@@ -15,20 +15,19 @@
  */
 package controllers
 
-import java.time.LocalDateTime
-
 import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
+import audit.models.HomeAudit
+import auth.MtdItUser
 import config.featureswitch.{Bills, NewFinancialDetailsApi, Payment}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
-import models.calculation.{CalculationItem, ListCalculationItems}
+import helpers.servicemocks.{AuditStub, FinancialTransactionsStub, IncomeTaxViewChangeStub}
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
+import play.api.test.FakeRequest
 
 class HomeControllerISpec extends ComponentSpecBase {
 
@@ -67,6 +66,16 @@ class HomeControllerISpec extends ComponentSpecBase {
           elementTextBySelector("#updates-tile > div > p:nth-child(2)")("4 OVERDUE UPDATES"),
           elementTextBySelector("#payments-tile > div > p:nth-child(2)")("2 OVERDUE PAYMENTS")
         )
+
+        AuditStub.verifyAuditContains(HomeAudit(
+          MtdItUser(
+            testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual")
+          )(FakeRequest()),
+          Some(Right(2)),
+          Right(4),
+          None
+        ).detail)
       }
 
       "render the home page with the payment due date with NewFinancialDetailsApi FS enabled" in {
@@ -89,7 +98,6 @@ class HomeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2018-04-06", "2019-04-05")(OK,
           testValidFinancialDetailsModelJson(3400.00, 1000.00, "2019"))
 
-
         When("I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.getHome
 
@@ -105,6 +113,16 @@ class HomeControllerISpec extends ComponentSpecBase {
           elementTextBySelector("#payments-tile > div > p:nth-child(2)")("6 OVERDUE PAYMENTS")
         )
         disable(NewFinancialDetailsApi)
+
+        AuditStub.verifyAuditContains(HomeAudit(
+          MtdItUser(
+            testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual")
+          )(FakeRequest()),
+          Some(Right(6)),
+          Right(4),
+          None
+        ).detail)
       }
 
       "render the ISE page when receive an error from the backend" in {
@@ -112,7 +130,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         And("I wiremock stub a single business obligation response")
-				IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
+        IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
 
         When("I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.getHome
