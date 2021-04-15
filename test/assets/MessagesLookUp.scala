@@ -116,7 +116,7 @@ object MessagesLookUp {
     val ManageYourIncomeTaxReturnHeading = "Manage Income Tax"
     val yourIncomeTaxReturnDescription = "Send updates to HMRC and declare income for a tax year."
     val sendUpdatesLink = "Send updates"
-    val submitYourReturnsLink = "Update and submit your income tax"
+    val submitYourReturnsLink = "Update and submit an Income Tax Return"
     val changeClientLink = "Change client"
     val backLink = "Back"
   }

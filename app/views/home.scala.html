@@ -71,57 +71,76 @@
 }
 
 @taxYearsTile = {
-<div id="tax-years-tile" class="tile tile-no-border">
-    <div class="tile-body">
-        <ul class="list">
-            <h2 class="heading-medium">@messages("home.tax-years.heading")</h2>
-            <li><a href=@controllers.routes.TaxYearsController.viewTaxYears().url>@messages("home.tax-years.view")</a>
-            </li>
-            @if(paymentHistoryEnabled){
-            <li><a href=@controllers.routes.PaymentHistoryController.viewPaymentHistory().url>@messages("home.tax-years.viewPayments")</a></li>
-            }
-        </ul>
+    <div id="tax-years-tile" class="tile tile-no-border">
+        <div class="tile-body">
+            <ul class="list">
+                <h2 class="heading-medium">@messages("home.tax-years.heading")</h2>
+                <li><a href=@controllers.routes.TaxYearsController.viewTaxYears().url>@messages("home.tax-years.view")</a>
+                </li>
+                @if(paymentHistoryEnabled){
+                    <li><a href=@controllers.routes.PaymentHistoryController.viewPaymentHistory().url>@messages("home.tax-years.viewPayments")</a></li>
+                }
+            </ul>
+        </div>
     </div>
-</div>
 }
 
 @YourIncomeTaxReturnTile= {
-@if(ITSASubmissionIntegrationEnabled){
-<div id="your-returns-tile" class="grid-row">
-    <div class="column-one-third">
-        <h3 class="heading-medium">@messages("home.your-returns.heading")</h3>
-        <p>@messages("home.your-returns.description")</p>
-        <p><a href= @appConfig.submissionFrontendUrl>@messages("home.your-returns.updatesLink")</a></p>
-    </div>
-</div>
-}
+    @if(ITSASubmissionIntegrationEnabled){
+        <div id="manage-income-tax-tile" class="grid-row">
+            <div class="column-two-thirds">
+                <h2 class="heading-large">@messages("home.manage-income-tax.heading")</h2>
+            </div>
+        </div>
+        <div id="submit-your-returns-tile" class="grid-row">
+            <div class="column-one-third">
+                <h3 class ="heading-small">
+                    <a href=@appConfig.submissionFrontendUrl>@messages("home.your-returns.updatesLink")</a>
+                </h3>
+                <p>@messages("home.your-returns.description")</p>
+            </div>
+        </div>
+    }
 }
 
 @main_template(
 title = messages("home.heading"),
 mainClass = Some("full-width")
 ) {
+    <h1 class="heading-xlarge">
+        <span id="income-tax-heading">@messages("home.heading")</span>
+        <span id="sub-heading" class="heading-secondary">@user.userName.map(_.name)</span>
+    </h1>
 
-<h1 class="heading-xlarge">
-    <span id="income-tax-heading">@messages("home.heading")</span>
-    <span id="sub-heading" class="heading-secondary">@user.userName.map(_.name)</span>
-</h1>
-
-<span id="utr-reference-heading" class="form-hint heading-xl-addon">
+    <span id="utr-reference-heading" class="form-hint heading-xl-addon">
         @messages("home.unique.taxpayer.reference", user.mtditid)
     </span>
 
-<div class="flex-container grid-row">
-
-    @if(paymentEnabled) {
-    @paymentsTile
+    @if(overDuePayments.getOrElse(0) > 0) {
+        <div id="overdue-warning" class="grid-row grid-row-spacing">
+            <div class="column-full">
+                <div class="notice">
+                    <span class="icon icon-important">
+                    <span class="visually-hidden">Warning</span>
+                </span>
+                <strong class="bold-small">
+                    @messages("home.overdue.message")
+                </strong>
+                </div>
+            </div>
+        </div>
     }
-    @updatesTile
-    @taxYearsTile
-</div>
-@if(ITSASubmissionIntegrationEnabled) {
-@YourIncomeTaxReturnTile
-}
+
+    <div class="flex-container grid-row">
+        @if(paymentEnabled) {
+            @paymentsTile
+        }
+        @updatesTile
+        @taxYearsTile
+    </div>
+    @if(ITSASubmissionIntegrationEnabled) {
+        @YourIncomeTaxReturnTile
+    }
 }
 
 

@@ -48,10 +48,15 @@ home.updates.view                                               = Bwrw golwg dro
 home.tax-years.heading                                          = Eich blynyddoedd treth
 home.tax-years.description                                      = Gwirio statws pob blwyddyn dreth
 home.your-returns.agent.description                             = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
+home.your-returns.description                                   = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
 home.tax-years.view                                             = Bwrw golwg dros flynyddoedd treth
 home.tax-years.viewPayments                                     = Bwrw golwg dros hanes eich taliadau
 home.manage-income-tax.heading                                  = Rheoli Treth Incwm
-home.update-and-submit-your-returns.Link                        = Diweddaru a chyflwyno’ch Treth Incwm
+home.your-returns.updatesLink                                   = Diweddaru a chyflwyno Ffurflen Treth Incwm
+home.update-and-submit-your-returns.Link                        = Diweddaru a chyflwyno Ffurflen Treth Incwm
+home.overdue.message                                            = Mae gennych daliadau sy’n hwyr. Codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+home.agent.overdue.message                                      = Mae gennych daliadau sy’n hwyr. Codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+
 
 ## Recruitment Banner ##
 banner.recruitment.text                                         = Helpu i wella’r gwasanaeth hwn

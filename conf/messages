@@ -101,11 +101,13 @@ home.tax-years.heading                                          = Tax years
 home.tax-years.view                                             = View tax years
 home.tax-years.viewPayments                                     = View payment history
 home.manage-income-tax.heading                                  = Manage Income Tax
-home.your-returns.heading                                       = Your Income Tax return
-home.your-returns.description                                   = Send updates to HMRC and declare income for a tax year.
+home.your-returns.heading                                       = Manage Income Tax
+home.your-returns.description                                   = Use this service to report untaxed income and any tax relief you’re claiming
 home.your-returns.agent.description                             = Use this service to report untaxed income and any tax relief you’re claiming.
-home.your-returns.updatesLink                                   = Send updates
-home.update-and-submit-your-returns.Link                        = Update and submit your income tax
+home.your-returns.updatesLink                                   = Update and submit an Income Tax Return
+home.update-and-submit-your-returns.Link                        = Update and submit an Income Tax Return
+home.overdue.message                                            = You have overdue payments. You will be charged interest on these until they are paid in full.
+home.agent.overdue.message                                      = You have overdue payments. You will be charged interest on these until they are paid in full.
 
 home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES

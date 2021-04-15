@@ -23,7 +23,13 @@
     mainTemplate: MainTemplate
 )
 
-@(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]], nextUpdateOrOverdue:Either[(LocalDate,Boolean),Int], paymentEnabled: Boolean, paymentHistoryEnabled: Boolean, ITSASubmissionIntegrationEnabled: Boolean,implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
+        nextUpdateOrOverdue: Either[(LocalDate,Boolean),Int],
+        overduePaymentExists: Boolean,
+        paymentEnabled: Boolean, paymentHistoryEnabled: Boolean,
+        ITSASubmissionIntegrationEnabled: Boolean,
+        implicitDateFormatter: ImplicitDateFormatter
+)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @paymentsTile = {
@@ -70,16 +76,16 @@
 }
 
 @YourIncomeTaxReturnTile= {
-    <div  class="grid-row">
-        <br>
-        <br>
-        <div id="manage-income-tax-tile" class="column-two-thirds">
+    <div id="manage-income-tax-tile" class="grid-row">
+        <div class="column-two-thirds">
             <h2 class="heading-large">@messages("home.manage-income-tax.heading")</h2>
         </div>
     </div>
-    <div  class="grid-row">
-        <div id="submit-your-returns-tile" class="column-one-third">
-            <p class ="heading-small govuk-link--no-visited-state"><a href="">@messages("home.update-and-submit-your-returns.Link")</a></p>
+    <div id="submit-your-returns-tile" class="grid-row">
+        <div class="column-one-third">
+            <h3 class ="heading-small">
+                <a href=@appConfig.submissionFrontendUrl>@messages("home.update-and-submit-your-returns.Link")</a>
+            </h3>
             <p>@messages("home.your-returns.agent.description")</p>
         </div>
     </div>
@@ -102,6 +108,22 @@
     <p style="margin-bottom:60px;" id="changeClientLink">
         <a href="@controllers.agent.routes.RemoveClientDetailsSessionsController.show().url" class="govuk-link--no-visited-state">@messages("home.agent.changeClientLink")</a>
     </p>
+
+    @if(overduePaymentExists) {
+        <div id="overdue-warning" class="grid-row grid-row-spacing">
+            <div class="column-full">
+                <div class="notice">
+                    <span class="icon icon-important">
+                        <span class="visually-hidden">Warning</span>
+                    </span>
+                    <strong class="bold-small">
+                        @messages("home.agent.overdue.message")
+                    </strong>
+                </div>
+            </div>
+        </div>
+    }
+
 
 
     <div class="flex-container grid-row">
