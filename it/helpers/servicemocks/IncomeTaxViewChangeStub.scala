@@ -116,7 +116,7 @@ object IncomeTaxViewChangeStub {
   }
 
   def verifyStubPayApi(url: String, requestBody: JsValue): Unit = {
-    WiremockHelper.verifyPost(url, requestBody.toString())
+    WiremockHelper.verifyPost(url, Some(requestBody.toString()))
   }
 
   //FinancialDetails Stubs
