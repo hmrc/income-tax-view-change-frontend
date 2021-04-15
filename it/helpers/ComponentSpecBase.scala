@@ -19,6 +19,7 @@ package helpers
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import helpers.agent.SessionCookieBaker
+import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
@@ -65,7 +66,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.individual-calculations.host" -> mockHost,
     "microservice.services.individual-calculations.port" -> mockPort,
     "calculation-polling.interval" -> "500",
-    "calculation-polling.timeout" -> "3000"
+    "calculation-polling.timeout" -> "3000",
+    "auditing.consumer.baseUri.host" -> mockHost,
+    "auditing.consumer.baseUri.port" -> mockPort,
+    "auditing.enabled" -> "true"
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -87,6 +91,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     wireMockServer.resetMappings()
     isAuthorisedUser(true)
     stubUserDetails()
+    AuditStub.stubAuditing()
   }
 
   override def afterAll(): Unit = {

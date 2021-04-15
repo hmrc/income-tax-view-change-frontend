@@ -43,7 +43,7 @@ object BaseTestConstants {
   val testRetrievedUserName: Name = Name(Some(testUserName), None)
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
   lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
-  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
+  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName), Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
     businessesAndPropertyIncome, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
   val testSelfEmploymentId = "XA00001234"
