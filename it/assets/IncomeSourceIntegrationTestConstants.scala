@@ -62,7 +62,7 @@ object IncomeSourceIntegrationTestConstants {
     property = Some(oldProperty)
   )
 
-  val multipleBusinessesAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+  val multipleBusinessesAndPropertyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(
       business1,

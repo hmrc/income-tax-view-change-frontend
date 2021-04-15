@@ -16,14 +16,13 @@
 
 package controllers.agent
 
-import java.time.LocalDate
-
+import audit.AuditingService
+import audit.models.HomeAudit
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.ImplicitDateFormatterImpl
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, _}
 import play.twirl.api.Html
@@ -31,6 +30,8 @@ import services._
 import uk.gov.hmrc.http.NotFoundException
 import views.html.agent.Home
 
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,6 +39,7 @@ class HomeController @Inject()(home: Home,
                                reportDeadlinesService: ReportDeadlinesService,
                                financialDetailsService: FinancialDetailsService,
                                incomeSourceDetailsService: IncomeSourceDetailsService,
+                               auditingService: AuditingService,
                                val authorisedFunctions: FrontendAuthorisedFunctions)
                               (implicit mcc: MessagesControllerComponents,
                                implicit val appConfig: FrontendAppConfig,
@@ -69,6 +71,9 @@ class HomeController @Inject()(home: Home,
           dueObligationDetails <- reportDeadlinesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
           dueChargesDetails <- financialDetailsService.getChargeDueDates(implicitly, mtdItUser)
         } yield {
+          auditingService.extendedAudit(HomeAudit(
+            mtdItUser, dueChargesDetails, dueObligationDetails, user.agentReferenceNumber
+          ))
           Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails))(implicitly, mtdItUser))
         }
       } else {
