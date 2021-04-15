@@ -238,6 +238,7 @@ taxCal_breakdown.table.total_notional_tax                           = Notional t
 taxCal_breakdown.table.total_foreign_tax_credit_relief              = Foreign Tax Credit Relief
 taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities    = Relief claimed on a qualifying distribution
 taxCal_breakdown.table.nonDeductibleLoanInterest                    = Non deductible loan interest
+taxCal_breakdown.table.income_tax_due_after_tax_reductions           = Income Tax due after tax reductions
 taxCal_breakdown.table.taxDeductedAtSource.savings					= Interest received from UK banks and building societies
 taxCal_breakdown.table.taxDeductedAtSource.payeEmployments          = All employments
 taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = UK pensions

@@ -21,20 +21,14 @@ import assets.MessagesLookUp.TaxCalcBreakdown
 import enums.Crystallised
 import models.calculation.CalcDisplayModel
 import org.jsoup.nodes.Element
+import org.scalatest.exceptions.TestFailedException
+import play.api.libs.iteratee.Input.Empty
 import testUtils.ViewSpec
 import views.html.taxCalcBreakdown
 
 class TaxCalcBreakdownViewSpec extends ViewSpec {
 
   val backUrl = "/report-quarterly/income-and-expenses/view/calculation/2021"
-
-  object Breadcrumbs {
-    val businessTaxAccount = "Business tax account"
-    val home = "Income Tax account"
-    val taxYears = "Tax years"
-    def taxYear(start: Int, end: Int): String = s"6 April $start to 5 April $end"
-    val taxCalc = "Tax calculation"
-  }
 
   "The taxCalc breakdown view displayed with Welsh tax regime for the 2017 tax year" should {
 
@@ -163,6 +157,10 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
       lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.testCalcModelCrystallised,
+        Crystallised), taxYear, backUrl)
+
+      lazy val viewAllIncome = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.calculationAllIncomeSources,
         Crystallised), taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
@@ -358,9 +356,20 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
       }
 
+      "have no Tax reductions table and heading when there is no any reductions value" in new Setup(viewAllIncome) {
+        val ex = intercept[TestFailedException](content.table(5))
+        ex.getMessage shouldBe "table element not found"
+
+      }
+
       "have a Tax reductions table" which {
-        "has all three table rows" in new Setup(view) {
-          content hasTableWithCorrectSize(5, 12)
+
+        "has a Tax reductions heading" in new Setup(view) {
+          content.table(5).h3.text() shouldBe TaxCalcBreakdown.sectionHeadingTaxReductions
+        }
+
+        "has all 13 table rows" in new Setup(view) {
+          content hasTableWithCorrectSize(5, 13)
         }
 
         "has a Deficiency Relief line with the correct value" in new Setup(view) {
@@ -434,7 +443,20 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
           row.select("td").first().text() shouldBe TaxCalcBreakdown.nonDeductibleLoanInterest
           row.select("td").last().text() shouldBe "-£9,000.00"
         }
+
+        "has a Income Tax due after tax reductions with the correct value" in new Setup(view) {
+          val row: Element = content.table(5).select("tr").get(12)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.incomeTaxDueAfterTaxReductions
+          row.select("td").last().text() shouldBe "£2,000.00"
+        }
       }
+
+      "have no additional charges table and heading when there is no any other charges value" in new Setup(viewAllIncome) {
+        val ex = intercept[TestFailedException](content.table(6))
+        ex.getMessage shouldBe "table element not found"
+
+      }
+
       "have an additional charges table" which {
 
         "has all four table rows" in new Setup(view) {
@@ -443,10 +465,6 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
 
         "has the correct heading" in new Setup(view) {
           content.table(6).h3.text() shouldBe TaxCalcBreakdown.sectionHeadingAdditionalChar
-        }
-
-        "has a Tax reductions heading" in new Setup(view) {
-          content.table(5).h3.text() shouldBe TaxCalcBreakdown.sectionHeadingTaxReductions
         }
 
         "has a Tax reductions line with the correct value" in new Setup(view) {
@@ -513,7 +531,7 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
       }
 
       "have a total tax due amount" in new Setup(view) {
-          content.select(".total-heading").text() shouldBe s"${TaxCalcBreakdown.sectionHeadingTotal} £543.21"
+        content.select(".total-heading").text() shouldBe s"${TaxCalcBreakdown.sectionHeadingTotal} £543.21"
       }
     }
   }

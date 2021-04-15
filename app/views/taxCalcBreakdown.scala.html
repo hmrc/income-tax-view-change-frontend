@@ -153,24 +153,35 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
         </table>
     }
 
-<table>
-    <caption>
-        <h3 class="heading-medium">@messages("taxCal_breakdown.table.tax_reductions")</h3>
-    </caption>
-    @taxReductionsTableRow("deficiencyRelief")
-    @taxReductionsTableRow("vctSubscriptions")
-    @taxReductionsTableRow("eisSubscriptions")
-    @taxReductionsTableRow("seedEnterpriseInvestment")
-    @taxReductionsTableRow("communityInvestment")
-    @taxReductionsTableRow("socialEnterpriseInvestment")
-    @taxReductionsTableRow("maintenancePayments")
-    @tableRow("property_finance_relief", calcModel.calcDataModel.reductionsAndCharges.propertyFinanceRelief, isNegative = true)
-    @tableRow("total_notional_tax", calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax, isNegative = true)
-    @tableRow("total_foreign_tax_credit_relief", calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief, isNegative = true)
-    @taxReductionsTableRow("qualifyingDistributionRedemptionOfSharesAndSecurities")
-    @taxReductionsTableRow("nonDeductibleLoanInterest")
-</table>
+    @if(calcModel.calcDataModel.reductionsAndCharges.propertyFinanceRelief.nonEmpty ||
+        calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax.nonEmpty ||
+        calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief.nonEmpty ||
+        calcModel.calcDataModel.reductionsAndCharges.reliefsClaimed.nonEmpty){
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.table.tax_reductions")</h3>
+            </caption>
+            @taxReductionsTableRow("deficiencyRelief")
+            @taxReductionsTableRow("vctSubscriptions")
+            @taxReductionsTableRow("eisSubscriptions")
+            @taxReductionsTableRow("seedEnterpriseInvestment")
+            @taxReductionsTableRow("communityInvestment")
+            @taxReductionsTableRow("socialEnterpriseInvestment")
+            @taxReductionsTableRow("maintenancePayments")
+            @tableRow("property_finance_relief", calcModel.calcDataModel.reductionsAndCharges.propertyFinanceRelief, isNegative = true)
+            @tableRow("total_notional_tax", calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax, isNegative = true)
+            @tableRow("total_foreign_tax_credit_relief", calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief, isNegative = true)
+            @taxReductionsTableRow("qualifyingDistributionRedemptionOfSharesAndSecurities")
+            @taxReductionsTableRow("nonDeductibleLoanInterest")
 
+            @calcModel.calcDataModel.reductionsAndCharges.incomeTaxDueAfterTaxReductions.map {incomeTaxDueAfterTaxReductions =>
+                <tr>
+                    <td class="total-section">@messages("taxCal_breakdown.table.income_tax_due_after_tax_reductions")</td>
+                    <td class="numeric total-section">@{calcModel.calcDataModel.reductionsAndCharges.incomeTaxDueAfterTaxReductions.get.toCurrency}</td>
+                </tr>
+            }
+        </table>
+    }
 
 
     @if(calcModel.calcDataModel.nic.class2.nonEmpty){
@@ -218,22 +229,24 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
         </table>
     }
 
-<table>
-    <caption>
-        <h3 class="heading-medium">@messages("taxCal_breakdown.table.other_charges")</h3>
-    </caption>
+    @if(calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.table.other_charges")</h3>
+            </caption>
 
-    <tbody>
-    @calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.map { amount =>
-    <tr>
-        <td >@messages("taxCal_breakdown.table.totalStudentLoansRepaymentAmount")</td>
-        <td class="numeric">@{amount.toCurrency}</td>
+            <tbody>
+            @calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.map { amount =>
+            <tr>
+                <td >@messages("taxCal_breakdown.table.totalStudentLoansRepaymentAmount")</td>
+                <td class="numeric">@{amount.toCurrency}</td>
 
-    </tr>
+            </tr>
+            }
+            </tbody>
+
+        </table>
     }
-    </tbody>
-
-</table>
 
 	@if(calcModel.calcDataModel.taxDeductedAtSource.nonEmpty) {
 		<table>
