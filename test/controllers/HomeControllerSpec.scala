@@ -16,9 +16,11 @@
 
 package controllers
 
-import java.time.{LocalDate, ZonedDateTime}
-
-import assets.MessagesLookUp
+import assets.BaseTestConstants._
+import assets.IncomeSourceDetailsTestConstants._
+import assets.{BaseTestConstants, MessagesLookUp}
+import audit.models.HomeAudit
+import auth.MtdItUser
 import config.featureswitch.{API5, FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -35,9 +37,10 @@ import play.api.mvc.MessagesControllerComponents
 import services.{FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
 import utils.CurrentDateProvider
 
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
-class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching{
+class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   trait Setup {
     val reportDeadlinesService: ReportDeadlinesService = mock[ReportDeadlinesService]
@@ -58,9 +61,10 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
       app.injector.instanceOf[MessagesControllerComponents],
       ec,
       currentDateProvider,
-      app.injector.instanceOf[ImplicitDateFormatterImpl]
+      app.injector.instanceOf[ImplicitDateFormatterImpl],
+      mockAuditingService,
     )
-    when(currentDateProvider.getCurrentDate()) thenReturn(LocalDate.of(2018, 1, 20))
+    when(currentDateProvider.getCurrentDate()) thenReturn (LocalDate.of(2018, 1, 20))
   }
 
   val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2018, 1, 1), Seq.empty[LocalDate])
@@ -80,10 +84,10 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           enable(Payment)
           when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-         	when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
+          when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
             .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
 
-          val result = controller.home(fakeRequestWithActiveSession)
+          val result = await(controller.home(fakeRequestWithActiveSession))
 
           status(result) shouldBe Status.OK
           val document = Jsoup.parse(bodyOf(result))
@@ -92,12 +96,12 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         }
 
         "display the oldest next payment due day when there multiple payment due" in new Setup {
-					enable(API5)
+          enable(API5)
           when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-					when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
-						.thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2018, 4, 5)), outstandingAmount = Some(0), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
-					when(financialTransactionsService.getFinancialTransactions(any(), matches(2018))(any()))
+          when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
+            .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2018, 4, 5)), outstandingAmount = Some(0), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
+          when(financialTransactionsService.getFinancialTransactions(any(), matches(2018))(any()))
             .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2018, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate2))))))))))
           when(financialTransactionsService.getFinancialTransactions(any(), matches(2019))(any()))
             .thenReturn(Future.successful(FinancialTransactionsModel(None, None, None, ZonedDateTime.now(), Some(Seq(TransactionModel(taxPeriodTo = Some(LocalDate.of(2019, 4, 5)), outstandingAmount = Some(1000), items = Some(Seq(SubItemModel(dueDate = Some(nextPaymentDate))))))))))
@@ -114,7 +118,7 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
           "there is a problem getting financial transaction" in new Setup {
             when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
             mockSingleBusinessIncomeSource()
-		when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
+            when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
               .thenReturn(Future.successful(FinancialTransactionsErrorModel(1, "testString")))
 
             val result = controller.home(fakeRequestWithActiveSession)
@@ -206,13 +210,13 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
         "display the oldest next payment due day when there multiple payment due" in new Setup {
           enable(NewFinancialDetailsApi)
-					enable(API5)
+          enable(API5)
           when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
 
-					when(financialDetailsService.getFinancialDetails(any(), any())(any()))
-						.thenReturn(Future.successful(FinancialDetailsModel(List(Charge(transactionId = "testId", taxYear = nextPaymentYear2, outstandingAmount = Some(1000),
-							items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))))
+          when(financialDetailsService.getFinancialDetails(any(), any())(any()))
+            .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(transactionId = "testId", taxYear = nextPaymentYear2, outstandingAmount = Some(1000),
+              items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))))
           when(financialDetailsService.getFinancialDetails(matches(2018), any())(any()))
             .thenReturn(Future.successful(FinancialDetailsModel(List(Charge(transactionId = "testId", taxYear = nextPaymentYear2, outstandingAmount = Some(1000),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString)))))))))
