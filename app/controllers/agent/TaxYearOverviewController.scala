@@ -73,8 +73,7 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   }
 
   def backUrl(): String = {
-    //todo: update to return to the tax years page when implemented
-    controllers.agent.routes.HomeController.show().url
+    controllers.agent.routes.TaxYearsController.show().url
   }
 
   private def view(taxYear: Int,

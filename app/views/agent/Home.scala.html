@@ -60,9 +60,9 @@
         <div class="tile-body">
             <ul class="list">
                 <h2 class="heading-medium">@messages("home.tax-years.heading")</h2>
-                <li><a href="">@messages("home.tax-years.view")</a></li>
+                <li><a href="@controllers.agent.routes.TaxYearsController.show().url">@messages("home.tax-years.view")</a></li>
                 @if(paymentHistoryEnabled){
-                <li><a href=@controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url>@messages("home.tax-years.viewPayments")</a></li>
+                    <li><a href=@controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url>@messages("home.tax-years.viewPayments")</a></li>
                 }
             </ul>
         </div>

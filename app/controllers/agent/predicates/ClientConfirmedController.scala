@@ -69,7 +69,7 @@ trait ClientConfirmedController extends BaseAgentController  {
     incomeSourceDetailsService.getIncomeSourceDetails()(hc = hc, mtdUser = userWithNino) map {
       case model@IncomeSourceDetailsModel(_, _, _, _) => MtdItUser(
         userWithNino.mtditid, userWithNino.nino, userWithNino.userName, model, userWithNino.saUtr, userWithNino.credId, userWithNino.userType)
-      case _ => throw new InternalServerException("[HomeController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
+      case _ => throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
     }
   }
 }

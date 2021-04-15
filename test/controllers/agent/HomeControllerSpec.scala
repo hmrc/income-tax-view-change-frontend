@@ -118,7 +118,7 @@ class HomeControllerSpec extends TestSupport
           val result: Future[Result] = controller.show()(fakeRequestConfirmedClient())
 
           intercept[InternalServerException](await(result))
-            .message shouldBe "[HomeController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
+            .message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
         }
       }
       "the call to retrieve income sources for the client is successful" when {

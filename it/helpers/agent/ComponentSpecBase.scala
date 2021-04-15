@@ -155,6 +155,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getPay(amountInPence: BigDecimal, additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession(s"/agents/payment?amountInPence=$amountInPence", additionalCookies)
+
+    def getTaxYears(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      getWithClientDetailsInSession("/agents/tax-years", additionalCookies)
+
   }
 
   def unauthorisedTest(uri: String): Unit = {
