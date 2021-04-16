@@ -179,6 +179,17 @@ income_breakdown.table.bbsi                                     = Interest from 
 income_breakdown.table.dividends                                = Dividends from UK companies
 income_breakdown.table.occupational_pensions                    = Occupational pensions
 income_breakdown.table.state_benefit                            = State benefit income
+income_breakdown.table.profit_uk_furnished_holiday              = Profit from UK furnished holiday lettings
+income_breakdown.table.profit_foreign_property                  = Profit from overseas properties
+income_breakdown.table.profit_eea_holiday                       = Profit from EEA holiday property lettings
+income_breakdown.table.foreign_dividends_income                 = Overseas dividends income
+income_breakdown.table.foreign_saving_income                    = Overseas savings income
+income_breakdown.table.foreign_pensions                         = Overseas pensions
+income_breakdown.table.foreign_income_abroad                    = Overseas income received whilst abroad
+income_breakdown.table.foreign_income_gains                     = Overseas income and gains
+income_breakdown.table.foreign_benefits_gifts                   = Overseas benefits and gifts
+income_breakdown.table.gains_insurance                          = Gains on life insurance polices
+income_breakdown.table.share_schemes                            = Share schemes
 income_breakdown.total                                          = Total income received
 
 ## Deduction Breakdown Page ##
@@ -189,6 +200,10 @@ deduction_breakdown.table.personal_allowance                           = Persona
 deduction_breakdown.table.pension_contributions                        = Pensions contributions
 deduction_breakdown.table.loss_relief                                  = Loss relief
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Gift of investments and property to charity
+deduction_breakdown.table.annual_payments                              = Annual Payments
+deduction_breakdown.table.qualifying_loan_interest                     = Qualifying loan interest
+deduction_breakdown.table.post_cessasation_trade_receipts              = Post cessasation trade reciepts
+deduction_breakdown.table.trade_union_payments                         = Trade Union payments
 deduction_breakdown.total                                              = Total allowances and deductions
 
 ## Tax Calculation Breakdown Page ##

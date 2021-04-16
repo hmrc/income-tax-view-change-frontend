@@ -78,10 +78,10 @@ object CalcBreakdownTestConstants {
         income = 20000.00,
         taxAmount = 2000.00),
         TaxBand(
-        name = "BRT",
-        rate = 20.0,
-        income = 20000.00,
-        taxAmount = 4000.00),
+          name = "BRT",
+          rate = 20.0,
+          income = 20000.00,
+          taxAmount = 4000.00),
         TaxBand(
           name = "IRT",
           rate = 25.0,
@@ -141,6 +141,8 @@ object CalcBreakdownTestConstants {
     savingsAndGains = SavingsAndGains(
       Some(0),
       Some(0),
+      Some(0),
+      Some(0),
       List(TaxBand(
         name = "SSR",
         rate = 0.0,
@@ -189,7 +191,7 @@ object CalcBreakdownTestConstants {
     dividends = Dividends(
       incomeTaxAmount = Some(5000),
       taxableIncome = Some(6000),
-      List(TaxBand(
+      bands = List(TaxBand(
         name = "basic-band",
         rate = 7.5,
         income = 1000,
@@ -244,12 +246,12 @@ object CalcBreakdownTestConstants {
       ),
 
         TaxBand(
-        name = "BRT",
-        rate = 20.0,
-        income = 20000.00,
-        taxAmount = 4000.00
+          name = "BRT",
+          rate = 20.0,
+          income = 20000.00,
+          taxAmount = 4000.00
 
-      ),
+        ),
 
         TaxBand(
           name = "IRT",
@@ -316,6 +318,8 @@ object CalcBreakdownTestConstants {
     savingsAndGains = SavingsAndGains(
       Some(0),
       Some(0),
+      Some(0),
+      Some(0),
       List(TaxBand(
         name = "SSR",
         rate = 0.0,
@@ -364,7 +368,7 @@ object CalcBreakdownTestConstants {
     dividends = Dividends(
       incomeTaxAmount = Some(5000),
       taxableIncome = Some(6000),
-      List(TaxBand(
+      bands = List(TaxBand(
         name = "basic-band",
         rate = 7.5,
         income = 1000,
@@ -413,7 +417,7 @@ object CalcBreakdownTestConstants {
       totalPropertyProfit = None,
       incomeTaxAmount = Some(66500),
       taxableIncome = Some(170000),
-      List(TaxBand(
+      bands = List(TaxBand(
         name = "BRT",
         rate = 20.0,
         income = 20000.00,
@@ -436,6 +440,8 @@ object CalcBreakdownTestConstants {
         ))
     ),
     savingsAndGains = SavingsAndGains(
+      Some(0),
+      Some(0),
       Some(0),
       Some(0),
       List(TaxBand(
@@ -486,7 +492,7 @@ object CalcBreakdownTestConstants {
     dividends = Dividends(
       incomeTaxAmount = Some(5000),
       taxableIncome = Some(6000),
-      List(TaxBand(
+      bands = List(TaxBand(
         name = "basic-band",
         rate = 7.5,
         income = 1000,
@@ -537,10 +543,10 @@ object CalcBreakdownTestConstants {
       taxableIncome = Some(132),
       List(
         TaxBand(
-        name = "BRT",
-        rate = 20.0,
-        income = 132.00,
-        taxAmount = 26.00
+          name = "BRT",
+          rate = 20.0,
+          income = 132.00,
+          taxAmount = 26.00
         ),
         TaxBand(
           name = "HRT",
@@ -560,12 +566,12 @@ object CalcBreakdownTestConstants {
     savingsAndGains = SavingsAndGains(
       Some(0),
       Some(0),
-      List(
+      bands = List(
         TaxBand(
-        name = "SSR",
-        rate = 0.0,
-        income = 0.00,
-        taxAmount = 0.0
+          name = "SSR",
+          rate = 0.0,
+          income = 0.00,
+          taxAmount = 0.0
         ),
         TaxBand(
           name = "ZRT",
@@ -603,12 +609,12 @@ object CalcBreakdownTestConstants {
     dividends = Dividends(
       incomeTaxAmount = Some(5000),
       taxableIncome = Some(6000),
-      List(
+      bands = List(
         TaxBand(
-        name = "basic-band",
-        rate = 7.5,
-        income = 1000,
-        taxAmount = 75.0),
+          name = "basic-band",
+          rate = 7.5,
+          income = 1000,
+          taxAmount = 75.0),
         TaxBand(
           name = "higher-band",
           rate = 37.5,
@@ -731,11 +737,11 @@ object CalcBreakdownTestConstants {
             "bands" -> Json.arr()
           ),
           "reductionsAndCharges" -> Json.obj(
-            "giftAidTax"-> 0,
-            "totalPensionSavingsTaxCharges"-> 0,
-            "statePensionLumpSumCharges"-> 0,
-            "totalStudentLoansRepaymentAmount"-> 0,
-            "propertyFinanceRelief"-> 0
+            "giftAidTax" -> 0,
+            "totalPensionSavingsTaxCharges" -> 0,
+            "statePensionLumpSumCharges" -> 0,
+            "totalStudentLoansRepaymentAmount" -> 0,
+            "propertyFinanceRelief" -> 0
           ),
         ),
         "nic" -> Json.obj(
@@ -760,7 +766,7 @@ object CalcBreakdownTestConstants {
         totalPropertyProfit = None,
         incomeTaxAmount = Some(66500),
         taxableIncome = Some(170000),
-        List(TaxBand(
+        bands = List(TaxBand(
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
@@ -775,17 +781,19 @@ object CalcBreakdownTestConstants {
             rate = 45.0,
             income = 50000.00,
             taxAmount = 22500.00)
-          )
+        )
       ),
       savingsAndGains = SavingsAndGains(
         Some(0),
         Some(500),
+        Some(0),
+        Some(500),
         List(
           TaxBand(
-          name = "SSR",
-          rate = 0.0,
-          income = 1.00,
-          taxAmount = 0.0),
+            name = "SSR",
+            rate = 0.0,
+            income = 1.00,
+            taxAmount = 0.0),
           TaxBand(
             name = "BRT",
             rate = 10.0,
@@ -833,7 +841,7 @@ object CalcBreakdownTestConstants {
       dividends = Dividends(
         incomeTaxAmount = Some(5000),
         taxableIncome = Some(6000),
-        List(
+        bands = List(
           TaxBand(
             name = "BRT",
             rate = 7.5,
@@ -941,17 +949,28 @@ object CalcBreakdownTestConstants {
     payPensionsProfit = PayPensionsProfit(
       totalSelfEmploymentProfit = Some(1001.01),
       totalPropertyProfit = Some(2002.02),
-			totalPayeEmploymentAndLumpSumIncome = Some(5005.05),
-			totalBenefitsInKind = Some(6006.06),
-			totalEmploymentExpenses = Some(7007.07),
-			totalOccupationalPensionIncome = Some(8008.08),
-			totalStateBenefitsIncome = Some(9009.09)
+      totalPayeEmploymentAndLumpSumIncome = Some(5005.05),
+      totalBenefitsInKind = Some(6006.06),
+      totalEmploymentExpenses = Some(7007.07),
+      totalOccupationalPensionIncome = Some(8008.08),
+      totalStateBenefitsIncome = Some(9009.09),
+      totalFHLPropertyProfit = Some(6003),
+      totalForeignPropertyProfit = Some(6004),
+      totalEeaFhlProfit = Some(6005),
+      totalOverseasPensionsStateBenefitsRoyalties = Some(6006.00),
+      totalAllOtherIncomeReceivedWhilstAbroad = Some(6007.00),
+      totalOverseasIncomeAndGains = Some(6008.00),
+      totalForeignBenefitsAndGifts = Some(6009.00),
+      totalShareSchemesIncome = Some(6010.00)
     ),
     savingsAndGains = SavingsAndGains(
-      taxableIncome = Some(3003.03)
+      taxableIncome = Some(3003.03),
+      totalForeignSavingsAndGainsIncome = Some(7019),
+      totalOfAllGains = Some(7015)
     ),
     dividends = Dividends(
-      taxableIncome = Some(4004.04)
+      taxableIncome = Some(4004.04),
+      totalForeignDividends = Some(7026)
     )
   )
 
@@ -962,8 +981,12 @@ object CalcBreakdownTestConstants {
       totalPensionContributions = Some(12500),
       lossesAppliedToGeneralIncome = Some(12500),
       giftOfInvestmentsAndPropertyToCharity = Some(10000),
-      totalAllowancesAndDeductions = Some (47000),
-      totalReliefs = Some(500)
+      totalAllowancesAndDeductions = Some(47000),
+      totalReliefs = Some(500),
+      grossAnnualPayments = Some(1000),
+      qualifyingLoanInterestFromInvestments = Some(1001),
+      postCessationTradeReceipts = Some(1002),
+      paymentsToTradeUnionsForDeathBenefits = Some(1003)
     )
 
   )

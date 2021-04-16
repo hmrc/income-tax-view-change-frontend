@@ -94,6 +94,17 @@ income_breakdown.table.bbsi                                     = Llog o fanciau
 income_breakdown.table.dividends                                = Difidendau o gwmnïau yn y DU
 income_breakdown.table.occupational_pensions                    = Pensiynau galwedigaethol
 income_breakdown.table.state_benefit                            = Incwm o fudd-daliadau’r Wladwriaeth
+income_breakdown.table.profit_uk_furnished_holiday              = Elw o lety gwyliau wedi’i ddodrefnu yn y DU
+income_breakdown.table.profit_foreign_property                  = Elw o eiddo tramor
+income_breakdown.table.profit_eea_holiday                       = Elw o lety gwyliau yn yr AEE
+income_breakdown.table.foreign_dividends_income                 = Incwm o ddifidendau tramor
+income_breakdown.table.foreign_saving_income                    = Incwm o gynilion tramor
+income_breakdown.table.foreign_pensions                         = Pensiynau tramor
+income_breakdown.table.foreign_income_abroad                    = Incwm tramor a gafwyd tra bo dramor
+income_breakdown.table.foreign_income_gains                     = Incwm ac enillion tramor
+income_breakdown.table.foreign_benefits_gifts                   = Buddion a rhoddion tramor
+income_breakdown.table.gains_insurance                          = Enillion ar bolisïau yswiriant bywyd
+income_breakdown.table.share_schemes                            = Cynlluniau cyfranddaliadau
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
 ## Deduction Breakdown Page ##
@@ -104,6 +115,10 @@ deduction_breakdown.table.personal_allowance                           = Lwfans 
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Rhoddion ar ffurf buddsoddiadau ac eiddo i elusennau
 deduction_breakdown.table.pension_contributions                        = Cyfraniadau pensiwn
 deduction_breakdown.table.loss_relief                                  = Rhyddhad colledion
+deduction_breakdown.table.annual_payments                              = Taliadau blynyddol
+deduction_breakdown.table.qualifying_loan_interest                     = Llog ar fenthyciad cymwys
+deduction_breakdown.table.post_cessasation_trade_receipts              = Derbynebau ar ôl i fasnachu ddod i ben
+deduction_breakdown.table.trade_union_payments                         = Taliadau Undeb Llafur
 deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
 
 ## Tax Calculation Breakdown Page ##
