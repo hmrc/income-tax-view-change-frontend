@@ -24,8 +24,11 @@ object MessagesLookUp {
 
   object CalculationBreakdown {
     def estimateSubHeading(taxAmount: String) = s"How your estimate of $taxAmount was calculated"
+
     val billSubHeading = "How your tax was calculated"
+
     def nationalRegime(regime: String) = s"(National Regime: $regime)"
+
     val incomeHeading = "About your income"
     val incomeSubheading = "Summary of the income you reported and applicable deductions"
     val incomeBusinessProfit = "Income from Business Profit"
@@ -39,16 +42,22 @@ object MessagesLookUp {
     val incomeEstimatedTotalTaxableIncome = "Your estimated total taxable income"
     val incomeTotalTaxableIncome = "Your total taxable income"
     val calculationHeading = "Calculation of tax"
+
     def calculationSubheading(income: String): String = s"Your tax calculation breakdown based on your taxable income of $income"
+
     def calculationIncomeTax(income: String, rate: String) = s"Income Tax ($income at $rate%)"
+
     def calculationDividend(income: String, rate: String) = s"Dividend Tax ($income at $rate%)"
+
     def calculationSavings(income: String, rate: String) = s"Savings Tax ($income at $rate%)"
+
     val calculationClassTwoNI = "Class 2 National Insurance"
     val calculationClassFourNI = "Class 4 National Insurance"
     val calculationTaxRelief = "Deduction - your tax reliefs"
     val calculationPaymentsToDate = "Deduction - your payments to date"
     val calculationYourTotalEstimate = "Your total estimated tax"
     val calculationTotalOutstanding = "Total outstanding tax"
+
     def calculationDueDate(year: String) = s"due 31 January $year"
   }
 
@@ -68,8 +77,8 @@ object MessagesLookUp {
     val subHeadingPara = "You must submit these returns on your record-keeping software (opens in a new tab) by the dates listed."
     val annualDropdownListOne = "In the annual update you must declare that the 4 quarterly updates you submitted are correct or amend any errors."
     val annualDropdownListTwo = "Using your record-keeping software (opens in a new tab), you need to submit one annual update for each source of income at the end of its accounting period."
-    val quarterlyDropdownLine1 ="A quarterly update sets out the income and expenses for each 3-month period."
-    val quarterlyDropdownLine2 ="Using your record-keeping software (opens in a new tab), you must submit 4 quarterly updates in a year for each source of income."
+    val quarterlyDropdownLine1 = "A quarterly update sets out the income and expenses for each 3-month period."
+    val quarterlyDropdownLine2 = "Using your record-keeping software (opens in a new tab), you must submit 4 quarterly updates in a year for each source of income."
     val finalDeclerationDetails = "Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your record-keeping software (opens in a new tab)."
     val quarterlyDropDown = "What is a quarterly update?"
     val annualDropDown = "What is an annual update?"
@@ -79,7 +88,9 @@ object MessagesLookUp {
     val annualHeading = "Annual updates"
     val finalDeclarationHeading = "Final Declaration"
     val propertyIncome = "Property Income"
+
     def fromToDates(from: String, to: String) = s"$from to $to"
+
     val dueOn = "Due on:"
     val crystallisedHeading = "Whole tax year (final check)"
   }
@@ -104,7 +115,9 @@ object MessagesLookUp {
     val agentTitle = "Your client’s Income Tax - Your client’s Income Tax details - GOV.UK"
     val heading = "Income Tax"
     val agentHeading = "Your client’s Income Tax"
+
     def taxpayerReference(mtditid: String): String = s"Unique Taxpayer Reference - $mtditid"
+
     val updatesHeading = "Next updates due"
     val paymentsHeading = "Next payments due"
     val updatesLink = "View next updates"
@@ -123,32 +136,55 @@ object MessagesLookUp {
 
   object IncomeBreakdown {
     val title = "Income - Business Tax account - GOV.UK"
+
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
+
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Income"
+
     def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
       s"You can see more details in your record-keeping software."
-		val employments = "Pay from all employments"
-		val benefitsAndExpenses = "Benefits & expenses received"
-		val allowableExpenses = "Allowable expenses"
+
+    val employments = "Pay from all employments"
+    val benefitsAndExpenses = "Benefits & expenses received"
+    val allowableExpenses = "Allowable expenses"
     val selfEmployments = "Profit from all self employments"
     val property = "Profit from UK land and property"
     val bbsi = "Interest from UK banks, building societies and securities"
     val dividends = "Dividends from UK companies"
-		val occupationalPensions = "Occupational pensions"
-		val stateBenefits = "State benefit income"
+    val occupationalPensions = "Occupational pensions"
+    val stateBenefits = "State benefit income"
+    val profitUkFurnished = "Profit from UK furnished holiday lettings"
+    val profitFromForeignProperties = "Profit from overseas properties"
+    val profitFromEeaHoliday = "Profit from EEA holiday property lettings"
+    val foreignDividendsIncome = "Overseas dividends income"
+    val foreignSavingsIncome = "Overseas savings income"
+    val foreignPensions = "Overseas pensions"
+    val incomeReceivedAbroad = "Overseas income received whilst abroad"
+    val foreignincomeAndGains = "Overseas income and gains"
+    val foreignBenefitsAndGifts = "Overseas benefits and gifts"
+    val gainsOnInsurancePolicy = "Gains on life insurance polices"
+    val shareSchemes = "Share schemes"
     val total = "Total income received"
   }
 
   object DeductionBreakdown {
     val title = "Allowances and deductions - Business Tax account - GOV.UK"
+
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
+
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Allowances and deductions"
+
     def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
       s"You can see more details in your record-keeping software."
+
     val personalAllowance = "Personal Allowance"
     val totalPensionContributions = "Pensions contributions"
     val lossesAppliedToGeneralIncome = "Loss relief"
     val giftOfInvestmentsAndPropertyToCharity = "Gift of investments and property to charity"
+    val annualPayments = "Annual Payments"
+    val loanInterest = "Qualifying loan interest"
+    val postCessasationTradeReceipts = "Post cessasation trade reciepts"
+    val tradeUnionPayments = "Trade Union payments"
     val total = "Total allowances and deductions"
   }
 
@@ -156,7 +192,9 @@ object MessagesLookUp {
     val title = "Tax calculation - Business Tax account - GOV.UK"
 
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
+
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Tax calculation"
+
     val sectionHeadingPPP: String = "Pay, pensions and profit"
     val sectionHeadingSavings: String = "Savings"
     val sectionHeadingDividends: String = "Dividends"
@@ -225,33 +263,40 @@ object MessagesLookUp {
     val ukLandAndProperty: String = "UK land and property"
     val totalDeductions: String = "Total tax deducted"
   }
-    // Estimated Tax Liability Page Messages
+
+  // Estimated Tax Liability Page Messages
   class Calculation(taxYear: Int) {
-    val heading = s"Tax estimate for ${taxYear-1} - $taxYear"
-    val title = s"Tax estimate for ${taxYear-1} - $taxYear - Business Tax account - GOV.UK"
+    val heading = s"Tax estimate for ${taxYear - 1} - $taxYear"
+    val title = s"Tax estimate for ${taxYear - 1} - $taxYear - Business Tax account - GOV.UK"
+
     object Crystallised {
-      val heading = s"Income tax bill for ${taxYear-1} to $taxYear"
-      val tabTitle =s"$heading - Business Tax account - GOV.UK"
+      val heading = s"Income tax bill for ${taxYear - 1} to $taxYear"
+      val tabTitle = s"$heading - Business Tax account - GOV.UK"
       val subHeading = s"Albert Einstein"
       val utrHeading = "Unique Taxpayer Reference - XAIT0000123456"
+
       def noBreakdownContent(amount: String): String = s"Your total tax bill amount: $amount"
+
       val p1 = "This figure is based on the information you provided in your quarterly reports and final report."
       val breakdownHeading = "How this figure was calculated"
       val errors = "If there are any errors, you can make adjustments through your software."
       val changes = s"If you make these changes before 31 January ${taxYear + 1} you will not be penalised."
       val payNow = "Pay now"
       val payDeadline = s"You must pay by 31 January ${taxYear + 1} to avoid penalties."
+
       def owed(amount: String): String = s"Tax left to pay: $amount"
     }
+
     object Bills {
       val billsTitle = "Bills - Business Tax account - GOV.UK"
       val billsHeading = "Bills"
       val viewBills = "View your finalised bills:"
-      val billLink = s"${taxYear-1} to $taxYear tax year"
+      val billLink = s"${taxYear - 1} to $taxYear tax year"
       val billsLinkAriaLabel = s"view bill for $billLink"
       val noBills = "You’ve had no bills since you started reporting through software."
       val earlierBills = "For earlier bills, view your Self Assessment calculations (opens in a new tab)."
     }
+
   }
 
   // No Estimated Tax Liability Page Messages
@@ -282,12 +327,12 @@ object MessagesLookUp {
     val title = "Income Tax Statement - Business Tax account - GOV.UK"
     val pageHeading = "Income Tax Statement"
     val p1 = "A record of your charges and payments."
-    val taxYear: Int => String = taxYear => s"Tax year: ${taxYear-1}-$taxYear"
+    val taxYear: Int => String = taxYear => s"Tax year: ${taxYear - 1}-$taxYear"
     val totalCharges = "Total charges"
     val stillToPay: String => String = amount => s"Still to pay: $amount"
     val dueBy: String => String = date => s"This is due by $date."
     val dueByWithLink: String => String = date => s"This is due by $date. You can pay this now."
-    val paymentAriaLabel: Int => String = taxYear => s"pay your ${taxYear-1}-$taxYear bill now"
+    val paymentAriaLabel: Int => String = taxYear => s"pay your ${taxYear - 1}-$taxYear bill now"
     val nothingToPay = "Nothing left to pay"
     val paidBill = "You’ve paid this bill."
     val transactions = "Your transactions"
@@ -295,10 +340,12 @@ object MessagesLookUp {
     val youPaid: (String, String) => String = (amount, date) => s"You paid $amount on $date"
     val earlierTransactions = "For earlier transactions, view your Self Assessment."
     val noTransactions = "You’ve had no transactions since you started reporting through accounting software."
+
     object Error {
       val pageHeading = "We can’t show your statement right now"
       val p1 = "Try reloading the page or coming back later."
     }
+
   }
 
   // Timeout Messages
@@ -336,10 +383,12 @@ object MessagesLookUp {
     val heading = "You can’t view this page"
     val signUp = "You need to sign up for quarterly reporting before you can view this page."
   }
+
   object ExitSurvey {
     val title = "Give feedback - Business Tax account - GOV.UK"
     val heading = "Give feedback"
     val q1 = "Overall, how did you feel about the service you received today?"
+
     object Options {
       val option1 = "Very satisfied"
       val option2 = "Satisfied"
@@ -347,11 +396,14 @@ object MessagesLookUp {
       val option4 = "Dissatisfied"
       val option5 = "Very dissatisfied"
     }
+
     val q2 = "How could we improve this service?"
     val p1 = "Please don’t include any personal or financial information, for example your National Insurance or credit card numbers."
+
     object Errors {
       val maxImprovementsError = "You can’t enter more than 1200 characters for your feedback"
     }
+
   }
 
   object Thankyou {
@@ -365,14 +417,15 @@ object MessagesLookUp {
     val bta = "Business tax account"
     val it = "Income Tax account"
     val taxYears = "Tax years"
-    val basicItEstimate: Int => String = taxYear => s"${taxYear-1} to $taxYear tax year"
-    val itEstimate: Int => String = taxYear => s"Tax estimate for ${taxYear-1} - $taxYear"
-    val finalisedBill: Int => String = taxYear => s"Income tax bill for ${taxYear-1} to $taxYear"
+    val basicItEstimate: Int => String = taxYear => s"${taxYear - 1} to $taxYear tax year"
+    val itEstimate: Int => String = taxYear => s"Tax estimate for ${taxYear - 1} - $taxYear"
+    val finalisedBill: Int => String = taxYear => s"Income tax bill for ${taxYear - 1} to $taxYear"
     val obligations = "Report deadlines"
     val statement = "Income Tax statement"
     val updates = "Updates"
     val payementsDue = "Payments due"
     val whatYouOwe = "What you owe"
+
     def taxYearOverview(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear"
   }
 
@@ -383,12 +436,12 @@ object MessagesLookUp {
     val heading = "Updates"
     val previousObligations = "Previously submitted updates"
     val tabOne = "Updates due"
-//    val tabTwo = "Previously submitted updates"
+    //    val tabTwo = "Previously submitted updates"
     val subTitle = "Updates due"
     val annualDropdownListOne = "In the annual update you must declare that the 4 quarterly updates you submitted are correct or amend any errors."
     val annualDropdownListTwo = "Using your accounting software , you need to submit one annual update for each source of income at the end of its accounting period."
-    val quarterlyDropdownLine1 ="A quarterly update sets out the income and expenses for each 3-month period."
-    val quarterlyDropdownLine2 ="Using your accounting software, you must submit 4 quarterly updates in a year for each source of income."
+    val quarterlyDropdownLine1 = "A quarterly update sets out the income and expenses for each 3-month period."
+    val quarterlyDropdownLine2 = "Using your accounting software, you must submit 4 quarterly updates in a year for each source of income."
     val finalDeclerationDetails = "Your final declaration is to confirm that the annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your accounting software."
     val quarterlyDropDown = "What is a quarterly update?"
     val annualDropDown = "What is an annual update?"
@@ -398,7 +451,9 @@ object MessagesLookUp {
     val annualHeading = "Annual updates"
     val finalDeclarationHeading = "Final Declaration"
     val propertyIncome = "Property Income"
+
     def fromToDates(from: String, to: String) = s"$from to $to"
+
     val dueOn = "Due on:"
     val crystallisedHeading = "Whole tax year (final check)"
   }
@@ -413,8 +468,11 @@ object MessagesLookUp {
     val quarterly = "Quarterly update"
     val eops = "Annual update"
     val crystallised = "Declaration"
+
     def dateToDate(from: String, to: String) = s"$from to $to"
+
     def wasDueOn(date: String) = s"Was due on $date"
+
     val submittedOn = "Submitted on"
     val updatesLink = "Updates due"
     val previousUpdatesTab = "Previously submitted updates"
@@ -425,11 +483,16 @@ object MessagesLookUp {
     val heading = "Payments due"
     val description = "If you have made a payment in the last 7 days, the amounts shown here may not be accurate."
     val due = "Due"
-    def taxYearPeriod(from: String, to:String) = s"Tax year $from to $to"
+
+    def taxYearPeriod(from: String, to: String) = s"Tax year $from to $to"
+
     val noBills = "No payments due."
     val billLink = "View bill"
+
     def billLinkAria(fromYear: String, toYear: String) = s"View bill for Tax year $fromYear to $toYear"
+
     val payNow = "Pay now"
+
     def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
   }
 
@@ -442,7 +505,9 @@ object MessagesLookUp {
     val dropDownInfo = "What are the payment types?"
     val paymentDaysNote = "Payments can take up to 7 days to process."
     val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
-    def preMtdPayments(from: String, to:String) = s"Tax year $from to $to pre-Making Tax Digital payments"
+
+    def preMtdPayments(from: String, to: String) = s"Tax year $from to $to pre-Making Tax Digital payments"
+
     val paymentType = "Payment type"
     val amountDue = "Amount due"
     val poa1Text = "Payment on account 1 of 2"
@@ -450,20 +515,25 @@ object MessagesLookUp {
     val remainingBalance = "Remaining balance"
     val remainingBalanceLine1 = "The remaining balance is the tax you still need to pay for a tax year."
     val interestOnRemainingBalance = "Interest on remaining balance"
+
     def interestOnRemainingBalanceYear(from: String, to: String) = s"From $from to $to"
+
     val poaHeading = "Payment on account"
     val poaLine1 = "This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill."
     val overduePayments = "Overdue payments"
     val overdueTag = "OVERDUE"
     val dueInThirtyDays = "Due within 30 days"
     val futurePayments = "Future payments"
-    def taxYearForChargesText(from: String, to:String): String = s"Tax year $from to $to"
+
+    def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
+
     val dueDate = "Due date"
     val payNow = "Pay now"
+
     def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
   }
 
-  object AgentPaymentDue{
+  object AgentPaymentDue {
     val title = "What you owe - Your client’s Income Tax details - GOV.UK"
     val heading = "What you owe"
     val noPaymentsDue = "You have no payments due."
@@ -472,7 +542,9 @@ object MessagesLookUp {
     val dropDownInfo = "What are the payment types?"
     val paymentDaysNote = "Payments can take up to 7 days to process."
     val creditOnAccount = "If you make a payment more than 30 days before a payment is due, you will see it as credit on account."
-    def preMtdPayments(from: String, to:String) = s"Tax year $from to $to pre-Making Tax Digital payments"
+
+    def preMtdPayments(from: String, to: String) = s"Tax year $from to $to pre-Making Tax Digital payments"
+
     val paymentType = "Payment type"
     val amountDue = "Amount due"
     val poa1Text = "Payment on account 1 of 2"
@@ -480,24 +552,33 @@ object MessagesLookUp {
     val remainingBalance = "Remaining balance"
     val remainingBalanceLine1 = "The remaining balance is the tax you still need to pay for a tax year."
     val interestOnRemainingBalance = "Interest on remaining balance"
+
     def interestOnRemainingBalanceYear(from: String, to: String) = s"From $from to $to"
+
     val poaHeading = "Payment on account"
     val poaLine1 = "This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill."
     val overduePayments = "Overdue payments"
     val overdueTag = "OVERDUE"
     val dueInThirtyDays = "Due within 30 days"
     val futurePayments = "Future payments"
-    def taxYearForChargesText(from: String, to:String): String = s"Tax year $from to $to"
+
+    def taxYearForChargesText(from: String, to: String): String = s"Tax year $from to $to"
+
     val dueDate = "Due date"
     val payNow = "Pay now"
+
     def payNowAria(fromYear: String, toYear: String) = s"Pay now for Tax year $fromYear to $toYear"
   }
 
   object TaxYearOverview {
     def title(firstYear: Int, secondYear: Int) = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
+
     def heading(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"
+
     def status(status: String) = s"Tax year status: $status"
+
     def calculationDate(date: String) = s"Calculation date: $date"
+
     val linksSummary = "Click on each link for more detail about each section."
     val noLinksSummary = "This page shows a summary of your tax year."
     val income = "Income"

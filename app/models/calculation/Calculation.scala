@@ -31,13 +31,21 @@ case class PayPensionsProfit(totalSelfEmploymentProfit: Option[BigDecimal] = Non
                              incomeTaxAmount: Option[BigDecimal] = None,
                              taxableIncome: Option[BigDecimal] = None,
                              bands: List[TaxBand] = Nil,
-														 totalPayeEmploymentAndLumpSumIncome: Option[BigDecimal] = None,
-														 totalBenefitsInKind: Option[BigDecimal] = None,
-														 totalEmploymentExpenses: Option[BigDecimal] = None,
-														 totalEmploymentIncome: Option[BigDecimal] = None,
-														 totalOccupationalPensionIncome: Option[BigDecimal] = None,
-														 totalStateBenefitsIncome: Option[BigDecimal] = None
-														)
+                             totalPayeEmploymentAndLumpSumIncome: Option[BigDecimal] = None,
+                             totalBenefitsInKind: Option[BigDecimal] = None,
+                             totalEmploymentExpenses: Option[BigDecimal] = None,
+                             totalEmploymentIncome: Option[BigDecimal] = None,
+                             totalOccupationalPensionIncome: Option[BigDecimal] = None,
+                             totalStateBenefitsIncome: Option[BigDecimal] = None,
+                             totalFHLPropertyProfit: Option[BigDecimal] = None,
+                             totalForeignPropertyProfit: Option[BigDecimal] = None,
+                             totalEeaFhlProfit: Option[BigDecimal] = None,
+                             totalOverseasPensionsStateBenefitsRoyalties: Option[BigDecimal] = None,
+                             totalAllOtherIncomeReceivedWhilstAbroad: Option[BigDecimal] = None,
+                             totalOverseasIncomeAndGains: Option[BigDecimal] = None,
+                             totalForeignBenefitsAndGifts: Option[BigDecimal] = None,
+                             totalShareSchemesIncome: Option[BigDecimal] = None
+                            )
 
 object PayPensionsProfit {
   implicit val reads: Reads[PayPensionsProfit] = (
@@ -46,18 +54,27 @@ object PayPensionsProfit {
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "payPensionsProfit" \ "incomeTaxAmount") and
       readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "taxableIncome") and
       readNullableList[TaxBand](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "payPensionsProfit" \ "taxBands") and
-			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalPayeEmploymentAndLumpSumIncome") and
-			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalBenefitsInKind") and
-			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalEmploymentExpenses") and
-			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalEmploymentIncome") and
-			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalOccupationalPensionIncome") and
-			readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalStateBenefitsIncome")
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalPayeEmploymentAndLumpSumIncome") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalBenefitsInKind") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalEmploymentExpenses") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalEmploymentIncome") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalOccupationalPensionIncome") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalStateBenefitsIncome") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalFHLPropertyProfit") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalForeignPropertyProfit") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalEeaFhlProfit") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalOverseasPensionsStateBenefitsRoyalties") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalAllOtherIncomeReceivedWhilstAbroad") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalOverseasIncomeAndGains") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalForeignBenefitsAndGifts") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "payPensionsProfit" \ "totalShareSchemesIncome")
     ) (PayPensionsProfit.apply _)
   implicit val writes: OWrites[PayPensionsProfit] = Json.writes[PayPensionsProfit]
 }
 
 case class Dividends(incomeTaxAmount: Option[BigDecimal] = None,
                      taxableIncome: Option[BigDecimal] = None,
+                     totalForeignDividends: Option[BigDecimal] = None,
                      bands: List[TaxBand] = Nil) {
   val dividendsAllowance: BigDecimal = bands.filter(_.rate == 0).map(_.income).sum
 }
@@ -66,6 +83,7 @@ object Dividends {
   implicit val reads: Reads[Dividends] = (
     readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "dividends" \ "incomeTaxAmount") and
       readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "dividends" \ "taxableIncome") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "dividends" \ "totalForeignDividends") and
       readNullableList[TaxBand](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "dividends" \ "taxBands")
     ) (Dividends.apply _)
   implicit val writes: OWrites[Dividends] = Json.writes[Dividends]
@@ -73,6 +91,8 @@ object Dividends {
 
 case class SavingsAndGains(incomeTaxAmount: Option[BigDecimal] = None,
                            taxableIncome: Option[BigDecimal] = None,
+                           totalForeignSavingsAndGainsIncome: Option[BigDecimal] = None,
+                           totalOfAllGains: Option[BigDecimal] = None,
                            bands: List[TaxBand] = Nil) {
   val savingsAllowance: BigDecimal = bands.filter(_.rate == 0).map(_.income).sum
 }
@@ -81,6 +101,8 @@ object SavingsAndGains {
   implicit val reads: Reads[SavingsAndGains] = (
     readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "savingsAndGains" \ "incomeTaxAmount") and
       readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "savingsAndGains" \ "taxableIncome") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "savingsAndGains" \ "totalForeignSavingsAndGainsIncome") and
+      readNullable[BigDecimal](__ \ "taxableIncome" \ "detail" \ "savingsAndGains" \ "totalOfAllGains") and
       readNullableList[TaxBand](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "savingsAndGains" \ "taxBands")
     ) (SavingsAndGains.apply _)
   implicit val writes: OWrites[SavingsAndGains] = Json.writes[SavingsAndGains]
@@ -91,28 +113,28 @@ case class ReductionsAndCharges(giftAidTax: Option[BigDecimal] = None,
                                 statePensionLumpSumCharges: Option[BigDecimal] = None,
                                 totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
                                 propertyFinanceRelief: Option[BigDecimal] = None,
-																totalForeignTaxCreditRelief: Option[BigDecimal] = None,
-																reliefsClaimed: Option[Seq[ReliefsClaimed]] = None,
-																totalNotionalTax: Option[BigDecimal] = None,
+                                totalForeignTaxCreditRelief: Option[BigDecimal] = None,
+                                reliefsClaimed: Option[Seq[ReliefsClaimed]] = None,
+                                totalNotionalTax: Option[BigDecimal] = None,
                                 incomeTaxDueAfterTaxReductions: Option[BigDecimal] = None,
                                 totalIncomeTaxDue: Option[BigDecimal] = None
                                ) {
-	val reliefsClaimedMap: Map[String, Option[BigDecimal]] = reliefsClaimed.getOrElse(Seq()).map(relief => relief.`type` -> relief.amountUsed).toMap
+  val reliefsClaimedMap: Map[String, Option[BigDecimal]] = reliefsClaimed.getOrElse(Seq()).map(relief => relief.`type` -> relief.amountUsed).toMap
 
 }
 
-object ReductionsAndCharges{
+object ReductionsAndCharges {
   implicit val reads: Reads[ReductionsAndCharges] = (
     readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "giftAid" \ "giftAidTax") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax"  \ "totalPensionSavingsTaxCharges") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax"  \ "statePensionLumpSumCharges") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "totalStudentLoansRepaymentAmount") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "totalPensionSavingsTaxCharges") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "statePensionLumpSumCharges") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalStudentLoansRepaymentAmount") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "residentialFinanceCosts" \ "propertyFinanceRelief") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "foreignTaxCreditRelief" \ "totalForeignTaxCreditRelief") and
       readNullable[Seq[ReliefsClaimed]](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "reliefsClaimed") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax" \ "totalNotionalTax") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax" \ "incomeTaxDueAfterTaxReductions") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \"summary" \ "incomeTax" \ "totalIncomeTaxDue")
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "totalNotionalTax") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "incomeTaxDueAfterTaxReductions") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "totalIncomeTaxDue")
     ) (ReductionsAndCharges.apply _)
   implicit val writes: OWrites[ReductionsAndCharges] = Json.writes[ReductionsAndCharges]
 }
@@ -120,7 +142,7 @@ object ReductionsAndCharges{
 case class ReliefsClaimed(`type`: String, amountUsed: Option[BigDecimal])
 
 object ReliefsClaimed {
-	implicit val format: OFormat[ReliefsClaimed] = Json.format[ReliefsClaimed]
+  implicit val format: OFormat[ReliefsClaimed] = Json.format[ReliefsClaimed]
 }
 
 
@@ -138,7 +160,12 @@ case class AllowancesAndDeductions(personalAllowance: Option[BigDecimal] = None,
                                    giftOfInvestmentsAndPropertyToCharity: Option[BigDecimal] = None,
                                    totalAllowancesAndDeductions: Option[BigDecimal] = None,
                                    totalTaxableIncome: Option[BigDecimal] = None,
-                                   totalReliefs: Option[BigDecimal] = None) {
+                                   totalReliefs: Option[BigDecimal] = None,
+                                   grossAnnualPayments: Option[BigDecimal] = None,
+                                   qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
+                                   postCessationTradeReceipts: Option[BigDecimal] = None,
+                                   paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None
+                                  ) {
 
   val totalAllowancesDeductionsReliefs: Option[BigDecimal] = (totalAllowancesAndDeductions ++ totalReliefs).reduceOption(_ + _)
 
@@ -152,10 +179,15 @@ object AllowancesAndDeductions {
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "giftOfInvestmentsAndPropertyToCharity") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "summary" \ "totalAllowancesAndDeductions") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "summary" \ "totalTaxableIncome") and
-      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "summary" \ "totalReliefs")
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "summary" \ "totalReliefs") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "annualPayments" \ "grossAnnualPayments") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "qualifyingLoanInterestFromInvestments") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "postCessationTradeReceipts") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "allowancesAndDeductions" \ "paymentsToTradeUnionsForDeathBenefits")
     ) (AllowancesAndDeductions.apply _)
   implicit val writes: OWrites[AllowancesAndDeductions] = Json.writes[AllowancesAndDeductions]
 }
+
 
 case class Nic(class2: Option[BigDecimal] = None,
                class4: Option[BigDecimal] = None,
@@ -182,35 +214,35 @@ object NicBand {
 }
 
 case class TaxDeductedAtSource(payeEmployments: Option[BigDecimal] = None,
-															 ukPensions: Option[BigDecimal] = None,
-															 stateBenefits: Option[BigDecimal] = None,
-															 cis: Option[BigDecimal] = None,
-															 ukLandAndProperty: Option[BigDecimal] = None,
-															 savings: Option[BigDecimal] = None,
-															 total: Option[BigDecimal] = None
-															) {
-	val allFields: Seq[(String, BigDecimal)] = Seq(
-		"payeEmployments" -> payeEmployments,
-		"ukPensions" -> ukPensions,
-		"stateBenefits" -> stateBenefits,
-		"cis" -> cis,
-		"ukLandAndProperty" -> ukLandAndProperty,
-		"savings" -> savings
-	).collect {
-		case (key, Some(amount)) => key -> amount
-	}
-	val nonEmpty: Boolean = allFields.nonEmpty
+                               ukPensions: Option[BigDecimal] = None,
+                               stateBenefits: Option[BigDecimal] = None,
+                               cis: Option[BigDecimal] = None,
+                               ukLandAndProperty: Option[BigDecimal] = None,
+                               savings: Option[BigDecimal] = None,
+                               total: Option[BigDecimal] = None
+                              ) {
+  val allFields: Seq[(String, BigDecimal)] = Seq(
+    "payeEmployments" -> payeEmployments,
+    "ukPensions" -> ukPensions,
+    "stateBenefits" -> stateBenefits,
+    "cis" -> cis,
+    "ukLandAndProperty" -> ukLandAndProperty,
+    "savings" -> savings
+  ).collect {
+    case (key, Some(amount)) => key -> amount
+  }
+  val nonEmpty: Boolean = allFields.nonEmpty
 }
 
 object TaxDeductedAtSource {
-	implicit val reads: Reads[TaxDeductedAtSource] = (
-		readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "payeEmployments") and
-		readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "occupationalPensions") and
-		readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "stateBenefits") and
-		readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "cis") and
-		readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "ukLandAndProperty") and
-		readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "savings") and
-		readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalTaxDeducted")
-	) (TaxDeductedAtSource.apply _)
-	implicit val writes: Writes[TaxDeductedAtSource] = Json.writes[TaxDeductedAtSource]
+  implicit val reads: Reads[TaxDeductedAtSource] = (
+    readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "payeEmployments") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "occupationalPensions") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "stateBenefits") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "cis") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "ukLandAndProperty") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "savings") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalTaxDeducted")
+    ) (TaxDeductedAtSource.apply _)
+  implicit val writes: Writes[TaxDeductedAtSource] = Json.writes[TaxDeductedAtSource]
 }
