@@ -55,6 +55,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
 	val paymentDateLongDate = "31 January 2019"
 	val multipleOverduePayments = "3 OVERDUE PAYMENTS"
+  val overdueMessage = "Warning You have overdue payments. You will be charged interest on these until they are paid in full."
 
 	class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePayments: Option[Int] = Some(0),
               overDueUpdates: Option[Int] = Some(0), paymentEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
@@ -125,9 +126,19 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 			"has the date of the next update due" in new Setup {
 				getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
 			}
-			"display an overdue tag when a single update is overdue" in new Setup(overDuePayments = Some(1)) {
-				getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + paymentDateLongDate)
+
+      "dont display an overdue warning message when no payment is overdue" in new Setup(overDuePayments = Some(0)) {
+        getTextOfElementById("overdue-warning")shouldBe None
+      }
+
+			"display an overdue warning message when a payment is overdue" in new Setup(overDuePayments = Some(1)) {
+        getTextOfElementById("overdue-warning")shouldBe Some(overdueMessage)
 			}
+
+      "display an overdue tag when a single update is overdue" in new Setup(overDuePayments = Some(1)) {
+        getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + paymentDateLongDate)
+      }
+
 			"has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePayments = Some(3)) {
 				getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverduePayments)
 			}
@@ -155,14 +166,15 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     }
   }
+
   "have an your income tax returns tile" when {
-      "has a heading" in new Setup {
-        getElementById("your-returns-tile").map(_.select("h3").text) shouldBe Some(homeMessages.yourIncomeTaxReturnHeading)
-      }
-      "has a link to the send updates page" in new Setup {
-        val link: Option[Elements] = getElementById("your-returns-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some("http://localhost:9302/income-through-software/return/2022/start")
-        link.map(_.text) shouldBe Some(homeMessages.sendUpdatesLink)
-      }
+    "has a heading" in new Setup {
+      getElementById("manage-income-tax-tile").map(_.select("h2").text) shouldBe Some(homeMessages.ManageYourIncomeTaxReturnHeading)
     }
+    "has a link to the send updates page" in new Setup {
+      val link: Option[Elements] = getElementById("submit-your-returns-tile").map(_.select("a"))
+      link.map(_.attr("href")) shouldBe Some("http://localhost:9302/income-through-software/return/2022/start")
+      link.map(_.text) shouldBe Some(homeMessages.submitYourReturnsLink)
+    }
+  }
 }

@@ -47,11 +47,13 @@ class HomeController @Inject()(home: Home,
 
 
   private def view(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
-                   nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int])
+                   nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int],
+                   overduePaymentExists: Boolean)
                   (implicit request: Request[_], user: MtdItUser[_]): Html = {
     home(
       nextPaymentOrOverdue = nextPaymentOrOverdue,
       nextUpdateOrOverdue = nextUpdateOrOverdue,
+      overduePaymentExists = overduePaymentExists,
       paymentEnabled = isEnabled(Payment),
       paymentHistoryEnabled = isEnabled(PaymentHistory),
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
@@ -67,11 +69,19 @@ class HomeController @Inject()(home: Home,
           dueObligationDetails <- reportDeadlinesService.getObligationDueDates()(implicitly, implicitly, mtdItUser)
           dueChargesDetails <- financialDetailsService.getChargeDueDates(implicitly, mtdItUser)
         } yield {
-          Ok(view(dueChargesDetails, dueObligationDetails)(implicitly, mtdItUser))
+          Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails))(implicitly, mtdItUser))
         }
       } else {
         Future.failed(new NotFoundException("[HomeController][home] - Agent viewer is disabled"))
       }
+  }
+
+  private def overduePaymentExists(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]]): Boolean = {
+    nextPaymentOrOverdue match {
+      case Some(_@Left((_, true))) => true
+      case Some(_@Right(overdueCount)) if overdueCount > 0 => true
+      case _ => false
+    }
   }
 
 }

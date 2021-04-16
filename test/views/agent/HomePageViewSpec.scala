@@ -71,13 +71,16 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   val nextPaymentDue: LocalDate = LocalDate.of(2019, 1, 31)
 
   class Setup(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left(nextPaymentDue, false)),
-              nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left(nextUpdateDue, false), paymentEnabled: Boolean = true, paymentHistoryEnabled:Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
+              nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left(nextUpdateDue, false), paymentEnabled: Boolean = true,
+              paymentHistoryEnabled:Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
+              overduePaymentExists: Boolean = false) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
     val view: HtmlFormat.Appendable = agentHome(
       nextPaymentOrOverdue = nextPaymentOrOverdue,
       nextUpdateOrOverdue = nextUpdateOrOverdue,
+      overduePaymentExists = overduePaymentExists,
       paymentEnabled = paymentEnabled,
       paymentHistoryEnabled = paymentHistoryEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
@@ -144,6 +147,15 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
       }
 
+      "dont display an overdue warning message when no payment is overdue" in new Setup(overduePaymentExists = false) {
+        getTextOfElementById("overdue-warning")shouldBe None
+      }
+
+      "display an overdue warning message when a payment is overdue" in new Setup(overduePaymentExists = true) {
+        val overdueMessage = "Warning You have overdue payments. You will be charged interest on these until they are paid in full."
+        getTextOfElementById("overdue-warning")shouldBe Some(overdueMessage)
+      }
+
       "have an next updates due tile" which {
         "has a heading" in new Setup {
           getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(homeMessages.updatesHeading)
@@ -189,7 +201,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
         "has a link to the send updates page" in new Setup {
           val link: Option[Elements] = getElementById("submit-your-returns-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("")
+          link.map(_.attr("href")) shouldBe Some("http://localhost:9302/income-through-software/return/2022/start")
           link.map(_.text) shouldBe Some(homeMessages.submitYourReturnsLink)
         }
       }
