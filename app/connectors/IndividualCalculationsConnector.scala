@@ -44,7 +44,7 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
     }
 
     http.GET[HttpResponse](listCalculationsUrl(nino), Seq(("taxYear", taxYear)))(httpReads,
-      headerCarrierVal.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"), ec) map {
+      headerCarrierVal.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"), ec) map {
       response =>
         response.status match {
           case OK => response.json.validate[ListCalculationItems].fold(

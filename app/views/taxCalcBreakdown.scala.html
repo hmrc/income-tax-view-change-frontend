@@ -153,7 +153,7 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
         </table>
     }
 
-    @if(calcModel.calcDataModel.reductionsAndCharges.propertyFinanceRelief.nonEmpty ||
+    @if(calcModel.calcDataModel.reductionsAndCharges.totalResidentialFinanceCostsRelief.nonEmpty ||
         calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax.nonEmpty ||
         calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief.nonEmpty ||
         calcModel.calcDataModel.reductionsAndCharges.reliefsClaimed.nonEmpty){
@@ -168,7 +168,7 @@ appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
             @taxReductionsTableRow("communityInvestment")
             @taxReductionsTableRow("socialEnterpriseInvestment")
             @taxReductionsTableRow("maintenancePayments")
-            @tableRow("property_finance_relief", calcModel.calcDataModel.reductionsAndCharges.propertyFinanceRelief, isNegative = true)
+            @tableRow("property_finance_relief", calcModel.calcDataModel.reductionsAndCharges.totalResidentialFinanceCostsRelief, isNegative = true)
             @tableRow("total_notional_tax", calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax, isNegative = true)
             @tableRow("total_foreign_tax_credit_relief", calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief, isNegative = true)
             @taxReductionsTableRow("qualifyingDistributionRedemptionOfSharesAndSecurities")
