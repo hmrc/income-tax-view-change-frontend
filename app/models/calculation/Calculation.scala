@@ -112,7 +112,7 @@ case class ReductionsAndCharges(giftAidTax: Option[BigDecimal] = None,
                                 totalPensionSavingsTaxCharges: Option[BigDecimal] = None,
                                 statePensionLumpSumCharges: Option[BigDecimal] = None,
                                 totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
-                                propertyFinanceRelief: Option[BigDecimal] = None,
+                                totalResidentialFinanceCostsRelief: Option[BigDecimal] = None,
                                 totalForeignTaxCreditRelief: Option[BigDecimal] = None,
                                 reliefsClaimed: Option[Seq[ReliefsClaimed]] = None,
                                 totalNotionalTax: Option[BigDecimal] = None,
@@ -129,7 +129,7 @@ object ReductionsAndCharges {
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "totalPensionSavingsTaxCharges") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "statePensionLumpSumCharges") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalStudentLoansRepaymentAmount") and
-      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "residentialFinanceCosts" \ "propertyFinanceRelief") and
+      readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "residentialFinanceCosts" \ "totalResidentialFinanceCostsRelief") and
       readNullable[BigDecimal](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "foreignTaxCreditRelief" \ "totalForeignTaxCreditRelief") and
       readNullable[Seq[ReliefsClaimed]](__ \ "allowancesDeductionsAndReliefs" \ "detail" \ "reliefs" \ "reliefsClaimed") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "totalNotionalTax") and

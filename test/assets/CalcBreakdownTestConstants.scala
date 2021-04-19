@@ -185,7 +185,7 @@ object CalcBreakdownTestConstants {
       totalPensionSavingsTaxCharges = Some(5000.99),
       statePensionLumpSumCharges = Some(5000.99),
       totalStudentLoansRepaymentAmount = Some(5000.99),
-      propertyFinanceRelief = Some(5000.99)
+      totalResidentialFinanceCostsRelief = Some(5000.99)
     ),
 
     dividends = Dividends(
@@ -362,7 +362,7 @@ object CalcBreakdownTestConstants {
       totalPensionSavingsTaxCharges = Some(5000.99),
       statePensionLumpSumCharges = Some(5000.99),
       totalStudentLoansRepaymentAmount = Some(5000.99),
-      propertyFinanceRelief = Some(5000.99)
+      totalResidentialFinanceCostsRelief = Some(5000.99)
     ),
 
     dividends = Dividends(
@@ -486,7 +486,7 @@ object CalcBreakdownTestConstants {
       totalPensionSavingsTaxCharges = Some(5000.99),
       statePensionLumpSumCharges = Some(5000.99),
       totalStudentLoansRepaymentAmount = Some(5000.99),
-      propertyFinanceRelief = Some(5000.99)
+      totalResidentialFinanceCostsRelief = Some(5000.99)
     ),
 
     dividends = Dividends(
@@ -603,7 +603,7 @@ object CalcBreakdownTestConstants {
       totalPensionSavingsTaxCharges = Some(5000.99),
       statePensionLumpSumCharges = Some(5000.99),
       totalStudentLoansRepaymentAmount = Some(5000.99),
-      propertyFinanceRelief = Some(5000.99)
+      totalResidentialFinanceCostsRelief = Some(5000.99)
     ),
 
     dividends = Dividends(
@@ -826,7 +826,7 @@ object CalcBreakdownTestConstants {
         totalPensionSavingsTaxCharges = Some(5000),
         statePensionLumpSumCharges = Some(5000),
         totalStudentLoansRepaymentAmount = Some(5000),
-        propertyFinanceRelief = Some(5000),
+        totalResidentialFinanceCostsRelief = Some(5000),
         totalForeignTaxCreditRelief = Some(6000),
         totalNotionalTax = Some(7000),
         incomeTaxDueAfterTaxReductions = Some(2000),

@@ -50,7 +50,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       totalPensionSavingsTaxCharges = Some(2.0),
       statePensionLumpSumCharges = Some(3.0),
       totalStudentLoansRepaymentAmount = Some(4.0),
-      propertyFinanceRelief = Some(5.0),
+      totalResidentialFinanceCostsRelief = Some(5.0),
       totalForeignTaxCreditRelief = Some(6.0),
       totalNotionalTax = Some(7.0),
       reliefsClaimed = Some(Seq(ReliefsClaimed("deficiencyRelief", Some(1.0)), ReliefsClaimed("vctSubscriptions", Some(2.0)),
@@ -216,7 +216,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         ),
         "reliefs" -> Json.obj(
           "residentialFinanceCosts" -> Json.obj(
-            "propertyFinanceRelief" -> 5.0
+            "totalResidentialFinanceCostsRelief" -> 5.0
           ),
           "foreignTaxCreditRelief" -> Json.obj(
             "totalForeignTaxCreditRelief" -> 6.0
@@ -312,7 +312,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "totalPensionSavingsTaxCharges" -> 2.0,
       "statePensionLumpSumCharges" -> 3.0,
       "totalStudentLoansRepaymentAmount" -> 4.0,
-      "propertyFinanceRelief" -> 5.0,
+      "totalResidentialFinanceCostsRelief" -> 5.0,
       "totalForeignTaxCreditRelief" -> 6.0,
       "totalNotionalTax" -> 7.0,
       "reliefsClaimed" -> Json.arr(
