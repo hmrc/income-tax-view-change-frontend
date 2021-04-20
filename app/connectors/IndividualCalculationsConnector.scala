@@ -77,7 +77,7 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
                                                           ec: ExecutionContext): Future[CalculationResponseModel] = {
     http.GET[HttpResponse](getCalculationUrl(nino, calculationId))(
       httpReads,
-      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.1.0+json"),
+      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec
     ) map { response =>
       response.status match {
