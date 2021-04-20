@@ -215,7 +215,7 @@ object MessagesLookUp {
     val incomeTaxDueAfterTaxReductions: String = "Income Tax due after tax reductions"
     val otherCharges: String = "Other charges"
     val sectionHeadingAdditionalDeduc: String = "Tax deductions"
-    val sectionHeadingTotal: String = "Total tax due"
+    val sectionHeadingTotal: String = "Income Tax and National Insurance contributions due"
     val guidance: String = "This calculation is based on your taxable income of £0.00"
     val regime: String = "Tax regime: UK"
     val regimeScotland: String = "Tax regime: Scotland"
@@ -261,7 +261,9 @@ object MessagesLookUp {
     val stateBenefits: String = "State benefits"
     val cis: String = "CIS and trading income"
     val ukLandAndProperty: String = "UK land and property"
-    val totalDeductions: String = "Total tax deducted"
+    val specialWithholdingTax:String = "Special withholding tax"
+    val voidISAs:String = "Void ISAs"
+    val totalDeductions: String = "Income Tax due after deductions"
   }
 
   // Estimated Tax Liability Page Messages

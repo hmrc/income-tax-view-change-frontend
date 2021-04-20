@@ -89,7 +89,10 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       Some(400.0),
       Some(500.0),
       Some(600.0),
-      Some(700.0)
+      Some(700.0),
+      Some(800.0),
+      Some(700.0),
+      Some(1.0)
     )
   )
   val minimalModel: Calculation = Calculation(
@@ -110,8 +113,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "totalNic" -> 3.0
         ),
         "incomeTax" -> Json.obj(
-          "totalPensionSavingsTaxCharges"-> 2.0,
-          "statePensionLumpSumCharges"-> 3.0,
+          "totalPensionSavingsTaxCharges" -> 2.0,
+          "statePensionLumpSumCharges" -> 3.0,
           "totalNotionalTax" -> 7.0
         ),
         "totalTaxDeducted" -> 700.0
@@ -129,13 +132,16 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           )
         ),
         "taxDeductedAtSource" -> Json.obj(
-					"payeEmployments" -> 100.0,
-					"occupationalPensions" -> 200.0,
-					"stateBenefits" -> 300.0,
-					"cis" -> 400.0,
-					"ukLandAndProperty" -> 500.0,
-					"savings" -> 600.0
-				),
+          "payeEmployments" -> 100.0,
+          "occupationalPensions" -> 200.0,
+          "stateBenefits" -> 300.0,
+          "cis" -> 400.0,
+          "ukLandAndProperty" -> 500.0,
+          "specialWithholdingTaxOrUkTaxPaid" -> 600.0,
+          "voidedIsa" -> 700.0,
+          "savings" -> 800.0,
+          "totalIncomeTaxAndNicsDue" -> 1.0
+        ),
         "incomeTax" -> Json.obj(
           "payPensionsProfit" -> Json.obj(
             "incomeTaxAmount" -> 3.0,
@@ -175,7 +181,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
             )
           )
         )
-    )
+      )
     ),
     "taxableIncome" -> Json.obj(
       "summary" -> Json.obj(
@@ -261,11 +267,11 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
               "type" -> "nonDeductibleLoanInterest",
               "amountUsed" -> 9.0
             )
+          )
         )
-      )
 
+      )
     )
-  )
   )
   val minimalReadJson: JsObject = Json.obj(
     "metadata" -> Json.obj(
@@ -385,15 +391,18 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         )
       )
     ),
-		"taxDeductedAtSource" ->  Json.obj(
-			"payeEmployments" -> 100,
-			"ukPensions" -> 200,
-			"stateBenefits" -> 300,
-			"cis" -> 400,
-			"ukLandAndProperty" -> 500,
-			"savings" -> 600,
-			"total" -> 700
-		)
+    "taxDeductedAtSource" -> Json.obj(
+      "payeEmployments" -> 100,
+      "ukPensions" -> 200,
+      "stateBenefits" -> 300,
+      "cis" -> 400,
+      "ukLandAndProperty" -> 500,
+      "specialWithholdingTax" -> 600.0,
+      "voidISAs" -> 700.0,
+      "savings" -> 800,
+      "total" -> 700,
+      "totalIncomeTaxAndNicsDue" -> 1
+    )
   )
   val minimalWriteJson: JsObject = Json.obj(
     "crystallised" -> true,
@@ -409,7 +418,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     ),
     "allowancesAndDeductions" -> Json.obj(),
     "nic" -> Json.obj(),
-		"taxDeductedAtSource" -> Json.obj()
+    "taxDeductedAtSource" -> Json.obj()
   )
 
   "Calculation" must {

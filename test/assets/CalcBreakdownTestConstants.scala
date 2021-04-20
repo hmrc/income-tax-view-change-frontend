@@ -933,7 +933,10 @@ object CalcBreakdownTestConstants {
         Some(400.0),
         Some(500.0),
         Some(600.0),
-        Some(700.0)
+        Some(700.0),
+        Some(800.0),
+        Some(900.0),
+        Some(1000.0)
       )
     )
 

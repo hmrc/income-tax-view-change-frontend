@@ -47,16 +47,17 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
       headerCarrierVal.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"), ec) map {
       response =>
         response.status match {
-          case OK => response.json.validate[ListCalculationItems].fold(
-            invalid => {
-              Logger.error(s"[IndividualCalculationsConnector][getLatestCalculationId] - Json validation error parsing calculation list response, error: $invalid.")
-              Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, s"Json validation error parsing calculation list response"))
-            },
-            valid => {
-              Logger.debug("[IndividualCalculationsConnector][getLatestCalculationId] - Successfully parsed calculation list response")
-              Right(valid.calculations.sortWith((x, y) => x.calculationTimestamp.isAfter(y.calculationTimestamp)).head.id)
-            }
-          )
+          case OK =>
+            response.json.validate[ListCalculationItems].fold(
+              invalid => {
+                Logger.error(s"[IndividualCalculationsConnector][getLatestCalculationId] - Json validation error parsing calculation list response, error: $invalid.")
+                Left(CalculationErrorModel(INTERNAL_SERVER_ERROR, s"Json validation error parsing calculation list response"))
+              },
+              valid => {
+                Logger.debug("[IndividualCalculationsConnector][getLatestCalculationId] - Successfully parsed calculation list response")
+                Right(valid.calculations.sortWith((x, y) => x.calculationTimestamp.isAfter(y.calculationTimestamp)).head.id)
+              }
+            )
           case NOT_FOUND =>
             Logger.warn(s"[IndividualCalculationsConnector][getLatestCalculationId] - No calculation found for tax year $taxYear")
             Left(CalculationErrorModel(NOT_FOUND, s"No calculation found for tax year $taxYear"))
@@ -81,13 +82,14 @@ class IndividualCalculationsConnector @Inject()(val http: HttpClient,
       ec
     ) map { response =>
       response.status match {
-        case OK => response.json.validate[Calculation].fold(
-          invalid => {
-            Logger.error(s"[IndividualCalculationsConnector][getCalculation] - Json validation error parsing calculation response, error $invalid")
-            CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
-          },
-          valid => valid
-        )
+        case OK =>
+          response.json.validate[Calculation].fold(
+            invalid => {
+              Logger.error(s"[IndividualCalculationsConnector][getCalculation] - Json validation error parsing calculation response, error $invalid")
+              CalculationErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
+            },
+            valid => valid
+          )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
             Logger.error(s"[IndividualCalculationsConnector][getCalculation] - Response status: ${response.status}, body: ${response.body}")

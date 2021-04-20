@@ -230,7 +230,7 @@ taxCal_breakdown.table.ART_scottish                                 = Top rate (
 taxCal_breakdown.table.ZRTBR                                        = Basic rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.ZRTHR                                        = Higher rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
-taxCal_breakdown.table.total_tax_due                                = Total tax due
+taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Income Tax and National Insurance contributions due
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
 
 taxCal_breakdown.table.nic2                                         = Class 2 National Insurance
@@ -262,7 +262,9 @@ taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = UK pensions
 taxCal_breakdown.table.taxDeductedAtSource.stateBenefits	        = State benefits
 taxCal_breakdown.table.taxDeductedAtSource.cis				        = CIS and trading income
 taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty		= UK land and property
-taxCal_breakdown.table.taxDeductedAtSource.total					= Total tax deducted
+taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax    = Special withholding tax
+taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = Void ISAs
+taxCal_breakdown.table.taxDeductedAtSource.total					= Income Tax due after deductions
 
 
 
