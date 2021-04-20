@@ -63,7 +63,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
         "return Status OK (200) with audit events" in {
           mockCalculationSuccess()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.OK
 
           verifyExtendedAudit(AllowanceAndDeductionsRequestAuditModel(testMtditid, testNino, None, Some(testCredId), Some("Individual")))
@@ -87,7 +87,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
         "return Status Internal Server Error (500)" in {
           mockCalculationNotFound()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -100,7 +100,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
         "return Status Internal Server Error (500)" in {
           mockCalculationError()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
@@ -117,7 +117,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         "return Status NotFound (404)" in {
           disable(DeductionBreakdown)
           mockCalculationNotFound()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.NOT_FOUND
         }
       }
