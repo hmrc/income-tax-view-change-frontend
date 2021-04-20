@@ -16,8 +16,8 @@
 
 package assets
 
-import assets.BusinessDetailsTestConstants._
-import assets.ReportDeadlinesTestConstants._
+import assets.BusinessDetailsTestConstants.{business2, obligationsDataSuccessModel}
+import assets.ReportDeadlinesTestConstants.reportDeadlinesDataPropertySuccessModel
 import models.reportDeadlines.ObligationsModel
 
 object IncomeSourcesWithDeadlinesTestConstants {

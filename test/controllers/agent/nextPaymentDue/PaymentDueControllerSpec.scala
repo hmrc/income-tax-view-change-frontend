@@ -16,9 +16,10 @@
 
 package controllers.agent.nextPaymentDue
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
+import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testMtditidAgent, testNino, testNinoAgent, testSaUtr, testSaUtrId}
 import assets.FinancialDetailsTestConstants._
 import assets.FinancialTransactionsTestConstants._
+import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi}
 import controllers.agent.utils.SessionKeys
 import implicits.ImplicitDateFormatter
@@ -30,6 +31,7 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
+import play.api.libs.json.Json
 import play.api.mvc.MessagesControllerComponents
 import services.{FinancialTransactionsService, PaymentDueService}
 import testUtils.TestSupport
@@ -114,6 +116,14 @@ class PaymentDueControllerSpec extends TestSupport
 
         status(result) shouldBe Status.OK
         result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+
+        println("/n/n/n Hellohello"+WhatYouOweResponseAuditModel(Some(testArn), Some("Agent"), Some(s"$testSaUtrId"),
+          testNinoAgent, None, testMtditidAgent, whatYouOweChargesListFull))
+
+        verifyExtendedAudit(WhatYouOweRequestAuditModel(Some(testArn),  Some("Agent"), Some(s"$testSaUtrId"), testNinoAgent, None, testMtditidAgent))
+        verifyExtendedAudit(WhatYouOweResponseAuditModel(Some(testArn), Some("Agent"), Some(s"$testSaUtrId"),
+          testNinoAgent, None, testMtditidAgent, whatYouOweChargesListEmpty))
+
       }
 
       "return success page with empty data in WhatYouOwe model" in new Setup {
@@ -130,6 +140,14 @@ class PaymentDueControllerSpec extends TestSupport
 
         status(result) shouldBe Status.OK
         result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+
+        println("/n/n/n Hellohello"+WhatYouOweResponseAuditModel(Some(testArn), Some("Agent"), Some(s"$testSaUtrId"),
+          testNinoAgent, None, testMtditidAgent, whatYouOweChargesListFull))
+
+        verifyExtendedAudit(WhatYouOweRequestAuditModel(Some(testArn),  Some("Agent"), Some(s"$testSaUtrId"), testNinoAgent, None, testMtditidAgent))
+        verifyExtendedAudit(WhatYouOweResponseAuditModel(Some(testArn), Some("Agent"), Some(s"$testSaUtrId"),
+          testNinoAgent, None, testMtditidAgent, whatYouOweChargesListEmpty))
+
       }
 
       "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {

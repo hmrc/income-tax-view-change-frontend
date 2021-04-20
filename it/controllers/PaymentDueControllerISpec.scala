@@ -16,18 +16,19 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import assets.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.OutstandingChargesIntegrationTestConstants._
 import assets.messages.{PaymentsDueMessages => messages}
+import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import config.featureswitch.{NewFinancialDetailsApi, Payment}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, FinancialTransactionsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
 import play.api.libs.json.Json
-
-import java.time.LocalDate
 
 class PaymentDueControllerISpec extends ComponentSpecBase {
 
@@ -37,6 +38,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
     "Authorised" should {
       "NewFinancialDetailsApi FS is disabled" when {
         "render the payments due page with a single transaction" in {
+          disable(NewFinancialDetailsApi)
           val testTaxYear = 2018
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -68,6 +70,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
         }
 
         "render the payments due page with multiple transactions" in {
+          disable(NewFinancialDetailsApi)
           val testTaxYear1 = 2018
           val testTaxYear2 = 2019
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -108,6 +111,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
         }
 
         "render the payments due page where there is a mix of paid, unpaid and non charge transactions" in {
+
+          disable(NewFinancialDetailsApi)
           disable(Payment)
           val testTaxYear = 2019
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -146,6 +151,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
         }
 
         "render the payments due page with a single transaction and a not found" in {
+          disable(NewFinancialDetailsApi)
           val testTaxYear1 = 2018
           val testTaxYear2 = 2019
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -180,6 +186,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
         }
 
         "render the payments due page with no transactions" in {
+          disable(NewFinancialDetailsApi)
           val testTaxYear1 = 2018
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -211,6 +218,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
         }
 
         "redirect to an internal server error page when transactions contain internal server error" in {
+          disable(NewFinancialDetailsApi)
           val testTaxYear1 = 2018
           val testTaxYear2 = 2019
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -262,6 +270,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+            AuditStub.verifyAuditContains(WhatYouOweRequestAuditModel(None, Some("Individual"), Some("1234567890"), "AA123456A", Some("12345-credId"), "XAITSA123456").detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")
@@ -617,6 +627,16 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear}-04-05")
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear -1).toString)
+
+            println(WhatYouOweResponseAuditModel)
+
+//            AuditStub.verifyAuditContains(WhatYouOweResponseAuditModel(
+//              None, None, testNino, Some("1234567890"), None, testMtditid, chargesList = Json.arr(Json.obj()))
+//              (FakeRequest()),
+//              Charge("2022", "testId", Some("2022-04-05"), None, Some(1000), Some(1000), Some(500), Some(500), Some("POA1"),
+//                Some("SA Payment on Account 1"), Some(List(SubItem(None, None, None, None, None, None, None, Some(),
+//                  None, None)))), agentReferenceNumber = Some("1")
+//            ).detail)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(

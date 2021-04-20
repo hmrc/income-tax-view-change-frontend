@@ -16,11 +16,11 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
+import assets.BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
 import models.financialDetails.{Charge, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem}
 import play.api.libs.json.{JsValue, Json}
 
-object FinancialDetailsTestConstants {
+object FinancialDetailsIntegrationTestConstants {
   val testValidFinancialDetailsModelJson: JsValue = Json.obj(
     "financialDetails" -> Json.arr(
       Json.obj(

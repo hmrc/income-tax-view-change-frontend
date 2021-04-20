@@ -17,12 +17,13 @@
 package controllers
 
 import assets.BaseTestConstants
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
+import assets.BaseTestConstants.{testArn, testCredId, testErrorMessage, testErrorStatus, testMtditid, testMtditidAgent, testNino, testNinoAgent, testSaUtr, testSaUtrId}
 import assets.FinancialDetailsTestConstants._
 import assets.FinancialTransactionsTestConstants._
 import assets.OutstandingChargesTestConstants.{invalidOutStandingChargeJson, validOutStandingChargeResponseJsonWithAciAndBcdCharges}
 import audit.AuditingService
 import audit.mocks.MockAuditingService
+import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
@@ -71,9 +72,13 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
   def testFinancialTransaction(taxYear: Int) = financialTransactionsModel(s"$taxYear-04-05")
   def testFinancialDetail(taxYear: Int) = financialDetailsModel(taxYear)
 
-  def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(List(chargeModel(2019)), List(chargeModel(2020)),
-    List(chargeModel(2021)), Some(OutstandingChargesModel(List(
-      OutstandingChargeModel("BCD", Some("2020-12-31"), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234)))))
+  def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
+    List(chargeModel(2019)),
+    List(chargeModel(2020)),
+    List(chargeModel(2021)),
+    Some(OutstandingChargesModel(List(
+      OutstandingChargeModel("BCD", Some("2020-12-31"), 10.23, 1234),
+      OutstandingChargeModel("ACI", None, 1.23, 1234)))))
 
   def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList()
 
@@ -140,7 +145,7 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
     }
     "NewFinancialDetailsApi FS is enabled" when {
       "obtaining a users charge" should {
-        "send the user to the paymentsOwe page with full data of charges" in new Setup {
+        "send the user to the paymentsOwe page with full data of charges and send audits" in new Setup {
           enable(NewFinancialDetailsApi)
           mockSingleBISWithCurrentYearAsMigrationYear()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
@@ -153,6 +158,11 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
 
           status(result) shouldBe Status.OK
           result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+
+          verifyExtendedAudit(WhatYouOweRequestAuditModel(None, Some("Individual"), Some(s"$testSaUtrId"),
+            testNino, Some(testCredId), testMtditid))
+          verifyExtendedAudit(WhatYouOweResponseAuditModel(None, Some("Individual"), Some(s"$testSaUtrId"),
+            testNino, Some(testCredId), testMtditid, whatYouOweChargesListFull))
         }
 
         "return success page with empty data in WhatYouOwe model" in new Setup {
@@ -169,6 +179,11 @@ class PaymentDueControllerSpec extends MockAuthenticationPredicate
 
           status(result) shouldBe Status.OK
           result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+
+          verifyExtendedAudit(WhatYouOweRequestAuditModel(None, Some("Individual"), Some(s"$testSaUtrId"),
+            testNino, Some(testCredId), testMtditid))
+          verifyExtendedAudit(WhatYouOweResponseAuditModel(None, Some("Individual"), Some(s"$testSaUtrId"),
+            testNino, Some(testCredId), testMtditid, whatYouOweChargesListEmpty))
         }
 
         "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {

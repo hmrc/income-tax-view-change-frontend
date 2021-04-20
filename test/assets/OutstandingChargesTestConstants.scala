@@ -20,7 +20,6 @@ import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 
-
 object OutstandingChargesTestConstants {
 
 
@@ -35,12 +34,11 @@ object OutstandingChargesTestConstants {
       |""".stripMargin)
 
 
-
   val testValidOutstandingChargesModelJson1: JsValue = Json.obj(
     "outstandingCharges" -> Json.arr(
       Json.obj(
         "chargeName" -> "LATE"
-  )))
+      )))
 
   val testValidOutstandingChargesModel: OutstandingChargesModel = OutstandingChargesModel(List(
     OutstandingChargeModel("LATE", Some("2021-01-31"), 123456789012345.67, 1234)))
@@ -57,9 +55,9 @@ object OutstandingChargesTestConstants {
 
 
   val testInvalidOutstandingChargesJson: JsValue = Json.obj(
-        "chargeName" -> "LATE",
-        "relevantDueDate" -> "2021-01-31",
-        "chargeAmount" -> 123456789012345.67,
+    "chargeName" -> "LATE",
+    "relevantDueDate" -> "2021-01-31",
+    "chargeAmount" -> 123456789012345.67,
   )
 
   val testInvalidBadOutstandingChargesJson: JsValue = Json.obj(

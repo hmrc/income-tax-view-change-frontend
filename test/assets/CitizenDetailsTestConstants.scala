@@ -23,9 +23,9 @@ import play.api.libs.json.{JsValue, Json}
 object CitizenDetailsTestConstants {
   val testValidCitizenDetailsModelJson: JsValue = Json.obj(
     "name" -> Json.obj(
-        "current" -> Json.obj(
-          "firstName" -> "John",
-          "lastName" -> "Smith"),
+      "current" -> Json.obj(
+        "firstName" -> "John",
+        "lastName" -> "Smith"),
       "previous" -> ""
     ),
     "ids" -> Json.obj("nino" -> "AA055075C"),

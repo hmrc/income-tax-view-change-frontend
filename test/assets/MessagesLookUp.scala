@@ -261,8 +261,8 @@ object MessagesLookUp {
     val stateBenefits: String = "State benefits"
     val cis: String = "CIS and trading income"
     val ukLandAndProperty: String = "UK land and property"
-    val specialWithholdingTax:String = "Special withholding tax"
-    val voidISAs:String = "Void ISAs"
+    val specialWithholdingTax: String = "Special withholding tax"
+    val voidISAs: String = "Void ISAs"
     val totalDeductions: String = "Income Tax due after deductions"
   }
 

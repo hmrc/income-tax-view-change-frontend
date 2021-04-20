@@ -17,7 +17,8 @@
 package assets
 
 import java.time.LocalDate
-import assets.BaseTestConstants._
+
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testTimeStampString}
 import enums.Estimate
 import models.calculation._
 import models.financialDetails.{Charge, ChargeModelWithYear, SubItem}
@@ -32,7 +33,7 @@ object EstimatesTestConstants {
 
   //Last Tax Calculations
 
-  val lastTaxCalcSuccess = Calculation(crystallised = false, timestamp = Some(testTimeStampString), totalIncomeTaxAndNicsDue = Some(123) )
+  val lastTaxCalcSuccess = Calculation(crystallised = false, timestamp = Some(testTimeStampString), totalIncomeTaxAndNicsDue = Some(123))
 
   val responseModel = CalcDisplayModel(testTimeStampString, 10.00, lastTaxCalcSuccess, Estimate)
 
@@ -95,8 +96,8 @@ object EstimatesTestConstants {
     val outstandingAmount = if (paid) 0 else 1
     val dueDate = if (overdue) LocalDate.now().minusDays(1).toString else LocalDate.now().plusDays(1).toString
     Charge(
-			taxYear = "2019",
-			transactionId = "id",
+      taxYear = "2019",
+      transactionId = "id",
       outstandingAmount = Some(outstandingAmount),
       items = Some(Seq(SubItem(dueDate = Some(dueDate))))
     )

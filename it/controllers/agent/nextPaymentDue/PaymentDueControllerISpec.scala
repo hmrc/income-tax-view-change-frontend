@@ -4,18 +4,23 @@ package controllers.agent.nextPaymentDue
 import java.time.LocalDate
 
 import assets.BaseIntegrationTestConstants._
+import assets.ChargeListIntegrationTestConstants.whatYouOweFinancialDataWithoutOutstandingCharges
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.OutstandingChargesIntegrationTestConstants._
 import assets.PaymentDueTestConstraints.getCurrentTaxYearEnd
+import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi, Payment}
 import controllers.Assets.INTERNAL_SERVER_ERROR
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
+import models.financialDetails.WhatYouOweChargesList
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import org.scalatest.concurrent.Eventually
+import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 
 class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -67,7 +72,6 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
         val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
 
-
         Then("The user is redirected to")
         result should have(
           httpStatus(SEE_OTHER),
@@ -116,6 +120,8 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
       enable(Payment)
       stubAuthorisedAgentUser(authorised = true)
 
+      WhatYouOweChargesList()
+
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = OK,
         propertyOnlyResponseWithMigrationData(previousTaxYearEnd, Some(currentTaxYearEnd.toString)
@@ -130,6 +136,11 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
         "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetails)
+
+      AuditStub.verifyAuditContains(WhatYouOweRequestAuditModel(Some("1"), Some("Agent"), Some("1234567890"), "AA123456A", None, "XAITSA123456").detail)
+
+      AuditStub.verifyAuditContains(WhatYouOweResponseAuditModel(Some("1"), Some("Agent"), Some("1234567890"), "AA123456A", None, "XAITSA123456",
+        whatYouOweFinancialDataWithoutOutstandingCharges).detail)
 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(

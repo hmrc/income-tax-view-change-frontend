@@ -16,12 +16,11 @@
 
 package views
 
-import assets.FinancialDetailsTestConstants
+import assets.FinancialDetailsTestConstants._
 import models.financialDetails.Charge
 import org.jsoup.Jsoup
 import testUtils.ViewSpec
 import views.html.chargeSummary
-import FinancialDetailsTestConstants._
 
 class ChargeSummarySpec extends ViewSpec {
 

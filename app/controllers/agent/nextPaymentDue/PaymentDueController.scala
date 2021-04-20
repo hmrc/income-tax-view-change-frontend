@@ -17,6 +17,7 @@
 package controllers.agent.nextPaymentDue
 
 import audit.AuditingService
+import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{AgentViewer, FeatureSwitching, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
@@ -33,8 +34,8 @@ import services.{FinancialTransactionsService, IncomeSourceDetailsService, Payme
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.nextPaymentDue.paymentDue
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -75,9 +76,18 @@ class PaymentDueController @Inject()(paymentDue: paymentDue,
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           mtdItUser =>
             if (isEnabled(AgentViewer)) {
+              println("/n/n BABABABABABABBABABBABABBAA"+ WhatYouOweRequestAuditModel(user.agentReferenceNumber, mtdItUser.userType,
+                mtdItUser.saUtr, mtdItUser.nino, mtdItUser.credId, mtdItUser.mtditid).detail)
+
+              auditingService.extendedAudit(WhatYouOweRequestAuditModel(user.agentReferenceNumber, mtdItUser.userType,
+                mtdItUser.saUtr, mtdItUser.nino, mtdItUser.credId, mtdItUser.mtditid))
 
               paymentDueService.getWhatYouOweChargesList()(implicitly, mtdItUser).map {
                 whatYouOweChargesList => {
+                  println("/n/n NANANANANANANANANANANA"+ WhatYouOweResponseAuditModel(user.agentReferenceNumber, mtdItUser.userType,
+                    mtdItUser.saUtr, mtdItUser.nino, mtdItUser.credId, mtdItUser.mtditid, whatYouOweChargesList).detail)
+                  auditingService.extendedAudit(WhatYouOweResponseAuditModel(user.agentReferenceNumber, mtdItUser.userType, mtdItUser.saUtr,
+                    mtdItUser.nino, mtdItUser.credId, mtdItUser.mtditid, whatYouOweChargesList))
                   Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser)
                   ).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
                 }

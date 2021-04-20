@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 
 import assets.BaseIntegrationTestConstants.testMtditid
-import implicits.ImplicitDateFormatter
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 object FinancialTransactionsIntegrationTestConstants {

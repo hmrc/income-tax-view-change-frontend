@@ -35,7 +35,6 @@ import uk.gov.hmrc.http.InternalServerException
 
 import scala.concurrent.Future
 
-
 class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
 
   override def beforeEach(): Unit = {
