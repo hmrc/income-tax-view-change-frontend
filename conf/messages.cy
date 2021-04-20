@@ -148,7 +148,7 @@ taxCal_breakdown.table.ART_scottish                                 = Cyfradd uc
 taxCal_breakdown.table.ZRTBR                                        = Haen cyfradd sylfaenol ar y gyfradd sero ({0} ar {1}%)
 taxCal_breakdown.table.ZRTHR                                        = Haen cyfradd uwch ar y gyfradd sero ({0} ar {1}%)
 taxCal_breakdown.table.ZRTAR                                        = Haen cyfradd ychwanegol ar y gyfradd sero ({0} ar {1}%)
-taxCal_breakdown.table.total_tax_due                                = Cyfanswm y dreth sy’n ddyledus
+taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus
 taxCal_breakdown.table.nic4                                         = Yswiriant Gwladol Dosbarth 4 ({0} ar {1}%)
 taxCal_breakdown.table.nic2                                         = Yswiriant Gwladol Dosbarth 2
 taxCal_breakdown.table.banks_and_building_societies                 = Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
@@ -177,7 +177,9 @@ taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = Pensiynau’
 taxCal_breakdown.table.taxDeductedAtSource.stateBenefits	        = Budd-daliadau’r Wladwriaeth
 taxCal_breakdown.table.taxDeductedAtSource.cis				        = CIS ac incwm masnachu
 taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty		= Tir ac eiddo yn y DU
-taxCal_breakdown.table.taxDeductedAtSource.total					= Cyfanswm y dreth a ddidynnwyd
+taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax    = Treth ataliedig arbennig
+taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = ISAs di-rym
+taxCal_breakdown.table.taxDeductedAtSource.total					= Treth Incwm sy’n ddyledus ar ôl didyniadau
 
 
 ## ReportDeadlines Page ##

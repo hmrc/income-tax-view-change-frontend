@@ -218,8 +218,11 @@ case class TaxDeductedAtSource(payeEmployments: Option[BigDecimal] = None,
                                stateBenefits: Option[BigDecimal] = None,
                                cis: Option[BigDecimal] = None,
                                ukLandAndProperty: Option[BigDecimal] = None,
+                               specialWithholdingTax: Option[BigDecimal] = None,
+                               voidISAs: Option[BigDecimal] = None,
                                savings: Option[BigDecimal] = None,
-                               total: Option[BigDecimal] = None
+                               total: Option[BigDecimal] = None,
+                               totalIncomeTaxAndNicsDue: Option[BigDecimal] = None
                               ) {
   val allFields: Seq[(String, BigDecimal)] = Seq(
     "payeEmployments" -> payeEmployments,
@@ -227,6 +230,8 @@ case class TaxDeductedAtSource(payeEmployments: Option[BigDecimal] = None,
     "stateBenefits" -> stateBenefits,
     "cis" -> cis,
     "ukLandAndProperty" -> ukLandAndProperty,
+    "specialWithholdingTax" -> specialWithholdingTax,
+    "voidISAs" -> voidISAs,
     "savings" -> savings
   ).collect {
     case (key, Some(amount)) => key -> amount
@@ -241,8 +246,12 @@ object TaxDeductedAtSource {
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "stateBenefits") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "cis") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "ukLandAndProperty") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "specialWithholdingTaxOrUkTaxPaid") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "voidedIsa") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "taxDeductedAtSource" \ "savings") and
-      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalTaxDeducted")
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalTaxDeducted") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalIncomeTaxAndNicsDue")
+
     ) (TaxDeductedAtSource.apply _)
   implicit val writes: Writes[TaxDeductedAtSource] = Json.writes[TaxDeductedAtSource]
 }
