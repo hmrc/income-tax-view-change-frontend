@@ -185,41 +185,6 @@
                 }
             </table>
         }
-        @if(calcModel.calcDataModel.reductionsAndCharges.totalResidentialFinanceCostsRelief.nonEmpty ||
-                calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax.nonEmpty ||
-                calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief.nonEmpty ||
-                calcModel.calcDataModel.reductionsAndCharges.reliefsClaimed.nonEmpty) {
-            <table>
-                <caption>
-                    <h3 class="heading-medium">@messages("taxCal_breakdown.table.tax_reductions")</h3>
-                </caption>
-                @taxReductionsTableRow("deficiencyRelief")
-                @taxReductionsTableRow("vctSubscriptions")
-                @taxReductionsTableRow("eisSubscriptions")
-                @taxReductionsTableRow("seedEnterpriseInvestment")
-                @taxReductionsTableRow("communityInvestment")
-                @taxReductionsTableRow("socialEnterpriseInvestment")
-                @taxReductionsTableRow("maintenancePayments")
-                @tableRow("property_finance_relief", calcModel.calcDataModel.reductionsAndCharges.totalResidentialFinanceCostsRelief, isNegative
-                        = true)
-                @tableRow("total_notional_tax", calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax, isNegative = true)
-                @tableRow("total_foreign_tax_credit_relief",
-                    calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief, isNegative = true)
-                @taxReductionsTableRow("qualifyingDistributionRedemptionOfSharesAndSecurities")
-                @taxReductionsTableRow("nonDeductibleLoanInterest")
-
-                @calcModel.calcDataModel.reductionsAndCharges.incomeTaxDueAfterTaxReductions.map { incomeTaxDueAfterTaxReductions =>
-                    <tr>
-                        <td class="total-section">@messages("taxCal_breakdown.table.income_tax_due_after_tax_reductions")</td>
-                        <td class="numeric total-section">
-                        @{
-                            calcModel.calcDataModel.reductionsAndCharges.incomeTaxDueAfterTaxReductions.get.toCurrency
-                        }
-                        </td>
-                    </tr>
-                }
-            </table>
-        }
 
         @if(calcModel.calcDataModel.nic.class2.nonEmpty) {
             <table>
