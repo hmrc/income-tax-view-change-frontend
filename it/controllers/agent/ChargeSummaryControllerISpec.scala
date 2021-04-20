@@ -17,13 +17,17 @@
 package controllers.agent
 
 import assets.BaseIntegrationTestConstants._
+import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import audit.models.ChargeSummaryAudit
+import auth.MtdItUser
 import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{Charge, FinancialDetailsModel, SubItem}
 import play.api.http.Status._
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 
 import java.time.LocalDate
 
@@ -53,6 +57,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       enable(NewFinancialDetailsApi)
       stubAuthorisedAgentUser(authorised = true)
 
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
       IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
         nino = testNino,
         from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -81,6 +87,16 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
         getCurrentTaxYearEnd.getYear.toString, "testid", clientDetails
       )
+
+      AuditStub.verifyAuditContains(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent")
+        )(FakeRequest()),
+        Charge("2022", "testId", Some("2022-04-05"), None, Some(1000), Some(1000), Some(500), Some(500), Some("POA1"),
+          Some("SA Payment on Account 1"), Some(List(SubItem(None, None, None, None, None, None, None, Some("2021-04-20"),
+            None, None)))), agentReferenceNumber = Some("1")
+      ).detail)
 
       result should have(
         httpStatus(OK),

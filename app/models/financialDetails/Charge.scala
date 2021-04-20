@@ -16,10 +16,10 @@
 
 package models.financialDetails
 
-import play.api.libs.json.{Format, Json}
-import java.time.LocalDate
-
 import play.api.Logger
+import play.api.libs.json.{Format, Json}
+
+import java.time.LocalDate
 
 case class Charge(taxYear: String,
                   transactionId: String,
@@ -27,26 +27,26 @@ case class Charge(taxYear: String,
                   `type`: Option[String] = None,
                   totalAmount: Option[BigDecimal] = None,
                   originalAmount: Option[BigDecimal] = None,
-                  outstandingAmount: Option[BigDecimal] =None,
-                  clearedAmount: Option[BigDecimal] =None,
-									chargeType: Option[String] = None,
+                  outstandingAmount: Option[BigDecimal] = None,
+                  clearedAmount: Option[BigDecimal] = None,
+                  chargeType: Option[String] = None,
                   mainType: Option[String] = None,
                   items: Option[Seq[SubItem]] = None
                  ) {
   val isPaid: Boolean = {
-		outstandingAmount.fold(clearedAmount.exists(_ >= 0) && clearedAmount == originalAmount)(_ <= 0)
-	}
+    outstandingAmount.fold(clearedAmount.exists(_ >= 0) && clearedAmount == originalAmount)(_ <= 0)
+  }
 
-	def remainingToPay: BigDecimal = {
-		if (isPaid) BigDecimal(0)
-		else outstandingAmount.getOrElse(originalAmount.get)
-	}
+  def remainingToPay: BigDecimal = {
+    if (isPaid) BigDecimal(0)
+    else outstandingAmount.getOrElse(originalAmount.get)
+  }
 
   def charges(): Seq[SubItem] = items.getOrElse(Seq()).filter(_.dueDate.isDefined)
 
   def payments(): Seq[SubItem] = items.getOrElse(Seq()).filter(_.paymentReference.isDefined)
 
-  def eligibleToPay(paymentEnabled: Boolean) :Boolean = {
+  def eligibleToPay(paymentEnabled: Boolean): Boolean = {
     !isPaid && paymentEnabled
   }
 
@@ -54,19 +54,19 @@ case class Charge(taxYear: String,
 
   def isOverdue: Boolean = due.exists(dueDate => dueDate.isBefore(LocalDate.now()))
 
-	def getChargeTypeKey: String = mainType match {
-		case Some("SA Payment on Account 1") => "paymentOnAccount1.text"
-		case Some("SA Payment on Account 2") => "paymentOnAccount2.text"
-		case Some("SA Balancing Charge") => "balancingCharge.text"
-		case error => {
-			Logger.error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
-			"unknownCharge"
-		}
-	}
+  def getChargeTypeKey: String = mainType match {
+    case Some("SA Payment on Account 1") => "paymentOnAccount1.text"
+    case Some("SA Payment on Account 2") => "paymentOnAccount2.text"
+    case Some("SA Balancing Charge") => "balancingCharge.text"
+    case error => {
+      Logger.error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
+      "unknownCharge"
+    }
+  }
 
   def getChargePaidStatus: String = {
-    if(isPaid) "paid"
-    else if(outstandingAmount.isDefined) "part-paid"
+    if (isPaid) "paid"
+    else if (outstandingAmount.isDefined) "part-paid"
     else "unpaid"
   }
 }
