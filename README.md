@@ -33,7 +33,7 @@ sbt 'run 9081'
 ### To run the application locally execute in test mode the following:
 
 ```
-sbt "run 9081 -Dapplication.router=testOnlyDoNotUseInAppConf.Routes"
+sbt "run 9081 -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes"
 ```
 
 ## Test the application
