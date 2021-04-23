@@ -70,7 +70,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         AuditStub.verifyAuditContains(HomeAudit(
           MtdItUser(
             testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual")
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
           )(FakeRequest()),
           Some(Right(2)),
           Right(4),
@@ -117,7 +117,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         AuditStub.verifyAuditContains(HomeAudit(
           MtdItUser(
             testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual")
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
           )(FakeRequest()),
           Some(Right(6)),
           Right(4),

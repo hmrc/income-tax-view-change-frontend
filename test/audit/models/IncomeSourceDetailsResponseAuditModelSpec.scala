@@ -17,47 +17,88 @@
 package audit.models
 
 import assets.BaseTestConstants._
+import auth.MtdItUserWithNino
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.retrieve.Name
 
 class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
 
   val transactionName = "income-source-details-response"
-  val auditEvent = "incomeSourceDetailsResponse"
+  val auditType = "incomeSourceDetailsResponse"
   val seIdsKey = "selfEmploymentIncomeSourceIds"
   val propertyIdKey = "propertyIncomeSourceId"
 
   "The IncomeSourceDetailsResponseAuditModel" when {
 
-    "Supplied with Multiple Business IDs and a Property ID" should {
+    "Supplied with Multiple Business IDs and a Property ID for individual which display no arn and Individual as user type" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-        testMtditid,
-        testNino,
+        testMtdUserNino,
         List(testSelfEmploymentId, testSelfEmploymentId2),
         Some(testPropertyIncomeId),
-        Some(testSaUtr),
-        Some(testCredId),
-        Some(testUserType)
+        Some(testMigrationYear2019)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
       }
 
-      s"Have the correct audit event type of '$auditEvent'" in {
-        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditEvent
+      s"Have the correct audit event type of '$auditType'" in {
+        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
       }
 
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtdItUser.mtditid,
-          "nationalInsuranceNumber" -> testMtdItUser.nino,
-          seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
           propertyIdKey -> testPropertyIncomeId,
           "saUtr" -> testSaUtr,
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
+          "userType" -> testUserType,
+          "dateOfMigration" -> testMigrationYear2019,
           "credId" -> testCredId,
-          "userType" -> testUserType
+          seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
+          "mtditid" -> testMtdItUser.mtditid
+        )
+      }
+    }
+
+    "Supplied with Multiple Business IDs and a Property ID for agent" should {
+
+      val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
+        mtdItUser = MtdItUserWithNino(
+          saUtr = Some(testSaUtr),
+          nino = testNino,
+          mtditid = testMtditidAgent,
+          arn = Some("arn"),
+          userType = Some("Agent"),
+          credId = Some(testCredId),
+          userName = Some(Name(Some("firstName"), Some("lastName")))
+        )(FakeRequest()),
+        List(testSelfEmploymentId, testSelfEmploymentId2),
+        Some(testPropertyIncomeId),
+        Some(testMigrationYear2019)
+      )
+
+      s"Have the correct transaction name of '$transactionName'" in {
+        testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
+      }
+
+      s"Have the correct audit event type of '$auditType'" in {
+        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
+      }
+
+      "Have the correct details for the audit event which display the arn and Agent as user type" in {
+        testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
+          propertyIdKey -> testPropertyIncomeId,
+          "saUtr" -> testSaUtr,
+          "nationalInsuranceNumber" -> testNino,
+          "agentReferenceNumber" -> "arn",
+          "userType" -> "Agent",
+          "dateOfMigration" -> testMigrationYear2019,
+          "credId" -> testCredId,
+          seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
+          "mtditid" -> testMtditidAgent
         )
       }
     }
@@ -65,32 +106,30 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Single Business IDs and a Property ID" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-        testMtditid,
-        testNino,
+        testMtdUserNino,
         List(testSelfEmploymentId),
         Some(testPropertyIncomeId),
-        Some(testSaUtr),
-        Some(testCredId),
-        Some(testUserType)
+        Some(testMigrationYear2019)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
       }
 
-      s"Have the correct audit event type of '$auditEvent'" in {
-        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditEvent
+      s"Have the correct audit event type of '$auditType'" in {
+        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
       }
 
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtdItUser.mtditid,
-          "nationalInsuranceNumber" -> testMtdItUser.nino,
-          seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
           propertyIdKey -> testPropertyIncomeId,
           "saUtr" -> testSaUtr,
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
+          "userType" -> testUserType,
+          "dateOfMigration" -> testMigrationYear2019,
           "credId" -> testCredId,
-          "userType" -> testUserType
+          seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
+          "mtditid" -> testMtdItUser.mtditid
         )
       }
     }
@@ -98,57 +137,59 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with No Business IDs and a Property ID" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-        testMtditid,
-        testNino,
+        testMtdUserNino,
         List(),
         Some(testPropertyIncomeId),
-        Some(testSaUtr),
-        Some(testCredId),
-        Some(testUserType)
+        Some(testMigrationYear2019)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
       }
 
-      s"Have the correct audit event type of '$auditEvent'" in {
-        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditEvent
+      s"Have the correct audit event type of '$auditType'" in {
+        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
       }
 
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtdItUser.mtditid,
-          "nationalInsuranceNumber" -> testMtdItUser.nino,
           propertyIdKey -> testPropertyIncomeId,
           "saUtr" -> testSaUtr,
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
+          "userType" -> testUserType,
+          "dateOfMigration" -> testMigrationYear2019,
           "credId" -> testCredId,
-          "userType" -> testUserType
+          seIdsKey -> Json.arr(),
+          "mtditid" -> testMtdItUser.mtditid
+
         )
       }
     }
 
-    "Supplied with Single Business IDs and No Property ID and No optional fields" should {
+    "Supplied with Single Business IDs and MtditUser, No Property ID, no year of Migration fields" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-        testMtditid,
-        testNino,
+        testMtdUserNino,
         List(testSelfEmploymentId),
-        None, None, None, None
+        None, None
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
       }
 
-      s"Have the correct audit event type of '$auditEvent'" in {
-        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditEvent
+      s"Have the correct audit event type of '$auditType'" in {
+        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
       }
 
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtdItUser.mtditid,
+          "saUtr" -> testSaUtr,
           "nationalInsuranceNumber" -> testMtdItUser.nino,
-          seIdsKey -> Json.toJson(List(testSelfEmploymentId))
+          "userType" -> testUserType,
+          "credId" -> testCredId,
+          seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
+          "mtditid" -> testMtdItUser.mtditid
         )
       }
     }
@@ -156,31 +197,29 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with Multiple Business IDs and No Property ID" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-        testMtditid,
-        testNino,
+        testMtdUserNino,
         List(testSelfEmploymentId, testSelfEmploymentId2),
         None,
-        Some(testSaUtr),
-        Some(testCredId),
-        Some(testUserType)
+        Some(testMigrationYear2019)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
       }
 
-      s"Have the correct audit event type of '$auditEvent'" in {
-        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditEvent
+      s"Have the correct audit event type of '$auditType'" in {
+        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
       }
 
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtdItUser.mtditid,
-          "nationalInsuranceNumber" -> testMtdItUser.nino,
-          seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
           "saUtr" -> testSaUtr,
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
+          "userType" -> testUserType,
+          "dateOfMigration" -> testMigrationYear2019,
           "credId" -> testCredId,
-          "userType" -> testUserType
+          seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2)),
+          "mtditid" -> testMtdItUser.mtditid
         )
       }
     }
@@ -188,30 +227,30 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
     "Supplied with No Business IDs and No Property ID" should {
 
       val testIncomeSourceDetailsResponseAuditModel = IncomeSourceDetailsResponseAuditModel(
-        testMtditid,
-        testNino,
+        testMtdUserNino,
         List(),
         None,
-        Some(testSaUtr),
-        Some(testCredId),
-        Some(testUserType)
+        Some(testMigrationYear2019)
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
         testIncomeSourceDetailsResponseAuditModel.transactionName shouldBe transactionName
       }
 
-      s"Have the correct audit event type of '$auditEvent'" in {
-        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditEvent
+      s"Have the correct audit event type of '$auditType'" in {
+        testIncomeSourceDetailsResponseAuditModel.auditType shouldBe auditType
       }
 
       "Have the correct details for the audit event" in {
         testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
-          "mtditid" -> testMtdItUser.mtditid,
-          "nationalInsuranceNumber" -> testMtdItUser.nino,
           "saUtr" -> testSaUtr,
+          "nationalInsuranceNumber" -> testMtdItUser.nino,
+          "userType" -> testUserType,
+          "dateOfMigration" -> testMigrationYear2019,
           "credId" -> testCredId,
-          "userType" -> testUserType
+          seIdsKey -> Json.arr(),
+          "mtditid" -> testMtdItUser.mtditid
+
         )
       }
     }

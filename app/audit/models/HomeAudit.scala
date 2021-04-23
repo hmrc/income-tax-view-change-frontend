@@ -16,6 +16,7 @@
 
 package audit.models
 
+import audit.Utilities._
 import auth.MtdItUser
 import play.api.libs.json.{JsObject, JsValue, Json}
 
@@ -25,12 +26,6 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
                      nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
                      nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int],
                      agentReferenceNumber: Option[String]) extends ExtendedAuditModel {
-
-  private val userType: JsObject = mtdItUser.userType match {
-    case Some("Agent") => Json.obj("userType" -> "Agent")
-    case Some(_) => Json.obj("userType" -> "Individual")
-    case None => Json.obj()
-  }
 
   private val paymentsInformation: JsObject = nextPaymentOrOverdue match {
     case Some(Right(count)) => Json.obj("overduePayments" -> count)
@@ -48,7 +43,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
     agentReferenceNumber.fold(Json.obj())(arn => Json.obj("agentReferenceNumber" -> arn)) ++
       Json.obj("nationalInsuranceNumber" -> mtdItUser.nino) ++
       mtdItUser.saUtr.fold(Json.obj())(sautr => Json.obj("saUtr" -> sautr)) ++
-      userType ++
+      userType(mtdItUser.userType) ++
       mtdItUser.credId.fold(Json.obj())(credId => Json.obj("credId" -> credId)) ++
       Json.obj("mtditid" -> mtdItUser.mtditid) ++
       paymentsInformation ++

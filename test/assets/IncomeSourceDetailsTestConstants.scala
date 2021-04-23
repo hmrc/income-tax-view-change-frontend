@@ -30,6 +30,7 @@ object IncomeSourceDetailsTestConstants {
   val businessIncome2018and2019 = IncomeSourceDetailsModel(testMtdItId, None, List(business2018, business2019), None)
   val propertyIncomeOnly = IncomeSourceDetailsModel(testMtdItId, None, List(), Some(propertyDetails))
   val businessAndPropertyAligned = IncomeSourceDetailsModel(testMtdItId, None, List(alignedBusiness), Some(propertyDetails))
+  val singleBusinessAndPropertyMigrat2019 = IncomeSourceDetailsModel(testMtdItId, Some(testMigrationYear2019), List(alignedBusiness), Some(propertyDetails))
   val noIncomeDetails = IncomeSourceDetailsModel(testMtdItId, None, List(), None)
   val errorResponse = IncomeSourceDetailsError(testErrorStatus, testErrorMessage)
   val businessIncome2018and2019AndProp = IncomeSourceDetailsModel(testMtdItId, None, List(business2018, business2019), Some(propertyDetails))

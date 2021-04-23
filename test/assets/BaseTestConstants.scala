@@ -21,7 +21,7 @@ import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.auth.core._
 
 object BaseTestConstants {
 
@@ -37,21 +37,22 @@ object BaseTestConstants {
   val idType: String = "utr"
   val testArn = "XAIT0000123456"
   val testCredId = "credId"
-  val testUserType = "individual"
+  val testUserType = "Individual"
   val testTaxYear = 2018
   val testUserName = "Albert Einstein"
   val testRetrievedUserName: Name = Name(Some(testUserName), None)
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
-  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
-  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName), Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
+  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some("saUtr"), Some("credId"), Some("Individual"))(FakeRequest())
+  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName), Some("saUtr"), Some("credId"), userType = Some("Individual"), arn = None)(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    businessesAndPropertyIncome, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
+    businessesAndPropertyIncome, Some("saUtr"), Some("credId"), Some("Individual"), None)(FakeRequest())
   val testSelfEmploymentId = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
   val testYear2017 = 2017
+  val testMigrationYear2019 = "2019"
   val testFrom = "2016-04-06"
   val testTo = "2017-04-05"
   val testPaymentLot = "081203010024"
@@ -61,17 +62,17 @@ object BaseTestConstants {
   val testErrorMessage = "Dummy Error Message"
 
   def testAuthSuccessResponse(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,
-															affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
+                              affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
 
-	def testAuthSuccessResponseOrgNoNino(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200) = new ~(new ~(new ~(new ~(Enrolments(Set(
-		Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated")
-	)), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Organisation)), confidenceLevel)
+  def testAuthSuccessResponseOrgNoNino(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200) = new ~(new ~(new ~(new ~(Enrolments(Set(
+    Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated")
+  )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Organisation)), confidenceLevel)
 
   def testAuthSuccessWithSaUtrResponse(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,
-																			 affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
+                                       affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
     Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567890")), "activated")

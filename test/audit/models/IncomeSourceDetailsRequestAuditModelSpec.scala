@@ -16,36 +16,84 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
+import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import auth.MtdItUserWithNino
+import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.Json
-import testUtils.TestSupport
+import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.retrieve.Name
 
-class IncomeSourceDetailsRequestAuditModelSpec extends TestSupport {
+class IncomeSourceDetailsRequestAuditModelSpec extends WordSpecLike with MustMatchers {
 
   val transactionName = "income-source-details-request"
-  val auditEvent = "incomeSourceDetailsRequest"
+  val auditType = "incomeSourceDetailsRequest"
+  val mtdUserWithNino: MtdItUserWithNino[_] = MtdItUserWithNino(
+    mtditid = testMtditid,
+    nino = testNino,
+    userName = Some(testRetrievedUserName),
+    saUtr = Some("saUtr"),
+    credId = Some("credId"),
+    userType = Some("agent"),
+    arn = Some("arn"))(FakeRequest())
 
-  "The IncomeSourceDetailsRequestAuditModel" should {
+  val incomeSourceDetailsRequestAuditFull: IncomeSourceDetailsRequestAuditModel =
+    IncomeSourceDetailsRequestAuditModel(
+      mtdItUser = MtdItUserWithNino(
+        saUtr = Some("saUtr"),
+        nino = "nino",
+        mtditid = "mtditid",
+        arn = Some("arn"),
+        userType = Some("Agent"),
+        credId = Some("credId"),
+        userName = Some(Name(Some("firstName"), Some("lastName")))
+      )(FakeRequest())
+    )
 
-    lazy val testIncomeSourceDetailsRequestAuditModel = IncomeSourceDetailsRequestAuditModel(testMtditid, testNino,
-      Some(testSaUtr), Some(testCredId), Some(testUserType))
+  val incomeSourceDetailsRequestAuditMin: IncomeSourceDetailsRequestAuditModel =
+    IncomeSourceDetailsRequestAuditModel(
+      mtdItUser = MtdItUserWithNino(
+        mtditid = "mtditid",
+        nino = "nino",
+        userName = None,
+        saUtr = None,
+        credId = None,
+        userType = None,
+        arn = None
+      )(FakeRequest())
+    )
 
-    s"Have the correct transaction name of '$transactionName'" in {
-      testIncomeSourceDetailsRequestAuditModel.transactionName shouldBe transactionName
+  "IncomeSourceDetailsRequestAudit(testMtdUserNino)" should {
+
+    s"have the correct transaction name of '$transactionName'" in {
+      incomeSourceDetailsRequestAuditFull.transactionName mustBe transactionName
     }
 
-    s"Have the correct audit event type of '$auditEvent'" in {
-      testIncomeSourceDetailsRequestAuditModel.auditType shouldBe auditEvent
+    s"have the correct audit event type of '$auditType'" in {
+      incomeSourceDetailsRequestAuditFull.auditType mustBe auditType
     }
 
-    "Have the correct details for the audit event" in {
-      testIncomeSourceDetailsRequestAuditModel.detail shouldBe Json.obj(
-        "mtditid" -> testMtditid,
-        "nationalInsuranceNumber" -> testNino,
-        "saUtr" -> testSaUtr,
-        "credId" -> testCredId,
-        "userType" -> testUserType
-      )
+    "have the correct details for the audit event" when {
+      "the income source details request audit has all detail" when {
+        "there are MtdItUserWithNino details" in {
+          incomeSourceDetailsRequestAuditFull.detail mustBe Json.obj(
+            "saUtr" -> "saUtr",
+            "nationalInsuranceNumber" -> "nino",
+            "agentReferenceNumber" -> "arn",
+            "userType" -> "Agent",
+            "credId" -> "credId",
+            "mtditid" -> "mtditid"
+          )
+        }
+      }
+
+      "the income source details request audit has minimal details" in {
+        incomeSourceDetailsRequestAuditMin.detail mustBe Json.obj(
+          "nationalInsuranceNumber" -> "nino",
+          "mtditid" -> "mtditid"
+        )
+      }
     }
+
+
   }
 }

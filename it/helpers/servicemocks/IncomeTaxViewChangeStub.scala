@@ -16,8 +16,6 @@
 
 package helpers.servicemocks
 
-import java.time.LocalDate
-
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
 import models.core.{Nino, NinoResponseError}
@@ -25,6 +23,8 @@ import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
+
+import java.time.LocalDate
 
 object IncomeTaxViewChangeStub {
 
@@ -147,8 +147,9 @@ object IncomeTaxViewChangeStub {
   def getOutstandingChargesUrl(idType: String, idNumber: Long, taxYear: String): String = {
     s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
   }
+
   def stubGetOutstandingChargesResponse(idType: String, idNumber: Long, taxYear: String)
-                             (status: Int, response: JsValue): StubMapping = {
+                                       (status: Int, response: JsValue): StubMapping = {
     WiremockHelper.stubGet(getOutstandingChargesUrl(idType, idNumber, s"${taxYear.toInt}-04-05"), status, response.toString())
   }
 

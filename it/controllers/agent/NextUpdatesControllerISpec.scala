@@ -149,7 +149,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         )
       }
 
-      "the user has  no obligations" in {
+      "the user has no obligations" in {
         enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
