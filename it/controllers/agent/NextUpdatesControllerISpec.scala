@@ -16,9 +16,12 @@
 package controllers.agent
 
 import assets.BaseIntegrationTestConstants._
+import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
+import auth.MtdItUser
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
@@ -27,6 +30,7 @@ import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDead
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
@@ -60,6 +64,23 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
 
+  val incomeSourceDetails: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    mtdbsa = testMtditid,
+    yearOfMigration = None,
+    businesses = List(BusinessDetailsModel(
+      "testId",
+      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+      None, None, None, None, None, None, None, None,
+      Some(getCurrentTaxYearEnd)
+    )),
+    property = None
+  )
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
+    incomeSourceDetails, Some("1234567890"), None, Some("Agent"), Some("1")
+  )(FakeRequest())
+
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
@@ -84,17 +105,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
-          response = IncomeSourceDetailsModel(
-            mtdbsa = testMtditid,
-            yearOfMigration = None,
-            businesses = List(BusinessDetailsModel(
-              "testId",
-              AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-              None, None, None, None, None, None, None, None,
-              Some(getCurrentTaxYearEnd)
-            )),
-            property = None
-          )
+          response = incomeSourceDetails
         )
 
         val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithoutConfirmation)
@@ -108,32 +119,24 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 
       "the user has obligations" in {
         enable(AgentViewer)
-
         stubAuthorisedAgentUser(authorised = true)
+
+        val currentObligations: ObligationsModel = ObligationsModel(Seq(
+          ReportDeadlinesModel(
+            identification = "testId",
+            obligations = List(
+              ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
+            ))
+        ))
+
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
-          response = IncomeSourceDetailsModel(
-            mtdbsa = testMtditid,
-            yearOfMigration = None,
-            businesses = List(BusinessDetailsModel(
-              "testId",
-              AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-              None, None, None, None, None, None, None, None,
-              Some(getCurrentTaxYearEnd)
-            )),
-            property = None
-          )
+          response = incomeSourceDetails
         )
 
         IncomeTaxViewChangeStub.stubGetReportDeadlines(
           nino = testNino,
-          deadlines = ObligationsModel(Seq(
-            ReportDeadlinesModel(
-              identification = "testId",
-              obligations = List(
-                ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
-              ))
-          ))
+          deadlines = currentObligations
         )
 
         val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
@@ -147,6 +150,9 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
           httpStatus(OK),
           pageTitle("Next updates - Business Tax account - GOV.UK")
         )
+
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
       }
 
       "the user has no obligations" in {
@@ -154,17 +160,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
-          response = IncomeSourceDetailsModel(
-            mtdbsa = testMtditid,
-            yearOfMigration = None,
-            businesses = List(BusinessDetailsModel(
-              "testId",
-              AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-              None, None, None, None, None, None, None, None,
-              Some(getCurrentTaxYearEnd)
-            )),
-            property = None
-          )
+          response = incomeSourceDetails
         )
 
         IncomeTaxViewChangeStub.stubGetReportDeadlines(
@@ -182,37 +178,15 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
+
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", Seq.empty).detail)
       }
     }
     "the Agent viewer Feature is disabled" when {
       "the user is trying to access next updates page when AgentViewer is disabled" in {
         disable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          status = OK,
-          response = IncomeSourceDetailsModel(
-            mtdbsa = testMtditid,
-            yearOfMigration = None,
-            businesses = List(BusinessDetailsModel(
-              "testId",
-              AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-              None, None, None, None, None, None, None, None,
-              Some(getCurrentTaxYearEnd)
-            )),
-            property = None
-          )
-        )
-
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(
-          nino = testNino,
-          deadlines = ObligationsModel(Seq(
-            ReportDeadlinesModel(
-              identification = "testId",
-              obligations = List(
-                ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
-              ))
-          ))
-        )
 
         val res = IncomeTaxViewChangeFrontend.getAgentNextUpdates(clientDetailsWithConfirmation)
 

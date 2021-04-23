@@ -77,22 +77,22 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     def toHtmlDocument: Document = Jsoup.parse(bodyOf(x))
   }
 
-  lazy val fakeRequestWithActiveSession = FakeRequest().withSession(
+  lazy val fakeRequestWithActiveSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662",
     SessionKeys.authToken -> "Bearer Token"
   ).withHeaders(
     HeaderNames.REFERER -> "/test/url"
   )
 
-  lazy val fakeRequestWithTimeoutSession = FakeRequest().withSession(
+  lazy val fakeRequestWithTimeoutSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662"
   )
 
-  lazy val fakeRequestWithClientUTR = FakeRequest().withSession(
+  lazy val fakeRequestWithClientUTR: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     utils.SessionKeys.clientUTR -> "1234567890"
   )
 
-  lazy val fakeRequestWithClientDetails = fakeRequestWithActiveSession.withSession(
+  lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     utils.SessionKeys.clientFirstName -> "Test",
     utils.SessionKeys.clientLastName -> "User",
     utils.SessionKeys.clientUTR -> "1234567890"
@@ -108,14 +108,14 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
       utils.SessionKeys.confirmedClient -> "true"
     )
 
-  lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> testNino)
+  lazy val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession("nino" -> testNino)
 
-  lazy val fakeRequestWithNinoAndCalc = fakeRequestWithActiveSession.withSession(
+  lazy val fakeRequestWithNinoAndCalc: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     forms.utils.SessionKeys.calculationId -> "1234567890",
     "nino" -> testNino
   )
 
-  lazy val fakeRequestNoSession = FakeRequest()
+  lazy val fakeRequestNoSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   implicit class FakeRequestUtil[C](fakeRequest: FakeRequest[C]) {
     def addingToSession(newSessions: (String, String)*): FakeRequest[C] = {

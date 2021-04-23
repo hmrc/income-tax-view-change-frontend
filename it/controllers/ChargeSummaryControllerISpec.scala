@@ -66,7 +66,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      AuditStub.verifyAuditContains(ChargeSummaryAudit(
+      AuditStub.verifyAuditContainsDetail(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
@@ -74,8 +74,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         Charge("2018", "1040000123", Some("2019-05-15"), Some("Balancing Charge Debit"), Some(3400), Some(2000),
           Some(2000), None, Some("Balancing Charge debit"), Some("SA Balancing Charge"), Some(List(SubItem(Some("001"),
             Some(100), Some("2019-05-15"), Some("01"), Some("A"), None, Some(2000),
-            Some("2018-02-14"), Some("A"), Some("081203010024-000001"))))),
-        None
+            Some("2018-02-14"), Some("A"), Some("081203010024-000001")))))
       ).detail)
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")

@@ -72,7 +72,7 @@ class HomeController @Inject()(home: Home,
           dueChargesDetails <- financialDetailsService.getChargeDueDates(implicitly, mtdItUser)
         } yield {
           auditingService.extendedAudit(HomeAudit(
-            mtdItUser, dueChargesDetails, dueObligationDetails, user.agentReferenceNumber
+            mtdItUser, dueChargesDetails, dueObligationDetails
           ))
           Ok(view(dueChargesDetails, dueObligationDetails, overduePaymentExists(dueChargesDetails))(implicitly, mtdItUser))
         }

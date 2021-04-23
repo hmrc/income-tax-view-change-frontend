@@ -17,12 +17,13 @@ package controllers.agent
 
 import assets.BaseIntegrationTestConstants._
 import assets.messages.HomeMessages.agentTitle
-import audit.models.HomeAudit
+import audit.models.{HomeAudit, ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
 import controllers.Assets.INTERNAL_SERVER_ERROR
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
@@ -75,6 +76,23 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
   val testArn: String = "1"
 
   import implicitDateFormatter.longDate
+
+  val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    mtdbsa = testMtditid,
+    yearOfMigration = None,
+    businesses = List(BusinessDetailsModel(
+      "testId",
+      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+      None, None, None, None, None, None, None, None,
+      Some(getCurrentTaxYearEnd)
+    )),
+    property = None
+  )
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
+    incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent"), Some(testArn)
+  )(FakeRequest())
 
   s"GET ${routes.HomeController.show().url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
@@ -151,32 +169,22 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
               stubAuthorisedAgentUser(authorised = true)
 
-              val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
-                mtdbsa = testMtditid,
-                yearOfMigration = None,
-                businesses = List(BusinessDetailsModel(
-                  "testId",
-                  AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-                  None, None, None, None, None, None, None, None,
-                  Some(getCurrentTaxYearEnd)
-                )),
-                property = None
-              )
-
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
 
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                ReportDeadlinesModel(
+                  identification = "testId",
+                  obligations = List(
+                    ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+                  ))
+              ))
+
               IncomeTaxViewChangeStub.stubGetReportDeadlines(
                 nino = testNino,
-                deadlines = ObligationsModel(Seq(
-                  ReportDeadlinesModel(
-                    identification = "testId",
-                    obligations = List(
-                      ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
-                    ))
-                ))
+                deadlines = currentObligations
               )
 
               IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
@@ -213,15 +221,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 elementTextBySelector(".form-hint")("UTR: 1234567890 Client’s name Test User")
               )
 
-              AuditStub.verifyAuditContains(HomeAudit(
-                MtdItUser(
-                  testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
-                  incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent"), Some(testArn)
-                )(FakeRequest()),
-                Some(Left(LocalDate.now -> false)),
-                Left(LocalDate.now -> false),
-                Some(testArn)
-              ).detail)
+              verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now -> false)), Left(LocalDate.now -> false)).detail)
+              verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+              verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
           }
           "display the page with no upcoming payment" when {
@@ -233,17 +235,13 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
               AuditStub.stubAuditing()
 
-              val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
-                mtdbsa = testMtditid,
-                yearOfMigration = None,
-                businesses = List(BusinessDetailsModel(
-                  "testId",
-                  AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-                  None, None, None, None, None, None, None, None,
-                  Some(getCurrentTaxYearEnd)
-                )),
-                property = None
-              )
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                ReportDeadlinesModel(
+                  identification = "testId",
+                  obligations = List(
+                    ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+                  ))
+              ))
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
@@ -252,13 +250,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
               IncomeTaxViewChangeStub.stubGetReportDeadlines(
                 nino = testNino,
-                deadlines = ObligationsModel(Seq(
-                  ReportDeadlinesModel(
-                    identification = "testId",
-                    obligations = List(
-                      ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
-                    ))
-                ))
+                deadlines = currentObligations
               )
 
               IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
@@ -295,15 +287,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 elementTextBySelector(".form-hint")("UTR: 1234567890 Client’s name Test User")
               )
 
-              AuditStub.verifyAuditContains(HomeAudit(
-                MtdItUser(
-                  testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
-                  incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent"), Some(testArn)
-                )(FakeRequest()),
-                None,
-                Left(LocalDate.now -> false),
-                Some("1")
-              ).detail)
+              verifyAuditContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
+              verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+              verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
           }
           "display the page with an overdue payment and an overdue obligation" when {
@@ -315,32 +301,22 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
               AuditStub.stubAuditing()
 
-              val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
-                mtdbsa = testMtditid,
-                yearOfMigration = None,
-                businesses = List(BusinessDetailsModel(
-                  "testId",
-                  AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-                  None, None, None, None, None, None, None, None,
-                  Some(getCurrentTaxYearEnd)
-                )),
-                property = None
-              )
-
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
 
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                ReportDeadlinesModel(
+                  identification = "testId",
+                  obligations = List(
+                    ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
+                  ))
+              ))
+
               IncomeTaxViewChangeStub.stubGetReportDeadlines(
                 nino = testNino,
-                deadlines = ObligationsModel(Seq(
-                  ReportDeadlinesModel(
-                    identification = "testId",
-                    obligations = List(
-                      ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
-                    ))
-                ))
+                deadlines = currentObligations
               )
 
               IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
@@ -377,15 +353,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 elementTextBySelector(".form-hint")("UTR: 1234567890 Client’s name Test User")
               )
 
-              AuditStub.verifyAuditContains(HomeAudit(
-                MtdItUser(
-                  testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
-                  incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent"), Some(testArn)
-                )(FakeRequest()),
-                Some(Left(LocalDate.now.minusDays(1) -> true)),
-                Left(LocalDate.now.minusDays(1) -> true),
-                Some("1")
-              ).detail)
+              verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusDays(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
+              verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+              verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
           }
           "display the page with a count of the overdue payments a count of overdue obligations" when {
@@ -397,33 +367,23 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
               AuditStub.stubAuditing()
 
-              val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
-                mtdbsa = testMtditid,
-                yearOfMigration = None,
-                businesses = List(BusinessDetailsModel(
-                  "testId",
-                  AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-                  None, None, None, None, None, None, None, None,
-                  Some(getCurrentTaxYearEnd)
-                )),
-                property = None
-              )
-
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
 
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                ReportDeadlinesModel(
+                  identification = "testId",
+                  obligations = List(
+                    ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey"),
+                    ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(2), "Quarterly", None, "testPeriodKey")
+                  ))
+              ))
+
               IncomeTaxViewChangeStub.stubGetReportDeadlines(
                 nino = testNino,
-                deadlines = ObligationsModel(Seq(
-                  ReportDeadlinesModel(
-                    identification = "testId",
-                    obligations = List(
-                      ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey"),
-                      ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(2), "Quarterly", None, "testPeriodKey")
-                    ))
-                ))
+                deadlines = currentObligations
               )
 
               IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
@@ -472,15 +432,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 elementTextBySelector(".form-hint")("UTR: 1234567890 Client’s name Test User")
               )
 
-              AuditStub.verifyAuditContains(HomeAudit(
-                MtdItUser(
-                  testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
-                  incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent"), Some(testArn)
-                )(FakeRequest()),
-                Some(Right(2)),
-                Right(2),
-                Some(testArn)
-              ).detail)
+              verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
+              verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+              verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
           }
         }
@@ -492,28 +446,20 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
             status = OK,
-            response = IncomeSourceDetailsModel(
-              mtdbsa = testMtditid,
-              yearOfMigration = None,
-              businesses = List(BusinessDetailsModel(
-                "testId",
-                AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-                None, None, None, None, None, None, None, None,
-                Some(getCurrentTaxYearEnd)
-              )),
-              property = None
-            )
+            response = incomeSourceDetailsModel
           )
+
+          val currentObligations: ObligationsModel = ObligationsModel(Seq(
+            ReportDeadlinesModel(
+              identification = "testId",
+              obligations = List(
+                ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+              ))
+          ))
 
           IncomeTaxViewChangeStub.stubGetReportDeadlines(
             nino = testNino,
-            deadlines = ObligationsModel(Seq(
-              ReportDeadlinesModel(
-                identification = "testId",
-                obligations = List(
-                  ReportDeadlineModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
-                ))
-            ))
+            deadlines = currentObligations
           )
 
           IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
@@ -531,6 +477,9 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
             httpStatus(INTERNAL_SERVER_ERROR),
             pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
           )
+
+          verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+          verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
         }
       }
       "retrieving the client's obligations was unsuccessful" in {
@@ -541,17 +490,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
-          response = IncomeSourceDetailsModel(
-            mtdbsa = testMtditid,
-            yearOfMigration = None,
-            businesses = List(BusinessDetailsModel(
-              "testId",
-              AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-              None, None, None, None, None, None, None, None,
-              Some(getCurrentTaxYearEnd)
-            )),
-            property = None
-          )
+          response = incomeSourceDetailsModel
         )
 
         IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
@@ -572,17 +511,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = INTERNAL_SERVER_ERROR,
-        response = IncomeSourceDetailsModel(
-          mtdbsa = testMtditid,
-          yearOfMigration = None,
-          businesses = List(BusinessDetailsModel(
-            "testId",
-            AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-            None, None, None, None, None, None, None, None,
-            Some(getCurrentTaxYearEnd)
-          )),
-          property = None
-        )
+        response = incomeSourceDetailsModel
       )
 
       val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)

@@ -22,6 +22,7 @@ import controllers.BaseController
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
@@ -36,8 +37,8 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
 
   override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUser[A]]] = {
 
-    implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    implicit val req = request
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val req: MtdItUserWithNino[A] = request
 
     incomeSourceDetailsService.getIncomeSourceDetails() map {
       case sources: IncomeSourceDetailsModel =>

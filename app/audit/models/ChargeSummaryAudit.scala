@@ -25,8 +25,7 @@ import utils.Utilities._
 
 
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
-                              charge: Charge,
-                              agentReferenceNumber: Option[String]) extends ExtendedAuditModel {
+                              charge: Charge) extends ExtendedAuditModel {
 
   val getChargeType: String = charge.mainType match {
     case Some("SA Payment on Account 1") => "Payment on account 1 of 2"
@@ -50,7 +49,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
   override val transactionName: String = "charge-summary"
   override val detail: JsValue = {
     Json.obj("nationalInsuranceNumber" -> mtdItUser.nino) ++
-      ("agentReferenceNumber", agentReferenceNumber) ++
+      ("agentReferenceNumber", mtdItUser.arn) ++
       ("saUtr", mtdItUser.saUtr) ++
       userType(mtdItUser.userType) ++
       ("credId", mtdItUser.credId) ++

@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import audit.AuditingService
 import audit.models.BillsAuditing.BillsAuditModel
 import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
@@ -30,6 +28,7 @@ import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation._
 import models.financialDetails.{Charge, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, TransactionModel}
+import models.reportDeadlines.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -37,9 +36,9 @@ import play.twirl.api.Html
 import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.{taxYearOverview, taxYearOverviewOld}
-import javax.inject.{Inject, Singleton}
-import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel}
 
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -88,7 +87,7 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
         case CalcDisplayModel(_, calcAmount, calculation, _) =>
           auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
           if (calculation.crystallised) {
-            if(isEnabled(NewFinancialDetailsApi)) {
+            if (isEnabled(NewFinancialDetailsApi)) {
               financialDetailsService.getFinancialDetails(taxYear, user.nino) map {
                 case _: FinancialDetailsErrorModel =>
                   Logger.error(s"[CalculationController][showCalculationForYear] - Could not retrieve financial details model for year: $taxYear")
@@ -144,8 +143,8 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
 
   private def withObligationsModel(taxYear: Int)(implicit user: MtdItUser[AnyContent]) = {
     reportDeadlinesService.getReportDeadlines(
-      fromDate = LocalDate.of(taxYear-1, 4, 6),
-      toDate = LocalDate.of(taxYear,4,5)
+      fromDate = LocalDate.of(taxYear - 1, 4, 6),
+      toDate = LocalDate.of(taxYear, 4, 5)
     )
   }
 
@@ -159,10 +158,10 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
               case obligationsModel: ObligationsModel =>
                 auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, None, calculation, charges, obligationsModel))
                 Ok(view(taxYear, calculation, charge = charges, obligations = obligationsModel))
-                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
+                  .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }
-        }
+          }
         case CalcDisplayNoDataFound | CalcDisplayError =>
           Logger.error(s"[CalculationController][showTaxYearOverview] - Could not retrieve calculation for year $taxYear")
           Future.successful(itvcErrorHandler.showInternalServerError())

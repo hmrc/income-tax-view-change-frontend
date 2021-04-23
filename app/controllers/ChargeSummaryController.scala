@@ -61,8 +61,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
               val charge: Charge = success.financialDetails.find(_.transactionId == chargeId).get
               auditingService.extendedAudit(ChargeSummaryAudit(
                 mtdItUser = user,
-                charge = charge,
-                None
+                charge = charge
               ))
 
               Ok(view(charge, backLocation, taxYear))

@@ -16,6 +16,8 @@
 
 package controllers.agent
 
+import audit.AuditingService
+import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -34,12 +36,9 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.TaxYearOverview
+
 import java.time.LocalDate
-
-import audit.AuditingService
-import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import javax.inject.Inject
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,

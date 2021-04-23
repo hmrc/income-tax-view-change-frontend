@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
@@ -43,6 +41,8 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
+
+import java.time.LocalDate
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
@@ -92,7 +92,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         mockCalculationSuccess()
         mockFinancialDetailsSuccess()
         mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear , 4, 5))(
+          toDate = LocalDate.of(testYear, 4, 5))(
           response = testObligtionsModel
         )
 
@@ -121,7 +121,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           mockCalculationSuccess()
           mockFinancialDetailsNotFound()
           mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
-            toDate = LocalDate.of(testYear , 4, 5))(
+            toDate = LocalDate.of(testYear, 4, 5))(
             response = testObligtionsModel
           )
 
@@ -165,7 +165,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           mockCalculationCrystalisationSuccess()
           mockFinancialDetailsNotFound()
           mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
-            toDate = LocalDate.of(testYear , 4, 5))(
+            toDate = LocalDate.of(testYear, 4, 5))(
             response = ReportDeadlinesErrorModel(500, "INTERNAL_SERVER_ERROR")
           )
 
@@ -243,7 +243,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
       }
-
 
 
       "NewFinancialDetailsApi FS is disabled" when {

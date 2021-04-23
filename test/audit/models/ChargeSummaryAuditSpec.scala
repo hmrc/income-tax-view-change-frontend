@@ -49,15 +49,14 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     case Some("SA Payment on Account 1") => "Payment on account 1 of 2"
     case Some("SA Payment on Account 2") => "Payment on account 2 of 2"
     case Some("SA Balancing Charge") => "Remaining balance"
-    case error => {
+    case error =>
       Logger.error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
       "unknownCharge"
-    }
   }
 
   def chargeSummaryAuditFull(userType: Option[String] = Some("Agent"),
                              charge: Charge,
-                             agentReferenceNumber: Option[String]): ChargeSummaryAudit = ChargeSummaryAudit(
+                             agentReferenceNumber: Option[String] = Some("agentReferenceNumber")): ChargeSummaryAudit = ChargeSummaryAudit(
     mtdItUser = MtdItUser(
       mtditid = "mtditid",
       nino = "nino",
@@ -66,10 +65,9 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       saUtr = Some("saUtr"),
       credId = Some("credId"),
       userType = userType,
-      arn = None
+      arn = agentReferenceNumber
     ),
-    charge = charge,
-    agentReferenceNumber = Some("agentReferenceNumber")
+    charge = charge
   )
 
   val chargeSummaryAuditMin: ChargeSummaryAudit = ChargeSummaryAudit(
@@ -83,8 +81,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       userType = None,
       arn = None
     ),
-    charge = charge,
-    agentReferenceNumber = None
+    charge = charge
   )
 
   "ChargeSummaryAudit(mtdItUser, charge, agentReferenceNumber)" should {
@@ -109,7 +106,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
           chargeSummaryAuditFull(
             userType = Some("Agent"),
             charge = charge,
-            agentReferenceNumber = Some("arn")
+            agentReferenceNumber = Some("agentReferenceNumber")
           ).detail mustBe Json.obj(
             "agentReferenceNumber" -> "agentReferenceNumber",
             "nationalInsuranceNumber" -> "nino",
@@ -117,6 +114,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
             "userType" -> "Agent",
             "credId" -> "credId",
             "mtditid" -> "mtditid",
+            "agentReferenceNumber" -> "agentReferenceNumber",
             "charge" -> Json.obj(
               "chargeType" -> getChargeType,
               "dueDate" -> charge.due,

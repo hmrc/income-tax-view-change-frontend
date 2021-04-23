@@ -33,9 +33,9 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
     ec, app.injector.instanceOf[MessagesControllerComponents]
   )
 
-  lazy val userWithNino = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
+  lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
     Some("testUtr"), Some("testCredId"), Some("Individual"), None)
-  lazy val successResponse = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
+  lazy val successResponse: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
     Some("testUtr"), Some("testCredId"), Some("Individual"), None)
 
   "The IncomeSourceDetailsPredicate" when {
