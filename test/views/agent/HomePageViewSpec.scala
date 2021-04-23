@@ -14,25 +14,7 @@
  * limitations under the License.
  */
 
-/*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package views.agent
-
-import java.time.LocalDate
 
 import assets.BaseTestConstants._
 import assets.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
@@ -48,6 +30,8 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.{TestSupport, ViewSpec}
 import views.html.agent.Home
+
+import java.time.LocalDate
 
 
 class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
@@ -73,7 +57,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
   class Setup(nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = Some(Left(nextPaymentDue, false)),
               nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = Left(nextUpdateDue, false), paymentEnabled: Boolean = true,
-              paymentHistoryEnabled:Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
+              paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               overduePaymentExists: Boolean = false) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
@@ -149,12 +133,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       "dont display an overdue warning message when no payment is overdue" in new Setup(overduePaymentExists = false) {
-        getTextOfElementById("overdue-warning")shouldBe None
+        getTextOfElementById("overdue-warning") shouldBe None
       }
 
       "display an overdue warning message when a payment is overdue" in new Setup(overduePaymentExists = true) {
         val overdueMessage = "Warning You have overdue payments. You will be charged interest on these until they are paid in full."
-        getTextOfElementById("overdue-warning")shouldBe Some(overdueMessage)
+        getTextOfElementById("overdue-warning") shouldBe Some(overdueMessage)
       }
 
       "have an next updates due tile" which {

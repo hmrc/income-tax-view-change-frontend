@@ -19,6 +19,7 @@ package helpers.agent
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import forms.agent.ClientsUTRForm
+import helpers.servicemocks.AuditStub
 import helpers.servicemocks.AuthStub.getWithClientDetailsInSession
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
@@ -86,6 +87,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override def beforeEach(): Unit = {
     super.beforeEach()
     wireMockServer.resetMappings()
+    wireMockServer.resetScenarios()
+    AuditStub.stubAuditing()
   }
 
   override def afterAll(): Unit = {

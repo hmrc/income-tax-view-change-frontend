@@ -16,12 +16,10 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
-import assets.FinancialDetailsTestConstants.{chargeModel, financialDetailsModel, fullChargeModel, testValidFinancialDetailsModel}
+import assets.FinancialDetailsTestConstants.{chargeModel, fullChargeModel}
 import assets.FinancialTransactionsTestConstants.transactionModel
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.MessagesLookUp
@@ -36,13 +34,15 @@ import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockFinancialTransactionsService, MockReportDeadlinesService}
 import models.calculation.CalcOverview
-import models.financialDetails.{Charge, FinancialDetailsModel}
+import models.financialDetails.Charge
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
+
+import java.time.LocalDate
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
@@ -92,7 +92,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         mockCalculationSuccess()
         mockFinancialDetailsSuccess()
         mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear , 4, 5))(
+          toDate = LocalDate.of(testYear, 4, 5))(
           response = testObligtionsModel
         )
 
@@ -121,7 +121,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           mockCalculationSuccess()
           mockFinancialDetailsNotFound()
           mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
-            toDate = LocalDate.of(testYear , 4, 5))(
+            toDate = LocalDate.of(testYear, 4, 5))(
             response = testObligtionsModel
           )
 
@@ -165,7 +165,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           mockCalculationCrystalisationSuccess()
           mockFinancialDetailsNotFound()
           mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
-            toDate = LocalDate.of(testYear , 4, 5))(
+            toDate = LocalDate.of(testYear, 4, 5))(
             response = ReportDeadlinesErrorModel(500, "INTERNAL_SERVER_ERROR")
           )
 
@@ -243,7 +243,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
       }
-
 
 
       "NewFinancialDetailsApi FS is disabled" when {

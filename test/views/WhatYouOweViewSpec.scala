@@ -17,6 +17,7 @@
 package views
 
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import assets.FinancialDetailsTestConstants.{testFinancialDetailsModel, testFinancialDetailsModelWithChargesOfSameType}
 import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import assets.MessagesLookUp.{WhatYouOwe => whatYouOwe}
 import auth.MtdItUser
@@ -24,22 +25,19 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
-import models.outstandingCharges._
+import models.outstandingCharges.{OutstandingChargesModel, _}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import assets.FinancialDetailsTestConstants.{testFinancialDetailsModel, testFinancialDetailsModelWithChargesOfSameType}
-import models.outstandingCharges.OutstandingChargesModel
 
 import java.time.LocalDate
 
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
     Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
@@ -52,38 +50,38 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
-  def outstandingChargesModel(dueDate: String, aciAmount: BigDecimal = 12.67) = OutstandingChargesModel(
+  def outstandingChargesModel(dueDate: String, aciAmount: BigDecimal = 12.67): OutstandingChargesModel = OutstandingChargesModel(
     List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, aciAmount, 1234)))
 
-  val financialDetailsDueInMoreThan30Days = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+  val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
     List(Some(50), Some(75)), LocalDate.now().getYear.toString)
-  val outstandingChargesDueInMoreThan30Days = outstandingChargesModel(LocalDate.now().plusDays(35).toString)
-  val whatYouOweDataWithDataDueInMoreThan30Days = WhatYouOweChargesList(futurePayments = financialDetailsDueInMoreThan30Days.financialDetails,
+  val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(35).toString)
+  val whatYouOweDataWithDataDueInMoreThan30Days: WhatYouOweChargesList = WhatYouOweChargesList(futurePayments = financialDetailsDueInMoreThan30Days.financialDetails,
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days))
 
-  val financialDetailsDueIn30Days = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+  val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString)),
     List(Some(50), Some(75)), LocalDate.now().getYear.toString)
-  val outstandingChargesDueIn30Days = outstandingChargesModel(LocalDate.now().plusDays(30).toString)
-  val whatYouOweDataWithDataDueIn30Days = WhatYouOweChargesList(dueInThirtyDaysList = financialDetailsDueIn30Days.financialDetails,
+  val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(30).toString)
+  val whatYouOweDataWithDataDueIn30Days: WhatYouOweChargesList = WhatYouOweChargesList(dueInThirtyDaysList = financialDetailsDueIn30Days.financialDetails,
     outstandingChargesModel = Some(outstandingChargesDueIn30Days))
 
-  val financialDetailsOverdueData = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+  val financialDetailsOverdueData: FinancialDetailsModel = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
     List(Some(50), Some(75)), LocalDate.now().getYear.toString)
-  val outstandingChargesOverdueData = outstandingChargesModel(LocalDate.now().minusDays(30).toString)
-  val whatYouOweDataWithOverdueData = WhatYouOweChargesList(overduePaymentList = financialDetailsOverdueData.financialDetails,
+  val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(30).toString)
+  val whatYouOweDataWithOverdueData: WhatYouOweChargesList = WhatYouOweChargesList(overduePaymentList = financialDetailsOverdueData.financialDetails,
     outstandingChargesModel = Some(outstandingChargesOverdueData))
 
-  val financialDetailsWithMixedData = testFinancialDetailsModelWithChargesOfSameType(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+  val financialDetailsWithMixedData: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().plusDays(35).toString), Some(LocalDate.now().plusDays(30).toString), Some(LocalDate.now().minusDays(1).toString)),
     List(Some(25), Some(50), Some(75)), LocalDate.now().getYear.toString)
-  val whatYouOweDataWithMixedData = WhatYouOweChargesList(overduePaymentList = List(financialDetailsWithMixedData.financialDetails(2)),
+  val whatYouOweDataWithMixedData: WhatYouOweChargesList = WhatYouOweChargesList(overduePaymentList = List(financialDetailsWithMixedData.financialDetails(2)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData.financialDetails(1)), futurePayments = List(financialDetailsWithMixedData.financialDetails(0)))
 
-  val outstandingChargesWithAciValueZeroAndOverdue = outstandingChargesModel(LocalDate.now().minusDays(15).toString, 0.00)
-  val whatYouOweDataWithWithAciValueZeroAndOverdue = WhatYouOweChargesList(overduePaymentList = List(financialDetailsWithMixedData.financialDetails(2)),
+  val outstandingChargesWithAciValueZeroAndOverdue: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(15).toString, 0.00)
+  val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(overduePaymentList = List(financialDetailsWithMixedData.financialDetails(2)),
     dueInThirtyDaysList = List(financialDetailsWithMixedData.financialDetails(1)), futurePayments = List(financialDetailsWithMixedData.financialDetails(0)),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )

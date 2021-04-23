@@ -16,23 +16,21 @@
 
 package views
 
-import java.time.LocalDate
-
 import assets.BaseTestConstants._
 import assets.MessagesLookUp.{Core => coreMessages, HomePage => homeMessages}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import play.api.i18n.Messages.Implicits._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
+
+import java.time.LocalDate
 
 
 class HomePageViewSpec extends TestSupport with FeatureSwitching {
@@ -43,7 +41,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     testMtditid,
     testNino,
     Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testMtditid,None,Nil, None),
+    IncomeSourceDetailsModel(testMtditid, None, Nil, None),
     Some("testUtr"),
     Some("testCredId"),
     Some("Individual"),
@@ -54,11 +52,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val updateDateLongDate = "1 January 2018"
   val multipleOverdueUpdates = "3 OVERDUE UPDATES"
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
-	val paymentDateLongDate = "31 January 2019"
-	val multipleOverduePayments = "3 OVERDUE PAYMENTS"
+  val paymentDateLongDate = "31 January 2019"
+  val multipleOverduePayments = "3 OVERDUE PAYMENTS"
   val overdueMessage = "Warning You have overdue payments. You will be charged interest on these until they are paid in full."
 
-	class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePayments: Option[Int] = Some(0),
+  class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePayments: Option[Int] = Some(0),
               overDueUpdates: Option[Int] = Some(0), paymentEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
 
     lazy val page: HtmlFormat.Appendable = views.html.home(
@@ -107,9 +105,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has the date of the next update due" in new Setup {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDateLongDate)
       }
-			"display an overdue tag when a single update is overdue" in new Setup(overDueUpdates = Some(1)) {
-				getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + updateDateLongDate)
-			}
+      "display an overdue tag when a single update is overdue" in new Setup(overDueUpdates = Some(1)) {
+        getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + updateDateLongDate)
+      }
       "has the correct number of overdue updates when three updates are overdue" in new Setup(overDueUpdates = Some(3)) {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverdueUpdates)
       }
@@ -120,35 +118,35 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
     }
 
-		"have a payments due tile" which {
-			"has a heading" in new Setup {
-				getElementById("payments-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentsHeading)
-			}
-			"has the date of the next update due" in new Setup {
-				getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
-			}
-
-      "dont display an overdue warning message when no payment is overdue" in new Setup(overDuePayments = Some(0)) {
-        getTextOfElementById("overdue-warning")shouldBe None
+    "have a payments due tile" which {
+      "has a heading" in new Setup {
+        getElementById("payments-tile").map(_.select("h2").text) shouldBe Some(homeMessages.paymentsHeading)
+      }
+      "has the date of the next update due" in new Setup {
+        getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
       }
 
-			"display an overdue warning message when a payment is overdue" in new Setup(overDuePayments = Some(1)) {
-        getTextOfElementById("overdue-warning")shouldBe Some(overdueMessage)
-			}
+      "dont display an overdue warning message when no payment is overdue" in new Setup(overDuePayments = Some(0)) {
+        getTextOfElementById("overdue-warning") shouldBe None
+      }
+
+      "display an overdue warning message when a payment is overdue" in new Setup(overDuePayments = Some(1)) {
+        getTextOfElementById("overdue-warning") shouldBe Some(overdueMessage)
+      }
 
       "display an overdue tag when a single update is overdue" in new Setup(overDuePayments = Some(1)) {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + paymentDateLongDate)
       }
 
-			"has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePayments = Some(3)) {
-				getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverduePayments)
-			}
-			"has a link to view payments" in new Setup {
-				val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
-				link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentDueController.viewPaymentsDue().url)
-				link.map(_.text) shouldBe Some(homeMessages.paymentLink)
-			}
-		}
+      "has the correct number of overdue updates when three updates are overdue" in new Setup(overDuePayments = Some(3)) {
+        getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverduePayments)
+      }
+      "has a link to view payments" in new Setup {
+        val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentDueController.viewPaymentsDue().url)
+        link.map(_.text) shouldBe Some(homeMessages.paymentLink)
+      }
+    }
 
     "have a tax years tile" which {
       "has a heading" in new Setup {

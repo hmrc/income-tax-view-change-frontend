@@ -19,13 +19,13 @@ package audit.models
 import audit.Utilities._
 import auth.MtdItUser
 import play.api.libs.json.{JsObject, JsValue, Json}
+import utils.Utilities.JsonUtil
 
 import java.time.LocalDate
 
 case class HomeAudit(mtdItUser: MtdItUser[_],
                      nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
-                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int],
-                     agentReferenceNumber: Option[String]) extends ExtendedAuditModel {
+                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int]) extends ExtendedAuditModel {
 
   private val paymentsInformation: JsObject = nextPaymentOrOverdue match {
     case Some(Right(count)) => Json.obj("overduePayments" -> count)
@@ -39,16 +39,15 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
   }
 
   override val transactionName: String = "itsa-home-page"
-  override val detail: JsValue = {
-    agentReferenceNumber.fold(Json.obj())(arn => Json.obj("agentReferenceNumber" -> arn)) ++
-      Json.obj("nationalInsuranceNumber" -> mtdItUser.nino) ++
-      mtdItUser.saUtr.fold(Json.obj())(sautr => Json.obj("saUtr" -> sautr)) ++
-      userType(mtdItUser.userType) ++
-      mtdItUser.credId.fold(Json.obj())(credId => Json.obj("credId" -> credId)) ++
-      Json.obj("mtditid" -> mtdItUser.mtditid) ++
-      paymentsInformation ++
-      updatesInformation
-  }
+
+  override val detail: JsValue = Json.obj(
+    "mtditid" -> mtdItUser.mtditid,
+    "nationalInsuranceNumber" -> mtdItUser.nino
+  ) ++ userType(mtdItUser.userType) ++ paymentsInformation ++ updatesInformation ++
+    ("saUtr", mtdItUser.saUtr) ++
+    ("credId", mtdItUser.credId) ++
+    ("agentReferenceNumber", mtdItUser.arn)
+
   override val auditType: String = "ItsaHomePage"
 
 }
@@ -76,7 +75,6 @@ object HomeAudit {
       mtdItUser,
       nextPaymentOrOverdue = nextPaymentOrOverdue,
       nextUpdateOrOverdue = nextUpdateOrOverdue,
-      agentReferenceNumber = None
     )
   }
 }

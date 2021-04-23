@@ -20,16 +20,22 @@ import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
-import audit.models.HomeAudit
+import audit.models.{HomeAudit, ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{Bills, NewFinancialDetailsApi, Payment}
 import helpers.ComponentSpecBase
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{AuditStub, FinancialTransactionsStub, IncomeTaxViewChangeStub}
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
 
 class HomeControllerISpec extends ComponentSpecBase {
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None,
+    multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+  )(FakeRequest())
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {
     enable(Payment)
@@ -67,15 +73,12 @@ class HomeControllerISpec extends ComponentSpecBase {
           elementTextBySelector("#payments-tile > div > p:nth-child(2)")("2 OVERDUE PAYMENTS")
         )
 
-        AuditStub.verifyAuditContains(HomeAudit(
-          MtdItUser(
-            testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()),
-          Some(Right(2)),
-          Right(4),
-          None
-        ).detail)
+        verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(4)).detail)
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
       }
 
       "render the home page with the payment due date with NewFinancialDetailsApi FS enabled" in {
@@ -84,13 +87,15 @@ class HomeControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-        And("I wiremock stub obligation responses")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(
+        val currentObligations: ObligationsModel = ObligationsModel(Seq(
           singleObligationQuarterlyReturnModel(testSelfEmploymentId),
           singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
           singleObligationOverdueModel(testPropertyId),
           singleObligationCrystallisationModel
-        )))
+        ))
+
+        And("I wiremock stub obligation responses")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, currentObligations)
 
         And("I stub a successful financial details response")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, "2017-04-06", "2018-04-05")(OK,
@@ -114,15 +119,12 @@ class HomeControllerISpec extends ComponentSpecBase {
         )
         disable(NewFinancialDetailsApi)
 
-        AuditStub.verifyAuditContains(HomeAudit(
-          MtdItUser(
-            testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()),
-          Some(Right(6)),
-          Right(4),
-          None
-        ).detail)
+        verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
       }
 
       "render the ISE page when receive an error from the backend" in {

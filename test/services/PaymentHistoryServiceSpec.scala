@@ -16,21 +16,19 @@
 
 package services
 
-import java.time.LocalDate
-
-import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName, testTaxYear}
-import assets.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, oldUserDetails}
+import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import assets.IncomeSourceDetailsTestConstants.oldUserDetails
 import auth.MtdItUser
 import config.featureswitch.{API5, FeatureSwitching}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
-import models.financialDetails.{Payment, Payments, PaymentsError, PaymentsResponse}
-import play.api.libs.json.{JsObject, Json}
+import models.financialDetails.{Payment, Payments, PaymentsError}
 import play.api.test.FakeRequest
-import services.PaymentHistoryService
 import services.PaymentHistoryService.PaymentHistoryError
 import testUtils.TestSupport
 
-class PaymentHistoryServiceSpec  extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
+import java.time.LocalDate
+
+class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -41,7 +39,6 @@ class PaymentHistoryServiceSpec  extends TestSupport with MockIncomeTaxViewChang
     val currentDate = LocalDate.now
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1
-
   }
 
   val paymentFull: Payment = Payment(
@@ -77,16 +74,16 @@ class PaymentHistoryServiceSpec  extends TestSupport with MockIncomeTaxViewChang
       }
     }
 
-      "a successful Payment History response is returned from the connector" should {
-            "return a list of payments and ignore any payment data not found (404s)" in {
-              setupGetPayments(getCurrentTaxEndYear)(PaymentsError(404, "NOT FOUND"))
-              setupGetPayments(getCurrentTaxEndYear - 1)(Payments(List(paymentFull)))
-              await(TestPaymentHistoryService.getPaymentHistory) shouldBe Right(List(paymentFull))
-            }
-
+    "a successful Payment History response is returned from the connector" should {
+      "return a list of payments and ignore any payment data not found (404s)" in {
+        setupGetPayments(getCurrentTaxEndYear)(PaymentsError(404, "NOT FOUND"))
+        setupGetPayments(getCurrentTaxEndYear - 1)(Payments(List(paymentFull)))
+        await(TestPaymentHistoryService.getPaymentHistory) shouldBe Right(List(paymentFull))
       }
 
-  }
+    }
 
   }
+
+}
 

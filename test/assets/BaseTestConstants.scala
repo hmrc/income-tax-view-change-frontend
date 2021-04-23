@@ -46,6 +46,8 @@ object BaseTestConstants {
   lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName), Some("saUtr"), Some("credId"), userType = Some("Individual"), arn = None)(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
     businessesAndPropertyIncome, Some("saUtr"), Some("credId"), Some("Individual"), None)(FakeRequest())
+  lazy val testMtdItAgentUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+    businessesAndPropertyIncome, Some("saUtr"), Some("credId"), Some("Agent"), Some(testArn))(FakeRequest())
   val testSelfEmploymentId = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"

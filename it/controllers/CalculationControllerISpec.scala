@@ -16,17 +16,16 @@
 
 package controllers
 
-import java.time.{LocalDate, LocalDateTime}
-
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.TaxYearOverviewMessages
-import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
+import audit.models.{ReportDeadlinesRequestAuditModel, ReportDeadlinesResponseAuditModel, TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, TaxYearOverviewUpdate}
 import helpers.ComponentSpecBase
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation.{CalculationItem, ListCalculationItems}
@@ -37,12 +36,12 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 
+import java.time.{LocalDate, LocalDateTime}
+
 class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
-
-  import implicitDateFormatter.longDate
 
   val getCurrentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.now
@@ -105,13 +104,13 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
       identification = "ABC123456789",
       obligations = List(
         ReportDeadlineModel(
-        start = getCurrentTaxYearEnd.minusMonths(3),
-        end = getCurrentTaxYearEnd,
-        due = getCurrentTaxYearEnd,
-        obligationType = "EOPS",
-        dateReceived = Some(getCurrentTaxYearEnd),
-        periodKey = "EOPS"
-      ))
+          start = getCurrentTaxYearEnd.minusMonths(3),
+          end = getCurrentTaxYearEnd,
+          due = getCurrentTaxYearEnd,
+          obligationType = "EOPS",
+          dateReceived = Some(getCurrentTaxYearEnd),
+          periodKey = "EOPS"
+        ))
     ),
     ReportDeadlinesModel(
       identification = "ABC123456789",
@@ -123,11 +122,16 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           obligationType = "Quarterly",
           dateReceived = Some(getCurrentTaxYearEnd.minusDays(1)),
           periodKey = "#004"
-      ))
+        ))
     )
   ))
 
   unauthorisedTest(s"/calculation/$testYear")
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None,
+    singleBusinessResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+  )(FakeRequest())
 
   s"GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}" when {
 
@@ -183,6 +187,10 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
         )
+
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
         res should have(
@@ -267,6 +275,9 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString)
 
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("Page is displayed with no payments due")
         res should have(
@@ -319,7 +330,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           httpStatus(INTERNAL_SERVER_ERROR)
         )
 
-        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
           MtdItUser(testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
           )(FakeRequest()), None).detail)
@@ -345,7 +356,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           httpStatus(INTERNAL_SERVER_ERROR)
         )
 
-        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
           MtdItUser(testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
           )(FakeRequest()), None).detail)
@@ -389,7 +400,7 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
           httpStatus(INTERNAL_SERVER_ERROR)
         )
 
-        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
           MtdItUser(testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
           )(FakeRequest()), None).detail)
@@ -428,12 +439,15 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
+        verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
+        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", Nil).detail)
+
         And("Internal server error is returned")
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
 
-        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+        AuditStub.verifyAuditContainsDetail(TaxYearOverviewRequestAuditModel(
           MtdItUser(testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
           )(FakeRequest()), None).detail)

@@ -30,7 +30,7 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
   val transactionName: String = "itsa-home-page"
   val auditType: String = "ItsaHomePage"
 
-  def homeAuditFull(userType: Option[String] = Some("Agent"),
+  def homeAuditFull(userType: Option[String] = Some("Agent"), agentReferenceNumber: Option[String] = Some("agentReferenceNumber"),
                     nextPaymentOrOverdue: Either[(LocalDate, Boolean), Int],
                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int]): HomeAudit = HomeAudit(
     mtdItUser = MtdItUser(
@@ -41,11 +41,10 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
       saUtr = Some("saUtr"),
       credId = Some("credId"),
       userType = userType,
-      arn = None
+      arn = agentReferenceNumber
     ),
     nextPaymentOrOverdue = Some(nextPaymentOrOverdue),
-    nextUpdateOrOverdue = nextUpdateOrOverdue,
-    agentReferenceNumber = Some("agentReferenceNumber")
+    nextUpdateOrOverdue = nextUpdateOrOverdue
   )
 
   val homeAuditMin: HomeAudit = HomeAudit(
@@ -60,8 +59,7 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
       arn = None
     ),
     nextPaymentOrOverdue = None,
-    nextUpdateOrOverdue = Right(2),
-    agentReferenceNumber = None
+    nextUpdateOrOverdue = Right(2)
   )
 
   "HomeAudit(mtdItUser, nextPaymentOrOverdue, nextUpdateOrOverdue, agentReferenceNumber)" should {
@@ -95,7 +93,8 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
             "credId" -> "credId",
             "mtditid" -> "mtditid",
             "overduePayments" -> 2,
-            "overdueUpdates" -> 2
+            "overdueUpdates" -> 2,
+            "agentReferenceNumber" -> "agentReferenceNumber"
           )
         }
         "there is are payments and updates due which are not overdue" in {
@@ -111,7 +110,8 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
             "credId" -> "credId",
             "mtditid" -> "mtditid",
             "nextPaymentDeadline" -> LocalDate.now.toString,
-            "nextUpdateDeadline" -> LocalDate.now.toString
+            "nextUpdateDeadline" -> LocalDate.now.toString,
+            "agentReferenceNumber" -> "agentReferenceNumber"
           )
         }
       }

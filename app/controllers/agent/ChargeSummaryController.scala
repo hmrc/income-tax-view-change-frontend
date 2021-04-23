@@ -71,8 +71,7 @@ class ChargeSummaryController @Inject()(chargeSummary: ChargeSummary,
                 getMtdItUserWithIncomeSources(incomeSourceDetailsService) map { mtdItUser =>
                   auditingService.extendedAudit(ChargeSummaryAudit(
                     mtdItUser = mtdItUser,
-                    charge = charge,
-                    agentReferenceNumber = user.agentReferenceNumber
+                    charge = charge
                   ))
 
                 }

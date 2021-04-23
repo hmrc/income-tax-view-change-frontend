@@ -16,7 +16,7 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
+import assets.BaseTestConstants.{testArn, testCredId, testMtdItAgentUser, testMtditid, testNino, testSaUtr, testUserType}
 import play.api.libs.json.Json
 import testUtils.TestSupport
 
@@ -27,8 +27,7 @@ class ReportDeadlinesRequestAuditModelSpec extends TestSupport {
 
   "The ReportDeadlinesRequestAuditModel" should {
 
-    lazy val testReportDeadlinesRequestAuditModel = ReportDeadlinesRequestAuditModel(testMtditid, testNino,
-      Some(testSaUtr), Some(testCredId), Some(testUserType))
+    lazy val testReportDeadlinesRequestAuditModel = ReportDeadlinesRequestAuditModel(testMtdItAgentUser)
 
     s"Have the correct transaction name of '$transactionName'" in {
       testReportDeadlinesRequestAuditModel.transactionName shouldBe transactionName
@@ -38,14 +37,17 @@ class ReportDeadlinesRequestAuditModelSpec extends TestSupport {
       testReportDeadlinesRequestAuditModel.auditType shouldBe auditEvent
     }
 
-    "Have the correct details for the audit event" in {
-      testReportDeadlinesRequestAuditModel.detail shouldBe Json.obj(
-        "mtditid" -> testMtditid,
-        "nationalInsuranceNumber" -> testNino,
-        "saUtr" -> testSaUtr,
-        "credId" -> testCredId,
-        "userType" -> testUserType
-      )
+    "Have the correct details for the audit event" when {
+      "information for the audit is complete" in {
+        testReportDeadlinesRequestAuditModel.detail shouldBe Json.obj(
+          "mtditid" -> testMtditid,
+          "nationalInsuranceNumber" -> testNino,
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> "Agent",
+          "agentReferenceNumber" -> testArn
+        )
+      }
     }
   }
 }

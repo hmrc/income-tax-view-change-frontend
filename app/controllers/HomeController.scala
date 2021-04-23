@@ -54,7 +54,8 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                dateFormatter: ImplicitDateFormatterImpl,
                                auditingService: AuditingService) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int])(implicit request: Request[_], user: MtdItUser[_]): Html = {
+  private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int])
+                  (implicit request: Request[_], user: MtdItUser[_]): Html = {
     views.html.home(
       nextPaymentDueDate = nextPaymentDueDate,
       nextUpdate = nextUpdate,
@@ -80,12 +81,10 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
           }
         }) map {
           _.filter(_ match {
-            case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty => {
+            case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty =>
               ftm.financialTransactions.get.exists(!_.isPaid)
-            }
-            case fdm: FinancialDetailsModel if fdm.financialDetails.nonEmpty => {
+            case fdm: FinancialDetailsModel if fdm.financialDetails.nonEmpty =>
               fdm.financialDetails.exists(!_.isPaid)
-            }
             case _ =>
               false
           }) flatMap {
@@ -112,10 +111,9 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
         }
 
       }.recover {
-        case ex => {
+        case ex =>
           Logger.error(s"[HomeController][home] Downstream error, ${ex.getMessage}")
           itvcErrorHandler.showInternalServerError()
-        }
       }
   }
 }
