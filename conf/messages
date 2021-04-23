@@ -233,7 +233,9 @@ taxCal_breakdown.table.ZRTAR                                        = Additional
 taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Income Tax and National Insurance contributions due
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
 
-taxCal_breakdown.table.nic2                                         = Class 2 National Insurance
+taxCal_breakdown.table.nic2.false                                   = Class 2 National Insurance
+taxCal_breakdown.table.nic2.true                                    = Voluntary Class 2 National Insurance
+
 taxCal_breakdown.table.banks_and_building_societies                 = Interest received from UK banks and building societies
 
 taxCal_breakdown.taxDeductedAtSource								= Tax deductions

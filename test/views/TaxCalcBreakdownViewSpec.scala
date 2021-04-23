@@ -155,6 +155,10 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         CalcBreakdownTestConstants.testCalcModelCrystallised,
         Crystallised), taxYear, backUrl)
 
+      lazy val viewNic2 = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.testCalcModelNic2,
+        Crystallised), taxYear, backUrl)
+
       lazy val viewAllIncome = taxCalcBreakdown(CalcDisplayModel("", 1,
         CalcBreakdownTestConstants.calculationAllIncomeSources,
         Crystallised), taxYear, backUrl)
@@ -467,7 +471,13 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
           content.table(7).h3.text() shouldBe TaxCalcBreakdown.otherCharges
         }
 
-        "has a Nic2 line with the correct value" in new Setup(view) {
+        "has a Voluntary Nic line with the correct value" in new Setup(view) {
+          val row: Element = content.table(6).select("tr").get(0)
+          row.select("td").first().text() shouldBe TaxCalcBreakdown.VoluntaryNic2
+          row.select("td").last().text() shouldBe "£10,000.00"
+        }
+
+        "has a Nic2 line with the correct value" in new Setup(viewNic2) {
           val row: Element = content.table(6).select("tr").get(0)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.Nic2
           row.select("td").last().text() shouldBe "£10,000.00"

@@ -195,12 +195,12 @@
                 <tbody>
                 @calcModel.calcDataModel.nic.class2.map { amount =>
                     <tr>
-                        <td>@messages("taxCal_breakdown.table.nic2")</td>
-                        <td class="numeric">@{
-                            amount.toCurrency
-                        }</td>
+                        @calcModel.calcDataModel.nic.class2VoluntaryContributions.map { voluntary =>
+                        <td>@messages(s"taxCal_breakdown.table.nic2.${voluntary}")</td>
+                        <td class="numeric">@{amount.toCurrency}</td>
+                        }
                     </tr>
-                }
+                    }
                 </tbody>
                 <tbody>
                 @calcModel.calcDataModel.reductionsAndCharges.giftAidTax.map { amount =>
