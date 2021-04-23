@@ -254,6 +254,7 @@ object MessagesLookUp {
     val totalStudentLoansRepaymentAmount: String = "Student Loan repayments"
     //additional charges table
     val Nic2: String = "Class 2 National Insurance"
+    val VoluntaryNic2: String = "Voluntary Class 2 National Insurance"
     //additional deduction
     val BBSI: String = "Interest received from UK banks and building societies"
     val employments: String = "All employments"
