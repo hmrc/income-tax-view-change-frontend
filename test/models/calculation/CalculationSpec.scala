@@ -93,6 +93,16 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       Some(800.0),
       Some(700.0),
       Some(1.0)
+    ),
+    lumpSums = LumpSums(
+      bands = List(
+        TaxBand("LSBand", 1.0, 2.0, 3.0)
+      )
+    ),
+    gainsOnLifePolicies = GainsOnLifePolicies(
+      bands = List(
+        TaxBand("GOLPBand", 1.0, 2.0, 3.0)
+      )
     )
   )
   val minimalModel: Calculation = Calculation(
@@ -163,6 +173,26 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
             "taxBands" -> Json.arr(
               Json.obj(
                 "name" -> "SAGBand",
+                "rate" -> 1.0,
+                "income" -> 2.0,
+                "taxAmount" -> 3.0
+              )
+            )
+          ),
+          "lumpSums" -> Json.obj(
+            "taxBands" -> Json.arr(
+              Json.obj(
+                "name" -> "LSBand",
+                "rate" -> 1.0,
+                "income" -> 2.0,
+                "taxAmount" -> 3.0
+              )
+            )
+          ),
+          "gainsOnLifePolicies" -> Json.obj(
+            "taxBands" -> Json.arr(
+              Json.obj(
+                "name" -> "GOLPBand",
                 "rate" -> 1.0,
                 "income" -> 2.0,
                 "taxAmount" -> 3.0
@@ -402,6 +432,26 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       "savings" -> 800,
       "total" -> 700,
       "totalIncomeTaxAndNicsDue" -> 1
+    ),
+    "lumpSums" -> Json.obj(
+      "bands" -> Json.arr(
+        Json.obj(
+          "name" -> "LSBand",
+          "rate" -> 1.0,
+          "income" -> 2.0,
+          "taxAmount" -> 3.0
+        )
+      )
+    ),
+    "gainsOnLifePolicies" -> Json.obj(
+      "bands" -> Json.arr(
+        Json.obj(
+          "name" -> "GOLPBand",
+          "rate" -> 1.0,
+          "income" -> 2.0,
+          "taxAmount" -> 3.0
+        )
+      )
     )
   )
   val minimalWriteJson: JsObject = Json.obj(
@@ -418,7 +468,13 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     ),
     "allowancesAndDeductions" -> Json.obj(),
     "nic" -> Json.obj(),
-    "taxDeductedAtSource" -> Json.obj()
+    "taxDeductedAtSource" -> Json.obj(),
+    "lumpSums" -> Json.obj(
+      "bands" -> Json.arr()
+    ),
+    "gainsOnLifePolicies" -> Json.obj(
+      "bands" -> Json.arr()
+    )
   )
 
   "Calculation" must {

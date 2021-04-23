@@ -198,6 +198,8 @@ object MessagesLookUp {
     val sectionHeadingPPP: String = "Pay, pensions and profit"
     val sectionHeadingSavings: String = "Savings"
     val sectionHeadingDividends: String = "Dividends"
+    val sectionHeadingLumpSums: String = "Employment lump sums"
+    val sectionHeadingGainsOnLifePolicies: String = "Gains on life policies"
     val sectionHeadingAdditionalChar: String = "Additional charges"
     val sectionHeadingTaxReductions: String = "Tax reductions"
     val deficiencyRelief: String = "Deficiency Relief"
@@ -217,8 +219,8 @@ object MessagesLookUp {
     val sectionHeadingAdditionalDeduc: String = "Tax deductions"
     val sectionHeadingTotal: String = "Income Tax and National Insurance contributions due"
     val guidance: String = "This calculation is based on your taxable income of £0.00"
-    val regime: String = "Tax regime: UK"
-    val regimeScotland: String = "Tax regime: Scotland"
+    val regimeUkRateText: String = "(UK rate for England, Wales and Northern Ireland)"
+    val regimeScotlandRateText: String = "(Rate for Scotland)"
     val regimeWales: String = "Tax regime: Wales"
     //pay, pension and profit table
     val pPP_BRT: String = "Basic rate (£20,000.00 at 20.0%)"
@@ -230,6 +232,18 @@ object MessagesLookUp {
     val pPP_Scot_IRT: String = "Intermediate rate (£20,000.00 at 25.0%)"
     val pPP_Scot_HRT: String = "Higher rate (£100,000.00 at 40.0%)"
     val pPP_Scot_ART: String = "Top rate (£500,000.00 at 45.0%)"
+    //lump sums table for Scotland
+    val ls_Scot_SRT: String = "Starter rate (£20,000.00 at 10.0%)"
+    val ls_Scot_BRT: String = "Basic rate (£20,000.00 at 20.0%)"
+    val ls_Scot_IRT: String = "Intermediate rate (£20,000.00 at 25.0%)"
+    val ls_Scot_HRT: String = "Higher rate (£100,000.00 at 40.0%)"
+    val ls_Scot_ART: String = "Top rate (£500,000.00 at 45.0%)"
+    //Gains on life policies for scotland
+    val gols_Scot_SRT: String = "Starter rate (£20,000.00 at 10.0%)"
+    val gols_Scot_BRT: String = "Basic rate (£20,000.00 at 20.0%)"
+    val gols_Scot_IRT: String = "Intermediate rate (£20,000.00 at 25.0%)"
+    val gols_Scot_HRT: String = "Higher rate (£100,000.00 at 40.0%)"
+    val gols_Scot_ART: String = "Top rate (£500,000.00 at 45.0%)"
     //savings table
     val saving_SSR: String = "Starting rate (£1.00 at 0.0%)"
     val saving_BRT: String = "Basic rate (£20.00 at 10.0%)"
@@ -244,6 +258,14 @@ object MessagesLookUp {
     val dividend_ZRTBR: String = "Basic rate band at nil rate (£1,000.00 at 0%)"
     val dividend_ZRTHR: String = "Higher rate band at nil rate (£2,000.00 at 0%)"
     val dividend_ZRTAR: String = "Additional rate band at nil rate (£3,000.00 at 0%)"
+    //lump sums table
+    val ls_BRT: String = "Basic rate (£20,000.00 at 20.0%)"
+    val ls_HRT: String = "Higher rate (£100,000.00 at 40.0%)"
+    val ls_ART: String = "Additional rate (£50,000.00 at 45.0%)"
+    //gains on life policies table
+    val gols_BRT: String = "Basic rate (£20,000.00 at 20.0%)"
+    val gols_HRT: String = "Higher rate (£100,000.00 at 40.0%)"
+    val gols_ART: String = "Additional rate (£50,000.00 at 45.0%)"
     //Class 4 National Insurance
     val Nic4_ZRT: String = "Zero rate (£2,000.00 at 1%)"
     val Nic4_BRT: String = "Basic rate (£3,000.00 at 2%)"
