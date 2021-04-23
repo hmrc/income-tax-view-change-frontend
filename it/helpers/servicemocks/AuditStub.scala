@@ -17,7 +17,7 @@
 package helpers.servicemocks
 
 import controllers.Assets.NO_CONTENT
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 
 object AuditStub extends WiremockMethods {
 
@@ -37,5 +37,9 @@ object AuditStub extends WiremockMethods {
 
   def verifyAuditContains(body: JsValue): Unit = {
     verifyContains(method = POST, uri = "/write/audit", body)
+  }
+
+  def verifyAuditContainsDetail(body: JsValue): Unit = {
+    verifyContainsJson(method = POST, uri = "/write/audit", Json.obj("detail" -> body))
   }
 }
