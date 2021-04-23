@@ -27,21 +27,21 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import testUtils.TestSupport
 
-class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLookupService with EitherValues{
+class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLookupService with EitherValues {
 
   "The NinoPredicate" when {
 
     lazy val userNoNino = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some("individual"))(fakeRequestWithActiveSession)
+      Some("testUtr"), Some("testCredId"), Some("Individual"))(fakeRequestWithActiveSession)
     lazy val userNinoInSession = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some("individual"))(fakeRequestWithNino)
+      Some("testUtr"), Some("testCredId"), Some("Individual"))(fakeRequestWithNino)
     lazy val userWithNino = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some("individual"))(fakeRequestWithActiveSession)
+      Some("testUtr"), Some("testCredId"), Some("Individual"))(fakeRequestWithActiveSession)
     lazy val successResponse = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some("individual"))
+      Some("testUtr"), Some("testCredId"), Some("Individual"), None)
 
     lazy val ninoServiceSuccess = Nino(testNino)
-    lazy val ninoServiceError   = NinoResponseError(testErrorStatus, testErrorMessage)
+    lazy val ninoServiceError = NinoResponseError(testErrorStatus, testErrorMessage)
 
     object TestPredicate extends NinoPredicate(
       mockNinoLookupService,

@@ -37,21 +37,22 @@ object BaseTestConstants {
   val idType: String = "utr"
   val testArn = "XAIT0000123456"
   val testCredId = "credId"
-  val testUserType = "individual"
+  val testUserType = "Individual"
   val testTaxYear = 2018
   val testUserName = "Albert Einstein"
   val testRetrievedUserName: Name = Name(Some(testUserName), None)
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
-  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
-  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName), Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
+  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some("saUtr"), Some("credId"), Some("Individual"))(FakeRequest())
+  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName), Some("saUtr"), Some("credId"), userType = Some("Individual"), arn = None)(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    businessesAndPropertyIncome, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
+    businessesAndPropertyIncome, Some("saUtr"), Some("credId"), Some("Individual"), None)(FakeRequest())
   val testSelfEmploymentId = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
   val testYear2017 = 2017
+  val testMigrationYear2019 = "2019"
   val testFrom = "2016-04-06"
   val testTo = "2017-04-05"
   val testPaymentLot = "081203010024"

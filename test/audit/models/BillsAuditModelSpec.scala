@@ -46,7 +46,7 @@ class BillsAuditModelSpec extends TestSupport {
         "currentBill" -> "123.45",
         "saUtr" -> "saUtr",
         "credId" -> "credId",
-        "userType" -> "individual"
+        "userType" -> "Individual"
       )
     }
   }

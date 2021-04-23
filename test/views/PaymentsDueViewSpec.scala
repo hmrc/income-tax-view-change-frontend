@@ -41,12 +41,12 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
 
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
-    Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
+    Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
   class Setup(transactionsModel: List[FinancialTransactionsModel] = List(), charges: List[FinancialDetailsModel] = List(),
               paymentEnabled: Boolean = false) {
     val html: HtmlFormat.Appendable = views.html.paymentDue(transactionsModel, charges,
-      paymentEnabled,"testBackURL", mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
+      paymentEnabled, "testBackURL", mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 

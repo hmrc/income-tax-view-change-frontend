@@ -79,7 +79,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     ),
     Some("testUtr"),
     Some("testCredId"),
-    Some("individual")
+    Some("Individual"),
+    None
   )(FakeRequest())
 
   object TestFinancialDetailsService extends FinancialDetailsService(mockIncomeTaxViewChangeConnector)
@@ -96,7 +97,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       )
     ),
     property = None
-  ), None, None, None)(FakeRequest())
+  ), None, None, None, None)(FakeRequest())
 
   "getFinancialDetails" when {
     "a successful financial details response is returned from the connector" should {

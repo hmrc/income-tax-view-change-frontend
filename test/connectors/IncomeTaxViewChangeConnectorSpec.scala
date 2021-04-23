@@ -18,7 +18,7 @@ package connectors
 
 import assets.BaseTestConstants._
 import assets.FinancialDetailsTestConstants._
-import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import assets.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
 import assets.NinoLookupTestConstants.{testNinoModelJson, _}
 import assets.OutstandingChargesTestConstants.{testInvalidOutstandingChargesJson, testOutstandingChargesErrorModelParsing, testValidOutStandingChargeModelJson, testValidOutstandingChargesModel}
 import assets.PaymentAllocationsTestConstants._
@@ -67,7 +67,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getOutstandingChargesUrl" should {
     "return the correct url" in new Setup {
-      getOutstandingChargesUrl(testSaUtr,testSaUtrId,testTo) shouldBe s"$baseUrl/income-tax-view-change/out-standing-charges/$testSaUtr/$testSaUtrId/$testTo"
+      getOutstandingChargesUrl(testSaUtr, testSaUtrId, testTo) shouldBe s"$baseUrl/income-tax-view-change/out-standing-charges/$testSaUtr/$testSaUtrId/$testTo"
     }
   }
   "getIncomeSourcesUrl" should {
@@ -134,7 +134,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getIncomeSources" should {
 
-    val successResponse = HttpResponse(Status.OK, Some(Json.toJson(singleBusinessIncome)))
+    val successResponse = HttpResponse(Status.OK, Some(Json.toJson(singleBusinessAndPropertyMigrat2019)))
     val successResponseBadJson = HttpResponse(Status.OK, Some(Json.parse("{}")))
     val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
 
@@ -143,38 +143,38 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     "return an IncomeSourceDetailsModel when successful JSON is received" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(successResponse)
 
-      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))
-      await(result) shouldBe singleBusinessIncome
+      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
+      await(result) shouldBe singleBusinessAndPropertyMigrat2019
 
-      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)), Some(testReferrerUrl))
-      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtditid, testNino, List(testSelfEmploymentId), None, Some(testSaUtr), Some(testCredId), Some(testUserType)))
+      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtdUserNino))
+      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtdUserNino, List(testSelfEmploymentId), Some(testPropertyIncomeId), Some(testMigrationYear2019)))
     }
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(successResponseBadJson)
 
-      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))
+      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
 
-      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
+      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtdUserNino))
     }
 
     "return IncomeSourceDetailsError model in case of failure" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(badResponse)
 
-      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))
+      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       await(result) shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
 
-      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
+      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtdUserNino))
     }
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in new Setup {
       setupMockFailedHttpGet(getIncomeSourcesTestUrl)(badResponse)
 
-      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))
+      val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       await(result) shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
 
-      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType)))
+      verifyExtendedAudit(IncomeSourceDetailsRequestAuditModel(testMtdUserNino))
     }
   }
 

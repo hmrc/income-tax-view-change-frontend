@@ -60,7 +60,8 @@ class PaymentHistoryServiceSpec  extends TestSupport with MockIncomeTaxViewChang
     incomeSources = oldUserDetails,
     saUtr = Some("saUtr"),
     credId = Some("credId"),
-    userType = Some("individual")
+    userType = Some("Individual"),
+    None
   )(FakeRequest())
 
 

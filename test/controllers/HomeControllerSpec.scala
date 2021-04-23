@@ -16,11 +16,7 @@
 
 package controllers
 
-import assets.BaseTestConstants._
-import assets.IncomeSourceDetailsTestConstants._
-import assets.{BaseTestConstants, MessagesLookUp}
-import audit.models.HomeAudit
-import auth.MtdItUser
+import assets.MessagesLookUp
 import config.featureswitch.{API5, FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}

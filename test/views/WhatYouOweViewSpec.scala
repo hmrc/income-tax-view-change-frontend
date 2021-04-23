@@ -41,7 +41,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
-    Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
+    Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
   class Setup(charges: WhatYouOweChargesList,
               currentTaxYear: Int = LocalDate.now().getYear,
@@ -101,6 +101,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
         pageDocument.title() shouldBe whatYouOwe.title
         pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+        pageDocument.select("#sa-note-migrated a").attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
       }
       "have the link to their previous Self Assessment online account in the sa-note" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
@@ -283,7 +284,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(10).toLongDateShort
-        overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " "+
+        overduePaymentsTableRow1.select("td").get(1).text() shouldBe whatYouOwe.overdueTag + " " +
           whatYouOwe.poa1Text + " " + whatYouOwe.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
@@ -470,6 +471,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
     }
+<<<<<<< HEAD
 
     "the user has no charges" should {
       s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(noChargesModel) {
@@ -496,5 +498,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
+=======
+>>>>>>> bafd40a0 (MISUV-1664: audit event for income source details for both individual and agent)
   }
 }

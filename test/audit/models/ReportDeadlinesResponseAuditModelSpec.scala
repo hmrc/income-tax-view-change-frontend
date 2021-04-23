@@ -38,7 +38,7 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
         deadlines,
         Some("saUtr"),
         Some("credId"),
-        Some("individual")
+        Some("Individual")
       )
 
       s"Have the correct transaction name of '$transactionName'" in {
@@ -93,7 +93,7 @@ class ReportDeadlinesResponseAuditModelSpec extends TestSupport {
         List(openObligation),
         Some("saUtr"),
         Some("credId"),
-        Some("individual")
+        Some("Individual")
       )
 
       s"Have the correct transaction name of '$transactionName'" in {

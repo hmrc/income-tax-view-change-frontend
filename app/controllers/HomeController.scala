@@ -27,7 +27,6 @@ import models.financialDetails.FinancialDetailsModel
 import models.financialTransactions.FinancialTransactionsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}

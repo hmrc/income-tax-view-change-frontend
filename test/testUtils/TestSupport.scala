@@ -67,7 +67,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     incomeSources = businessAndPropertyAligned,
     saUtr = Some("saUtr"),
     credId = Some("credId"),
-    userType = Some("individual")
+    userType = Some("Individual"),
+    None
   )(FakeRequest())
 
   implicit val serviceInfo: Html = Html("")
@@ -99,12 +100,12 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
 
   def fakeRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
-    utils.SessionKeys.clientFirstName -> "Test",
-    utils.SessionKeys.clientLastName -> "User",
-    utils.SessionKeys.clientUTR -> "1234567890",
-    utils.SessionKeys.clientMTDID -> "XAIT00000000015",
-    utils.SessionKeys.clientNino -> clientNino,
-    utils.SessionKeys.confirmedClient -> "true"
+      utils.SessionKeys.clientFirstName -> "Test",
+      utils.SessionKeys.clientLastName -> "User",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true"
     )
 
   lazy val fakeRequestWithNino = fakeRequestWithActiveSession.withSession("nino" -> testNino)

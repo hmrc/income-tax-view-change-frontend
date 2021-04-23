@@ -306,7 +306,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
               contentType(result) shouldBe Some("text/html")
 
               lazy val expectedTestMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-                singleBusinessIncome, None, Some("credId"), Some("Individual"))(FakeRequest())
+                singleBusinessIncome, None, Some("credId"), Some("Individual"), None)(FakeRequest())
 
               verifyExtendedAudit(BillsAuditModel(expectedTestMtdItUser, BigDecimal(2010.00)))
             }
@@ -412,7 +412,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
               contentType(result) shouldBe Some("text/html")
 
               lazy val expectedTestMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-                singleBusinessIncome, None, Some("credId"), Some("Individual"))(FakeRequest())
+                singleBusinessIncome, None, Some("credId"), Some("Individual"), None)(FakeRequest())
 
               verifyExtendedAudit(BillsAuditModel(expectedTestMtdItUser, BigDecimal(2010.00)))
             }

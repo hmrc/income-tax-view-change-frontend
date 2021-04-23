@@ -69,7 +69,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       AuditStub.verifyAuditContains(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual")
+          multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         Charge("2018", "1040000123", Some("2019-05-15"), Some("Balancing Charge Debit"), Some(3400), Some(2000),
           Some(2000), None, Some("Balancing Charge debit"), Some("SA Balancing Charge"), Some(List(SubItem(Some("001"),

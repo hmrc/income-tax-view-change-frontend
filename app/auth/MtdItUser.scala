@@ -32,7 +32,8 @@ case class MtdItUserWithNino[A](mtditid: String,
                                 userName: Option[Name],
                                 saUtr: Option[String],
                                 credId: Option[String],
-                                userType: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                userType: Option[String],
+                                arn: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
 
 case class MtdItUser[A](mtditid: String,
                         nino: String,
@@ -40,5 +41,5 @@ case class MtdItUser[A](mtditid: String,
                         incomeSources: IncomeSourceDetailsModel,
                         saUtr: Option[String],
                         credId: Option[String],
-                        userType: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
-
+                        userType: Option[String],
+                        arn: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)

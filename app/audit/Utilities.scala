@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package services
+package audit
 
-import auth.MtdItUserWithNino
-import connectors.IncomeTaxViewChangeConnector
-import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.json.{JsObject, Json}
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+object Utilities {
 
-@Singleton
-class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
+  def userType(userType: Option[String]): JsObject = userType match {
+    case Some("Agent") => Json.obj("userType" -> "Agent")
+    case Some(_) => Json.obj("userType" -> "Individual")
+    case None => Json.obj()
+  }
 
-  def getIncomeSourceDetails()(implicit hc: HeaderCarrier, mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] =
-    incomeTaxViewChangeConnector.getIncomeSources()
 }
