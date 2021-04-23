@@ -211,7 +211,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 elementTextBySelector(".form-hint")("UTR: 1234567890 Client’s name Test User")
               )
 
-              AuditStub.verifyAuditContains(HomeAudit(
+              AuditStub.verifyAuditContainsDetail(HomeAudit(
                 MtdItUser(
                   testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
                   incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent")
@@ -293,7 +293,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 elementTextBySelector(".form-hint")("UTR: 1234567890 Client’s name Test User")
               )
 
-              AuditStub.verifyAuditContains(HomeAudit(
+              AuditStub.verifyAuditContainsDetail(HomeAudit(
                 MtdItUser(
                   testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
                   incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent")
@@ -375,7 +375,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 elementTextBySelector(".form-hint")("UTR: 1234567890 Client’s name Test User")
               )
 
-              AuditStub.verifyAuditContains(HomeAudit(
+              AuditStub.verifyAuditContainsDetail(HomeAudit(
                 MtdItUser(
                   testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
                   incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent")
@@ -470,7 +470,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 elementTextBySelector(".form-hint")("UTR: 1234567890 Client’s name Test User")
               )
 
-              AuditStub.verifyAuditContains(HomeAudit(
+              AuditStub.verifyAuditContainsDetail(HomeAudit(
                 MtdItUser(
                   testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
                   incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent")

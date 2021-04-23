@@ -271,7 +271,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
             val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-            AuditStub.verifyAuditContains(WhatYouOweRequestAuditModel(None, Some("Individual"), Some("1234567890"), "AA123456A", Some("12345-credId"), "XAITSA123456").detail)
+            AuditStub.verifyAuditContainsDetail(WhatYouOweRequestAuditModel(None, Some("Individual"), Some("1234567890"), "AA123456A", Some("12345-credId"), "XAITSA123456").detail)
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")

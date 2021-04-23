@@ -66,7 +66,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
-      AuditStub.verifyAuditContains(ChargeSummaryAudit(
+      AuditStub.verifyAuditContainsDetail(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual")

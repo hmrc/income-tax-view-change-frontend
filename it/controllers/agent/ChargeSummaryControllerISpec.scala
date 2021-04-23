@@ -88,7 +88,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         getCurrentTaxYearEnd.getYear.toString, "testid", clientDetails
       )
 
-      AuditStub.verifyAuditContains(ChargeSummaryAudit(
+      AuditStub.verifyAuditContainsDetail(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent")

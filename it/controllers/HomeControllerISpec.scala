@@ -67,7 +67,7 @@ class HomeControllerISpec extends ComponentSpecBase {
           elementTextBySelector("#payments-tile > div > p:nth-child(2)")("2 OVERDUE PAYMENTS")
         )
 
-        AuditStub.verifyAuditContains(HomeAudit(
+        AuditStub.verifyAuditContainsDetail(HomeAudit(
           MtdItUser(
             testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual")
@@ -114,7 +114,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         )
         disable(NewFinancialDetailsApi)
 
-        AuditStub.verifyAuditContains(HomeAudit(
+        AuditStub.verifyAuditContainsDetail(HomeAudit(
           MtdItUser(
             testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, Some("1234567890"), Some("12345-credId"), Some("Individual")
