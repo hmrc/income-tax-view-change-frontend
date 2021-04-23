@@ -106,11 +106,11 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         TaxBand("GOLPBand", 1.0, 2.0, 3.0, 4.0, 5.0)
       )
     ),
-    messages = Some(Messages(
-      info = Some(Seq(Message("infoId", "infoMessage"))),
-      warnings = Some(Seq(Message("warningId", "warningMessage"))),
-      errors = Some(Seq(Message("errorId", "errorMessage")))
-    ))
+		messages = Some(Messages(
+			info = Some(Seq(Message("infoId", "infoMessage"))),
+			warnings = Some(Seq(Message("warningId", "warningMessage"))),
+			errors = Some(Seq(Message("errorId", "errorMessage")))
+		))
   )
   val minimalModel: Calculation = Calculation(
     crystallised = true
@@ -521,7 +521,27 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "text" -> "errorMessage"
         )
       )
-    )
+    ),
+		"messages" -> Json.obj(
+			"info" -> Json.arr(
+				Json.obj(
+					"id" -> "infoId",
+					"text" -> "infoMessage"
+				)
+			),
+			"warnings" -> Json.arr(
+				Json.obj(
+					"id" -> "warningId",
+					"text" -> "warningMessage"
+				)
+			),
+			"errors" -> Json.arr(
+				Json.obj(
+					"id" -> "errorId",
+					"text" -> "errorMessage"
+				)
+			)
+		)
   )
   val minimalWriteJson: JsObject = Json.obj(
     "crystallised" -> true,
@@ -546,24 +566,24 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     )
   )
 
-  "Calculation" must {
-    "read from json successfully" when {
-      "all data is provided" in {
-        Json.fromJson[Calculation](fullReadJson) mustBe JsSuccess(fullModel)
-      }
-      "all optional data is not provided" in {
-        Json.fromJson[Calculation](minimalReadJson) mustBe JsSuccess(minimalModel)
-      }
-    }
+	"Calculation" must {
+		"read from json successfully" when {
+			"all data is provided" in {
+				Json.fromJson[Calculation](fullReadJson) mustBe JsSuccess(fullModel)
+			}
+			"all optional data is not provided" in {
+				Json.fromJson[Calculation](minimalReadJson) mustBe JsSuccess(minimalModel)
+			}
+		}
 
-    "write to json successfully" when {
-      "the model is full" in {
-        Json.toJson(fullModel) mustBe fullWriteJson
-      }
-      "the model doesn't contain any optional data" in {
-        Json.toJson(minimalModel) mustBe minimalWriteJson
-      }
-    }
-  }
+		"write to json successfully" when {
+			"the model is full" in {
+				Json.toJson(fullModel) mustBe fullWriteJson
+			}
+			"the model doesn't contain any optional data" in {
+				Json.toJson(minimalModel) mustBe minimalWriteJson
+			}
+		}
+	}
 
 }

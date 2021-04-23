@@ -275,7 +275,6 @@ object TaxDeductedAtSource {
   object Messages {
     implicit val format: OFormat[Messages] = Json.format[Messages]
   }
-
 }
 
 case class LumpSums(bands: List[TaxBand] = Nil)
