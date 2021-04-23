@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.UrlPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
-import play.api.libs.json.Writes
+import play.api.libs.json.{JsValue, Json, Writes}
 
 trait WiremockMethods {
 
@@ -94,6 +94,10 @@ trait WiremockMethods {
     verifyInternalContains(method, uri, Some(stringBody))
   }
 
+  def verifyContainsJson(method: HTTPMethod, uri: String, jsonBodyPart: JsValue): Unit = {
+    verifyInternalContainsJson(method, uri, Some(jsonBodyPart))
+  }
+
   private def verifyInternal(method: HTTPMethod, uri: String, bodyString: Option[String]): Unit = method match {
     case GET => WiremockHelper.verifyGet(uri)
     case POST => WiremockHelper.verifyPost(uri, bodyString)
@@ -104,6 +108,11 @@ trait WiremockMethods {
     case GET => WiremockHelper.verifyGet(uri)
     case POST => WiremockHelper.verifyPostContaining(uri, bodyString)
     case _ => ()
+  }
+
+  private def verifyInternalContainsJson(method: HTTPMethod, uri: String, bodyPart: Option[JsValue]): Unit = method match {
+    case POST => WiremockHelper.verifyPostContainingJson(uri, bodyPart)
+    case _ => verifyInternalContains(method, uri, bodyPart.map(_.toString))
   }
 
   sealed trait HTTPMethod {
