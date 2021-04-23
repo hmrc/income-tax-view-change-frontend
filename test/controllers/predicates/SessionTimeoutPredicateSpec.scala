@@ -17,7 +17,6 @@
 package controllers.predicates
 
 import play.api.http.Status
-import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.api.test.Helpers.{redirectLocation, _}
@@ -40,6 +39,7 @@ class SessionTimeoutPredicateSpec extends TestSupport {
 
       "return status OK" in {
         def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
+
         status(result) shouldBe Status.OK
       }
 

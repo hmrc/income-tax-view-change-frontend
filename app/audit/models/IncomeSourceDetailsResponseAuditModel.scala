@@ -16,39 +16,28 @@
 
 package audit.models
 
-import play.api.libs.json.{JsValue, Json, Writes}
+import audit.Utilities._
+import auth.MtdItUserWithNino
+import play.api.libs.json.{JsValue, Json}
+import utils.Utilities._
 
-case class IncomeSourceDetailsResponseAuditModel(mtditid: String,
-                                                 nino: String,
+case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserWithNino[_],
                                                  selfEmploymentIds: List[String],
                                                  propertyIncomeId: Option[String],
-                                                 saUtr: Option[String],
-                                                 credId: Option[String],
-                                                 userType: Option[String]) extends ExtendedAuditModel {
+                                                 yearOfMigration: Option[String]) extends ExtendedAuditModel {
 
   override val transactionName: String = "income-source-details-response"
   override val auditType: String = "incomeSourceDetailsResponse"
 
-  private case class AuditDetail(mtditid: String,
-                                 nationalInsuranceNumber: String,
-                                 selfEmploymentIncomeSourceIds: Option[List[String]],
-                                 propertyIncomeSourceId: Option[String],
-                                 saUtr: Option[String],
-                                 credId: Option[String],
-                                 userType: Option[String])
-  private implicit val auditDetailWrites: Writes[AuditDetail] = Json.writes[AuditDetail]
-
-  private val seIds = if (selfEmploymentIds.nonEmpty) Some(selfEmploymentIds) else None
-
-  override val detail: JsValue = Json.toJson(
-    AuditDetail(
-      mtditid,
-      nino,
-      seIds,
-      propertyIncomeId,
-      saUtr,
-      credId,
-      userType
-    )
-  )
+  override val detail: JsValue = {
+    Json.obj("mtditid" -> mtdItUser.mtditid,
+      "nationalInsuranceNumber" -> mtdItUser.nino,
+      "selfEmploymentIncomeSourceIds" -> selfEmploymentIds) ++
+      ("agentReferenceNumber", mtdItUser.arn) ++
+      ("saUtr", mtdItUser.saUtr) ++
+      userType(mtdItUser.userType) ++
+      ("credId", mtdItUser.credId) ++
+      ("propertyIncomeSourceId", propertyIncomeId) ++
+      ("dateOfMigration", yearOfMigration)
+  }
 }

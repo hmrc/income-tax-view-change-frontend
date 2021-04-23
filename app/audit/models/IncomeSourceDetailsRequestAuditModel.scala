@@ -16,20 +16,22 @@
 
 package audit.models
 
-import play.api.libs.json.{JsValue, Json, Writes}
+import audit.Utilities._
+import auth.MtdItUserWithNino
+import play.api.libs.json.{JsValue, Json}
+import utils.Utilities._
 
-case class IncomeSourceDetailsRequestAuditModel(mtditid: String, nino: String,
-                                                saUtr: Option[String], credId: Option[String],
-                                                userType: Option[String]) extends ExtendedAuditModel {
+case class IncomeSourceDetailsRequestAuditModel(mtdItUser: MtdItUserWithNino[_]) extends ExtendedAuditModel {
 
   override val transactionName: String = "income-source-details-request"
   override val auditType: String = "incomeSourceDetailsRequest"
 
-  private case class AuditDetail(mtditid: String, nationalInsuranceNumber: String,
-                                 saUtr: Option[String], credId: Option[String],
-                                 userType: Option[String])
-
-  private implicit val auditDetailWrites: Writes[AuditDetail] = Json.writes[AuditDetail]
-
-  override val detail: JsValue = Json.toJson(AuditDetail(mtditid, nino, saUtr, credId, userType))
+  override val detail: JsValue = {
+    Json.obj("mtditid" -> mtdItUser.mtditid,
+      "nationalInsuranceNumber" -> mtdItUser.nino) ++
+      ("saUtr", mtdItUser.saUtr) ++
+      ("credId", mtdItUser.credId) ++
+      userType(mtdItUser.userType) ++
+      ("agentReferenceNumber", mtdItUser.arn)
+  }
 }

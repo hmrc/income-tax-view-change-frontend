@@ -16,7 +16,6 @@
 
 package controllers.agent
 
-import java.time.LocalDate
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
@@ -34,6 +33,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class HomeControllerSpec extends TestSupport

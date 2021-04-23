@@ -42,7 +42,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
 
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
-    Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
+    Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
   class Setup(charges: WhatYouOweChargesList = WhatYouOweChargesList(),
               currentTaxYear: Int = LocalDate.now().getYear,

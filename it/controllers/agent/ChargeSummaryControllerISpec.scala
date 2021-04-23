@@ -49,6 +49,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   }
 
   val currentYear: Int = LocalDate.now().getYear
+  val testArn: String = "1"
 
   s"GET ${routes.ChargeSummaryController.showChargeSummary(currentYear, "testid").url}" should {
     s"return $OK with correct page title" in {
@@ -91,11 +92,11 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       AuditStub.verifyAuditContains(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
-          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent")
+          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
         )(FakeRequest()),
         Charge("2022", "testId", Some("2022-04-05"), None, Some(1000), Some(1000), Some(500), Some(500), Some("POA1"),
-          Some("SA Payment on Account 1"), Some(List(SubItem(None, None, None, None, None, None, None, Some("2021-04-20"),
-            None, None)))), agentReferenceNumber = Some("1")
+          Some("SA Payment on Account 1"), Some(List(SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString),
+            None, None)))), agentReferenceNumber = Some(testArn)
       ).detail)
 
       result should have(

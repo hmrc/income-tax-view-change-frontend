@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import scala.concurrent.Future
 
-trait ClientConfirmedController extends BaseAgentController  {
+trait ClientConfirmedController extends BaseAgentController {
 
   override protected def baseAgentPredicates: AuthPredicate[IncomeTaxAgentUser] = AgentAuthenticationPredicate.confirmedClientPredicates
 
@@ -53,7 +53,7 @@ trait ClientConfirmedController extends BaseAgentController  {
     val firstName = request.session.get(SessionKeys.clientFirstName)
     val lastName = request.session.get(SessionKeys.clientLastName)
 
-    if(firstName.isDefined && lastName.isDefined) {
+    if (firstName.isDefined && lastName.isDefined) {
       Some(Name(firstName, lastName))
     } else {
       None
@@ -63,12 +63,12 @@ trait ClientConfirmedController extends BaseAgentController  {
   def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService)(
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[AnyContent]] = {
     val userWithNino: MtdItUserWithNino[_] = MtdItUserWithNino(
-      getClientMtditid, getClientNino, getClientName, getClientUtr, None, Some("Agent")
+      getClientMtditid, getClientNino, getClientName, getClientUtr, None, Some("Agent"), user.agentReferenceNumber
     )
 
     incomeSourceDetailsService.getIncomeSourceDetails()(hc = hc, mtdUser = userWithNino) map {
       case model@IncomeSourceDetailsModel(_, _, _, _) => MtdItUser(
-        userWithNino.mtditid, userWithNino.nino, userWithNino.userName, model, userWithNino.saUtr, userWithNino.credId, userWithNino.userType)
+        userWithNino.mtditid, userWithNino.nino, userWithNino.userName, model, userWithNino.saUtr, userWithNino.credId, userWithNino.userType, userWithNino.arn)
       case _ => throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
     }
   }

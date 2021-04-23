@@ -46,7 +46,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     IncomeSourceDetailsModel(testMtditid,None,Nil, None),
     Some("testUtr"),
     Some("testCredId"),
-    Some("individual")
+    Some("Individual"),
+    None
   )(FakeRequest())
 
   val updateDate: LocalDate = LocalDate.of(2018, 1, 1)

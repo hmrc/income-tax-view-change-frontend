@@ -65,7 +65,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       incomeSources = IncomeSourceDetailsModel("mtditid", None, Nil, None),
       saUtr = Some("saUtr"),
       credId = Some("credId"),
-      userType = userType
+      userType = userType,
+      arn = None
     ),
     charge = charge,
     agentReferenceNumber = Some("agentReferenceNumber")
@@ -79,7 +80,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       incomeSources = IncomeSourceDetailsModel("mtditid", None, Nil, None),
       saUtr = None,
       credId = None,
-      userType = None
+      userType = None,
+      arn = None
     ),
     charge = charge,
     agentReferenceNumber = None

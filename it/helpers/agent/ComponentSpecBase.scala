@@ -34,7 +34,7 @@ import play.api.{Application, Environment, Mode}
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
-  with GenericStubMethods with SessionCookieBaker with FeatureSwitching{
+  with GenericStubMethods with SessionCookieBaker with FeatureSwitching {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
@@ -141,7 +141,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAgentHome(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/income-tax-account", additionalCookies)
 
-    def getPaymentsDue(additionalCookies: Map[String, String]= Map.empty): WSResponse =
+    def getPaymentsDue(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/payments-owed", additionalCookies)
 
     def getTaxYearOverview(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =

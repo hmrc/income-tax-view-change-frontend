@@ -16,7 +16,6 @@
 
 package controllers
 
-import assets.BaseTestConstants.testMtdUserNino
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.AuditingService
@@ -52,26 +51,26 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     "feature switch IncomeBreakdown is enabled" when {
       enable(IncomeBreakdown)
 
-    "given a tax year which can be found in ETMP" should {
+      "given a tax year which can be found in ETMP" should {
 
-      lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
-      lazy val document = result.toHtmlDocument
+        lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
 
-      "return Status OK (200)" in {
-        mockCalculationSuccess()
-        setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-        status(result) shouldBe Status.OK
+        "return Status OK (200)" in {
+          mockCalculationSuccess()
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+          status(result) shouldBe Status.OK
+        }
+
+        "return HTML" in {
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+        }
+
+        "render the IncomeBreakdown page" in {
+          document.title() shouldBe "Income - Business Tax account - GOV.UK"
+        }
       }
-
-      "return HTML" in {
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
-      }
-
-      "render the IncomeBreakdown page" in {
-        document.title() shouldBe "Income - Business Tax account - GOV.UK"
-      }
-    }
       "given a tax year which can not be found in ETMP" should {
 
         lazy val result = TestIncomeSummaryController.showIncomeSummary(testYear)(fakeRequestWithActiveSession)

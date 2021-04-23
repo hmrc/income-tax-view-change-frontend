@@ -40,7 +40,8 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
       incomeSources = IncomeSourceDetailsModel("mtditid", None, Nil, None),
       saUtr = Some("saUtr"),
       credId = Some("credId"),
-      userType = userType
+      userType = userType,
+      arn = None
     ),
     nextPaymentOrOverdue = Some(nextPaymentOrOverdue),
     nextUpdateOrOverdue = nextUpdateOrOverdue,
@@ -55,7 +56,8 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
       incomeSources = IncomeSourceDetailsModel("mtditid", None, Nil, None),
       saUtr = None,
       credId = None,
-      userType = None
+      userType = None,
+      arn = None
     ),
     nextPaymentOrOverdue = None,
     nextUpdateOrOverdue = Right(2),

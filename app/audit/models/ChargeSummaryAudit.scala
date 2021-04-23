@@ -16,6 +16,7 @@
 
 package audit.models
 
+import audit.Utilities._
 import auth.MtdItUser
 import models.financialDetails.Charge
 import play.api.Logger
@@ -26,12 +27,6 @@ import utils.Utilities._
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
                               charge: Charge,
                               agentReferenceNumber: Option[String]) extends ExtendedAuditModel {
-
-  private val userType: JsObject = mtdItUser.userType match {
-    case Some("Agent") => Json.obj("userType" -> "Agent")
-    case Some(_) => Json.obj("userType" -> "Individual")
-    case None => Json.obj()
-  }
 
   val getChargeType: String = charge.mainType match {
     case Some("SA Payment on Account 1") => "Payment on account 1 of 2"
@@ -57,7 +52,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
     Json.obj("nationalInsuranceNumber" -> mtdItUser.nino) ++
       ("agentReferenceNumber", agentReferenceNumber) ++
       ("saUtr", mtdItUser.saUtr) ++
-      userType ++
+      userType(mtdItUser.userType) ++
       ("credId", mtdItUser.credId) ++
       Json.obj("mtditid" -> mtdItUser.mtditid) ++
       Json.obj("charge" -> chargeDetails)
