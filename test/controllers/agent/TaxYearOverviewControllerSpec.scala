@@ -16,9 +16,12 @@
 
 package controllers.agent
 
+import java.time.LocalDate
+
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
 import assets.FinancialDetailsTestConstants.{financialDetailsModel, testFinancialDetailsErrorModel}
+import audit.mocks.MockAuditingService
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
@@ -36,12 +39,11 @@ import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.play.language.LanguageUtils
 
-import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockFinancialDetailsService
   with FeatureSwitching with MockTaxYearOverview with MockCalculationService with MockIncomeSourceDetailsService
-  with MockReportDeadlinesService with MockItvcErrorHandler {
+  with MockReportDeadlinesService with MockItvcErrorHandler with MockAuditingService {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -58,7 +60,8 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
       calculationService = mockCalculationService,
       financialDetailsService = mockFinancialDetailsService,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      reportDeadlinesService = mockReportDeadlinesService
+      reportDeadlinesService = mockReportDeadlinesService,
+      auditingService = mockAuditingService
     )(appConfig,
       app.injector.instanceOf[LanguageUtils],
       app.injector.instanceOf[MessagesControllerComponents],

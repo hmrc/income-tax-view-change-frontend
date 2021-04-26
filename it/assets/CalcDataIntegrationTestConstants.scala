@@ -15,6 +15,7 @@
  */
 package assets
 
+import models.calculation.{AllowancesAndDeductions, Calculation, Dividends, Nic, PayPensionsProfit, ReductionsAndCharges, SavingsAndGains, TaxBand}
 import play.api.libs.json.{JsObject, Json}
 
 object CalcDataIntegrationTestConstants {
@@ -463,6 +464,127 @@ object CalcDataIntegrationTestConstants {
           "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
         )
       )
+    )
+  )
+
+  val calculationDataSuccessModel = Calculation(
+    totalIncomeTaxAndNicsDue = Some(90500.00),
+    totalIncomeTaxNicsCharged = Some(90500.00),
+    totalIncomeReceived = Some(199505.00),
+    totalTaxableIncome = Some(198500.00),
+    incomeTaxNicAmount = None,
+    timestamp = Some("2017-07-06T12:34:56.789Z"),
+    crystallised = false,
+    nationalRegime = None,
+
+    payPensionsProfit = PayPensionsProfit(
+      totalSelfEmploymentProfit = None,
+      totalPropertyProfit = None,
+      incomeTaxAmount = Some(66500),
+      taxableIncome = Some(170000),
+      List(TaxBand(
+        name = "BRT",
+        rate = 20.0,
+        income = 20000.00,
+        taxAmount = 4000.00
+
+      ),
+        TaxBand(
+          name = "HRT",
+          rate = 40.0,
+          income = 100000.00,
+          taxAmount = 40000.00
+
+        ),
+        TaxBand(
+          name = "ART",
+          rate = 45.0,
+          income = 50000.00,
+          taxAmount = 22500.00
+
+        ))
+    ),
+    savingsAndGains = SavingsAndGains(
+      Some(0),
+      Some(0),
+      Some(0),
+      Some(0),
+      List(TaxBand(
+        name = "SSR",
+        rate = 0.0,
+        income = 1.00,
+        taxAmount = 0.0
+
+      ),
+        TaxBand(
+          name = "ZRT",
+          rate = 0.0,
+          income = 20.00,
+          taxAmount = 0.0
+
+        ),
+        TaxBand(
+          name = "BRT",
+          rate = 20.0,
+          income = 0.0,
+          taxAmount = 0.0
+
+        ),
+        TaxBand(
+          name = "HRT",
+          rate = 40.0,
+          income = 0.0,
+          taxAmount = 0.0
+
+        ),
+        TaxBand(
+          name = "ART",
+          rate = 45.0,
+          income = 0.0,
+          taxAmount = 0.0
+
+        ))
+    ),
+    reductionsAndCharges = ReductionsAndCharges(
+      giftAidTax = Some(5000.99),
+      totalPensionSavingsTaxCharges = Some(5000.99),
+      statePensionLumpSumCharges = Some(5000.99),
+      totalStudentLoansRepaymentAmount = Some(5000.99),
+      totalResidentialFinanceCostsRelief = Some(5000.99)
+    ),
+    dividends = Dividends(
+      incomeTaxAmount = Some(5000),
+      taxableIncome = Some(6000),
+      bands = List(TaxBand(
+        name = "basic-band",
+        rate = 7.5,
+        income = 1000,
+        taxAmount = 75.0
+      ),
+        TaxBand(
+          name = "higher-band",
+          rate = 37.5,
+          income = 2000,
+          taxAmount = 750.0
+        ),
+        TaxBand(
+          name = "additional-band",
+          rate = 38.1,
+          income = 3000,
+          taxAmount = 1143.0
+        )
+      )
+    ),
+    allowancesAndDeductions = AllowancesAndDeductions(
+      personalAllowance = Some(11500),
+      totalPensionContributions = Some(11501),
+      totalAllowancesAndDeductions = Some(250),
+      totalReliefs = Some(250)
+    ),
+    nic = Nic(
+      class2 = Some(10000.00),
+      class4 = Some(14000.00),
+      totalNic = Some(66000.00)
     )
   )
 

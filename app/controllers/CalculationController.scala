@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import audit.AuditingService
 import audit.models.BillsAuditing.BillsAuditModel
+import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -150,12 +151,15 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
 
   private def showTaxYearOverview(taxYear: Int): Action[AnyContent] = action.async {
     implicit user =>
+      auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(user, None))
       calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
         case CalcDisplayModel(_, calcAmount, calculation, _) =>
-        auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
           withTaxYearFinancials(taxYear) { charges =>
             withObligationsModel(taxYear) map {
-              case obligationsModel: ObligationsModel => Ok(view(taxYear, calculation, charge = charges, obligations = obligationsModel))
+              case obligationsModel: ObligationsModel =>
+                auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, None, calculation, charges, obligationsModel))
+                println(TaxYearOverviewResponseAuditModel(user, None, calculation, charges, obligationsModel).detail)
+                Ok(view(taxYear, calculation, charge = charges, obligations = obligationsModel))
                 .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }
