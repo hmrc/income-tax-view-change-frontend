@@ -34,9 +34,12 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.TaxYearOverview
-
 import java.time.LocalDate
+
+import audit.AuditingService
+import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
@@ -44,7 +47,8 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
                                           calculationService: CalculationService,
                                           financialDetailsService: FinancialDetailsService,
                                           incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          reportDeadlinesService: ReportDeadlinesService
+                                          reportDeadlinesService: ReportDeadlinesService,
+                                          auditingService: AuditingService
                                          )(implicit val appConfig: FrontendAppConfig,
                                            val languageUtils: LanguageUtils,
                                            mcc: MessagesControllerComponents,
@@ -57,9 +61,11 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
     implicit user =>
       if (isEnabled(AgentViewer)) {
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
+          auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(mtdItUser, user.agentReferenceNumber))
           withCalculation(getClientNino(request), taxYear) { calculation =>
             withTaxYearFinancials(taxYear) { charges =>
               withObligationsModel(taxYear) { obligations =>
+                auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(mtdItUser, user.agentReferenceNumber, calculation, charges, obligations))
                 Future.successful(Ok(view(taxYear, calculation, charges = charges, obligations = obligations)(request, mtdItUser))
                   .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
               }
