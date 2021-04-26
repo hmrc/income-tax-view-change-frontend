@@ -257,3 +257,21 @@ object TaxDeductedAtSource {
     ) (TaxDeductedAtSource.apply _)
   implicit val writes: Writes[TaxDeductedAtSource] = Json.writes[TaxDeductedAtSource]
 }
+
+case class LumpSums(bands: List[TaxBand] = Nil)
+
+object LumpSums {
+  implicit val reads: Reads[LumpSums] =
+    readNullableList[TaxBand](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "lumpSums" \ "taxBands") map LumpSums.apply
+
+  implicit val writes: Writes[LumpSums] = Json.writes[LumpSums]
+}
+
+case class GainsOnLifePolicies(bands: List[TaxBand] = Nil)
+
+object GainsOnLifePolicies {
+  implicit val reads: Reads[GainsOnLifePolicies] =
+    readNullableList[TaxBand](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "gainsOnLifePolicies" \ "taxBands") map GainsOnLifePolicies.apply
+
+  implicit val writes: Writes[GainsOnLifePolicies] = Json.writes[GainsOnLifePolicies]
+}

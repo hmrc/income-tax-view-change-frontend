@@ -278,6 +278,96 @@ object CalcBreakdownTestConstants {
     )
   )
 
+  val scottishTaxBandModelJustLs = Calculation(
+    crystallised = true,
+    nationalRegime = Some("Scotland"),
+    lumpSums = LumpSums(
+      List(TaxBand(
+        name = "SRT",
+        rate = 10.0,
+        income = 20000.00,
+        taxAmount = 2000.00
+
+      ),
+
+      TaxBand(
+        name = "BRT",
+        rate = 20.0,
+        income = 20000.00,
+        taxAmount = 4000.00
+
+      ),
+
+      TaxBand(
+        name = "IRT",
+        rate = 25.0,
+        income = 20000.00,
+        taxAmount = 45000.00
+
+      ),
+
+      TaxBand(
+        name = "HRT",
+        rate = 40.0,
+        income = 100000.00,
+        taxAmount = 40000.00
+
+      ),
+      TaxBand(
+        name = "ART",
+        rate = 45.0,
+        income = 500000.00,
+        taxAmount = 22500.00
+
+      ))
+    )
+  )
+
+  val scottishTaxBandModelJustGols = Calculation(
+    crystallised = true,
+    nationalRegime = Some("Scotland"),
+    gainsOnLifePolicies = GainsOnLifePolicies(
+      List(TaxBand(
+        name = "SRT",
+        rate = 10.0,
+        income = 20000.00,
+        taxAmount = 2000.00
+
+      ),
+
+        TaxBand(
+          name = "BRT",
+          rate = 20.0,
+          income = 20000.00,
+          taxAmount = 4000.00
+
+        ),
+
+        TaxBand(
+          name = "IRT",
+          rate = 25.0,
+          income = 20000.00,
+          taxAmount = 45000.00
+
+        ),
+
+        TaxBand(
+          name = "HRT",
+          rate = 40.0,
+          income = 100000.00,
+          taxAmount = 40000.00
+
+        ),
+        TaxBand(
+          name = "ART",
+          rate = 45.0,
+          income = 500000.00,
+          taxAmount = 22500.00
+
+        ))
+    )
+  )
+
   val scottishTaxBandModelJustSRT = Calculation(
     totalIncomeTaxAndNicsDue = Some(0),
     totalIncomeTaxNicsCharged = Some(149.86),
@@ -783,6 +873,42 @@ object CalcBreakdownTestConstants {
             taxAmount = 22500.00)
         )
       ),
+      lumpSums = LumpSums(
+        bands = List(TaxBand(
+          name = "BRT",
+          rate = 20.0,
+          income = 20000.00,
+          taxAmount = 4000.00),
+          TaxBand(
+            name = "HRT",
+            rate = 40.0,
+            income = 100000.00,
+            taxAmount = 40000.00),
+          TaxBand(
+            name = "ART",
+            rate = 45.0,
+            income = 50000.00,
+            taxAmount = 22500.00)
+        )
+      ),
+      gainsOnLifePolicies = GainsOnLifePolicies(
+        bands = List(TaxBand(
+          name = "BRT",
+          rate = 20.0,
+          income = 20000.00,
+          taxAmount = 4000.00),
+          TaxBand(
+            name = "HRT",
+            rate = 40.0,
+            income = 100000.00,
+            taxAmount = 40000.00),
+          TaxBand(
+            name = "ART",
+            rate = 45.0,
+            income = 50000.00,
+            taxAmount = 22500.00)
+        )
+      ),
       savingsAndGains = SavingsAndGains(
         Some(0),
         Some(500),
@@ -956,6 +1082,42 @@ object CalcBreakdownTestConstants {
         totalPropertyProfit = None,
         incomeTaxAmount = Some(66500),
         taxableIncome = Some(170000),
+        bands = List(TaxBand(
+          name = "BRT",
+          rate = 20.0,
+          income = 20000.00,
+          taxAmount = 4000.00),
+          TaxBand(
+            name = "HRT",
+            rate = 40.0,
+            income = 100000.00,
+            taxAmount = 40000.00),
+          TaxBand(
+            name = "ART",
+            rate = 45.0,
+            income = 50000.00,
+            taxAmount = 22500.00)
+        )
+      ),
+      lumpSums = LumpSums(
+        bands = List(TaxBand(
+          name = "BRT",
+          rate = 20.0,
+          income = 20000.00,
+          taxAmount = 4000.00),
+          TaxBand(
+            name = "HRT",
+            rate = 40.0,
+            income = 100000.00,
+            taxAmount = 40000.00),
+          TaxBand(
+            name = "ART",
+            rate = 45.0,
+            income = 50000.00,
+            taxAmount = 22500.00)
+        )
+      ),
+      gainsOnLifePolicies = GainsOnLifePolicies(
         bands = List(TaxBand(
           name = "BRT",
           rate = 20.0,
