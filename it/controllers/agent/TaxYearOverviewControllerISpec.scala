@@ -15,14 +15,19 @@
  */
 package controllers.agent
 
+import java.time.{LocalDate, LocalDateTime}
+
 import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants.estimatedCalculationFullJson
+import assets.CalcDataIntegrationTestConstants.{calculationDataSuccessModel, estimatedCalculationFullJson}
+import assets.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import assets.messages.TaxYearOverviewMessages.agentTitle
+import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
+import auth.MtdItUser
 import config.featureswitch._
 import controllers.Assets.INTERNAL_SERVER_ERROR
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.{IncomeTaxViewChangeStub, IndividualCalculationStub}
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
@@ -34,8 +39,6 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-
-import java.time.{LocalDate, LocalDateTime}
 
 class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -124,6 +127,35 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
   ))
 
   val previousObligationsSuccess: ObligationsModel = ObligationsModel(Seq(
+    ReportDeadlinesModel(
+      identification = "testId2",
+      obligations = List(
+        ReportDeadlineModel(
+          start = getCurrentTaxYearEnd.minusMonths(3),
+          end = getCurrentTaxYearEnd,
+          due = getCurrentTaxYearEnd,
+          obligationType = "Quarterly",
+          dateReceived = Some(getCurrentTaxYearEnd.minusDays(1)),
+          periodKey = "#004"
+        )
+      )
+    )
+  ))
+
+  val allObligations: ObligationsModel = ObligationsModel(Seq(
+    ReportDeadlinesModel(
+      identification = "testId",
+      obligations = List(
+        ReportDeadlineModel(
+          start = getCurrentTaxYearEnd.minusMonths(3),
+          end = getCurrentTaxYearEnd,
+          due = getCurrentTaxYearEnd,
+          obligationType = "EOPS",
+          dateReceived = Some(getCurrentTaxYearEnd),
+          periodKey = "EOPS"
+        )
+      )
+    ),
     ReportDeadlinesModel(
       identification = "testId2",
       obligations = List(
@@ -280,6 +312,16 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
         )
 
+        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            incomeSourceDetailsSuccess, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1")).detail)
+
+        AuditStub.verifyAuditContains(TaxYearOverviewResponseAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            incomeSourceDetailsSuccess, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1"), calculationDataSuccessModel, financialDetailsSuccess.financialDetails, allObligations).detail)
+
       }
       "financial details data was not found" in {
         enable(AgentViewer)
@@ -352,6 +394,17 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
             expectedValue = s"${getCurrentTaxYearEnd.toLongDate}"
           )
         )
+
+        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1")).detail)
+
+        AuditStub.verifyAuditContains(TaxYearOverviewResponseAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            incomeSourceDetailsSuccess, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1"), calculationDataSuccessModel, List(), allObligations).detail)
+
       }
       "previous obligations data was not found" in {
         enable(AgentViewer)
@@ -421,6 +474,17 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
             expectedValue = s"${getCurrentTaxYearEnd.toLongDate}"
           )
         )
+
+        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1")).detail)
+
+        AuditStub.verifyAuditContains(TaxYearOverviewResponseAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            incomeSourceDetailsSuccess, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1"), calculationDataSuccessModel, financialDetailsSuccess.financialDetails, currentObligationsSuccess).detail)
+
       }
     }
     "return a technical difficulties page to the user" when {
@@ -439,6 +503,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           httpStatus(INTERNAL_SERVER_ERROR),
           pageTitle("Sorry, we are experiencing technical difficulties - 500 - Business Tax account - GOV.UK")
         )
+
+        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1")).detail)
       }
       "there was a problem retrieving the calculation list for the tax year" in {
         enable(AgentViewer)
@@ -462,6 +531,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           httpStatus(INTERNAL_SERVER_ERROR),
           pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
         )
+
+        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1")).detail)
       }
       "there was a problem retrieving the calculation for the tax year" in {
         enable(AgentViewer)
@@ -492,6 +566,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           httpStatus(INTERNAL_SERVER_ERROR),
           pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
         )
+
+        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1")).detail)
       }
       "there was a problem retrieving financial details for the tax year" in {
         enable(AgentViewer)
@@ -531,6 +610,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           httpStatus(INTERNAL_SERVER_ERROR),
           pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
         )
+
+        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1")).detail)
       }
       "there was a problem retrieving current obligations" in {
         enable(AgentViewer)
@@ -574,6 +658,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           httpStatus(INTERNAL_SERVER_ERROR),
           pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
         )
+
+        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1")).detail)
       }
       "there was a problem retrieving previous obligations" in {
         enable(AgentViewer)
@@ -624,6 +713,11 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
           httpStatus(INTERNAL_SERVER_ERROR),
           pageTitle("Sorry, there is a problem with the service - Business Tax account - GOV.UK")
         )
+
+        AuditStub.verifyAuditContains(TaxYearOverviewRequestAuditModel(
+          MtdItUser(testMtditid, testNino, None,
+            multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some("1")
+          )(FakeRequest()), Some("1")).detail)
       }
     }
   }
