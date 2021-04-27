@@ -79,6 +79,13 @@
 
     </div>
 
+
+@for(message <- calcModel.calcDataModel.messages.map(_.allMessages.sortBy(_.id)).getOrElse(Seq())) {
+<div class="">
+        @messages(s"taxCal_breakdown.message.${message.id}")
+</div>
+}
+
     @if(calcModel.calcDataModel.payPensionsProfit.bands.nonEmpty) {
         <table>
             <caption>
