@@ -79,12 +79,35 @@
 
     </div>
 
+    @if(calcModel.calcDataModel.messages.exists(_.allMessages.exists(_.id=="C22201"))){
+    <div class="panel panel-border-wide">
+        @messages(s"taxCal_breakdown.message.C22201",calcModel.calcDataModel.reductionsAndCharges.giftAidTax.get.toCurrencyString, calcModel.getModifiedBaseTaxBand.get.apportionedBandLimit.toCurrencyString)
+    </div>
+    }
 
-@for(message <- calcModel.calcDataModel.messages.map(_.allMessages.sortBy(_.id)).getOrElse(Seq())) {
-<div class="">
+    @for(message <- calcModel.calcDataModel.messages.map(_.genericMessages.sortBy(_.id)).getOrElse(Seq())) {
+    <div class="panel panel-border-wide">
         @messages(s"taxCal_breakdown.message.${message.id}")
-</div>
-}
+    </div>
+    }
+
+    @if(calcModel.calcDataModel.messages.exists(_.allMessages.exists(_.id=="C22205"))){
+    <div class="panel panel-border-wide">
+        @messages(s"taxCal_breakdown.message.C22205",calcModel.calcDataModel.allowancesAndDeductions.lossesAppliedToGeneralIncome.get.toCurrencyString)
+    </div>
+    }
+
+    @if(calcModel.calcDataModel.messages.exists(_.allMessages.exists(_.id=="C22208"))){
+    <div class="panel panel-border-wide">
+        @messages(s"taxCal_breakdown.message.C22208",calcModel.calcDataModel.reductionsAndCharges.giftAidTax.get.toCurrencyString, calcModel.getModifiedBaseTaxBand.get.apportionedBandLimit.toCurrencyString)
+    </div>
+    }
+
+    @if(calcModel.calcDataModel.messages.exists(_.allMessages.exists(_.id=="C22209"))){
+    <div class="panel panel-border-wide">
+        @messages(s"taxCal_breakdown.message.C22209",calcModel.calcDataModel.reductionsAndCharges.giftAidTax.get.toCurrencyString, calcModel.getModifiedBaseTaxBand.get.apportionedBandLimit.toCurrencyString)
+    </div>
+    }
 
     @if(calcModel.calcDataModel.payPensionsProfit.bands.nonEmpty) {
         <table>
