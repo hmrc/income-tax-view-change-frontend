@@ -16,17 +16,19 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.{PaymentHistoryRequestAuditModel, PaymentHistoryResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import services.PaymentHistoryService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -34,6 +36,7 @@ class PaymentHistoryController @Inject()(val checkSessionTimeout: SessionTimeout
                                          val authenticate: AuthenticationPredicate,
                                          val retrieveNino: NinoPredicate,
                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                         auditingService: AuditingService,
                                          itvcErrorHandler: ItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService,
                                          dateFormatter: ImplicitDateFormatterImpl)
@@ -49,8 +52,11 @@ class PaymentHistoryController @Inject()(val checkSessionTimeout: SessionTimeout
       if (!isEnabled(PaymentHistory)) {
         Future.successful(NotFound(itvcErrorHandler.notFoundTemplate(user)))
       } else {
+        auditingService.extendedAudit(PaymentHistoryRequestAuditModel(user))
         paymentHistoryService.getPaymentHistory.map {
-          case Right(payments) => Ok(views.html.paymentHistory(payments, dateFormatter,backUrl = backUrl, user.saUtr))
+          case Right(payments) =>
+            auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments))
+            Ok(views.html.paymentHistory(payments, dateFormatter, backUrl = backUrl, user.saUtr))
           case Left(_) => itvcErrorHandler.showInternalServerError()
         }
       }

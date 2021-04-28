@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package audit
+package audit.models
 
+import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import play.api.libs.json.{JsObject, Json}
-import utils.Utilities.JsonUtil
+import play.api.libs.json.JsValue
 
-object Utilities {
+case class PaymentHistoryRequestAuditModel(mtdItUser: MtdItUser[_]) extends ExtendedAuditModel {
 
-  def userAuditDetails(user: MtdItUser[_]): JsObject = Json.obj(
-    "nationalInsuranceNumber" -> user.nino,
-    "mtditid" -> user.mtditid
-  ) ++
-    ("agentReferenceNumber", user.arn) ++
-    ("saUtr", user.saUtr) ++
-    ("credId", user.credId) ++
-    userType(user.userType)
-
-  def userType(userType: Option[String]): JsObject = userType match {
-    case Some("Agent") => Json.obj("userType" -> "Agent")
-    case Some(_) => Json.obj("userType" -> "Individual")
-    case None => Json.obj()
-  }
+  override val transactionName: String = "payment-history-request"
+  override val auditType: String = "PaymentHistoryRequest"
+  override val detail: JsValue = userAuditDetails(mtdItUser)
 
 }

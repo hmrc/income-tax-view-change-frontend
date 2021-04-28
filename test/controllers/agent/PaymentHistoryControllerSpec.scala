@@ -17,6 +17,7 @@
 package controllers.agent
 
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
+import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import config.featureswitch.{API5, AgentViewer, FeatureSwitching}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -36,12 +37,13 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaymentHistoryControllerSpec  extends TestSupport
+class PaymentHistoryControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with MockIncomeSourceDetailsService
   with ImplicitDateFormatter
   with FeatureSwitching
-  with MockItvcErrorHandler {
+  with MockItvcErrorHandler
+  with MockAuditingService {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -60,6 +62,7 @@ class PaymentHistoryControllerSpec  extends TestSupport
 
     val controller = new PaymentHistoryController(
       app.injector.instanceOf[views.html.agent.AgentsPaymentHistory],
+      mockAuditingService,
       mockAuthService,
       mockIncomeSourceDetailsService,
       paymentHistoryService,
@@ -79,7 +82,6 @@ class PaymentHistoryControllerSpec  extends TestSupport
         enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-
         mockSingleBusinessIncomeSource()
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Right(testPayments)))
@@ -91,7 +93,7 @@ class PaymentHistoryControllerSpec  extends TestSupport
 
     }
 
-        "Failing to retrieve a user's payments - left" should {
+    "Failing to retrieve a user's payments - left" should {
       "send the user to the internal service error page" in new Setup {
         enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -107,7 +109,7 @@ class PaymentHistoryControllerSpec  extends TestSupport
 
     }
 
-        "Failing to retrieve income sources" should {
+    "Failing to retrieve income sources" should {
       "send the user to internal server error page" in new Setup {
         enable(AgentViewer)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -119,17 +121,15 @@ class PaymentHistoryControllerSpec  extends TestSupport
       }
     }
 
-      "User fails to be authorised" in new Setup {
-        enable(AgentViewer)
-        setupMockAgentAuthorisationException()
+    "User fails to be authorised" in new Setup {
+      enable(AgentViewer)
+      setupMockAgentAuthorisationException()
 
-        val result = await(controller.viewPaymentHistory()(fakeRequestWithActiveSession))
+      val result = await(controller.viewPaymentHistory()(fakeRequestWithActiveSession))
 
-        status(result) shouldBe Status.SEE_OTHER
+      status(result) shouldBe Status.SEE_OTHER
 
-      }
     }
-
-
-
+  }
+  
 }

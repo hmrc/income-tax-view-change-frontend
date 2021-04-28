@@ -74,7 +74,7 @@ object HomeAudit {
     HomeAudit(
       mtdItUser,
       nextPaymentOrOverdue = nextPaymentOrOverdue,
-      nextUpdateOrOverdue = nextUpdateOrOverdue,
+      nextUpdateOrOverdue = nextUpdateOrOverdue
     )
   }
 }
