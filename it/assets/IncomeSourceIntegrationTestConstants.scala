@@ -55,7 +55,7 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = None
   )
 
-  val paymentHistoryBusinessAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+  val paymentHistoryBusinessAndPropertyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtdItId,
     None,
     businesses = List(oldBusiness1),
@@ -80,7 +80,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val noPropertyOrBusinessResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-    testMtdItId,None,
+    testMtdItId, None,
     List(), None
   )
 
@@ -92,12 +92,12 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = yearOfMigration
   )
 
-  val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500,"ISE")
+  val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500, "ISE")
 
   val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("financialDetails" -> Json.arr())
 
   def testValidFinancialDetailsModelJsonSingleCharge(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
-                                         taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
+                                                     taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
     "financialDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear,
@@ -111,7 +111,7 @@ object IncomeSourceIntegrationTestConstants {
         "items" -> Json.arr(
           Json.obj(
             "subItemId" -> "001",
-            "amount" ->  100,
+            "amount" -> 100,
             "clearingDate" -> "2019-05-15",
             "clearingReason" -> "01",
             "outgoingPaymentMethod" -> "A",
@@ -142,7 +142,7 @@ object IncomeSourceIntegrationTestConstants {
         "items" -> Json.arr(
           Json.obj(
             "subItemId" -> "001",
-            "amount" ->  100,
+            "amount" -> 100,
             "clearingDate" -> "2019-05-15",
             "clearingReason" -> "01",
             "outgoingPaymentMethod" -> "A",
@@ -167,7 +167,7 @@ object IncomeSourceIntegrationTestConstants {
         "items" -> Json.arr(
           Json.obj(
             "subItemId" -> "001",
-            "amount" ->  100,
+            "amount" -> 100,
             "clearingDate" -> "2019-05-15",
             "clearingReason" -> "01",
             "outgoingPaymentMethod" -> "A",
@@ -192,7 +192,7 @@ object IncomeSourceIntegrationTestConstants {
         "items" -> Json.arr(
           Json.obj(
             "subItemId" -> "001",
-            "amount" ->  100,
+            "amount" -> 100,
             "clearingDate" -> "2019-05-15",
             "clearingReason" -> "01",
             "outgoingPaymentMethod" -> "A",
@@ -221,7 +221,7 @@ object IncomeSourceIntegrationTestConstants {
     "items" -> Json.arr(
       Json.obj(
         "subItemId" -> "001",
-        "amount" ->  100,
+        "amount" -> 100,
         "clearingDate" -> "2019-05-15",
         "clearingReason" -> "01",
         "outgoingPaymentMethod" -> "A",
@@ -233,7 +233,7 @@ object IncomeSourceIntegrationTestConstants {
       ),
       Json.obj(
         "subItemId" -> "002",
-        "amount" ->  101,
+        "amount" -> 101,
         "clearingDate" -> "2019-05-16",
         "clearingReason" -> "02",
         "outgoingPaymentMethod" -> "B",
