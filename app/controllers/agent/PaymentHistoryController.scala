@@ -16,11 +16,12 @@
 
 package controllers.agent
 
+import audit.AuditingService
+import audit.models.{PaymentHistoryRequestAuditModel, PaymentHistoryResponseAuditModel}
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{IncomeSourceDetailsService, PaymentHistoryService}
@@ -29,21 +30,21 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.agent.AgentsPaymentHistory
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentHistoryController @Inject()(agentsPaymentHistory: AgentsPaymentHistory,
+                                         auditingService: AuditingService,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          incomeSourceDetailsService: IncomeSourceDetailsService,
                                          paymentHistoryService: PaymentHistoryService)
                                         (implicit val appConfig: FrontendAppConfig,
-                                          val languageUtils: LanguageUtils,
-                                          mcc: MessagesControllerComponents,
-                                          dateFormatter: ImplicitDateFormatterImpl,
-                                          implicit val ec: ExecutionContext,
-                                          val itvcErrorHandler: ItvcErrorHandler)
+                                         val languageUtils: LanguageUtils,
+                                         mcc: MessagesControllerComponents,
+                                         dateFormatter: ImplicitDateFormatterImpl,
+                                         implicit val ec: ExecutionContext,
+                                         val itvcErrorHandler: ItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
-
-
 
   def viewPaymentHistory(): Action[AnyContent] =
     Authenticated.async { implicit request =>
@@ -51,17 +52,20 @@ class PaymentHistoryController @Inject()(agentsPaymentHistory: AgentsPaymentHist
         if (isEnabled(AgentViewer)) {
           for {
             mtdItUser <- getMtdItUserWithIncomeSources(incomeSourceDetailsService)
+            _ = auditingService.extendedAudit(PaymentHistoryRequestAuditModel(mtdItUser))
             paymentHistoryResponse <- paymentHistoryService.getPaymentHistory(implicitly, mtdItUser)
           } yield {
             paymentHistoryResponse match {
-              case Right(payments) => Ok(agentsPaymentHistory(payments, dateFormatter, backUrl, mtdItUser.saUtr))
+              case Right(payments) =>
+                auditingService.extendedAudit(PaymentHistoryResponseAuditModel(mtdItUser, payments))
+                Ok(agentsPaymentHistory(payments, dateFormatter, backUrl, mtdItUser.saUtr))
               case Left(_) => itvcErrorHandler.showInternalServerError()
             }
           }
         } else {
-            Future.failed(new NotFoundException("[PaymentHistoryController] - Agent viewer is disabled"))
-          }
+          Future.failed(new NotFoundException("[PaymentHistoryController] - Agent viewer is disabled"))
         }
+    }
 
   def backUrl: String = controllers.agent.routes.HomeController.show().url
 

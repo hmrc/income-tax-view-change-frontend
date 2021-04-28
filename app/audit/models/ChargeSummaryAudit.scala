@@ -31,10 +31,9 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
     case Some("SA Payment on Account 1") => "Payment on account 1 of 2"
     case Some("SA Payment on Account 2") => "Payment on account 2 of 2"
     case Some("SA Balancing Charge") => "Remaining balance"
-    case error => {
+    case error =>
       Logger.error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
       "unknownCharge"
-    }
   }
 
   private val chargeDetails: JsObject = Json.obj(

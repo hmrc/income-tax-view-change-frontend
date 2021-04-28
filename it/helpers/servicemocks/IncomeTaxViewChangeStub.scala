@@ -19,6 +19,7 @@ package helpers.servicemocks
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
 import models.core.{Nino, NinoResponseError}
+import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status
@@ -135,8 +136,8 @@ object IncomeTaxViewChangeStub {
   def paymentsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
 
   def stubGetPaymentsResponse(nino: String, from: String, to: String)
-                             (status: Int, response: JsValue): StubMapping = {
-    WiremockHelper.stubGet(paymentsUrl(nino, from, to), status, response.toString())
+                             (status: Int, response: Seq[Payment]): StubMapping = {
+    WiremockHelper.stubGet(paymentsUrl(nino, from, to), status, Json.toJson(response).toString())
   }
 
   def verifyGetPayments(nino: String, from: String, to: String): Unit = {
