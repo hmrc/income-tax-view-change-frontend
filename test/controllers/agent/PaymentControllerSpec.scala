@@ -79,7 +79,7 @@ class PaymentControllerSpec extends TestSupport
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("redirect-url")
-        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditidAgent, Some(testNinoAgent), Some(testSaUtrId.toString), None, Some("Agent")))
+        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditidAgent, Some(testNinoAgent), Some(testSaUtrId.toString), Some("credId"), Some("Agent")))
       }
     }
 

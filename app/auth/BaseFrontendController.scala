@@ -43,15 +43,15 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
 
   protected trait AuthenticatedActions[User <: IncomeTaxUser] {
 
-    def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel) => User
+    def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel, Option[String]) => User
 
     def apply(action: Request[AnyContent] => User => Result): Action[AnyContent] = async(action andThen (_ andThen Future.successful))
 
     protected def asyncInternal(predicate: AuthPredicate[User])(action: ActionBody[User]): Action[AnyContent] =
       Action.async { implicit request =>
-        authorisedFunctions.authorised().retrieve(allEnrolments and affinityGroup and confidenceLevel) {
-          case enrolments ~ affinity ~ confidence =>
-            implicit val user: User = userApply(enrolments, affinity, confidence)
+        authorisedFunctions.authorised().retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
+          case enrolments ~ affinity ~ confidence ~ credentials =>
+            implicit val user: User = userApply(enrolments, affinity, confidence, credentials.map(_.providerId))
 
             predicate.apply(request)(user) match {
               case Right(AuthPredicateSuccess) => action(request)(user)

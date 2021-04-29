@@ -24,6 +24,8 @@ class IncomeTaxAgentUserSpec extends UnitSpec with WithFakeApplication {
 
   val testArn = "123456"
 
+  val testCredId: Option[String] = Some("credId")
+
   "IncomeTaxSAUser" should {
     val confidenceLevel = ConfidenceLevel.L50
 
@@ -35,11 +37,16 @@ class IncomeTaxAgentUserSpec extends UnitSpec with WithFakeApplication {
         )
       )),
       None,
-      confidenceLevel
+      confidenceLevel,
+      credId = testCredId
     )
 
     s"have the expected ARN '${testArn}'" in {
       user.agentReferenceNumber shouldBe Some(testArn)
+    }
+
+    s"have the expected credId '$testCredId" in {
+      user.credId shouldBe testCredId
     }
 
   }
