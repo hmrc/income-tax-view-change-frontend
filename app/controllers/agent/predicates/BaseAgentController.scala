@@ -28,7 +28,7 @@ trait BaseAgentController extends BaseFrontendController {
 
   object Authenticated extends AuthenticatedActions[IncomeTaxAgentUser] {
 
-    override def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel) => IncomeTaxAgentUser = IncomeTaxAgentUser.apply
+    override def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel, Option[String]) => IncomeTaxAgentUser = IncomeTaxAgentUser.apply
 
     override def async: AuthenticatedAction[IncomeTaxAgentUser] = asyncInternal(baseAgentPredicates)
 

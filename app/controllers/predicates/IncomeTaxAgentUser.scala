@@ -27,7 +27,8 @@ trait IncomeTaxUser {
 
 case class IncomeTaxAgentUser(enrolments: Enrolments,
                               affinityGroup: Option[AffinityGroup],
-                              confidenceLevel: ConfidenceLevel) extends IncomeTaxUser {
+                              confidenceLevel: ConfidenceLevel,
+                              credId: Option[String]) extends IncomeTaxUser {
 
   lazy val agentReferenceNumber: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
 
