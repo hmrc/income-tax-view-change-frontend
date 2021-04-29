@@ -470,7 +470,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
     }
-    <<<<<<< HEAD
 
     "the user has no charges" should {
       s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(noChargesModel) {
@@ -496,11 +495,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         Option(pageDocument.getElementById("payment-button")) shouldBe None
       }
     }
-
-    =======
-    >>>>>>> bafd40a0 (MISUV - 1664: audit event
-    for income source details
-    for both individual and agent
-    )
+    
   }
 }

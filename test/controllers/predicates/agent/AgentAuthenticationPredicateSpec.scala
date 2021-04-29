@@ -40,6 +40,7 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
     enrolments = Enrolments(enrolments.toSet),
     affinityGroup = affinityGroup,
     confidenceLevel: ConfidenceLevel,
+    credId = Some("credId")
   )
 
   private def testUser(affinityGroup: Option[AffinityGroup], enrolments: Enrolment*): IncomeTaxAgentUser =

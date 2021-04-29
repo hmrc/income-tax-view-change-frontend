@@ -63,7 +63,7 @@ trait ClientConfirmedController extends BaseAgentController {
   def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService)(
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[AnyContent]] = {
     val userWithNino: MtdItUserWithNino[_] = MtdItUserWithNino(
-      getClientMtditid, getClientNino, getClientName, getClientUtr, None, Some("Agent"), user.agentReferenceNumber
+      getClientMtditid, getClientNino, getClientName, getClientUtr, user.credId, Some("Agent"), user.agentReferenceNumber
     )
 
     incomeSourceDetailsService.getIncomeSourceDetails()(hc = hc, mtdUser = userWithNino) map {
