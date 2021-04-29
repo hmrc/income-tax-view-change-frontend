@@ -109,6 +109,7 @@ object SavingsAndGains {
 }
 
 case class ReductionsAndCharges(giftAidTax: Option[BigDecimal] = None,
+                                grossGiftAidPayments: Option[BigDecimal] = None,
                                 totalPensionSavingsTaxCharges: Option[BigDecimal] = None,
                                 statePensionLumpSumCharges: Option[BigDecimal] = None,
                                 totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
@@ -126,6 +127,7 @@ case class ReductionsAndCharges(giftAidTax: Option[BigDecimal] = None,
 object ReductionsAndCharges {
   implicit val reads: Reads[ReductionsAndCharges] = (
     readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "giftAid" \ "giftAidTax") and
+      readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "detail" \ "incomeTax" \ "giftAid" \ "grossGiftAidPayments") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "totalPensionSavingsTaxCharges") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "incomeTax" \ "statePensionLumpSumCharges") and
       readNullable[BigDecimal](__ \ "incomeTaxAndNicsCalculated" \ "summary" \ "totalStudentLoansRepaymentAmount") and
