@@ -20,7 +20,7 @@ import models.{readNullable, readNullableList}
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Json, OFormat, OWrites, Reads, _}
 
-case class TaxBand(name: String, rate: BigDecimal, income: BigDecimal, taxAmount: BigDecimal)
+case class TaxBand(name: String, rate: BigDecimal, income: BigDecimal, taxAmount: BigDecimal, bandLimit: BigDecimal, apportionedBandLimit: BigDecimal)
 
 object TaxBand {
   implicit val format: OFormat[TaxBand] = Json.format[TaxBand]

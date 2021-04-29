@@ -48,17 +48,24 @@ object CalcBreakdownTestConstants {
         name = "BRT",
         rate = 20.0,
         income = 20000.00,
-        taxAmount = 4000.00),
+        taxAmount = 4000.00,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
+			),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 100000.00,
-          taxAmount = 40000.00),
+          taxAmount = 40000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 50000.00,
-          taxAmount = 22500.00)
+          taxAmount = 22500.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000)
       )
     )
   )
@@ -76,27 +83,37 @@ object CalcBreakdownTestConstants {
         name = "SRT",
         rate = 10.0,
         income = 20000.00,
-        taxAmount = 2000.00),
+        taxAmount = 2000.00,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000),
         TaxBand(
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00),
+          taxAmount = 4000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
         TaxBand(
           name = "IRT",
           rate = 25.0,
           income = 20000.00,
-          taxAmount = 45000.00),
+          taxAmount = 45000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 100000.00,
-          taxAmount = 40000.00),
+          taxAmount = 40000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 50000.00,
-          taxAmount = 22500.00)
+          taxAmount = 22500.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000)
       )
     )
   )
@@ -119,22 +136,25 @@ object CalcBreakdownTestConstants {
         name = "BRT",
         rate = 20.0,
         income = 20000.00,
-        taxAmount = 4000.00
-
+        taxAmount = 4000.00,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 100000.00,
-          taxAmount = 40000.00
-
+          taxAmount = 40000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 50000.00,
-          taxAmount = 22500.00
-
+          taxAmount = 22500.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     ),
 
@@ -147,36 +167,41 @@ object CalcBreakdownTestConstants {
         name = "SSR",
         rate = 0.0,
         income = 1.00,
-        taxAmount = 0.0
-
+        taxAmount = 0.0,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
         TaxBand(
           name = "ZRT",
           rate = 0.0,
           income = 20.00,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "BRT",
           rate = 20.0,
           income = 0.0,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 0.0,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 0.0,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     ),
 
@@ -195,19 +220,25 @@ object CalcBreakdownTestConstants {
         name = "basic-band",
         rate = 7.5,
         income = 1000,
-        taxAmount = 75.0
+        taxAmount = 75.0,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
         TaxBand(
           name = "higher-band",
           rate = 37.5,
           income = 2000,
-          taxAmount = 750.0
+          taxAmount = 750.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "additional-band",
           rate = 38.1,
           income = 3000,
-          taxAmount = 1143.0
+          taxAmount = 1143.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         )
       )
     ),
@@ -241,39 +272,44 @@ object CalcBreakdownTestConstants {
         name = "SRT",
         rate = 10.0,
         income = 20000.00,
-        taxAmount = 2000.00
-
+        taxAmount = 2000.00,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
 
         TaxBand(
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00
-
+          taxAmount = 4000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
 
         TaxBand(
           name = "IRT",
           rate = 25.0,
           income = 20000.00,
-          taxAmount = 45000.00
-
+          taxAmount = 45000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
 
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 100000.00,
-          taxAmount = 40000.00
-
+          taxAmount = 40000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 500000.00,
-          taxAmount = 22500.00
-
+          taxAmount = 22500.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     )
   )
@@ -286,39 +322,44 @@ object CalcBreakdownTestConstants {
         name = "SRT",
         rate = 10.0,
         income = 20000.00,
-        taxAmount = 2000.00
-
+        taxAmount = 2000.00,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
 
         TaxBand(
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00
-
+          taxAmount = 4000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
 
         TaxBand(
           name = "IRT",
           rate = 25.0,
           income = 20000.00,
-          taxAmount = 45000.00
-
+          taxAmount = 45000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
 
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 100000.00,
-          taxAmount = 40000.00
-
+          taxAmount = 40000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 500000.00,
-          taxAmount = 22500.00
-
+          taxAmount = 22500.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     )
   )
@@ -331,39 +372,44 @@ object CalcBreakdownTestConstants {
         name = "SRT",
         rate = 10.0,
         income = 20000.00,
-        taxAmount = 2000.00
-
+        taxAmount = 2000.00,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
 
         TaxBand(
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00
-
+          taxAmount = 4000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
 
         TaxBand(
           name = "IRT",
           rate = 25.0,
           income = 20000.00,
-          taxAmount = 45000.00
-
+          taxAmount = 45000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
 
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 100000.00,
-          taxAmount = 40000.00
-
+          taxAmount = 40000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 500000.00,
-          taxAmount = 22500.00
-
+          taxAmount = 22500.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     )
   )
@@ -386,22 +432,25 @@ object CalcBreakdownTestConstants {
         name = "BRT",
         rate = 20.0,
         income = 20000.00,
-        taxAmount = 4000.00
-
+        taxAmount = 4000.00,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 100000.00,
-          taxAmount = 40000.00
-
+          taxAmount = 40000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 50000.00,
-          taxAmount = 22500.00
-
+          taxAmount = 22500.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     ),
 
@@ -414,36 +463,41 @@ object CalcBreakdownTestConstants {
         name = "SSR",
         rate = 0.0,
         income = 1.00,
-        taxAmount = 0.0
-
+        taxAmount = 0.0,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
         TaxBand(
           name = "ZRT",
           rate = 0.0,
           income = 20.00,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "BRT",
           rate = 20.0,
           income = 0.0,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 0.0,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 0.0,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     ),
 
@@ -462,19 +516,25 @@ object CalcBreakdownTestConstants {
         name = "basic-band",
         rate = 7.5,
         income = 1000,
-        taxAmount = 75.0
+        taxAmount = 75.0,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
         TaxBand(
           name = "higher-band",
           rate = 37.5,
           income = 2000,
-          taxAmount = 750.0
+          taxAmount = 750.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "additional-band",
           rate = 38.1,
           income = 3000,
-          taxAmount = 1143.0
+          taxAmount = 1143.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         )
       )
     ),
@@ -511,22 +571,25 @@ object CalcBreakdownTestConstants {
         name = "BRT",
         rate = 20.0,
         income = 20000.00,
-        taxAmount = 4000.00
-
+        taxAmount = 4000.00,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 100000.00,
-          taxAmount = 40000.00
-
+          taxAmount = 40000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 50000.00,
-          taxAmount = 22500.00
-
+          taxAmount = 22500.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     ),
     savingsAndGains = SavingsAndGains(
@@ -538,36 +601,41 @@ object CalcBreakdownTestConstants {
         name = "SSR",
         rate = 0.0,
         income = 0.00,
-        taxAmount = 0.0
-
+        taxAmount = 0.0,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
         TaxBand(
           name = "ZRT",
           rate = 0.0,
           income = 0.00,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "BRT",
           rate = 20.0,
           income = 0.0,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 0.0,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 0.0,
-          taxAmount = 0.0
-
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     ),
 
@@ -586,19 +654,25 @@ object CalcBreakdownTestConstants {
         name = "basic-band",
         rate = 7.5,
         income = 1000,
-        taxAmount = 75.0
+        taxAmount = 75.0,
+				bandLimit = 15000,
+				apportionedBandLimit = 15000
       ),
         TaxBand(
           name = "higher-band",
           rate = 37.5,
           income = 2000,
-          taxAmount = 750.0
+          taxAmount = 750.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "additional-band",
           rate = 38.1,
           income = 3000,
-          taxAmount = 1143.0
+          taxAmount = 1143.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         )
       )
     ),
@@ -636,21 +710,25 @@ object CalcBreakdownTestConstants {
           name = "BRT",
           rate = 20.0,
           income = 132.00,
-          taxAmount = 26.00
+          taxAmount = 26.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 0.00,
-          taxAmount = 0.00
-
+          taxAmount = 0.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 0.00,
-          taxAmount = 0.00
-
+          taxAmount = 0.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     ),
     savingsAndGains = SavingsAndGains(
@@ -661,31 +739,41 @@ object CalcBreakdownTestConstants {
           name = "SSR",
           rate = 0.0,
           income = 0.00,
-          taxAmount = 0.0
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ZRT",
           rate = 0.0,
           income = 0.00,
-          taxAmount = 0.0
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "BRT",
           rate = 20.0,
           income = 0.0,
-          taxAmount = 0.0
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "HRT",
           rate = 40.0,
           income = 0.0,
-          taxAmount = 0.0
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ),
         TaxBand(
           name = "ART",
           rate = 45.0,
           income = 0.0,
-          taxAmount = 0.0
+          taxAmount = 0.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         ))
     ),
     reductionsAndCharges = ReductionsAndCharges(
@@ -701,20 +789,26 @@ object CalcBreakdownTestConstants {
       taxableIncome = Some(6000),
       bands = List(
         TaxBand(
-          name = "basic-band",
+          name = "BRT",
           rate = 7.5,
           income = 1000,
-          taxAmount = 75.0),
+          taxAmount = 75.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
         TaxBand(
           name = "higher-band",
           rate = 37.5,
           income = 2000,
-          taxAmount = 750.0),
+          taxAmount = 750.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
         TaxBand(
           name = "additional-band",
           rate = 38.1,
           income = 3000,
-          taxAmount = 1143.0
+          taxAmount = 1143.0,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000
         )
       )
     ),
@@ -860,17 +954,23 @@ object CalcBreakdownTestConstants {
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00),
+          taxAmount = 4000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 100000.00,
-            taxAmount = 40000.00),
+            taxAmount = 40000.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 45.0,
             income = 50000.00,
-            taxAmount = 22500.00)
+            taxAmount = 22500.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       lumpSums = LumpSums(
@@ -878,17 +978,23 @@ object CalcBreakdownTestConstants {
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00),
+          taxAmount = 4000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 100000.00,
-            taxAmount = 40000.00),
+            taxAmount = 40000.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 45.0,
             income = 50000.00,
-            taxAmount = 22500.00)
+            taxAmount = 22500.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       gainsOnLifePolicies = GainsOnLifePolicies(
@@ -896,17 +1002,23 @@ object CalcBreakdownTestConstants {
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00),
+          taxAmount = 4000.00,
+					bandLimit = 14000,
+					apportionedBandLimit = 14000),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 100000.00,
-            taxAmount = 40000.00),
+            taxAmount = 40000.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 45.0,
             income = 50000.00,
-            taxAmount = 22500.00)
+            taxAmount = 22500.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       savingsAndGains = SavingsAndGains(
@@ -919,32 +1031,44 @@ object CalcBreakdownTestConstants {
             name = "SSR",
             rate = 0.0,
             income = 1.00,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "BRT",
             rate = 10.0,
             income = 20.00,
-            taxAmount = 2.0),
+            taxAmount = 2.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTBR",
             rate = 0.0,
             income = 20.0,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 2000.0,
-            taxAmount = 800.0),
+            taxAmount = 800.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTHR",
             rate = 0.0,
             income = 10000.0,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 50.0,
             income = 100000.0,
-            taxAmount = 5000.0)
+            taxAmount = 5000.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       reductionsAndCharges = ReductionsAndCharges(
@@ -972,32 +1096,44 @@ object CalcBreakdownTestConstants {
             name = "BRT",
             rate = 7.5,
             income = 1000,
-            taxAmount = 75.0),
+            taxAmount = 75.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTBR",
             rate = 0,
             income = 1000,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 37.5,
             income = 2000,
-            taxAmount = 750.0),
+            taxAmount = 750.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTHR",
             rate = 0,
             income = 2000,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 38.1,
             income = 3000,
-            taxAmount = 1143.0),
+            taxAmount = 1143.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTAR",
             rate = 0,
             income = 3000,
-            taxAmount = 0.0)
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       allowancesAndDeductions = AllowancesAndDeductions(
@@ -1086,17 +1222,23 @@ object CalcBreakdownTestConstants {
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00),
+          taxAmount = 4000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 100000.00,
-            taxAmount = 40000.00),
+            taxAmount = 40000.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 45.0,
             income = 50000.00,
-            taxAmount = 22500.00)
+            taxAmount = 22500.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       lumpSums = LumpSums(
@@ -1104,17 +1246,23 @@ object CalcBreakdownTestConstants {
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00),
+          taxAmount = 4000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 100000.00,
-            taxAmount = 40000.00),
+            taxAmount = 40000.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 45.0,
             income = 50000.00,
-            taxAmount = 22500.00)
+            taxAmount = 22500.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       gainsOnLifePolicies = GainsOnLifePolicies(
@@ -1122,17 +1270,23 @@ object CalcBreakdownTestConstants {
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00),
+          taxAmount = 4000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 100000.00,
-            taxAmount = 40000.00),
+            taxAmount = 40000.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 45.0,
             income = 50000.00,
-            taxAmount = 22500.00)
+            taxAmount = 22500.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       savingsAndGains = SavingsAndGains(
@@ -1145,32 +1299,44 @@ object CalcBreakdownTestConstants {
             name = "SSR",
             rate = 0.0,
             income = 1.00,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "BRT",
             rate = 10.0,
             income = 20.00,
-            taxAmount = 2.0),
+            taxAmount = 2.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTBR",
             rate = 0.0,
             income = 20.0,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 2000.0,
-            taxAmount = 800.0),
+            taxAmount = 800.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTHR",
             rate = 0.0,
             income = 10000.0,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 50.0,
             income = 100000.0,
-            taxAmount = 5000.0)
+            taxAmount = 5000.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       reductionsAndCharges = ReductionsAndCharges(
@@ -1198,32 +1364,44 @@ object CalcBreakdownTestConstants {
             name = "BRT",
             rate = 7.5,
             income = 1000,
-            taxAmount = 75.0),
+            taxAmount = 75.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTBR",
             rate = 0,
             income = 1000,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 37.5,
             income = 2000,
-            taxAmount = 750.0),
+            taxAmount = 750.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTHR",
             rate = 0,
             income = 2000,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 38.1,
             income = 3000,
-            taxAmount = 1143.0),
+            taxAmount = 1143.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTAR",
             rate = 0,
             income = 3000,
-            taxAmount = 0.0)
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       allowancesAndDeductions = AllowancesAndDeductions(
@@ -1311,17 +1489,23 @@ object CalcBreakdownTestConstants {
           name = "BRT",
           rate = 20.0,
           income = 20000.00,
-          taxAmount = 4000.00),
+          taxAmount = 4000.00,
+					bandLimit = 15000,
+					apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 100000.00,
-            taxAmount = 40000.00),
+            taxAmount = 40000.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 45.0,
             income = 50000.00,
-            taxAmount = 22500.00)
+            taxAmount = 22500.00,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       savingsAndGains = SavingsAndGains(
@@ -1334,32 +1518,44 @@ object CalcBreakdownTestConstants {
             name = "SSR",
             rate = 0.0,
             income = 1.00,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "BRT",
             rate = 10.0,
             income = 20.00,
-            taxAmount = 2.0),
+            taxAmount = 2.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTBR",
             rate = 0.0,
             income = 20.0,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 40.0,
             income = 2000.0,
-            taxAmount = 800.0),
+            taxAmount = 800.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTHR",
             rate = 0.0,
             income = 10000.0,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 50.0,
             income = 100000.0,
-            taxAmount = 5000.0)
+            taxAmount = 5000.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       reductionsAndCharges = ReductionsAndCharges(
@@ -1387,32 +1583,44 @@ object CalcBreakdownTestConstants {
             name = "BRT",
             rate = 7.5,
             income = 1000,
-            taxAmount = 75.0),
+            taxAmount = 75.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTBR",
             rate = 0,
             income = 1000,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "HRT",
             rate = 37.5,
             income = 2000,
-            taxAmount = 750.0),
+            taxAmount = 750.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTHR",
             rate = 0,
             income = 2000,
-            taxAmount = 0.0),
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ART",
             rate = 38.1,
             income = 3000,
-            taxAmount = 1143.0),
+            taxAmount = 1143.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000),
           TaxBand(
             name = "ZRTAR",
             rate = 0,
             income = 3000,
-            taxAmount = 0.0)
+            taxAmount = 0.0,
+						bandLimit = 15000,
+						apportionedBandLimit = 15000)
         )
       ),
       allowancesAndDeductions = AllowancesAndDeductions(
