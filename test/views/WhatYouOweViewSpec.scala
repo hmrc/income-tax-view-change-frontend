@@ -17,13 +17,14 @@
 package views
 
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import assets.FinancialDetailsTestConstants.{testFinancialDetailsModel, testFinancialDetailsModelWithChargesOfSameType}
 import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import assets.MessagesLookUp.{WhatYouOwe => whatYouOwe}
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.WhatYouOweChargesList
 import models.outstandingCharges._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -31,8 +32,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import assets.FinancialDetailsTestConstants.{testFinancialDetailsModel, testFinancialDetailsModelWithChargesOfSameType}
-import models.outstandingCharges.OutstandingChargesModel
 
 import java.time.LocalDate
 
@@ -44,12 +43,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
     Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
 
-  class Setup(charges: WhatYouOweChargesList = WhatYouOweChargesList(),
+  class Setup(charges: WhatYouOweChargesList,
               currentTaxYear: Int = LocalDate.now().getYear,
               paymentEnabled: Boolean = true) {
     val html: HtmlFormat.Appendable = views.html.whatYouOwe(charges, currentTaxYear,
       paymentEnabled, mockImplicitDateFormatter, "testBackURL", Some("1234567890"))(FakeRequest(), implicitly, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
+
+    def verifySelfAssessmentLink(): Unit = {
+      val anchor: Element = pageDocument.getElementById("sa-note-migrated").selectFirst("a")
+      anchor.text shouldBe whatYouOwe.saLink
+      anchor.attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
+      anchor.attr("target") shouldBe "_blank"
+    }
   }
 
   def outstandingChargesModel(dueDate: String, aciAmount: BigDecimal = 12.67) = OutstandingChargesModel(
@@ -88,13 +94,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
-  "The What you owe view with financial details model" should {
-    "when the user has charges and access viewer before 30 days of due date" should {
+  val noChargesModel = WhatYouOweChargesList()
+
+  "The What you owe view with financial details model" when {
+    "the user has charges and access viewer before 30 days of due date" should {
       s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
         pageDocument.title() shouldBe whatYouOwe.title
         pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
-				pageDocument.select("#sa-note-migrated a").attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
+      }
+      "have the link to their previous Self Assessment online account in the sa-note" in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
+        verifySelfAssessmentLink()
       }
       s"have the remaining balance title, table header " in new Setup(whatYouOweDataWithDataDueInMoreThan30Days) {
 
@@ -159,7 +169,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "when the user has charges and access viewer within 30 days of due date" should {
+    "the user has charges and access viewer within 30 days of due date" should {
       s"have the title '${whatYouOwe.title}' and notes" in new Setup(whatYouOweDataWithDataDueIn30Days) {
         pageDocument.title() shouldBe whatYouOwe.title
         pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
@@ -228,7 +238,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("over-due-payments-heading") shouldBe null
       }
     }
-    "when the user has charges and access viewer after due date" should {
+
+    "the user has charges and access viewer after due date" should {
       s"have the title '${whatYouOwe.title}' and notes" in new Setup(whatYouOweDataWithOverdueData) {
         pageDocument.title() shouldBe whatYouOwe.title
         pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
@@ -303,7 +314,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "when the user has charges and access viewer with mixed dates" should {
+    "the user has charges and access viewer with mixed dates" should {
       s"have the title '${whatYouOwe.title}' and notes" in new Setup(whatYouOweDataWithMixedData) {
         pageDocument.title() shouldBe whatYouOwe.title
       }
@@ -371,7 +382,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "when the user has charges and access viewer with mixed dates and ACI value of zero" should {
+    "the user has charges and access viewer with mixed dates and ACI value of zero" should {
       s"have the title '${whatYouOwe.title}' and notes" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
         pageDocument.title() shouldBe whatYouOwe.title
         pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
@@ -459,5 +470,31 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
     }
+
+    "the user has no charges" should {
+      s"have the title '${whatYouOwe.title}' and page header and notes" in new Setup(noChargesModel) {
+        pageDocument.title() shouldBe whatYouOwe.title
+        pageDocument.selectFirst("header > h1").text shouldBe whatYouOwe.heading
+
+        pageDocument.getElementById("no-payments-due").text shouldBe whatYouOwe.noPaymentsDue
+        pageDocument.getElementById("sa-note-migrated").text shouldBe whatYouOwe.saNote
+        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe whatYouOwe.osChargesNote
+        pageDocument.getElementById("payment-days-note").text shouldBe whatYouOwe.paymentDaysNote
+        pageDocument.getElementById("credit-on-account").text shouldBe whatYouOwe.creditOnAccount
+      }
+
+      "have the link to their previous Self Assessment online account in the sa-note" in new Setup(noChargesModel) {
+        verifySelfAssessmentLink()
+      }
+
+      "have note credit-on-account as a panel" in new Setup(noChargesModel) {
+        pageDocument.getElementById("credit-on-account").classNames should contain allOf("panel", "panel-indent", "panel-border-wide")
+      }
+
+      "not have button Pay now" in new Setup(noChargesModel) {
+        Option(pageDocument.getElementById("payment-button")) shouldBe None
+      }
     }
+
+  }
 }

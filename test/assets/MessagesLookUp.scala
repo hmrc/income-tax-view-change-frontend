@@ -16,7 +16,7 @@
 
 package assets
 
-object MessagesLookUp {
+object MessagesLookUp { // scalastyle:off number.of.methods
 
   object Core {
     val welsh = "Cymraeg"
@@ -527,7 +527,8 @@ object MessagesLookUp {
     val title = "What you owe - Business Tax account - GOV.UK"
     val heading = "What you owe"
     val noPaymentsDue = "You have no payments due."
-    val saNote = "You still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous Self Assessment online account."
+    val saLink = "Self Assessment online account (opens in new tab)"
+    val saNote = s"You still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous $saLink."
     val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
     val dropDownInfo = "What are the payment types?"
     val paymentDaysNote = "Payments can take up to 7 days to process."
@@ -564,7 +565,8 @@ object MessagesLookUp {
     val title = "What you owe - Your client’s Income Tax details - GOV.UK"
     val heading = "What you owe"
     val noPaymentsDue = "You have no payments due."
-    val saNote = "You still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous Self Assessment online account."
+    val saLink = "Self Assessment online account (opens in new tab)"
+    val saNote = s"You still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous $saLink."
     val osChargesNote = "Any payments made will be used for outstanding charges in these tax years first and will not be displayed here."
     val dropDownInfo = "What are the payment types?"
     val paymentDaysNote = "Payments can take up to 7 days to process."
