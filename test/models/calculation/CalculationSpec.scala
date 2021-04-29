@@ -47,12 +47,13 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     ),
     reductionsAndCharges = ReductionsAndCharges(
       giftAidTax = Some(1.0),
-      totalPensionSavingsTaxCharges = Some(2.0),
-      statePensionLumpSumCharges = Some(3.0),
-      totalStudentLoansRepaymentAmount = Some(4.0),
-      totalResidentialFinanceCostsRelief = Some(5.0),
-      totalForeignTaxCreditRelief = Some(6.0),
-      totalNotionalTax = Some(7.0),
+      grossGiftAidPayments = Some(2.0),
+      totalPensionSavingsTaxCharges = Some(3.0),
+      statePensionLumpSumCharges = Some(4.0),
+      totalStudentLoansRepaymentAmount = Some(5.0),
+      totalResidentialFinanceCostsRelief = Some(6.0),
+      totalForeignTaxCreditRelief = Some(7.0),
+      totalNotionalTax = Some(8.0),
       reliefsClaimed = Some(Seq(ReliefsClaimed("deficiencyRelief", Some(1.0)), ReliefsClaimed("vctSubscriptions", Some(2.0)),
         ReliefsClaimed("eisSubscriptions", Some(3.0)), ReliefsClaimed("seedEnterpriseInvestment", Some(4.0)),
         ReliefsClaimed("communityInvestment", Some(5.0)), ReliefsClaimed("socialEnterpriseInvestment", Some(6.0)),
@@ -115,7 +116,7 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         "totalIncomeTaxAndNicsDue" -> 1.0,
         "totalIncomeTaxAndNicsDue" -> 1.0,
         "totalIncomeTaxNicsCharged" -> 2.0,
-        "totalStudentLoansRepaymentAmount" -> 4.0,
+        "totalStudentLoansRepaymentAmount" -> 5.0,
         "taxRegime" -> "Welsh",
         "nics" -> Json.obj(
           "class2NicsAmount" -> 1.0,
@@ -123,9 +124,9 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "totalNic" -> 3.0
         ),
         "incomeTax" -> Json.obj(
-          "totalPensionSavingsTaxCharges" -> 2.0,
-          "statePensionLumpSumCharges" -> 3.0,
-          "totalNotionalTax" -> 7.0
+          "totalPensionSavingsTaxCharges" -> 3.0,
+          "statePensionLumpSumCharges" -> 4.0,
+          "totalNotionalTax" -> 8.0
         ),
         "totalTaxDeducted" -> 700.0
       ),
@@ -165,7 +166,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
             )
           ),
           "giftAid" -> Json.obj(
-            "giftAidTax" -> 1.0
+            "giftAidTax" -> 1.0,
+            "grossGiftAidPayments" -> 2.0,
           ),
 
           "savingsAndGains" -> Json.obj(
@@ -252,10 +254,10 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
         ),
         "reliefs" -> Json.obj(
           "residentialFinanceCosts" -> Json.obj(
-            "totalResidentialFinanceCostsRelief" -> 5.0
+            "totalResidentialFinanceCostsRelief" -> 6.0
           ),
           "foreignTaxCreditRelief" -> Json.obj(
-            "totalForeignTaxCreditRelief" -> 6.0
+            "totalForeignTaxCreditRelief" -> 7.0
           ),
           "reliefsClaimed" -> Json.arr(
             Json.obj(
@@ -345,12 +347,13 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
     ),
     "reductionsAndCharges" -> Json.obj(
       "giftAidTax" -> 1.0,
-      "totalPensionSavingsTaxCharges" -> 2.0,
-      "statePensionLumpSumCharges" -> 3.0,
-      "totalStudentLoansRepaymentAmount" -> 4.0,
-      "totalResidentialFinanceCostsRelief" -> 5.0,
-      "totalForeignTaxCreditRelief" -> 6.0,
-      "totalNotionalTax" -> 7.0,
+      "grossGiftAidPayments" -> 2.0,
+      "totalPensionSavingsTaxCharges" -> 3.0,
+      "statePensionLumpSumCharges" -> 4.0,
+      "totalStudentLoansRepaymentAmount" -> 5.0,
+      "totalResidentialFinanceCostsRelief" -> 6.0,
+      "totalForeignTaxCreditRelief" -> 7.0,
+      "totalNotionalTax" -> 8.0,
       "reliefsClaimed" -> Json.arr(
         Json.obj(
           "type" -> "deficiencyRelief",
