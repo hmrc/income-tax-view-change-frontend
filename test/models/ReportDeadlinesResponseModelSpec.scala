@@ -17,8 +17,8 @@
 package models
 
 import assets.BaseTestConstants._
-import assets.{BaseTestConstants, IncomeSourceDetailsTestConstants, ReportDeadlinesTestConstants}
 import assets.ReportDeadlinesTestConstants._
+import assets.{BaseTestConstants, ReportDeadlinesTestConstants}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import javax.inject.Inject
 import models.reportDeadlines._

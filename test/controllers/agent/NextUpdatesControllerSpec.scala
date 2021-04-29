@@ -16,7 +16,6 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import config.FrontendAppConfig
 import config.featureswitch.{AgentViewer, FeatureSwitching}
@@ -34,8 +33,10 @@ import play.api.test.Helpers._
 import services.ReportDeadlinesService
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-
 import java.time.LocalDate
+
+import assets.BaseTestConstants
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class NextUpdatesControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with MockItvcErrorHandler

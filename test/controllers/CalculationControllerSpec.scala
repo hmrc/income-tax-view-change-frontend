@@ -21,7 +21,7 @@ import java.time.LocalDate
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
-import assets.FinancialDetailsTestConstants.{chargeModel, financialDetailsModel, fullChargeModel, testValidFinancialDetailsModel}
+import assets.FinancialDetailsTestConstants.{chargeModel, fullChargeModel}
 import assets.FinancialTransactionsTestConstants.transactionModel
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.MessagesLookUp
@@ -36,7 +36,7 @@ import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockFinancialTransactionsService, MockReportDeadlinesService}
 import models.calculation.CalcOverview
-import models.financialDetails.{Charge, FinancialDetailsModel}
+import models.financialDetails.Charge
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents

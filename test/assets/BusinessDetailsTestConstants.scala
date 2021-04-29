@@ -18,28 +18,24 @@ package assets
 
 import java.time.LocalDate
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testSelfEmploymentId, testSelfEmploymentId2}
-import assets.ReportDeadlinesTestConstants._
-import implicits.ImplicitDateFormatter
+import assets.BaseTestConstants._
+import assets.ReportDeadlinesTestConstants.{openObligation, overdueObligation}
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
 import models.reportDeadlines.ReportDeadlinesModel
-import uk.gov.hmrc.play.language.LanguageUtils
-
-import scala.concurrent.ExecutionContext
 
 object BusinessDetailsTestConstants {
 
 
   val getCurrentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.now
-    if(currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6)))LocalDate.of(currentDate.getYear, 4, 5)
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
 
-  val testBusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017,6,1), end = LocalDate.of(2018,5,30))
-  val test2019BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(2018,3,5), end = LocalDate.of(2019,3,6))
-  val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(2019,3,6), end = LocalDate.of(2018,3,6))
+  val testBusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017, 6, 1), end = LocalDate.of(2018, 5, 30))
+  val test2019BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(2018, 3, 5), end = LocalDate.of(2019, 3, 6))
+  val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(2019, 3, 6), end = LocalDate.of(2018, 3, 6))
   val testTradeName = "business"
   val testTradeName2 = "business"
   val testBizAddress = AddressModel(
@@ -51,7 +47,7 @@ object BusinessDetailsTestConstants {
     countryCode = "UK"
   )
   val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
-  val testCessation = CessationModel(Some(LocalDate.of(2018,1,1)), Some("It was a stupid idea anyway"))
+  val testCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
   val testMtdItId = "XIAT0000000000A"
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
@@ -112,7 +108,7 @@ object BusinessDetailsTestConstants {
 
   val alignedBusiness = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017,4,6), end = LocalDate.of(2018,4,5)),
+    accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5)),
     cashOrAccruals = Some("CASH"),
     tradingStartDate = Some("2017-1-1"),
     cessation = None,
@@ -140,7 +136,7 @@ object BusinessDetailsTestConstants {
 
   val oldUseralignedBusiness = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
-    accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017,4,6), end = LocalDate.of(2018,4,5)),
+    accountingPeriod = AccountingPeriodModel(start = LocalDate.of(2017, 4, 6), end = LocalDate.of(2018, 4, 5)),
     cashOrAccruals = Some("CASH"),
     tradingStartDate = Some("2017-1-1"),
     cessation = None,

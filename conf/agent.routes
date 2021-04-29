@@ -43,3 +43,6 @@ GET         /payments/history                   controllers.agent.PaymentHistory
 
 #Next updates
 GET         /next-updates                       controllers.agent.NextUpdatesController.getNextUpdates
+
+#Deductions Summary
+GET         /calculation/:taxYear/deductions    controllers.agent.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)

@@ -16,9 +16,8 @@
 
 package controllers
 
-
 import assets.BaseTestConstants
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testSaUtrId, testUserType}
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtrId}
 import assets.PaymentDataTestConstants._
 import audit.mocks.MockAuditingService
 import audit.models.InitiatePayNowAuditModel
@@ -29,7 +28,6 @@ import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJou
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import play.api.http.Status
-import play.api.i18n.MessagesApi
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testUtils.TestSupport

@@ -27,9 +27,6 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
-import scala.concurrent.Await
-import scala.concurrent.duration.DurationInt
-
 class CalculationPollingControllerSpec extends TestSupport with MockCalculationPollingService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 

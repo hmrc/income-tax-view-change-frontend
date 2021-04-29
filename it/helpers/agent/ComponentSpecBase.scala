@@ -150,6 +150,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getPaymentHistory(additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/agents/payments/history", additionalCookies)
 
+    def getDeductionsSummary(year: String, additionalCookies: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession(s"/agents/calculation/$year/deductions", additionalCookies)
+
     def getAgentNextUpdates(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/next-updates", additionalCookies)
 

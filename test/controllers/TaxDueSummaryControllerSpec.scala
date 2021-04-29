@@ -19,9 +19,8 @@ package controllers
 import assets.BaseTestConstants.testMtdUserNino
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import audit.AuditingService
-import config.featureswitch.{DeductionBreakdown, FeatureSwitching, TaxDue}
-import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.ItvcErrorHandler
+import config.featureswitch.{FeatureSwitching, TaxDue}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}

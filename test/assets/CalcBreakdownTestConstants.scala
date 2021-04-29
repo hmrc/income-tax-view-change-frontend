@@ -16,7 +16,7 @@
 
 package assets
 
-import assets.BaseTestConstants._
+import BaseTestConstants._
 import enums.{Crystallised, Estimate}
 import models.calculation._
 import play.api.http.Status
@@ -290,36 +290,36 @@ object CalcBreakdownTestConstants {
 
       ),
 
-      TaxBand(
-        name = "BRT",
-        rate = 20.0,
-        income = 20000.00,
-        taxAmount = 4000.00
+        TaxBand(
+          name = "BRT",
+          rate = 20.0,
+          income = 20000.00,
+          taxAmount = 4000.00
 
-      ),
+        ),
 
-      TaxBand(
-        name = "IRT",
-        rate = 25.0,
-        income = 20000.00,
-        taxAmount = 45000.00
+        TaxBand(
+          name = "IRT",
+          rate = 25.0,
+          income = 20000.00,
+          taxAmount = 45000.00
 
-      ),
+        ),
 
-      TaxBand(
-        name = "HRT",
-        rate = 40.0,
-        income = 100000.00,
-        taxAmount = 40000.00
+        TaxBand(
+          name = "HRT",
+          rate = 40.0,
+          income = 100000.00,
+          taxAmount = 40000.00
 
-      ),
-      TaxBand(
-        name = "ART",
-        rate = 45.0,
-        income = 500000.00,
-        taxAmount = 22500.00
+        ),
+        TaxBand(
+          name = "ART",
+          rate = 45.0,
+          income = 500000.00,
+          taxAmount = 22500.00
 
-      ))
+        ))
     )
   )
 
