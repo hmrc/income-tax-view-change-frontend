@@ -16,6 +16,7 @@
 
 package models.calculation
 
+import models.calculation.TaxDeductedAtSource.Messages
 import models.readNullable
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -44,7 +45,8 @@ case class Calculation(totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
                        nic: Nic = Nic(),
                        taxDeductedAtSource: TaxDeductedAtSource = TaxDeductedAtSource(),
                        lumpSums: LumpSums = LumpSums(),
-                       gainsOnLifePolicies: GainsOnLifePolicies = GainsOnLifePolicies()
+                       gainsOnLifePolicies: GainsOnLifePolicies = GainsOnLifePolicies(),
+                       messages: Option[Messages] = None
                       ) extends CalculationResponseModel with CrystallisedViewModel
 
 object Calculation {
@@ -65,7 +67,8 @@ object Calculation {
       __.read[Nic] and
       __.read[TaxDeductedAtSource] and
       __.read[LumpSums] and
-      __.read[GainsOnLifePolicies]
+      __.read[GainsOnLifePolicies] and
+      readNullable[Messages](__ \ "messages")
     ) (Calculation.apply _)
   implicit val writes: OWrites[Calculation] = Json.writes[Calculation]
 }
