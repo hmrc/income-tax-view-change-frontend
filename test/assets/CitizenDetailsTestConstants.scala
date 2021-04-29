@@ -16,16 +16,16 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import play.api.libs.json.{JsValue, Json}
+import BaseTestConstants._
 
 object CitizenDetailsTestConstants {
   val testValidCitizenDetailsModelJson: JsValue = Json.obj(
     "name" -> Json.obj(
-        "current" -> Json.obj(
-          "firstName" -> "John",
-          "lastName" -> "Smith"),
+      "current" -> Json.obj(
+        "firstName" -> "John",
+        "lastName" -> "Smith"),
       "previous" -> ""
     ),
     "ids" -> Json.obj("nino" -> "AA055075C"),

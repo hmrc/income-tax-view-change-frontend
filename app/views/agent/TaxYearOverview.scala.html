@@ -52,7 +52,7 @@
         </tr>
         <tr>
             <td>
-                <a href="">@messages("tax-year-overview.deductions")</a>
+                <a href=@controllers.agent.routes.DeductionsSummaryController.showDeductionsSummary(taxYear).url>@messages("tax-year-overview.deductions")</a>
             </td>
             <td class="numeric">@{overview.deductions.toNegativeCurrencyString}</td>
         </tr>

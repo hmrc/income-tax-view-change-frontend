@@ -16,9 +16,9 @@
 
 package assets
 
-import assets.BaseTestConstants.{testMtditid, testPaymentRedirectUrl}
 import models.core.PaymentDataModel
 import play.api.libs.json.{JsValue, Json}
+import BaseTestConstants._
 
 object PaymentDataTestConstants {
 

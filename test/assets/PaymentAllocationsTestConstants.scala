@@ -16,9 +16,9 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
 import play.api.libs.json.{JsValue, Json}
+import BaseTestConstants._
 
 object PaymentAllocationsTestConstants {
 

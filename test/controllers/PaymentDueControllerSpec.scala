@@ -17,28 +17,23 @@
 package controllers
 
 import assets.BaseTestConstants
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import assets.FinancialDetailsTestConstants._
 import assets.FinancialTransactionsTestConstants._
-import assets.OutstandingChargesTestConstants.{invalidOutStandingChargeJson, validOutStandingChargeResponseJsonWithAciAndBcdCharges}
 import audit.AuditingService
-import audit.mocks.MockAuditingService
-import auth.FrontendAuthorisedFunctions
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
-import controllers.predicates.{AuthenticationPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.WhatYouOweChargesList
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel}
+import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
-import play.api.{Configuration, Environment}
+import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import services.{FinancialDetailsService, FinancialTransactionsService, PaymentDueService}
+import services.{FinancialTransactionsService, PaymentDueService}
 
 import scala.concurrent.Future
 

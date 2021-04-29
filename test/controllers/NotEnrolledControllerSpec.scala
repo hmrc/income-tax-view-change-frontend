@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import controllers.errors.NotEnrolledController
 import org.jsoup.Jsoup
 import play.api.http.Status
-import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 

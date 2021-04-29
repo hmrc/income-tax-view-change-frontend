@@ -19,18 +19,18 @@ package assets
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 
-import assets.BaseTestConstants._
+import BaseTestConstants._
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
 import play.api.libs.json.{JsValue, Json}
 
-object FinancialTransactionsTestConstants{
+object FinancialTransactionsTestConstants {
 
   val testIdType = Some("MTDBSA")
   val testIdNumber = Some("XQIT00000000001")
   val testRegimeType = Some("ITSA")
   val testProcessingDate = ZonedDateTime.parse(testTimeStampString, DateTimeFormatter.ISO_ZONED_DATE_TIME)
 
-  val financialTransactionsErrorJson : JsValue =
+  val financialTransactionsErrorJson: JsValue =
     Json.obj(
       "code" -> testErrorStatus,
       "message" -> testErrorMessage
@@ -98,12 +98,12 @@ object FinancialTransactionsTestConstants{
       )
     )
 
-  def transactionModel(taxYear: LocalDate = LocalDate.of(2018,4,5), outstandingAmount: Option[BigDecimal] = Some(1400.0)) = TransactionModel(
+  def transactionModel(taxYear: LocalDate = LocalDate.of(2018, 4, 5), outstandingAmount: Option[BigDecimal] = Some(1400.0)) = TransactionModel(
     chargeType = Some("PAYE"),
     mainType = Some("2100"),
     periodKey = Some("13RL"),
     periodKeyDescription = Some("abcde"),
-    taxPeriodFrom = Some(LocalDate.of(2017,4,6)),
+    taxPeriodFrom = Some(LocalDate.of(2017, 4, 6)),
     taxPeriodTo = Some(taxYear),
     businessPartner = Some("6622334455"),
     contractAccountCategory = Some("02"),
@@ -121,9 +121,9 @@ object FinancialTransactionsTestConstants{
     accruedInterest = Some(0.23),
     items = Some(Seq(SubItemModel(
       subItem = Some("000"),
-      dueDate = Some(LocalDate.of(2018,2,14)),
+      dueDate = Some(LocalDate.of(2018, 2, 14)),
       amount = Some(3400.00),
-      clearingDate = Some(LocalDate.of(2018,2,17)),
+      clearingDate = Some(LocalDate.of(2018, 2, 17)),
       clearingReason = Some("A"),
       outgoingPaymentMethod = Some("B"),
       paymentLock = Some("C"),
@@ -142,12 +142,13 @@ object FinancialTransactionsTestConstants{
       promiseToPay = Some("K")
     )))
   )
-  def paidTransactionModel(taxYear: LocalDate = LocalDate.of(2018,4,5)) = TransactionModel(
+
+  def paidTransactionModel(taxYear: LocalDate = LocalDate.of(2018, 4, 5)) = TransactionModel(
     chargeType = Some("PAYE"),
     mainType = Some("2100"),
     periodKey = Some("13RL"),
     periodKeyDescription = Some("abcde"),
-    taxPeriodFrom = Some(LocalDate.of(2017,4,6)),
+    taxPeriodFrom = Some(LocalDate.of(2017, 4, 6)),
     taxPeriodTo = Some(taxYear),
     businessPartner = Some("6622334455"),
     contractAccountCategory = Some("02"),
@@ -166,11 +167,11 @@ object FinancialTransactionsTestConstants{
     items = Some(Seq(
       SubItemModel(
         subItem = Some("000"),
-        dueDate = Some(LocalDate.of(2018,2,14)),
+        dueDate = Some(LocalDate.of(2018, 2, 14)),
         amount = Some(3400.00)
       ),
       SubItemModel(
-        clearingDate = Some(LocalDate.of(2018,2,17)),
+        clearingDate = Some(LocalDate.of(2018, 2, 17)),
         clearingReason = Some("A"),
         paymentReference = Some("XAIT1234"),
         paymentAmount = Some(3400.00),
@@ -183,7 +184,7 @@ object FinancialTransactionsTestConstants{
 
   val fullTransactionModel: TransactionModel = transactionModel()
 
-  def financialTransactionsModel(taxYear: LocalDate = LocalDate.of(2018,2,17), outstandingAmount: Option[BigDecimal] = Some(1400.0)) = FinancialTransactionsModel(
+  def financialTransactionsModel(taxYear: LocalDate = LocalDate.of(2018, 2, 17), outstandingAmount: Option[BigDecimal] = Some(1400.0)) = FinancialTransactionsModel(
     idType = testIdType,
     idNumber = testIdNumber,
     regimeType = testRegimeType,

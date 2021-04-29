@@ -16,10 +16,9 @@
 
 package controllers
 
-import assets.BaseTestConstants.{testCredId, testMtdUserNino, testMtditid, testNino, testSaUtr, testUserType}
+import assets.BaseTestConstants.{testCredId, testMtdUserNino, testMtditid, testNino}
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import audit.AuditingService
 import audit.mocks.MockAuditingService
 import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
 import config.featureswitch.{DeductionBreakdown, FeatureSwitching}

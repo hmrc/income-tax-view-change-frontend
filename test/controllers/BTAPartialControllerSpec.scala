@@ -17,11 +17,9 @@
 package controllers
 
 import assets.MessagesLookUp.{BtaPartial => btaPartialMessages}
-import config.FrontendAppConfig
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import play.api.http.Status
-import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport

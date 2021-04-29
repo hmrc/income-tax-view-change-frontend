@@ -16,9 +16,9 @@
 
 package assets
 
-import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testNino}
 import models.core.{Nino, NinoResponseError}
 import play.api.libs.json.{JsValue, Json}
+import BaseTestConstants._
 
 object NinoLookupTestConstants {
   val testNinoModel: Nino = Nino(nino = testNino)

@@ -169,6 +169,7 @@ object MessagesLookUp {
 
   object DeductionBreakdown {
     val title = "Allowances and deductions - Business Tax account - GOV.UK"
+    val agentTitle = "Allowances and deductions - Your client’s Income Tax details - GOV.UK"
 
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
 
@@ -284,8 +285,8 @@ object MessagesLookUp {
     val stateBenefits: String = "State benefits"
     val cis: String = "CIS and trading income"
     val ukLandAndProperty: String = "UK land and property"
-    val specialWithholdingTax:String = "Special withholding tax"
-    val voidISAs:String = "Void ISAs"
+    val specialWithholdingTax: String = "Special withholding tax"
+    val voidISAs: String = "Void ISAs"
     val totalDeductions: String = "Income Tax due after deductions"
   }
 

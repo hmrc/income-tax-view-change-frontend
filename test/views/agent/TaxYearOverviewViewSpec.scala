@@ -269,7 +269,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
             "has a row for the user's allowances and deductions" in new Setup(view()) {
               val row: Element = content.selectHead("#taxCalculation").selectNth("table", 1).selectNth("tr", 2)
               row.selectNth("td", 1).selectHead("a").text shouldBe TaxYearOverviewMessages.calculationTabAllowances
-              row.selectNth("td", 1).selectHead("a").attr("href") shouldBe ""
+              row.selectNth("td", 1).selectHead("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/calculation/2020/deductions"
               row.selectNth("td", 2).text shouldBe "-£50.00"
             }
             "has a row for the total income on which tax is due" in new Setup(view()) {
