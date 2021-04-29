@@ -16,12 +16,13 @@
 
 package controllers.agent
 
+import audit.AuditingService
+import audit.models.AgentClientRelationshipResponseAuditModel
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
-
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,7 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           clientRelationshipService: ClientRelationshipService,
-                                          val authorisedFunctions: AuthorisedFunctions)
+                                          val authorisedFunctions: AuthorisedFunctions,
+                                          auditingService: AuditingService)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: ItvcErrorHandler,
@@ -71,6 +73,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
               arn = user.agentReferenceNumber.getOrElse(throw new InternalServerException("[EnterClientsUTRController][submit] - arn not found"))
             ) map {
               case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
+                auditingService.extendedAudit(AgentClientRelationshipResponseAuditModel(validUTR, user.agentReferenceNumber, true))
                 val sessionValues: Seq[(String, String)] = Seq(
                   SessionKeys.clientMTDID -> mtdItId,
                   SessionKeys.clientNino -> nino,
@@ -81,6 +84,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                 val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
                 Redirect(routes.UTRErrorController.show()).addingToSession(sessionValue: _*)
               case Left(NoAgentClientRelationship) =>
+                auditingService.extendedAudit(AgentClientRelationshipResponseAuditModel(validUTR, user.agentReferenceNumber, false))
                 Redirect(routes.ClientRelationshipFailureController.show())
               case Left(_) =>
                 throw new InternalServerException("[EnterClientsUTRController][submit] - Unexpected response received")
