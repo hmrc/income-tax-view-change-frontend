@@ -16,6 +16,7 @@
 
 package models.calculation
 
+import models.calculation.TaxDeductedAtSource.{Message, Messages}
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.{JsObject, JsSuccess, Json}
 
@@ -104,7 +105,12 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
       bands = List(
         TaxBand("GOLPBand", 1.0, 2.0, 3.0)
       )
-    )
+    ),
+    messages = Some(Messages(
+      info = Some(Seq(Message("infoId", "infoMessage"))),
+      warnings = Some(Seq(Message("warningId", "warningMessage"))),
+      errors = Some(Seq(Message("errorId", "errorMessage")))
+    ))
   )
   val minimalModel: Calculation = Calculation(
     crystallised = true
@@ -169,7 +175,6 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
             "giftAidTax" -> 1.0,
             "grossGiftAidPayments" -> 2.0,
           ),
-
           "savingsAndGains" -> Json.obj(
             "incomeTaxAmount" -> 1.0,
             "taxBands" -> Json.arr(
@@ -301,7 +306,26 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
             )
           )
         )
-
+      )
+    ),
+    "messages" -> Json.obj(
+      "info" -> Json.arr(
+        Json.obj(
+          "id" -> "infoId",
+          "text" -> "infoMessage"
+        )
+      ),
+      "warnings" -> Json.arr(
+        Json.obj(
+          "id" -> "warningId",
+          "text" -> "warningMessage"
+        )
+      ),
+      "errors" -> Json.arr(
+        Json.obj(
+          "id" -> "errorId",
+          "text" -> "errorMessage"
+        )
       )
     )
   )
@@ -453,6 +477,26 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "rate" -> 1.0,
           "income" -> 2.0,
           "taxAmount" -> 3.0
+        )
+      )
+    ),
+    "messages" -> Json.obj(
+      "info" -> Json.arr(
+        Json.obj(
+          "id" -> "infoId",
+          "text" -> "infoMessage"
+        )
+      ),
+      "warnings" -> Json.arr(
+        Json.obj(
+          "id" -> "warningId",
+          "text" -> "warningMessage"
+        )
+      ),
+      "errors" -> Json.arr(
+        Json.obj(
+          "id" -> "errorId",
+          "text" -> "errorMessage"
         )
       )
     )
