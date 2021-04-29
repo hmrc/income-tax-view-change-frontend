@@ -18,9 +18,10 @@ package controllers.agent
 import assets.BaseIntegrationTestConstants._
 import assets.BusinessDetailsIntegrationTestConstants.testMtdItId
 import assets.IncomeSourceIntegrationTestConstants._
+import audit.models.AgentClientRelationshipResponseAuditModel
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.{AgentClientRelationshipStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AgentClientRelationshipStub, AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -216,6 +217,12 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           httpStatus(SEE_OTHER),
           redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
         )
+
+        AuditStub.verifyAuditContainsDetail(AgentClientRelationshipResponseAuditModel(
+          saUtr = validUTR,
+          agentReferenceNumber = Some("1"),
+          true
+        ).detail)
       }
     }
 
@@ -316,7 +323,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         val validUTR: String = "1234567890"
 
         enable(AgentViewer)
-        stubAuthorisedAgentUser(authorised = true)
+        stubAuthorisedAgentUser(authorised = true, arn = "2")
         CitizenDetailsStub.stubGetCitizenDetails(validUTR)(
           status = OK,
           response = CitizenDetailsStub.validCitizenDetailsResponse(
@@ -329,9 +336,15 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
-        AgentClientRelationshipStub.stubAgentClientRelationship(testMtdItId, "1")(status = NOT_FOUND)
+        AgentClientRelationshipStub.stubAgentClientRelationship(testMtdItId, "2")(status = NOT_FOUND)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
+
+        AuditStub.verifyAuditContainsDetail(AgentClientRelationshipResponseAuditModel(
+          saUtr = validUTR,
+          agentReferenceNumber = Some("2"),
+          validRelationship = false
+        ).detail)
 
         Then(s"The user is redirected to the client relationship failure page")
         result should have(
