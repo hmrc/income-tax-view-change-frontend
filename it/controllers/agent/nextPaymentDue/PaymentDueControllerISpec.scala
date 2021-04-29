@@ -1,8 +1,6 @@
 
 package controllers.agent.nextPaymentDue
 
-import java.time.LocalDate
-
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.OutstandingChargesIntegrationTestConstants._
@@ -15,7 +13,9 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
+
+import java.time.LocalDate
 
 class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -376,12 +376,12 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(false),
           isElementVisibleById("future-payments-heading")(false),
-          isElementVisibleById(s"payment-days-note")(false),
-          isElementVisibleById(s"credit-on-account")(false),
+          isElementVisibleById("payment-days-note")(true),
+          isElementVisibleById("credit-on-account")(true),
           isElementVisibleById(s"payment-button")(false),
           isElementVisibleById(s"no-payments-due")(true),
-          isElementVisibleById(s"sa-note")(false),
-          isElementVisibleById(s"outstanding-charges-note")(false)
+          isElementVisibleById("sa-note-migrated")(true),
+          isElementVisibleById("outstanding-charges-note-migrated")(true),
         )
       }
     }
@@ -419,12 +419,12 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(false),
           isElementVisibleById("future-payments-heading")(false),
-          isElementVisibleById(s"payment-days-note")(false),
-          isElementVisibleById(s"credit-on-account")(false),
+          isElementVisibleById("payment-days-note")(true),
+          isElementVisibleById("credit-on-account")(true),
           isElementVisibleById(s"payment-button")(false),
           isElementVisibleById(s"no-payments-due")(true),
-          isElementVisibleById(s"sa-note")(false),
-          isElementVisibleById(s"outstanding-charges-note")(false)
+          isElementVisibleById("sa-note-migrated")(true),
+          isElementVisibleById("outstanding-charges-note-migrated")(true),
         )
       }
     }
@@ -467,12 +467,12 @@ class PaymentDueControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("over-due-payments-heading")(false),
           isElementVisibleById("due-in-thirty-days-payments-heading")(false),
           isElementVisibleById("future-payments-heading")(false),
-          isElementVisibleById(s"payment-days-note")(false),
-          isElementVisibleById(s"credit-on-account")(false),
+          isElementVisibleById("payment-days-note")(true),
+          isElementVisibleById("credit-on-account")(true),
           isElementVisibleById(s"payment-button")(false),
           isElementVisibleById(s"no-payments-due")(true),
-          isElementVisibleById(s"sa-note")(false),
-          isElementVisibleById(s"outstanding-charges-note")(false)
+          isElementVisibleById("sa-note-migrated")(true),
+          isElementVisibleById("outstanding-charges-note-migrated")(true),
         )
       }
     }
