@@ -144,8 +144,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
                 "income" -> 1.0,
                 "rate" -> 2.0,
                 "amount" -> 3.0,
-								"bandLimit" -> 4.0,
-								"apportionedBandLimit" -> 5.0
+                "bandLimit" -> 4.0,
+                "apportionedBandLimit" -> 5.0
               )
             )
           )
@@ -170,8 +170,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
                 "rate" -> 1.0,
                 "income" -> 2.0,
                 "taxAmount" -> 3.0,
-								"bandLimit" -> 4.0,
-								"apportionedBandLimit" -> 5.0
+                "bandLimit" -> 4.0,
+                "apportionedBandLimit" -> 5.0
               )
             )
           ),
@@ -187,8 +187,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
                 "rate" -> 1.0,
                 "income" -> 2.0,
                 "taxAmount" -> 3.0,
-								"bandLimit" -> 4.0,
-								"apportionedBandLimit" -> 5.0
+                "bandLimit" -> 4.0,
+                "apportionedBandLimit" -> 5.0
               )
             )
           ),
@@ -199,8 +199,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
                 "rate" -> 1.0,
                 "income" -> 2.0,
                 "taxAmount" -> 3.0,
-								"bandLimit" -> 4.0,
-								"apportionedBandLimit" -> 5.0
+                "bandLimit" -> 4.0,
+                "apportionedBandLimit" -> 5.0
               )
             )
           ),
@@ -211,8 +211,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
                 "rate" -> 1.0,
                 "income" -> 2.0,
                 "taxAmount" -> 3.0,
-								"bandLimit" -> 4.0,
-								"apportionedBandLimit" -> 5.0
+                "bandLimit" -> 4.0,
+                "apportionedBandLimit" -> 5.0
               )
             )
           ),
@@ -224,8 +224,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
                 "rate" -> 1.0,
                 "income" -> 2.0,
                 "taxAmount" -> 3.0,
-								"bandLimit" -> 4.0,
-								"apportionedBandLimit" -> 5.0
+                "bandLimit" -> 4.0,
+                "apportionedBandLimit" -> 5.0
               )
             )
           )
@@ -366,8 +366,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "rate" -> 1.0,
           "income" -> 2.0,
           "taxAmount" -> 3.0,
-					"bandLimit" -> 4.0,
-					"apportionedBandLimit" -> 5.0
+          "bandLimit" -> 4.0,
+          "apportionedBandLimit" -> 5.0
         )
       )
     ),
@@ -380,8 +380,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "rate" -> 1.0,
           "income" -> 2.0,
           "taxAmount" -> 3.0,
-					"bandLimit" -> 4.0,
-					"apportionedBandLimit" -> 5.0
+          "bandLimit" -> 4.0,
+          "apportionedBandLimit" -> 5.0
         )
       )
     ),
@@ -442,8 +442,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "rate" -> 1.0,
           "income" -> 2.0,
           "taxAmount" -> 3.0,
-					"bandLimit" -> 4.0,
-					"apportionedBandLimit" -> 5.0
+          "bandLimit" -> 4.0,
+          "apportionedBandLimit" -> 5.0
         )
       )
     ),
@@ -485,8 +485,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "rate" -> 1.0,
           "income" -> 2.0,
           "taxAmount" -> 3.0,
-					"bandLimit" -> 4.0,
-					"apportionedBandLimit" -> 5.0
+          "bandLimit" -> 4.0,
+          "apportionedBandLimit" -> 5.0
         )
       )
     ),
@@ -497,8 +497,8 @@ class CalculationSpec extends WordSpecLike with MustMatchers {
           "rate" -> 1.0,
           "income" -> 2.0,
           "taxAmount" -> 3.0,
-					"bandLimit" -> 4.0,
-					"apportionedBandLimit" -> 5.0
+          "bandLimit" -> 4.0,
+          "apportionedBandLimit" -> 5.0
         )
       )
     ),
