@@ -95,7 +95,7 @@ object AuthStub extends ComponentSpecBase {
            |}""".stripMargin).toString())
   }
 
-  def stubAuthorisedAgent(): Unit = {
+  def stubAuthorisedAgent(arn: String): Unit = {
     WiremockHelper.stubPost(
       url = postAuthoriseUrl,
       status = Status.OK,
@@ -106,7 +106,7 @@ object AuthStub extends ComponentSpecBase {
             "identifiers" -> Json.arr(
               Json.obj(
                 "key" -> "AgentReferenceNumber",
-                "value" -> "1"
+                "value" -> arn
               )
             )
           )

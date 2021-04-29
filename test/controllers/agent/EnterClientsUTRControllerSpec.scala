@@ -17,6 +17,7 @@
 package controllers.agent
 
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testMtditid, testNino}
+import audit.mocks.MockAuditingService
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
@@ -37,6 +38,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with MockItvcErrorHandler
   with MockClientRelationshipService
+  with MockAuditingService
   with FeatureSwitching {
 
   override def beforeEach(): Unit = {
@@ -47,7 +49,8 @@ class EnterClientsUTRControllerSpec extends TestSupport
   object TestEnterClientsUTRController extends EnterClientsUTRController(
     enterClientsUTR,
     mockClientRelationshipService,
-    mockAuthService
+    mockAuthService,
+    mockAuditingService
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,

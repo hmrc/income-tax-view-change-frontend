@@ -29,11 +29,11 @@ trait GenericStubMethods extends CustomMatchers {
     }
   }
 
-  def stubAuthorisedAgentUser(authorised: Boolean, hasAgentEnrolment: Boolean = true): Unit = {
+  def stubAuthorisedAgentUser(authorised: Boolean, hasAgentEnrolment: Boolean = true, arn: String = "1"): Unit = {
     if (authorised) {
       if (hasAgentEnrolment) {
         Given("I stub the agent is authorised with an agent reference number")
-        AuthStub.stubAuthorisedAgent()
+        AuthStub.stubAuthorisedAgent(arn)
       } else {
         Given("I stub the agent is authorised without an agent reference number")
         AuthStub.stubAuthorisedAgentNoARN()
