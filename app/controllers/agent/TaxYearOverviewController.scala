@@ -24,7 +24,6 @@ import controllers.agent.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation.{CalcDisplayModel, CalcOverview, Calculation}
 import models.financialDetails.{Charge, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.financialTransactions.TransactionModel
 import models.reportDeadlines.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
