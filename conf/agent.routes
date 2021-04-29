@@ -46,3 +46,7 @@ GET         /next-updates                       controllers.agent.NextUpdatesCon
 
 #Deductions Summary
 GET         /calculation/:taxYear/deductions    controllers.agent.DeductionsSummaryController.showDeductionsSummary(taxYear: Int)
+
+#IncomeSummary
+GET         /calculation/:taxYear/income            controllers.agent.IncomeSummaryController.showIncomeSummary(taxYear: Int)
+

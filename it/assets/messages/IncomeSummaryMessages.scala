@@ -20,4 +20,6 @@ object IncomeSummaryMessages {
 
   val incomeSummaryTitle = "Income - Business Tax account - GOV.UK"
   val incomeSummaryHeading = "6 April 2017 to 5 April 2018 Income"
+  val agentTitle: String = "Income - Your client’s Income Tax details - GOV.UK"
+  val incomeSummaryAgentHeading = "6 April 2021 to 5 April 2022 Income"
 }

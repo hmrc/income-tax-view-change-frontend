@@ -136,6 +136,7 @@ object MessagesLookUp {
 
   object IncomeBreakdown {
     val title = "Income - Business Tax account - GOV.UK"
+    val agentTitle = "Income - Your client’s Income Tax details - GOV.UK"
 
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
 
