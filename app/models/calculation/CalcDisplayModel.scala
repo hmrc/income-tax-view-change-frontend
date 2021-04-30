@@ -27,25 +27,43 @@ case class CalcDisplayModel(calcTimestamp: String,
                             calcDataModel: Calculation,
                             calcStatus: CalcStatus) extends CalcDisplayResponseModel with CrystallisedViewModel {
 
-  val whatYouOwe : String = s"${calcAmount.toCurrency}"
+  val whatYouOwe: String = s"${calcAmount.toCurrency}"
 
-  def crystallisedWithBBSInterest :Boolean = {
+  def getModifiedBaseTaxBand: Option[TaxBand] = {
+    val payPensionsProfitTaxBand = calcDataModel.payPensionsProfit.bands.find(_.name.equals("BRT"))
+    val savingsTaxBand = calcDataModel.savingsAndGains.bands.find(_.name.equals("BRT"))
+    val dividendsTaxBand = calcDataModel.dividends.bands.find(_.name.equals("BRT"))
+    val lumpSumsTaxBand = calcDataModel.lumpSums.bands.find(_.name.equals("BRT"))
+    val gainsOnLifePoliciesTaxBand = calcDataModel.gainsOnLifePolicies.bands.find(_.name.equals("BRT"))
+
+    (payPensionsProfitTaxBand, savingsTaxBand, dividendsTaxBand, lumpSumsTaxBand, gainsOnLifePoliciesTaxBand) match {
+      case (Some(_), _, _, _, _) => payPensionsProfitTaxBand
+      case (_, Some(_), _, _, _) => savingsTaxBand
+      case (_, _, Some(_), _, _) => dividendsTaxBand
+      case (_, _, _, Some(_), _) => lumpSumsTaxBand
+      case (_, _, _, _, Some(_)) => gainsOnLifePoliciesTaxBand
+      case _ => None
+    }
+  }
+
+  def crystallisedWithBBSInterest: Boolean = {
     calcStatus == Crystallised && calcDataModel.savingsAndGains.taxableIncome.exists(_ > 0)
   }
 
   def savingsAllowanceHeading: String = {
     calcStatus match {
-      case Estimate     => ".pa-estimates-savings"
-      case _            => ".pa-bills-savings"
+      case Estimate => ".pa-estimates-savings"
+      case _ => ".pa-bills-savings"
     }
   }
 
-  def estimatedWithBBSInterest : Boolean = {
+  def estimatedWithBBSInterest: Boolean = {
     calcDataModel.savingsAndGains.taxableIncome.exists(_ > 0) && calcStatus == Estimate
   }
 }
 
 case object CalcDisplayError extends CalcDisplayResponseModel
+
 case object CalcDisplayNoDataFound extends CalcDisplayResponseModel
 
 object CalcDisplayModel {
