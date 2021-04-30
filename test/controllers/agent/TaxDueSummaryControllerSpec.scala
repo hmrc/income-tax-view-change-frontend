@@ -16,14 +16,15 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
+import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtdUserNino}
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
-import config.featureswitch.{AgentViewer, FeatureSwitching, IncomeBreakdown}
+import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import config.featureswitch.{AgentViewer, FeatureSwitching, TaxDue}
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
-import mocks.views.MockIncomeSummary
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockCalculationService
+import mocks.views.MockTaxCalcBreakdown
 import models.calculation.CalcDisplayError
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
@@ -35,20 +36,20 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 import scala.concurrent.ExecutionContext
 
-class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorisedFunctions with FeatureSwitching
-  with MockIncomeSummary with MockCalculationService with MockIncomeSourceDetailsService with MockItvcErrorHandler {
+class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationService with MockTaxCalcBreakdown
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockItvcErrorHandler {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    disable(TaxDue)
     disable(AgentViewer)
-    disable(IncomeBreakdown)
   }
 
   class Setup {
     val testYear: Int = 2020
 
-    val controller: IncomeSummaryController = new IncomeSummaryController(
-      incomeBreakdown = incomeBreakdown,
+    val controller: TaxDueSummaryController = new TaxDueSummaryController(
+      taxCalcBreakdown = taxCalcBreakdown,
       authorisedFunctions = mockAuthService,
       calculationService = mockCalculationService,
       incomeSourceDetailsService = mockIncomeSourceDetailsService
@@ -60,24 +61,26 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
       itvcErrorHandler = mockItvcErrorHandler
     )
   }
+
   "backUrl" should {
     "return to the taxyear overview" in new Setup {
       controller.backUrl(testYear) shouldBe controllers.agent.routes.TaxYearOverviewController.show(testYear).url
     }
   }
-  "showIncomeSummary" when {
-    "feature switch IncomeBreakdown and AgentViewer are enabled" when {
+
+  "showTaxDueSummary" when {
+    "feature switch TaxDue and Agent viewer are enabled" when {
       "given a tax year which can be found in ETMP" should {
-        "return Status OK (200) with html content and right title" in new Setup {
-          enable(IncomeBreakdown)
+        "return Status OK (200) with HTML" in new Setup {
           enable(AgentViewer)
+          enable(TaxDue)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
           setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-          mockIncomeBreakdown(testYear, calculationDisplaySuccessModel(calculationDataSuccessModel),
+          mockTaxCalcBreakdown(testYear, calculationDisplaySuccessModel(calculationDataSuccessModel),
             controllers.agent.routes.TaxYearOverviewController.show(testYear).url)(HtmlFormat.empty)
 
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe OK
           contentType(result) shouldBe Some(HTML)
@@ -85,29 +88,28 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
       }
       "there was a problem retrieving income source details for the user" should {
         "throw an internal server exception" in new Setup {
-          enable(IncomeBreakdown)
+          enable(TaxDue)
           enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockErrorIncomeSource()
           setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
           mockShowInternalServerError()
 
-          intercept[InternalServerException](await(controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())))
+          intercept[InternalServerException](await(controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())))
             .message shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
         }
-
       }
 
       "there is a downstream error" should {
         "return Status Internal Server Error (500)" in new Setup {
-          enable(IncomeBreakdown)
+          lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
+          enable(TaxDue)
           enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockBothIncomeSources()
           setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
           mockShowInternalServerError()
-
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -117,27 +119,28 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
     "feature switch AgentViewer is disabled" when {
       "given a tax year which can be found in ETMP" should {
         "return Status NotFound (404)" in new Setup {
-          disable(AgentViewer)
-          enable(IncomeBreakdown)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockNotFound()
+          lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
 
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
+          enable(TaxDue)
+          disable(AgentViewer)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          mockBothIncomeSources()
+          mockNotFound()
 
           status(result) shouldBe Status.NOT_FOUND
         }
       }
     }
 
-    "feature switch IncomeBreakdown is disabled" when {
+    "feature switch TaxDue is disabled" when {
       "given a tax year which can be found in ETMP" should {
         "return Status NotFound (404)" in new Setup {
-          disable(IncomeBreakdown)
+          lazy val result = controller.showTaxDueSummary(testYear)(fakeRequestConfirmedClient())
+          disable(TaxDue)
           enable(AgentViewer)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          mockBothIncomeSources()
           mockNotFound()
-
-          lazy val result = controller.showIncomeSummary(testYear)(fakeRequestConfirmedClient())
 
           status(result) shouldBe Status.NOT_FOUND
         }
@@ -145,4 +148,3 @@ class IncomeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
     }
   }
 }
-

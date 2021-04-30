@@ -192,6 +192,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
   object TaxCalcBreakdown {
     val title = "Tax calculation - Business Tax account - GOV.UK"
+    val agentTitle = "Tax calculation - Your client’s Income Tax details - GOV.UK"
 
     def subHeading(taxYear: Int): String = s"6 April ${taxYear - 1} to 5 April $taxYear"
 
