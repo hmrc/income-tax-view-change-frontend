@@ -51,7 +51,7 @@ class ChargeSummarySpec extends ViewSpec {
 
 		"display a due date" in new Setup(chargeModel()) {
 			document.select(".govuk-summary-list .govuk-summary-list__row:nth-of-type(1) .govuk-summary-list__value")
-				.text() shouldBe "15 May 2019"
+				.text() shouldBe "OVERDUE 15 May 2019"
 		}
 
 		"display a charge amount" in new Setup(chargeModel(originalAmount = Some(1500))) {

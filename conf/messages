@@ -452,6 +452,7 @@ chargeSummary.remainingDue   									   = Remaining to pay
 chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other payments due.
 chargeSummary.whatYouOwe.linkText								   = what you owe
+chargeSummary.overdue                                              = OVERDUE
 
 
 ## Regimes
