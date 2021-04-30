@@ -35,7 +35,12 @@
 	<dl class="govuk-summary-list">
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
-			<dd class="govuk-summary-list__value">@{charge.due.get.toLongDate}</dd>
+			<dd class="govuk-summary-list__value">
+				@if(charge.isOverdue && !charge.isPaid) {
+					<span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
+				}
+				@{charge.due.get.toLongDate}
+			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">@messages("chargeSummary.paymentAmount")</dt>

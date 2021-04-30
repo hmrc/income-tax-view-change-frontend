@@ -343,6 +343,18 @@ whatYouOwe.due-in-thirty-days-payments                          = Due within 30 
 whatYouOwe.future-payments                                      = Future payments
 whatYouOwe.payment-type.taxYear                                 = Tax year {0} to {1}
 
+## Charge Summary ##
+chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
+chargeSummary.paymentOnAccount2.text                            = Taliad ar gyfrif 2 o 2
+chargeSummary.balancingCharge.text                              = Balans sy’n weddill
+chargeSummary.dueDate                                           = Dyddiad dyledus
+chargeSummary.paymentAmount                                     = Swm y taliad
+chargeSummary.paidToDate                                        = wedi'i dalu hyd yma
+chargeSummary.remainingDue                                      = Yn weddill i dalu
+chargeSummary.whatYouOwe.textOne                                = Gweld
+chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
+chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
+chargeSummary.overdue                                           = YN HWYR
 
 ## Regimes
 regimes.UK = Y DU
