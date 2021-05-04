@@ -184,6 +184,16 @@ taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax    = Treth atal
 taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = ISAs di-rym
 taxCal_breakdown.table.taxDeductedAtSource.total					= Treth Incwm sy’n ddyledus ar ôl didyniadau
 
+taxCal_breakdown.message.C22201                                 = Cynyddwyd eich terfyn ar gyfer y Gyfradd Sylfaenol gan {0} i {1} ar gyfer taliadau Rhodd Cymorth
+taxCal_breakdown.message.C22202                                 = Mae’r dreth sy’n ddyledus ar daliadau Rhodd Cymorth yn fwy na’r Dreth Incwm a godwyd arnoch, felly rydych yn agored i dalu treth Rhodd Cymorth
+taxCal_breakdown.message.C22203                                 = Ni chodwyd Yswiriant Gwladol Dosbarth 2 oherwydd bod eich elw o hunangyflogaeth o dan y trothwy elw bychan
+taxCal_breakdown.message.C22205                                 = Cafodd cyfanswm y golled o’r holl ffynonellau incwm ei gyfyngu i uchafswm o {0}
+taxCal_breakdown.message.C22206                                 = Ni ddefnyddiwyd un neu fwy o’ch addasiadau blynyddol oherwydd eich bod wedi cyflwyno incwm neu dreuliau ychwanegol
+taxCal_breakdown.message.C22207                                 = Mae’r swm yr ydych yn ei roi drwy’r gyflogres wedi’i gynnwys yn eich incwm trethadwy sydd wedi’i addasu
+taxCal_breakdown.message.C22208                                 = Mae eich terfyn Cyfradd Sylfaenol wedi’i gynyddu {0} i {1} ar gyfer Cyfraniad Pensiwn
+taxCal_breakdown.message.C22209                                 = Mae eich terfyn Cyfradd Sylfaenol wedi’i gynyddu {0} i {1} ar gyfer Cyfraniad Pensiwn a thaliadau Rhodd Cymorth
+taxCal_breakdown.message.C22210                                 = Caiff treuliau sy’n ymwneud â chyflogaeth eu cyfyngu i gyfanswm yr incwm o gyflogaeth
+taxCal_breakdown.message.C22211                                 = Rhagolwg yw hwn o’ch rhwymedigaeth Treth Incwm blynyddol, sy’n seiliedig ar yr wybodaeth yr ydych wedi’i rhoi hyd yma. Ni chaiff gordaliadau Treth Incwm eu had-dalu hyd nes i chi gyflwyno’ch datganiad terfynol
 
 ## ReportDeadlines Page ##
 obligations.heading                                             = Dyddiadau cau ar gyfer adroddiadau

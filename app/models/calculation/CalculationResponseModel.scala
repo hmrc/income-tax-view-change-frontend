@@ -26,7 +26,7 @@ sealed trait CalculationResponseModel
 case class CalculationErrorModel(code: Int, message: String) extends CalculationResponseModel
 
 object CalculationErrorModel {
-  implicit val format: Format[CalculationErrorModel] = Json.format[CalculationErrorModel]
+	implicit val format: Format[CalculationErrorModel] = Json.format[CalculationErrorModel]
 }
 
 case class Calculation(totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
@@ -75,23 +75,23 @@ object Calculation {
 
 case class CalculationResponseModelWithYear(model: CalculationResponseModel, year: Int) {
 
-  val isError: Boolean = model match {
-    case CalculationErrorModel(status, _) if status >= 500 => true
-    case _ => false
-  }
+	val isError: Boolean = model match {
+		case CalculationErrorModel(status, _) if status >= 500 => true
+		case _ => false
+	}
 
-  val notCrystallised: Boolean = model match {
-    case model: Calculation => !model.crystallised
-    case _ => false
-  }
+	val notCrystallised: Boolean = model match {
+		case model: Calculation => !model.crystallised
+		case _ => false
+	}
 
-  val isCrystallised: Boolean = model match {
-    case model: Calculation => model.crystallised
-    case _ => false
-  }
+	val isCrystallised: Boolean = model match {
+		case model: Calculation => model.crystallised
+		case _ => false
+	}
 
-  val isCalculation: Boolean = model match {
-    case _: Calculation => true
-    case _ => false
-  }
+	val isCalculation: Boolean = model match {
+		case _: Calculation => true
+		case _ => false
+	}
 }

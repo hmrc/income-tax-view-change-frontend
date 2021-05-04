@@ -261,21 +261,21 @@ object TaxDeductedAtSource {
 
   case class Message(id: String, text: String)
 
-  object Message {
-    implicit val format: OFormat[Message] = Json.format[Message]
-  }
+	object Message {
+		implicit val format: OFormat[Message] = Json.format[Message]
+	}
 
-  case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None) {
-
-    val allMessages: Seq[Message] = {
-      info.getOrElse(Seq.empty) ++ warnings.getOrElse(Seq.empty) ++ errors.getOrElse(Seq.empty)
-    }
-  }
+	case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None) {
+    private val acceptedMessages: Seq[String] = Seq("C22202","C22203","C22206","C22207","C22210","C22211")
+		val allMessages: Seq[Message] = {
+			info.getOrElse(Seq.empty) ++ warnings.getOrElse(Seq.empty) ++ errors.getOrElse(Seq.empty)
+		}
+    val genericMessages: Seq[Message] = allMessages.filter(message=>acceptedMessages.contains(message.id))
+	}
 
   object Messages {
     implicit val format: OFormat[Messages] = Json.format[Messages]
   }
-
 }
 
 case class LumpSums(bands: List[TaxBand] = Nil)

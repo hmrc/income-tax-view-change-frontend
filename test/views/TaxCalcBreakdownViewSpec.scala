@@ -18,11 +18,13 @@ package views
 
 import assets.MessagesLookUp.TaxCalcBreakdown
 import assets.CalcBreakdownTestConstants
+import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import enums.Crystallised
-import models.calculation.CalcDisplayModel
-import org.jsoup.nodes.Element
+import models.calculation.{AllowancesAndDeductions, CalcDisplayModel}
+import models.calculation.TaxDeductedAtSource.{Message, Messages}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.{Document, Element}
 import org.scalatest.exceptions.TestFailedException
-import play.api.libs.iteratee.Input.Empty
 import testUtils.ViewSpec
 import views.html.taxCalcBreakdown
 
@@ -677,5 +679,110 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
       }
     }
   }
+
+	"The tax calc view should display messages" when {
+
+		"provided with all matching generic messages" in {
+			val taxYear = 2017
+			val displayModel = calculationDataSuccessModel.copy(messages = Some(Messages(
+				Some(Seq(
+					Message("C22202", "message2"),
+					Message("C22203", "message3"),
+					Message("C22206", "message6"),
+					Message("C22207", "message7"),
+					Message("C22210", "message10"),
+					Message("C22211", "message11")
+				))
+			)))
+
+			lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
+				displayModel,
+				Crystallised), taxYear, backUrl)
+
+			val document: Document = Jsoup.parse(view.body)
+
+			document.select("div.panel-border-wide").size shouldBe 6
+			document.select("div.panel-border-wide").get(0).text shouldBe "Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax"
+			document.select("div.panel-border-wide").get(1).text shouldBe "Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold"
+			document.select("div.panel-border-wide").get(2).text shouldBe "One or more of your annual adjustments have not been applied because you have submitted additional income or expenses"
+			document.select("div.panel-border-wide").get(3).text shouldBe "Your payroll giving amount has been included in your adjusted taxable income"
+			document.select("div.panel-border-wide").get(4).text shouldBe "Employment related expenses are capped at the total amount of employment income"
+			document.select("div.panel-border-wide").get(5).text shouldBe "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
+		}
+
+		"provided with message C22201" in {
+			val taxYear = 2017
+			val displayModel = calculationDataSuccessModel.copy(messages = Some(Messages(
+				Some(Seq(
+					Message("C22201", "message"),
+				))
+			)))
+
+			lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
+				displayModel,
+				Crystallised), taxYear, backUrl)
+
+			val document: Document = Jsoup.parse(view.body)
+
+			document.select("div.panel-border-wide").size shouldBe 1
+			document.select("div.panel-border-wide").text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Gift Aid payments"
+		}
+
+		"provided with message C22205" in {
+			val taxYear = 2017
+			val displayModel = calculationDataSuccessModel.copy(messages = Some(Messages(
+				Some(Seq(
+					Message("C22205", "message"),
+				))
+			)),
+				allowancesAndDeductions = AllowancesAndDeductions(lossesAppliedToGeneralIncome = Some(1000.0))
+			)
+
+			lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
+				displayModel,
+				Crystallised), taxYear, backUrl)
+
+			val document: Document = Jsoup.parse(view.body)
+
+			document.select("div.panel-border-wide").size shouldBe 1
+			document.select("div.panel-border-wide").text shouldBe "Total loss from all income sources was capped at £1,000.00"
+		}
+
+		"provided with message C22208" in {
+			val taxYear = 2017
+			val displayModel = calculationDataSuccessModel.copy(messages = Some(Messages(
+				Some(Seq(
+					Message("C22208", "message"),
+				))
+			)))
+
+			lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
+				displayModel,
+				Crystallised), taxYear, backUrl)
+
+			val document: Document = Jsoup.parse(view.body)
+
+			document.select("div.panel-border-wide").size shouldBe 1
+			document.select("div.panel-border-wide").text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution"
+		}
+
+		"provided with message C22209" in {
+			val taxYear = 2017
+			val displayModel = calculationDataSuccessModel.copy(messages = Some(Messages(
+				Some(Seq(
+					Message("C22209", "message"),
+				))
+			)))
+
+			lazy val view = taxCalcBreakdown(CalcDisplayModel("", 1,
+				displayModel,
+				Crystallised), taxYear, backUrl)
+
+			val document: Document = Jsoup.parse(view.body)
+
+			document.select("div.panel-border-wide").size shouldBe 1
+			document.select("div.panel-border-wide").text shouldBe "Your Basic Rate limit has been increased by £5,000.99 to £15,000.00 for Pension Contribution and Gift Aid payments"
+		}
+	}
 }
 

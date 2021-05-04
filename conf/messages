@@ -271,7 +271,16 @@ taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax    = Special wi
 taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = Void ISAs
 taxCal_breakdown.table.taxDeductedAtSource.total					= Income Tax due after deductions
 
-
+taxCal_breakdown.message.C22201                                 = Your Basic Rate limit has been increased by {0} to {1} for Gift Aid payments
+taxCal_breakdown.message.C22202                                 = Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax
+taxCal_breakdown.message.C22203                                 = Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold
+taxCal_breakdown.message.C22205                                 = Total loss from all income sources was capped at {0}
+taxCal_breakdown.message.C22206                                 = One or more of your annual adjustments have not been applied because you have submitted additional income or expenses
+taxCal_breakdown.message.C22207                                 = Your payroll giving amount has been included in your adjusted taxable income
+taxCal_breakdown.message.C22208                                 = Your Basic Rate limit has been increased by {0} to {1} for Pension Contribution
+taxCal_breakdown.message.C22209                                 = Your Basic Rate limit has been increased by {0} to {1} for Pension Contribution and Gift Aid payments
+taxCal_breakdown.message.C22210                                 = Employment related expenses are capped at the total amount of employment income
+taxCal_breakdown.message.C22211                                 = This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration
 
 ## ReportDeadlines Page ##
 obligations.heading                                             = Report deadlines
