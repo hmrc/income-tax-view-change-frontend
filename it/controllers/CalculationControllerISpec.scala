@@ -440,7 +440,6 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
         verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "ABC123456789", Nil).detail)
 
         And("Internal server error is returned")
         res should have(

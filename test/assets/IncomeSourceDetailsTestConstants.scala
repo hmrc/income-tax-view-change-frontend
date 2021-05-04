@@ -16,12 +16,12 @@
 
 package assets
 
-import java.time.LocalDate
-
-import PropertyDetailsTestConstants.propertyDetails
-import BaseTestConstants._
-import BusinessDetailsTestConstants._
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019}
+import assets.BusinessDetailsTestConstants._
+import assets.PropertyDetailsTestConstants.propertyDetails
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
+
+import java.time.LocalDate
 
 object IncomeSourceDetailsTestConstants {
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testMtdItId, None, List(business1, business2), Some(propertyDetails))

@@ -19,6 +19,7 @@ package assets
 import java.time.LocalDate
 
 import implicits.ImplicitDateFormatter
+import play.api.http.Status
 
 object BaseIntegrationTestConstants {
 
@@ -39,6 +40,8 @@ object BaseIntegrationTestConstants {
   val testCalcId = "01234567"
   val testCalcId2 = "01234568"
 
+  val testTaxYear = 2018
+  val taxYear: String = "2020-04-05"
   val testYear = "2018"
   val testYearPlusOne = "2019"
   val testYearInt = 2018
@@ -51,5 +54,8 @@ object BaseIntegrationTestConstants {
   val testPropertyIncomeId = "1234"
 
   val testTradeName = "business"
+  val testErrorStatus = Status.INTERNAL_SERVER_ERROR
+  val testErrorNotFoundStatus = Status.NOT_FOUND
+  val testErrorMessage = "Dummy Error Message"
 
 }

@@ -16,6 +16,7 @@
 
 package helpers.agent
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import forms.agent.ClientsUTRForm
@@ -86,8 +87,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    wireMockServer.resetMappings()
-    wireMockServer.resetScenarios()
+    WireMock.reset()
     AuditStub.stubAuditing()
   }
 

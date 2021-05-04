@@ -16,12 +16,12 @@
 
 package assets
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, ZonedDateTime}
-
-import BaseTestConstants._
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testTimeStampString}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, SubItemModel, TransactionModel}
 import play.api.libs.json.{JsValue, Json}
+
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZonedDateTime}
 
 object FinancialTransactionsTestConstants {
 

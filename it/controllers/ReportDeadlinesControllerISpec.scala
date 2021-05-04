@@ -119,13 +119,9 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          IncomeTaxViewChangeStub.stubGetReportDeadlinesNotFound(testNino)
-
           val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
           verifyIncomeSourceDetailsCall(testMtditid)
-
-          verifyReportDeadlinesCall(testNino)
 
           Then("the view displays the correct title, username and links")
           res should have(
@@ -537,14 +533,11 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
-        And("I wiremock stub a single business obligation response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(singleObligationOverdueModel(testSelfEmploymentId))))
 
         When("I call GET /report-quarterly/income-and-expenses/view/obligations")
         val res = IncomeTaxViewChangeFrontend.getReportDeadlines
 
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyReportDeadlinesCall(testNino)
 
         Then("the result should have a HTTP status of SEE_OTHER (303) and redirect to the Income Tax home page")
         res should have(

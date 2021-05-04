@@ -16,9 +16,10 @@
 
 package controllers.agent.nextPaymentDue
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
+import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testArn, testMtdItAgentUser, testMtditidAgent, testNinoAgent, testSaUtrId}
 import assets.FinancialDetailsTestConstants._
 import assets.FinancialTransactionsTestConstants._
+import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi}
 import controllers.agent.utils.SessionKeys
 import implicits.ImplicitDateFormatter
@@ -78,7 +79,7 @@ class PaymentDueControllerSpec extends TestSupport
     List(chargeModel(2021)), Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some("2020-12-31"), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234)))))
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList()
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(List.empty)
 
   val noFinancialTransactionErrors = List(testFinancialTransaction(2018))
   val hasFinancialTransactionErrors = List(testFinancialTransaction(2018), financialTransactionsErrorModel)
@@ -114,6 +115,8 @@ class PaymentDueControllerSpec extends TestSupport
 
         status(result) shouldBe Status.OK
         result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+
+
       }
 
       "return success page with empty data in WhatYouOwe model" in new Setup {
@@ -130,6 +133,8 @@ class PaymentDueControllerSpec extends TestSupport
 
         status(result) shouldBe Status.OK
         result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
+
+
       }
 
       "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {

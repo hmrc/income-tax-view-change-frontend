@@ -16,6 +16,7 @@
 
 package helpers
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import helpers.agent.SessionCookieBaker
@@ -88,7 +89,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    wireMockServer.resetMappings()
+    WireMock.reset()
     isAuthorisedUser(true)
     stubUserDetails()
     AuditStub.stubAuditing()
