@@ -21,7 +21,6 @@
 @import views.html.templates.main_template
 @import views.html.helpers.backLinkHelper
 
-
 @(financialTransactions: List[FinancialTransactionsModel] = List(), financialDetails: List[FinancialDetailsModel] = List(), paymentEnabled: Boolean,backUrl: String, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
@@ -66,22 +65,22 @@
             }
         }
         @for(financialDetail <- financialDetails){
-            @for(charge <- financialDetail.financialDetails){
+            @for(documentDetailWithDueDate <- financialDetail.getAllDocumentDetailsWithDueDates){
                 <div class="form-group divider--bottom">
                     <div class="column-half soft--left">
                         <h3 class="heading-large" >
-                            <span class="heading-secondary" id="payments-due-@{charge.taxYear}">@messages("paymentDue.tax-year", (charge.taxYear.toInt - 1).toString, charge.taxYear)</span>
-                            <div id="payments-due-outstanding-@charge.taxYear"> @{charge.remainingToPay.toCurrency} </div>
-                            <span class="heading-secondary" id="payments-due-on-@{charge.taxYear}">@{messages("paymentDue.due") + " " + charge.due.get.toLongDate}</span>
+                            <span class="heading-secondary" id="payments-due-@{documentDetailWithDueDate.documentDetail.taxYear}">@messages("paymentDue.tax-year", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</span>
+                            <div id="payments-due-outstanding-@documentDetailWithDueDate.documentDetail.taxYear"> @{documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency} </div>
+                            <span class="heading-secondary" id="payments-due-on-@{documentDetailWithDueDate.documentDetail.taxYear}">@{messages("paymentDue.due") + " " + documentDetailWithDueDate.dueDate.get.toLongDate}</span>
                         </h3>
                     </div>
                     <div class="column-half heading-large">
-                        <div class="font-small text--right link-style form-group" id="bills-link-@{charge.taxYear}">
-                            <a href="@controllers.routes.CalculationController.renderTaxYearOverviewPage(charge.taxYear.toInt).url" aria-label='@messages("paymentDue.view-bill-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.viewBill")</a>
+                        <div class="font-small text--right link-style form-group" id="bills-link-@{documentDetailWithDueDate.documentDetail.taxYear}">
+                            <a href="@controllers.routes.CalculationController.renderTaxYearOverviewPage(documentDetailWithDueDate.documentDetail.taxYear.toInt).url" aria-label='@messages("paymentDue.view-bill-aria", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)'>@messages("paymentDue.viewBill")</a>
                         </div>
-                        @if(paymentEnabled && charge.remainingToPay > 0){
-                        <div id="payment-link-@{charge.taxYear}" class="font-small text--right link-style">
-                            <a href="@controllers.routes.PaymentController.paymentHandoff(charge.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.payNow")</a>
+                        @if(paymentEnabled && documentDetailWithDueDate.documentDetail.remainingToPay > 0){
+                        <div id="payment-link-@{documentDetailWithDueDate.documentDetail.taxYear}" class="font-small text--right link-style">
+                            <a href="@controllers.routes.PaymentController.paymentHandoff(documentDetailWithDueDate.documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)'>@messages("paymentDue.payNow")</a>
                         </div>
                         }
                     </div>

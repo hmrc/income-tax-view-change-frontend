@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.financialDetails.Charge
 @import views.html.templates.agent.MainTemplate
 @import implicits.ImplicitCurrencyFormatter._
 @import views.html.helpers.injected.BackLink
@@ -22,10 +21,11 @@
 @import models.calculation.CalcOverview
 @import models.reportDeadlines.ObligationsModel
 @import java.time.LocalDate
+@import models.financialDetails.DocumentDetailWithDueDate
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
 
-@(taxYear: Int, overview: CalcOverview, charges: List[Charge], obligations: ObligationsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(taxYear: Int, overview: CalcOverview, documentDetailsWithDueDates: List[DocumentDetailWithDueDate], obligations: ObligationsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 
@@ -74,7 +74,7 @@
 
 @paymentsContent = {
     <h2 class="heading-large">@messages("tax-year-overview.payments")</h2>
-    @if(charges.isEmpty){
+    @if(documentDetailsWithDueDates.isEmpty){
         <p>@messages("tax-year-overview.payments.no-payments")</p>
     } else {
         <table class="govuk-table-paymentsTab" id="payments-table">
@@ -85,19 +85,19 @@
                 <th id="paymentAmountHeading" class="bold">@messages("tax-year-overview.payments.amount")</th>
             </tr>
 
-            @for((charge, index) <- charges.zipWithIndex) {
+            @for((documentDetailWithDueDate, index) <- documentDetailsWithDueDates.zipWithIndex) {
                 <tr>
                     <td>
-                        @if(charge.isOverdue && !charge.isPaid) {
+                        @if(documentDetailWithDueDate.isOverdue && !documentDetailWithDueDate.documentDetail.isPaid) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-overview.payments.overdue")</div>
                         }
                         <div>
-                            <a id="paymentTypeLink-@{index}" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear,charge.transactionId).url">@messages(s"tax-year-overview.payments.${charge.getChargeTypeKey}")</a>
+                            <a id="paymentTypeLink-@{index}" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(taxYear,documentDetailWithDueDate.documentDetail.transactionId).url">@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")</a>
                         </div>
                     </td>
-                    <td>@charge.due.get.toLongDate</td>
-                    <td>@messages(s"tax-year-overview.payments.${charge.getChargePaidStatus}")</td>
-                    <td>@charge.originalAmount.get.toCurrencyString</td>
+                    <td>@documentDetailWithDueDate.dueDate.get.toLongDate</td>
+                    <td>@messages(s"tax-year-overview.payments.${documentDetailWithDueDate.documentDetail.getChargePaidStatus}")</td>
+                    <td>@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrencyString</td>
                 </tr>
             }
         </table>

@@ -80,7 +80,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val noPropertyOrBusinessResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-    testMtdItId,None,
+    testMtdItId, None,
     List(), None
   )
 
@@ -92,34 +92,28 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = yearOfMigration
   )
 
-  val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500,"ISE")
+  val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500, "ISE")
 
-  val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("financialDetails" -> Json.arr())
+  val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("documentDetails" -> Json.arr(), "financialDetails" -> Json.arr())
 
   def testValidFinancialDetailsModelJsonSingleCharge(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
-                                         taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
-    "financialDetails" -> Json.arr(
+                                                     taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
+    "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear,
         "transactionId" -> "1040000123",
-        "transactionDate" -> "2019-05-15",
-        "type" -> "POA1",
-        "chargeType" -> "POA1",
-        "totalAmount" -> 3400,
-        "originalAmount" -> originalAmount,
+        "documentDescription" -> "ITSA- POA 1",
         "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount
+      )
+    ),
+    "financialDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "SA Payment on Account 1",
         "items" -> Json.arr(
           Json.obj(
-            "subItemId" -> "001",
-            "amount" ->  100,
-            "clearingDate" -> "2019-05-15",
-            "clearingReason" -> "01",
-            "outgoingPaymentMethod" -> "A",
-            "outgoingPaymentMethod" -> "A",
-            "paymentAmount" -> 2000,
             "dueDate" -> dueDate,
-            "paymentMethod" -> "A",
-            "paymentId" -> "081203010024-000001"
           )
         )
       )
@@ -128,121 +122,66 @@ object IncomeSourceIntegrationTestConstants {
 
   def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                          taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
+    "documentDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000123",
+        "documentDescription" -> "ITSA- Bal Charge",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000123",
+        "documentDescription" -> "ITSA- POA 1",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000123",
+        "documentDescription" -> "ITSA - POA 2",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount
+      )
+    ),
     "financialDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear,
-        "transactionId" -> "1040000123",
-        "transactionDate" -> "2019-05-15",
-        "type" -> "Balancing Charge Debit",
-        "chargeType" -> "Balancing Charge debit",
         "mainType" -> "SA Balancing Charge",
-        "totalAmount" -> 3400,
-        "originalAmount" -> originalAmount,
-        "outstandingAmount" -> outstandingAmount,
-        "items" -> Json.arr(
-          Json.obj(
-            "subItemId" -> "001",
-            "amount" ->  100,
-            "clearingDate" -> "2019-05-15",
-            "clearingReason" -> "01",
-            "outgoingPaymentMethod" -> "A",
-            "outgoingPaymentMethod" -> "A",
-            "paymentAmount" -> 2000,
-            "dueDate" -> dueDate,
-            "paymentMethod" -> "A",
-            "paymentId" -> "081203010024-000001"
-          )
-        )
+        "items" -> Json.arr(Json.obj("dueDate" -> dueDate))
       ),
       Json.obj(
         "taxYear" -> taxYear,
-        "transactionId" -> "1040000123",
-        "transactionDate" -> "2019-05-15",
-        "type" -> "POA1",
-        "chargeType" -> "POA1",
         "mainType" -> "SA Payment on Account 1",
-        "totalAmount" -> 3400,
-        "originalAmount" -> originalAmount,
-        "outstandingAmount" -> outstandingAmount,
-        "items" -> Json.arr(
-          Json.obj(
-            "subItemId" -> "001",
-            "amount" ->  100,
-            "clearingDate" -> "2019-05-15",
-            "clearingReason" -> "01",
-            "outgoingPaymentMethod" -> "A",
-            "outgoingPaymentMethod" -> "A",
-            "paymentAmount" -> 2000,
-            "dueDate" -> dueDate,
-            "paymentMethod" -> "A",
-            "paymentId" -> "081203010024-000001"
-          )
-        )
+        "items" -> Json.arr(Json.obj("dueDate" -> dueDate))
       ),
       Json.obj(
         "taxYear" -> taxYear,
-        "transactionId" -> "1040000123",
-        "transactionDate" -> "2019-05-15",
-        "type" -> "POA2",
-        "chargeType" -> "POA2",
         "mainType" -> "SA Payment on Account 2",
-        "totalAmount" -> 3400,
-        "originalAmount" -> originalAmount,
-        "outstandingAmount" -> outstandingAmount,
-        "items" -> Json.arr(
-          Json.obj(
-            "subItemId" -> "001",
-            "amount" ->  100,
-            "clearingDate" -> "2019-05-15",
-            "clearingReason" -> "01",
-            "outgoingPaymentMethod" -> "A",
-            "outgoingPaymentMethod" -> "A",
-            "paymentAmount" -> 2000,
-            "dueDate" -> dueDate,
-            "paymentMethod" -> "A",
-            "paymentId" -> "081203010024-000001"
-          )
-        )
+        "items" -> Json.arr(Json.obj("dueDate" -> dueDate))
       )
     )
   )
 
-  def chargeJson(originalAmount: Option[BigDecimal], outstandingAmount: Option[BigDecimal],
-                 totalAmount: Option[BigDecimal], taxYear: String = "2018", mainType: String = "SA Balancing Charge", dueDate: String = "2018-02-14"): JsValue = Json.obj(
+  def documentDetailJson(originalAmount: BigDecimal,
+                         outstandingAmount: BigDecimal,
+                         taxYear: String = "2018",
+                         documentDescription: String = "ITSA- Bal Charge"): JsValue = Json.obj(
     "taxYear" -> taxYear,
     "transactionId" -> "1040000123",
-    "transactionDate" -> "2019-05-15",
-    "type" -> "Balancing Charge debit",
-    "totalAmount" -> totalAmount,
-    "originalAmount" -> originalAmount,
+    "documentDescription" -> documentDescription,
     "outstandingAmount" -> outstandingAmount,
-    "chargeType" -> "Balancing Charge debit",
+    "originalAmount" -> originalAmount
+  )
+
+  def financialDetailJson(taxYear: String = "2018",
+                          mainType: String = "SA Balancing Charge",
+                          dueDate: String = "2018-02-14"): JsValue = Json.obj(
+    "taxYear" -> taxYear,
     "mainType" -> mainType,
     "items" -> Json.arr(
-      Json.obj(
-        "subItemId" -> "001",
-        "amount" ->  100,
-        "clearingDate" -> "2019-05-15",
-        "clearingReason" -> "01",
-        "outgoingPaymentMethod" -> "A",
-        "paymentReference" -> "A",
-        "paymentAmount" -> 2000,
-        "dueDate" -> dueDate,
-        "paymentMethod" -> "A",
-        "paymentId" -> "081203010024-000001"
-      ),
-      Json.obj(
-        "subItemId" -> "002",
-        "amount" ->  101,
-        "clearingDate" -> "2019-05-16",
-        "clearingReason" -> "02",
-        "outgoingPaymentMethod" -> "B",
-        "paymentReference" -> "B",
-        "paymentAmount" -> 3000,
-        "dueDate" -> dueDate,
-        "paymentMethod" -> "B",
-        "paymentId" -> "081203010025-000002"
-      )
+      Json.obj("dueDate" -> dueDate)
     )
   )
 

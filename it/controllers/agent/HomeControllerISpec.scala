@@ -15,8 +15,6 @@
  */
 package controllers.agent
 
-import java.time.LocalDate
-
 import assets.BaseIntegrationTestConstants._
 import assets.messages.HomeMessages.agentTitle
 import config.featureswitch._
@@ -26,7 +24,7 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
-import models.financialDetails.{Charge, FinancialDetailsModel, SubItem}
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
@@ -34,6 +32,8 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+
+import java.time.LocalDate
 
 class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -179,18 +179,20 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )(
                 status = OK,
                 response = Json.toJson(FinancialDetailsModel(
-                  financialDetails = List(
-                    Charge(
+                  documentDetails = List(
+                    DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       transactionId = "testTransactionId",
-                      transactionDate = Some(getCurrentTaxYearEnd.toString),
-                      `type` = None,
-                      totalAmount = Some(1000.00),
-                      originalAmount = Some(1000.00),
+                      documentDescription = Some("ITSA- POA 1"),
                       outstandingAmount = Some(500.00),
-                      clearedAmount = Some(500.00),
-                      chargeType = Some("POA1"),
-                      items = Some(Seq(SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString), None, None)))
+                      originalAmount = Some(1000.00)
+                    )
+                  ),
+                  financialDetails = List(
+                    FinancialDetail(
+                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      mainType = Some("SA Payment on Account 1"),
+                      items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
                     )
                   )
                 ))
@@ -247,18 +249,20 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )(
                 status = OK,
                 response = Json.toJson(FinancialDetailsModel(
-                  financialDetails = List(
-                    Charge(
+                  documentDetails = List(
+                    DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       transactionId = "testTransactionId",
-                      transactionDate = Some(getCurrentTaxYearEnd.toString),
-                      `type` = None,
-                      totalAmount = Some(1000.00),
-                      originalAmount = Some(1000.00),
+                      documentDescription = Some("ITSA- POA 1"),
                       outstandingAmount = Some(0),
-                      clearedAmount = Some(1000.00),
-                      chargeType = Some("POA1"),
-                      items = Some(Seq(SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString), None, None)))
+                      originalAmount = Some(1000.00)
+                    )
+                  ),
+                  financialDetails = List(
+                    FinancialDetail(
+                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      mainType = Some("SA Payment on Account 1"),
+                      items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
                     )
                   )
                 ))
@@ -315,18 +319,20 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )(
                 status = OK,
                 response = Json.toJson(FinancialDetailsModel(
-                  financialDetails = List(
-                    Charge(
+                  documentDetails = List(
+                    DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       transactionId = "testTransactionId",
-                      transactionDate = Some(getCurrentTaxYearEnd.toString),
-                      `type` = None,
-                      totalAmount = Some(1000.00),
-                      originalAmount = Some(1000.00),
+                      documentDescription = Some("ITSA- POA 1"),
                       outstandingAmount = Some(500.00),
-                      clearedAmount = Some(500.00),
-                      chargeType = Some("POA1"),
-                      items = Some(Seq(SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.minusDays(1).toString), None, None)))
+                      originalAmount = Some(1000.00)
+                    )
+                  ),
+                  financialDetails = List(
+                    FinancialDetail(
+                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      mainType = Some("SA Payment on Account 1"),
+                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
                     )
                   )
                 ))
@@ -384,30 +390,32 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )(
                 status = OK,
                 response = Json.toJson(FinancialDetailsModel(
-                  financialDetails = List(
-                    Charge(
+                  documentDetails = List(
+                    DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       transactionId = "testTransactionId",
-                      transactionDate = Some(getCurrentTaxYearEnd.toString),
-                      `type` = None,
-                      totalAmount = Some(1000.00),
-                      originalAmount = Some(1000.00),
+                      documentDescription = Some("ITSA- POA 1"),
                       outstandingAmount = Some(500.00),
-                      clearedAmount = Some(500.00),
-                      chargeType = Some("POA1"),
-                      items = Some(Seq(SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.minusDays(1).toString), None, None)))
+                      originalAmount = Some(1000.00)
                     ),
-                    Charge(
+                    DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       transactionId = "testTransactionId2",
-                      transactionDate = Some(getCurrentTaxYearEnd.toString),
-                      `type` = None,
-                      totalAmount = Some(1000.00),
-                      originalAmount = Some(1000.00),
+                      documentDescription = Some("ITSA - POA 2"),
                       outstandingAmount = Some(500.00),
-                      clearedAmount = Some(500.00),
-                      chargeType = Some("POA2"),
-                      items = Some(Seq(SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.minusDays(2).toString), None, None)))
+                      originalAmount = Some(1000.00)
+                    )
+                  ),
+                  financialDetails = List(
+                    FinancialDetail(
+                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      mainType = Some("SA Payment on Account 1"),
+                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
+                    ),
+                    FinancialDetail(
+                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      mainType = Some("SA Payment on Account 2"),
+                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString))))
                     )
                   )
                 ))

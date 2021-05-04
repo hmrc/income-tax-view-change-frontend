@@ -25,12 +25,13 @@ import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.financialDetails.WhatYouOweChargesList
+import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialTransactions.FinancialTransactionsModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import services.{FinancialTransactionsService, PaymentDueService}
 import testUtils.TestSupport
 
@@ -70,13 +71,18 @@ class PaymentDueControllerSpec extends TestSupport
       mockItvcErrorHandler)
   }
 
-  def testFinancialTransaction(taxYear: Int) = financialTransactionsModel(s"$taxYear-04-05")
+  def testFinancialTransaction(taxYear: Int): FinancialTransactionsModel = financialTransactionsModel(s"$taxYear-04-05")
 
-  def testFinancialDetail(taxYear: Int) = financialDetailsModel(taxYear)
+  def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
-  def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(List(chargeModel(2019)), List(chargeModel(2020)),
-    List(chargeModel(2021)), Some(OutstandingChargesModel(List(
-      OutstandingChargeModel("BCD", Some("2020-12-31"), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234)))))
+  def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
+    List(documentDetailWithDueDateModel(2019)),
+    List(documentDetailWithDueDateModel(2020)),
+    List(documentDetailWithDueDateModel(2021)),
+    Some(OutstandingChargesModel(List(
+      OutstandingChargeModel("BCD", Some("2020-12-31"), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
+    ))
+  )
 
   def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList()
 
@@ -86,11 +92,11 @@ class PaymentDueControllerSpec extends TestSupport
   "The PaymentDueControllerSpec.hasFinancialTransactionsError function" when {
     "checking the list of transactions" should {
       "produce false if there are no errors are present" in new Setup {
-        val result = controller.hasFinancialTransactionsError(noFinancialTransactionErrors)
+        val result: Boolean = controller.hasFinancialTransactionsError(noFinancialTransactionErrors)
         result shouldBe false
       }
       "produce true if any errors are present" in new Setup {
-        val result = controller.hasFinancialTransactionsError(hasFinancialTransactionErrors)
+        val result: Boolean = controller.hasFinancialTransactionsError(hasFinancialTransactionErrors)
         result shouldBe true
       }
     }
@@ -110,7 +116,7 @@ class PaymentDueControllerSpec extends TestSupport
         when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
-        val result = await(controller.show()(fakeRequestConfirmedClient()))
+        val result: Result = await(controller.show()(fakeRequestConfirmedClient()))
 
         status(result) shouldBe Status.OK
         result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
@@ -126,7 +132,7 @@ class PaymentDueControllerSpec extends TestSupport
         when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
-        val result = await(controller.show()(fakeRequestConfirmedClient()))
+        val result: Result = await(controller.show()(fakeRequestConfirmedClient()))
 
         status(result) shouldBe Status.OK
         result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("paymentDue")
@@ -143,7 +149,7 @@ class PaymentDueControllerSpec extends TestSupport
         when(paymentDueService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
-        val result = await(controller.show()(fakeRequestConfirmedClient()))
+        val result: Result = await(controller.show()(fakeRequestConfirmedClient()))
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -153,7 +159,7 @@ class PaymentDueControllerSpec extends TestSupport
       enable(AgentViewer)
       setupMockAgentAuthorisationException()
 
-      val result = await(controller.show()(fakeRequestWithActiveSession))
+      val result: Result = await(controller.show()(fakeRequestWithActiveSession))
 
       status(result) shouldBe Status.SEE_OTHER
 

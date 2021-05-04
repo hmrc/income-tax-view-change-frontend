@@ -17,7 +17,6 @@
 package views.agent.nextPaymentDue
 
 import java.time.LocalDate
-
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import assets.FinancialDetailsTestConstants.{testFinancialDetailsModel, testFinancialDetailsModelWithChargesOfSameType}
 import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
@@ -26,7 +25,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.financialDetails.WhatYouOweChargesList
+import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesModel, _}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -40,7 +39,6 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
     Some("testUtr"), Some("testCredId"), Some("individual"))(FakeRequest())
 
@@ -51,7 +49,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
     val agentPaymentDue: paymentDue = app.injector.instanceOf[paymentDue]
 
     val html: HtmlFormat.Appendable = agentPaymentDue(charges, currentTaxYear,
-      paymentEnabled, mockImplicitDateFormatter, "testBackURL", Some("1234567890"))(FakeRequest(),implicitly, mockAppConfig)
+      paymentEnabled, mockImplicitDateFormatter, "testBackURL", Some("1234567890"))(FakeRequest(), implicitly, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -62,43 +60,99 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
   }
 
-  def outstandingChargesModel(dueDate: String, aciAmount: BigDecimal = 12.67) = OutstandingChargesModel(
+  def outstandingChargesModel(dueDate: String, aciAmount: BigDecimal = 12.67): OutstandingChargesModel = OutstandingChargesModel(
     List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, aciAmount, 1234)))
 
-  val financialDetailsDueInMoreThan30Days = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
-    List(Some(50), Some(75)), LocalDate.now().getYear.toString)
-  val outstandingChargesDueInMoreThan30Days = outstandingChargesModel(LocalDate.now().plusDays(35).toString)
-  val whatYouOweDataWithDataDueInMoreThan30Days = WhatYouOweChargesList(futurePayments = financialDetailsDueInMoreThan30Days.financialDetails,
-    outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days))
+  val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    dueDate = List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
+    outstandingAmount = List(Some(50), Some(75)),
+    taxYear = LocalDate.now().getYear.toString
+  )
+  val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(35).toString)
 
-  val financialDetailsDueIn30Days = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString)),
-    List(Some(50), Some(75)), LocalDate.now().getYear.toString)
-  val outstandingChargesDueIn30Days = outstandingChargesModel(LocalDate.now().plusDays(30).toString)
-  val whatYouOweDataWithDataDueIn30Days = WhatYouOweChargesList(dueInThirtyDaysList = financialDetailsDueIn30Days.financialDetails,
-    outstandingChargesModel = Some(outstandingChargesDueIn30Days))
+  val whatYouOweDataWithDataDueInMoreThan30Days: WhatYouOweChargesList = WhatYouOweChargesList(
+    futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
+    outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
+  )
 
-  val financialDetailsOverdueData = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
-    List(Some(50), Some(75)), LocalDate.now().getYear.toString)
-  val outstandingChargesOverdueData = outstandingChargesModel(LocalDate.now().minusDays(30).toString)
-  val whatYouOweDataWithOverdueData = WhatYouOweChargesList(overduePaymentList = financialDetailsOverdueData.financialDetails,
-    outstandingChargesModel = Some(outstandingChargesOverdueData))
+  val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    dueDate = List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString)),
+    outstandingAmount = List(Some(50), Some(75)),
+    taxYear = LocalDate.now().getYear.toString
+  )
 
-  val financialDetailsWithMixedData = testFinancialDetailsModelWithChargesOfSameType(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-    List(Some(LocalDate.now().plusDays(35).toString), Some(LocalDate.now().plusDays(30).toString), Some(LocalDate.now().minusDays(1).toString)),
-    List(Some(25), Some(50), Some(75)), LocalDate.now().getYear.toString)
-  val whatYouOweDataWithMixedData = WhatYouOweChargesList(overduePaymentList = List(financialDetailsWithMixedData.financialDetails(2)),
-    dueInThirtyDaysList = List(financialDetailsWithMixedData.financialDetails(1)), futurePayments = List(financialDetailsWithMixedData.financialDetails(0)))
+  val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(30).toString)
 
-  val outstandingChargesWithAciValueZeroAndOverdue = outstandingChargesModel(LocalDate.now().minusDays(15).toString, 0.00)
-  val whatYouOweDataWithWithAciValueZeroAndOverdue = WhatYouOweChargesList(overduePaymentList = List(financialDetailsWithMixedData.financialDetails(2)),
-    dueInThirtyDaysList = List(financialDetailsWithMixedData.financialDetails(1)), futurePayments = List(financialDetailsWithMixedData.financialDetails(0)),
+  val whatYouOweDataWithDataDueIn30Days: WhatYouOweChargesList = WhatYouOweChargesList(
+    dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
+    outstandingChargesModel = Some(outstandingChargesDueIn30Days)
+  )
+
+  val financialDetailsOverdueData: FinancialDetailsModel = testFinancialDetailsModel(
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    dueDate = List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
+    outstandingAmount = List(Some(50), Some(75)),
+    taxYear = LocalDate.now().getYear.toString
+  )
+
+  val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(30).toString)
+
+  val whatYouOweDataWithOverdueData: WhatYouOweChargesList = WhatYouOweChargesList(
+    overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates,
+    outstandingChargesModel = Some(outstandingChargesOverdueData)
+  )
+
+  val financialDetailsWithMixedData: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    dueDate = List(Some(LocalDate.now().plusDays(35).toString), Some(LocalDate.now().plusDays(30).toString)),
+    outstandingAmount = List(Some(25), Some(50)),
+    taxYear = LocalDate.now().getYear.toString
+  )
+
+  val whatYouOweDataWithMixedData: WhatYouOweChargesList = WhatYouOweChargesList(
+    overduePaymentList = List(),
+    dueInThirtyDaysList = List(financialDetailsWithMixedData.getAllDocumentDetailsWithDueDates(1)),
+    futurePayments = List(financialDetailsWithMixedData.getAllDocumentDetailsWithDueDates.head)
+  )
+
+  val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+    dueDate = List(Some(LocalDate.now().plusDays(30).toString), Some(LocalDate.now().minusDays(1).toString)),
+    outstandingAmount = List(Some(50), Some(75)),
+    taxYear = LocalDate.now().getYear.toString
+  )
+
+  val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
+    overduePaymentList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates(1)),
+    dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
+    futurePayments = List()
+  )
+
+  val outstandingChargesWithAciValueZeroAndOverdue: OutstandingChargesModel = outstandingChargesModel(
+    LocalDate.now().minusDays(15).toString, 0.00
+  )
+  val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
+    overduePaymentList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates(1)),
+    dueInThirtyDaysList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates.head),
+    futurePayments = List(),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
-  val noChargesModel = WhatYouOweChargesList()
+  val whatYouOweDataWithWithAciValueZeroAndFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
+    overduePaymentList = List(),
+    dueInThirtyDaysList = List(financialDetailsWithMixedData.getAllDocumentDetailsWithDueDates(1)),
+    futurePayments = List(financialDetailsWithMixedData.getAllDocumentDetailsWithDueDates.head),
+    outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
+  )
+
+  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList()
 
   "The What you owe view with financial details model" when {
     "the user has charges and access viewer before 30 days of due date" should {
@@ -289,7 +343,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(4)
         overduePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().minusDays(10).toLongDateShort
-        overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " "+
+        overduePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.overdueTag + " " +
           AgentPaymentDue.poa1Text + " " + AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
@@ -327,7 +381,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"not have MTD payments heading" in new Setup(whatYouOweDataWithMixedData) {
         pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
       }
-      s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataWithMixedData) {
+      s"have overdue table header and data with hyperlink and overdue tag" in new Setup(whatYouOweDataWithMixedData2) {
         val overdueTableHeader: Element = pageDocument.select("tr").first()
         overdueTableHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
@@ -340,10 +394,10 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
         pageDocument.getElementById("over-due-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000125").url
+          LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
-      s"have due within thirty days header and data with hyperlink and no overdue tag" in new Setup(whatYouOweDataWithMixedData) {
+      s"have due within thirty days header and data with hyperlink and no overdue tag" in new Setup(whatYouOweDataWithMixedData2) {
         val dueWithInThirtyDaysHeader: Element = pageDocument.select("tr").get(2)
         dueWithInThirtyDaysHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
         dueWithInThirtyDaysHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
@@ -356,18 +410,18 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000124").url
+          LocalDate.now().getYear, "1040000123").url
         pageDocument.getElementById("due-in-thirty-days-type-0-overdue") shouldBe null
       }
       s"have future payments with table header, data and hyperlink without overdue tag" in new Setup(whatYouOweDataWithMixedData) {
         pageDocument.getElementById("future-payments-heading").text shouldBe AgentPaymentDue.futurePayments
 
-        val futurePaymentsHeader: Element = pageDocument.select("tr").get(4)
+        val futurePaymentsHeader: Element = pageDocument.select("tr").get(2)
         futurePaymentsHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
         futurePaymentsHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
         futurePaymentsHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
 
-        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(5)
+        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
         futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
         futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + " " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)
@@ -382,7 +436,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("credit-on-account").text shouldBe AgentPaymentDue.creditOnAccount
         pageDocument.getElementById("payment-button").text shouldBe AgentPaymentDue.payNow
 
-        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(7500).url
+        pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.agent.routes.PaymentController.paymentHandoff(5000).url
 
         pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
       }
@@ -423,7 +477,7 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
         pageDocument.getElementById("over-due-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000125").url
+          LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("over-due-type-0-overdue").text shouldBe AgentPaymentDue.overdueTag
       }
       s"have due within thirty days header and data with hyperlink and no overdue tag" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
@@ -439,18 +493,18 @@ class PaymentDueViewSpec extends TestSupport with FeatureSwitching with Implicit
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
         pageDocument.getElementById("due-in-thirty-days-type-0-link").attr("href") shouldBe controllers.agent.routes.ChargeSummaryController.showChargeSummary(
-          LocalDate.now().getYear, "1040000124").url
+          LocalDate.now().getYear, "1040000123").url
         pageDocument.getElementById("due-in-thirty-days-type-0-overdue") shouldBe null
       }
-      s"have future payments with table header, data and hyperlink without overdue tag" in new Setup(whatYouOweDataWithWithAciValueZeroAndOverdue) {
+      s"have future payments with table header, data and hyperlink without overdue tag" in new Setup(whatYouOweDataWithWithAciValueZeroAndFuturePayments) {
         pageDocument.getElementById("future-payments-heading").text shouldBe AgentPaymentDue.futurePayments
 
-        val futurePaymentsHeader: Element = pageDocument.select("tr").get(6)
+        val futurePaymentsHeader: Element = pageDocument.select("tr").get(4)
         futurePaymentsHeader.select("th").first().text() shouldBe AgentPaymentDue.dueDate
         futurePaymentsHeader.select("th").get(1).text() shouldBe AgentPaymentDue.paymentType
         futurePaymentsHeader.select("th").last().text() shouldBe AgentPaymentDue.amountDue
 
-        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(7)
+        val futurePaymentsTableRow1: Element = pageDocument.select("tr").get(5)
         futurePaymentsTableRow1.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
         futurePaymentsTableRow1.select("td").get(1).text() shouldBe AgentPaymentDue.poa1Text + " " +
           AgentPaymentDue.taxYearForChargesText((LocalDate.now().getYear - 1).toString, LocalDate.now().getYear.toString)

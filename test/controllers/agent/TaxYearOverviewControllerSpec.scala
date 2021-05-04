@@ -189,7 +189,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
           mockTaxYearOverview(
             taxYear = testYear,
             calcOverview = CalcOverview(calculationDataSuccessModel, None),
-            charges = financialDetailsModel(testYear).financialDetails,
+            documentDetailsWithDueDates = financialDetailsModel(testYear).getAllDocumentDetailsWithDueDates,
             obligations = ObligationsModel(Nil),
             backUrl = controllers.agent.routes.TaxYearsController.show().url
           )(HtmlFormat.empty)

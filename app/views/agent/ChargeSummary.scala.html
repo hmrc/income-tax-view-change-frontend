@@ -14,28 +14,23 @@
  * limitations under the License.
  *@
 
-@import models.financialDetails.Charge
 @import views.html.templates.agent.MainTemplate
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import views.html.helpers.backLinkHelper
 @import views.html.helpers.injected.BackLink
-
-@import java.time.LocalDate
 @import implicits.ImplicitDateFormatter
+@import models.financialDetails.DocumentDetailWithDueDate
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
-@(charge: Charge, implicitDateFormatter: ImplicitDateFormatter, paymentEnabled: Boolean, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(documentDetailWithDueDate: DocumentDetailWithDueDate, implicitDateFormatter: ImplicitDateFormatter, paymentEnabled: Boolean, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@import implicitDateFormatter.longDate
-@import implicitDateFormatter.toTaxYearEndDate
-@import implicitDateFormatter.toTaxYearStartDate
+@import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 
-@mainTemplate(title = messages(s"chargeSummary.${charge.getChargeTypeKey}"),bodyClasses = None){
+@mainTemplate(title = messages(s"chargeSummary.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}"),bodyClasses = None){
 	@backLink(backUrl)
 
 	<h1 class="heading-xlarge">
-		<span class="heading-secondary">@messages("paymentDue.tax-year", toTaxYearStartDate((charge.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(charge.taxYear).toLongDate)</span>
-		@messages(s"chargeSummary.${charge.getChargeTypeKey}")
+		<span class="heading-secondary">@messages("paymentDue.tax-year", toTaxYearStartDate((documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString).toLongDate, toTaxYearEndDate(documentDetailWithDueDate.documentDetail.taxYear).toLongDate)</span>
+		@messages(s"chargeSummary.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
 	</h1>
 
 	<dl class="govuk-summary-list">
@@ -44,23 +39,17 @@
 			<dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
 
 			<dd class="govuk-summary-list__value">
-				@if(charge.isOverdue && !charge.isPaid) { <span class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>}
-				@{charge.due.get.toLongDate}
+				@if(documentDetailWithDueDate.isOverdue && !documentDetailWithDueDate.documentDetail.isPaid) { <span class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>}
+				@{documentDetailWithDueDate.dueDate.get.toLongDate}
 			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">@messages("chargeSummary.paymentAmount")</dt>
-			<dd class="govuk-summary-list__value">@{charge.originalAmount.get.toCurrency}</dd>
-		</div>
-		<div class="govuk-summary-list__row">
-			<dt class="govuk-summary-list__key">@messages("chargeSummary.paidToDate")</dt>
-			<dd class="govuk-summary-list__value">@{charge.clearedAmount.getOrElse(BigDecimal(0)).toCurrency}</dd>
+			<dd class="govuk-summary-list__value">@documentDetailWithDueDate.documentDetail.originalAmount.get.toCurrency</dd>
 		</div>
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
-			<dd class="govuk-summary-list__value">@{
-				charge.remainingToPay.toCurrency
-			}</dd>
+			<dd class="govuk-summary-list__value">@documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency</dd>
 		</div>
 	</dl>
 
@@ -70,9 +59,9 @@
 		@messages("chargeSummary.whatYouOwe.textTwo")
 	</p>
 
-	@if(paymentEnabled && charge.remainingToPay > 0){
-		<div id="payment-link-@{charge.taxYear}">
-			<a class="button" href="@controllers.agent.routes.PaymentController.paymentHandoff(charge.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (charge.taxYear.toInt - 1).toString, charge.taxYear)'>@messages("paymentDue.payNow")</a>
+	@if(paymentEnabled && documentDetailWithDueDate.documentDetail.remainingToPay > 0){
+		<div id="payment-link-@{documentDetailWithDueDate.documentDetail.taxYear}">
+			<a class="button" href="@controllers.agent.routes.PaymentController.paymentHandoff(documentDetailWithDueDate.documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)'>@messages("paymentDue.payNow")</a>
 		</div>
 	}
 }

@@ -16,18 +16,17 @@
 
 package services
 
-import java.time.LocalDate
-
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{API5, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.Assets.NOT_FOUND
-import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -45,7 +44,9 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
       getFinancialDetails(item, user.nino)
     )) map { financialDetails =>
       val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
-        case fdm: FinancialDetailsModel => fdm.financialDetails.filterNot(_.isPaid).flatMap(_.charges()).flatMap(_.dueDate).map(LocalDate.parse)
+        case fdm: FinancialDetailsModel => fdm.documentDetails.filterNot(_.isPaid) flatMap { documentDetail =>
+          fdm.getDueDateFor(documentDetail)
+        }
         case FinancialDetailsErrorModel(NOT_FOUND, _) => List.empty[LocalDate]
         case _ => throw new InternalServerException(s"[FinancialDetailsService][getChargeDueDates] - Failed to retrieve successful financial details")
       }.sortWith(_ isBefore _)
@@ -78,15 +79,13 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
     ).map(_.flatten)
   }
 
-  def getAllUnpaidFinancialDetails(implicit user: MtdItUser[_],
-                                   hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
+  def getAllUnpaidFinancialDetails(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
     getAllFinancialDetails.map { chargesWithYears =>
       chargesWithYears.collect {
         case (_, errorModel: FinancialDetailsErrorModel) => errorModel
         case (_, financialDetails: FinancialDetailsModel) if !financialDetails.isAllPaid =>
           financialDetails.copy(
-            financialDetails = financialDetails.financialDetails.filterNot(
-              charge => charge.originalAmount.exists(_ <= 0) || charge.remainingToPay <= 0)
+            documentDetails = financialDetails.documentDetails.filterNot(_.isPaid)
           )
       }
     }

@@ -26,7 +26,7 @@ import helpers.servicemocks.{IncomeTaxViewChangeStub, IndividualCalculationStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation.{CalculationItem, ListCalculationItems}
 import models.core.AccountingPeriodModel
-import models.financialDetails.{Charge, FinancialDetailsModel, SubItem}
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel}
 import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
@@ -91,21 +91,24 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
     )
   )
 
-  val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(List(
-    Charge(
-      taxYear = getCurrentTaxYearEnd.getYear.toString,
-      transactionId = "testTransactionId",
-      transactionDate = Some(getCurrentTaxYearEnd.toString),
-      `type` = None,
-      totalAmount = Some(1000.00),
-      originalAmount = Some(1000.00),
-      outstandingAmount = Some(500.00),
-      clearedAmount = Some(500.00),
-      chargeType = Some("POA1"),
-      mainType = Some("SA Payment on Account 1"),
-      items = Some(Seq(SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString), None, None)))
+  val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
+    documentDetails = List(
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = "testTransactionId",
+        documentDescription = Some("ITSA- POA 1"),
+        outstandingAmount = Some(500.00),
+        originalAmount = Some(1000.00)
+      )
+    ),
+    financialDetails = List(
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        mainType = Some("SA Payment on Account 1"),
+        items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+      )
     )
-  ))
+  )
 
   val currentObligationsSuccess: ObligationsModel = ObligationsModel(Seq(
     ReportDeadlinesModel(

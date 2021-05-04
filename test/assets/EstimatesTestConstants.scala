@@ -16,14 +16,13 @@
 
 package assets
 
-import java.time.LocalDate
-
-import enums.Estimate
+import assets.BaseTestConstants._
 import models.calculation._
-import models.financialDetails.{Charge, ChargeModelWithYear, SubItem}
-import models.financialTransactions.{SubItemModel, TransactionModel, TransactionModelWithYear}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
+import models.financialTransactions.{SubItemModel, TransactionModel}
 import play.api.http.Status
-import BaseTestConstants._
+
+import java.time.LocalDate
 
 object EstimatesTestConstants {
 
@@ -33,17 +32,13 @@ object EstimatesTestConstants {
 
   //Last Tax Calculations
 
-  val lastTaxCalcSuccess = Calculation(crystallised = false, timestamp = Some(testTimeStampString), totalIncomeTaxAndNicsDue = Some(123))
+  val lastTaxCalcSuccess: Calculation = Calculation(crystallised = false, timestamp = Some(testTimeStampString), totalIncomeTaxAndNicsDue = Some(123))
 
-  val responseModel = CalcDisplayModel(testTimeStampString, 10.00, lastTaxCalcSuccess, Estimate)
+  val lastTaxCalcCrystallisedSuccess: Calculation = Calculation(crystallised = true, totalIncomeTaxAndNicsDue = Some(123))
 
-  val lastTaxCalcCrystallisedSuccess = Calculation(crystallised = true, totalIncomeTaxAndNicsDue = Some(123))
-
-  val lastTaxCalcError = CalculationErrorModel(testErrorStatus, testErrorMessage)
+  val lastTaxCalcError: CalculationErrorModel = CalculationErrorModel(testErrorStatus, testErrorMessage)
   val lastTaxCalcNotFound: CalculationResponseModel = CalculationErrorModel(Status.NOT_FOUND, "Not found")
 
-  //Last Tax Calculation With Years (for sub pages)
-  val lastTaxCalcSuccessWithYear = CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear)
   val lastTaxCalcWithYearList = List(
     CalculationResponseModelWithYear(lastTaxCalcSuccess, testYear),
     CalculationResponseModelWithYear(lastTaxCalcSuccess, testYearPlusOne)
@@ -69,19 +64,6 @@ object EstimatesTestConstants {
     CalculationResponseModelWithYear(lastTaxCalcCrystallisedSuccess, testYear),
     CalculationResponseModelWithYear(lastTaxCalcNotFound, testYearPlusOne)
   )
-  val lastTaxCalcErrorWithYear = CalculationResponseModelWithYear(lastTaxCalcError, testYear)
-
-  val lastThreeTaxYearFinancialTransactions = List(
-    TransactionModelWithYear(transactionModelStatus(false, false), testYear),
-    TransactionModelWithYear(transactionModelStatus(true, false), testYearPlusOne),
-    TransactionModelWithYear(transactionModelStatus(false, true), testYearPlusTwo)
-  )
-
-  val lastThreeTaxYearFinancialCharges = List(
-    ChargeModelWithYear(chargeModelStatus(false, false), testYear),
-    ChargeModelWithYear(chargeModelStatus(true, false), testYearPlusOne),
-    ChargeModelWithYear(chargeModelStatus(false, true), testYearPlusTwo)
-  )
 
   def transactionModelStatus(paid: Boolean, overdue: Boolean): TransactionModel = {
     val outstandingAmount = if (paid) 0 else 1
@@ -92,14 +74,18 @@ object EstimatesTestConstants {
     )
   }
 
-  def chargeModelStatus(paid: Boolean, overdue: Boolean): Charge = {
+  def chargeModelStatus(paid: Boolean, overdue: Boolean): DocumentDetailWithDueDate = {
     val outstandingAmount = if (paid) 0 else 1
-    val dueDate = if (overdue) LocalDate.now().minusDays(1).toString else LocalDate.now().plusDays(1).toString
-    Charge(
-      taxYear = "2019",
-      transactionId = "id",
-      outstandingAmount = Some(outstandingAmount),
-      items = Some(Seq(SubItem(dueDate = Some(dueDate))))
+    val dueDate = if (overdue) LocalDate.now().minusDays(1) else LocalDate.now().plusDays(1)
+    DocumentDetailWithDueDate(
+      DocumentDetail(
+        taxYear = "2019",
+        transactionId = "id",
+        documentDescription = None,
+        outstandingAmount = Some(outstandingAmount),
+        originalAmount = None
+      ),
+      Some(dueDate)
     )
   }
 }

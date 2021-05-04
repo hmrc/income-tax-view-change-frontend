@@ -16,14 +16,11 @@
 
 @import implicits.ImplicitDateFormatter
 @import implicits.ImplicitCurrencyFormatter._
-@import models.financialDetails.FinancialDetailsModel
-@import models.financialDetails.Charge
 @import models.financialDetails.WhatYouOweChargesList
 @import views.html.templates.main_template
 @import java.time.LocalDate
-@import models.outstandingCharges.OutstandingChargesModel
 @import views.html.helpers.backLinkHelper
-
+@import models.financialDetails.DocumentDetailWithDueDate
 
 @(chargesList: WhatYouOweChargesList, currentTaxYear: Int, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter,backUrl: String, utr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
@@ -74,17 +71,17 @@
     </thead>
 }
 
-@tableRow(rowId: String, charge: Charge, isOverduePayment: Boolean = false, isChargeTypeHyperlinked: Boolean = true) = {
+@tableRow(rowId: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean = false, isChargeTypeHyperlinked: Boolean = true) = {
     <tr id="@rowId">
-        <td>@charge.due.get.toLongDateShort</td>
+        <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
         <td>
             @if(isOverduePayment){<span id="@rowId-overdue" class="govuk-tag govuk-tag--red">@messages("whatYouOwe.over-due")</span>}
-            @if(isChargeTypeHyperlinked){<a id="@rowId-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(charge.taxYear.toInt, charge.transactionId)">}
-            @messages(s"whatYouOwe.${charge.getChargeTypeKey}")
+            @if(isChargeTypeHyperlinked){<a id="@rowId-link" href="@controllers.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId)">}
+            @messages(s"whatYouOwe.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
             @if(isChargeTypeHyperlinked){</a>}
-            <div>@messages("whatYouOwe.payment-type.taxYear", (charge.taxYear.toInt - 1).toString, charge.taxYear)</div>
+            <div>@messages("whatYouOwe.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
         </td>
-        <td class="numeric">@{charge.remainingToPay.toCurrency}</td>
+        <td class="numeric">@{documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency}</td>
     </tr>
 }
 
@@ -158,7 +155,7 @@
                         @tableHead("over-due-payments-table-head")
                         <tbody>
                             @for((charge, index) <- chargesList.overduePaymentList.zipWithIndex) {
-                                @tableRow(s"over-due-type-$index", charge, true, true)
+                                @tableRow(s"over-due-type-$index", charge, isOverduePayment = true)
                             }
                         </tbody>
                     </table>
@@ -174,7 +171,7 @@
                         @tableHead("due-in-thirty-days-payments-table-head")
                         <tbody>
                             @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
-                                @tableRow(s"due-in-thirty-days-type-$index", charge, false, true)
+                                @tableRow(s"due-in-thirty-days-type-$index", charge)
                             }
                         </tbody>
                     </table>
@@ -191,7 +188,7 @@
                         @tableHead("future-payments-table-head")
                         <tbody class="govuk-table-whatYouOwe">
                             @for((charge, index) <- chargesList.futurePayments.zipWithIndex) {
-                                @tableRow(s"future-payments-type-$index", charge, false, true)
+                                @tableRow(s"future-payments-type-$index", charge)
                             }
                         </tbody>
                     </table>

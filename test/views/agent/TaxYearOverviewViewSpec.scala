@@ -35,7 +35,7 @@ package views.agent
 import assets.BaseTestConstants.{testMtdItUser, testMtditid}
 import config.featureswitch._
 import models.calculation.{AllowancesAndDeductions, CalcOverview, Calculation}
-import models.financialDetails.{Charge, SubItem}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, SubItem}
 import models.financialTransactions.TransactionModel
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlineModelWithIncomeType, ReportDeadlinesModel}
 import org.jsoup.nodes.Element
@@ -62,10 +62,10 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     transaction = Some(TransactionModel())
   )
 
-  val testCharges: List[Charge] = List(
-    Charge(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00), mainType = Some("SA Payment on Account 1"), items = Some(Seq(SubItem(dueDate = Some(LocalDate.now.toString))))),
-    Charge(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00), mainType = Some("SA Payment on Account 2"), items = Some(Seq(SubItem(dueDate = Some("2020-04-07"))))),
-    Charge(taxYear = "2020", transactionId = "testId3", originalAmount = Some(100.00), mainType = Some("SA Balancing Charge"), items = Some(Seq(SubItem(dueDate = Some("2020-04-08")))))
+  val testCharges: List[DocumentDetailWithDueDate] = List(
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00), documentDescription = Some("ITSA- POA 1")), Some(LocalDate.now)),
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00), documentDescription = Some("ITSA - POA 2")), Some(LocalDate.of(2020, 4, 7))),
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId3", outstandingAmount = Some(100.00), originalAmount = Some(100.00), documentDescription = Some("ITSA- Bal Charge")), Some(LocalDate.of(2020, 4, 8)))
   )
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -118,12 +118,12 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
 
   def view(taxYear: Int = testYear,
            overview: CalcOverview = testCalcOverview,
-           charges: List[Charge] = testCharges,
+           documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testCharges,
            obligations: ObligationsModel = testObligations): Html = {
     taxYearOverview(
       taxYear = taxYear,
       overview = overview,
-      charges = charges,
+      documentDetailsWithDueDates = documentDetailsWithDueDates,
       obligations = obligations,
       implicitDateFormatter = mockImplicitDateFormatter,
       backUrl = "/testBack"
@@ -175,7 +175,9 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val paymentsTabOverdue: String = "Overdue"
 
     val updatesTabHeading: String = "Updates"
+
     def updatesTabUpdatesDue(due: String): String = s"Due $due"
+
     def updatesTabCaption(from: String, to: String): String = s"$from to $to"
 
     val updatesTabUpdateTypeHeading: String = "Update type"
@@ -302,7 +304,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
             content.selectHead("#payments").selectHead("h2").text shouldBe TaxYearOverviewMessages.paymentsTabHeading
           }
           "has no payments due content" when {
-            "no payments are due" in new Setup(view(charges = Nil)) {
+            "no payments are due" in new Setup(view(documentDetailsWithDueDates = Nil)) {
               content.selectHead("#payments").selectHead("p").text shouldBe TaxYearOverviewMessages.paymentsTabNoPayments
             }
           }
