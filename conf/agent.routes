@@ -50,3 +50,7 @@ GET         /calculation/:taxYear/deductions    controllers.agent.DeductionsSumm
 #IncomeSummary
 GET         /calculation/:taxYear/income            controllers.agent.IncomeSummaryController.showIncomeSummary(taxYear: Int)
 
+#Tax Due
+GET         /calculation/:taxYear/tax-due           controllers.agent.TaxDueSummaryController.showTaxDueSummary(taxYear: Int)
+
+

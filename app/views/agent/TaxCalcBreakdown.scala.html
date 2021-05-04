@@ -1,0 +1,329 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.calculation.{CalcDisplayModel, TaxBand}
+@import implicits.ImplicitCurrencyFormatter._
+@import views.html.templates.agent.MainTemplate
+@import views.html.helpers.injected.BackLink
+
+@this(mainTemplate: MainTemplate, backLink: BackLink)
+
+@(calcModel: CalcDisplayModel, taxYear: Int, backUrl: String)(implicit request: Request[_], messages: Messages,
+        appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+
+@heading = @{
+    messages("taxCal_breakdown.heading")
+}
+
+@taxBandTableRow(band: TaxBand, scottishRegime: Boolean = false) = {
+    <tr>
+        <td>
+        @messages(
+            if(scottishRegime && band.name == "ART") {
+                s"taxCal_breakdown.table.${band.name}_scottish"
+            } else {
+                s"taxCal_breakdown.table.${band.name}"
+            },
+            band.income.toCurrencyString,
+            s"${band.rate}")
+        </td>
+        <td class="numeric">@{
+            band.taxAmount.toCurrency
+        }</td>
+    </tr>
+}
+
+@taxReductionsTableRow(reliefsClaimedType: String) = {
+    @if(calcModel.calcDataModel.reductionsAndCharges.reliefsClaimed.isDefined) {
+        @if(calcModel.calcDataModel.reductionsAndCharges.reliefsClaimedMap.get(s"$reliefsClaimedType").isDefined) {
+            @tableRow(s"$reliefsClaimedType", calcModel.calcDataModel.reductionsAndCharges.reliefsClaimedMap(s"$reliefsClaimedType"), isNegative = true)
+        }
+    }
+}
+
+@tableRow(messageCode: String, dataItem: Option[BigDecimal], isNegative: Boolean = false) = {
+    @if(dataItem.isDefined) {
+        <tr id="@messageCode">
+            <td>@messages(s"taxCal_breakdown.table.$messageCode")</td>
+            <td class="numeric">@{
+                if(isNegative) dataItem.get.toNegativeCurrencyString
+                else dataItem.get.toCurrency
+            }
+            </td>
+        </tr>
+    }
+}
+
+
+@mainTemplate(title = heading){
+
+    @backLink(backUrl)
+
+    <h1 class="heading-xlarge">
+        <span class="heading-secondary">@messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>
+        @messages("taxCal_breakdown.heading")
+    </h1>
+
+    <div class="govuk-body-l" id="explanation">
+        @messages(
+            "taxCal_breakdown.explanation")
+        <strong class="bold">@calcModel.calcDataModel.totalTaxableIncome.getOrElse(BigDecimal(0)).toCurrencyString</strong>
+
+    </div>
+
+    @if(calcModel.calcDataModel.payPensionsProfit.bands.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium" style="margin-bottom: 0px;">@messages("taxCal_breakdown.pay_pensions_profit")</h3>
+                <p>
+                @if(calcModel.calcDataModel.nationalRegime.contains("Scotland")) {
+                    @messages("taxCal-breakdown.scotlandRate")
+                } else {
+                    @messages("taxCal-breakdown.ukRate")
+                }
+                </p>
+            </caption>
+            <tbody>
+            @for(band <- calcModel.calcDataModel.payPensionsProfit.bands.filter(_.income > 0).sortBy(_.rate)) {
+                @taxBandTableRow(band, calcModel.calcDataModel.nationalRegime.contains("Scotland"))
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(calcModel.calcDataModel.savingsAndGains.bands.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.savings")</h3>
+            </caption>
+            <tbody>
+            @for(band <- calcModel.calcDataModel.savingsAndGains.bands.filter(_.income > 0)
+                    .sortBy(_.name == "SSR").sortBy(_.name == "ZRTBR").sortBy(_.name == "BRT").sortBy(_.name == "ZRTHR")
+                    .sortBy(_.name == "HRT").sortBy(_.name == "ART")
+            ) {
+                @taxBandTableRow(band)
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(calcModel.calcDataModel.dividends.bands.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.dividends")</h3>
+            </caption>
+            <tbody>
+            @for(band <- calcModel.calcDataModel.dividends.bands.filter(_.income > 0)
+                    .sortBy(_.name == "ZRTBR").sortBy(_.name == "BRT").sortBy(_.name == "ZRTHR").sortBy(_.name == "HRT")
+                    .sortBy(_.name == "ZRTAR").sortBy(_.name == "ART")
+            ) {
+                @taxBandTableRow(band)
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(calcModel.calcDataModel.lumpSums.bands.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium" style="margin-bottom: 0px;">@messages("taxCal_breakdown.lumpSums")</h3>
+                <p>
+                @if(calcModel.calcDataModel.nationalRegime.contains("Scotland")) {
+                    @messages("taxCal-breakdown.scotlandRate")
+                } else {
+                    @messages("taxCal-breakdown.ukRate")
+                }
+                </p>
+            </caption>
+            <tbody>
+            @for(band <- calcModel.calcDataModel.lumpSums.bands.filter(_.income > 0).sortBy(_.rate)) {
+                @taxBandTableRow(band, calcModel.calcDataModel.nationalRegime.contains("Scotland"))
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(calcModel.calcDataModel.gainsOnLifePolicies.bands.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.gains_life_policies")</h3>
+            </caption>
+            <tbody>
+            @for(band <- calcModel.calcDataModel.gainsOnLifePolicies.bands.filter(_.income > 0).sortBy(_.rate)) {
+                @taxBandTableRow(band, calcModel.calcDataModel.nationalRegime.contains("Scotland"))
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(calcModel.calcDataModel.nic.class4Bands.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.class4_national_insurance")</h3>
+            </caption>
+            <tbody>
+            @calcModel.calcDataModel.nic.class4Bands.map { nicBands =>
+                @for(band <- nicBands.filter(_.income > 0).sortBy(_.rate)) {
+                    <tr>
+                        <td>
+                        @messages(
+                            s"taxCal_breakdown.table.${band.name}",
+                            band.income.toCurrencyString,
+                            s"${band.rate}"
+                        )
+                        </td>
+                        <td class="numeric">@{
+                            band.amount.toCurrency
+                        }</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(calcModel.calcDataModel.reductionsAndCharges.totalResidentialFinanceCostsRelief.nonEmpty ||
+            calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax.nonEmpty ||
+            calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief.nonEmpty ||
+            calcModel.calcDataModel.reductionsAndCharges.reliefsClaimed.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.table.tax_reductions")</h3>
+            </caption>
+            @taxReductionsTableRow("deficiencyRelief")
+            @taxReductionsTableRow("vctSubscriptions")
+            @taxReductionsTableRow("eisSubscriptions")
+            @taxReductionsTableRow("seedEnterpriseInvestment")
+            @taxReductionsTableRow("communityInvestment")
+            @taxReductionsTableRow("socialEnterpriseInvestment")
+            @taxReductionsTableRow("maintenancePayments")
+            @tableRow("property_finance_relief", calcModel.calcDataModel.reductionsAndCharges.totalResidentialFinanceCostsRelief, isNegative = true)
+            @tableRow("total_notional_tax", calcModel.calcDataModel.reductionsAndCharges.totalNotionalTax, isNegative = true)
+            @tableRow("total_foreign_tax_credit_relief", calcModel.calcDataModel.reductionsAndCharges.totalForeignTaxCreditRelief, isNegative = true)
+            @taxReductionsTableRow("qualifyingDistributionRedemptionOfSharesAndSecurities")
+            @taxReductionsTableRow("nonDeductibleLoanInterest")
+
+            @calcModel.calcDataModel.reductionsAndCharges.incomeTaxDueAfterTaxReductions.map { incomeTaxDueAfterTaxReductions =>
+                <tr>
+                    <td class="total-section">@messages("taxCal_breakdown.table.income_tax_due_after_tax_reductions")</td>
+                    <td class="numeric total-section">@{
+                        calcModel.calcDataModel.reductionsAndCharges.incomeTaxDueAfterTaxReductions.get.toCurrency
+                    }</td>
+                </tr>
+            }
+        </table>
+    }
+
+    @if(calcModel.calcDataModel.nic.class2.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.additional_charges")</h3>
+            </caption>
+
+            <tbody>
+            @calcModel.calcDataModel.nic.class2.map { amount =>
+                <tr>
+                    @calcModel.calcDataModel.nic.class2VoluntaryContributions.map { voluntary =>
+                        <td>@messages(s"taxCal_breakdown.table.nic2.${voluntary}")</td>
+                        <td class="numeric">@{
+                            amount.toCurrency
+                        }</td>
+                    }
+                </tr>
+            }
+            </tbody>
+            <tbody>
+            @calcModel.calcDataModel.reductionsAndCharges.giftAidTax.map { amount =>
+                <tr>
+                    <td>@messages("taxCal_breakdown.table.giftAidTax")</td>
+                    <td class="numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            </tbody>
+            <tbody>
+            @calcModel.calcDataModel.reductionsAndCharges.totalPensionSavingsTaxCharges.map { amount =>
+                <tr>
+                    <td>@messages("taxCal_breakdown.table.totalPensionSavingsTaxCharges")</td>
+                    <td class="numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            </tbody>
+            <tbody>
+            @calcModel.calcDataModel.reductionsAndCharges.statePensionLumpSumCharges.map { amount =>
+                <tr>
+                    <td>@messages("taxCal_breakdown.table.statePensionLumpSumCharges")</td>
+                    <td class="numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.table.other_charges")</h3>
+            </caption>
+
+            <tbody>
+            @calcModel.calcDataModel.reductionsAndCharges.totalStudentLoansRepaymentAmount.map { amount =>
+                <tr>
+                    <td>@messages("taxCal_breakdown.table.totalStudentLoansRepaymentAmount")</td>
+                    <td class="numeric">@{
+                        amount.toCurrency
+                    }</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+
+    @if(calcModel.calcDataModel.taxDeductedAtSource.nonEmpty) {
+        <table>
+            <caption>
+                <h3 class="heading-medium">@messages("taxCal_breakdown.taxDeductedAtSource")</h3>
+            </caption>
+            <tbody>
+                @calcModel.calcDataModel.taxDeductedAtSource.allFields.map { mapEntry =>
+                    <tr>
+                        <td>@messages(s"taxCal_breakdown.table.taxDeductedAtSource.${mapEntry._1}")</td>
+                        <td class="numeric">@{
+                            mapEntry._2.toNegativeCurrencyString
+                        }</td>
+                    </tr>
+                }
+                <tr>
+                    <td class="total-section">@messages("taxCal_breakdown.table.taxDeductedAtSource.total")</td>
+                    <td class="numeric total-section">@{
+                        calcModel.calcDataModel.taxDeductedAtSource.total.get.toCurrency
+                    }</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+    <table>
+        <tr>
+            <td class="total-section-with-spacing">@messages("taxCal_breakdown.table.totalIncomeTaxAndNicsDue") </td>
+            <td class="numeric total-section-with-spacing">@calcModel.calcDataModel.totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)).toCurrency</td>
+        </tr>
+    </table>
+}

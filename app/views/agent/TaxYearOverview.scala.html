@@ -46,7 +46,7 @@
     <table id="income-deductions-table">
         <tr>
             <td>
-                <a href="">@messages("tax-year-overview.income")</a>
+                <a href=@controllers.agent.routes.IncomeSummaryController.showIncomeSummary(taxYear).url>@messages("tax-year-overview.income")</a>
             </td>
             <td class="numeric">@{overview.income.toCurrencyString}</td>
         </tr>
@@ -65,7 +65,7 @@
     <table id="taxdue-payments-table" class="table--spaced-top">
         <tr>
             <td class="bold">
-                <a href="">@messages("tax-year-overview.tax-due")</a>
+                <a href=@controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(taxYear).url>@messages("tax-year-overview.tax-due")</a>
             </td>
             <td  class="bold">@{overview.taxDue.toCurrencyString}</td>
         </tr>

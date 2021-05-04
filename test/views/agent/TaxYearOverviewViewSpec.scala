@@ -263,7 +263,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
             "has a row for the user's income" in new Setup(view()) {
               val row: Element = content.selectHead("#taxCalculation").selectNth("table", 1).selectNth("tr", 1)
               row.selectNth("td", 1).selectHead("a").text shouldBe TaxYearOverviewMessages.calculationTabIncome
-              row.selectNth("td", 1).selectHead("a").attr("href") shouldBe ""
+              row.selectNth("td", 1).selectHead("a")
+                .attr("href") shouldBe controllers.agent.routes.IncomeSummaryController.showIncomeSummary(2020).url
               row.selectNth("td", 2).text shouldBe "£150.00"
             }
             "has a row for the user's allowances and deductions" in new Setup(view()) {
@@ -281,6 +282,8 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
           "has a table details a users tax calculation" in new Setup(view()) {
             val row: Element = content.selectHead("#taxCalculation").selectNth("table", 2).selectNth("tr", 1)
             row.selectNth("td", 1).text shouldBe TaxYearOverviewMessages.calculationTabIncomeTaxDue
+            row.selectNth("td", 1).selectHead("a")
+              .attr("href") shouldBe controllers.agent.routes.TaxDueSummaryController.showTaxDueSummary(2020).url
             row.selectNth("td", 2).text shouldBe "£100.00"
           }
         }
