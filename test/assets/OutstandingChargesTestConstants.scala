@@ -16,9 +16,9 @@
 
 package assets
 
+import assets.BaseTestConstants._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
-import BaseTestConstants._
 
 object OutstandingChargesTestConstants {
 

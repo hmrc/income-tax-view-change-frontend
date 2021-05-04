@@ -16,14 +16,14 @@
 
 package assets
 
-import java.time.LocalDate
-
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testTimeStampString}
 import enums.Estimate
 import models.calculation._
 import models.financialDetails.{Charge, ChargeModelWithYear, SubItem}
 import models.financialTransactions.{SubItemModel, TransactionModel, TransactionModelWithYear}
 import play.api.http.Status
-import BaseTestConstants._
+
+import java.time.LocalDate
 
 object EstimatesTestConstants {
 

@@ -15,22 +15,26 @@
  */
 package assets
 
+import java.time.LocalDate
+
 import play.api.libs.json.{JsValue, Json}
 
 object OutstandingChargesIntegrationTestConstants {
 
+  val dueDate = LocalDate.now().minusMonths(13).toString
+
   val validOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
-    """
+    s"""
       |{
       |  "outstandingCharges": [{
       |         "chargeName": "BCD",
-      |         "relevantDueDate": "2021-01-31",
+      |         "relevantDueDate": "$dueDate",
       |         "chargeAmount": 123456789012345.67,
       |         "tieBreaker": 1234
       |       },
       |       {
       |         "chargeName": "ACI",
-      |         "relevantDueDate": "2021-01-31",
+      |         "relevantDueDate": "$dueDate",
       |         "chargeAmount": 12.67,
       |         "tieBreaker": 1234
       |       }
@@ -39,11 +43,11 @@ object OutstandingChargesIntegrationTestConstants {
       |""".stripMargin)
 
   val validOutStandingChargeResponseJsonWithoutAciAndBcdCharges: JsValue = Json.parse(
-    """
+    s"""
       |{
       |  "outstandingCharges": [{
       |         "chargeName": "LATE",
-      |         "relevantDueDate": "2021-01-31",
+      |         "relevantDueDate": "$dueDate",
       |         "chargeAmount": 123456789012345.67,
       |         "tieBreaker": 1234
       |       }

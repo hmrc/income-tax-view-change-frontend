@@ -180,7 +180,6 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         )
 
         verifyAuditContainsDetail(ReportDeadlinesRequestAuditModel(testUser).detail)
-        verifyAuditContainsDetail(ReportDeadlinesResponseAuditModel(testUser, "testId", Seq.empty).detail)
       }
     }
     "the Agent viewer Feature is disabled" when {

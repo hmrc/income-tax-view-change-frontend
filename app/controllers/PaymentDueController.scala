@@ -17,6 +17,7 @@
 package controllers
 
 import audit.AuditingService
+import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -29,8 +30,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{FinancialTransactionsService, PaymentDueService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-
 import javax.inject.Inject
+
 import scala.concurrent.ExecutionContext
 
 class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -60,10 +61,16 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
   val viewPaymentsDue: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
       if(isEnabled(NewFinancialDetailsApi)) {
+        auditingService.extendedAudit(WhatYouOweRequestAuditModel(user))
+
         paymentDueService.getWhatYouOweChargesList().map {
           whatYouOweChargesList =>
+
+            auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList))
+
             Ok(views.html.whatYouOwe(chargesList = whatYouOweChargesList, currentTaxYear = user.incomeSources.getCurrentTaxEndYear,
-              paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter, backUrl = backUrl, user.saUtr)).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
+              paymentEnabled = isEnabled(Payment), implicitDateFormatter = dateFormatter, backUrl = backUrl, user.saUtr)
+            ).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
         } recover {
           case ex: Exception =>
             Logger.error(s"Error received while getting what you page details: ${ex.getMessage}")
@@ -73,7 +80,8 @@ class PaymentDueController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         financialTransactionsService.getAllUnpaidFinancialTransactions.map {
           case transactions if hasFinancialTransactionsError(transactions) => itvcErrorHandler.showInternalServerError()
           case transactions: List[FinancialTransactionsModel] => Ok(views.html.paymentDue(financialTransactions = transactions,
-            paymentEnabled = isEnabled(Payment),backUrl = backUrl, implicitDateFormatter = dateFormatter)).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
+            paymentEnabled = isEnabled(Payment),backUrl = backUrl, implicitDateFormatter = dateFormatter)
+          ).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
         }
       }
   }
