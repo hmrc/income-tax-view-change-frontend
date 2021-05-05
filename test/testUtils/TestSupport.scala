@@ -33,6 +33,7 @@ import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
@@ -60,15 +61,15 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
   implicit val environment: Environment = app.injector.instanceOf[Environment]
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  implicit val user: MtdItUser[_] = MtdItUser(
+  implicit val individualUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
     userName = Some(testRetrievedUserName),
     incomeSources = businessAndPropertyAligned,
-    saUtr = Some("saUtr"),
-    credId = Some("credId"),
-    userType = Some("Individual"),
-    None
+    saUtr = Some(testSaUtr),
+    credId = Some(testCredId),
+    userType = Some(testUserTypeIndividual),
+    arn = None
   )(FakeRequest())
 
   implicit val serviceInfo: Html = Html("")
@@ -107,6 +108,17 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
       utils.SessionKeys.clientNino -> clientNino,
       utils.SessionKeys.confirmedClient -> "true"
     )
+
+  def agentUserConfirmedClient(clientNino: String = "AA111111A"): MtdItUser[_] = MtdItUser(
+    mtditid = "XAIT00000000015",
+    nino = clientNino,
+    userName = Some(Name(Some("Test"), Some("User"))),
+    incomeSources = businessesAndPropertyIncome,
+    saUtr = Some("1234567890"),
+    credId = Some(testCredId),
+    userType = Some(testUserTypeAgent),
+    arn = Some(testArn)
+  )(FakeRequest())
 
   lazy val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession("nino" -> testNino)
 

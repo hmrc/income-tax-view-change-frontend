@@ -44,9 +44,9 @@ class BillsAuditModelSpec extends TestSupport {
         "mtditid" -> testMtditid,
         "nationalInsuranceNumber" -> testNino,
         "currentBill" -> "123.45",
-        "saUtr" -> "saUtr",
-        "credId" -> "credId",
-        "userType" -> "Individual"
+        "saUtr" -> testSaUtr,
+        "credId" -> testCredId,
+        "userType" -> testUserTypeIndividual
       )
     }
   }

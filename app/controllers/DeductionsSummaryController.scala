@@ -23,15 +23,15 @@ import config.featureswitch.{DeductionBreakdown, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
-import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CalculationService, FinancialTransactionsService}
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.notFound
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -58,24 +58,20 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
     action.async {
       implicit user =>
         if (isEnabled(DeductionBreakdown)) {
-          auditingService.extendedAudit(AllowanceAndDeductionsRequestAuditModel(user.mtditid, user.nino,
-            user.saUtr, user.credId, user.userType))
-          calculationService.getCalculationDetail(user.nino, taxYear).flatMap {
-            case calcDisplayModel: CalcDisplayModel => {
-              auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user.mtditid, user.nino,
-                user.saUtr, user.credId, user.userType,
-                calcDisplayModel.calcDataModel.allowancesAndDeductions.personalAllowance,
-                calcDisplayModel.calcDataModel.allowancesAndDeductions.totalPensionContributions))
+          auditingService.extendedAudit(AllowanceAndDeductionsRequestAuditModel(user))
+          calculationService.getCalculationDetail(user.nino, taxYear).map {
+            case calcDisplayModel: CalcDisplayModel =>
+              auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user,
+                calcDisplayModel.calcDataModel.allowancesAndDeductions))
+              Ok(views.html.deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear)))
 
-              Future.successful(Ok(views.html.deductionBreakdown(calcDisplayModel, taxYear, backUrl(taxYear))))
-            }
             case CalcDisplayNoDataFound =>
               Logger.warn(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Not found")
-              Future.successful(itvcErrorHandler.showInternalServerError())
+              itvcErrorHandler.showInternalServerError()
 
             case CalcDisplayError =>
               Logger.error(s"[DeductionsSummaryController][showDeductionsSummary[$taxYear]] No deductions data could be retrieved. Downstream error")
-              Future.successful(itvcErrorHandler.showInternalServerError())
+              itvcErrorHandler.showInternalServerError()
           }
         }
         else Future.successful(NotFound(notFound()))

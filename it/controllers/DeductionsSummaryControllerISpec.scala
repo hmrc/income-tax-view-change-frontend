@@ -16,17 +16,21 @@
 
 package controllers
 
-import java.time.LocalDateTime
-
 import assets.BaseIntegrationTestConstants._
 import assets.CalcDataIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.messages.{DeductionsSummaryMessages => messages}
-import config.featureswitch.{DeductionBreakdown, FeatureSwitching}
+import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
+import auth.MtdItUser
+import config.featureswitch.DeductionBreakdown
 import helpers.ComponentSpecBase
+import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.servicemocks._
-import models.calculation.{CalculationItem, ListCalculationItems}
+import models.calculation.{Calculation, CalculationItem, ListCalculationItems}
 import play.api.http.Status._
+import play.api.test.FakeRequest
+
+import java.time.LocalDateTime
 
 class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
@@ -57,11 +61,22 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
         IndividualCalculationStub.verifyGetCalculation(testNino, "idOne")
 
+        Then("I see Allowances and deductions page")
         res should have(
           httpStatus(OK),
           pageTitle(messages.deductionsSummaryTitle),
           elementTextBySelector("h1")(messages.deductionsSummaryHeading)
         )
+
+        And("Audit TXM events have been fired")
+        val testUser: MtdItUser[_] = MtdItUser(
+          testMtditid, testNino, userName = None, multipleBusinessesAndPropertyResponse,
+          Some("1234567890"), Some("12345-credId"), Some(testUserTypeIndividual), arn = None
+        )(FakeRequest())
+
+        val expectedAllowancesAndDeductions = estimatedCalculationFullJson.as[Calculation].allowancesAndDeductions
+        verifyAuditEvent(AllowanceAndDeductionsRequestAuditModel(testUser))
+        verifyAuditEvent(AllowanceAndDeductionsResponseAuditModel(testUser, expectedAllowancesAndDeductions))
       }
     }
 

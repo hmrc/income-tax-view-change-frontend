@@ -16,11 +16,13 @@
 
 package controllers
 
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino}
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
+import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.mocks.MockAuditingService
 import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
+import auth.MtdItUser
 import config.featureswitch.{DeductionBreakdown, FeatureSwitching}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -28,6 +30,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{charset, contentType, _}
 import testUtils.TestSupport
 
@@ -66,9 +69,12 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
           setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.OK
 
-          verifyExtendedAudit(AllowanceAndDeductionsRequestAuditModel(testMtditid, testNino, None, Some(testCredId), Some("Individual")))
-          verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(testMtditid, testNino, None, Some(testCredId),
-            Some("Individual"), Some(BigDecimal("11500")), Some(BigDecimal("11501"))))
+          val expectedMtdItUser = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+            businessIncome2018and2019, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
+
+          verifyExtendedAudit(AllowanceAndDeductionsRequestAuditModel(expectedMtdItUser))
+          verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
+            calculationDataSuccessModel.allowancesAndDeductions))
         }
 
         "return HTML" in {

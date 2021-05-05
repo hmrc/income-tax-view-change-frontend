@@ -16,6 +16,7 @@
 
 package helpers.servicemocks
 
+import audit.models.ExtendedAuditModel
 import controllers.Assets.NO_CONTENT
 import play.api.libs.json.{JsValue, Json}
 
@@ -41,5 +42,15 @@ object AuditStub extends WiremockMethods {
 
   def verifyAuditContainsDetail(body: JsValue): Unit = {
     verifyContainsJson(method = POST, uri = "/write/audit", Json.obj("detail" -> body))
+  }
+
+  def verifyAuditEvent(auditEvent: ExtendedAuditModel,
+                       auditSource: String = "income-tax-view-change-frontend"): Unit = {
+    val expectedAuditJson = Json.obj(
+      "auditSource" -> auditSource,
+      "auditType" -> auditEvent.auditType,
+      "tags" -> Json.obj("transactionName" -> auditEvent.transactionName),
+      "detail" -> auditEvent.detail)
+    verifyContainsJson(method = POST, uri = "/write/audit", expectedAuditJson)
   }
 }

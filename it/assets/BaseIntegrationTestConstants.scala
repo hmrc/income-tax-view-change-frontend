@@ -18,12 +18,14 @@ package assets
 
 import java.time.LocalDate
 
-import implicits.ImplicitDateFormatter
 import play.api.http.Status
 
 object BaseIntegrationTestConstants {
 
-  val testDate = LocalDate.of(2018, 5, 5)
+  val testDate: LocalDate = LocalDate.of(2018, 5, 5)
+
+  val testUserTypeIndividual = "Individual"
+  val testUserTypeAgent = "Agent"
 
   val testMtditidEnrolmentKey = "HMRC-MTD-IT"
   val testMtditidEnrolmentIdentifier = "MTDITID"
@@ -54,8 +56,8 @@ object BaseIntegrationTestConstants {
   val testPropertyIncomeId = "1234"
 
   val testTradeName = "business"
-  val testErrorStatus = Status.INTERNAL_SERVER_ERROR
-  val testErrorNotFoundStatus = Status.NOT_FOUND
+  val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
+  val testErrorNotFoundStatus: Int = Status.NOT_FOUND
   val testErrorMessage = "Dummy Error Message"
 
 }

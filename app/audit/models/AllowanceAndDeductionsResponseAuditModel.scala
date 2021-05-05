@@ -16,27 +16,25 @@
 
 package audit.models
 
-import play.api.libs.json.{JsValue, Json, Writes}
+import audit.Utilities.userAuditDetails
+import auth.MtdItUser
+import models.calculation.AllowancesAndDeductions
+import play.api.libs.json.JsValue
+import utils.Utilities._
 
-case class AllowanceAndDeductionsResponseAuditModel(mtditid: String, nino: String,
-                                                    saUtr: Option[String], credId: Option[String],
-                                                    userType: Option[String], personalAllowance: Option[BigDecimal],
-                                                    pensionContributions: Option[BigDecimal]) extends ExtendedAuditModel {
+case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUser[_],
+                                                    aad: AllowancesAndDeductions) extends ExtendedAuditModel {
 
   override val transactionName: String = "allowances-deductions-details-response"
   override val auditType: String = "AllowancesDeductionsDetailsResponse"
 
-  private case class AuditDetail(mtditid: String, nationalInsuranceNumber: String,
-                                 saUtr: Option[String], credId: Option[String],
-                                 userType: Option[String], personalAllowance: Option[String],
-                                 pensionContributions: Option[String])
-
-  private implicit val auditDetailWrites: Writes[AuditDetail] = Json.writes[AuditDetail]
-
-  override val detail: JsValue = Json.toJson(
-    AuditDetail(
-      mtditid, nino, saUtr, credId, userType,
-      personalAllowance.map(_.toString()), pensionContributions.map(_.toString())
-    )
-  )
+  override val detail: JsValue = userAuditDetails(mtdItUser) ++
+    ("personalAllowance", aad.personalAllowance) ++
+    ("pensionContributions", aad.totalPensionContributions) ++
+    ("lossRelief", aad.lossesAppliedToGeneralIncome) ++
+    ("giftsToCharity", aad.giftOfInvestmentsAndPropertyToCharity) ++
+    ("annualPayments", aad.grossAnnualPayments) ++
+    ("qualifyingLoanInterest", aad.qualifyingLoanInterestFromInvestments) ++
+    ("postCessationTradeReceipts", aad.postCessationTradeReceipts) ++
+    ("tradeUnionPayments", aad.paymentsToTradeUnionsForDeathBenefits)
 }
