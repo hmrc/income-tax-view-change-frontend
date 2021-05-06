@@ -15,9 +15,10 @@
  *@
 
 @import models.financialTransactions.TransactionModel
-@import models.financialDetails.Charge
+@import models.financialDetails.DocumentDetail
+@import models.financialDetails.DocumentDetailWithDueDate
 
-@(transaction: Option[TransactionModel], charge: Option[Charge] = None)(implicit messages: Messages)
+@(transaction: Option[TransactionModel], charge: Option[DocumentDetailWithDueDate] = None)(implicit messages: Messages)
 
 @statusLabel(message: String, status: Option[String] = None) = {
   <span class="@{s"govUk-tag${status.getOrElse("")}"}">@message</span>
@@ -25,7 +26,7 @@
 
 @if(charge.isDefined) {
     @{charge match {
-        case Some(bill) if bill.isPaid => statusLabel(messages("taxYears.complete"), Some(" govUk-tag--complete"))
+        case Some(bill) if bill.documentDetail.isPaid => statusLabel(messages("taxYears.complete"), Some(" govUk-tag--complete"))
         case Some(bill) if bill.isOverdue => statusLabel(messages("taxYears.overdue"), Some(" govUk-tag--overdue"))
         case _ => statusLabel(messages("taxYears.ongoing"))
     }}

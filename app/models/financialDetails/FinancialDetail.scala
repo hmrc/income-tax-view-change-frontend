@@ -16,4 +16,15 @@
 
 package models.financialDetails
 
-case class ChargeModelWithYear(model: FinancialDetail, taxYear: Int)
+import play.api.libs.json.{Format, Json}
+import java.time.LocalDate
+
+import play.api.Logger
+
+case class FinancialDetail(taxYear: String,
+                           mainType: Option[String] = None,
+                           items: Option[Seq[SubItem]] = None)
+
+object FinancialDetail {
+  implicit val format: Format[FinancialDetail] = Json.format[FinancialDetail]
+}

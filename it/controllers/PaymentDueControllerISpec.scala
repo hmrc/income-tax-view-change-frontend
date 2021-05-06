@@ -58,11 +58,11 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
           res should have(
             httpStatus(OK),
             pageTitle("Payments due - Business Tax account - GOV.UK"),
-            isElementVisibleById(s"payments-due-$testTaxYear")(true),
-            isElementVisibleById(s"payments-due-outstanding-$testTaxYear")(true),
-            isElementVisibleById(s"payments-due-on-$testTaxYear")(true),
-            isElementVisibleById(s"bills-link-$testTaxYear")(true),
-            isElementVisibleById(s"payment-link-$testTaxYear")(false)
+            isElementVisibleById(s"payments-due-$testTaxYear")(expectedValue = true),
+            isElementVisibleById(s"payments-due-outstanding-$testTaxYear")(expectedValue = true),
+            isElementVisibleById(s"payments-due-on-$testTaxYear")(expectedValue = true),
+            isElementVisibleById(s"bills-link-$testTaxYear")(expectedValue = true),
+            isElementVisibleById(s"payment-link-$testTaxYear")(expectedValue = false)
           )
 
         }
@@ -92,16 +92,16 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
           res should have(
             httpStatus(OK),
             pageTitle("Payments due - Business Tax account - GOV.UK"),
-            isElementVisibleById(s"payments-due-$testTaxYear1")(true),
-            isElementVisibleById(s"payments-due-outstanding-$testTaxYear1")(true),
-            isElementVisibleById(s"payments-due-on-$testTaxYear1")(true),
-            isElementVisibleById(s"bills-link-$testTaxYear1")(true),
-            isElementVisibleById(s"payment-link-$testTaxYear1")(false),
-            isElementVisibleById(s"payments-due-$testTaxYear2")(true),
-            isElementVisibleById(s"payments-due-outstanding-$testTaxYear2")(true),
-            isElementVisibleById(s"payments-due-on-$testTaxYear2")(true),
-            isElementVisibleById(s"bills-link-$testTaxYear2")(true),
-            isElementVisibleById(s"payment-link-$testTaxYear2")(false)
+            isElementVisibleById(s"payments-due-$testTaxYear1")(expectedValue = true),
+            isElementVisibleById(s"payments-due-outstanding-$testTaxYear1")(expectedValue = true),
+            isElementVisibleById(s"payments-due-on-$testTaxYear1")(expectedValue = true),
+            isElementVisibleById(s"bills-link-$testTaxYear1")(expectedValue = true),
+            isElementVisibleById(s"payment-link-$testTaxYear1")(expectedValue = false),
+            isElementVisibleById(s"payments-due-$testTaxYear2")(expectedValue = true),
+            isElementVisibleById(s"payments-due-outstanding-$testTaxYear2")(expectedValue = true),
+            isElementVisibleById(s"payments-due-on-$testTaxYear2")(expectedValue = true),
+            isElementVisibleById(s"bills-link-$testTaxYear2")(expectedValue = true),
+            isElementVisibleById(s"payment-link-$testTaxYear2")(expectedValue = false)
           )
 
 
@@ -170,11 +170,11 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
           res should have(
             httpStatus(OK),
             pageTitle("Payments due - Business Tax account - GOV.UK"),
-            isElementVisibleById(s"payments-due-$testTaxYear2")(true),
-            isElementVisibleById(s"payments-due-outstanding-$testTaxYear2")(true),
-            isElementVisibleById(s"payments-due-on-$testTaxYear2")(true),
-            isElementVisibleById(s"bills-link-$testTaxYear2")(true),
-            isElementVisibleById(s"payment-link-$testTaxYear2")(false)
+            isElementVisibleById(s"payments-due-$testTaxYear2")(expectedValue = true),
+            isElementVisibleById(s"payments-due-outstanding-$testTaxYear2")(expectedValue = true),
+            isElementVisibleById(s"payments-due-on-$testTaxYear2")(expectedValue = true),
+            isElementVisibleById(s"bills-link-$testTaxYear2")(expectedValue = true),
+            isElementVisibleById(s"payment-link-$testTaxYear2")(expectedValue = false)
           )
 
         }
@@ -201,11 +201,11 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
           res should have(
             httpStatus(OK),
             pageTitle("Payments due - Business Tax account - GOV.UK"),
-            isElementVisibleById(s"payments-due-$testTaxYear1")(false),
-            isElementVisibleById(s"payments-due-outstanding-$testTaxYear1")(false),
-            isElementVisibleById(s"payments-due-on-$testTaxYear1")(false),
-            isElementVisibleById(s"bills-link-$testTaxYear1")(false),
-            isElementVisibleById(s"payment-link-$testTaxYear1")(false)
+            isElementVisibleById(s"payments-due-$testTaxYear1")(expectedValue = false),
+            isElementVisibleById(s"payments-due-outstanding-$testTaxYear1")(expectedValue = false),
+            isElementVisibleById(s"payments-due-on-$testTaxYear1")(expectedValue = false),
+            isElementVisibleById(s"bills-link-$testTaxYear1")(expectedValue = false),
+            isElementVisibleById(s"payment-link-$testTaxYear1")(expectedValue = false)
           )
 
         }
@@ -268,26 +268,27 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear.toInt - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
+
             res should have(
               httpStatus(OK),
               pageTitle("What you owe - Business Tax account - GOV.UK"),
-              isElementVisibleById("pre-mtd-payments-heading")(true),
-              isElementVisibleById("balancing-charge-type-table-head")(true),
-              isElementVisibleById("balancing-charge-type-0")(true),
-              isElementVisibleById("balancing-charge-type-1")(true),
-              isElementVisibleById("payment-type-dropdown-title")(true),
-              isElementVisibleById("payment-details-content-0")(true),
-              isElementVisibleById("payment-details-content-1")(true),
-              isElementVisibleById("over-due-payments-heading")(false),
-              isElementVisibleById("due-in-thirty-days-payments-heading")(true),
-              isElementVisibleById("due-in-thirty-days-type-0")(true),
-              isElementVisibleById("due-in-thirty-days-type-1")(true),
-              isElementVisibleById("future-payments-heading")(false),
-              isElementVisibleById("payment-days-note")(true),
-              isElementVisibleById("credit-on-account")(true),
-              isElementVisibleById("payment-button")(true),
-              isElementVisibleById("sa-note-migrated")(true),
-              isElementVisibleById("outstanding-charges-note-migrated")(true)
+              isElementVisibleById("pre-mtd-payments-heading")(expectedValue = true),
+              isElementVisibleById("balancing-charge-type-table-head")(expectedValue = true),
+              isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
+              isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
+              isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+              isElementVisibleById("payment-details-content-0")(expectedValue = true),
+              isElementVisibleById("payment-details-content-1")(expectedValue = true),
+              isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+              isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = true),
+              isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
+              isElementVisibleById("due-in-thirty-days-type-1")(expectedValue = true),
+              isElementVisibleById("future-payments-heading")(expectedValue = false),
+              isElementVisibleById("payment-days-note")(expectedValue = true),
+              isElementVisibleById("credit-on-account")(expectedValue = true),
+              isElementVisibleById("payment-button")(expectedValue = true),
+              isElementVisibleById("sa-note-migrated")(expectedValue = true),
+              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
             )
 
           }
@@ -320,23 +321,23 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             res should have(
               httpStatus(OK),
               pageTitle("What you owe - Business Tax account - GOV.UK"),
-              isElementVisibleById("pre-mtd-payments-heading")(false),
-              isElementVisibleById("balancing-charge-type-table-head")(false),
-              isElementVisibleById("balancing-charge-type-0")(false),
-              isElementVisibleById("balancing-charge-type-1")(false),
-              isElementVisibleById("payment-type-dropdown-title")(true),
-              isElementVisibleById("payment-details-content-0")(true),
-              isElementVisibleById("payment-details-content-1")(true),
-              isElementVisibleById("over-due-payments-heading")(true),
-              isElementVisibleById("over-due-type-0")(true),
-              isElementVisibleById("over-due-type-1")(true),
-              isElementVisibleById("due-in-thirty-days-payments-heading")(false),
-              isElementVisibleById("future-payments-heading")(false),
-              isElementVisibleById(s"payment-days-note")(false),
-              isElementVisibleById(s"credit-on-account")(false),
-              isElementVisibleById(s"payment-button")(false),
-              isElementVisibleById(s"sa-note-migrated")(true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(true)
+              isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+              isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+              isElementVisibleById("payment-details-content-0")(expectedValue = true),
+              isElementVisibleById("payment-details-content-1")(expectedValue = true),
+              isElementVisibleById("over-due-payments-heading")(expectedValue = true),
+              isElementVisibleById("over-due-type-0")(expectedValue = true),
+              isElementVisibleById("over-due-type-1")(expectedValue = true),
+              isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+              isElementVisibleById("future-payments-heading")(expectedValue = false),
+              isElementVisibleById(s"payment-days-note")(expectedValue = false),
+              isElementVisibleById(s"credit-on-account")(expectedValue = false),
+              isElementVisibleById(s"payment-button")(expectedValue = false),
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
             )
 
           }
@@ -350,11 +351,17 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a single financial details response")
             val mixedJson = Json.obj(
+              "documentDetails" -> Json.arr(
+                documentDetailJson(3400.00, 1000.00, testTaxYear.toString),
+                documentDetailJson(1000.00, 100.00, testTaxYear.toString, "ITSA- POA 1"),
+                documentDetailJson(1000.00, 0.00, testTaxYear.toString, "ITSA - POA 2")
+              ),
               "financialDetails" -> Json.arr(
-                chargeJson(Some(3400), Some(1000), Some(3400), testTaxYear.toString),
-                chargeJson(Some(1000.00), Some(100.00), Some(3400), testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString),
-                chargeJson(Some(1000.00), Some(0.00), Some(3400), testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString)
-              ))
+                financialDetailJson(testTaxYear.toString),
+                financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString),
+                financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString)
+              )
+            )
 
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -368,28 +375,28 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear}-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear -1).toString)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(
               httpStatus(OK),
               pageTitle("What you owe - Business Tax account - GOV.UK"),
-              isElementVisibleById("pre-mtd-payments-heading")(true),
-              isElementVisibleById("balancing-charge-type-table-head")(true),
-              isElementVisibleById("balancing-charge-type-0")(true),
-              isElementVisibleById("balancing-charge-type-1")(true),
-              isElementVisibleById("payment-type-dropdown-title")(true),
-              isElementVisibleById("payment-details-content-0")(true),
-              isElementVisibleById("payment-details-content-1")(true),
-              isElementVisibleById("over-due-payments-heading")(false),
-              isElementVisibleById("over-due-type-0")(false),
-              isElementVisibleById("over-due-type-1")(false),
-              isElementVisibleById("due-in-thirty-days-payments-heading")(true),
-              isElementVisibleById("due-in-thirty-days-type-0")(true),
-              isElementVisibleById("future-payments-heading")(false),
-              isElementVisibleById(s"payment-days-note")(true),
-              isElementVisibleById(s"sa-note-migrated")(true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(true)
+              isElementVisibleById("pre-mtd-payments-heading")(expectedValue = true),
+              isElementVisibleById("balancing-charge-type-table-head")(expectedValue = true),
+              isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
+              isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
+              isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+              isElementVisibleById("payment-details-content-0")(expectedValue = true),
+              isElementVisibleById("payment-details-content-1")(expectedValue = true),
+              isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+              isElementVisibleById("over-due-type-0")(expectedValue = false),
+              isElementVisibleById("over-due-type-1")(expectedValue = false),
+              isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = true),
+              isElementVisibleById("due-in-thirty-days-type-0")(expectedValue = true),
+              isElementVisibleById("future-payments-heading")(expectedValue = false),
+              isElementVisibleById(s"payment-days-note")(expectedValue = true),
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
             )
           }
 
@@ -515,22 +522,22 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             res should have(
               httpStatus(OK),
               pageTitle("What you owe - Business Tax account - GOV.UK"),
-              isElementVisibleById("pre-mtd-payments-heading")(false),
-              isElementVisibleById("balancing-charge-type-table-head")(false),
-              isElementVisibleById("balancing-charge-type-0")(false),
-              isElementVisibleById("balancing-charge-type-1")(false),
-              isElementVisibleById("payment-type-dropdown-title")(false),
-              isElementVisibleById("payment-details-content-0")(false),
-              isElementVisibleById("payment-details-content-1")(false),
-              isElementVisibleById("over-due-payments-heading")(false),
-              isElementVisibleById("due-in-thirty-days-payments-heading")(false),
-              isElementVisibleById("future-payments-heading")(false),
-              isElementVisibleById("payment-days-note")(true),
-              isElementVisibleById("credit-on-account")(true),
-              isElementVisibleById(s"payment-button")(false),
-              isElementVisibleById("no-payments-due")(true),
-              isElementVisibleById("sa-note-migrated")(true),
-              isElementVisibleById("outstanding-charges-note-migrated")(true)
+              isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+              isElementVisibleById("payment-type-dropdown-title")(expectedValue = false),
+              isElementVisibleById("payment-details-content-0")(expectedValue = false),
+              isElementVisibleById("payment-details-content-1")(expectedValue = false),
+              isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+              isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+              isElementVisibleById("future-payments-heading")(expectedValue = false),
+              isElementVisibleById("payment-days-note")(expectedValue = true),
+              isElementVisibleById("credit-on-account")(expectedValue = true),
+              isElementVisibleById(s"payment-button")(expectedValue = false),
+              isElementVisibleById("no-payments-due")(expectedValue = true),
+              isElementVisibleById("sa-note-migrated")(expectedValue = true),
+              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
             )
           }
         }
@@ -564,22 +571,22 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
             res should have(
               httpStatus(OK),
               pageTitle("What you owe - Business Tax account - GOV.UK"),
-              isElementVisibleById("pre-mtd-payments-heading")(false),
-              isElementVisibleById("balancing-charge-type-table-head")(false),
-              isElementVisibleById("balancing-charge-type-0")(false),
-              isElementVisibleById("balancing-charge-type-1")(false),
-              isElementVisibleById("payment-type-dropdown-title")(false),
-              isElementVisibleById("payment-details-content-0")(false),
-              isElementVisibleById("payment-details-content-1")(false),
-              isElementVisibleById("over-due-payments-heading")(false),
-              isElementVisibleById("due-in-thirty-days-payments-heading")(false),
-              isElementVisibleById("future-payments-heading")(false),
-              isElementVisibleById("payment-days-note")(true),
-              isElementVisibleById("credit-on-account")(true),
-              isElementVisibleById(s"payment-button")(false),
-              isElementVisibleById("no-payments-due")(true),
-              isElementVisibleById("sa-note-migrated")(true),
-              isElementVisibleById("outstanding-charges-note-migrated")(true)
+              isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+              isElementVisibleById("payment-type-dropdown-title")(expectedValue = false),
+              isElementVisibleById("payment-details-content-0")(expectedValue = false),
+              isElementVisibleById("payment-details-content-1")(expectedValue = false),
+              isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+              isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+              isElementVisibleById("future-payments-heading")(expectedValue = false),
+              isElementVisibleById("payment-days-note")(expectedValue = true),
+              isElementVisibleById("credit-on-account")(expectedValue = true),
+              isElementVisibleById(s"payment-button")(expectedValue = false),
+              isElementVisibleById("no-payments-due")(expectedValue = true),
+              isElementVisibleById("sa-note-migrated")(expectedValue = true),
+              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
             )
 
           }
@@ -597,11 +604,17 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a mixed financial details response")
             val mixedJson = Json.obj(
+              "documentDetails" -> Json.arr(
+                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "test"),
+                documentDetailJson(1000.00, 0, testTaxYear.toString, "4444"),
+                documentDetailJson(1000.00, 3000.00, testTaxYear.toString, "5555")
+              ),
               "financialDetails" -> Json.arr(
-                chargeJson(Some(3400), Some(1000), Some(3400), testTaxYear.toString, "test"),
-                chargeJson(Some(1000.00), None, Some(3400), testTaxYear.toString, "4444"),
-                chargeJson(Some(1000.00), Some(3000.00), Some(3400), testTaxYear.toString, "5555")
-              ))
+                financialDetailJson(testTaxYear.toString, "test"),
+                financialDetailJson(testTaxYear.toString, "4444"),
+                financialDetailJson(testTaxYear.toString, "5555")
+              )
+            )
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -616,27 +629,27 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"${testTaxYear}-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear -1).toString)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(
               httpStatus(OK),
               pageTitle("What you owe - Business Tax account - GOV.UK"),
-              isElementVisibleById("pre-mtd-payments-heading")(false),
-              isElementVisibleById("balancing-charge-type-table-head")(false),
-              isElementVisibleById("balancing-charge-type-0")(false),
-              isElementVisibleById("payment-type-dropdown-title")(false),
-              isElementVisibleById("payment-details-content-0")(false),
-              isElementVisibleById("payment-details-content-1")(false),
-              isElementVisibleById("over-due-payments-heading")(false),
-              isElementVisibleById("due-in-thirty-days-payments-heading")(false),
-              isElementVisibleById("future-payments-heading")(false),
-              isElementVisibleById("payment-days-note")(true),
-              isElementVisibleById("credit-on-account")(true),
-              isElementVisibleById(s"payment-button")(false),
-              isElementVisibleById("no-payments-due")(true),
-              isElementVisibleById("sa-note-migrated")(true),
-              isElementVisibleById("outstanding-charges-note-migrated")(true)
+              isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+              isElementVisibleById("payment-type-dropdown-title")(expectedValue = false),
+              isElementVisibleById("payment-details-content-0")(expectedValue = false),
+              isElementVisibleById("payment-details-content-1")(expectedValue = false),
+              isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+              isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+              isElementVisibleById("future-payments-heading")(expectedValue = false),
+              isElementVisibleById("payment-days-note")(expectedValue = true),
+              isElementVisibleById("credit-on-account")(expectedValue = true),
+              isElementVisibleById(s"payment-button")(expectedValue = false),
+              isElementVisibleById("no-payments-due")(expectedValue = true),
+              isElementVisibleById("sa-note-migrated")(expectedValue = true),
+              isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
             )
 
           }
@@ -653,10 +666,15 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a mixed financial details response")
             val mixedJson = Json.obj(
+              "documentDetails" -> Json.arr(
+                documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "test"),
+                documentDetailJson(1000.00, 0, testTaxYear.toString, "3333"),
+                documentDetailJson(1000.00, 3000.00, testTaxYear.toString, "4444")
+              ),
               "financialDetails" -> Json.arr(
-                chargeJson(Some(3400), Some(1000), Some(3400), testTaxYear.toString, "test"),
-                chargeJson(Some(1000.00), None, Some(3400), testTaxYear.toString, "3333"),
-                chargeJson(Some(1000.00), Some(3000.00), Some(3400), testTaxYear.toString, "4444")
+                financialDetailJson(testTaxYear.toString, "test"),
+                financialDetailJson(testTaxYear.toString, "3333"),
+                financialDetailJson(testTaxYear.toString, "4444")
               ))
 
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
@@ -672,28 +690,28 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear -1).toString)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(
               httpStatus(OK),
               pageTitle("What you owe - Business Tax account - GOV.UK"),
-              isElementVisibleById("pre-mtd-payments-heading")(true),
-              isElementVisibleById("balancing-charge-type-table-head")(true),
-              isElementVisibleById("balancing-charge-type-0")(true),
-              isElementVisibleById("balancing-charge-type-1")(true),
-              isElementVisibleById("payment-type-dropdown-title")(true),
-              isElementVisibleById("payment-details-content-0")(true),
-              isElementVisibleById("payment-details-content-1")(true),
-              isElementVisibleById("over-due-payments-heading")(false),
-              isElementVisibleById("due-in-thirty-days-payments-heading")(false),
-              isElementVisibleById("future-payments-heading")(false),
-              isElementVisibleById(s"payment-days-note")(true),
-              isElementVisibleById(s"credit-on-account")(true),
-              isElementVisibleById(s"payment-button")(true),
-              isElementVisibleById(s"no-payments-due")(false),
-              isElementVisibleById(s"sa-note-migrated")(true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(true)
+              isElementVisibleById("pre-mtd-payments-heading")(expectedValue = true),
+              isElementVisibleById("balancing-charge-type-table-head")(expectedValue = true),
+              isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
+              isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
+              isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+              isElementVisibleById("payment-details-content-0")(expectedValue = true),
+              isElementVisibleById("payment-details-content-1")(expectedValue = true),
+              isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+              isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+              isElementVisibleById("future-payments-heading")(expectedValue = false),
+              isElementVisibleById(s"payment-days-note")(expectedValue = true),
+              isElementVisibleById(s"credit-on-account")(expectedValue = true),
+              isElementVisibleById(s"payment-button")(expectedValue = true),
+              isElementVisibleById(s"no-payments-due")(expectedValue = false),
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
             )
 
           }
@@ -710,7 +728,7 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a mixed financial details response")
             IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(testNino, s"${testTaxYear.toInt - 1}-04-06", s"${testTaxYear.toInt}-04-05")(OK,
-              testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, s"${testTaxYear+1}-01-01"))
+              testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, s"${testTaxYear + 1}-01-01"))
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
@@ -722,30 +740,30 @@ class PaymentDueControllerISpec extends ComponentSpecBase {
 
             verifyIncomeSourceDetailsCall(testMtditid)
             IncomeTaxViewChangeStub.verifyGetFinancialDetails(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear -1).toString)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
             Then("the result should have a HTTP status of OK (200) and the payments due page")
             res should have(
               httpStatus(OK),
               pageTitle("What you owe - Business Tax account - GOV.UK"),
-              isElementVisibleById("pre-mtd-payments-heading")(false),
-              isElementVisibleById("balancing-charge-type-table-head")(false),
-              isElementVisibleById("balancing-charge-type-0")(false),
-              isElementVisibleById("balancing-charge-type-1")(false),
-              isElementVisibleById("payment-type-dropdown-title")(true),
-              isElementVisibleById("payment-details-content-0")(true),
-              isElementVisibleById("payment-details-content-1")(true),
-              isElementVisibleById("over-due-payments-heading")(false),
-              isElementVisibleById("due-in-thirty-days-payments-heading")(false),
-              isElementVisibleById("future-payments-heading")(true),
-              isElementVisibleById("future-payments-type-0")(true),
-              isElementVisibleById("future-payments-type-1")(true),
-              isElementVisibleById(s"payment-days-note")(true),
-              isElementVisibleById(s"credit-on-account")(true),
-              isElementVisibleById(s"payment-button")(true),
-              isElementVisibleById(s"no-payments-due")(false),
-              isElementVisibleById(s"sa-note-migrated")(true),
-              isElementVisibleById(s"outstanding-charges-note-migrated")(true)
+              isElementVisibleById("pre-mtd-payments-heading")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-table-head")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+              isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+              isElementVisibleById("payment-type-dropdown-title")(expectedValue = true),
+              isElementVisibleById("payment-details-content-0")(expectedValue = true),
+              isElementVisibleById("payment-details-content-1")(expectedValue = true),
+              isElementVisibleById("over-due-payments-heading")(expectedValue = false),
+              isElementVisibleById("due-in-thirty-days-payments-heading")(expectedValue = false),
+              isElementVisibleById("future-payments-heading")(expectedValue = true),
+              isElementVisibleById("future-payments-type-0")(expectedValue = true),
+              isElementVisibleById("future-payments-type-1")(expectedValue = true),
+              isElementVisibleById(s"payment-days-note")(expectedValue = true),
+              isElementVisibleById(s"credit-on-account")(expectedValue = true),
+              isElementVisibleById(s"payment-button")(expectedValue = true),
+              isElementVisibleById(s"no-payments-due")(expectedValue = false),
+              isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+              isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
             )
 
           }

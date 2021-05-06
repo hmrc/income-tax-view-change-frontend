@@ -17,7 +17,7 @@
 package mocks.views
 
 import models.calculation.{CalcDisplayModel, CalcOverview}
-import models.financialDetails.Charge
+import models.financialDetails.FinancialDetail
 import models.reportDeadlines.ObligationsModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}

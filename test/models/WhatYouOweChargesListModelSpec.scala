@@ -17,7 +17,7 @@
 package models
 
 import assets.FinancialDetailsTestConstants.testFinancialDetailsModel
-import models.financialDetails.WhatYouOweChargesList
+import models.financialDetails.{FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.scalatest.Matchers
 import uk.gov.hmrc.play.test.UnitSpec
@@ -26,36 +26,52 @@ import java.time.LocalDate
 
 class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
 
-  def outstandingChargesModel(dueDate: String) = OutstandingChargesModel(
+  def outstandingChargesModel(dueDate: String): OutstandingChargesModel = OutstandingChargesModel(
     List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
 
-  val financialDetailsDueInMoreThan30Days = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+  val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
+    List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
-    List(Some(50), Some(75)), LocalDate.now().getYear.toString)
+    List(Some(50), Some(75)),
+    LocalDate.now().getYear.toString
+  )
 
-  val financialDetailsDueIn30Days = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+  val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(
+    List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().toString), Some(LocalDate.now().plusDays(1).toString)),
-    List(Some(50), Some(75)), LocalDate.now().getYear.toString)
+    List(Some(50), Some(75)),
+    LocalDate.now().getYear.toString
+  )
 
-  val financialDetailsOverdueData = testFinancialDetailsModel(List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+  val financialDetailsOverdueData: FinancialDetailsModel = testFinancialDetailsModel(
+    List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     List(Some(LocalDate.now().minusDays(10).toString), Some(LocalDate.now().minusDays(1).toString)),
-    List(Some(50), Some(75)), LocalDate.now().getYear.toString)
+    List(Some(50), Some(75)),
+    LocalDate.now().getYear.toString
+  )
 
-  val outstandingCharges = outstandingChargesModel(LocalDate.now().minusMonths(13).toString)
+  val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusMonths(13).toString)
 
-  val whatYouOweAllData = WhatYouOweChargesList(dueInThirtyDaysList = financialDetailsDueIn30Days.financialDetails,
-    futurePayments = financialDetailsDueInMoreThan30Days.financialDetails,
-    overduePaymentList = financialDetailsOverdueData.financialDetails,
-    outstandingChargesModel = Some(outstandingCharges))
+  val whatYouOweAllData: WhatYouOweChargesList = WhatYouOweChargesList(
+    dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
+    futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
+    overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates,
+    outstandingChargesModel = Some(outstandingCharges)
+  )
 
-  val whatYouOweFinancialDataWithoutOutstandingCharges = WhatYouOweChargesList(dueInThirtyDaysList = financialDetailsDueIn30Days.financialDetails,
-    futurePayments = financialDetailsDueInMoreThan30Days.financialDetails,
-    overduePaymentList = financialDetailsOverdueData.financialDetails)
+  val whatYouOweFinancialDataWithoutOutstandingCharges: WhatYouOweChargesList = WhatYouOweChargesList(
+    dueInThirtyDaysList = financialDetailsDueIn30Days.getAllDocumentDetailsWithDueDates,
+    futurePayments = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates,
+    overduePaymentList = financialDetailsOverdueData.getAllDocumentDetailsWithDueDates
+  )
 
 
   "The WhatYouOweChargesList model" when {
 
-    "all values in model exists with tie breaker matching in OutstandingCharges Model" should  {
+    "all values in model exists with tie breaker matching in OutstandingCharges Model" should {
       "bcdChargeTypeDefinedAndGreaterThanZero is true" in {
         whatYouOweAllData.bcdChargeTypeDefinedAndGreaterThanZero shouldBe true
       }
@@ -68,7 +84,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
       }
     }
 
-    "all values in model exists except outstanding charges" should  {
+    "all values in model exists except outstanding charges" should {
       "bcdChargeTypeDefinedAndGreaterThanZero is false" in {
         whatYouOweFinancialDataWithoutOutstandingCharges.bcdChargeTypeDefinedAndGreaterThanZero shouldBe false
       }

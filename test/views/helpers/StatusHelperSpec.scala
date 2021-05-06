@@ -16,12 +16,8 @@
 
 package views.helpers
 
-import java.time.LocalDate
-
 import assets.{EstimatesTestConstants, MessagesLookUp}
-import models.financialTransactions.{SubItemModel, TransactionModel, TransactionModelWithYear}
 import org.jsoup.Jsoup
-import play.api.i18n.Messages.Implicits._
 import testUtils.TestSupport
 import views.html.helpers.statusHelper
 
@@ -44,7 +40,7 @@ class StatusHelperSpec extends TestSupport {
       }
 
       "provided with an unpaid financial transaction for an ongoing status" which {
-        val result = Jsoup.parse(statusHelper(Some(EstimatesTestConstants.transactionModelStatus(false, false))).toString())
+        val result = Jsoup.parse(statusHelper(Some(EstimatesTestConstants.transactionModelStatus(paid = false, overdue = false))).toString())
 
         "has the correct class" in {
           result.select("span").attr("class") shouldBe "govUk-tag"
@@ -56,7 +52,7 @@ class StatusHelperSpec extends TestSupport {
       }
 
       "provided with a paid financial transaction for a complete status" which {
-        val result = Jsoup.parse(statusHelper(Some(EstimatesTestConstants.transactionModelStatus(true, false))).toString())
+        val result = Jsoup.parse(statusHelper(Some(EstimatesTestConstants.transactionModelStatus(paid = true, overdue = false))).toString())
 
         "has the correct class" in {
           result.select("span").attr("class") shouldBe "govUk-tag govUk-tag--complete"
@@ -68,7 +64,7 @@ class StatusHelperSpec extends TestSupport {
       }
 
       "provided with an unpaid financial transaction for an overdue status" which {
-        val result = Jsoup.parse(statusHelper(Some(EstimatesTestConstants.transactionModelStatus(false, true))).toString())
+        val result = Jsoup.parse(statusHelper(Some(EstimatesTestConstants.transactionModelStatus(paid = false, overdue = true))).toString())
 
         "has the correct class" in {
           result.select("span").attr("class") shouldBe "govUk-tag govUk-tag--overdue"
@@ -95,7 +91,7 @@ class StatusHelperSpec extends TestSupport {
       }
 
       "provided with an unpaid financial details for an ongoing status" which {
-        val result = Jsoup.parse(statusHelper(None, Some(EstimatesTestConstants.chargeModelStatus(false, false))).toString())
+        val result = Jsoup.parse(statusHelper(None, Some(EstimatesTestConstants.chargeModelStatus(paid = false, overdue = false))).toString())
 
         "has the correct class" in {
           result.select("span").attr("class") shouldBe "govUk-tag"
@@ -107,7 +103,7 @@ class StatusHelperSpec extends TestSupport {
       }
 
       "provided with a paid financial detail for a complete status" which {
-        val result = Jsoup.parse(statusHelper(None, Some(EstimatesTestConstants.chargeModelStatus(true, false))).toString())
+        val result = Jsoup.parse(statusHelper(None, Some(EstimatesTestConstants.chargeModelStatus(paid = true, overdue = false))).toString())
 
         "has the correct class" in {
           result.select("span").attr("class") shouldBe "govUk-tag govUk-tag--complete"
@@ -119,7 +115,7 @@ class StatusHelperSpec extends TestSupport {
       }
 
       "provided with an unpaid financial detail for an overdue status" which {
-        val result = Jsoup.parse(statusHelper(None, Some(EstimatesTestConstants.chargeModelStatus(false, true))).toString())
+        val result = Jsoup.parse(statusHelper(None, Some(EstimatesTestConstants.chargeModelStatus(paid = false, overdue = true))).toString())
 
         "has the correct class" in {
           result.select("span").attr("class") shouldBe "govUk-tag govUk-tag--overdue"

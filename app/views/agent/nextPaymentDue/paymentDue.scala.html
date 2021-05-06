@@ -16,14 +16,11 @@
 
 @import implicits.ImplicitDateFormatter
 @import implicits.ImplicitCurrencyFormatter._
-@import models.financialDetails.FinancialDetailsModel
-@import models.financialDetails.Charge
 @import models.financialDetails.WhatYouOweChargesList
-@import views.html.helpers.backLinkHelper
 @import views.html.helpers.injected.BackLink
 @import views.html.templates.agent.MainTemplate
 @import java.time.LocalDate
-@import models.outstandingCharges.OutstandingChargesModel
+@import models.financialDetails.DocumentDetailWithDueDate
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
 @(chargesList: WhatYouOweChargesList, currentTaxYear: Int, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter, backUrl: String, utr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
@@ -48,48 +45,49 @@
 }
 
 @paymentTypesDropdown = {
-<details class="govuk-details" data-module="govuk-details" role="group">
-    <summary class="govuk-details__summary" id="payment-type-dropdown-title" role="button" aria-controls="payment-details-content" aria-expanded="false">
-        <span class="govuk-details__summary-text"> @messages("agent.paymentDue.dropdown.info") </span>
-    </summary>
+    <details class="govuk-details" data-module="govuk-details" role="group">
+        <summary class="govuk-details__summary" id="payment-type-dropdown-title" role="button" aria-controls="payment-details-content" aria-expanded="false">
+            <span class="govuk-details__summary-text"> @messages("agent.paymentDue.dropdown.info") </span>
+        </summary>
 
-    <div class="govuk-details__text" id="payment-details-content-0" data-module="govuk-details" aria-hidden="false">
-        <h3 id="remaining-balance-heading" class="heading-medium">@messages("agent.paymentDue.remaining-balance.heading")</h3>
-        <span id="remaining-balance-line1"> @messages("agent.paymentDue.remaining-balance.line1")</span>
-    </div>
+        <div class="govuk-details__text" id="payment-details-content-0" data-module="govuk-details" aria-hidden="false">
+            <h3 id="remaining-balance-heading" class="heading-medium">@messages("agent.paymentDue.remaining-balance.heading")</h3>
+            <span id="remaining-balance-line1"> @messages("agent.paymentDue.remaining-balance.line1")</span>
+        </div>
 
-    <div class="govuk-details__text" id="payment-details-content-1" data-module="govuk-details" aria-hidden="false">
-        <h3 id="payment-on-account-heading" class="heading-medium">@messages("agent.paymentDue.payment-on-account.heading")</h3>
-        <span id="payment-on-account-line1"> @messages("agent.paymentDue.payment-on-account.line1")</span>
-    </div>
-</details>
+        <div class="govuk-details__text" id="payment-details-content-1" data-module="govuk-details" aria-hidden="false">
+            <h3 id="payment-on-account-heading" class="heading-medium">@messages("agent.paymentDue.payment-on-account.heading")</h3>
+            <span id="payment-on-account-line1"> @messages("agent.paymentDue.payment-on-account.line1")</span>
+        </div>
+    </details>
 }
 
 @tableHead(headId: String) = {
-<thead id="@headId">
-<tr>
-    <th>@messages("agent.paymentDue.tableHead.due-date")</th>
-    <th>@messages("agent.paymentDue.tableHead.payment-type")</th>
-    <th>@messages("agent.paymentDue.tableHead.amount-due")</th>
-</tr>
-</thead>
+    <thead id="@headId">
+        <tr>
+            <th>@messages("agent.paymentDue.tableHead.due-date")</th>
+            <th>@messages("agent.paymentDue.tableHead.payment-type")</th>
+            <th>@messages("agent.paymentDue.tableHead.amount-due")</th>
+        </tr>
+    </thead>
 }
 
-@tableRow(rowId: String, charge: Charge, isOverduePayment: Boolean = false, isChargeTypeHyperlinked: Boolean = true) = {
-<tr id="@rowId">
-    <td>@charge.due.get.toLongDateShort</td>
-    <td>
-        @if(isOverduePayment){<span id="@rowId-overdue" class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>}
-        @if(isChargeTypeHyperlinked){<a id="@rowId-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(charge.taxYear.toInt, charge.transactionId)">}
-        @messages(s"agent.paymentDue.${charge.getChargeTypeKey}")
-        @if(isChargeTypeHyperlinked){</a>}
-        <div>@messages("agent.paymentDue.payment-type.taxYear", (charge.taxYear.toInt - 1).toString, charge.taxYear)</div>
-    </td>
-    <td class="numeric">@{charge.remainingToPay.toCurrency}</td>
-</tr>
+@tableRow(rowId: String, documentDetailWithDueDate: DocumentDetailWithDueDate, isOverduePayment: Boolean = false, isChargeTypeHyperlinked: Boolean = true) = {
+    <tr id="@rowId">
+        <td>@documentDetailWithDueDate.dueDate.get.toLongDateShort</td>
+        <td>
+            @if(isOverduePayment){<span id="@rowId-overdue" class="govuk-tag govuk-tag--red">@messages("agent.paymentDue.over-due")</span>}
+            @if(isChargeTypeHyperlinked){<a id="@rowId-link" href="@controllers.agent.routes.ChargeSummaryController.showChargeSummary(documentDetailWithDueDate.documentDetail.taxYear.toInt, documentDetailWithDueDate.documentDetail.transactionId)">}
+            @messages(s"agent.paymentDue.${documentDetailWithDueDate.documentDetail.getChargeTypeKey}")
+            @if(isChargeTypeHyperlinked){</a>}
+            <div>@messages("agent.paymentDue.payment-type.taxYear", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)</div>
+        </td>
+        <td class="numeric">@{documentDetailWithDueDate.documentDetail.remainingToPay.toCurrency}</td>
+    </tr>
 }
 
-@mainTemplate(title = messages("agent.paymentDue.heading"),bodyClasses = None){
+@mainTemplate(title = messages("agent.paymentDue.heading")){
+
     @backLink(backUrl)
 
     <header class="page-heading">
@@ -154,7 +152,7 @@
                         @tableHead("over-due-payments-table-head")
                         <tbody>
                             @for((charge, index) <- chargesList.overduePaymentList.zipWithIndex) {
-                                @tableRow(s"over-due-type-$index", charge, true, true)
+                                @tableRow(s"over-due-type-$index", charge, isOverduePayment = true)
                             }
                         </tbody>
                     </table>
@@ -170,7 +168,7 @@
                         @tableHead("due-in-thirty-days-payments-table-head")
                         <tbody>
                             @for((charge, index) <- chargesList.dueInThirtyDaysList.zipWithIndex) {
-                                @tableRow(s"due-in-thirty-days-type-$index", charge, false, true)
+                                @tableRow(s"due-in-thirty-days-type-$index", charge)
                             }
                         </tbody>
                     </table>
@@ -187,7 +185,7 @@
                         @tableHead("future-payments-table-head")
                         <tbody class="govuk-table-whatYouOwe">
                         @for((charge, index) <- chargesList.futurePayments.zipWithIndex) {
-                        @tableRow(s"future-payments-type-$index", charge, false, true)
+                        @tableRow(s"future-payments-type-$index", charge)
                         }
                         </tbody>
                     </table>

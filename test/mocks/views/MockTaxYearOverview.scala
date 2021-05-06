@@ -17,7 +17,7 @@
 package mocks.views
 
 import models.calculation.CalcOverview
-import models.financialDetails.Charge
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
 import models.reportDeadlines.ObligationsModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}
@@ -36,12 +36,16 @@ trait MockTaxYearOverview extends BeforeAndAfterEach with MockitoSugar {
     reset(taxYearOverview)
   }
 
-  def mockTaxYearOverview(taxYear: Int, calcOverview: CalcOverview, charges: List[Charge], obligations: ObligationsModel, backUrl: String)
+  def mockTaxYearOverview(taxYear: Int,
+                          calcOverview: CalcOverview,
+                          documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
+                          obligations: ObligationsModel,
+                          backUrl: String)
                        (response: Html): Unit = {
     when(taxYearOverview.apply(
       matches(taxYear),
       matches(calcOverview),
-      matches(charges),
+      matches(documentDetailsWithDueDates),
       matches(obligations),
       any(), matches(backUrl)
     )(any(), any(), any(), any()))

@@ -16,27 +16,24 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.FinancialDetailsModel
-import javax.inject.{Inject, Singleton}
 import models.financialTransactions.FinancialTransactionsModel
 import play.api.Logger
-import play.api.http.Status
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{CalculationService, FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
+import services.{FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CurrentDateProvider
 
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 @Singleton
 class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -54,7 +51,8 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                val currentDateProvider: CurrentDateProvider,
                                dateFormatter: ImplicitDateFormatterImpl) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int])(implicit request: Request[_], user: MtdItUser[_]): Html = {
+  private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePayments: Option[Int], overDueUpdates: Option[Int])
+                  (implicit request: Request[_], user: MtdItUser[_]): Html = {
     views.html.home(
       nextPaymentDueDate = nextPaymentDueDate,
       nextUpdate = nextUpdate,
@@ -76,24 +74,22 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
             financialDetailsService.getFinancialDetails(taxYear, user.nino)
           }
           else {
-						financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear)
+            financialTransactionsService.getFinancialTransactions(user.mtditid, taxYear)
           }
         }) map {
           _.filter(_ match {
-            case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty => {
-							ftm.financialTransactions.get.exists(!_.isPaid)
-            }
-            case fdm: FinancialDetailsModel if fdm.financialDetails.nonEmpty => {
-							fdm.financialDetails.exists(!_.isPaid)
-            }
+            case ftm: FinancialTransactionsModel if ftm.financialTransactions.nonEmpty =>
+              ftm.financialTransactions.get.exists(!_.isPaid)
+            case fdm: FinancialDetailsModel if fdm.financialDetails.nonEmpty =>
+              fdm.documentDetails.exists(!_.isPaid)
             case _ =>
-							false
+              false
           }) flatMap {
             case ftm: FinancialTransactionsModel =>
-							ftm.financialTransactions.get.flatMap(_.charges().map(_.dueDate.get))
-						case fdm: FinancialDetailsModel =>
-							fdm.financialDetails.flatMap(_.charges().map(b => LocalDate.parse(b.dueDate.get)))
-					}
+              ftm.financialTransactions.get.flatMap(_.charges().map(_.dueDate.get))
+            case fdm: FinancialDetailsModel =>
+              fdm.getAllDueDates
+          }
         }
 
         allCharges.map(_.sortBy(_.toEpochDay())).map { paymentsDue =>
@@ -103,10 +99,9 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
         }
 
       }.recover {
-        case ex => {
+        case ex =>
           Logger.error(s"[HomeController][home] Downstream error, ${ex.getMessage}")
           itvcErrorHandler.showInternalServerError()
-        }
       }
   }
 }

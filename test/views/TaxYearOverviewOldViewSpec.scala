@@ -16,18 +16,20 @@
 
 package views
 
-import assets.MessagesLookUp.{Breadcrumbs, TaxYearOverview}
+import assets.MessagesLookUp.TaxYearOverview
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi}
 import implicits.ImplicitCurrencyFormatter._
 import models.calculation.CalcOverview
-import models.financialDetails.Charge
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.financialTransactions.TransactionModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.{taxYearOverview, taxYearOverviewOld}
+import views.html.taxYearOverviewOld
+
+import java.time.LocalDate
 
 class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
 
@@ -48,22 +50,26 @@ class TaxYearOverviewOldViewSpec extends TestSupport with FeatureSwitching {
     outstandingAmount = Some(8.08)
   )
 
-  val chargeModel: Charge = Charge(
-		taxYear = "2018",
-		transactionId = "transactionId",
-    totalAmount = Some(7.07),
-    outstandingAmount = Some(8.08)
+  val chargeModel: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
+    documentDetail = DocumentDetail(
+      taxYear = "2018",
+      transactionId = "transactionId",
+      documentDescription = Some("ITSA- POA 1"),
+      outstandingAmount = Some(8.08),
+      originalAmount = Some(100.00)
+    ),
+    dueDate = Some(LocalDate.now)
   )
 
   class Setup(taxYear: Int = testYear,
               overview: CalcOverview = completeOverview,
               transaction: Option[TransactionModel] = Some(transactionModel),
-              charge: Option[Charge] = Some(chargeModel),
+              charge: Option[DocumentDetailWithDueDate] = Some(chargeModel),
               incomeBreakdown: Boolean = false,
               deductionBreakdown: Boolean = false,
               taxDue: Boolean = false) {
 
-    val page: Html = taxYearOverviewOld(taxYear, overview, transaction, charge, incomeBreakdown, deductionBreakdown, taxDue, mockImplicitDateFormatter,"testBackURL")
+    val page: Html = taxYearOverviewOld(taxYear, overview, transaction, charge, incomeBreakdown, deductionBreakdown, taxDue, mockImplicitDateFormatter, "testBackURL")
     val document: Document = Jsoup.parse(page.body)
     val content: Element = document.selectFirst("#content")
 

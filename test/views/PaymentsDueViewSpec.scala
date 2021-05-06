@@ -17,7 +17,7 @@
 package views
 
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName, testTaxYear, testTimeStampString}
-import assets.FinancialDetailsTestConstants.chargeModel
+import assets.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}
 import assets.FinancialTransactionsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import assets.MessagesLookUp.{PaymentDue => paymentDueMessages}
@@ -46,7 +46,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
   class Setup(transactionsModel: List[FinancialTransactionsModel] = List(), charges: List[FinancialDetailsModel] = List(),
               paymentEnabled: Boolean = false) {
     val html: HtmlFormat.Appendable = views.html.paymentDue(transactionsModel, charges,
-      paymentEnabled,"testBackURL", mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
+      paymentEnabled, "testBackURL", mockImplicitDateFormatter)(FakeRequest(), implicitly, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
@@ -66,9 +66,9 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
     None
   ))
 
-  val unpaidFinancialDetails: List[FinancialDetailsModel] = List(FinancialDetailsModel(List(chargeModel())))
+  val unpaidFinancialDetails: List[FinancialDetailsModel] = List(FinancialDetailsModel(List(documentDetailModel()), List(financialDetail())))
 
-  val noFinancialDetails: List[FinancialDetailsModel] = List(FinancialDetailsModel(List()))
+  val noFinancialDetails: List[FinancialDetailsModel] = List(FinancialDetailsModel(List(), List()))
 
   "The Payments due view with Financial transactions model" should {
     "when the user has bills for a single taxYear" should {
@@ -152,9 +152,12 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
         val testTaxYearFrom = testTaxYear - 1
         pageDocument.getElementById(s"payments-due-$testTaxYearTo").text shouldBe paymentDueMessages.taxYearPeriod(testTaxYearFrom.toString, testTaxYearTo.toString)
 
-        pageDocument.getElementById(s"payments-due-outstanding-$testTaxYearTo").text shouldBe unpaidFinancialDetails.head.financialDetails.head.outstandingAmount.get.toCurrencyString
+        pageDocument.getElementById(s"payments-due-outstanding-$testTaxYearTo").text shouldBe unpaidFinancialDetails.head.documentDetails.head.outstandingAmount.get.toCurrencyString
 
-        pageDocument.getElementById(s"payments-due-on-$testTaxYearTo").text shouldBe s"${paymentDueMessages.due} ${unpaidFinancialDetails.head.financialDetails.head.due.get.toLongDate}"
+        val expectedDueDate: String = unpaidFinancialDetails.head.findDocumentDetailByIdWithDueDate(unpaidFinancialDetails.head.documentDetails.head.transactionId).get.dueDate.get.toLongDate
+
+        pageDocument.getElementById(s"payments-due-on-$testTaxYearTo").text shouldBe
+          s"${paymentDueMessages.due} $expectedDueDate"
 
       }
 
@@ -177,7 +180,7 @@ class PaymentsDueViewSpec extends TestSupport with FeatureSwitching with Implici
         pageDocument.select(s"#payment-link-$testTaxYearTo a").attr("aria-label") shouldBe paymentDueMessages.payNowAria(testTaxYearFrom.toString, testTaxYearTo.toString)
 
         pageDocument.select(s"#payment-link-$testTaxYearTo a")
-          .attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(unpaidFinancialDetails.head.financialDetails.head.outstandingAmount.get.toPence).url
+          .attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(unpaidFinancialDetails.head.documentDetails.head.outstandingAmount.get.toPence).url
       }
 
     }

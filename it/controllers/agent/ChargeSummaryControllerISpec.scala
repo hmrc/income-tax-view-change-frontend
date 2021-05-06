@@ -21,7 +21,7 @@ import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsA
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.financialDetails.{Charge, FinancialDetailsModel, SubItem}
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import play.api.http.Status._
 import play.api.libs.json.Json
 
@@ -46,7 +46,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
   val currentYear: Int = LocalDate.now().getYear
 
-  s"GET ${routes.ChargeSummaryController.showChargeSummary(currentYear, "testid").url}" should {
+  s"GET ${routes.ChargeSummaryController.showChargeSummary(currentYear, "testId").url}" should {
     s"return $OK with correct page title" in {
 
       enable(AgentViewer)
@@ -60,26 +60,27 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       )(
         status = OK,
         response = Json.toJson(FinancialDetailsModel(
-          financialDetails = List(
-            Charge(
+          documentDetails = List(
+            DocumentDetail(
               taxYear = getCurrentTaxYearEnd.getYear.toString,
-              transactionId = "testid",
-              transactionDate = Some(getCurrentTaxYearEnd.toString),
-              `type` = None,
-              totalAmount = Some(1000.00),
-              originalAmount = Some(1000.00),
+              transactionId = "testId",
+              documentDescription = Some("ITSA- POA 1"),
               outstandingAmount = Some(500.00),
-              clearedAmount = Some(500.00),
-              chargeType = Some("POA1"),
+              originalAmount = Some(1000.00)
+            )
+          ),
+          financialDetails = List(
+            FinancialDetail(
+              taxYear = getCurrentTaxYearEnd.getYear.toString,
               mainType = Some("SA Payment on Account 1"),
-              items = Some(Seq(SubItem(None, None, None, None, None, None, None, Some(LocalDate.now.toString), None, None)))
+              items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
             )
           )
         ))
       )
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        getCurrentTaxYearEnd.getYear.toString, "testid", clientDetails
+        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetails
       )
 
       result should have(

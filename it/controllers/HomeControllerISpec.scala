@@ -15,18 +15,14 @@
  */
 package controllers
 
-import java.time.LocalDateTime
-
 import assets.BaseIntegrationTestConstants._
-import assets.CalcDataIntegrationTestConstants._
 import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
 import config.featureswitch.{Bills, NewFinancialDetailsApi, Payment}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub, IndividualCalculationStub}
-import models.calculation.{CalculationItem, ListCalculationItems}
+import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub}
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
 
@@ -112,7 +108,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
         And("I wiremock stub a single business obligation response")
-				IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
+        IncomeTaxViewChangeStub.stubGetReportDeadlinesError(testNino)
 
         When("I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.getHome

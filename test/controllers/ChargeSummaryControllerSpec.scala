@@ -26,7 +26,7 @@ import models.financialDetails.FinancialDetailsResponseModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 import services.FinancialDetailsService
 import testUtils.TestSupport
@@ -34,75 +34,75 @@ import testUtils.TestSupport
 import scala.concurrent.Future
 
 class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
-with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching with TestSupport {
+  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with FeatureSwitching with TestSupport {
 
-	class Setup(financialDetails: FinancialDetailsResponseModel, featureSwitch: Boolean = true) {
-		val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
+  class Setup(financialDetails: FinancialDetailsResponseModel, featureSwitch: Boolean = true) {
+    val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
 
-		when(financialDetailsService.getFinancialDetails(any(), any())(any()))
-			.thenReturn(Future.successful(financialDetails))
+    when(financialDetailsService.getFinancialDetails(any(), any())(any()))
+      .thenReturn(Future.successful(financialDetails))
 
-		mockBothIncomeSources()
+    mockBothIncomeSources()
 
-		if (featureSwitch) enable(NewFinancialDetailsApi)
-		else disable(NewFinancialDetailsApi)
+    if (featureSwitch) enable(NewFinancialDetailsApi)
+    else disable(NewFinancialDetailsApi)
 
-		val controller = new ChargeSummaryController(
-			MockAuthenticationPredicate,
-			app.injector.instanceOf[SessionTimeoutPredicate],
-			app.injector.instanceOf[NinoPredicate],
-			MockIncomeSourceDetailsPredicate,
-			financialDetailsService,
-			app.injector.instanceOf[ItvcErrorHandler]
-		)(
-			app.injector.instanceOf[FrontendAppConfig],
-			languageUtils,
-			app.injector.instanceOf[MessagesControllerComponents],
-			ec,
-			app.injector.instanceOf[ImplicitDateFormatterImpl]
-		)
-	}
+    val controller = new ChargeSummaryController(
+      MockAuthenticationPredicate,
+      app.injector.instanceOf[SessionTimeoutPredicate],
+      app.injector.instanceOf[NinoPredicate],
+      MockIncomeSourceDetailsPredicate,
+      financialDetailsService,
+      app.injector.instanceOf[ItvcErrorHandler]
+    )(
+      app.injector.instanceOf[FrontendAppConfig],
+      languageUtils,
+      app.injector.instanceOf[MessagesControllerComponents],
+      ec,
+      app.injector.instanceOf[ImplicitDateFormatterImpl]
+    )
+  }
 
-	val errorHeading = "Sorry, there is a problem with the service"
-	val successHeading = "Tax year 6 April 2017 to 5 April 2018 Payment on account 1 of 2"
+  val errorHeading = "Sorry, there is a problem with the service"
+  val successHeading = "Tax year 6 April 2017 to 5 April 2018 Payment on account 1 of 2"
 
-	"The ChargeSummaryController" should {
+  "The ChargeSummaryController" should {
 
-		"redirect a user back to the home page" when {
+    "redirect a user back to the home page" when {
 
-			"the financial api switch is disabled" in new Setup(financialDetailsModel(2018), false) {
-				val result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+      "the financial api switch is disabled" in new Setup(financialDetailsModel(2018), false) {
+        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
 
-				status(result) shouldBe Status.SEE_OTHER
-				redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
-			}
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
+      }
 
-			"the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel(2018)) {
-				val result = await(controller.showChargeSummary(2018, "fakeId")(fakeRequestWithActiveSession))
+      "the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel(2018)) {
+        val result: Result = await(controller.showChargeSummary(2018, "fakeId")(fakeRequestWithActiveSession))
 
-				status(result) shouldBe Status.SEE_OTHER
-				redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
-			}
-		}
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
+      }
+    }
 
-		"load the page" when {
+    "load the page" when {
 
-			"provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
-				val result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+      "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(2018)) {
+        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
 
-				status(result) shouldBe Status.OK
-				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
-			}
-		}
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+      }
+    }
 
-		"load an error page" when {
+    "load an error page" when {
 
-			"the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing) {
-				val result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
+      "the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing) {
+        val result: Result = await(controller.showChargeSummary(2018, "1040000123")(fakeRequestWithActiveSession))
 
-				status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-				JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
-			}
-		}
-	}
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+      }
+    }
+  }
 }

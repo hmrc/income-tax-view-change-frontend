@@ -17,7 +17,7 @@
 package controllers.agent
 
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
-import assets.FinancialDetailsTestConstants.{fullChargeModel, testFinancialDetailsErrorModelParsing}
+import assets.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullFinancialDetailModel, testFinancialDetailsErrorModelParsing}
 import config.ItvcErrorHandler
 import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi}
 import implicits.ImplicitDateFormatterImpl
@@ -73,8 +73,10 @@ class ChargeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
 
               setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-              setupMockGetFinancialDetails(currentYear)(FinancialDetailsModel(List(
-                fullChargeModel.copy(taxYear = currentYear.toString, transactionId = "testid"))))
+              setupMockGetFinancialDetails(currentYear)(FinancialDetailsModel(
+                documentDetails = List(fullDocumentDetailModel.copy(taxYear = currentYear.toString, transactionId = "testid")),
+                financialDetails = List(fullFinancialDetailModel.copy(taxYear = currentYear.toString))
+              ))
 
               val result: Future[Result] = chargeSummaryController.showChargeSummary(currentYear, "testid")
                 .apply(fakeRequestConfirmedClient("AB123456C"))
@@ -90,10 +92,12 @@ class ChargeSummaryControllerSpec extends TestSupport with MockFrontendAuthorise
 
               setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-              setupMockGetFinancialDetails(currentYear)(FinancialDetailsModel(List(
-                fullChargeModel.copy(taxYear = currentYear.toString, transactionId = "NotTestid"))))
+              setupMockGetFinancialDetails(currentYear)(FinancialDetailsModel(
+                documentDetails = List(fullDocumentDetailModel.copy(taxYear = currentYear.toString, transactionId = "NotTestid")),
+                financialDetails = List(fullFinancialDetailModel.copy(taxYear = currentYear.toString))
+              ))
 
-              val result = await(chargeSummaryController.showChargeSummary(currentYear, "testid")
+              val result: Result = await(chargeSummaryController.showChargeSummary(currentYear, "testid")
                 .apply(fakeRequestConfirmedClient("AB123456C")))
 
               status(result) shouldBe SEE_OTHER

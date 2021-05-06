@@ -19,16 +19,13 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.{Charge, FinancialDetailsErrorModel, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
+
 import java.time.LocalDate
-
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
-
 import scala.concurrent.{ExecutionContext, Future}
-
 
 @Singleton
 class PaymentDueService @Inject()(val financialDetailsService: FinancialDetailsService,
@@ -53,10 +50,10 @@ class PaymentDueService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   private def callOutstandingCharges(saUtr: Option[String], yearOfMigration: Option[String], currentTaxYear: Int)
-                            (implicit headerCarrier: HeaderCarrier): Future[Option[OutstandingChargesModel]] = {
-    if(saUtr.isDefined && yearOfMigration.isDefined && yearOfMigration.get.toInt >= currentTaxYear - 1) {
-			val saPreviousYear = yearOfMigration.get.toInt - 1
-			incomeTaxViewChangeConnector.getOutstandingCharges("utr", saUtr.get.toLong, saPreviousYear.toString) map {
+                                    (implicit headerCarrier: HeaderCarrier): Future[Option[OutstandingChargesModel]] = {
+    if (saUtr.isDefined && yearOfMigration.isDefined && yearOfMigration.get.toInt >= currentTaxYear - 1) {
+      val saPreviousYear = yearOfMigration.get.toInt - 1
+      incomeTaxViewChangeConnector.getOutstandingCharges("utr", saUtr.get.toLong, saPreviousYear.toString) map {
         case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
         case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == 404 => None
         case _ => throw new Exception("[PaymentDueService][callOutstandingCharges] Error response while getting outstanding charges")
@@ -66,25 +63,33 @@ class PaymentDueService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def whatYourOwePageDataExists(charge: Charge): Boolean = charge.mainType.isDefined && charge.due.isDefined
+  private def whatYourOwePageDataExists(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {
+    documentDetailWithDueDate.documentDetail.documentDescription.isDefined && documentDetailWithDueDate.dueDate.isDefined
+  }
 
-  private def getDueWithinThirtyDaysList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.flatMap(financialDetails =>
-		financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
-			&& (charge.mainType.get == "SA Payment on Account 1" || charge.mainType.get == "SA Payment on Account 2")
-			&& charge.remainingToPay > 0
-			&& LocalDate.now().isAfter(charge.due.get.minusDays(31))
-			&& LocalDate.now().isBefore(charge.due.get.plusDays(1)))).sortBy(_.due.get)
+  private def getDueWithinThirtyDaysList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
+    financialDetailsList.flatMap(financialDetails =>
+      financialDetails.getAllDocumentDetailsWithDueDates.filter(documentDetailWithDueDate => whatYourOwePageDataExists(documentDetailWithDueDate)
+        && (documentDetailWithDueDate.documentDetail.documentDescription.get == "ITSA- POA 1" || documentDetailWithDueDate.documentDetail.documentDescription.get == "ITSA - POA 2")
+        && documentDetailWithDueDate.documentDetail.remainingToPay > 0
+        && LocalDate.now().isAfter(documentDetailWithDueDate.dueDate.get.minusDays(31))
+        && LocalDate.now().isBefore(documentDetailWithDueDate.dueDate.get.plusDays(1)))).sortBy(_.dueDate.get)
+  }
 
-  private def getFuturePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.flatMap(financialDetails =>
-		financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
-			&& (charge.mainType.get == "SA Payment on Account 1" || charge.mainType.get == "SA Payment on Account 2")
-			&& charge.remainingToPay > 0
-			&& LocalDate.now().isBefore(charge.due.get.minusDays(30)))).sortBy(_.due.get)
+  private def getFuturePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
+    financialDetailsList.flatMap(financialDetails =>
+      financialDetails.getAllDocumentDetailsWithDueDates.filter(documentDetailWithDueDate => whatYourOwePageDataExists(documentDetailWithDueDate)
+        && (documentDetailWithDueDate.documentDetail.documentDescription.get == "ITSA- POA 1" || documentDetailWithDueDate.documentDetail.documentDescription.get == "ITSA - POA 2")
+        && documentDetailWithDueDate.documentDetail.remainingToPay > 0
+        && LocalDate.now().isBefore(documentDetailWithDueDate.dueDate.get.minusDays(30)))).sortBy(_.dueDate.get)
+  }
 
-  private def getOverduePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[Charge] = financialDetailsList.flatMap(financialDetails =>
-		financialDetails.financialDetails.filter(charge => whatYourOwePageDataExists(charge)
-			&& (charge.mainType.get == "SA Payment on Account 1" || charge.mainType.get == "SA Payment on Account 2")
-			&& charge.remainingToPay > 0
-			&& charge.due.get.isBefore(LocalDate.now()))).sortBy(_.due.get)
+  private def getOverduePaymentsList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
+    financialDetailsList.flatMap(financialDetails =>
+      financialDetails.getAllDocumentDetailsWithDueDates.filter(documentDetailWithDueDate => whatYourOwePageDataExists(documentDetailWithDueDate)
+        && (documentDetailWithDueDate.documentDetail.documentDescription.get == "ITSA- POA 1" || documentDetailWithDueDate.documentDetail.documentDescription.get == "ITSA - POA 2")
+        && documentDetailWithDueDate.documentDetail.remainingToPay > 0
+        && documentDetailWithDueDate.dueDate.get.isBefore(LocalDate.now()))).sortBy(_.dueDate.get)
+  }
 
 }

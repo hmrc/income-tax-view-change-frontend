@@ -23,7 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.calculation.{CalcDisplayModel, CalcOverview, Calculation}
-import models.financialDetails.{Charge, FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.reportDeadlines.ObligationsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -58,10 +58,14 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
       if (isEnabled(AgentViewer)) {
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
           withCalculation(getClientNino(request), taxYear) { calculation =>
-            withTaxYearFinancials(taxYear) { charges =>
+            withTaxYearFinancials(taxYear) { documentDetailsWithDueDates =>
               withObligationsModel(taxYear) { obligations =>
-                Future.successful(Ok(view(taxYear, calculation, charges = charges, obligations = obligations)(request, mtdItUser))
-                  .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
+                Future.successful(Ok(view(
+                  taxYear,
+                  calculation,
+                  documentDetailsWithDueDates = documentDetailsWithDueDates,
+                  obligations = obligations
+                )(request, mtdItUser)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")(request))
               }
             }
           }
@@ -77,13 +81,13 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
 
   private def view(taxYear: Int,
                    calculation: Calculation,
-                   charges: List[Charge],
+                   documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
                    obligations: ObligationsModel
                   )(implicit request: Request[_], user: MtdItUser[_]): Html = {
     taxYearOverview(
       taxYear = taxYear,
       overview = CalcOverview(calculation, None),
-      charges = charges,
+      documentDetailsWithDueDates = documentDetailsWithDueDates,
       obligations = obligations,
       implicitDateFormatter = dateFormatter,
       backUrl = backUrl()
@@ -99,9 +103,13 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
     }
   }
 
-  private def withTaxYearFinancials(taxYear: Int)(f: List[Charge] => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+  private def withTaxYearFinancials(taxYear: Int)(f: List[DocumentDetailWithDueDate] => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
-      case FinancialDetailsModel(charges) => f(charges)
+      case financialDetails@FinancialDetailsModel(documentDetails, _) =>
+        val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
+          documentDetails.map(documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail)))
+        }
+        f(documentDetailsWithDueDates)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ =>
         Logger.error(s"[TaxYearOverviewController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")

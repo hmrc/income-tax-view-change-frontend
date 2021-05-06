@@ -17,11 +17,10 @@
 package controllers
 
 import java.time.LocalDate
-
 import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
-import assets.FinancialDetailsTestConstants.{chargeModel, fullChargeModel}
+import assets.FinancialDetailsTestConstants.{documentDetailModel, documentDetailWithDueDateModel, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import assets.FinancialTransactionsTestConstants.transactionModel
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.MessagesLookUp
@@ -36,7 +35,7 @@ import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockFinancialTransactionsService, MockReportDeadlinesService}
 import models.calculation.CalcOverview
-import models.financialDetails.Charge
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
@@ -71,8 +70,8 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
   val testIncomeBreakdown: Boolean = false
   val testDeductionBreakdown: Boolean = false
   val testTaxDue: Boolean = false
-  val testChargesList: List[Charge] = List(fullChargeModel)
-  val testEmptyChargesList: List[Charge] = List.empty
+  val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel)
+  val testEmptyChargesList: List[DocumentDetailWithDueDate] = List.empty
   val testObligtionsModel: ObligationsModel = ObligationsModel(Nil)
   val taxYearsBackLink: String = "/report-quarterly/income-and-expenses/view/tax-years"
 
@@ -92,7 +91,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         mockCalculationSuccess()
         mockFinancialDetailsSuccess()
         mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
-          toDate = LocalDate.of(testYear , 4, 5))(
+          toDate = LocalDate.of(testYear, 4, 5))(
           response = testObligtionsModel
         )
 
@@ -121,7 +120,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           mockCalculationSuccess()
           mockFinancialDetailsNotFound()
           mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
-            toDate = LocalDate.of(testYear , 4, 5))(
+            toDate = LocalDate.of(testYear, 4, 5))(
             response = testObligtionsModel
           )
 
@@ -165,7 +164,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           mockCalculationCrystalisationSuccess()
           mockFinancialDetailsNotFound()
           mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
-            toDate = LocalDate.of(testYear , 4, 5))(
+            toDate = LocalDate.of(testYear, 4, 5))(
             response = ReportDeadlinesErrorModel(500, "INTERNAL_SERVER_ERROR")
           )
 
@@ -243,7 +242,6 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some("text/html")
       }
-
 
 
       "NewFinancialDetailsApi FS is disabled" when {
@@ -442,7 +440,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
 
                 val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, None)
                 val expectedContent: String = views.html.taxYearOverviewOld(
-                  testYear, calcOverview, None, Some(chargeModel()), testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter, taxYearsBackLink).toString
+                  testYear, calcOverview, None, Some(documentDetailWithDueDateModel()), testIncomeBreakdown, testDeductionBreakdown, testTaxDue, mockImplicitDateFormatter, taxYearsBackLink).toString
 
                 val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 

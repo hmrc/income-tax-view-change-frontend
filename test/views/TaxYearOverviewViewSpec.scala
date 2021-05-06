@@ -16,21 +16,20 @@
 
 package views
 
-import java.time.LocalDate
-
-import assets.FinancialDetailsTestConstants.fullChargeModel
-import assets.MessagesLookUp.Breadcrumbs
+import assets.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import assets.ReportDeadlinesTestConstants._
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatterImpl
 import models.calculation.CalcOverview
-import models.financialDetails.Charge
+import models.financialDetails.DocumentDetailWithDueDate
 import models.financialTransactions.TransactionModel
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModelWithIncomeType}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.taxYearOverview
+
+import java.time.LocalDate
 
 class TaxYearOverviewViewSpec extends ViewSpec {
 
@@ -57,13 +56,13 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     outstandingAmount = Some(8.08)
   )
 
-  val testChargesList: List[Charge] = List(fullChargeModel)
-  val emptyChargeList: List[Charge] = List.empty
+  val testChargesList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel)
+  val emptyChargeList: List[DocumentDetailWithDueDate] = List.empty
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel))
 
-  def estimateView(chargeList: List[Charge] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverview(
-    testYear, completeOverview(false), chargeList, obligations, mockImplicitDateFormatter, "testBackURL")
+  def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverview(
+    testYear, completeOverview(false), documentDetailsWithDueDates, obligations, mockImplicitDateFormatter, "testBackURL")
 
   def crystallisedView: Html = taxYearOverview(testYear, completeOverview(true), testChargesList, testObligationsModel, mockImplicitDateFormatter, "testBackURL")
 
@@ -102,7 +101,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
 
     def dueMessage(due: String): String = s"Due $due"
 
-    def incomeType(incomeType: String) = {
+    def incomeType(incomeType: String): String = {
       incomeType match {
         case "Property" => "Property income"
         case "Business" => "Business"
@@ -111,7 +110,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       }
     }
 
-    def updateType(updateType: String) = {
+    def updateType(updateType: String): String = {
       updateType match {
         case "Quarterly" => "Quarterly Update"
         case "EOPS" => "Annual Update"
@@ -207,7 +206,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView()) {
       val paymentTypeLink: Element = content.selectHead("#payments-table tr:nth-child(2) td:nth-child(1) a")
       paymentTypeLink.text shouldBe taxYearOverviewMessages.paymentOnAccount1
-      paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(testYear, fullChargeModel.transactionId).url
+      paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showChargeSummary(testYear, fullDocumentDetailModel.transactionId).url
     }
 
     "display the Due date in the Payments tab" in new Setup(estimateView()) {
@@ -215,7 +214,7 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     }
 
     "display the Status in the payments tab" in new Setup(estimateView()) {
-      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe taxYearOverviewMessages.partPaid
+      content.selectHead("#payments-table tr:nth-child(2) td:nth-child(3)").text shouldBe taxYearOverviewMessages.unpaid
     }
 
     "display the Amount in the payments tab" in new Setup(estimateView()) {
