@@ -38,7 +38,7 @@ class UTRErrorController @Inject()(utrError: UTRError,
                                    val ec: ExecutionContext)
   extends BaseAgentController with FeatureSwitching with I18nSupport {
 
-  def show: Action[AnyContent] = Authenticated.async { implicit request =>
+  def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth { implicit request =>
     implicit user =>
     if (isEnabled(AgentViewer)) {
       val clientUTR: Option[String] = request.session.get(SessionKeys.clientUTR)
@@ -55,7 +55,7 @@ class UTRErrorController @Inject()(utrError: UTRError,
     }
   }
 
-  def submit: Action[AnyContent] = Authenticated.async { implicit request =>
+  def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth { implicit request =>
     implicit user =>
     if (isEnabled(AgentViewer)) {
       Future.successful(

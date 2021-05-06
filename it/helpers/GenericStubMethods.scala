@@ -29,17 +29,17 @@ trait GenericStubMethods extends CustomMatchers {
     }
   }
 
-  def stubAuthorisedAgentUser(authorised: Boolean, hasAgentEnrolment: Boolean = true): Unit = {
+  def stubAuthorisedAgentUser(authorised: Boolean, hasAgentEnrolment: Boolean = true, clientMtdId: String = "mtdbsaId"): Unit = {
     if (authorised) {
       if (hasAgentEnrolment) {
         Given("I stub the agent is authorised with an agent reference number")
-        AuthStub.stubAuthorisedAgent()
+        AuthStub.stubAuthorisedAgent(clientMtdId)
       } else {
         Given("I stub the agent is authorised without an agent reference number")
         AuthStub.stubAuthorisedAgentNoARN()
       }
     } else {
-      Given("I stub the agent is unauthorised")
+      Given("I stub the unauthorised agent")
       AuthStub.stubUnauthorised()
     }
   }

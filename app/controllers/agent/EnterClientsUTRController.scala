@@ -43,7 +43,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 
-  def show: Action[AnyContent] = Authenticated.async { implicit request =>
+  def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth { implicit request =>
     implicit user =>
       if (!isEnabled(AgentViewer)) {
         Future.failed(new NotFoundException("[EnterClientsUTRController][show] - Agent viewer is disabled"))
@@ -55,7 +55,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       }
   }
 
-  def submit: Action[AnyContent] = Authenticated.async { implicit request =>
+  def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth { implicit request =>
     implicit user =>
       if (!isEnabled(AgentViewer)) {
         Future.failed(new NotFoundException("[EnterClientsUTRController][submit] - Agent viewer is disabled"))
@@ -68,7 +68,8 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
           validUTR => {
             clientRelationshipService.checkAgentClientRelationship(
               utr = validUTR,
-              arn = user.agentReferenceNumber.getOrElse(throw new InternalServerException("[EnterClientsUTRController][submit] - arn not found"))
+              arn = user.agentReferenceNumber.getOrElse(throw new InternalServerException("[EnterClientsUTRController][submit] - arn not found")),
+							delegatedEnrolments = user.delegatedMtdEnrolments
             ) map {
               case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
                 val sessionValues: Seq[(String, String)] = Seq(
@@ -80,8 +81,6 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
               case Left(CitizenDetailsNotFound | BusinessDetailsNotFound) =>
                 val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
                 Redirect(routes.UTRErrorController.show()).addingToSession(sessionValue: _*)
-              case Left(NoAgentClientRelationship) =>
-                Redirect(routes.ClientRelationshipFailureController.show())
               case Left(_) =>
                 throw new InternalServerException("[EnterClientsUTRController][submit] - Unexpected response received")
             }
@@ -89,5 +88,4 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
         )
       }
   }
-
 }

@@ -87,7 +87,7 @@ class PaymentControllerSpec extends TestSupport
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
       mockSingleBusinessIncomeSource()
 
-      val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
+      val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession.withSession(utils.SessionKeys.clientMTDID -> "XAIT00000000015"))
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
     }

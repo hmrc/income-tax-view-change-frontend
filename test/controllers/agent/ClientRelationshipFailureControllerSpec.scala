@@ -52,7 +52,7 @@ class ClientRelationshipFailureControllerSpec extends TestSupport
   "show" when {
     "the user is not authenticated" should {
       "redirect the user to authenticate" in {
-        setupMockAgentAuthorisationException()
+        setupMockAgentAuthorisationException(withClientPredicate = false)
 
         val result = TestClientRelationshipFailureController.show()(fakeRequestWithActiveSession)
 
@@ -63,7 +63,7 @@ class ClientRelationshipFailureControllerSpec extends TestSupport
 
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
 
         val result = TestClientRelationshipFailureController.show()(fakeRequestWithTimeoutSession)
 
@@ -74,7 +74,7 @@ class ClientRelationshipFailureControllerSpec extends TestSupport
 
     "the user does not have an agent reference number" should {
       "return Ok with technical difficulties" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
         mockShowOkTechnicalDifficulties()
 
         val result = TestClientRelationshipFailureController.show()(fakeRequestWithActiveSession)
@@ -86,7 +86,7 @@ class ClientRelationshipFailureControllerSpec extends TestSupport
 
     "the agent viewer feature switch is disabled" should {
       "return Not Found" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockNotFound()
 
         val result = TestClientRelationshipFailureController.show()(fakeRequestWithClientDetails)
@@ -98,7 +98,7 @@ class ClientRelationshipFailureControllerSpec extends TestSupport
     "the agent viewer feature switch is enabled" should {
       "return OK and display the client relationship failure page" in {
         enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockClientRelationshipFailure(HtmlFormat.empty)
 
         val result = TestClientRelationshipFailureController.show()(fakeRequestWithClientDetails)
