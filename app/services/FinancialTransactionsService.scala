@@ -18,7 +18,6 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{API5, FeatureSwitching}
 import connectors.FinancialTransactionsConnector
 import javax.inject.{Inject, Singleton}
 import models.financialTransactions.{FinancialTransactionsErrorModel, FinancialTransactionsModel, FinancialTransactionsResponseModel}
@@ -30,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialTransactionsService @Inject()(val financialTransactionsConnector: FinancialTransactionsConnector)
-                                            (implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
+                                            (implicit val appConfig: FrontendAppConfig) {
 
   def getFinancialTransactions(mtditid: String, taxYear: Int)(implicit headCarrier: HeaderCarrier): Future[FinancialTransactionsResponseModel] = {
     Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] - Requesting Financial Transactions from connector for mtditid: $mtditid")
@@ -43,7 +42,7 @@ class FinancialTransactionsService @Inject()(val financialTransactionsConnector:
     Logger.debug(
       s"[FinancialTransactionsService][getAllFinancialTransactions] - Requesting Financial Transactions for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(user.incomeSources.orderedTaxYears(isEnabled(API5)).map {
+    Future.sequence(user.incomeSources.orderedTaxYears.map {
       taxYear =>
         financialTransactionsConnector.getFinancialTransactions(user.mtditid, taxYear).map {
           case transaction: FinancialTransactionsModel => Some((taxYear, transaction))

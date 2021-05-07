@@ -16,29 +16,29 @@
 
 package services
 
+import java.time.LocalDate
+
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{API5, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.Assets.NOT_FOUND
+import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
-import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
-                                       (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) extends FeatureSwitching {
+                                       (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
 
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[FinancialDetailsResponseModel] = {
     incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino)
   }
 
   def getChargeDueDates(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[Either[(LocalDate, Boolean), Int]]] = {
-    val orderedTaxYear: List[Int] = user.incomeSources.orderedTaxYears(true)
+    val orderedTaxYear: List[Int] = user.incomeSources.orderedTaxYears
 
     Future.sequence(orderedTaxYear.map(item =>
       getFinancialDetails(item, user.nino)
@@ -68,7 +68,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
     Logger.debug(
       s"[IncomeSourceDetailsService][getAllFinancialDetails] - Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(user.incomeSources.orderedTaxYears(isEnabled(API5)).map {
+    Future.sequence(user.incomeSources.orderedTaxYears.map {
       taxYear =>
         incomeTaxViewChangeConnector.getFinancialDetails(taxYear, user.nino).map {
           case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))

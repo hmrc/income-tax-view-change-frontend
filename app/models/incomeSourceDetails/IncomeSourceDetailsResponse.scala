@@ -38,19 +38,15 @@ case class IncomeSourceDetailsModel(mtdbsa:String,
 
   val accountingPeriods: List[AccountingPeriodModel] = businesses.map(_.accountingPeriod) ++ property.map(_.accountingPeriod)
 
-  def orderedTaxYears(api5Enable: Boolean): List[Int] = {
-    if (api5Enable) {
+  def orderedTaxYears: List[Int] = {
       startingTaxYear.fold(List.empty[Int])(year => (year to getCurrentTaxEndYear).toList)
     }
-    else {
-      accountingPeriods.map(_.determineTaxYear).sortWith(_ < _).distinct
-    }
-  }
+
 
   val hasPropertyIncome: Boolean = property.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty
 
-  val earliestTaxYear: Option[Int] = orderedTaxYears(false).headOption
+  val earliestTaxYear: Option[Int] = orderedTaxYears.headOption
 
   val getCurrentTaxEndYear: Int = {
     val currentDate = LocalDate.now
