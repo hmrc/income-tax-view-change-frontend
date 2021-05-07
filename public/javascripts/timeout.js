@@ -86,12 +86,12 @@
                  var timeout = secondsToTime(settings.timeout)
                  // AL: Add live region and edit dialog structure
                  $('<div id="timeout-dialog" class="timeout-dialog" role="dialog" aria-labelledby="timeout-heading" aria-live="assertive">' +
-                     '<h2 id="timeout-heading" class="heading-medium">' + settings.title + '</h2>' +
                      '<p id="timeout-message">' +
-                     settings.message + ' <br /><span class="countdown" id="timeout-countdown" role="text">' + time.m + ' ' + settings.messageMinutes + '</span>' +
+                     settings.message + ' <span class="countdown" id="timeout-countdown" role="text">' + time.m + ' ' + settings.messageMinutes + '</span>' +
                      '</p>' +
                      '<button id="timeout-keep-signin-btn" class="button">' + settings.keep_alive_button_text.format(settings.timeout / 60) + '</button>' +
-                     '</div>' +
+                     '</div>' + '<a id="sign-out" href="@routes.SignOutController.signOut"
+                                          data-journey-click="primary-navigation:Click:Signout">@messages("base.sign-out")</a>' +
                      '<div id="timeout-overlay" class="timeout-overlay"></div>')
                      .appendTo('body');
 
