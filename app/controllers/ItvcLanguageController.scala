@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 
 @Singleton
@@ -30,6 +30,13 @@ class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
 
   override def fallbackURL: String = controllers.routes.HomeController.home().url
 
-  override protected def languageMap: Map[String, Lang] = appConfig.languageMap
+  val english: Lang = Lang("en")
+  val welsh: Lang = Lang("cy")
 
+
+  override def languageMap: Map[String, Lang] = Map("en" -> english, "cy" -> welsh)
+
+  def switchToEnglish: Action[AnyContent] = switchToLanguage("en")
+
+  def switchToWelsh: Action[AnyContent] = switchToLanguage("cy")
 }

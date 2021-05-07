@@ -107,7 +107,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       "display the language selection switch" in new Setup {
-        getTextOfElementById("cymraeg-switch") shouldBe Some(coreMessages.welsh)
+        getTextOfElementById("switch-welsh") shouldBe Some(coreMessages.welsh)
       }
 
       s"have the page heading '${homeMessages.agentHeading}'" in new Setup {

@@ -110,12 +110,7 @@
     @if(contentHeader.isDefined) {
         <header class="page-header inline-block">@contentHeader.get</header>
     }
-
-    <div class="float--right">@views.html.language_selection(
-        appConfig.languageMap,
-        appConfig.routeToSwitchAgentLanguage,
-        customClass = None
-    )</div>
+        @helpers.language_selection()
 }
 
 @getHelpForm = @{reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}

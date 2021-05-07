@@ -439,3 +439,10 @@ agent.nextUpdates.previousYears.link	                        = tax years
 agent.obligations.quarterlyUpdates                              = Diweddariadau chwarterol
 agent.obligations.annualUpdates                                 = Diweddariadau blynyddol
 agent.obligations.finalDeclarationUpdate                        = Datganiad terfynol
+
+#Language Selector
+language-switcher.english.hidden                                = Change the language to English
+language-switcher.english                                       = English
+language-switcher.welsh                                         = Cymraeg
+language-switcher.welsh.hidden                                  = Newid yr iaith ir Gymraeg
+language-switcher.nav                                           = Newid yr iaith
