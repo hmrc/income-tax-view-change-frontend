@@ -470,13 +470,12 @@ regimes.Scotland = Scotland
 regimes.Wales = Wales
 
 ## Timeout
-timeoutDialog.title                                             = You are about to be signed out
 timeoutDialog.seconds                                           = seconds
 timeoutDialog.minutes                                           = minutes
 timeoutDialog.minutes.two                                       = minutes
 timeoutDialog.minute                                            = minute
-timeoutDialog.message                                           = For your security, you will be signed out in:
-button.continue                                                 = Continue
+timeoutDialog.message                                           = For your security, we will sign you out in
+button.continue                                                 = Stay signed in
 
 ## Not found
 notFound.heading = This page cannot be found
