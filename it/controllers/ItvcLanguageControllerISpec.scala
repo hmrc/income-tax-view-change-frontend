@@ -11,7 +11,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
 
   "GET /language/cymraeg" should {
     "update the PLAY_LANG cookie to cy and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultCy: WSResponse = getWithHeaders("/language/cymraeg", "REFERER" -> testRefererRoute)
+      lazy val resultCy: WSResponse = getWithHeaders("/switch-to-welsh", "REFERER" -> testRefererRoute)
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
@@ -21,7 +21,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "update the PLAY_LANG cookie to cy and return the user to the overview page when REFERER is not in the headers" in {
-      lazy val resultCy: WSResponse = getWithHeaders("/language/cymraeg")
+      lazy val resultCy: WSResponse = getWithHeaders("/switch-to-welsh")
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(

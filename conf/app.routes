@@ -69,3 +69,6 @@ GET         /language/:lang                         controllers.ItvcLanguageCont
 
 #Payment history
 GET         /payments/history                       controllers.PaymentHistoryController.viewPaymentHistory
+
+GET        /switch-to-welsh                                 controllers.ItvcLanguageController.switchToWelsh
+GET        /switch-to-english                               controllers.ItvcLanguageController.switchToEnglish

@@ -59,12 +59,13 @@ class UTRErrorViewSpec extends ViewSpec {
     }
 
     s"have a first bullet point: ${utrErrorMessages.reasonBullet1}" in new Setup(utrErrorView) {
-      content.select("ul li:nth-child(1)").text shouldBe utrErrorMessages.reasonBullet1
+      content.getElementById("list-bullet1").text shouldBe utrErrorMessages.reasonBullet1
     }
 
     s"have a second bullet point: ${utrErrorMessages.reasonBullet2}" in new Setup(utrErrorView) {
       content.select("ul li:nth-child(2)").text shouldBe utrErrorMessages.reasonBullet2
     }
+
 
     s"have a link in the second bullet point: ${utrErrorMessages.reasonBullet2Link}" in new Setup(utrErrorView) {
       val link: Elements = content.select("ul li:nth-child(2) a")

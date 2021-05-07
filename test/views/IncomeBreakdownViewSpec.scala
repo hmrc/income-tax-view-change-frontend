@@ -57,7 +57,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct guidance" in new Setup(view) {
-        val guidance: Element = content.select("p").get(1)
+        val guidance: Element = content.select("p").get(0)
         guidance.text() shouldBe IncomeBreakdown.guidance(taxYear)
       }
 
@@ -92,7 +92,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct guidance" in new Setup(view) {
-        val guidance: Element = content.select("p").get(1)
+        val guidance: Element = content.select("p").get(0)
         guidance.text() shouldBe IncomeBreakdown.guidance(taxYear)
       }
 
