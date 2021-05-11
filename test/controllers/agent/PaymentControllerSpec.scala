@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditidAgent, testNinoAgent, testSaUtrId}
+import assets.BaseTestConstants._
 import assets.PaymentDataTestConstants._
 import audit.mocks.MockAuditingService
 import audit.models.InitiatePayNowAuditModel
@@ -79,7 +79,8 @@ class PaymentControllerSpec extends TestSupport
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("redirect-url")
-        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditidAgent, Some(testNinoAgent), Some(testSaUtrId.toString), Some("credId"), Some("Agent")))
+        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditidAgent, Some(testNinoAgent), Some(testSaUtrId.toString),
+          Some(testCredId), Some(testUserTypeAgent)))
       }
     }
 

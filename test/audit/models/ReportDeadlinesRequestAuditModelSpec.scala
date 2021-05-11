@@ -16,7 +16,7 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{testArn, testCredId, testMtdItAgentUser, testMtditid, testNino, testSaUtr, testUserType}
+import assets.BaseTestConstants.{testArn, testCredId, testMtdItAgentUser, testMtditid, testMtditidAgent, testNino, testNinoAgent, testSaUtr, testUserTypeAgent}
 import play.api.libs.json.Json
 import testUtils.TestSupport
 
@@ -44,7 +44,7 @@ class ReportDeadlinesRequestAuditModelSpec extends TestSupport {
           "nationalInsuranceNumber" -> testNino,
           "saUtr" -> testSaUtr,
           "credId" -> testCredId,
-          "userType" -> "Agent",
+          "userType" -> testUserTypeAgent,
           "agentReferenceNumber" -> testArn
         )
       }

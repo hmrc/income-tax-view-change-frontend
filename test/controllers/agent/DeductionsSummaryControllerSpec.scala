@@ -16,8 +16,10 @@
 
 package controllers.agent
 
-import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
+import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNinoAgent}
 import assets.CalcBreakdownTestConstants.{calculationDataSuccessModel, calculationDisplaySuccessModel}
+import audit.mocks.MockAuditingService
+import audit.models.AllowanceAndDeductionsRequestAuditModel
 import config.featureswitch.{AgentViewer, DeductionBreakdown, FeatureSwitching}
 import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
@@ -35,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockFrontendAuthorisedFunctions with MockIncomeSourceDetailsService
-  with MockFinancialTransactionsService with FeatureSwitching with MockItvcErrorHandler {
+  with MockFinancialTransactionsService with FeatureSwitching with MockItvcErrorHandler with MockAuditingService{
 
   class Setup {
 
@@ -45,7 +47,8 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
       app.injector.instanceOf[views.html.agent.DeductionBreakdown],
       mockAuthService,
       mockIncomeSourceDetailsService,
-      mockCalculationService,
+      mockAuditingService,
+      mockCalculationService
     )(
       appConfig,
       app.injector.instanceOf[LanguageUtils],
@@ -69,62 +72,59 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
+
+        verifyExtendedAudit(AllowanceAndDeductionsRequestAuditModel(agentUserConfirmedClient()))
       }
 
+      "return calcDisplay error case scenario" in new Setup {
 
-      "feature switches AgentViewer and DeductionsBreakdown are enabled" should {
-        "return calcDisplay error case scenario" in new Setup {
+        enable(AgentViewer)
+        enable(DeductionBreakdown)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockBothIncomeSources()
+        setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
+        mockShowInternalServerError()
 
-          enable(AgentViewer)
-          enable(DeductionBreakdown)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
-          mockShowInternalServerError()
+        val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
 
-          val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
-
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
-      "feature switches AgentViewer and DeductionsBreakdown are enabled" should {
-        "return internal server error when Error from both Calc and Income sources" in new Setup {
+      "return internal server error when Error from both Calc and Income sources" in new Setup {
 
-          enable(AgentViewer)
-          enable(DeductionBreakdown)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockErrorIncomeSource()
-          mockCalculationNotFound()
+        enable(AgentViewer)
+        enable(DeductionBreakdown)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockErrorIncomeSource()
+        mockCalculationNotFound()
 
 
-          val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
+        val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
 
-          intercept[InternalServerException](await(result))
+        intercept[InternalServerException](await(result))
 
-        }
-      }
-
-      "feature switch AgentViewer is enabled Agent and DeductionBreakdown is disabled" should {
-        "return 303 with redirect to tax years overview" in new Setup {
-
-          enable(AgentViewer)
-          disable(DeductionBreakdown)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockBothIncomeSources()
-          setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
-
-          val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
-
-          status(await(result)) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/calculation/2020")
-        }
       }
 
       "backUrl" should {
         "return to the home page" in new Setup {
           controller.backUrl(testYear) shouldBe controllers.agent.routes.TaxYearOverviewController.show(testYear).url
         }
+      }
+    }
+
+    "feature switch AgentViewer is enabled Agent and DeductionBreakdown is disabled" should {
+      "redirect to tax years overview" in new Setup {
+
+        enable(AgentViewer)
+        disable(DeductionBreakdown)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockBothIncomeSources()
+        setupMockGetCalculation("AA111111A", testYear)(calculationDisplaySuccessModel(calculationDataSuccessModel))
+
+        val result: Future[Result] = controller.showDeductionsSummary(taxYear = testYear)(fakeRequestConfirmedClient())
+
+        status(await(result)) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/calculation/2020")
       }
     }
   }

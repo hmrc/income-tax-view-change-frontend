@@ -16,7 +16,7 @@
 
 package controllers
 
-import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
 import assets.FinancialDetailsTestConstants.{chargeModel, fullChargeModel}
@@ -305,7 +305,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
               contentType(result) shouldBe Some("text/html")
 
               lazy val expectedTestMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-                singleBusinessIncome, None, Some("credId"), Some("Individual"), None)(FakeRequest())
+                singleBusinessIncome, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
 
               verifyExtendedAudit(BillsAuditModel(expectedTestMtdItUser, BigDecimal(2010.00)))
             }
@@ -411,7 +411,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
               contentType(result) shouldBe Some("text/html")
 
               lazy val expectedTestMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-                singleBusinessIncome, None, Some("credId"), Some("Individual"), None)(FakeRequest())
+                singleBusinessIncome, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
 
               verifyExtendedAudit(BillsAuditModel(expectedTestMtdItUser, BigDecimal(2010.00)))
             }
