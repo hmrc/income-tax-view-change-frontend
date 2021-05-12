@@ -115,15 +115,14 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
 
 
   private def view(taxYear: Int,
-                   calculation: Calculation,
-                   transaction: Option[TransactionModel] = None,
+                   calculationOverview: Option[CalcOverview] = None,
                    charge: List[DocumentDetailWithDueDate],
                    obligations: ObligationsModel
                   )(implicit request: Request[_],
                     user: MtdItUser[_]): Html = {
     taxYearOverview(
       taxYear = taxYear,
-      overview = CalcOverview(calculation, transaction),
+      overviewOpt = calculationOverview,
       charges = charge,
       obligations,
       dateFormatter,
@@ -158,12 +157,20 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
           auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
           withTaxYearFinancials(taxYear) { charges =>
             withObligationsModel(taxYear) map {
-              case obligationsModel: ObligationsModel => Ok(view(taxYear, calculation, charge = charges, obligations = obligationsModel))
-                .addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
+              case obligationsModel: ObligationsModel => Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation, None)),
+                charge = charges, obligations = obligationsModel)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }
           }
-        case CalcDisplayNoDataFound | CalcDisplayError =>
+        case CalcDisplayNoDataFound =>
+          withTaxYearFinancials(taxYear) { charges =>
+            withObligationsModel(taxYear) map {
+              case obligationsModel: ObligationsModel => Ok(view(taxYear, charge = charges,
+                obligations = obligationsModel)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
+              case _ => itvcErrorHandler.showInternalServerError()
+            }
+          }
+        case CalcDisplayError =>
           Logger.error(s"[CalculationController][showTaxYearOverview] - Could not retrieve calculation for year $taxYear")
           Future.successful(itvcErrorHandler.showInternalServerError())
       }
