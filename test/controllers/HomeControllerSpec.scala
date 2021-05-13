@@ -18,7 +18,7 @@ package controllers
 
 import java.time.{LocalDate, ZonedDateTime}
 import assets.MessagesLookUp
-import config.featureswitch.{API5, FeatureSwitching, NewFinancialDetailsApi, Payment}
+import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatterImpl
@@ -92,7 +92,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
         }
 
         "display the oldest next payment due day when there multiple payment due" in new Setup {
-          enable(API5)
           when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
           when(financialTransactionsService.getFinancialTransactions(any(), any())(any()))
@@ -209,7 +208,6 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 
         "display the oldest next payment due day when there multiple payment due" in new Setup {
           enable(NewFinancialDetailsApi)
-          enable(API5)
           when(reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(any())(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
 
