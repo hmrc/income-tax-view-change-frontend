@@ -20,7 +20,7 @@ import assets.BusinessDetailsIntegrationTestConstants.testMtdItId
 import assets.IncomeSourceIntegrationTestConstants._
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.{AgentClientRelationshipStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{CitizenDetailsStub, IncomeTaxViewChangeStub}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -191,7 +191,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       }
     }
     s"redirect ($SEE_OTHER) to the next page" when {
-      "the utr submitted is valid and there is an agent client relationship" in {
+      "the utr submitted is valid" in {
         val validUTR: String = "1234567890"
         enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true, clientMtdId = testMtdItId)

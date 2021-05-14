@@ -23,7 +23,7 @@ import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
-import mocks.services.MockClientRelationshipService
+import mocks.services.MockClientDetailsService
 import mocks.views.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify, verifyZeroInteractions}
@@ -31,7 +31,7 @@ import org.mockito.internal.verification.Times
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import services.agent.ClientRelationshipService._
+import services.agent.ClientDetailsService._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment}
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
@@ -41,7 +41,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
   with MockEnterClientsUTR
   with MockFrontendAuthorisedFunctions
   with MockItvcErrorHandler
-  with MockClientRelationshipService
+  with MockClientDetailsService
   with FeatureSwitching {
 
   override def beforeEach(): Unit = {
@@ -51,7 +51,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
   object TestEnterClientsUTRController extends EnterClientsUTRController(
     enterClientsUTR,
-    mockClientRelationshipService,
+    mockClientDetailsService,
     mockAuthService
   )(
     app.injector.instanceOf[MessagesControllerComponents],
@@ -166,7 +166,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
             enable(AgentViewer)
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-            mockCheckAgentClientRelationship(validUTR, testArn)(
+            mockClientDetails(validUTR)(
               response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
             )
 
@@ -208,7 +208,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
             enable(AgentViewer)
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-            mockCheckAgentClientRelationship(validUTR, testArn)(
+            mockClientDetails(validUTR)(
               response = Left(CitizenDetailsNotFound)
             )
 
@@ -225,7 +225,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
             enable(AgentViewer)
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-            mockCheckAgentClientRelationship(validUTR, testArn)(
+            mockClientDetails(validUTR)(
               response = Left(BusinessDetailsNotFound)
             )
 
@@ -244,7 +244,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
             enable(AgentViewer)
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-            mockCheckAgentClientRelationship(validUTR, testArn)(
+            mockClientDetails(validUTR)(
               response = Left(UnexpectedResponse)
             )
 

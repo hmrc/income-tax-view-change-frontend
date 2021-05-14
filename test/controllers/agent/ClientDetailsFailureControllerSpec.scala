@@ -28,7 +28,7 @@ import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 
-class ClientRelationshipFailureControllerSpec extends TestSupport
+class ClientDetailsFailureControllerSpec extends TestSupport
   with MockClientRelationshipFailure
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
