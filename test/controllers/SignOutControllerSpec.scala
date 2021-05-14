@@ -16,29 +16,78 @@
 
 package controllers
 
-import config.FrontendAppConfig
+import auth.FrontendAuthorisedFunctions
+import config.{FrontendAppConfig, FrontendAuthConnector}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.{AffinityGroup, MissingBearerToken}
+
+import scala.concurrent.Future
 
 class SignOutControllerSpec extends TestSupport {
 
-  object TestSignOutController extends SignOutController()(
+  val mockAuthConnector: FrontendAuthConnector = mock[FrontendAuthConnector]
+
+  def mockAuth(authResult: Future[Option[AffinityGroup]]): Any =
+    when(mockAuthConnector.authorise(any(), any[Retrieval[Option[AffinityGroup]]]())(any(), any()))
+      .thenReturn(authResult)
+
+  object TestSignOutController extends SignOutController(
     app.injector.instanceOf[FrontendAppConfig],
+    new FrontendAuthorisedFunctions(mockAuthConnector),
     app.injector.instanceOf[MessagesControllerComponents]
   )
 
-  "navigating to signout page" should {
-    lazy val result = TestSignOutController.signOut(fakeRequestWithActiveSession)
+  "navigating to signout page" when {
 
-    "return OK (303)" in {
-      status(result) shouldBe Status.SEE_OTHER
-    }
-    "redirect to the exitSurvey page" in {
-      redirectLocation(await(result)).head endsWith appConfig.exitSurveyUrl
+    "the user is an agent" should {
+      lazy val result: Future[Result] = {
+        mockAuth(Future.successful(Some(AffinityGroup.Agent)))
+        TestSignOutController.signOut(fakeRequestWithActiveSession)
+      }
+
+      "return 303" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the correct survey url" in {
+        redirectLocation(result) shouldBe Some(appConfig.ggSignOutUrl("ITVCA"))
+      }
     }
 
+    "the user is a principal entity" should {
+      lazy val result: Future[Result] = {
+        mockAuth(Future.successful(Some(AffinityGroup.Individual)))
+        TestSignOutController.signOut(fakeRequestWithActiveSession)
+      }
+
+      "return 303" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the correct survey url" in {
+        redirectLocation(result) shouldBe Some(appConfig.ggSignOutUrl("ITVC"))
+      }
+    }
+
+    "there is an authorisation exception" should {
+      lazy val result: Future[Result] = {
+        mockAuth(Future.failed(MissingBearerToken()))
+        TestSignOutController.signOut(fakeRequestWithActiveSession)
+      }
+
+      "return 303" in {
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "redirect to the unauthorised sign out URL" in {
+        redirectLocation(result) shouldBe Some(appConfig.signInUrl)
+      }
+    }
   }
-
 }

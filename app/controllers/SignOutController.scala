@@ -16,19 +16,32 @@
 
 package controllers
 
+import auth.FrontendAuthorisedFunctions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SignOutController @Inject()(implicit val config: FrontendAppConfig,
+class SignOutController @Inject()(config: FrontendAppConfig,
+                                  enrolmentsAuthService: FrontendAuthorisedFunctions,
                                   mcc: MessagesControllerComponents
                                    ) extends FrontendController(mcc) {
 
+  implicit val ec: ExecutionContext = mcc.executionContext
+
   val signOut:Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Redirect(config.ggSignOutUrl))
+    enrolmentsAuthService.authorised.retrieve(Retrievals.affinityGroup) {
+      case Some(AffinityGroup.Agent) => Future.successful(s"${config.contactFormServiceIdentifier}A")
+      case _ => Future.successful(config.contactFormServiceIdentifier)
+    }
+      .map(contactFormIdentifier => Redirect(config.ggSignOutUrl(contactFormIdentifier)))
+      .recover {
+        case _: AuthorisationException => Redirect(config.signInUrl)
+      }
   }
 }
