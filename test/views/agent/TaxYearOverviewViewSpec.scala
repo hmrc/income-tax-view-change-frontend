@@ -117,12 +117,12 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   }
 
   def view(taxYear: Int = testYear,
-           overview: CalcOverview = testCalcOverview,
+           overview: Option[CalcOverview] = Some(testCalcOverview),
            documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testCharges,
            obligations: ObligationsModel = testObligations): Html = {
     taxYearOverview(
       taxYear = taxYear,
-      overview = overview,
+      overviewOpt = overview,
       documentDetailsWithDueDates = documentDetailsWithDueDates,
       obligations = obligations,
       implicitDateFormatter = mockImplicitDateFormatter,
@@ -156,6 +156,9 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     val calculationTabAllowances: String = "Allowances and deductions"
     val calculationTabTotalIncome: String = "Total income on which tax is due"
     val calculationTabIncomeTaxDue: String = "Income Tax and National Insurance contributions due"
+    val taxCalculationNoData: String = "No calculation yet"
+    val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
+
 
     val paymentsTabHeading: String = "Payments"
     val paymentsTabNoPayments: String = "No payments currently due."
@@ -218,7 +221,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
           listRow.selectNth("dd", 1).text shouldBe TaxYearOverviewMessages.totalDue
           listRow.selectNth("dd", 2).text shouldBe "£100.00"
         }
-        "the calculation is a crystallised calculation" in new Setup(view(overview = testCalcOverview.copy(crystallised = false))) {
+        "the calculation is a crystallised calculation" in new Setup(view(overview = Some(testCalcOverview.copy(crystallised = false)))) {
           val listRow: Element = content.selectHead("dl").selectNth("div", 2)
           listRow.selectNth("dd", 1).text shouldBe TaxYearOverviewMessages.fromToEstimate("6 April 2019", "6 April 2020")
           listRow.selectNth("dd", 2).text shouldBe "£100.00"
@@ -227,7 +230,7 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
     }
 
     "have information about the estimate calculation" when {
-      "the calculation is an estimate" in new Setup(view(overview = testCalcOverview.copy(crystallised = false))) {
+      "the calculation is an estimate" in new Setup(view(overview = Some(testCalcOverview.copy(crystallised = false)))) {
         content.selectHead("div.panel").text shouldBe TaxYearOverviewMessages.estimateMessage
       }
     }
@@ -253,12 +256,20 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
         }
         "has the tab contents" which {
           "has different headings" when {
-            "it is an estimate" in new Setup(view(overview = testCalcOverview.copy(crystallised = false))) {
+            "it is an estimate" in new Setup(view(overview = Some(testCalcOverview.copy(crystallised = false)))) {
               val heading: Element = content.selectHead("#taxCalculation").selectHead("h2")
               heading.text shouldBe TaxYearOverviewMessages.calculationTabHeadingEstimate("6 April 2019", "6 April 2020")
             }
             "it is crystallised" in new Setup(view()) {
               content.selectHead("#taxCalculation").selectHead("h2").text shouldBe TaxYearOverviewMessages.calculationTabHeadingCrystallised
+            }
+            "there is no calculation data" in new Setup(view(overview = None)) {
+              content.selectHead("#taxCalculation").selectHead("h2").text shouldBe TaxYearOverviewMessages.taxCalculationNoData
+            }
+          }
+          "has a paragraph" when {
+            "there is no calculation data" in new Setup(view(overview = None)) {
+              content.selectHead("#taxCalculation").selectHead("p").text shouldBe TaxYearOverviewMessages.taxCalculationNoDataNote
             }
           }
           "has a table detailing a users income calculation" which {
