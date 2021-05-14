@@ -20,7 +20,7 @@ import assets.FinancialTransactionsIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.HomeMessages._
-import config.featureswitch.{Bills, NewFinancialDetailsApi, Payment}
+import config.featureswitch.{NewFinancialDetailsApi, Payment}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{FinancialTransactionsStub, IncomeTaxViewChangeStub}
 import models.reportDeadlines.ObligationsModel
@@ -33,7 +33,6 @@ class HomeControllerISpec extends ComponentSpecBase {
     "Authorised" should {
       "render the home page with the payment due date" in {
         disable(NewFinancialDetailsApi)
-        enable(Bills)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -67,7 +66,6 @@ class HomeControllerISpec extends ComponentSpecBase {
 
       "render the home page with the payment due date with NewFinancialDetailsApi FS enabled" in {
         enable(NewFinancialDetailsApi)
-        enable(Bills)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
