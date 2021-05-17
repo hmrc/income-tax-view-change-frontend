@@ -17,20 +17,20 @@
 package services
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{API5, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import javax.inject.Inject
 import models.financialDetails.{Payment, Payments, PaymentsError}
 import services.PaymentHistoryService.PaymentHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector, val appConfig: FrontendAppConfig)
-                                     (implicit ec: ExecutionContext) extends FeatureSwitching {
+                                     (implicit ec: ExecutionContext) {
 
   def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]] = {
 
-    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYears(isEnabled(API5)).reverse.take(appConfig.paymentHistoryLimit)
+    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYears.reverse.take(appConfig.paymentHistoryLimit)
 
     Future.sequence(orderedTaxYears.map(incomeTaxViewChangeConnector.getPayments)) map { paymentResponses =>
       val paymentsContainsFailure: Boolean = paymentResponses.exists {

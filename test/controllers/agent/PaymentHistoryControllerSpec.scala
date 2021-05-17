@@ -18,7 +18,7 @@ package controllers.agent
 
 import assets.BaseTestConstants.testAgentAuthRetrievalSuccess
 import config.FrontendAppConfig
-import config.featureswitch.{API5, AgentViewer, FeatureSwitching}
+import config.featureswitch.{AgentViewer, FeatureSwitching}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -45,7 +45,6 @@ class PaymentHistoryControllerSpec  extends TestSupport
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(API5)
     enable(AgentViewer)
   }
 

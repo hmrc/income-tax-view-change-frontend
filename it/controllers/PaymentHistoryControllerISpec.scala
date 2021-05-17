@@ -19,7 +19,7 @@ package controllers
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
 import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
-import config.featureswitch.{API5, FeatureSwitching, PaymentHistory}
+import config.featureswitch.{FeatureSwitching, PaymentHistory}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status._
@@ -31,7 +31,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(API5)
     enable(PaymentHistory)
   }
 

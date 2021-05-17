@@ -18,15 +18,13 @@ package services
 
 import java.time.LocalDate
 
-import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName, testTaxYear}
-import assets.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, oldUserDetails}
+import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import assets.IncomeSourceDetailsTestConstants.oldUserDetails
 import auth.MtdItUser
-import config.featureswitch.{API5, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockIncomeTaxViewChangeConnector
-import models.financialDetails.{Payment, Payments, PaymentsError, PaymentsResponse}
-import play.api.libs.json.{JsObject, Json}
+import models.financialDetails.{Payment, Payments, PaymentsError}
 import play.api.test.FakeRequest
-import services.PaymentHistoryService
 import services.PaymentHistoryService.PaymentHistoryError
 import testUtils.TestSupport
 
@@ -34,7 +32,6 @@ class PaymentHistoryServiceSpec  extends TestSupport with MockIncomeTaxViewChang
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(API5)
   }
 
   val getCurrentTaxEndYear: Int = {

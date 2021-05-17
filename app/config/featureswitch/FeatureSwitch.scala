@@ -33,7 +33,6 @@ object FeatureSwitch {
     IncomeBreakdown,
     DeductionBreakdown,
     TaxDue,
-    API5,
     ITSASubmissionIntegration,
     NewFinancialDetailsApi,
     AgentViewer,
@@ -81,11 +80,6 @@ case object DeductionBreakdown extends FeatureSwitch {
 case object TaxDue extends FeatureSwitch {
   override val name: String = s"$prefix.enable-tax-due"
   override val displayText: String = "Enable Tax Due Feature"
-}
-
-case object API5 extends FeatureSwitch {
-  override val name = s"$prefix.enable-API5"
-  override val displayText = "Enable API5 Calls"
 }
 
 case object ITSASubmissionIntegration extends FeatureSwitch {

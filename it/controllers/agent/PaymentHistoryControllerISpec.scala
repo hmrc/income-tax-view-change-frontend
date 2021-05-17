@@ -20,7 +20,7 @@ import java.time.LocalDate
 
 import assets.BaseIntegrationTestConstants._
 import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
-import config.featureswitch.{API5, AgentViewer, FeatureSwitching}
+import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -34,7 +34,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(API5)
     enable(AgentViewer)
   }
 

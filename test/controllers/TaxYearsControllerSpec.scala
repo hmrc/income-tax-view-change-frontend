@@ -21,7 +21,7 @@ import assets.EstimatesTestConstants._
 import assets.IncomeSourceDetailsTestConstants._
 import assets.MessagesLookUp
 import audit.AuditingService
-import config.featureswitch.{API5, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
@@ -65,7 +65,6 @@ class TaxYearsControllerSpec extends MockCalculationService
           lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
 
           setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
-          enable(API5)
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(lastTaxCalcWithYearListWithError))
 
@@ -79,7 +78,6 @@ class TaxYearsControllerSpec extends MockCalculationService
           lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
 
           setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
-          enable(API5)
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenReturn(Future.successful(lastThreeTaxCalcWithYear))
 
@@ -92,7 +90,6 @@ class TaxYearsControllerSpec extends MockCalculationService
           lazy val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
 
           setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
-          enable(API5)
           when(calculationService.getAllLatestCalculations(any(), any())(any()))
             .thenThrow(new RuntimeException)
 
@@ -107,7 +104,6 @@ class TaxYearsControllerSpec extends MockCalculationService
 
       "return redirect SEE_OTHER (303)" in {
 
-        disable(API5)
         setupMockAuthorisationException()
         val result = TestTaxYearsController.viewTaxYears(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER

@@ -20,7 +20,7 @@ import assets.BaseTestConstants._
 import assets.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import assets.FinancialDetailsTestConstants._
 import auth.MtdItUser
-import config.featureswitch.{API5, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import controllers.Assets.INTERNAL_SERVER_ERROR
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.core.AccountingPeriodModel
@@ -38,7 +38,6 @@ import scala.concurrent.Future
 class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
 
   override def beforeEach(): Unit = {
-    disable(API5)
     super.beforeEach()
   }
 
@@ -281,114 +280,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
   }
 
   "getAllFinancialDetails" when {
-    "API5 is enabled" should {
       "return a set of successful financial details" when {
         "a successful response is returned for a single year" in {
-          enable(API5)
-          val financialDetail = getFinancialDetailSuccess(getTaxEndYear(LocalDate.now))
-          val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
-            (getTaxEndYear(LocalDate.now), financialDetail)
-          )
-
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetail)
-
-          val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
-
-          await(result) shouldBe expectedResult
-        }
-        "successful responses are returned for multiple years" in {
-          enable(API5)
-          val financialDetailLastYear = getFinancialDetailSuccess(getTaxEndYear(LocalDate.now.minusYears(1)))
-          val financialDetail = getFinancialDetailSuccess(getTaxEndYear(LocalDate.now))
-          val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
-            (getTaxEndYear(LocalDate.now.minusYears(1)), financialDetailLastYear),
-            (getTaxEndYear(LocalDate.now), financialDetail)
-          )
-
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(financialDetailLastYear)
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetail)
-
-          val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
-
-          await(result) shouldBe expectedResult
-        }
-        "a successful response and a not found response are returned" in {
-          enable(API5)
-          val financialDetailLastYear = getFinancialDetailSuccess(getTaxEndYear(LocalDate.now.minusYears(1)))
-          val financialDetailNotFound = FinancialDetailsErrorModel(Status.NOT_FOUND, "not found")
-          val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
-            (getTaxEndYear(LocalDate.now.minusYears(1)), financialDetailLastYear)
-          )
-
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(financialDetailLastYear)
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetailNotFound)
-
-          val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
-
-          await(result) shouldBe expectedResult
-        }
-        "only not found response is returned" in {
-          enable(API5)
-          val financialDetailNotFound = FinancialDetailsErrorModel(Status.NOT_FOUND, "not found")
-          val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List.empty
-
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetailNotFound)
-
-          val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
-
-          await(result) shouldBe expectedResult
-        }
-      }
-      "return a set of financial transactions with error transactions" when {
-        "an error response is returned for a single year" in {
-          enable(API5)
-          val financialDetailsError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal service error")
-          val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
-            (getTaxEndYear(LocalDate.now), financialDetailsError)
-          )
-
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetailsError)
-
-          val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
-
-          await(result) shouldBe expectedResult
-        }
-        "an error response is returned for multiple years" in {
-          enable(API5)
-          val financialDetailsError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal service error")
-          val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
-            (getTaxEndYear(LocalDate.now.minusYears(1)), financialDetailsError),
-            (getTaxEndYear(LocalDate.now), financialDetailsError)
-          )
-
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(financialDetailsError)
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetailsError)
-
-          val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
-
-          await(result) shouldBe expectedResult
-        }
-        "an error response is returned along with a successful response" in {
-          enable(API5)
-          val financialDetailsErrorLastYear = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
-          val financialDetails = getFinancialDetailSuccess(getTaxEndYear(LocalDate.now))
-          val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
-            (getTaxEndYear(LocalDate.now.minusYears(1)), financialDetailsErrorLastYear),
-            (getTaxEndYear(LocalDate.now), financialDetails)
-          )
-
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(financialDetailsErrorLastYear)
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetails)
-
-          val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
-
-          await(result) shouldBe expectedResult
-        }
-      }
-    }
-    "API5 is disabled" should {
-      "return a set of successful financial transactions" when {
-        "a successful response is returned for a single year" in {
           val financialDetail = getFinancialDetailSuccess(getTaxEndYear(LocalDate.now))
           val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
             (getTaxEndYear(LocalDate.now), financialDetail)
@@ -483,14 +376,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           await(result) shouldBe expectedResult
         }
       }
-    }
   }
 
   "getAllUnpaidFinancialDetails" when {
-    "API5 is enabled" should {
       "return financial transactions with only the unpaid transactions" when {
         "only unpaid transactions exist" in {
-          enable(API5)
 
           val financialDetailLastYear = getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
@@ -527,7 +417,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           await(result) shouldBe expectedResult
         }
         "a mix of unpaid, paid and non charge transactions exist" in {
-          enable(API5)
 
           val expectedResult: List[FinancialDetailsResponseModel] = List(
             getFinancialDetailSuccess(
@@ -578,7 +467,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           await(result) shouldBe expectedResult
         }
         "no unpaid transactions exist" in {
-          enable(API5)
 
           setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
@@ -608,7 +496,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           await(result) shouldBe List.empty[FinancialDetailsResponseModel]
         }
         "errored financial transactions exist" in {
-          enable(API5)
 
           val financialDetailError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
           val expectedResult: List[FinancialDetailsResponseModel] = List(
@@ -641,154 +528,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           await(result) shouldBe expectedResult
         }
       }
-    }
-    "API5 is disabled" should {
-      "return financial transactions with only the unpaid transactions" when {
-        "only unpaid transactions exist" in {
-          val financialDetailLastYear = getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(100.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(200.00))
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel,
-              fullFinancialDetailModel
-            )
-          )
-          val financialDetail = getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(LocalDate.now),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(300.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(400.00))
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel,
-              fullFinancialDetailModel
-            )
-          )
-          val expectedResult: List[FinancialDetailsResponseModel] = List(
-            financialDetailLastYear,
-            financialDetail
-          )
-
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(financialDetailLastYear)
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetail)
-
-          val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
-
-          await(result) shouldBe expectedResult
-        }
-        "a mix of unpaid, paid and non charge transactions exist" in {
-          val expectedResult: List[FinancialDetailsResponseModel] = List(
-            getFinancialDetailSuccess(
-              taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
-              documentDetails = List(
-                fullDocumentDetailModel.copy(outstandingAmount = Some(100.00), originalAmount = Some(100.00)),
-              ),
-              financialDetails = List(
-                fullFinancialDetailModel
-              )
-            ),
-            getFinancialDetailSuccess(
-              taxYear = getTaxEndYear(LocalDate.now),
-              documentDetails = List(
-                fullDocumentDetailModel.copy(outstandingAmount = Some(300.00), originalAmount = Some(300.00)),
-              ),
-              financialDetails = List(
-                fullFinancialDetailModel
-              )
-            )
-          )
-
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(100.00), originalAmount = Some(100.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), originalAmount = Some(-200.00))
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel
-            )
-          ))
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(LocalDate.now),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(300.00), originalAmount = Some(300.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00), originalAmount = Some(-400.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00))
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel
-            )
-          ))
-
-          val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
-
-          await(result) shouldBe expectedResult
-        }
-        "no unpaid transactions exist" in {
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0))
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel,
-              fullFinancialDetailModel
-            )
-          ))
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(LocalDate.now),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0))
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel,
-              fullFinancialDetailModel
-            )
-          ))
-
-          val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
-
-          await(result) shouldBe List.empty[FinancialDetailsResponseModel]
-        }
-        "errored financial transactions exist" in {
-          val financialDetailError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
-          val expectedResult: List[FinancialDetailsResponseModel] = List(
-            getFinancialDetailSuccess(
-              taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
-              documentDetails = List(
-                fullDocumentDetailModel.copy(outstandingAmount = Some(100.00))
-              ),
-              financialDetails = List(
-                fullFinancialDetailModel
-              )
-            ),
-            financialDetailError
-          )
-
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(getFinancialDetailSuccess(
-            taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
-            documentDetails = List(
-              fullDocumentDetailModel.copy(outstandingAmount = Some(100.00)),
-              fullDocumentDetailModel.copy(outstandingAmount = Some(0.00))
-            ),
-            financialDetails = List(
-              fullFinancialDetailModel
-            )
-          ))
-          setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetailError)
-
-          val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
-
-          await(result) shouldBe expectedResult
-        }
-      }
-    }
   }
 
 }

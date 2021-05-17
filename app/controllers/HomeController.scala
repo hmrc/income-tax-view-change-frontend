@@ -69,7 +69,7 @@ class HomeController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
     implicit user =>
 
       reportDeadlinesService.getNextDeadlineDueDateAndOverDueObligations(user.incomeSources).flatMap { latestDeadlineDate =>
-        val allCharges: Future[Seq[LocalDate]] = Future.sequence(user.incomeSources.orderedTaxYears(isEnabled(API5)).map { taxYear =>
+        val allCharges: Future[Seq[LocalDate]] = Future.sequence(user.incomeSources.orderedTaxYears.map { taxYear =>
           if (isEnabled(NewFinancialDetailsApi)) {
             financialDetailsService.getFinancialDetails(taxYear, user.nino)
           }

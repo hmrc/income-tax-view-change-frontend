@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.featureswitch.{API5, FeatureSwitching, PaymentHistory}
+import config.featureswitch.{FeatureSwitching, PaymentHistory}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -37,7 +37,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(API5)
     enable(PaymentHistory)
   }
 

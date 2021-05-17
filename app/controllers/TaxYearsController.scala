@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import config.featureswitch.{API5, FeatureSwitching, ITSASubmissionIntegration}
+import config.featureswitch.{FeatureSwitching, ITSASubmissionIntegration}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import javax.inject.Inject
@@ -43,7 +43,7 @@ class TaxYearsController @Inject()(implicit val appConfig: FrontendAppConfig,
 
   val viewTaxYears: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
     implicit user =>
-      calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears(isEnabled(API5))).flatMap {
+      calculationService.getAllLatestCalculations(user.nino, user.incomeSources.orderedTaxYears).flatMap {
         case taxYearCalResponse if taxYearCalResponse.exists(_.isError) =>
           Future.successful(itvcErrorHandler.showInternalServerError)
         case taxYearCalResponse =>
