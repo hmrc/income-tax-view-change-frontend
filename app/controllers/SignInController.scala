@@ -32,6 +32,6 @@ class SignInController @Inject()(val appConfig: FrontendAppConfig,
                                 (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) with AuthRedirects {
 
   val signIn: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(toGGLogin(appConfig.ggSignInContinueUrl))
+    Future.successful(Redirect(appConfig.ggSignInUrl, Map("continue_url" -> Seq(appConfig.homePageUrl), "origin" -> Seq(appConfig.appName))))
   }
 }

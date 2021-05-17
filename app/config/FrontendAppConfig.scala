@@ -57,9 +57,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 	//View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
-  //GG Sign In via Company Auth Frontend
-  lazy val ggSignInContinueUrl: String = servicesConfig.getString("government-gateway.continue.url")
+  //GG Sign In via BAS Gateway
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
+  lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")
+  lazy val homePageUrl: String = servicesConfig.getString("base.fullUrl")
 
   //Exit Survey
   lazy val exitSurveyBaseUrl:String = servicesConfig.getString("feedback-frontend.host") + servicesConfig.getString("feedback-frontend.url")
@@ -67,7 +68,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Sign out
   lazy val ggUrl: String = servicesConfig.getString(s"government-gateway.url")
-  def ggSignOutUrl(identifier: String): String = s"$ggUrl/gg/sign-out?continue=${exitSurveyUrl(identifier)}"
+  def ggSignOutUrl(identifier: String): String = s"$ggUrl/bas-gateway/sign-out-without-state?continue=${exitSurveyUrl(identifier)}"
 
   //MTD Income Tax Enrolment
   lazy val mtdItEnrolmentKey: String = servicesConfig.getString("enrolments.mtd.key")
