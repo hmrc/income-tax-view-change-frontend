@@ -6,6 +6,7 @@ base.sign-out                                                   = Allgofnodi
 base.submit                                                     = Cyflwyno
 base.error_heading                                              = Mae problem wedi codi
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
+base.continue                                                   = Continue
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Mae problem wedi codi
@@ -56,6 +57,8 @@ home.your-returns.updatesLink                                   = Diweddaru a ch
 home.update-and-submit-your-returns.Link                        = Diweddaru a chyflwyno Ffurflen Treth Incwm
 home.overdue.message                                            = Mae gennych daliadau sy’n hwyr. Codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.agent.overdue.message                                      = Mae gennych daliadau sy’n hwyr. Codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
+home.updates.overdue.payments                                   = {0} TALIADAU SY’N HWYR
+home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
 
 
 ## Recruitment Banner ##
@@ -74,17 +77,43 @@ taxYears.overdue                                               = YN HWYR
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 
 ## Tax Year Overview Page Old##
-tax-year-overview-old.heading                                       = 6 Ebrill {0} hyd at 5 Ebrill {1}
-tax-year-overview-old.heading-secondary                             = Trosolwg blwyddyn dreth
-tax-year-overview-old.status                                        = Statws y flwyddyn dreth:
-tax-year-overview-old.calculation-date                              = Dyddiad y cyfrifiad:
-tax-year-overview-old.links-summary                                 = Cliciwch ar bob cysylltiad i gael rhagor o fanylion am bob adran.
-tax-year-overview-old.no-links-summary                              = Mae’r dudalen hon yn dangos crynodeb o’ch blwyddyn dreth.
-tax-year-overview-old.income                                        = Incwm
-tax-year-overview-old.deductions                                    = Lwfansau a didyniadau
-tax-year-overview-old.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus ar ei gyfer
-tax-year-overview-old.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 sy’n ddyledus
-tax-year-overview-old.total-remaining                               = Cyfanswm sy’n ddyledus sy’n weddill
+tax-year-overview-old.heading                                   = 6 Ebrill {0} hyd at 5 Ebrill {1}
+tax-year-overview-old.heading-secondary                         = Trosolwg blwyddyn dreth
+tax-year-overview-old.status                                    = Statws y flwyddyn dreth:
+tax-year-overview-old.calculation-date                          = Dyddiad y cyfrifiad:
+tax-year-overview-old.links-summary                             = Cliciwch ar bob cysylltiad i gael rhagor o fanylion am bob adran.
+tax-year-overview-old.no-links-summary                          = Mae’r dudalen hon yn dangos crynodeb o’ch blwyddyn dreth.
+tax-year-overview-old.income                                    = Incwm
+tax-year-overview-old.deductions                                = Lwfansau a didyniadau
+tax-year-overview-old.taxable-income                            = Cyfanswm yr incwm y mae treth yn ddyledus ar ei gyfer
+tax-year-overview-old.tax-due                                   = Treth Incwm a chyfraniadau Yswiriant Gwladol Dosbarth 4 sy’n ddyledus
+tax-year-overview-old.total-remaining                           = Cyfanswm sy’n ddyledus sy’n weddill
+
+## Tax Year Overview Page New##
+tax-year-overview.heading                                       = Trosolwg o’r flwyddyn dreth
+tax-year-overview.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
+tax-year-overview.calculation-date                              = Dyddiad y cyfrifiad
+tax-year-overview.estimate                                      = Amcangyfrif ar gyfer 6 Ebrill {0} i 28 Ion {1}
+tax-year-overview.calc-from-last-time                           = Mae’r cyfrifiad hwn yn deillio o’r tro diwethaf i chi fwrw golwg dros eich cyfrifiad treth yn eich meddalwedd eich hun. Bydd angen i chi fwrw golwg drosto yn eich meddalwedd chi ar gyfer y fersiwn mwyaf diweddar.
+tax-year-overview.tax-calculation                               = Cyfrifiad Treth
+tax-year-overview.payments                                      = Taliadau
+tax-year-overview.updates                                       = Diweddariadau
+tax-year-overview.income                                        = Incwm
+tax-year-overview.deductions                                    = Lwfansau a didyniadau
+tax-year-overview.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus arno
+tax-year-overview.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus
+tax-year-overview.payments.payment-type                         = Math o daliad
+tax-year-overview.payments.due-date                             = Dyddiad dyledus
+tax-year-overview.payments.status                               = Statws
+tax-year-overview.payments.amount                               = Swm
+tax-year-overview.payments.paymentOnAccount1.text               = Taliad ar gyfrif 1 o 2
+tax-year-overview.payments.paymentOnAccount2.text               = Taliad ar gyfrif 2 o 2
+tax-year-overview.payments.balancingCharge.text                 = Balans sy’n weddill
+tax-year-overview.payments.paid                                 = Talwyd
+tax-year-overview.payments.unpaid                               = Na dalwyd
+tax-year-overview.payments.part-paid                            = Talwyd yn rhannol
+tax-year-overview.payments.overdue                              = Yn hwyr
+tax-year-overview.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
@@ -130,13 +159,13 @@ deduction_breakdown.total                                              = Cyfansw
 taxCal_breakdown.heading                                            = Cyfrifiad Treth
 taxCal_breakdown.dates                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
 taxCal_breakdown.explanation                                        = Mae’r cyfrifiad hwn yn seiliedig ar eich incwm trethadwy o
-taxCal-breakdown.ukRate                                             = (UK rate for England, Wales and Northern Ireland)
-taxCal-breakdown.scotlandRate                                       = (Rate for Scotland)
+taxCal-breakdown.ukRate                                             = (cyfradd y DU ar gyfer Cymru, Lloegr a Gogledd Iwerddon)
+taxCal-breakdown.scotlandRate                                       = (Cyfradd ar gyfer yr Alban)
 taxCal_breakdown.pay_pensions_profit                                = Cyflog, pensiynau ac elw
 taxCal_breakdown.savings                                            = Cynilion
 taxCal_breakdown.dividends                                          = Difidendau
-taxCal_breakdown.lumpSums                                           = Employment lump sums
-taxCal_breakdown.gains_life_policies                                = Gains on life policies
+taxCal_breakdown.lumpSums                                           = Cyfandaliadau cyflogaeth
+taxCal_breakdown.gains_life_policies                                = Enillion ar bolisïau bywyd
 taxCal_breakdown.class4_national_insurance                          = Yswiriant Gwladol Dosbarth 4
 taxCal_breakdown.additional_charges                                 = Taliadau ychwanegol
 taxCal_breakdown.additional_deductions                              = Didyniadau ychwanegol
@@ -161,18 +190,19 @@ taxCal_breakdown.table.giftAidTax                                   = Tâl treth
 taxCal_breakdown.table.totalPensionSavingsTaxCharges                = Cyfanswm y taliadau a godir ar gynilion pensiwn
 taxCal_breakdown.table.statePensionLumpSumCharges                   = Cyfandaliad Pensiwn y Wladwriaeth
 taxCal_breakdown.table.tax_reductions                               = Gostyngiadau treth
-taxCal_breakdown.table.deficiencyRelief                             = Deficiency Relief
-taxCal_breakdown.table.vctSubscriptions                             = Venture Capital Trust relief
-taxCal_breakdown.table.eisSubscriptions                             = Enterprise Investment Scheme relief
-taxCal_breakdown.table.seedEnterpriseInvestment                     = Seed Enterprise Scheme relief
-taxCal_breakdown.table.communityInvestment                          = Community Investment Tax Relief
-taxCal_breakdown.table.socialEnterpriseInvestment                   = Social Investment Tax Relief
-taxCal_breakdown.table.maintenancePayments                          = Maintenance and alimony paid
+taxCal_breakdown.table.deficiencyRelief                             = Rhyddhad am Ddiffyg
+taxCal_breakdown.table.vctSubscriptions                             = Rhyddhad Ymddiriedolaeth Cyfalaf Menter
+taxCal_breakdown.table.eisSubscriptions                             = Rhyddhad Cynllun Buddsoddiad Menter
+taxCal_breakdown.table.seedEnterpriseInvestment                     = Rhyddhad Cynllun Buddsoddiad Menter Seed
+taxCal_breakdown.table.communityInvestment                          = Rhyddhad Treth am Fuddsoddiad Cymunedol
+taxCal_breakdown.table.socialEnterpriseInvestment                   = Rhyddhad Treth am Fuddsoddiad Menter Gymdeithasol
+taxCal_breakdown.table.maintenancePayments                          = Cynhaliaeth ac alimoni a dalwyd
 taxCal_breakdown.table.property_finance_relief                      = Rhyddhad am gostau ariannol
-taxCal_breakdown.table.total_notional_tax                           = Notional tax from gains on life policies etc.
-taxCal_breakdown.table.total_foreign_tax_credit_relief              = Foreign Tax Credit Relief
-taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities    = Relief claimed on a qualifying distribution
-taxCal_breakdown.table.nonDeductibleLoanInterest                    = Non deductible loan interest
+taxCal_breakdown.table.total_notional_tax                           = Treth dybiannol o enillion ar bolisïau bywyd ac ati
+taxCal_breakdown.table.total_foreign_tax_credit_relief              = Rhyddhad Credyd Treth Dramor
+taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities    = Rhyddhad a hawliwyd ar ddosbarthiad cymhwysol
+taxCal_breakdown.table.nonDeductibleLoanInterest                    = Llog ar fenthyciad, na ellir ei ddidynnu
+taxCal_breakdown.table.income_tax_due_after_tax_reductions          = Treth Incwm sy’n ddyledus ar ôl gostyngiadau treth
 taxCal_breakdown.taxDeductedAtSource								= Didyniadau treth
 taxCal_breakdown.table.taxDeductedAtSource.savings					= Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
 taxCal_breakdown.table.taxDeductedAtSource.payeEmployments          = Pob cyflogaeth
@@ -183,6 +213,8 @@ taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty		= Tir ac eiddo yn 
 taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax    = Treth ataliedig arbennig
 taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = ISAs di-rym
 taxCal_breakdown.table.taxDeductedAtSource.total					= Treth Incwm sy’n ddyledus ar ôl didyniadau
+taxCal_breakdown.table.nic2.false                                   = Yswiriant Gwladol Dosbarth 2
+taxCal_breakdown.table.nic2.true                                    = Yswiriant Gwladol Dosbarth 2 Gwirfoddol
 
 taxCal_breakdown.message.C22201                                 = Cynyddwyd eich terfyn ar gyfer y Gyfradd Sylfaenol gan {0} i {1} ar gyfer taliadau Rhodd Cymorth
 taxCal_breakdown.message.C22202                                 = Mae’r dreth sy’n ddyledus ar daliadau Rhodd Cymorth yn fwy na’r Dreth Incwm a godwyd arnoch, felly rydych yn agored i dalu treth Rhodd Cymorth
@@ -241,20 +273,6 @@ not_enrolled.sign-up.1                                          = Mae’n rhaid 
 not_enrolled.sign-up.2                                          = gofrestru ar gyfer adrodd chwarterol
 not_enrolled.sign-up.3                                          = cyn i chi allu fwrw golwg ar y dudalen hon.
 
-## Breadcrumbs ##
-breadcrumb.landmark-label                                       = briwsion bara
-breadcrumb-bta                                                  = Cyfrif Treth Busnes
-breadcrumb-it                                                   = Cyfrif Treth Incwm
-breadcrumb-tax-years                                            = Mlynyddoedd treth
-breadcrumb-obligations                                          = Dyddiadau cau ar gyfer adroddiadau
-breadcrumb-updates                                              = Diweddariadau
-breadcrumb-payments-due                                         = Taliadau sy’n ddyledus
-breadcrumb-tax-year-overview                                    = 6 Ebrill {0} hyd at 5 Ebrill {1}
-breadcrumb-income                                               = Incwm
-breadcrumb-deductions                                           = Lwfansau a didyniadau
-breadcrumb-tax-calc                                             = Cyfrifiad Treth
-
-
 ## Standard Error Page ##
 standardError.heading                                           = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 standardError.message                                           = Rhowch gynnig arall arni yn nes ymlaen.
@@ -295,22 +313,24 @@ obligations.finalDeclarationUpdate                              = Datganiad terf
 obligation.dropdown.finalDeclaration.text.v2                    = Mae eich datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu cyflwyno yn gywir ac eich bod wedi cyflwyno pob ffynhonnell incwm, hyd eithaf eich gwybodaeth, gan ddefnyddio eich {0}.
 obligation.dropdown.finalDeclaration.info.v2                    = Beth yw datganiad terfynol?
 obligations.contents                                            = Cynnwys
-nextUpdates.heading                                             = Next updates
-nextUpdates.sub-heading                                         = Updates due by
-nextUpdates.dropdown.info                                       = What are the update types?
-nextUpdates.info                                       			= All updates need to be sent using your record keeping software by each date shown.
-nextUpdates.dropdown.quarterlyReturn.text                       = A quarterly update is a record of all your business income in a 3 month period.
-nextUpdates.dropdown.quarterlyReturn.text.lin2                  = Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income.
-nextUpdates.dropdown.annualReturn.text                          = In an annual update you need to declare that the 4 quarterly updates you have sent are correct. You can also change any previous errors.
-nextUpdates.dropdown.annualReturn.text.lin2                     = Using your record-keeping software, you need to send one annual update for each source of income at the end of each accounting period.
-nextUpdates.dropdown.finalDeclaration.text                      = Your final declaration confirms that the annual updates you have sent are correct and that you have submitted every source of income and expenses true to your knowledge. This is done using your record-keeping software.
-nextUpdates.table.header.type									= Update type
-nextUpdates.table.header.source									= Income source
-nextUpdates.section.heading.updates								= Update for: {0} to {1}
-nextUpdates.section.heading.taxYear								= Tax year: {0} to {1}
-nextUpdates.previousYears.textOne								= To view previously submitted updates visit the
-nextUpdates.previousYears.textTwo								= page.
-nextUpdates.previousYears.link									= tax years
+
+## Next updates Page ##
+nextUpdates.heading                                             = Diweddariadau nesaf
+nextUpdates.sub-heading                                         = Diweddariadau’n ddyledus erbyn
+nextUpdates.dropdown.info                                       = Beth yw’r mathau o ddiweddariadau?
+nextUpdates.info                                       			= Mae’n rhaid i bob diweddariad gael ei anfon gan ddefnyddio ein meddalwedd cadw cofnodion erbyn pob dyddiad a ddangosir.
+nextUpdates.dropdown.quarterlyReturn.text                       = Diweddariad chwarterol yw cofnod o’ch holl incwm busnes mewn cyfnod 3 mis.
+nextUpdates.dropdown.quarterlyReturn.text.lin2                  = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
+nextUpdates.dropdown.annualReturn.text                          = Mewn diweddariad blynyddol, mae angen i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu hanfon yn gywir. Gallwch hefyd newid unrhyw wallau blaenorol.
+nextUpdates.dropdown.annualReturn.text.lin2                     = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd pob cyfnod cyfrifyddu.
+nextUpdates.dropdown.finalDeclaration.text                      = Mae’ch datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu hanfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
+nextUpdates.table.header.type									= Math o ddiweddariad
+nextUpdates.table.header.source									= Ffynhonnell incwm
+nextUpdates.section.heading.updates								= Diweddariad ar gyfer: {0} i {1}
+nextUpdates.section.heading.taxYear								= Blwyddyn dreth: {0} i {1}
+nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
+nextUpdates.previousYears.textTwo								= dudalen.
+nextUpdates.previousYears.link									= blynyddoedd treth
 
 sections.open.all												= Agor pob un
 sections.close.all												= Cau pob un
@@ -322,36 +342,37 @@ paymentDue.description                                          = Os ydych wedi 
 paymentDue.viewBill                                             = Bwrw golwg dros y bil
 paymentDue.no-bills                                             = Dim taliadau’n ddyledus
 paymentDue.payNow                                               = Talu nawr
+paymentDue.pay-now-aria                                         = Talwch nawr ar gyfer Blwyddyn Dreth {0} i {1}
 paymentDue.tax-year                                             = Blwyddyn dreth {0} i {1}
 paymentDue.due                                                  = ddyledus
 
 ## What you owe
-whatYouOwe.heading                                              = What you owe
-whatYouOwe.no-payments-due                                      = You have no payments due.
-whatYouOwe.sa-note                                              = You still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
-whatYouOwe.sa-link                                              = Self Assessment online account (opens in new tab)
-whatYouOwe.outstanding-charges-note                             = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
-whatYouOwe.dropdown.info                                        = What are the payment types?
-whatYouOwe.payment-days-note                                    = Payments can take up to 7 days to process.
-whatYouOwe.credit-on-account                                    = If you make a payment more than 30 days before a payment is due, you will see it as credit on account.
-whatYouOwe.payNow                                               = Pay now
-whatYouOwe.pay-now-aria                                         = Pay now for Tax year {0} to {1}
-whatYouOwe.pre-mtd-payments                                     = Tax year {0} to {1} pre-Making Tax Digital payments
-whatYouOwe.tableHead.due-date                                   = Due date
-whatYouOwe.tableHead.payment-type                               = Payment type
-whatYouOwe.tableHead.amount-due                                 = Amount due
-whatYouOwe.paymentOnAccount1.text							    = Payment on account 1 of 2
-whatYouOwe.paymentOnAccount2.text							    = Payment on account 2 of 2
-whatYouOwe.balancingCharge.text  							    = Remaining balance
-whatYouOwe.remaining-balance.heading                            = Remaining balance
-whatYouOwe.remaining-balance.line1                              = The remaining balance is the tax you still need to pay for a tax year.
-whatYouOwe.payment-on-account.heading                           = Payment on account
-whatYouOwe.payment-on-account.line1                             = This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill.
-whatYouOwe.over-due-payments                                    = Overdue payments
-whatYouOwe.over-due                                             = OVERDUE
-whatYouOwe.due-in-thirty-days-payments                          = Due within 30 days
-whatYouOwe.future-payments                                      = Future payments
-whatYouOwe.payment-type.taxYear                                 = Tax year {0} to {1}
+whatYouOwe.heading                                              = Yr hyn sydd arnoch
+whatYouOwe.no-payments-due                                      = Nid oes gennych taliadau sy’n ddyledus.
+whatYouOwe.sa-note                                              = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
+whatYouOwe.sa-link                                              = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd).
+whatYouOwe.outstanding-charges-note                             = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
+whatYouOwe.dropdown.info                                        = Beth yw’r mathau o daliadau?
+whatYouOwe.payment-days-note                                    = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
+whatYouOwe.credit-on-account                                    = Os ydych yn gwneud taliad fwy na 30 diwrnod cyn bod taliad yn ddyledus, byddwch yn ei weld fel credyd ar gyfrif.
+whatYouOwe.payNow                                               = Talu nawr
+whatYouOwe.pay-now-aria                                         = Talu nawr ar gyfer Blwyddyn dreth  {0} i {1}
+whatYouOwe.pre-mtd-payments                                     = Blwyddyn dreth  {0} i {1} taliadau cyn-Troi Treth yn Ddigidol
+whatYouOwe.tableHead.due-date                                   = Dyddiad dyledus
+whatYouOwe.tableHead.payment-type                               = Math o daliad
+whatYouOwe.tableHead.amount-due                                 = Swm sy’n ddyledus
+whatYouOwe.paymentOnAccount1.text							    = Taliad ar gyfrif 1 o 2
+whatYouOwe.paymentOnAccount2.text							    = Taliad ar gyfrif 2 o 2
+whatYouOwe.balancingCharge.text  							    = Balans sy’n weddill
+whatYouOwe.remaining-balance.heading                            = Balans sy’n weddill
+whatYouOwe.remaining-balance.line1                              = Y balans sy’n weddill yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth.
+whatYouOwe.payment-on-account.heading                           = Taliad ar gyfrif
+whatYouOwe.payment-on-account.line1                             = Mae hwn yn daliad tuag at y bil treth ar gyfer y flwyddyn nesaf. Mae swm pob taliad yn hanner eich bil treth ar gyfer y flwyddyn flaenorol.
+whatYouOwe.over-due-payments                                    = Taliadau sy’n hwyr
+whatYouOwe.over-due                                             = YN HWYR
+whatYouOwe.due-in-thirty-days-payments                          = Yn ddyledus cyn pen 30 diwrnod
+whatYouOwe.future-payments                                      = Taliadau yn y dyfodol
+whatYouOwe.payment-type.taxYear                                 = Blwyddyn dreth {0} i {1}
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -408,6 +429,20 @@ agent.base.service_name                                         = Treth Incwm fa
 agent.title_pattern.service_name.govuk                          = {0} - Treth Incwm fanylion eich cleient - GOV.UK
 agent.error.title_pattern.service_name.govuk                    = Error: {0} - Treth Incwm fanylion eich cleient - GOV.UK
 
+# Agent - Enter clients details
+agent.enter_clients_utr.heading                                 = Beth yw Cyfeirnod Unigryw y Trethdalwr (UTR) eich cleient?
+agent.enter_clients_utr.info                                    = Dyma’r rhif 10 digid a gafodd wrth gofrestru ar gyfer Hunanasesiad. Er enghraifft, 1234567890.
+agent.error.enter_clients_utr.empty                             = Nodwch Gyfeirnod Unigryw y Trethdalwr eich cleient
+agent.error.enter_clients_utr.length                            = Mae’n rhaid i Gyfeirnod Unigryw y Trethdalwr eich cleient fod yn 10 digid
+agent.error.enter_clients_utr.non_numeric                       = Mae’n rhaid i Gyfeirnod Unigryw y Trethdalwr gynnwys rhifau yn unig
+
+## Agent - Confirm Client
+agent.confirmClient.heading                                     = Confirm your client’s details
+agent.confirmClient.clientName                                  = Client’s name
+agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference
+agent.confirmClient.changeClient                                = Newid cleient
+agent.confirmClient.confirmContinue                             = Confirm and continue
+
 ##Tax Years Overview Update Tab##
 updateTab.due                                                   = Ddyledus {0}
 updateTab.updateType                                            = Math o ddiweddariad
@@ -418,24 +453,53 @@ updateTab.obligationType.property                               = Incwm o eiddo
 updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
 
+## Agent - Payment Due Page
+agent.paymentDue.heading                                                 = Yr hyn sydd arnoch
+agent.paymentDue.no-payments-due                                         = Nid oes gennych taliadau sy’n ddyledus.
+agent.paymentDue.sa-note                                                 = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
+agent.paymentDue.sa-link                                                 = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
+agent.paymentDue.outstanding-charges-note                                = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
+agent.paymentDue.dropdown.info                                           = Beth yw’r mathau o daliadau?
+agent.paymentDue.payment-days-note                                       = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
+agent.paymentDue.credit-on-account                                       = Os ydych yn gwneud taliad fwy na 30 diwrnod cyn bod taliad yn ddyledus, byddwch yn ei weld fel credyd ar gyfrif.
+agent.paymentDue.payNow                                                  = Talu nawr
+agent.paymentDue.pay-now-aria                                            = Talu nawr ar gyfer Blwyddyn dreth  {0} i {1}
+agent.paymentDue.pre-mtd-payments                                        = Blwyddyn dreth {0} i {1}: taliadau cyn-Troi Treth yn Ddigidol
+agent.paymentDue.tableHead.due-date                                      = Dyddiad dyledus
+agent.paymentDue.tableHead.payment-type                                  = Math o daliad
+agent.paymentDue.tableHead.amount-due                                    = Swm sy’n ddyledus
+agent.paymentDue.paymentOnAccount1.text                                  = Taliad ar gyfrif 1 o 2
+agent.paymentDue.paymentOnAccount2.text                                  = Taliad ar gyfrif 2 o 2
+agent.paymentDue.balancingCharge.text                                    = Balans sy’n weddill
+agent.paymentDue.balancingCharge.interest.line1.text                     = Llog ar y balans sy’n weddill
+agent.paymentDue.balancingCharge.interest.line2.text                     = O {0} i {1}
+agent.paymentDue.remaining-balance.heading                               = Balans sy’n weddill
+agent.paymentDue.remaining-balance.line1                                 = Y balans sy’n weddill yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth.
+agent.paymentDue.payment-on-account.heading                              = Taliad ar gyfrif
+agent.paymentDue.payment-on-account.line1                                = Mae hwn yn daliad tuag at y bil treth ar gyfer y flwyddyn nesaf. Mae swm pob taliad yn hanner eich bil treth ar gyfer y flwyddyn flaenorol.
+agent.paymentDue.over-due-payments                                       = Taliadau sy’n hwyr
+agent.paymentDue.over-due                                                = YN HWYR
+agent.paymentDue.future-payments                                         = Taliadau yn y dyfodol
+agent.paymentDue.due-in-thirty-days-payments                             = Yn ddyledus cyn pen 30 diwrnod
+agent.paymentDue.payment-type.taxYear                                    = Blwyddyn dreth {0} i {1}
 
 #Agent next updates
-agent.nextUpdates.heading                                       = Next updates
-agent.nextUpdates.sub-heading                                   = Updates due by
-agent.nextUpdates.dropdown.info                                 = What are the update types?
-agent.nextUpdates.info                                          = All updates need to be sent using your record keeping software by each date shown.
-agent.nextUpdates.dropdown.quarterlyReturn.text                 = A quarterly update is a record of all your business income in a 3 month period.
-agent.nextUpdates.dropdown.quarterlyReturn.text.lin2            = Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income.
-agent.nextUpdates.dropdown.annualReturn.text                    = In an annual update you need to declare that the 4 quarterly updates you have sent are correct. You can also change any previous errors.
-agent.nextUpdates.dropdown.annualReturn.text.lin2               = Using your record-keeping software, you need to send one annual update for each source of income at the end of each accounting period.
-agent.nextUpdates.dropdown.finalDeclaration.text                = Your final declaration confirms that the annual updates you have sent are correct and that you have submitted every source of income and expenses true to your knowledge. This is done using your record-keeping software.
-agent.nextUpdates.table.header.type					            = Update type
-agent.nextUpdates.table.header.source	                        = Income source
-agent.nextUpdates.section.heading.updates                       = Update for: {0} to {1}
-agent.nextUpdates.section.heading.taxYear                       = Tax year: {0} to {1}
-agent.nextUpdates.previousYears.textOne				            = To view previously submitted updates visit the
-agent.nextUpdates.previousYears.textTwo				            = page.
-agent.nextUpdates.previousYears.link	                        = tax years
+agent.nextUpdates.heading                                       = Diweddariadau nesaf
+agent.nextUpdates.sub-heading                                   = Diweddariadau’n ddyledus erbyn
+agent.nextUpdates.dropdown.info                                 = Beth yw’r mathau o ddiweddariadau?
+agent.nextUpdates.info                                          = Mae’n rhaid i bob diweddariad gael ei anfon gan ddefnyddio ein meddalwedd cadw cofnodion erbyn pob dyddiad a ddangosir.
+agent.nextUpdates.dropdown.quarterlyReturn.text                 = Diweddariad chwarterol yw cofnod o’ch holl incwm busnes mewn cyfnod 3 mis.
+agent.nextUpdates.dropdown.quarterlyReturn.text.lin2            = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
+agent.nextUpdates.dropdown.annualReturn.text                    = Mewn diweddariad blynyddol, mae angen i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu hanfon yn gywir. Gallwch hefyd newid unrhyw wallau blaenorol.
+agent.nextUpdates.dropdown.annualReturn.text.lin2               = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd pob cyfnod cyfrifyddu.
+agent.nextUpdates.dropdown.finalDeclaration.text                = Mae’ch datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu hanfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
+agent.nextUpdates.table.header.type							    = Math o ddiweddariad
+agent.nextUpdates.table.header.source							= Ffynhonnell incwm
+agent.nextUpdates.section.heading.updates						= Diweddariad ar gyfer: {0} i {1}
+agent.nextUpdates.section.heading.taxYear						= Blwyddyn dreth: {0} i {1}
+agent.nextUpdates.previousYears.textOne							= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
+agent.nextUpdates.previousYears.textTwo							= dudalen.
+agent.nextUpdates.previousYears.link							= blynyddoedd treth
 agent.obligations.quarterlyUpdates                              = Diweddariadau chwarterol
 agent.obligations.annualUpdates                                 = Diweddariadau blynyddol
 agent.obligations.finalDeclarationUpdate                        = Datganiad terfynol
