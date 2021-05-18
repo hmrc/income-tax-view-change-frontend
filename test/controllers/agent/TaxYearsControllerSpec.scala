@@ -60,7 +60,7 @@ class TaxYearsControllerSpec extends TestSupport
   "show" when {
     "the user is not authenticated" should {
       "redirect them to sign in" in new Setup {
-        setupMockAgentAuthorisationException()
+        setupMockAgentAuthorisationException(withClientPredicate = false)
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -72,7 +72,7 @@ class TaxYearsControllerSpec extends TestSupport
       "redirect to the session timeout page" in new Setup {
         setupMockAgentAuthorisationException(exception = BearerTokenExpired())
 
-        val result: Future[Result] = controller.show()(fakeRequestWithTimeoutSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
@@ -80,7 +80,7 @@ class TaxYearsControllerSpec extends TestSupport
     }
     "the user does not have an agent reference number" should {
       "return Ok with technical difficulties" in new Setup {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
         mockShowOkTechnicalDifficulties()
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)

@@ -36,7 +36,7 @@ trait MockClientRelationshipService extends UnitSpec with MockitoSugar with Befo
   }
 
   def mockCheckAgentClientRelationship(utr: String, arn: String)(response: Either[ClientRelationshipFailure, ClientDetails]): Unit = {
-    when(mockClientRelationshipService.checkAgentClientRelationship(matches(utr), matches(arn))(any()))
+    when(mockClientRelationshipService.checkAgentClientRelationship(matches(utr), matches(arn), any())(any()))
       .thenReturn(Future.successful(response))
   }
 

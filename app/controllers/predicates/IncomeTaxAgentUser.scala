@@ -30,6 +30,9 @@ case class IncomeTaxAgentUser(enrolments: Enrolments,
                               confidenceLevel: ConfidenceLevel) extends IncomeTaxUser {
 
   lazy val agentReferenceNumber: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
+	lazy val delegatedMtdEnrolments: Set[Enrolment] = enrolments.enrolments.filter(enrolment => {
+		enrolment.key.equalsIgnoreCase("HMRC-MTD-IT") && enrolment.delegatedAuthRule.isDefined
+	})
 
   private def getEnrolment(key: String) = enrolments.enrolments.collectFirst {
     case Enrolment(`key`, EnrolmentIdentifier(_, value) :: _, _, _) => value

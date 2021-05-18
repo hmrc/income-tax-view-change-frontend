@@ -22,11 +22,14 @@ import controllers.agent.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.views.MockUTRError
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{times, verify}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.BearerTokenExpired
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
+import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment}
 
 class UTRErrorControllerSpec extends TestSupport
   with MockUTRError
@@ -52,7 +55,7 @@ class UTRErrorControllerSpec extends TestSupport
   "show" when {
     "the user is not authenticated" should {
       "redirect the user to authenticate" in {
-        setupMockAgentAuthorisationException()
+        setupMockAgentAuthorisationException(withClientPredicate = false)
 
         val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
 
@@ -63,7 +66,7 @@ class UTRErrorControllerSpec extends TestSupport
 
     "the user has timed out" should {
       "redirect to the session time out page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
 
         val result = TestUTRErrorController.show()(fakeRequestWithTimeoutSession)
 
@@ -74,7 +77,7 @@ class UTRErrorControllerSpec extends TestSupport
 
     "the user does not have an agent reference number" should {
       "return Ok with technical difficulties" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment,  withClientPredicate = false)
         mockShowOkTechnicalDifficulties()
 
         val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
@@ -86,7 +89,7 @@ class UTRErrorControllerSpec extends TestSupport
 
     "the agent viewer feature switch is disabled" should {
       "return Not Found" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess,  withClientPredicate = false)
         mockNotFound()
 
         val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
@@ -98,7 +101,7 @@ class UTRErrorControllerSpec extends TestSupport
     "the agent viewer feature switch is enabled" should {
       "redirect to the Enter Client UTR page when there is no client UTR in session" in {
         enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockUTRError(HtmlFormat.empty)
 
         val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
@@ -109,21 +112,23 @@ class UTRErrorControllerSpec extends TestSupport
 
       "return OK and display the UTR Error page" in {
         enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockUTRError(HtmlFormat.empty)
 
         val result = TestUTRErrorController.show()(fakeRequestWithClientUTR)
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
-      }
+				verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+				verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+			}
     }
   }
 
   "submit" when {
     "the user is not authenticated" should {
       "redirect the user to authenticate" in {
-        setupMockAgentAuthorisationException()
+        setupMockAgentAuthorisationException(withClientPredicate = false)
 
         val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
@@ -134,7 +139,7 @@ class UTRErrorControllerSpec extends TestSupport
 
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
 
         val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
@@ -145,7 +150,7 @@ class UTRErrorControllerSpec extends TestSupport
 
     "the user does not have an agent reference number" should {
       "return Ok with technical difficulties" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
         mockShowOkTechnicalDifficulties()
 
         val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
@@ -157,7 +162,7 @@ class UTRErrorControllerSpec extends TestSupport
 
     "the agent viewer feature switch is disabled" should {
       "return Not Found" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockNotFound()
 
         val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
@@ -169,13 +174,15 @@ class UTRErrorControllerSpec extends TestSupport
     "the agent viewer feature switch is enabled" should {
       "redirect to the Enter Client UTR page and remove the clientUTR from session" in {
         enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
 
         val result = TestUTRErrorController.submit()(fakeRequestWithClientUTR)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
         result.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
+				verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+				verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
       }
     }
   }

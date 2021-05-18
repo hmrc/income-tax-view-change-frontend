@@ -30,7 +30,8 @@ trait BaseAgentController extends BaseFrontendController {
 
     override def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel) => IncomeTaxAgentUser = IncomeTaxAgentUser.apply
 
-    override def async: AuthenticatedAction[IncomeTaxAgentUser] = asyncInternal(baseAgentPredicates)
+    override def async: AuthenticatedAction[IncomeTaxAgentUser] = asyncInternal(baseAgentPredicates, requireClientSelected = true)
 
+		def asyncWithoutClientAuth: AuthenticatedAction[IncomeTaxAgentUser] = asyncInternal(baseAgentPredicates, requireClientSelected = false)
   }
 }

@@ -27,7 +27,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.BearerTokenExpired
+import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 
 class ConfirmClientUTRControllerSpec extends TestSupport
   with MockConfirmClient
@@ -55,7 +55,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       "redirect the user to authenticate" in {
         setupMockAgentAuthorisationException()
 
-        val result = TestConfirmClientUTRController.show()(fakeRequestWithActiveSession)
+        val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
@@ -64,7 +64,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
 
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
 
         val result = TestConfirmClientUTRController.show()(fakeRequestWithTimeoutSession)
 
@@ -78,7 +78,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment)
         mockShowOkTechnicalDifficulties()
 
-        val result = TestConfirmClientUTRController.show()(fakeRequestWithActiveSession)
+        val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
@@ -87,7 +87,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
 
     "there are no client details in session" should {
       "redirect to the Enter Client UTR page" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
 
         val result = TestConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
@@ -95,6 +95,17 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
       }
     }
+
+		"the auth check fails to find a valid agent-client relationship" should {
+			"redirect to the Agent Client Relationship error page" in {
+				setupMockAgentAuthorisationException(InsufficientEnrolments())
+
+				val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
+
+				status(result) shouldBe SEE_OTHER
+				redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show().url)
+			}
+		}
 
     "the agent viewer feature switch is disabled" should {
       "return Not Found" in {
@@ -126,7 +137,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       "redirect the user to authenticate" in {
         setupMockAgentAuthorisationException()
 
-        val result = TestConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
+        val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
@@ -135,7 +146,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
 
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
 
         val result = TestConfirmClientUTRController.submit()(fakeRequestWithTimeoutSession)
 
@@ -149,7 +160,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment)
         mockShowOkTechnicalDifficulties()
 
-        val result = TestConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
+        val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
@@ -158,7 +169,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
 
     "there are no client details in session" should {
       "redirect to the Enter Client UTR page" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
 
         val result = TestConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 

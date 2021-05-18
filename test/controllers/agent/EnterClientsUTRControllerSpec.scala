@@ -16,6 +16,7 @@
 
 package controllers.agent
 
+import akka.parboiled2.RuleTrace.Times
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testMtditid, testNino}
 import config.featureswitch.{AgentViewer, FeatureSwitching}
 import controllers.agent.utils.SessionKeys
@@ -24,12 +25,16 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.MockClientRelationshipService
 import mocks.views.MockEnterClientsUTR
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{times, verify, verifyZeroInteractions}
+import org.mockito.internal.verification.Times
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.agent.ClientRelationshipService._
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.BearerTokenExpired
+import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment}
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.http.InternalServerException
 
 class EnterClientsUTRControllerSpec extends TestSupport
@@ -58,7 +63,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
   "show" when {
     "the user is not authenticated" should {
       "redirect them to sign in" in {
-        setupMockAgentAuthorisationException()
+        setupMockAgentAuthorisationException(withClientPredicate = false)
 
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
@@ -68,7 +73,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
     }
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+        setupMockAgentAuthorisationException(exception = BearerTokenExpired(), withClientPredicate = false)
 
         val result = TestEnterClientsUTRController.show()(fakeRequestWithTimeoutSession)
 
@@ -78,7 +83,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
     }
     "the user does not have an agent reference number" should {
       "return Ok with technical difficulties" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
         mockShowOkTechnicalDifficulties()
 
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
@@ -89,7 +94,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
     }
     "the agent viewer feature switch is disabled" should {
       "return Not Found" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockNotFound()
 
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
@@ -98,15 +103,17 @@ class EnterClientsUTRControllerSpec extends TestSupport
       }
     }
     "the agent viewer feature switch is enabled" should {
-      "return Ok and display the page to the user" in {
+      "return Ok and display the page to the user without checking client relationship information" in {
         enable(AgentViewer)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockEnterClientsUTR(HtmlFormat.empty)
 
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
+				verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+				verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
       }
     }
   }
@@ -114,7 +121,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
   "submit" when {
     "the user is not authenticated" should {
       "redirect them to sign in" in {
-        setupMockAgentAuthorisationException()
+        setupMockAgentAuthorisationException(withClientPredicate = false)
 
         val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
 
@@ -123,7 +130,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
       }
       "the user has timed out" should {
         "redirect to the session timeout page" in {
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
 
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithTimeoutSession)
 
@@ -133,7 +140,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
       }
       "the user does not have an agent reference number" should {
         "return Ok with technical difficulties" in {
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
           mockShowOkTechnicalDifficulties()
 
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
@@ -144,7 +151,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
       }
       "the agent viewer feature switch is disabled" should {
         "return Not Found" in {
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           mockNotFound()
 
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
@@ -153,12 +160,12 @@ class EnterClientsUTRControllerSpec extends TestSupport
         }
       }
       "the agent viewer feature switch is enabled" should {
-        "redirect to the confirm client details page and add client details to session" when {
+        "redirect to the confirm client details page and add client details to session without checking the relationship" when {
           "the utr entered is valid" in {
             val validUTR: String = "1234567890"
 
             enable(AgentViewer)
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             mockCheckAgentClientRelationship(validUTR, testArn)(
               response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
             )
@@ -175,13 +182,15 @@ class EnterClientsUTRControllerSpec extends TestSupport
             result.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
             result.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
             result.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
-          }
+						verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+						verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+					}
         }
 
         "return a bad request" when {
           "the submitted utr is invalid" in {
             enable(AgentViewer)
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             mockEnterClientsUTR(HtmlFormat.empty)
 
             val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -194,11 +203,11 @@ class EnterClientsUTRControllerSpec extends TestSupport
         }
 
         "redirect to the UTR Error page" when {
-          "a client details not found error is returned from the relationship check" in {
+          "a client details not found error is returned from the client lookup" in {
             val validUTR: String = "1234567890"
 
             enable(AgentViewer)
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             mockCheckAgentClientRelationship(validUTR, testArn)(
               response = Left(CitizenDetailsNotFound)
             )
@@ -211,11 +220,11 @@ class EnterClientsUTRControllerSpec extends TestSupport
             redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
           }
 
-          "a business details not found error is returned from the relationship check" in {
+          "a business details not found error is returned from the client lookup" in {
             val validUTR: String = "1234567890"
 
             enable(AgentViewer)
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             mockCheckAgentClientRelationship(validUTR, testArn)(
               response = Left(BusinessDetailsNotFound)
             )
@@ -230,27 +239,11 @@ class EnterClientsUTRControllerSpec extends TestSupport
         }
 
         "return an exception" when {
-          "an agent client relationship not found error is returned from the relationship check" in {
+          "an unexpected response is returned from the client lookup" in {
             val validUTR: String = "1234567890"
 
             enable(AgentViewer)
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            mockCheckAgentClientRelationship(validUTR, testArn)(
-              response = Left(NoAgentClientRelationship)
-            )
-
-            val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-              ClientsUTRForm.utr -> validUTR
-            ))
-
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(routes.ClientRelationshipFailureController.show().url)
-          }
-          "an unexpected response is returned from the relationship check" in {
-            val validUTR: String = "1234567890"
-
-            enable(AgentViewer)
-            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             mockCheckAgentClientRelationship(validUTR, testArn)(
               response = Left(UnexpectedResponse)
             )

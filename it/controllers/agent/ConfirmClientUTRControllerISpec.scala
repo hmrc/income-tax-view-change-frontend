@@ -17,7 +17,8 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
   val clientDetails = Map(
     SessionKeys.clientFirstName -> "Test",
     SessionKeys.clientLastName -> "User",
-    SessionKeys.clientUTR -> "1234567890"
+    SessionKeys.clientUTR -> "1234567890",
+		SessionKeys.clientMTDID -> "XAIT000000000000"
   )
 
   s"GET ${controllers.agent.routes.ConfirmClientUTRController.show().url}" should {

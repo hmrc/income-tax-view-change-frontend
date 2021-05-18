@@ -157,7 +157,7 @@ class PaymentDueControllerSpec extends TestSupport
 
     "User fails to be authorised" in new Setup {
       enable(AgentViewer)
-      setupMockAgentAuthorisationException()
+      setupMockAgentAuthorisationException(withClientPredicate = false)
 
       val result: Result = await(controller.show()(fakeRequestWithActiveSession))
 

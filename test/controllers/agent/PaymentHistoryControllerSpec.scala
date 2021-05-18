@@ -120,7 +120,7 @@ class PaymentHistoryControllerSpec  extends TestSupport
 
       "User fails to be authorised" in new Setup {
         enable(AgentViewer)
-        setupMockAgentAuthorisationException()
+        setupMockAgentAuthorisationException(withClientPredicate = false)
 
         val result = await(controller.viewPaymentHistory()(fakeRequestWithActiveSession))
 

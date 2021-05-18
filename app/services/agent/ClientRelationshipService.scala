@@ -22,6 +22,7 @@ import javax.inject.{Inject, Singleton}
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import services.agent.ClientRelationshipService._
+import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,15 +33,12 @@ class ClientRelationshipService @Inject()(agentClientRelationshipsConnector: Age
                                           incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
                                          (implicit ec: ExecutionContext) {
 
-  def checkAgentClientRelationship(utr: String, arn: String)(implicit hc: HeaderCarrier): Future[Either[ClientRelationshipFailure, ClientDetails]] =
+  def checkAgentClientRelationship(utr: String, arn: String, delegatedEnrolments: Set[Enrolment])(implicit hc: HeaderCarrier): Future[Either[ClientRelationshipFailure, ClientDetails]] =
     citizenDetailsConnector.getCitizenDetailsBySaUtr(utr) flatMap {
       case CitizenDetailsModel(optionalFirstName, optionalLastName, Some(nino)) =>
         incomeTaxViewChangeConnector.getBusinessDetails(nino) flatMap {
           case IncomeSourceDetailsModel(mtdbsa, _, _, _) =>
-            agentClientRelationshipsConnector.agentClientRelationship(arn, mtdbsa) map {
-              case true => Right(ClientRelationshipService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa))
-              case false => Left(NoAgentClientRelationship)
-            }
+						Future.successful(Right(ClientRelationshipService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
           case IncomeSourceDetailsError(code, _) if code == 404 => Future.successful(Left(BusinessDetailsNotFound))
           case _ => Future.successful(Left(UnexpectedResponse))
         }

@@ -95,7 +95,7 @@ object AuthStub extends ComponentSpecBase {
            |}""".stripMargin).toString())
   }
 
-  def stubAuthorisedAgent(): Unit = {
+  def stubAuthorisedAgent(mtdId: String = "mtdbsaId"): Unit = {
     WiremockHelper.stubPost(
       url = postAuthoriseUrl,
       status = Status.OK,
@@ -109,7 +109,17 @@ object AuthStub extends ComponentSpecBase {
                 "value" -> "1"
               )
             )
-          )
+          ),
+					Json.obj(
+						"key" -> "HMRC-MTD-IT",
+						"identifiers" -> Json.arr(
+							Json.obj(
+								"key" -> "MTDITID",
+								"value" -> mtdId
+							)
+						),
+						"delegatedAuthRule" -> "mtd-it-auth"
+					)
         ),
         "affinityGroup" -> "Agent",
         "confidenceLevel" -> 200
