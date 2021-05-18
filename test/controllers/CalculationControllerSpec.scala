@@ -98,7 +98,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
         val expectedContent: String = views.html.taxYearOverview(
           testYear,
-          calcOverview,
+          Some(calcOverview),
           testChargesList,
           testObligtionsModel,
           mockImplicitDateFormatter,
@@ -128,7 +128,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
           val calcOverview: CalcOverview = CalcOverview(calculationDataSuccessModel, Some(transactionModel()))
           val expectedContent: String = views.html.taxYearOverview(
             testYear,
-            calcOverview,
+            Some(calcOverview),
             testEmptyChargesList,
             testObligtionsModel,
             mockImplicitDateFormatter,
@@ -199,15 +199,30 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
         }
 
         "the calculation returned from the calculation service was not found" should {
-          "return the internal server error page" in {
+          "show tax year overview page with expected content" in {
             enable(TaxYearOverviewUpdate)
             mockSingleBusinessIncomeSource()
             mockCalculationNotFound()
+            mockFinancialDetailsSuccess()
+            mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6),
+              toDate = LocalDate.of(testYear, 4, 5))(
+              response = testObligtionsModel
+            )
+
+            val expectedContent: String = views.html.taxYearOverview(
+              testYear,
+              None,
+              testChargesList,
+              testObligtionsModel,
+              mockImplicitDateFormatter,
+              taxYearsBackLink).toString
 
             val result = TestCalculationController.renderTaxYearOverviewPage(testYear)(fakeRequestWithActiveSession)
 
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            status(result) shouldBe Status.OK
+            contentAsString(result) shouldBe expectedContent
             contentType(result) shouldBe Some("text/html")
+            result.session.get(SessionKeys.chargeSummaryBackPage) shouldBe Some("taxYearOverview")
           }
         }
 

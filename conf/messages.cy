@@ -115,6 +115,11 @@ tax-year-overview.payments.part-paid                            = Talwyd yn rhan
 tax-year-overview.payments.overdue                              = Yn hwyr
 tax-year-overview.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 
+## Tax Year Overview Page new ##
+tax-year-overview.tax-calculation.no-calc                           = Dim cyfrifiad eto
+tax-year-overview.tax-calculation.no-calc.note                      = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
+
+
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
 income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}

@@ -21,6 +21,8 @@ object TaxYearOverviewMessages {
   val title: String = "Tax year overview - Business Tax account - GOV.UK"
   val agentTitle: String = "Tax year overview - Your client’s Income Tax details - GOV.UK"
   val heading: String = "Tax year overview"
+  val headingNoCalcData: String = "No calculation yet"
+  val noCalcDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
 
   def titleOld(firstYear: Int, secondYear: Int): String = s"6 April $firstYear to 5 April $secondYear - Business Tax account - GOV.UK"
   def headingOld(firstYear: Int, secondYear: Int): String = s"Tax year overview 6 April $firstYear to 5 April $secondYear"

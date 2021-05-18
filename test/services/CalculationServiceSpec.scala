@@ -82,7 +82,15 @@ class CalculationServiceSpec extends TestSupport with MockIndividualCalculations
           await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe calculationDisplaySuccessModel(calculationDataSuccessModel)
 
         }
+        "NOT_FOUND response is returned from the IndividualCalculationConnector" should {
+          "return a CalculationErrorModel" in {
+            mockGetLatestCalculationId(testNino, "2017-18")(
+              Left(CalculationErrorModel(Status.NOT_FOUND, "not found"))
+            )
 
+            await(TestCalculationService.getCalculationDetail(testNino, testYear)) shouldBe CalcDisplayNoDataFound
+          }
+        }
         "error response is returned from the IndividualCalculationConnector" should {
           "return a CalculationErrorModel" in {
             mockGetLatestCalculationId(testNino, "2017-18")(

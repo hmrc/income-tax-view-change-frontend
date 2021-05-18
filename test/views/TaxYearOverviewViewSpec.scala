@@ -62,9 +62,12 @@ class TaxYearOverviewViewSpec extends ViewSpec {
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(reportDeadlinesDataSelfEmploymentSuccessModel))
 
   def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverview(
-    testYear, completeOverview(false), documentDetailsWithDueDates, obligations, mockImplicitDateFormatter, "testBackURL")
+    testYear, Some(completeOverview(false)), documentDetailsWithDueDates, obligations, mockImplicitDateFormatter, "testBackURL")
 
-  def crystallisedView: Html = taxYearOverview(testYear, completeOverview(true), testChargesList, testObligationsModel, mockImplicitDateFormatter, "testBackURL")
+  def estimateViewWithNoCalcData(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, obligations: ObligationsModel = testObligationsModel): Html = taxYearOverview(
+    testYear, None, documentDetailsWithDueDates, obligations, mockImplicitDateFormatter, "testBackURL")
+
+  def crystallisedView: Html = taxYearOverview(testYear, Some(completeOverview(true)), testChargesList, testObligationsModel, mockImplicitDateFormatter, "testBackURL")
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -79,6 +82,8 @@ class TaxYearOverviewViewSpec extends ViewSpec {
     val taxDue: String = "£4.04"
     val calcDateInfo: String = "This calculation is from the last time you viewed your tax calculation in your own software. You will need to view it in your software for the most up to date version."
     val taxCalculation: String = "Tax calculation"
+    val taxCalculationNoData: String = "No calculation yet"
+    val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software."
     val payments: String = "Payments"
     val updates: String = "Updates"
     val income: String = "Income"
@@ -175,6 +180,14 @@ class TaxYearOverviewViewSpec extends ViewSpec {
       incomeLink.text shouldBe taxYearOverviewMessages.income
       incomeLink.attr("href") shouldBe controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
       content.selectHead("#income-deductions-table tr:nth-child(1) .numeric").text shouldBe completeOverview(false).income.toCurrencyString
+    }
+
+    "when there is no calc data should display the correct heading in the Tax Calculation tab" in new Setup(estimateViewWithNoCalcData()) {
+      content.selectHead("#taxCalculation > h2").text shouldBe taxYearOverviewMessages.taxCalculationNoData
+    }
+
+    "when there is no calc data should display the correct notes in the Tax Calculation tab" in new Setup(estimateViewWithNoCalcData()) {
+      content.selectHead("#taxCalculation > p").text shouldBe taxYearOverviewMessages.taxCalculationNoDataNote
     }
 
     "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {

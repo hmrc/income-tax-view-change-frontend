@@ -35,6 +35,10 @@ object IndividualCalculationStub {
     WiremockHelper.stubGet(getCalculationListUrl(nino, taxYear), Status.NOT_FOUND, "")
   }
 
+  def stubGetCalculationListInternalServerError(nino: String, taxYear: String): Unit = {
+    WiremockHelper.stubGet(getCalculationListUrl(nino, taxYear), Status.INTERNAL_SERVER_ERROR, "")
+  }
+
   def verifyGetCalculationList(nino: String, taxYear: String): Unit = {
     WiremockHelper.verifyGet(getCalculationListUrl(nino, taxYear))
   }

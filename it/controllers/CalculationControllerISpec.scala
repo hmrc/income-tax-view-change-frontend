@@ -226,8 +226,105 @@ class CalculationControllerISpec extends ComponentSpecBase with FeatureSwitching
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
-        And("A calculation call for 2017-18 fails")
+        And("A calculation call for 2017-18 responds with http status 404:NOT_FOUND")
         IndividualCalculationStub.stubGetCalculationListNotFound(testNino, "2017-18")
+
+        And("previous obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino,
+          LocalDate.of(2017, 4, 6),
+          LocalDate.of(2018, 4, 5),
+          ObligationsModel(Seq(
+            ReportDeadlinesModel(
+              "ABC123456789",
+              List(ReportDeadlineModel(
+                LocalDate.of(2017, 12, 28),
+                LocalDate.of(2018, 2, 3),
+                LocalDate.of(2018, 2,4),
+                "Quarterly",
+                Some(LocalDate.of(2018, 2, 2)),
+                "#001"
+              ))
+            )
+          ))
+        )
+
+        And("current obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino,
+          ObligationsModel(Seq(
+            ReportDeadlinesModel(
+              "ABC123456789",
+              List(ReportDeadlineModel(
+                LocalDate.of(2017, 11, 28),
+                LocalDate.of(2018, 1, 3),
+                LocalDate.of(2018, 1,4),
+                "Quarterly",
+                Some(LocalDate.of(2018, 1, 2)),
+                "#001"
+              ))
+            )
+          ))
+        )
+
+        When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
+        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IndividualCalculationStub.verifyGetCalculationList(testNino, "2017-18")
+
+        And("The expected result with right headers are returned")
+        res should have(
+          httpStatus(OK),
+          pageTitle(TaxYearOverviewMessages.title),
+          elementTextBySelector("h1")(TaxYearOverviewMessages.heading),
+          elementTextByID("no-calc-data-header")(TaxYearOverviewMessages.headingNoCalcData),
+          elementTextByID("no-calc-data-note")(TaxYearOverviewMessages.noCalcDataNote)
+        )
+      }
+
+      "retrieving a calculation failed with INTERNAL_SERVER_ERROR" in {
+        enable(TaxYearOverviewUpdate)
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+        And("A calculation call for 2017-18 fails")
+        IndividualCalculationStub.stubGetCalculationListInternalServerError(testNino, "2017-18")
+
+        And("previous obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino,
+          LocalDate.of(2017, 4, 6),
+          LocalDate.of(2018, 4, 5),
+          ObligationsModel(Seq(
+            ReportDeadlinesModel(
+              "ABC123456789",
+              List(ReportDeadlineModel(
+                LocalDate.of(2017, 12, 28),
+                LocalDate.of(2018, 2, 3),
+                LocalDate.of(2018, 2,4),
+                "Quarterly",
+                Some(LocalDate.of(2018, 2, 2)),
+                "#001"
+              ))
+            )
+          ))
+        )
+
+        And("current obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino,
+          ObligationsModel(Seq(
+            ReportDeadlinesModel(
+              "ABC123456789",
+              List(ReportDeadlineModel(
+                LocalDate.of(2017, 11, 28),
+                LocalDate.of(2018, 1, 3),
+                LocalDate.of(2018, 1,4),
+                "Quarterly",
+                Some(LocalDate.of(2018, 1, 2)),
+                "#001"
+              ))
+            )
+          ))
+        )
 
         When(s"I call GET ${controllers.routes.CalculationController.renderTaxYearOverviewPage(testYearInt).url}")
         val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)

@@ -19,9 +19,11 @@ package services
 import config.FrontendAppConfig
 import connectors.IndividualCalculationsConnector
 import enums.{Crystallised, Estimate}
+
 import javax.inject.{Inject, Singleton}
 import models.calculation._
 import play.api.Logger
+import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +40,9 @@ class CalculationService @Inject()(val individualCalculationsConnector: Individu
       case calc: Calculation =>
         Logger.debug("[CalculationService] Retrieved all Financial Data")
         CalcDisplayModel(calc.timestamp.getOrElse(""), calc.totalIncomeTaxAndNicsDue.getOrElse(0.0), calc, if (calc.crystallised) Crystallised else Estimate)
+      case errorModel: CalculationErrorModel if errorModel.code == Status.NOT_FOUND =>
+        Logger.debug("[CalculationService] No Financial Data found")
+        CalcDisplayNoDataFound
       case _: CalculationErrorModel =>
         Logger.error("[CalculationService] Could not retrieve Last Tax Calculation. Downstream error.")
         CalcDisplayError
