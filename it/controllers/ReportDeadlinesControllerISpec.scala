@@ -17,13 +17,12 @@ package controllers
 
 import assets.BaseIntegrationTestConstants._
 import assets.IncomeSourceIntegrationTestConstants._
-import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.PreviousObligationsIntegrationTestConstants._
+import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.{ReportDeadlinesMessages => obligationsMessages}
-import config.featureswitch.{FeatureSwitching, ObligationsPage, ReportDeadlines}
+import config.featureswitch.ObligationsPage
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import implicits.ImplicitDateFormatter
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status._
 
@@ -31,14 +30,12 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
 
   "Calling the ReportDeadlinesController" when {
 
-    "the ReportDeadlines Feature is enabled" when {
-
       unauthorisedTest("/obligations")
 
       "the obligations feature switch is enabled" when {
 
         "the user has a eops property income obligation only and no previous obligations" in {
-          enable(ReportDeadlines)
+          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -525,35 +522,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
           )
         }
       }
-    }
-
-    "the ReportDeadlines Feature is disabled" should {
-
-      "Redirect to the Income Tax View Change Home Page" in {
-
-
-        disable(ReportDeadlines)
-
-        And("I wiremock stub a successful Income Source Details response with 1 Business and Property income")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
-
-        And("I wiremock stub a single business obligation response")
-        IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(singleObligationOverdueModel(testSelfEmploymentId))))
-
-        When("I call GET /report-quarterly/income-and-expenses/view/obligations")
-        val res = IncomeTaxViewChangeFrontend.getReportDeadlines
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        verifyReportDeadlinesCall(testNino)
-
-        Then("the result should have a HTTP status of SEE_OTHER (303) and redirect to the Income Tax home page")
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.home().url)
-        )
-      }
-
-    }
 
   }
 }

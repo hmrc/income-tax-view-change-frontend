@@ -16,16 +16,13 @@
 
 package controllers
 
-import java.time.LocalDate
-
-import assets.MessagesLookUp.{NoReportDeadlines, Obligations => obligationsMessages}
 import assets.BaseTestConstants
+import assets.MessagesLookUp.{NoReportDeadlines, Obligations => obligationsMessages}
 import audit.AuditingService
-import config.featureswitch.{FeatureSwitching, NextUpdates, ObligationsPage, ReportDeadlines}
+import config.featureswitch.{FeatureSwitching, NextUpdates}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import javax.inject.Inject
+import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockReportDeadlinesService
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesModel, ReportDeadlinesResponseModel}
@@ -34,12 +31,11 @@ import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status
-import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import services.ReportDeadlinesService
-import uk.gov.hmrc.play.language.LanguageUtils
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
@@ -79,29 +75,10 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 
   "The ReportDeadlinesController.getReportDeadlines function" when {
 
-    "the Report Deadlines feature is disabled" should {
-
-      lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
-
-      "return Redirect (303)" in {
-        mockSingleBusinessIncomeSource()
-        disable(ReportDeadlines)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-
-      "redirect to the Income Tax Home Page" in {
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.home().url)
-      }
-    }
-
-    "the Report Deadlines feature is enabled" should {
+    "the Next Updates feature switch is disabled" should {
 
       lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
       lazy val document = Jsoup.parse(bodyOf(result))
-
-      "set Report Deadlines enabled" in {
-        enable(ReportDeadlines)
-      }
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
@@ -288,8 +265,7 @@ class ReportDeadlinesControllerSpec extends MockAuthenticationPredicate with Moc
 			lazy val result = TestReportDeadlinesController.getReportDeadlines()(fakeRequestWithActiveSession)
 			lazy val document = Jsoup.parse(bodyOf(result))
 
-			"set Report Deadlines enabled" in {
-				enable(ReportDeadlines)
+			"set Next Updates enabled" in {
 				enable(NextUpdates)
 			}
 
