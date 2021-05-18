@@ -37,7 +37,7 @@ trait MockTaxYearOverview extends BeforeAndAfterEach with MockitoSugar {
   }
 
   def mockTaxYearOverview(taxYear: Int,
-                          calcOverview: CalcOverview,
+                          calcOverview: Option[CalcOverview],
                           documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
                           obligations: ObligationsModel,
                           backUrl: String)

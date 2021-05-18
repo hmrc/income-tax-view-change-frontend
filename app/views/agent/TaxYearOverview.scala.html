@@ -25,7 +25,7 @@
 
 @this(mainTemplate: MainTemplate, backLink: BackLink)
 
-@(taxYear: Int, overview: CalcOverview, documentDetailsWithDueDates: List[DocumentDetailWithDueDate], obligations: ObligationsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
+@(taxYear: Int, overviewOpt: Option[CalcOverview], documentDetailsWithDueDates: List[DocumentDetailWithDueDate], obligations: ObligationsModel, implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 
@@ -33,7 +33,20 @@
     messages("tax-year-overview.heading")
 }
 
-@taxCalculationContent = {
+@taxCalculationContent = @{
+    overviewOpt.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview))
+}
+
+@taxCalculationNotPresent = {
+    <h2 class="heading-large" id="no-calc-data-header">
+        @messages("tax-year-overview.tax-calculation.no-calc")
+    </h2>
+    <p id="no-calc-data-note">
+        @messages("tax-year-overview.tax-calculation.no-calc.note")
+    </p>
+}
+
+@taxCalculationOverview(overview: CalcOverview) = {
     <h2 class="heading-large">
     @if(overview.crystallised){
         @messages("tax-year-overview.tax-calculation")
@@ -166,38 +179,39 @@
         <h1 class="heading-xlarge">@heading</h1>
         <p class="heading-secondary">@messages("tax-year-overview.heading-secondary", (taxYear - 1).toString, taxYear.toString)</p>
     </header>
-
-    <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-            <dd class="govuk-summary-list__value bold">
-                @messages("tax-year-overview.calculation-date")
-            </dd>
-            <dd class="govuk-summary-list__value">
-                @overview.timestamp.map { timestamp =>
-                    <p id="calculation-date">
-                        <span>@{timestamp.toZonedDateTime.toLocalDate.toLongDate}</span>
-                    </p>
-                }
-            </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dd class="govuk-summary-list__value bold">
-                @if(overview.crystallised){
-                    @messages("tax-year-overview.total-due")
-                } else {
+    @overviewOpt.map{overview =>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dd class="govuk-summary-list__value bold">
+                    @messages("tax-year-overview.calculation-date")
+                </dd>
+                <dd class="govuk-summary-list__value">
                     @overview.timestamp.map { timestamp =>
-                        @{messages("tax-year-overview.estimate", (taxYear - 1).toString, timestamp.toZonedDateTime.toLocalDate.toLongDate)}
+                        <p id="calculation-date">
+                            <span>@{timestamp.toZonedDateTime.toLocalDate.toLongDate}</span>
+                        </p>
                     }
-                }
-            </dd>
-            <dd class="govuk-summary-list__value">
-                @{overview.taxDue.toCurrencyString}
-            </dd>
-        </div>
-    </dl>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dd class="govuk-summary-list__value bold">
+                    @if(overview.crystallised){
+                        @messages("tax-year-overview.total-due")
+                    } else {
+                        @overview.timestamp.map { timestamp =>
+                            @{messages("tax-year-overview.estimate", (taxYear - 1).toString, timestamp.toZonedDateTime.toLocalDate.toLongDate)}
+                        }
+                    }
+                </dd>
+                <dd class="govuk-summary-list__value">
+                    @{overview.taxDue.toCurrencyString}
+                </dd>
+            </div>
+        </dl>
 
-    @if(!overview.crystallised){
-        <div class="panel panel-indent panel-border-wide">@messages("tax-year-overview.calc-from-last-time")</div>
+        @if(!overview.crystallised){
+            <div class="panel panel-indent panel-border-wide">@messages("tax-year-overview.calc-from-last-time")</div>
+        }
     }
 
     <div class="govuk-tabs govuk-tabs-upper-padding" data-module="govuk-tabs">

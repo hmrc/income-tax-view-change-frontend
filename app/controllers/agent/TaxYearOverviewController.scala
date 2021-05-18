@@ -22,7 +22,7 @@ import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.calculation.{CalcDisplayModel, CalcOverview, Calculation}
+import models.calculation.{CalcDisplayModel, CalcDisplayNoDataFound, CalcOverview, Calculation}
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.reportDeadlines.ObligationsModel
 import play.api.Logger
@@ -80,13 +80,13 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
   }
 
   private def view(taxYear: Int,
-                   calculation: Calculation,
+                   calculationOverview: Option[CalcOverview],
                    documentDetailsWithDueDates: List[DocumentDetailWithDueDate],
                    obligations: ObligationsModel
                   )(implicit request: Request[_], user: MtdItUser[_]): Html = {
     taxYearOverview(
       taxYear = taxYear,
-      overview = CalcOverview(calculation, None),
+      overviewOpt = calculationOverview,
       documentDetailsWithDueDates = documentDetailsWithDueDates,
       obligations = obligations,
       implicitDateFormatter = dateFormatter,
@@ -94,9 +94,10 @@ class TaxYearOverviewController @Inject()(taxYearOverview: TaxYearOverview,
     )
   }
 
-  private def withCalculation(nino: String, taxYear: Int)(f: Calculation => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+  private def withCalculation(nino: String, taxYear: Int)(f: Option[CalcOverview] => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     calculationService.getCalculationDetail(nino, taxYear) flatMap {
-      case CalcDisplayModel(_, _, calculation, _) => f(calculation)
+      case CalcDisplayModel(_, _, calculation, _) => f(Some(CalcOverview(calculation, None)))
+      case CalcDisplayNoDataFound => f(None)
       case _ =>
         Logger.error(s"[TaxYearOverviewController][withCalculation] - Could not retrieve calculation for year: $taxYear")
         Future.successful(itvcErrorHandler.showInternalServerError())

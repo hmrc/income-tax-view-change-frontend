@@ -284,6 +284,101 @@ class TaxYearOverviewControllerISpec extends ComponentSpecBase with FeatureSwitc
         )
 
       }
+      "Calculation List was not found" in {
+        enable(AgentViewer)
+        stubAuthorisedAgentUser(authorised = true)
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          status = OK,
+          response = incomeSourceDetailsSuccess
+        )
+
+        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+        IndividualCalculationStub.stubGetCalculationListNotFound(testNino, calculationTaxYear)
+
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+          nino = testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )(
+          status = OK,
+          response = Json.toJson(financialDetailsSuccess)
+        )
+
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+          nino = testNino,
+          deadlines = currentObligationsSuccess
+        )
+
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+          nino = testNino,
+          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+          toDate = getCurrentTaxYearEnd,
+          deadlines = previousObligationsSuccess
+        )
+
+        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitle(agentTitle),
+          elementTextByID("no-calc-data-header")("No calculation yet"),
+          elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
+        )
+
+      }
+      "Calculation data was not found" in {
+        enable(AgentViewer)
+        stubAuthorisedAgentUser(authorised = true)
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          status = OK,
+          response = incomeSourceDetailsSuccess
+        )
+
+        val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
+
+        IndividualCalculationStub.stubGetCalculationList(testNino, calculationTaxYear)(
+          status = OK,
+          body = ListCalculationItems(Seq(
+            CalculationItem("calculationId1", LocalDateTime.of(2020, 4, 6, 12, 0))
+          ))
+        )
+
+        IndividualCalculationStub.stubGetCalculationNotFound(testNino, "2017-18")
+
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+          nino = testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )(
+          status = OK,
+          response = Json.toJson(financialDetailsSuccess)
+        )
+
+        IncomeTaxViewChangeStub.stubGetReportDeadlines(
+          nino = testNino,
+          deadlines = currentObligationsSuccess
+        )
+
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+          nino = testNino,
+          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+          toDate = getCurrentTaxYearEnd,
+          deadlines = previousObligationsSuccess
+        )
+
+        val result = IncomeTaxViewChangeFrontend.getTaxYearOverview(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitle(agentTitle),
+          elementTextByID("no-calc-data-header")("No calculation yet"),
+          elementTextByID("no-calc-data-note")("You will be able to see your latest tax year calculation here once you have sent an update and viewed it in your software.")
+        )
+
+      }
       "financial details data was not found" in {
         enable(AgentViewer)
         stubAuthorisedAgentUser(authorised = true)

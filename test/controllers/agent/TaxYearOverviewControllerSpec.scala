@@ -25,7 +25,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockIncomeSourceDetailsService, MockReportDeadlinesService}
 import mocks.views.MockTaxYearOverview
-import models.calculation.{CalcDisplayError, CalcOverview}
+import models.calculation.{CalcDisplayError, CalcDisplayNoDataFound, CalcOverview}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -176,6 +176,31 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
           contentType(result) shouldBe Some(HTML)
         }
       }
+      "no calculation data was returned" should {
+        "show the tax year overview page" in new Setup {
+          enable(AgentViewer)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          mockBothIncomeSources()
+          setupMockGetCalculation("AA111111A", testYear)(CalcDisplayNoDataFound)
+          setupMockGetFinancialDetails(testYear, "AA111111A")(financialDetailsModel(testYear))
+          mockGetReportDeadlines(fromDate = LocalDate.of(testYear - 1, 4, 6), toDate = LocalDate.of(testYear, 4, 5))(
+            ObligationsModel(Nil)
+          )
+          mockTaxYearOverview(
+            taxYear = testYear,
+            calcOverview = None,
+            documentDetailsWithDueDates = financialDetailsModel(testYear).getAllDocumentDetailsWithDueDates,
+            obligations = ObligationsModel(Nil),
+            backUrl = controllers.agent.routes.TaxYearsController.show().url
+          )(HtmlFormat.empty)
+
+          val result: Future[Result] = controller.show(taxYear = testYear)(fakeRequestConfirmedClient())
+
+          status(result) shouldBe OK
+          contentType(result) shouldBe Some(HTML)
+        }
+      }
+
       "all calls to retrieve data were successful" should {
         "show the tax year overview page" in new Setup {
           enable(AgentViewer)
@@ -188,7 +213,7 @@ class TaxYearOverviewControllerSpec extends TestSupport with MockFrontendAuthori
           )
           mockTaxYearOverview(
             taxYear = testYear,
-            calcOverview = CalcOverview(calculationDataSuccessModel, None),
+            calcOverview = Some(CalcOverview(calculationDataSuccessModel, None)),
             documentDetailsWithDueDates = financialDetailsModel(testYear).getAllDocumentDetailsWithDueDates,
             obligations = ObligationsModel(Nil),
             backUrl = controllers.agent.routes.TaxYearsController.show().url
