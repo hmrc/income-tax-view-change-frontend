@@ -16,20 +16,19 @@
 
 package services.agent
 
-import mocks.connectors.{MockAgentClientRelationshipsConnector, MockCitizenDetailsConnector, MockIncomeTaxViewChangeConnector}
+import mocks.connectors.{MockCitizenDetailsConnector, MockIncomeTaxViewChangeConnector}
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
-import services.agent.ClientRelationshipService.{BusinessDetailsNotFound, CitizenDetailsNotFound, NoAgentClientRelationship, UnexpectedResponse}
+import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, UnexpectedResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 
 import scala.concurrent.Future
 
-class ClientRelationshipServiceSpec extends TestSupport with MockAgentClientRelationshipsConnector
+class ClientDetailsServiceSpec extends TestSupport
   with MockCitizenDetailsConnector with MockIncomeTaxViewChangeConnector {
 
-  object TestClientRelationshipService extends ClientRelationshipService(
-    mockAgentClientRelationshipsConnector,
+  object TestClientDetailsService$ extends ClientDetailsService(
     mockCitizenDetailsConnector,
     mockIncomeTaxViewChangeConnector
   )
@@ -38,20 +37,17 @@ class ClientRelationshipServiceSpec extends TestSupport with MockAgentClientRela
 		Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", id)), "Activated", Some("mtd-it-auth"))
 	}
 
-  ".checkAgentClientRelationship" should {
+  ".checkClientDetails" should {
     "return client details" when {
       "a successful citizen details response contains a nino" when {
-        "income source details are returned with an mtdbsa identifer" when {
-          "an agent client relationship exists" in {
+        "income source details are returned with an mtdbsa identifer" in {
 
-            setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
-            setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", None, List(), None)))
-            mockAgentClientRelationship("testArn", "mtdbsaId")(Future.successful(true))
+					setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
+					setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("mtdbsaId", None, List(), None)))
 
-            val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn", Set(createDelegatedEnrolment("mtdbsaId"))))
+					val result = await(TestClientDetailsService$.checkClientDetails("testSaUtr"))
 
-            result shouldBe Right(ClientRelationshipService.ClientDetails(Some("James"), Some("Bond"), "TESTNINO123", "mtdbsaId"))
-          }
+					result shouldBe Right(ClientDetailsService.ClientDetails(Some("James"), Some("Bond"), "TESTNINO123", "mtdbsaId"))
         }
       }
     }
@@ -63,7 +59,7 @@ class ClientRelationshipServiceSpec extends TestSupport with MockAgentClientRela
           setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
           setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsError(404, "not found")))
 
-          val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn", Set(createDelegatedEnrolment("mtdbsaId"))))
+          val result = await(TestClientDetailsService$.checkClientDetails("testSaUtr"))
 
           result shouldBe Left(BusinessDetailsNotFound)
         }
@@ -77,7 +73,7 @@ class ClientRelationshipServiceSpec extends TestSupport with MockAgentClientRela
           setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
           setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsError(500, "internal server error")))
 
-          val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn", Set(createDelegatedEnrolment("mtdbsaId"))))
+          val result = await(TestClientDetailsService$.checkClientDetails("testSaUtr"))
 
           result shouldBe Left(UnexpectedResponse)
         }
@@ -89,7 +85,7 @@ class ClientRelationshipServiceSpec extends TestSupport with MockAgentClientRela
 
         setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsErrorModel(404, "not found")))
 
-        val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn", Set(createDelegatedEnrolment("mtdbsaId"))))
+        val result = await(TestClientDetailsService$.checkClientDetails("testSaUtr"))
 
         result shouldBe Left(CitizenDetailsNotFound)
       }
@@ -101,7 +97,7 @@ class ClientRelationshipServiceSpec extends TestSupport with MockAgentClientRela
 
         setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsErrorModel(500, "internal server error")))
 
-        val result = await(TestClientRelationshipService.checkAgentClientRelationship("testSaUtr", "testArn", Set(createDelegatedEnrolment("mtdbsaId"))))
+        val result = await(TestClientDetailsService$.checkClientDetails("testSaUtr"))
 
         result shouldBe Left(UnexpectedResponse)
       }

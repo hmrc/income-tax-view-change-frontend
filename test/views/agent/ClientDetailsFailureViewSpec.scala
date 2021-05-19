@@ -23,7 +23,7 @@ import testUtils.ViewSpec
 import views.html.agent.ClientRelationshipFailure
 
 
-class ClientRelationshipFailureViewSpec extends ViewSpec {
+class ClientDetailsFailureViewSpec extends ViewSpec {
 
   lazy val postAction: Call = controllers.agent.routes.EnterClientsUTRController.show()
 

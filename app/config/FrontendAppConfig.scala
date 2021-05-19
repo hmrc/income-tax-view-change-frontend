@@ -104,8 +104,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val enterSurveyUrl: String = servicesConfig.getString("enter-survey.url")
 
-  lazy val agentClientRelationshipUrl: String = servicesConfig.baseUrl("agent-client-relationships")
-
   lazy val paymentHistoryLimit: Int = config.get[Int]("payment-history.number-of-years")
 
   //Payment Redirect route

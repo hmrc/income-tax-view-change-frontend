@@ -20,23 +20,23 @@ import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import services.agent.ClientRelationshipService
-import services.agent.ClientRelationshipService.{ClientDetails, ClientRelationshipFailure}
+import services.agent.ClientDetailsService
+import services.agent.ClientDetailsService.{ClientDetails, ClientDetailsFailure}
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockClientRelationshipService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockClientDetailsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  val mockClientRelationshipService: ClientRelationshipService = mock[ClientRelationshipService]
+  val mockClientDetailsService: ClientDetailsService = mock[ClientDetailsService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockClientRelationshipService)
+    reset(mockClientDetailsService)
   }
 
-  def mockCheckAgentClientRelationship(utr: String, arn: String)(response: Either[ClientRelationshipFailure, ClientDetails]): Unit = {
-    when(mockClientRelationshipService.checkAgentClientRelationship(matches(utr), matches(arn), any())(any()))
+  def mockClientDetails(utr: String)(response: Either[ClientDetailsFailure, ClientDetails]): Unit = {
+    when(mockClientDetailsService.checkClientDetails(matches(utr))(any()))
       .thenReturn(Future.successful(response))
   }
 

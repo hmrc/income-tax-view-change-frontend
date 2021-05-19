@@ -20,7 +20,7 @@ import helpers.agent.ComponentSpecBase
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 
-class ClientRelationshipFailureControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class ClientDetailsFailureControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

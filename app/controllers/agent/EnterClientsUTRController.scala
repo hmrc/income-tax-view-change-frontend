@@ -25,8 +25,8 @@ import forms.agent.ClientsUTRForm
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.agent.ClientRelationshipService
-import services.agent.ClientRelationshipService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails, NoAgentClientRelationship}
+import services.agent.ClientDetailsService
+import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.{InternalServerException, NotFoundException}
 import views.html.agent.EnterClientsUTR
@@ -35,8 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
-                                          clientRelationshipService: ClientRelationshipService,
-                                          val authorisedFunctions: AuthorisedFunctions)
+																					clientDetailsService: ClientDetailsService,
+																					val authorisedFunctions: AuthorisedFunctions)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: ItvcErrorHandler,
@@ -66,10 +66,8 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
             postAction = routes.EnterClientsUTRController.submit()
           ))),
           validUTR => {
-            clientRelationshipService.checkAgentClientRelationship(
-              utr = validUTR,
-              arn = user.agentReferenceNumber.getOrElse(throw new InternalServerException("[EnterClientsUTRController][submit] - arn not found")),
-							delegatedEnrolments = user.delegatedMtdEnrolments
+            clientDetailsService.checkClientDetails(
+              utr = validUTR
             ) map {
               case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
                 val sessionValues: Seq[(String, String)] = Seq(
