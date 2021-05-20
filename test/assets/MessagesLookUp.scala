@@ -142,7 +142,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Income"
 
-    def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
+    def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1} to $taxYear. " +
       s"You can see more details in your record-keeping software."
 
     val employments = "Pay from all employments"
@@ -176,7 +176,7 @@ object MessagesLookUp { // scalastyle:off number.of.methods
 
     def heading(taxYear: Int): String = s"${subHeading(taxYear)} Allowances and deductions"
 
-    def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1}-$taxYear. " +
+    def guidance(taxYear: Int): String = s"This is a summary of your income for the tax year ${taxYear - 1} to $taxYear. " +
       s"You can see more details in your record-keeping software."
 
     val personalAllowance = "Personal Allowance"
