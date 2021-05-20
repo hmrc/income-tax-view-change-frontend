@@ -120,11 +120,6 @@ tax-year-overview.tax-calculation.no-calc                           = Dim cyfrif
 tax-year-overview.tax-calculation.no-calc.note                      = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
 
 
-## Tax Year Overview Page new ##
-tax-year-overview.tax-calculation.no-calc                           = Dim cyfrifiad eto
-tax-year-overview.tax-calculation.no-calc.note                      = Byddwch yn gallu gweld eich cyfrifiad ar gyfer y flwyddyn dreth ddiweddaraf yma ar ôl i chi anfon diweddariad a bwrw golwg drosto yn eich meddalwedd.
-
-
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
 income_breakdown.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
@@ -359,8 +354,8 @@ paymentDue.due                                                  = ddyledus
 ## What you owe
 whatYouOwe.heading                                              = Yr hyn sydd arnoch
 whatYouOwe.no-payments-due                                      = Nid oes gennych taliadau sy’n ddyledus.
-whatYouOwe.sa-note                                              = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
-whatYouOwe.sa-link                                              = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd).
+whatYouOwe.sa-note                                              = Gall fod gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
+whatYouOwe.sa-link                                              = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
 whatYouOwe.outstanding-charges-note                             = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
 whatYouOwe.dropdown.info                                        = Beth yw’r mathau o daliadau?
 whatYouOwe.payment-days-note                                    = Gall gymryd hyd at 7 diwrnod i brosesu taliadau.
@@ -466,7 +461,7 @@ updateTab.obligationType.crystallised                           = Pob ffynhonnel
 ## Agent - Payment Due Page
 agent.paymentDue.heading                                                 = Yr hyn sydd arnoch
 agent.paymentDue.no-payments-due                                         = Nid oes gennych taliadau sy’n ddyledus.
-agent.paymentDue.sa-note                                                 = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
+agent.paymentDue.sa-note                                                 = Gall fod gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
 agent.paymentDue.sa-link                                                 = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
 agent.paymentDue.outstanding-charges-note                                = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
 agent.paymentDue.dropdown.info                                           = Beth yw’r mathau o daliadau?
