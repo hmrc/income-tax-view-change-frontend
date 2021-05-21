@@ -235,6 +235,10 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         CalcBreakdownTestConstants.calculationAllIncomeSources,
         Crystallised), taxYear, backUrl)
 
+      lazy val zeroIncome = taxCalcBreakdown(CalcDisplayModel("", 1,
+        CalcBreakdownTestConstants.testCalcModelZeroIncome,
+        Crystallised), taxYear, backUrl)
+
       "have the correct title" in new Setup(view) {
         document title() shouldBe TaxCalcBreakdown.title
       }
@@ -280,6 +284,12 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
           val row: Element = content.table(1).select("tr").get(2)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.pPP_ART
           row.select("td").last().text() shouldBe "£22,500.00"
+        }
+      }
+
+      "have no Pay, pensions and profit Income" which {
+        "has no Pay, pensions and profit heading" in new Setup(zeroIncome) {
+          document.select("h3").text().contains(TaxCalcBreakdown.sectionHeadingPPP) shouldBe false
         }
       }
 
@@ -330,6 +340,12 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
       }
 
+      "have no Savings and Gains Income" which {
+        "has no Savings and Gains heading" in new Setup(zeroIncome) {
+          document.select("h3").text().contains(TaxCalcBreakdown.sectionHeadingSavings) shouldBe false
+        }
+      }
+
       "have a Dividends table" which {
 
         "has all six table rows" in new Setup(view) {
@@ -377,6 +393,12 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
       }
 
+      "have no Dividend Income" which {
+        "has no dividend heading" in new Setup(zeroIncome) {
+          document.select("h3").text().contains(TaxCalcBreakdown.sectionHeadingDividends) shouldBe false
+        }
+      }
+
       "have a Employment lump sums table" which {
         "has all three table rows" in new Setup(view) {
           content hasTableWithCorrectSize(4, 3)
@@ -411,6 +433,12 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
         }
       }
 
+      "have no Lump Sum Income" which {
+        "has no Lump Sum heading" in new Setup(zeroIncome) {
+          document.select("h3").text().contains(TaxCalcBreakdown.sectionHeadingLumpSums) shouldBe false
+        }
+      }
+
       "have a Gains on life policies table" which {
 
         "has all three table rows" in new Setup(view) {
@@ -437,6 +465,12 @@ class TaxCalcBreakdownViewSpec extends ViewSpec {
           val row: Element = content.table(5).select("tr").get(2)
           row.select("td").first().text() shouldBe TaxCalcBreakdown.gols_ART
           row.select("td").last().text() shouldBe "£22,500.00"
+        }
+      }
+
+      "have no Gains on Life Policy Income" which {
+        "has no Gains on Life Policy heading" in new Setup(zeroIncome) {
+          document.select("h3").text().contains(TaxCalcBreakdown.sectionHeadingGainsOnLifePolicies) shouldBe false
         }
       }
 
