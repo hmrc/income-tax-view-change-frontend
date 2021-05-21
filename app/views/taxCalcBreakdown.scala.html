@@ -109,7 +109,7 @@
     </div>
     }
 
-    @if(calcModel.calcDataModel.payPensionsProfit.bands.nonEmpty) {
+    @if(calcModel.calcDataModel.payPensionsProfit.bands.filter(_.income > 0).nonEmpty) {
         <table>
             <caption>
                 <h3 class="heading-medium" style="margin-bottom: 0px;">@messages("taxCal_breakdown.pay_pensions_profit")</h3>
@@ -129,7 +129,7 @@
         </table>
     }
 
-    @if(calcModel.calcDataModel.savingsAndGains.bands.nonEmpty) {
+    @if(calcModel.calcDataModel.savingsAndGains.bands.filter(_.income > 0).nonEmpty) {
         <table>
             <caption>
                 <h3 class="heading-medium">@messages("taxCal_breakdown.savings")</h3>
@@ -145,7 +145,7 @@
         </table>
     }
 
-    @if(calcModel.calcDataModel.dividends.bands.nonEmpty) {
+    @if(calcModel.calcDataModel.dividends.bands.filter(_.income > 0).nonEmpty) {
         <table>
             <caption>
                 <h3 class="heading-medium">@messages("taxCal_breakdown.dividends")</h3>
@@ -161,7 +161,7 @@
         </table>
     }
 
-    @if(calcModel.calcDataModel.lumpSums.bands.nonEmpty) {
+    @if(calcModel.calcDataModel.lumpSums.bands.filter(_.income > 0).nonEmpty) {
         <table>
             <caption>
                 <h3 class="heading-medium" style="margin-bottom: 0px;">@messages("taxCal_breakdown.lumpSums")</h3>
@@ -181,7 +181,7 @@
         </table>
     }
 
-    @if(calcModel.calcDataModel.gainsOnLifePolicies.bands.nonEmpty) {
+    @if(calcModel.calcDataModel.gainsOnLifePolicies.bands.filter(_.income > 0).nonEmpty) {
         <table>
             <caption>
                 <h3 class="heading-medium">@messages("taxCal_breakdown.gains_life_policies")</h3>

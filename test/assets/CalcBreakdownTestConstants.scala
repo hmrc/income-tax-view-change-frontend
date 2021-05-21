@@ -1689,6 +1689,272 @@ object CalcBreakdownTestConstants {
       )
     )
 
+  val testCalcModelZeroIncome: Calculation =
+    Calculation(
+      totalIncomeTaxAndNicsDue = Some(543.21),
+      totalIncomeTaxNicsCharged = Some(123.45),
+      totalTaxableIncome = Some(0),
+      incomeTaxNicAmount = Some(987.65),
+      timestamp = Some(testTimeStampString),
+      crystallised = true,
+      nationalRegime = Some("UK"),
+      payPensionsProfit = PayPensionsProfit(
+        totalSelfEmploymentProfit = None,
+        totalPropertyProfit = None,
+        incomeTaxAmount = Some(66500),
+        taxableIncome = Some(170000),
+        bands = List(TaxBand(
+          name = "BRT",
+          rate = 20.0,
+          income = 0.00,
+          taxAmount = 4000.00,
+          bandLimit = 15000,
+          apportionedBandLimit = 15000),
+          TaxBand(
+            name = "HRT",
+            rate = 40.0,
+            income = 0.00,
+            taxAmount = 40000.00,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "ART",
+            rate = 45.0,
+            income = 0.00,
+            taxAmount = 22500.00,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000)
+        )
+      ),
+      lumpSums = LumpSums(
+        bands = List(TaxBand(
+          name = "BRT",
+          rate = 20.0,
+          income = 0.00,
+          taxAmount = 4000.00,
+          bandLimit = 15000,
+          apportionedBandLimit = 15000),
+          TaxBand(
+            name = "HRT",
+            rate = 40.0,
+            income = 0.00,
+            taxAmount = 40000.00,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "ART",
+            rate = 45.0,
+            income = 0.00,
+            taxAmount = 22500.00,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000)
+        )
+      ),
+      gainsOnLifePolicies = GainsOnLifePolicies(
+        bands = List(TaxBand(
+          name = "BRT",
+          rate = 20.0,
+          income = 0.00,
+          taxAmount = 4000.00,
+          bandLimit = 14000,
+          apportionedBandLimit = 14000),
+          TaxBand(
+            name = "HRT",
+            rate = 40.0,
+            income = 0.00,
+            taxAmount = 40000.00,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "ART",
+            rate = 45.0,
+            income = 0.00,
+            taxAmount = 22500.00,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000)
+        )
+      ),
+      savingsAndGains = SavingsAndGains(
+        Some(0),
+        Some(500),
+        Some(0),
+        Some(500),
+        List(
+          TaxBand(
+            name = "SSR",
+            rate = 0.0,
+            income = 0.00,
+            taxAmount = 0.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "BRT",
+            rate = 10.0,
+            income = 0.00,
+            taxAmount = 2.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "ZRTBR",
+            rate = 0.0,
+            income = 0.0,
+            taxAmount = 0.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "HRT",
+            rate = 40.0,
+            income = 0.0,
+            taxAmount = 800.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "ZRTHR",
+            rate = 0.0,
+            income = 0.0,
+            taxAmount = 0.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "ART",
+            rate = 50.0,
+            income = 0.0,
+            taxAmount = 5000.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000)
+        )
+      ),
+      reductionsAndCharges = ReductionsAndCharges(
+        giftAidTax = Some(5000),
+        totalPensionSavingsTaxCharges = Some(5000),
+        statePensionLumpSumCharges = Some(5000),
+        totalStudentLoansRepaymentAmount = Some(5000),
+        totalResidentialFinanceCostsRelief = Some(5000),
+        totalForeignTaxCreditRelief = Some(6000),
+        totalNotionalTax = Some(7000),
+        incomeTaxDueAfterTaxReductions = Some(2000),
+        reliefsClaimed = Some(Seq(ReliefsClaimed("deficiencyRelief", Some(1000)), ReliefsClaimed("vctSubscriptions", Some(2000)),
+          ReliefsClaimed("eisSubscriptions", Some(3000)), ReliefsClaimed("seedEnterpriseInvestment", Some(4000)),
+          ReliefsClaimed("communityInvestment", Some(5000)), ReliefsClaimed("socialEnterpriseInvestment", Some(6000)),
+          ReliefsClaimed("maintenancePayments", Some(7000)),
+          ReliefsClaimed("qualifyingDistributionRedemptionOfSharesAndSecurities", Some(8000)),
+          ReliefsClaimed("nonDeductibleLoanInterest", Some(9000))
+        ))
+      ),
+      dividends = Dividends(
+        incomeTaxAmount = Some(5000),
+        taxableIncome = Some(6000),
+        bands = List(
+          TaxBand(
+            name = "BRT",
+            rate = 7.5,
+            income = 0.0,
+            taxAmount = 75.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "ZRTBR",
+            rate = 0,
+            income = 0.0,
+            taxAmount = 0.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "HRT",
+            rate = 37.5,
+            income = 0.0,
+            taxAmount = 750.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "ZRTHR",
+            rate = 0,
+            income = 0.0,
+            taxAmount = 0.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "ART",
+            rate = 38.1,
+            income = 0.0,
+            taxAmount = 1143.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000),
+          TaxBand(
+            name = "ZRTAR",
+            rate = 0,
+            income = 0.0,
+            taxAmount = 0.0,
+            bandLimit = 15000,
+            apportionedBandLimit = 15000)
+        )
+      ),
+      allowancesAndDeductions = AllowancesAndDeductions(
+        personalAllowance = Some(11500)
+      ),
+      nic = Nic(
+        class2 = Some(10000.00),
+        class4 = Some(14000.00),
+        class4Bands = Some(Seq(
+          NicBand(
+            name = "ZRT",
+            rate = 1,
+            income = 2000,
+            amount = 100
+          ),
+          NicBand(
+            name = "BRT",
+            rate = 2,
+            income = 3000,
+            amount = 200
+          ),
+          NicBand(
+            name = "HRT",
+            rate = 3,
+            income = 5000,
+            amount = 300
+          ),
+          NicBand(
+            name = "giftAidTax",
+            rate = 4,
+            income = 6000,
+            amount = 400
+          ),
+          NicBand(
+            name = "totalPensionSavingsTaxCharges",
+            rate = 5,
+            income = 7000,
+            amount = 500
+          ),
+          NicBand(
+            name = "statePensionLumpSumCharges",
+            rate = 6,
+            income = 8000,
+            amount = 600
+          ),
+          NicBand(
+            name = "totalStudentLoansRepaymentAmount",
+            rate = 7,
+            income = 9000,
+            amount = 700
+          ),
+        )),
+        totalNic = Some(24000.00),
+        class2VoluntaryContributions = Some(true)
+      ),
+      taxDeductedAtSource = TaxDeductedAtSource(
+        Some(100.0),
+        Some(200.0),
+        Some(300.0),
+        Some(400.0),
+        Some(500.0),
+        Some(600.0),
+        Some(700.0),
+        Some(800.0),
+        Some(900.0),
+        Some(1000.0)
+      )
+    )
 
   val errorCalculationModel: CalculationErrorModel =
     CalculationErrorModel(
