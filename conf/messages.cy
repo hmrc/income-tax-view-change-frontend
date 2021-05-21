@@ -514,4 +514,4 @@ language-switcher.english.hidden                                = Change the lan
 language-switcher.english                                       = English
 language-switcher.welsh                                         = Cymraeg
 language-switcher.welsh.hidden                                  = Newid yr iaith ir Gymraeg
-language-switcher.nav                                           = Newid yr iaith
+language-switcher.nav                                           = Switcher iaith
