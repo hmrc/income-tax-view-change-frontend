@@ -63,9 +63,9 @@ class TaxYearOverviewViewSpec extends ViewSpec with FeatureSwitching {
   )
 
   val testCharges: List[DocumentDetailWithDueDate] = List(
-    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00), documentDescription = Some("ITSA- POA 1")), Some(LocalDate.now)),
-    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00), documentDescription = Some("ITSA - POA 2")), Some(LocalDate.of(2020, 4, 7))),
-    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId3", outstandingAmount = Some(100.00), originalAmount = Some(100.00), documentDescription = Some("ITSA- Bal Charge")), Some(LocalDate.of(2020, 4, 8)))
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId", outstandingAmount = Some(0.00), originalAmount = Some(100.00), documentDescription = Some("ITSA- POA 1"), documentDate = "2018-03-29"), Some(LocalDate.now)),
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId2", outstandingAmount = Some(100.00), originalAmount = Some(200.00), documentDescription = Some("ITSA - POA 2"), documentDate = "2018-03-29"), Some(LocalDate.of(2020, 4, 7))),
+    DocumentDetailWithDueDate(DocumentDetail(taxYear = "2020", transactionId = "testId3", outstandingAmount = Some(100.00), originalAmount = Some(100.00), documentDescription = Some("ITSA- Bal Charge"), documentDate = "2018-03-29"), Some(LocalDate.of(2020, 4, 8)))
   )
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
