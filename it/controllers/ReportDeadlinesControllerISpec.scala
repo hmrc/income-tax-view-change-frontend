@@ -20,7 +20,6 @@ import assets.IncomeSourceIntegrationTestConstants._
 import assets.PreviousObligationsIntegrationTestConstants._
 import assets.ReportDeadlinesIntegrationTestConstants._
 import assets.messages.{ReportDeadlinesMessages => obligationsMessages}
-import config.featureswitch.ObligationsPage
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.reportDeadlines.ObligationsModel
@@ -35,7 +34,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
       "the obligations feature switch is enabled" when {
 
         "the user has a eops property income obligation only and no previous obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -71,7 +69,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has a eops property income obligation and previous obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -112,7 +109,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has no obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
@@ -137,7 +133,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has a quarterly property income obligation only and no previous obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -171,7 +166,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has a quarterly property income obligation and previous obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -212,7 +206,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has a quarterly business income obligation only and no previous obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
@@ -248,7 +241,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has a quarterly business income obligation and previous obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
@@ -289,7 +281,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has multiple quarterly business income obligations only and no previous obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
@@ -325,7 +316,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has multiple quarterly business income obligations and previous obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
@@ -365,7 +355,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has a eops SE income obligation only and no previous obligations" in {
-          enable(ObligationsPage)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(SEIncomeSourceEOPSModel(testSelfEmploymentId))))
           IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
@@ -400,7 +389,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has a eops SE income obligation and previous obligations" in {
-          enable(ObligationsPage)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(SEIncomeSourceEOPSModel(testSelfEmploymentId))))
           IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino, previousObligationsModel)
@@ -440,7 +428,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has a Crystallised obligation only and no previous obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
@@ -479,7 +466,6 @@ class ReportDeadlinesControllerISpec extends ComponentSpecBase {
         }
 
         "the user has a Crystallised obligation and previous obligations" in {
-          enable(ObligationsPage)
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
           IncomeTaxViewChangeStub.stubGetReportDeadlines(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
