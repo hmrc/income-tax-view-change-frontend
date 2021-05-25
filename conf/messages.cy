@@ -354,7 +354,7 @@ paymentDue.due                                                  = ddyledus
 ## What you owe
 whatYouOwe.heading                                              = Yr hyn sydd arnoch
 whatYouOwe.no-payments-due                                      = Nid oes gennych taliadau sy’n ddyledus.
-whatYouOwe.sa-note                                              = Gall fod gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
+whatYouOwe.sa-note                                              = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
 whatYouOwe.sa-link                                              = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
 whatYouOwe.outstanding-charges-note                             = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
 whatYouOwe.dropdown.info                                        = Beth yw’r mathau o daliadau?
@@ -461,7 +461,7 @@ updateTab.obligationType.crystallised                           = Pob ffynhonnel
 ## Agent - Payment Due Page
 agent.paymentDue.heading                                                 = Yr hyn sydd arnoch
 agent.paymentDue.no-payments-due                                         = Nid oes gennych taliadau sy’n ddyledus.
-agent.paymentDue.sa-note                                                 = Gall fod gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
+agent.paymentDue.sa-note                                                 = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
 agent.paymentDue.sa-link                                                 = cyfrif Hunanasesiad ar-lein blaenorol (yn agor tab newydd)
 agent.paymentDue.outstanding-charges-note                                = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
 agent.paymentDue.dropdown.info                                           = Beth yw’r mathau o daliadau?
