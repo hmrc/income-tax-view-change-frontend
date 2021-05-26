@@ -22,7 +22,7 @@
 @()(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 
-<nav class="hmrc-language-select float--right" aria-label="Language switcher">
+<nav class="hmrc-language-select float--right" aria-label= "@messages("language-switcher.nav")">
 <ul class="hmrc-language-select__list">
         @if(messages.lang.code === "en") {
     <li>
