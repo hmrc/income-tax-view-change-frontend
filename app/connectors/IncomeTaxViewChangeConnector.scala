@@ -27,6 +27,7 @@ import models.core.{Nino, NinoResponse, NinoResponseError}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.outstandingCharges._
+import models.chargeHistory._
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel, ReportDeadlinesResponseModel}
 import play.api.Logger
@@ -83,6 +84,10 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
 
   def getOutstandingChargesUrl(idType: String, idNumber: Long, taxYear: String): String = {
     s"${config.itvcProtectedService}/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
+  }
+
+  def getChargeHistoryUrl(mtdBsa: String, docNumber: String): String = {
+    s"${config.itvcProtectedService}/income-tax-view-change/charge-history/$mtdBsa/docId/$docNumber"
   }
 
   def getPaymentsUrl(nino: String, from: String, to: String): String = {
@@ -420,6 +425,38 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads {
       case ex =>
         Logger.error(s"[IncomeTaxViewChangeConnector][getOutstandingCharges] - Unexpected failure, ${ex.getMessage}", ex)
         OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+    }
+
+  }
+
+  def getChargeHistory(mtdBsa: String, docNumber: String)
+                           (implicit headerCarrier: HeaderCarrier): Future[ChargeHistoryResponseModel] = {
+    val url = getChargeHistoryUrl(mtdBsa, docNumber)
+    Logger.debug(s"[IncomeTaxViewChangeConnector][getChargeHistory] - GET $url")
+
+    http.GET[HttpResponse](url) map { response =>
+      response.status match {
+        case OK =>
+          Logger.debug(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Status: ${response.status}, json: ${response.json}")
+          response.json.validate[ChargesHistoryModel].fold(
+            invalid => {
+              Logger.error(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Json Validation Error: $invalid")
+              ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing ChargeHistory Data Response")
+            },
+            valid => valid
+          )
+        case status =>
+          if (status >= 500) {
+            Logger.error(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger.warn(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Status: ${response.status}, body: ${response.body}")
+          }
+          ChargesHistoryErrorModel(response.status, response.body)
+      }
+    } recover {
+      case ex =>
+        Logger.error(s"[IncomeTaxViewChangeConnector][getChargeHistory] - Unexpected failure, ${ex.getMessage}", ex)
+        ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }
 
   }

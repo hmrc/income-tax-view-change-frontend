@@ -35,6 +35,8 @@ object BaseTestConstants {
   val taxYear2020: String = "2020"
   val idNumber: Int = 1234567890
   val idType: String = "utr"
+  val ninoIdType: String = "NINO"
+  val docNumber: String = "XM0026100122"
   val testArn = "XAIT0000123456"
   val testCredId = "credId"
   val testUserType = "individual"

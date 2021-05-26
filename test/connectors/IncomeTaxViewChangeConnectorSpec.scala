@@ -20,6 +20,7 @@ import assets.BaseTestConstants._
 import assets.FinancialDetailsTestConstants._
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.NinoLookupTestConstants.{testNinoModelJson, _}
+import assets.ChargeHistoryTestConstants._
 import assets.OutstandingChargesTestConstants.{testInvalidOutstandingChargesJson, testOutstandingChargesErrorModelParsing, testValidOutStandingChargeModelJson, testValidOutstandingChargesModel}
 import assets.PaymentAllocationsTestConstants._
 import assets.ReportDeadlinesTestConstants._
@@ -29,6 +30,7 @@ import audit.models._
 import config.FrontendAppConfig
 import controllers.Assets.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import mocks.MockHttp
+import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
 import models.core.{NinoResponse, NinoResponseError}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
@@ -70,6 +72,13 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       getOutstandingChargesUrl(testSaUtr,testSaUtrId,testTo) shouldBe s"$baseUrl/income-tax-view-change/out-standing-charges/$testSaUtr/$testSaUtrId/$testTo"
     }
   }
+
+  "getChargeHistoryUrl" should {
+    "return the correct url" in new Setup {
+      getChargeHistoryUrl(testMtditid,docNumber) shouldBe s"$baseUrl/income-tax-view-change/charge-history/$testMtditid/docId/$docNumber"
+    }
+  }
+
   "getIncomeSourcesUrl" should {
     "return the correct url" in new Setup {
       getIncomeSourcesUrl(testMtditid) shouldBe s"$baseUrl/income-tax-view-change/income-sources/$testMtditid"
@@ -427,6 +436,46 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
       val result: Future[OutstandingChargesResponseModel] = getOutstandingCharges(idType, idNumber, taxYear2020)
       await(result) shouldBe testOutstandingChargesErrorModelParsing
+    }
+
+  }
+
+  "getChargeHistory" should {
+
+    val successResponse = HttpResponse(Status.OK, Some(testValidChargeHistoryDetailsModelJson))
+    val successResponseBadJson = HttpResponse(Status.OK, Some(testInvalidChargeHistoryDetailsModelJson))
+    val badResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Error Message"))
+
+    val getChargeHistoryUrlTestUrl =
+      s"http://localhost:9999/income-tax-view-change/charge-history/$testMtditid/docId/$docNumber"
+
+    "return a ChargeHistory model when successful JSON is received" in new Setup {
+      setupMockHttpGet(getChargeHistoryUrlTestUrl)(successResponse)
+
+      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid,docNumber)
+      await(result) shouldBe testValidChargeHistoryModel
+
+    }
+
+    "return a ChargeHistory model in case of future failed scenario" in new Setup {
+      setupMockFailedHttpGet(getChargeHistoryUrlTestUrl)(badResponse)
+      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid,docNumber)
+      await(result) shouldBe ChargesHistoryErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, unknown error")
+    }
+
+
+    "return ChargeHistoryErrorResponse model in case of failure" in new Setup {
+      setupMockHttpGet(getChargeHistoryUrlTestUrl)(badResponse)
+
+      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid,docNumber)
+      await(result) shouldBe ChargesHistoryErrorModel(Status.BAD_REQUEST, "Error Message")
+    }
+
+    "return ChargeHistoryErrorResponse model in case of bad/malformed JSON response" in new Setup {
+      setupMockHttpGet(getChargeHistoryUrlTestUrl)(successResponseBadJson)
+
+      val result: Future[ChargeHistoryResponseModel] = getChargeHistory(testMtditid,docNumber)
+      await(result) shouldBe testChargeHistoryErrorModelParsing
     }
 
   }
