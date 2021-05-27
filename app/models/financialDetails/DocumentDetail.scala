@@ -16,50 +16,51 @@
 
 package models.financialDetails
 
+import java.time.LocalDate
+
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
-
 case class DocumentDetail(taxYear: String,
-                          transactionId: String,
-                          documentDescription: Option[String],
-                          outstandingAmount: Option[BigDecimal],
-                          originalAmount: Option[BigDecimal]) {
+													transactionId: String,
+													documentDescription: Option[String],
+													outstandingAmount: Option[BigDecimal],
+													originalAmount: Option[BigDecimal],
+													documentDate: String) {
 
-  val isPaid: Boolean = outstandingAmount match {
-    case Some(amount) if amount == 0 => true
-    case _ => false
-  }
+	val isPaid: Boolean = outstandingAmount match {
+		case Some(amount) if amount == 0 => true
+		case _ => false
+	}
 
-  val isPartPaid: Boolean = outstandingAmount.getOrElse[BigDecimal](0) != originalAmount.getOrElse[BigDecimal](0)
+	val isPartPaid: Boolean = outstandingAmount.getOrElse[BigDecimal](0) != originalAmount.getOrElse[BigDecimal](0)
 
-  def remainingToPay: BigDecimal = {
-    if (isPaid) BigDecimal(0)
-    else outstandingAmount.getOrElse(originalAmount.get)
-  }
+	def remainingToPay: BigDecimal = {
+		if (isPaid) BigDecimal(0)
+		else outstandingAmount.getOrElse(originalAmount.get)
+	}
 
-  def getChargePaidStatus: String = {
-    if (isPaid) "paid"
-    else if (isPartPaid) "part-paid"
-    else "unpaid"
-  }
+	def getChargePaidStatus: String = {
+		if (isPaid) "paid"
+		else if (isPartPaid) "part-paid"
+		else "unpaid"
+	}
 
-  def getChargeTypeKey: String = documentDescription match {
-    case Some("ITSA- POA 1") => "paymentOnAccount1.text" //todo: fix the actual document descriptions
-    case Some("ITSA - POA 2") => "paymentOnAccount2.text"
-    case Some("ITSA- Bal Charge") => "balancingCharge.text"
-    case error =>
-      Logger.error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
-      "unknownCharge"
-  }
+	def getChargeTypeKey: String = documentDescription match {
+		case Some("ITSA- POA 1") => "paymentOnAccount1.text" //todo: fix the actual document descriptions
+		case Some("ITSA - POA 2") => "paymentOnAccount2.text"
+		case Some("ITSA- Bal Charge") => "balancingCharge.text"
+		case error =>
+			Logger.error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
+			"unknownCharge"
+	}
 
 }
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate]) {
-  val isOverdue: Boolean = dueDate.exists(_ isBefore LocalDate.now)
+	val isOverdue: Boolean = dueDate.exists(_ isBefore LocalDate.now)
 }
 
 object DocumentDetail {
-  implicit val format: Format[DocumentDetail] = Json.format[DocumentDetail]
+	implicit val format: Format[DocumentDetail] = Json.format[DocumentDetail]
 }
