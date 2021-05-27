@@ -20,6 +20,7 @@ import config.featureswitch.{AgentViewer, FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
+import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
 import forms.agent.ClientsUTRForm
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -42,7 +43,12 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 
-  def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth { implicit request =>
+  lazy val notAnAgentPredicate = {
+    val redirectNotAnAgent = Future.successful(Redirect(controllers.errors.routes.AgentErrorController.show()))
+    defaultAgentPredicates(onMissingARN = redirectNotAnAgent)
+  }
+
+  def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) { implicit request =>
     implicit user =>
       if (!isEnabled(AgentViewer)) {
         Future.failed(new NotFoundException("[EnterClientsUTRController][show] - Agent viewer is disabled"))
@@ -54,7 +60,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       }
   }
 
-  def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth { implicit request =>
+  def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
     implicit user =>
       if (!isEnabled(AgentViewer)) {
         Future.failed(new NotFoundException("[EnterClientsUTRController][submit] - Agent viewer is disabled"))

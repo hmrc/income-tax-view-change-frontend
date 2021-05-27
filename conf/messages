@@ -74,6 +74,11 @@ agent.paymentDue.future-payments                                         = Futur
 agent.paymentDue.due-in-thirty-days-payments                             = Due within 30 days
 agent.paymentDue.payment-type.taxYear                                    = Tax year {0} to {1}
 
+## Agent Error Page ##
+agent-error.heading                                            = You can''t use this service yet
+agent-error.note                                               = To use this service, you need to
+agent-error.link                                               = set up an agent services account
+
 ## BTA Links ##
 bta.home                                                        = Business tax home
 bta.messages                                                    = Messages

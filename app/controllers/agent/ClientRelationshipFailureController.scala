@@ -38,7 +38,7 @@ class ClientRelationshipFailureController @Inject()(clientRelationshipFailure: C
                                                     val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 
-  def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth { implicit request =>
+  def show: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
     implicit user =>
       if (!isEnabled(AgentViewer)) {
         Future.failed(new NotFoundException("[ClientRelationshipFailureController][show] - Agent viewer is disabled"))

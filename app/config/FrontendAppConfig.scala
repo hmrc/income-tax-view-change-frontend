@@ -93,6 +93,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"
   lazy val selfAssessmentUrl: String = s"$businessTaxAccount/self-assessment"
 
+  //Agent Services Account
+  lazy val setUpAgentServicesAccountUrl: String = servicesConfig.getString("set-up-agent-services-account.url")
+
   //Subscription Service
   lazy val signUpUrl: String = servicesConfig.getString("mtd-subscription-service.url")
 

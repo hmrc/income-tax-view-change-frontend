@@ -23,6 +23,11 @@ agent.utr_error.reason.bullet2                                  = nid ydych chi 
 agent.utr_error.reason.bullet2_link                             = Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd)
 agent.utr_error.go_back                                         = Ewch yn ôl a nodwch UTR gwahanol
 
+## Agent Error Page ##
+agent-error.heading                                            = Ni allwch ddefnyddio’r gwasanaeth hwn ar hyn o bryd
+agent-error.note                                               = I ddefnyddio’r gwasanaeth hwn, mae’n rhaid i chi sefydlu
+agent-error.link                                               = cyfrif gwasanaethau asiant
+
 ## BTA Links ##
 bta.home                                                        = Treth Busnes – Hafan
 bta.messages                                                    = Negeseuon
