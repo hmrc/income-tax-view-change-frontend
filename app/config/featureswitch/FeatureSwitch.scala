@@ -28,7 +28,6 @@ object FeatureSwitch {
 
   val switches: Set[FeatureSwitch] = Set(
     Payment,
-    ObligationsPage,
     IncomeBreakdown,
     DeductionBreakdown,
     TaxDue,
@@ -55,11 +54,6 @@ object FeatureSwitch {
 case object Payment extends FeatureSwitch {
   override val name = s"$prefix.enable-payment"
   override val displayText = "Enable Payment functionality"
-}
-
-case object ObligationsPage extends FeatureSwitch {
-  override val name = s"$prefix.enable-obligations-page"
-  override val displayText = "Enable Obligations Page"
 }
 
 case object IncomeBreakdown extends FeatureSwitch {
