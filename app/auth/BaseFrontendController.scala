@@ -34,60 +34,60 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class BaseFrontendController(implicit val mcc: MessagesControllerComponents, itvcErrorHandler: ItvcErrorHandler)
-	extends FrontendController(mcc) with I18nSupport {
-	type ActionBody[User <: IncomeTaxUser] = Request[AnyContent] => User => Future[Result]
+  extends FrontendController(mcc) with I18nSupport {
+  type ActionBody[User <: IncomeTaxUser] = Request[AnyContent] => User => Future[Result]
 
-	implicit val ec: ExecutionContext
-	type AuthenticatedAction[User <: IncomeTaxUser] = ActionBody[User] => Action[AnyContent]
-	val authorisedFunctions: AuthorisedFunctions
+  implicit val ec: ExecutionContext
+  type AuthenticatedAction[User <: IncomeTaxUser] = ActionBody[User] => Action[AnyContent]
+  val authorisedFunctions: AuthorisedFunctions
 
-	private def handleExceptions(request: Request[_]): PartialFunction[Throwable, Result] = {
-		case _: BearerTokenExpired =>
-			Logger.info("[BaseFrontendController][handleExceptions] - User's bearer token expired, redirecting to timeout page")
-			Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
-		case ex: MissingAgentReferenceNumber =>
-			Logger.warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
-			itvcErrorHandler.showOkTechnicalDifficulties()(request)
-		case ex: InsufficientEnrolments =>
-			Logger.warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
-			Redirect(controllers.agent.routes.ClientRelationshipFailureController.show())
-		case ex: AuthorisationException =>
-			Logger.warn(s"[BaseFrontendController][handleExceptions] - AuthorisationException occurred - ${ex.reason}")
-			Redirect(controllers.routes.SignInController.signIn())
-		case _: NotFoundException =>
-			NotFound(itvcErrorHandler.notFoundTemplate(request))
-		case ex => throw ex
-	}
+  private def handleExceptions(request: Request[_]): PartialFunction[Throwable, Result] = {
+    case _: BearerTokenExpired =>
+      Logger.info("[BaseFrontendController][handleExceptions] - User's bearer token expired, redirecting to timeout page")
+      Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
+    case ex: MissingAgentReferenceNumber =>
+      Logger.warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
+      itvcErrorHandler.showOkTechnicalDifficulties()(request)
+    case ex: InsufficientEnrolments =>
+      Logger.warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
+      Redirect(controllers.agent.routes.ClientRelationshipFailureController.show())
+    case ex: AuthorisationException =>
+      Logger.warn(s"[BaseFrontendController][handleExceptions] - AuthorisationException occurred - ${ex.reason}")
+      Redirect(controllers.routes.SignInController.signIn())
+    case _: NotFoundException =>
+      NotFound(itvcErrorHandler.notFoundTemplate(request))
+    case ex => throw ex
+  }
 
-	protected trait AuthenticatedActions[User <: IncomeTaxUser] {
+  protected trait AuthenticatedActions[User <: IncomeTaxUser] {
 
-		def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel) => User
+    def userApply: (Enrolments, Option[AffinityGroup], ConfidenceLevel) => User
 
-		def apply(action: Request[AnyContent] => User => Result): Action[AnyContent] = async(action andThen (_ andThen Future.successful))
+    def apply(action: Request[AnyContent] => User => Result): Action[AnyContent] = async(action andThen (_ andThen Future.successful))
 
-		def async: AuthenticatedAction[User]
+    def async: AuthenticatedAction[User]
 
-		protected def asyncInternal(predicate: AuthPredicate[User], requireClientSelected: Boolean)(action: ActionBody[User]): Action[AnyContent] =
-			Action.async { implicit request =>
-				val clientMtd: Option[String] = if (requireClientSelected) request.session.get(SessionKeys.clientMTDID) else None
-				val authPredicate: Predicate = clientMtd match {
-					case Some(mtdId) => Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId).withDelegatedAuthRule("mtd-it-auth")
-					case _ => EmptyPredicate
-				}
+    protected def asyncInternal(predicate: AuthPredicate[User], requireClientSelected: Boolean)(action: ActionBody[User]): Action[AnyContent] =
+      Action.async { implicit request =>
+        val clientMtd: Option[String] = if (requireClientSelected) request.session.get(SessionKeys.clientMTDID) else None
+        val authPredicate: Predicate = clientMtd match {
+          case Some(mtdId) => Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId).withDelegatedAuthRule("mtd-it-auth")
+          case _ => EmptyPredicate
+        }
 
-				authorisedFunctions.authorised(authPredicate).retrieve(allEnrolments and affinityGroup and confidenceLevel) {
-					case enrolments ~ affinity ~ confidence =>
-						implicit val user: User = userApply(enrolments, affinity, confidence)
-						predicate.apply(request)(user) match {
-							case Right(AuthPredicateSuccess) if requireClientSelected && clientMtd.isEmpty =>
-								Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show()))
-							case Right(AuthPredicateSuccess) =>
-								action(request)(user)
-							case Left(failureResult) => failureResult
-						}
-				}.recover(handleExceptions(request))
-			}
+        authorisedFunctions.authorised(authPredicate).retrieve(allEnrolments and affinityGroup and confidenceLevel) {
+          case enrolments ~ affinity ~ confidence =>
+            implicit val user: User = userApply(enrolments, affinity, confidence)
+            predicate.apply(request)(user) match {
+              case Right(AuthPredicateSuccess) if requireClientSelected && clientMtd.isEmpty =>
+                Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show()))
+              case Right(AuthPredicateSuccess) =>
+                action(request)(user)
+              case Left(failureResult) => failureResult
+            }
+        }.recover(handleExceptions(request))
+      }
 
-	}
+  }
 
 }

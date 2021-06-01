@@ -26,9 +26,9 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 import services.PaymentHistoryService
 import services.PaymentHistoryService.PaymentHistoryError
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 
 import scala.concurrent.Future
 
@@ -54,6 +54,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
+      mockAuditingService,
       app.injector.instanceOf[ItvcErrorHandler],
       paymentHistoryService,
       app.injector.instanceOf[ImplicitDateFormatterImpl]

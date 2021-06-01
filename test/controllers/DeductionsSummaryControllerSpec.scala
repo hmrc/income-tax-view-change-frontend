@@ -16,18 +16,21 @@
 
 package controllers
 
-import assets.BaseTestConstants.{testCredId, testMtdUserNino, testMtditid, testNino}
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
+import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants.testYear
 import assets.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import audit.mocks.MockAuditingService
 import audit.models.{AllowanceAndDeductionsRequestAuditModel, AllowanceAndDeductionsResponseAuditModel}
-import config.featureswitch.{DeductionBreakdown, FeatureSwitching}
+import auth.MtdItUser
+import config.featureswitch.{DeductionBreakdown, FeatureSwitching, TxmEventsApproved}
 import config.{ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialTransactionsService}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{charset, contentType, _}
 import testUtils.TestSupport
 
@@ -55,20 +58,22 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
   "showDeductionsSummary" when {
     "feature switch DeductionsBreakdown is enabled" when {
       enable(DeductionBreakdown)
-
-      "given a tax year which can be found in ETMP" should {
-
+      "given a tax year which can be found in ETMP with TxmApproved FS enabled" should {
         lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
         lazy val document = result.toHtmlDocument
 
-        "return Status OK (200) with audit events" in {
+        "return Status OK (200) with TxmApproved FS enabled" in {
+          enable(TxmEventsApproved)
           mockCalculationSuccess()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.OK
 
-          verifyExtendedAudit(AllowanceAndDeductionsRequestAuditModel(testMtditid, testNino, None, Some(testCredId), Some("Individual")))
-          verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(testMtditid, testNino, None, Some(testCredId),
-            Some("Individual"), Some(BigDecimal("11500")), Some(BigDecimal("11501"))))
+          val expectedMtdItUser = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+            businessIncome2018and2019, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
+
+          verifyExtendedAudit(AllowanceAndDeductionsRequestAuditModel(expectedMtdItUser))
+          verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
+            calculationDataSuccessModel.allowancesAndDeductions, true))
         }
 
         "return HTML" in {
@@ -80,6 +85,24 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
           document.title() shouldBe "Allowances and deductions - Business Tax account - GOV.UK"
         }
       }
+      "given a tax year which can be found in ETMP with TxmApproved FS disabled" should {
+        lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
+        lazy val document = result.toHtmlDocument
+
+        "return Status OK (200) with TxmApproved FS false" in {
+          disable(TxmEventsApproved)
+          mockCalculationSuccess()
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+          status(result) shouldBe Status.OK
+
+          val expectedMtdItUser = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+            businessIncome2018and2019, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
+
+          verifyExtendedAudit(AllowanceAndDeductionsRequestAuditModel(expectedMtdItUser))
+          verifyExtendedAudit(AllowanceAndDeductionsResponseAuditModel(expectedMtdItUser,
+            calculationDataSuccessModel.allowancesAndDeductions, false))
+        }
+      }
       "given a tax year which can not be found in ETMP" should {
 
         lazy val result = TestDeductionsSummaryController.showDeductionsSummary(testYear)(fakeRequestWithActiveSession)
@@ -87,7 +110,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
         "return Status Internal Server Error (500)" in {
           mockCalculationNotFound()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
@@ -100,7 +123,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
         "return Status Internal Server Error (500)" in {
           mockCalculationError()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
@@ -117,7 +140,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         "return Status NotFound (404)" in {
           disable(DeductionBreakdown)
           mockCalculationNotFound()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
           status(result) shouldBe Status.NOT_FOUND
         }
       }

@@ -16,9 +16,8 @@
 
 package controllers.agent
 
-import java.time.LocalDate
-
 import assets.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import config.featureswitch._
 import controllers.Assets.{NOT_FOUND, OK, SEE_OTHER}
@@ -34,6 +33,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class HomeControllerSpec extends TestSupport
@@ -42,6 +42,7 @@ class HomeControllerSpec extends TestSupport
   with MockItvcErrorHandler
   with MockReportDeadlinesService
   with MockFinancialDetailsService
+  with MockAuditingService
   with MockHome
   with FeatureSwitching {
 
@@ -56,6 +57,7 @@ class HomeControllerSpec extends TestSupport
       mockReportDeadlinesService,
       mockFinancialDetailsService,
       mockIncomeSourceDetailsService,
+      mockAuditingService,
       mockAuthService
     )(app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[FrontendAppConfig],

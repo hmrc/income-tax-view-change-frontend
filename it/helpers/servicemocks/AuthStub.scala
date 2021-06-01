@@ -110,16 +110,16 @@ object AuthStub extends ComponentSpecBase {
               )
             )
           ),
-					Json.obj(
-						"key" -> "HMRC-MTD-IT",
-						"identifiers" -> Json.arr(
-							Json.obj(
-								"key" -> "MTDITID",
-								"value" -> mtdId
-							)
-						),
-						"delegatedAuthRule" -> "mtd-it-auth"
-					)
+          Json.obj(
+            "key" -> "HMRC-MTD-IT",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> "MTDITID",
+                "value" -> mtdId
+              )
+            ),
+            "delegatedAuthRule" -> "mtd-it-auth"
+          )
         ),
         "affinityGroup" -> "Agent",
         "confidenceLevel" -> 200
@@ -140,5 +140,3 @@ object AuthStub extends ComponentSpecBase {
   }
 
 }
-
-

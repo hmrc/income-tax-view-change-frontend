@@ -34,7 +34,6 @@ import uk.gov.hmrc.http.InternalServerException
 import java.time.LocalDate
 import scala.concurrent.Future
 
-
 class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
 
   override def beforeEach(): Unit = {
@@ -78,7 +77,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     ),
     Some("testUtr"),
     Some("testCredId"),
-    Some("individual")
+    Some("Individual"),
+    None
   )(FakeRequest())
 
   object TestFinancialDetailsService extends FinancialDetailsService(mockIncomeTaxViewChangeConnector)
@@ -95,7 +95,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       )
     ),
     property = None
-  ), None, None, None)(FakeRequest())
+  ), None, None, None, None)(FakeRequest())
 
   "getFinancialDetails" when {
     "a successful financial details response is returned from the connector" should {

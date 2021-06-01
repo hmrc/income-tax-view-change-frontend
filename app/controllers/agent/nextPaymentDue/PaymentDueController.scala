@@ -17,8 +17,9 @@
 package controllers.agent.nextPaymentDue
 
 import audit.AuditingService
+import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{AgentViewer, FeatureSwitching, Payment}
+import config.featureswitch.{AgentViewer, FeatureSwitching, Payment, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -75,9 +76,16 @@ class PaymentDueController @Inject()(paymentDue: paymentDue,
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           mtdItUser =>
             if (isEnabled(AgentViewer)) {
+              if (isEnabled(TxmEventsApproved)) {
+                auditingService.extendedAudit(WhatYouOweRequestAuditModel(mtdItUser))
+              }
 
               paymentDueService.getWhatYouOweChargesList()(implicitly, mtdItUser).map {
                 whatYouOweChargesList => {
+                  if (isEnabled(TxmEventsApproved)) {
+                    auditingService.extendedAudit(WhatYouOweResponseAuditModel(mtdItUser, whatYouOweChargesList))
+                  }
+
                   Ok(view(whatYouOweChargesList, mtdItUser.incomeSources.getCurrentTaxEndYear)(implicitly, mtdItUser)
                   ).addingToSession(SessionKeys.chargeSummaryBackPage -> "paymentDue")
                 }

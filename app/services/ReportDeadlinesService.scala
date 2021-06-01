@@ -16,17 +16,15 @@
 
 package services
 
-import java.time.LocalDate
-
 import auth.MtdItUser
 import connectors._
-import javax.inject.{Inject, Singleton}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.reportDeadlines._
 import play.api.Logger
-import play.api.Logger.logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

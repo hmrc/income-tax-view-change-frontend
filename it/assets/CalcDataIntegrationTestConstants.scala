@@ -111,73 +111,73 @@ object CalcDataIntegrationTestConstants {
                 "income" -> 500,
                 "taxAmount" -> 0
               ),
-                Json.obj(
-              "name" -> "basic",
-              "rate" -> 7.5,
-              "income" -> 1000,
-              "taxAmount" -> 75
-            ),
-            Json.obj(
-              "name" -> "higher",
-              "rate" -> 37.5,
-              "income" -> 2000,
-              "taxAmount" -> 750
-            ),
               Json.obj(
-              "name" -> "additional",
-              "rate" -> 38.1,
-              "income" -> 3000,
-              "taxAmount" -> 1143
+                "name" -> "basic",
+                "rate" -> 7.5,
+                "income" -> 1000,
+                "taxAmount" -> 75
+              ),
+              Json.obj(
+                "name" -> "higher",
+                "rate" -> 37.5,
+                "income" -> 2000,
+                "taxAmount" -> 750
+              ),
+              Json.obj(
+                "name" -> "additional",
+                "rate" -> 38.1,
+                "income" -> 3000,
+                "taxAmount" -> 1143
+              )
             )
           )
         )
       )
     )
-  )
-  ,
-  "taxableIncome" -> Json.obj(
-    "summary" -> Json.obj(
-      "totalTaxableIncome" -> 198500,
-      "totalIncomeReceivedFromAllSources" -> 199505
-    ),
-    "detail" -> Json.obj(
-      "payPensionsProfit" -> Json.obj(
-        "totalSelfEmploymentProfit" -> 200000,
-        "totalPropertyProfit" -> 10000,
-        "taxableIncome" -> 4.0
+    ,
+    "taxableIncome" -> Json.obj(
+      "summary" -> Json.obj(
+        "totalTaxableIncome" -> 198500,
+        "totalIncomeReceivedFromAllSources" -> 199505
       ),
-      "savingsAndGains" -> Json.obj(
-        "taxableIncome" -> 2000
-      ),
-      "dividends" -> Json.obj(
-        "taxableIncome" -> 11000
+      "detail" -> Json.obj(
+        "payPensionsProfit" -> Json.obj(
+          "totalSelfEmploymentProfit" -> 200000,
+          "totalPropertyProfit" -> 10000,
+          "taxableIncome" -> 4.0
+        ),
+        "savingsAndGains" -> Json.obj(
+          "taxableIncome" -> 2000
+        ),
+        "dividends" -> Json.obj(
+          "taxableIncome" -> 11000
+        )
       )
     )
-  )
-  ,
-  "endOfYearEstimate" -> Json.obj(
-    "summary" -> Json.obj(
-      "incomeTaxNicAmount" -> 66000
-    )
-  )
-  ,
-  "metadata" -> Json.obj(
-    "calculationTimestamp" -> "2017-07-06T12:34:56.789Z",
-    "crystallised" -> true
-  )
-  ,
-  "allowancesDeductionsAndReliefs" -> Json.obj(
-    "summary" -> Json.obj(
-      "totalAllowancesAndDeductions" ->100,
-      "totalReliefs" -> 400
-    ),
-    "detail" -> Json.obj(
-      "allowancesAndDeductions" -> Json.obj(
-        "personalAllowance" -> 11500,
-        "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
+    ,
+    "endOfYearEstimate" -> Json.obj(
+      "summary" -> Json.obj(
+        "incomeTaxNicAmount" -> 66000
       )
     )
-  )
+    ,
+    "metadata" -> Json.obj(
+      "calculationTimestamp" -> "2017-07-06T12:34:56.789Z",
+      "crystallised" -> true
+    )
+    ,
+    "allowancesDeductionsAndReliefs" -> Json.obj(
+      "summary" -> Json.obj(
+        "totalAllowancesAndDeductions" ->100,
+        "totalReliefs" -> 400
+      ),
+      "detail" -> Json.obj(
+        "allowancesAndDeductions" -> Json.obj(
+          "personalAllowance" -> 11500,
+          "giftOfInvestmentsAndPropertyToCharity" -> 1000.25
+        )
+      )
+    )
   )
 
   val estimatedCalculationFullJson: JsObject = Json.obj(

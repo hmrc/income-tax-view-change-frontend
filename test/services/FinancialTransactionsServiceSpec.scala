@@ -16,9 +16,6 @@
 
 package services
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, ZonedDateTime}
-
 import assets.BaseTestConstants._
 import assets.FinancialTransactionsTestConstants._
 import auth.MtdItUser
@@ -31,6 +28,9 @@ import play.api.http.Status
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import testUtils.TestSupport
+
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZonedDateTime}
 
 
 class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTransactionsConnector with FeatureSwitching {
@@ -81,7 +81,8 @@ class FinancialTransactionsServiceSpec extends TestSupport with MockFinancialTra
     ),
     Some("testUtr"),
     Some("testCredId"),
-    Some("individual")
+    Some("Individual"),
+    None
   )(FakeRequest())
 
   object TestFinancialTransactionsService extends FinancialTransactionsService(mockFinancialTransactionsConnector)

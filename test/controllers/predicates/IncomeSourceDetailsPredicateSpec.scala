@@ -22,7 +22,6 @@ import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.MockIncomeSourceDetailsService
 import play.api.http.Status
-import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 
@@ -34,10 +33,10 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
     ec, app.injector.instanceOf[MessagesControllerComponents]
   )
 
-  lazy val userWithNino = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    Some("testUtr"), Some("testCredId"), Some("individual"))
-  lazy val successResponse = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    Some("testUtr"), Some("testCredId"), Some("individual"))
+  lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
+    Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+  lazy val successResponse: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
+    Some("testUtr"), Some("testCredId"), Some("Individual"), None)
 
   "The IncomeSourceDetailsPredicate" when {
 

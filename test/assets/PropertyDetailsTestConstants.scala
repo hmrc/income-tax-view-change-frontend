@@ -16,13 +16,13 @@
 
 package assets
 
-import java.time.LocalDate
-
-import ReportDeadlinesTestConstants.fakeReportDeadlinesModel
+import assets.BaseTestConstants.testPropertyIncomeId
+import assets.ReportDeadlinesTestConstants.fakeReportDeadlinesModel
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{PropertiesRentedModel, PropertyDetailsModel}
 import models.reportDeadlines.ReportDeadlineModel
-import BaseTestConstants._
+
+import java.time.LocalDate
 
 object PropertyDetailsTestConstants {
 

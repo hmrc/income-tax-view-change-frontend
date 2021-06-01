@@ -30,7 +30,7 @@ object BaseTestConstants {
   val testNinoAgent = "AA111111A"
   val testNino = "AB123456C"
   val testSaUtrId = 1234567890
-  val testSaUtr = "saUtr"
+  val testSaUtr = "testSaUtr"
   val taxYear: String = "2020-04-05"
   val taxYear2020: String = "2020"
   val idNumber: Int = 1234567890
@@ -38,28 +38,35 @@ object BaseTestConstants {
   val ninoIdType: String = "NINO"
   val docNumber: String = "XM0026100122"
   val testArn = "XAIT0000123456"
-  val testCredId = "credId"
-  val testUserType = "individual"
+  val testCredId = "testCredId"
+  val testUserTypeIndividual = "Individual"
+  val testUserTypeAgent = "Agent"
+  val testUserType: String = testUserTypeIndividual
   val testTaxYear = 2018
   val testUserName = "Albert Einstein"
   val testRetrievedUserName: Name = Name(Some(testUserName), None)
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
-  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
-  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
+  lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual))(FakeRequest())
+  lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName), Some(testSaUtr), Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    businessesAndPropertyIncome, Some("saUtr"), Some("credId"), Some("individual"))(FakeRequest())
+    businessesAndPropertyIncome, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
+  lazy val testMtdItAgentUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+    businessesAndPropertyIncome, Some(testSaUtr), Some(testCredId), Some(testUserTypeAgent), Some(testArn))(FakeRequest())
+  lazy val testMtdItUserMinimal: MtdItUser[_] = MtdItUser(testMtditid, testNino, userName = None,
+    incomeSources = businessesAndPropertyIncome, saUtr = None, credId = None, userType = None, arn = None)(FakeRequest())
   val testSelfEmploymentId = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
   val testYear2017 = 2017
+  val testMigrationYear2019 = "2019"
   val testFrom = "2016-04-06"
   val testTo = "2017-04-05"
   val testPaymentLot = "081203010024"
   val testPaymentLotItem = "000001"
-  val testErrorStatus = Status.INTERNAL_SERVER_ERROR
-  val testErrorNotFoundStatus = Status.NOT_FOUND
+  val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
+  val testErrorNotFoundStatus: Int = Status.NOT_FOUND
   val testErrorMessage = "Dummy Error Message"
 
   def testAuthSuccessResponse(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,

@@ -16,15 +16,16 @@
 
 package helpers.servicemocks
 
-import java.time.LocalDate
-
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
 import models.core.{Nino, NinoResponseError}
+import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.reportDeadlines.ObligationsModel
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
+
+import java.time.LocalDate
 
 object IncomeTaxViewChangeStub {
 
@@ -116,7 +117,7 @@ object IncomeTaxViewChangeStub {
   }
 
   def verifyStubPayApi(url: String, requestBody: JsValue): Unit = {
-    WiremockHelper.verifyPost(url, requestBody.toString())
+    WiremockHelper.verifyPost(url, Some(requestBody.toString()))
   }
 
   //FinancialDetails Stubs
@@ -135,8 +136,8 @@ object IncomeTaxViewChangeStub {
   def paymentsUrl(nino: String, from: String, to: String): String = s"/income-tax-view-change/$nino/financial-details/payments/from/$from/to/$to"
 
   def stubGetPaymentsResponse(nino: String, from: String, to: String)
-                             (status: Int, response: JsValue): StubMapping = {
-    WiremockHelper.stubGet(paymentsUrl(nino, from, to), status, response.toString())
+                             (status: Int, response: Seq[Payment]): StubMapping = {
+    WiremockHelper.stubGet(paymentsUrl(nino, from, to), status, Json.toJson(response).toString())
   }
 
   def verifyGetPayments(nino: String, from: String, to: String): Unit = {
@@ -147,8 +148,9 @@ object IncomeTaxViewChangeStub {
   def getOutstandingChargesUrl(idType: String, idNumber: Long, taxYear: String): String = {
     s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear"
   }
+
   def stubGetOutstandingChargesResponse(idType: String, idNumber: Long, taxYear: String)
-                             (status: Int, response: JsValue): StubMapping = {
+                                       (status: Int, response: JsValue): StubMapping = {
     WiremockHelper.stubGet(getOutstandingChargesUrl(idType, idNumber, s"${taxYear.toInt}-04-05"), status, response.toString())
   }
 

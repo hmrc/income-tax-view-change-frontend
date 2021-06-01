@@ -17,78 +17,148 @@
 package controllers.agent
 
 import java.time.LocalDate
-
 import assets.BaseIntegrationTestConstants._
-import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi}
+import assets.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import audit.models.ChargeSummaryAudit
+import auth.MtdItUser
+import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.DocumentDetailsStub.docDateDetail
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import play.api.http.Status._
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-	val clientDetails: Map[String, String] = Map(
-		SessionKeys.clientFirstName -> "Test",
-		SessionKeys.clientLastName -> "User",
-		SessionKeys.clientUTR -> "1234567890",
-		SessionKeys.clientNino -> testNino,
-		SessionKeys.clientMTDID -> testMtditid,
-		SessionKeys.confirmedClient -> "true"
-	)
+  val clientDetails: Map[String, String] = Map(
+    SessionKeys.clientFirstName -> "Test",
+    SessionKeys.clientLastName -> "User",
+    SessionKeys.clientUTR -> "1234567890",
+    SessionKeys.clientNino -> testNino,
+    SessionKeys.clientMTDID -> testMtditid,
+    SessionKeys.confirmedClient -> "true"
+  )
 
-	val getCurrentTaxYearEnd: LocalDate = {
-		val currentDate: LocalDate = LocalDate.now
-		if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-		else LocalDate.of(currentDate.getYear + 1, 4, 5)
-	}
+  val getCurrentTaxYearEnd: LocalDate = {
+    val currentDate: LocalDate = LocalDate.now
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
+    else LocalDate.of(currentDate.getYear + 1, 4, 5)
+  }
 
-	val currentYear: Int = LocalDate.now().getYear
+  val currentYear: Int = LocalDate.now().getYear
+  val testArn: String = "1"
 
-	s"GET ${routes.ChargeSummaryController.showChargeSummary(currentYear, "testId").url}" should {
-		s"return $OK with correct page title" in {
+  s"GET ${routes.ChargeSummaryController.showChargeSummary(currentYear, "testId").url}" should {
+    s"return $OK with correct page title and audit events when TxEventsApproved FS is enabled" in {
 
-			enable(AgentViewer)
-			enable(NewFinancialDetailsApi)
-			stubAuthorisedAgentUser(authorised = true)
+      enable(AgentViewer)
+      enable(NewFinancialDetailsApi)
+      enable(TxmEventsApproved)
+      stubAuthorisedAgentUser(authorised = true)
 
-			IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
-				nino = testNino,
-				from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-				to = getCurrentTaxYearEnd.toString
-			)(
-				status = OK,
-				response = Json.toJson(FinancialDetailsModel(
-					documentDetails = List(
-						DocumentDetail(
-							taxYear = getCurrentTaxYearEnd.getYear.toString,
-							transactionId = "testId",
-							documentDescription = Some("ITSA- POA 1"),
-							outstandingAmount = Some(500.00),
-							originalAmount = Some(1000.00),
-							documentDate = "2018-03-29"
-						)
-					),
-					financialDetails = List(
-						FinancialDetail(
-							taxYear = getCurrentTaxYearEnd.getYear.toString,
-							mainType = Some("SA Payment on Account 1"),
-							items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
-						)
-					)
-				))
-			)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-			val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-				getCurrentTaxYearEnd.getYear.toString, "testId", clientDetails
-			)
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        nino = testNino,
+        from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+        to = getCurrentTaxYearEnd.toString
+      )(
+        status = OK,
+        response = Json.toJson(FinancialDetailsModel(
+          documentDetails = List(
+            DocumentDetail(
+              taxYear = getCurrentTaxYearEnd.getYear.toString,
+              transactionId = "testId",
+              documentDescription = Some("ITSA- POA 1"),
+              outstandingAmount = Some(1.2),
+              originalAmount = Some(10.34),
+              documentDate = "2018-03-29"
+            )
+          ),
+          financialDetails = List(
+            FinancialDetail(
+              taxYear = getCurrentTaxYearEnd.getYear.toString,
+              mainType = Some("SA Payment on Account 1"),
+              items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+            )
+          )
+        ))
+      )
 
-			result should have(
-				httpStatus(OK),
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
+        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetails
+      )
 
-				pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
-			)
-		}
-	}
+      AuditStub.verifyAuditContainsDetail(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
+        )(FakeRequest()),
+        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
+        agentReferenceNumber = Some("1")
+      ).detail)
+
+      result should have(
+        httpStatus(OK),
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+      )
+    }
+    s"return $OK with correct page title and audit events when TxEventsApproved FS is disabled" in {
+
+      enable(AgentViewer)
+      enable(NewFinancialDetailsApi)
+      disable(TxmEventsApproved)
+      stubAuthorisedAgentUser(authorised = true)
+
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsResponse(
+        nino = testNino,
+        from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+        to = getCurrentTaxYearEnd.toString
+      )(
+        status = OK,
+        response = Json.toJson(FinancialDetailsModel(
+          documentDetails = List(
+            DocumentDetail(
+              taxYear = getCurrentTaxYearEnd.getYear.toString,
+              transactionId = "testId",
+              documentDescription = Some("ITSA- POA 1"),
+              outstandingAmount = Some(1.2),
+              originalAmount = Some(10.34),
+              documentDate = "2018-03-29"
+            )
+          ),
+          financialDetails = List(
+            FinancialDetail(
+              taxYear = getCurrentTaxYearEnd.getYear.toString,
+              mainType = Some("SA Payment on Account 1"),
+              items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+            )
+          )
+        ))
+      )
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
+        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetails
+      )
+
+      AuditStub.verifyAuditDoesNotContainsDetail(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, Some("1234567890"), None, Some("Agent"), Some(testArn)
+        )(FakeRequest()),
+        docDateDetail(LocalDate.now().toString, "ITSA- POA 1"),
+        agentReferenceNumber = Some("1")
+      ).detail)
+
+      result should have(
+        httpStatus(OK),
+        pageTitle("Payment on account 1 of 2 - Your client’s Income Tax details - GOV.UK")
+      )
+    }
+  }
 }

@@ -16,9 +16,11 @@
 
 package helpers.agent
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import forms.agent.ClientsUTRForm
+import helpers.servicemocks.AuditStub
 import helpers.servicemocks.AuthStub.getWithClientDetailsInSession
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
@@ -34,7 +36,7 @@ import play.api.{Application, Environment, Mode}
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
-  with GenericStubMethods with SessionCookieBaker with FeatureSwitching{
+  with GenericStubMethods with SessionCookieBaker with FeatureSwitching {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
@@ -61,7 +63,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.individual-calculations.host" -> mockHost,
     "microservice.services.individual-calculations.port" -> mockPort,
     "microservice.services.citizen-details.host" -> mockHost,
-    "microservice.services.citizen-details.port" -> mockPort
+    "microservice.services.citizen-details.port" -> mockPort,
+    "auditing.consumer.baseUri.host" -> mockHost,
+    "auditing.consumer.baseUri.port" -> mockPort,
+    "auditing.enabled" -> "true"
   )
 
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
@@ -80,7 +85,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    wireMockServer.resetMappings()
+    WireMock.reset()
+    AuditStub.stubAuditing()
   }
 
   override def afterAll(): Unit = {
@@ -136,7 +142,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAgentHome(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/income-tax-account", additionalCookies)
 
-    def getPaymentsDue(additionalCookies: Map[String, String]= Map.empty): WSResponse =
+    def getPaymentsDue(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/payments-owed", additionalCookies)
 
     def getTaxYearOverview(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =

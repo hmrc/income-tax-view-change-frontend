@@ -109,7 +109,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
           mockBothIncomeSources()
           setupMockGetCalculation("AA111111A", testYear)(CalcDisplayError)
           mockShowInternalServerError()
-          setupMockGetIncomeSourceDetails(testMtdUserNino)(businessIncome2018and2019)
+          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }

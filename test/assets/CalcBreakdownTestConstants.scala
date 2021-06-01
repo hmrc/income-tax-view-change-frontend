@@ -121,6 +121,7 @@ object CalcBreakdownTestConstants {
   val calculationDataSuccessModel = Calculation(
     totalIncomeTaxAndNicsDue = Some(2010.00),
     totalIncomeTaxNicsCharged = Some(90500.00),
+    totalIncomeReceived = Some(199505.00),
     totalTaxableIncome = Some(198500.00),
     incomeTaxNicAmount = None,
     timestamp = Some(testTimeStampString),
@@ -245,7 +246,9 @@ object CalcBreakdownTestConstants {
 
     allowancesAndDeductions = AllowancesAndDeductions(
       personalAllowance = Some(11500),
-      totalPensionContributions = Some(11501)
+      totalPensionContributions = Some(11501),
+      totalAllowancesAndDeductions = Some(250),
+      totalReliefs = Some(250)
     ),
     nic = Nic(
       class2 = Some(10000.00),

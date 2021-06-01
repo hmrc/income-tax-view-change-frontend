@@ -16,11 +16,11 @@
 
 package assets
 
-import java.time.LocalDate
-
+import assets.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentId2}
 import models.reportDeadlines.{ObligationsModel, ReportDeadlineModel, ReportDeadlinesErrorModel, ReportDeadlinesModel}
 import play.api.libs.json.{JsValue, Json}
-import BaseTestConstants._
+
+import java.time.LocalDate
 
 object ReportDeadlinesTestConstants {
 

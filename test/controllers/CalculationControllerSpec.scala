@@ -16,11 +16,11 @@
 
 package controllers
 
-import java.time.LocalDate
-import assets.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+
+import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
 import assets.CalcBreakdownTestConstants.calculationDataSuccessModel
 import assets.EstimatesTestConstants._
-import assets.FinancialDetailsTestConstants.{documentDetailModel, documentDetailWithDueDateModel, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
+import assets.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, fullDocumentDetailWithDueDateModel}
 import assets.FinancialTransactionsTestConstants.transactionModel
 import assets.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import assets.MessagesLookUp
@@ -35,13 +35,15 @@ import implicits.ImplicitDateFormatterImpl
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockFinancialTransactionsService, MockReportDeadlinesService}
 import models.calculation.CalcOverview
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
+import models.financialDetails.DocumentDetailWithDueDate
 import models.reportDeadlines.{ObligationsModel, ReportDeadlinesErrorModel}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
+
+import java.time.LocalDate
 
 class CalculationControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
@@ -319,7 +321,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
               contentType(result) shouldBe Some("text/html")
 
               lazy val expectedTestMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-                singleBusinessIncome, None, Some("credId"), Some("Individual"))(FakeRequest())
+                singleBusinessIncome, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
 
               verifyExtendedAudit(BillsAuditModel(expectedTestMtdItUser, BigDecimal(2010.00)))
             }
@@ -425,7 +427,7 @@ class CalculationControllerSpec extends TestSupport with MockCalculationService
               contentType(result) shouldBe Some("text/html")
 
               lazy val expectedTestMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-                singleBusinessIncome, None, Some("credId"), Some("Individual"))(FakeRequest())
+                singleBusinessIncome, saUtr = None, Some(testCredId), Some(testUserTypeIndividual), arn = None)(FakeRequest())
 
               verifyExtendedAudit(BillsAuditModel(expectedTestMtdItUser, BigDecimal(2010.00)))
             }

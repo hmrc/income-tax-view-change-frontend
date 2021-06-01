@@ -16,7 +16,7 @@
 
 package audit.models
 
-import assets.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
+import assets.BaseTestConstants._
 import play.api.libs.json.Json
 import testUtils.TestSupport
 
@@ -27,8 +27,7 @@ class AllowanceAndDeductionsRequestAuditModelISpec extends TestSupport {
 
   "The AllowanceAndDeductionsRequestAuditModel" should {
 
-    lazy val testAllowanceAndDeductionsRequestAuditModel = AllowanceAndDeductionsRequestAuditModel(testMtditid, testNino,
-      Some(testSaUtr), Some(testCredId), Some(testUserType))
+    val testAllowanceAndDeductionsRequestAuditModel = AllowanceAndDeductionsRequestAuditModel(testMtdItAgentUser)
 
     s"Have the correct transaction name of '$transactionName'" in {
       testAllowanceAndDeductionsRequestAuditModel.transactionName shouldBe transactionName
@@ -38,14 +37,24 @@ class AllowanceAndDeductionsRequestAuditModelISpec extends TestSupport {
       testAllowanceAndDeductionsRequestAuditModel.auditType shouldBe auditEvent
     }
 
-    "Have the correct details for the audit event" in {
-      testAllowanceAndDeductionsRequestAuditModel.detail shouldBe Json.obj(
-        "mtditid" -> testMtditid,
-        "nationalInsuranceNumber" -> testNino,
-        "saUtr" -> testSaUtr,
-        "credId" -> testCredId,
-        "userType" -> testUserType
-      )
+    "Have the correct details for the audit event" when {
+      "information for the audit is complete" in {
+        testAllowanceAndDeductionsRequestAuditModel.detail shouldBe Json.obj(
+          "mtditid" -> testMtditid,
+          "nationalInsuranceNumber" -> testNino,
+          "saUtr" -> testSaUtr,
+          "credId" -> testCredId,
+          "userType" -> testUserTypeAgent,
+          "agentReferenceNumber" -> testArn
+        )
+      }
+
+      "information for the audit has minimal details" in {
+        AllowanceAndDeductionsRequestAuditModel(testMtdItUserMinimal).detail shouldBe Json.obj(
+          "mtditid" -> testMtditid,
+          "nationalInsuranceNumber" -> testNino
+        )
+      }
     }
   }
 }

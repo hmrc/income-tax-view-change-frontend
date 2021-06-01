@@ -16,12 +16,14 @@
 
 package controllers
 
-import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
+import audit.AuditingService
+import audit.models.ChargeSummaryAudit
+import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
@@ -38,6 +40,7 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
                                         retrieveNino: NinoPredicate,
                                         retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                         financialDetailsService: FinancialDetailsService,
+                                        auditingService: AuditingService,
                                         itvcErrorHandler: ItvcErrorHandler)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
@@ -57,10 +60,17 @@ class ChargeSummaryController @Inject()(authenticate: AuthenticationPredicate,
           financialDetailsService.getFinancialDetails(taxYear, user.nino).map {
             case success: FinancialDetailsModel if success.documentDetails.exists(_.transactionId == id) =>
               val backLocation = user.session.get(SessionKeys.chargeSummaryBackPage)
-              val documentDetail = success.documentDetails.find(_.transactionId == id).get
+              val documentDetailWithDueDate: DocumentDetailWithDueDate = success.findDocumentDetailByIdWithDueDate(id).get
+              if (isEnabled(TxmEventsApproved)) {
+                auditingService.extendedAudit(ChargeSummaryAudit(
+                  mtdItUser = user,
+                  docDateDetail = documentDetailWithDueDate,
+                  None
+                ))
+              }
               Ok(view(
-                documentDetail = documentDetail,
-                dueDate = success.getDueDateFor(documentDetail),
+                documentDetail = documentDetailWithDueDate.documentDetail,
+                dueDate = success.getDueDateFor(documentDetailWithDueDate.documentDetail),
                 backLocation = backLocation,
                 taxYear = taxYear
               ))

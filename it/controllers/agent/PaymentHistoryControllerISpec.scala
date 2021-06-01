@@ -16,24 +16,31 @@
 
 package controllers.agent
 
-import java.time.LocalDate
-
 import assets.BaseIntegrationTestConstants._
 import assets.PaymentHistoryTestConstraints.getCurrentTaxYearEnd
-import config.featureswitch.{AgentViewer, FeatureSwitching}
+import audit.models.{PaymentHistoryRequestAuditModel, PaymentHistoryResponseAuditModel}
+import auth.MtdItUser
+import com.github.tomakehurst.wiremock.client.WireMock
+import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.AccountingPeriodModel
+import models.financialDetails.Payment
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
+import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.retrieve.Name
+
+import java.time.LocalDate
 
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    WireMock.reset()
     enable(AgentViewer)
   }
 
@@ -46,20 +53,39 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
     SessionKeys.confirmedClient -> "true"
   )
 
-  val paymentFullJson: JsValue = Json.arr(Json.obj(
-    "reference" -> "reference",
-    "amount" -> 100.00,
-    "method" -> "method",
-    "lot" -> "lot",
-    "lotItem" -> "lotItem",
-    "date" -> "2018-04-25"
+  val paymentsFull: Seq[Payment] = Seq(
+    Payment(
+      reference = Some("reference"),
+      amount = Some(100.00),
+      method = Some("method"),
+      lot = Some("lot"),
+      lotItem = Some("lotItem"),
+      date = Some("2018-04-25")
     )
   )
 
-  val currentTaxYearEnd = getCurrentTaxYearEnd.getYear
-  val previousTaxYearEnd = currentTaxYearEnd-1
-  val twoPreviousTaxYearEnd = currentTaxYearEnd-2
+  val testArn: String = "1"
 
+  val currentTaxYearEnd: Int = getCurrentTaxYearEnd.getYear
+  val previousTaxYearEnd: Int = currentTaxYearEnd - 1
+  val twoPreviousTaxYearEnd: Int = currentTaxYearEnd - 2
+
+  val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    mtdbsa = testMtditid,
+    yearOfMigration = None,
+    businesses = List(BusinessDetailsModel(
+      "testId",
+      AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
+      None, None, None, None, None, None, None, None,
+      Some(getCurrentTaxYearEnd)
+    )),
+    property = None
+  )
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, Some(Name(Some("Test"), Some("User"))),
+    incomeSourceDetailsModel, Some("1234567890"), None, Some("Agent"), Some(testArn)
+  )(FakeRequest())
 
   s"GET ${controllers.agent.routes.PaymentHistoryController.viewPaymentHistory().url}" should {
     s"SEE_OTHER to " when {
@@ -68,26 +94,12 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
-          response = IncomeSourceDetailsModel(
-            mtdbsa = testMtditid,
-            yearOfMigration = None,
-            businesses = List(BusinessDetailsModel(
-              "testId",
-              AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-              None, None, None, None, None, None, None, None,
-              Some(getCurrentTaxYearEnd)
-            )),
-            property = None
-          )
+          response = incomeSourceDetailsModel
         )
 
-
-        IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, paymentFullJson)
-        IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentFullJson)
-
+        IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
 
         val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetails)
-
 
         Then("The user is redirected to")
         result should have(
@@ -104,21 +116,10 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = OK,
-        response = IncomeSourceDetailsModel(
-          mtdbsa = testMtditid,
-          yearOfMigration = None,
-          businesses = List(BusinessDetailsModel(
-            "testId",
-            AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-            None, None, None, None, None, None, None, None,
-            Some(getCurrentTaxYearEnd)
-          )),
-          property = None
-        )
+        response = incomeSourceDetailsModel
       )
 
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, paymentFullJson)
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentFullJson)
+      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetails)
 
@@ -130,27 +131,17 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
   }
 
   s"return $OK with the enter client utr page" when {
-    "the payment history feature switch is enabled" in {
+    "the payment history feature switch is enabled and with TxmEventsApproved FS enabled" in {
       enable(AgentViewer)
+      enable(TxmEventsApproved)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = OK,
-        response = IncomeSourceDetailsModel(
-          mtdbsa = testMtditid,
-          yearOfMigration = None,
-          businesses = List(BusinessDetailsModel(
-            "testId",
-            AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1)),
-            None, None, None, None, None, None, None, None,
-            Some(getCurrentTaxYearEnd)
-          )),
-          property = None
-        )
+        response = incomeSourceDetailsModel
       )
 
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, paymentFullJson)
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentFullJson)
+      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetails)
 
@@ -158,6 +149,30 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase with FeatureSwitch
       result should have(
         httpStatus(OK)
       )
+
+      verifyAuditContainsDetail(PaymentHistoryRequestAuditModel(testUser).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
+    }
+    "the payment history feature switch is enabled and with TxmEventsApproved FS disabled" in {
+      enable(AgentViewer)
+      stubAuthorisedAgentUser(authorised = true)
+
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+        status = OK,
+        response = incomeSourceDetailsModel
+      )
+
+      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
+
+      disable(TxmEventsApproved)
+      val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetails)
+
+      Then("The Payment History page is returned to the user")
+      result should have(
+        httpStatus(OK)
+      )
+
+      verifyAuditDoesNotContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull).detail)
     }
   }
 }

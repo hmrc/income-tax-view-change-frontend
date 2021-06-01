@@ -18,6 +18,7 @@ package controllers
 
 import audit.AuditingService
 import audit.models.BillsAuditing.BillsAuditModel
+import audit.models.{TaxYearOverviewRequestAuditModel, TaxYearOverviewResponseAuditModel}
 import auth.MtdItUser
 import config.featureswitch._
 import config.{FrontendAppConfig, ItvcErrorHandler}
@@ -152,12 +153,18 @@ class CalculationController @Inject()(authenticate: AuthenticationPredicate,
 
   private def showTaxYearOverview(taxYear: Int): Action[AnyContent] = action.async {
     implicit user =>
+      if (isEnabled(TxmEventsApproved)) {
+        auditingService.extendedAudit(TaxYearOverviewRequestAuditModel(user, None))
+      }
       calculationService.getCalculationDetail(user.nino, taxYear) flatMap {
         case CalcDisplayModel(_, calcAmount, calculation, _) =>
-          auditingService.extendedAudit(BillsAuditModel(user, calcAmount))
           withTaxYearFinancials(taxYear) { charges =>
             withObligationsModel(taxYear) map {
-              case obligationsModel: ObligationsModel => Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation, None)),
+              case obligationsModel: ObligationsModel =>
+                if (isEnabled(TxmEventsApproved)) {
+                  auditingService.extendedAudit(TaxYearOverviewResponseAuditModel(user, None, calculation, charges, obligationsModel))
+                }
+                Ok(view(taxYear, calculationOverview = Some(CalcOverview(calculation, None)),
                 charge = charges, obligations = obligationsModel)).addingToSession(SessionKeys.chargeSummaryBackPage -> "taxYearOverview")
               case _ => itvcErrorHandler.showInternalServerError()
             }

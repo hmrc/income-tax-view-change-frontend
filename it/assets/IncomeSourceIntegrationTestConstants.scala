@@ -24,172 +24,173 @@ import play.api.libs.json.{JsValue, Json}
 
 object IncomeSourceIntegrationTestConstants {
 
-	val singleBusinessResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
-		testMtdItId,
-		businesses = List(business1),
-		property = None,
-		yearOfMigration = None
-	)
+  val singleBusinessResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(business1),
+    property = None,
+    yearOfMigration = None
+  )
 
-	val misalignedBusinessWithPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-		testMtdItId,
-		businesses = List(business2),
-		property = Some(property),
-		yearOfMigration = None
-	)
+  val misalignedBusinessWithPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(business2),
+    property = Some(property),
+    yearOfMigration = None
+  )
 
-	val multipleBusinessesResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-		testMtdItId,
-		businesses = List(
-			business1,
-			business2
-		),
-		property = None,
-		yearOfMigration = Some("2019")
-	)
+  val multipleBusinessesResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(
+      business1,
+      business2
+    ),
+    property = None,
+    yearOfMigration = Some("2019")
+  )
 
-	val businessAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-		testMtdItId,
-		businesses = List(business1),
-		property = Some(property),
-		yearOfMigration = None
-	)
+  val businessAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(business1),
+    property = Some(property),
+    yearOfMigration = None
+  )
 
-	val paymentHistoryBusinessAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-		testMtdItId,
-		None,
-		businesses = List(oldBusiness1),
-		property = Some(oldProperty)
-	)
+  val paymentHistoryBusinessAndPropertyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    None,
+    businesses = List(oldBusiness1),
+    property = Some(oldProperty)
+  )
 
-	val multipleBusinessesAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-		testMtdItId,
-		businesses = List(
-			business1,
-			business2
-		),
-		property = Some(property),
-		yearOfMigration = None
-	)
+  val multipleBusinessesAndPropertyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(
+      business1,
+      business2
+    ),
+    property = Some(property),
+    yearOfMigration = None
+  )
 
-	val propertyOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-		testMtdItId,
-		businesses = List(),
-		property = Some(property),
-		yearOfMigration = Some("2018")
-	)
+  val propertyOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(),
+    property = Some(property),
+    yearOfMigration = Some("2018")
+  )
 
-	val noPropertyOrBusinessResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-		testMtdItId, None,
-		List(), None
-	)
-	val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500, "ISE")
-	val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("documentDetails" -> Json.arr(), "financialDetails" -> Json.arr())
+  val noPropertyOrBusinessResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId, None,
+    List(), None
+  )
+  val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500, "ISE")
+  val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("documentDetails" -> Json.arr(), "financialDetails" -> Json.arr())
 
-	def propertyOnlyResponseWithMigrationData(year: Int,
-																						yearOfMigration: Option[String]): IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
-		testMtdItId,
-		businesses = List(),
-		property = Some(propertyWithCurrentYear(year)),
-		yearOfMigration = yearOfMigration
-	)
+  def propertyOnlyResponseWithMigrationData(year: Int,
+                                            yearOfMigration: Option[String]): IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(),
+    property = Some(propertyWithCurrentYear(year)),
+    yearOfMigration = yearOfMigration
+  )
 
-	def testValidFinancialDetailsModelJsonSingleCharge(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
-																										 taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
-		"documentDetails" -> Json.arr(
-			Json.obj(
-				"taxYear" -> taxYear,
-				"transactionId" -> "1040000123",
-				"documentDescription" -> "ITSA- POA 1",
-				"outstandingAmount" -> outstandingAmount,
-				"originalAmount" -> originalAmount,
-				"documentDate" -> "2018-03-29"
-			)
-		),
-		"financialDetails" -> Json.arr(
-			Json.obj(
-				"taxYear" -> taxYear,
-				"mainType" -> "SA Payment on Account 1",
-				"items" -> Json.arr(
-					Json.obj(
-						"dueDate" -> dueDate,
-					)
-				)
-			)
-		)
-	)
+  def testValidFinancialDetailsModelJsonSingleCharge(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
+                                                     taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
+    "documentDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000123",
+        "documentDescription" -> "ITSA- POA 1",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29"
+      )
+    ),
+    "financialDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "SA Payment on Account 1",
+        "items" -> Json.arr(
+          Json.obj(
+            "dueDate" -> dueDate
+          )
+        )
+      )
+    )
+  )
 
-	def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
-																				 taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
-		"documentDetails" -> Json.arr(
-			Json.obj(
-				"taxYear" -> taxYear,
-				"transactionId" -> "1040000123",
-				"documentDescription" -> "ITSA- Bal Charge",
-				"outstandingAmount" -> outstandingAmount,
-				"originalAmount" -> originalAmount,
-				"documentDate" -> "2018-03-29"
-			),
-			Json.obj(
-				"taxYear" -> taxYear,
-				"transactionId" -> "1040000123",
-				"documentDescription" -> "ITSA- POA 1",
-				"outstandingAmount" -> outstandingAmount,
-				"originalAmount" -> originalAmount,
-				"documentDate" -> "2018-03-29"
-			),
-			Json.obj(
-				"taxYear" -> taxYear,
-				"transactionId" -> "1040000123",
-				"documentDescription" -> "ITSA - POA 2",
-				"outstandingAmount" -> outstandingAmount,
-				"originalAmount" -> originalAmount,
-				"documentDate" -> "2018-03-29"
-			)
-		),
-		"financialDetails" -> Json.arr(
-			Json.obj(
-				"taxYear" -> taxYear,
-				"mainType" -> "SA Balancing Charge",
-				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
-			),
-			Json.obj(
-				"taxYear" -> taxYear,
-				"mainType" -> "SA Payment on Account 1",
-				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
-			),
-			Json.obj(
-				"taxYear" -> taxYear,
-				"mainType" -> "SA Payment on Account 2",
-				"items" -> Json.arr(Json.obj("dueDate" -> dueDate))
-			)
-		)
-	)
+  def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
+                                         taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
+    "documentDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000123",
+        "documentDescription" -> "ITSA- Bal Charge",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29"
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000123",
+        "documentDescription" -> "ITSA- POA 1",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29"
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000123",
+        "documentDescription" -> "ITSA - POA 2",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29"
+      )
+    ),
+    "financialDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "SA Balancing Charge",
+        "items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "SA Payment on Account 1",
+        "items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "SA Payment on Account 2",
+        "items" -> Json.arr(Json.obj("dueDate" -> dueDate))
+      )
+    )
+  )
 
-	def documentDetailJson(originalAmount: BigDecimal,
-												 outstandingAmount: BigDecimal,
-												 taxYear: String = "2018",
-												 documentDescription: String = "ITSA- Bal Charge"): JsValue = Json.obj(
-		"taxYear" -> taxYear,
-		"transactionId" -> "1040000123",
-		"documentDescription" -> documentDescription,
-		"outstandingAmount" -> outstandingAmount,
-		"originalAmount" -> originalAmount,
-		"documentDate" -> "2018-03-29"
-	)
+  def documentDetailJson(originalAmount: BigDecimal,
+                         outstandingAmount: BigDecimal,
+                         taxYear: String = "2018",
+                         documentDescription: String = "ITSA- Bal Charge"): JsValue = Json.obj(
+    "taxYear" -> taxYear,
+    "transactionId" -> "1040000123",
+    "documentDescription" -> documentDescription,
+    "outstandingAmount" -> outstandingAmount,
+    "originalAmount" -> originalAmount,
+    "documentDate" -> "2018-03-29"
+  )
 
-	def financialDetailJson(taxYear: String = "2018",
-													mainType: String = "SA Balancing Charge",
-													dueDate: String = "2018-02-14"): JsValue = Json.obj(
-		"taxYear" -> taxYear,
-		"mainType" -> mainType,
-		"items" -> Json.arr(
-			Json.obj("dueDate" -> dueDate)
-		)
-	)
+  def financialDetailJson(taxYear: String = "2018",
+                          mainType: String = "SA Balancing Charge",
+                          dueDate: String = "2018-02-14"): JsValue = Json.obj(
+    "taxYear" -> taxYear,
+    "mainType" -> mainType,
+    "items" -> Json.arr(
+      Json.obj("dueDate" -> dueDate)
+    )
+  )
 
-	def testFinancialDetailsErrorModelJson(status: String = "500"): JsValue = Json.obj(
-		"code" -> status,
-		"message" -> "ERROR MESSAGE"
-	)
+  def testFinancialDetailsErrorModelJson(status: String = "500"): JsValue = Json.obj(
+    "code" -> status,
+    "message" -> "ERROR MESSAGE"
+  )
+
 }

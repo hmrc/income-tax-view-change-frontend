@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.{LocalDate, ZonedDateTime}
-
 import assets.MessagesLookUp
 import config.featureswitch.{FeatureSwitching, NewFinancialDetailsApi, Payment}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
@@ -36,6 +34,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import services.{FinancialDetailsService, FinancialTransactionsService, ReportDeadlinesService}
 import utils.CurrentDateProvider
 
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
 class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
@@ -68,7 +67,8 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			app.injector.instanceOf[MessagesControllerComponents],
 			ec,
 			currentDateProvider,
-			app.injector.instanceOf[ImplicitDateFormatterImpl]
+			app.injector.instanceOf[ImplicitDateFormatterImpl],
+			mockAuditingService
 		)
 		when(currentDateProvider.getCurrentDate()) thenReturn LocalDate.of(2018, 1, 20)
 	}
@@ -313,5 +313,4 @@ class HomeControllerSpec extends MockAuthenticationPredicate with MockIncomeSour
 			disable(NewFinancialDetailsApi)
 		}
 	}
-
 }
