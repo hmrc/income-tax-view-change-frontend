@@ -46,10 +46,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
   class Setup(charges: WhatYouOweChargesList,
-              currentTaxYear: Int = LocalDate.now().getYear,
-              paymentEnabled: Boolean = true) {
+              currentTaxYear: Int = LocalDate.now().getYear
+              ) {
     val html: HtmlFormat.Appendable = views.html.whatYouOwe(charges, currentTaxYear,
-      paymentEnabled, mockImplicitDateFormatter, "testBackURL", Some("1234567890"))(FakeRequest(), implicitly, mockAppConfig)
+       mockImplicitDateFormatter, "testBackURL", Some("1234567890"))(FakeRequest(), implicitly, mockAppConfig)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -498,13 +498,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
       }
-      s"does not have payment data payments is disabled" in new Setup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue,
-        paymentEnabled = false) {
-        pageDocument.getElementById("payment-days-note") shouldBe null
-        pageDocument.getElementById("credit-on-account") shouldBe null
-        pageDocument.getElementById("payment-button") shouldBe null
 
-      }
     }
 
     "the user has no charges" should {

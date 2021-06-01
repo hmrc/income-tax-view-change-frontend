@@ -23,7 +23,7 @@ import assets.IncomeSourceDetailsTestConstants._
 import assets.MessagesLookUp
 import assets.MessagesLookUp.{Breadcrumbs => breadcrumbMessages}
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, Payment}
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitCurrencyFormatter._
 import models.calculation.BillsViewModel
 import org.jsoup.Jsoup
@@ -43,13 +43,13 @@ class BillViewSpec extends TestSupport with FeatureSwitching {
     propertyIncomeOnly, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
 
 
-  private def pageSetup(model: BillsViewModel, paymentsEnabled: Boolean = false, user: MtdItUser[_]) = new {
-    lazy val page: HtmlFormat.Appendable = views.html.getLatestCalculation.bill(model, paymentsEnabled)(FakeRequest(), implicitly, appConfig, user)
+  private def pageSetup(model: BillsViewModel, user: MtdItUser[_]) = new {
+    lazy val page: HtmlFormat.Appendable = views.html.getLatestCalculation.bill(model)(FakeRequest(), implicitly, appConfig, user)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
   }
 
   "The bill view" should {
-    val setup = pageSetup(unpaidBillsViewModel, paymentsEnabled = false, bizAndPropertyUser)
+    val setup = pageSetup(unpaidBillsViewModel, bizAndPropertyUser)
     import setup._
     val messages = new MessagesLookUp.Calculation(testYear)
     val crysMessages = new MessagesLookUp.Calculation(testYear).Crystallised
@@ -74,15 +74,8 @@ class BillViewSpec extends TestSupport with FeatureSwitching {
     }
 
 
-    "NOT show a button to go to payments, when the the eligibility is false" in {
-      val setup = pageSetup(paidBillsViewModel, paymentsEnabled = false, bizAndPropertyUser)
-      import setup._
-      Option(document.getElementById("payment-button")) shouldBe None
-    }
-
     "show a button to go to payments, when the the eligibility is true" in {
-      enable(Payment)
-      val setup = pageSetup(unpaidBillsViewModel, paymentsEnabled = true, bizAndPropertyUser)
+      val setup = pageSetup(unpaidBillsViewModel, bizAndPropertyUser)
       import setup._
       document.getElementById("payment-button").text() shouldBe messages.Crystallised.payNow
       document.getElementById("payment-button").attr("href") shouldBe

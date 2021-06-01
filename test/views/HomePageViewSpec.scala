@@ -57,17 +57,16 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val overdueMessage = "Warning You have overdue payments. You will be charged interest on these until they are paid in full."
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePayments: Option[Int] = Some(0),
-              overDueUpdates: Option[Int] = Some(0), paymentEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
+              overDueUpdates: Option[Int] = Some(0), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true) {
 
     lazy val page: HtmlFormat.Appendable = views.html.home(
       nextPaymentDueDate = paymentDueDate,
       nextUpdate = updateDate,
       overDuePayments = overDuePayments,
       overDueUpdates = overDueUpdates,
-      paymentEnabled = paymentEnabled,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       implicitDateFormatter = mockImplicitDateFormatter,
-      paymentHistoryEnabled = paymentEnabled
+      paymentHistoryEnabled = paymentHistoryEnabled
     )(FakeRequest(), implicitly, mockAppConfig, testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 

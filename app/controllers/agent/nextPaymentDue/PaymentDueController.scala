@@ -19,7 +19,7 @@ package controllers.agent.nextPaymentDue
 import audit.AuditingService
 import audit.models.{WhatYouOweRequestAuditModel, WhatYouOweResponseAuditModel}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{AgentViewer, FeatureSwitching, Payment, TxmEventsApproved}
+import config.featureswitch.{AgentViewer, FeatureSwitching, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -63,7 +63,6 @@ class PaymentDueController @Inject()(paymentDue: paymentDue,
     paymentDue.apply(
       chargesList = charge,
       currentTaxYear = taxYear,
-      paymentEnabled = isEnabled(Payment),
       implicitDateFormatter = dateFormatter,
       backUrl = backUrl,
       user.saUtr

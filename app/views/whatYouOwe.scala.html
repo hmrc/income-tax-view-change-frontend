@@ -22,7 +22,7 @@
 @import views.html.helpers.backLinkHelper
 @import models.financialDetails.DocumentDetailWithDueDate
 
-@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, paymentEnabled: Boolean, implicitDateFormatter: ImplicitDateFormatter,backUrl: String, utr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(chargesList: WhatYouOweChargesList, currentTaxYear: Int, implicitDateFormatter: ImplicitDateFormatter,backUrl: String, utr: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @saNoteParagraph = {
@@ -201,7 +201,7 @@
                 </p>
             }
         </div>
-        @if(paymentEnabled && utr.isDefined){
+        @if(utr.isDefined){
             <div>
                 @paymentDaysNoteParagraph
                 @creditOnAccountNotePanel

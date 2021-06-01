@@ -28,8 +28,8 @@ import java.time.LocalDate
 
 class ChargeSummarySpec extends ViewSpec {
 
-	class Setup(documentDetail: DocumentDetail, dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)), paymentEnabled: Boolean = true) {
-		val view: Html = chargeSummary(documentDetail, dueDate, mockImplicitDateFormatter, paymentEnabled, "testBackURL")
+	class Setup(documentDetail: DocumentDetail, dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15))) {
+		val view: Html = chargeSummary(documentDetail, dueDate, mockImplicitDateFormatter, "testBackURL")
 		val document: Document = Jsoup.parse(view.toString())
 	}
 
@@ -78,16 +78,9 @@ class ChargeSummarySpec extends ViewSpec {
 				.text() shouldBe "£1,700.00"
 		}
 
-		"have a payment link when an outstanding amount is to be paid and payments are enabled" in new Setup(documentDetailModel(), paymentEnabled = true) {
+		"have a payment link when an outstanding amount is to be paid" in new Setup(documentDetailModel()) {
 			document.select("div#payment-link-2018").text() shouldBe "Pay now"
 		}
 
-		"not have a payment link when an outstanding amount is to be paid but payments are disabled" in new Setup(documentDetailModel(), paymentEnabled = false) {
-			document.select("div#payment-link-2018").text() shouldBe ""
-		}
-
-		"not have a payment link when there is an outstanding amount of 0" in new Setup(documentDetailModel(outstandingAmount = Some(0)), paymentEnabled = true) {
-			document.select("div#payment-link-2018").text() shouldBe ""
-		}
 	}
 }

@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.AuditingService
 import audit.models.ChargeSummaryAudit
-import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi, Payment, TxmEventsApproved}
+import config.featureswitch.{AgentViewer, FeatureSwitching, NewFinancialDetailsApi, TxmEventsApproved}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
@@ -54,7 +54,6 @@ class ChargeSummaryController @Inject()(chargeSummary: ChargeSummary,
     chargeSummary(
       documentDetailWithDueDate = documentDetailWithDueDate,
       implicitDateFormatter = dateFormatter,
-      paymentEnabled = isEnabled(Payment),
       backUrl = backUrl(backLocation, taxYear)
     )
   }

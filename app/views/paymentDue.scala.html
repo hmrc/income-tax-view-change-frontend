@@ -21,7 +21,7 @@
 @import views.html.templates.main_template
 @import views.html.helpers.backLinkHelper
 
-@(financialTransactions: List[FinancialTransactionsModel] = List(), financialDetails: List[FinancialDetailsModel] = List(), paymentEnabled: Boolean,backUrl: String, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(financialTransactions: List[FinancialTransactionsModel] = List(), financialDetails: List[FinancialDetailsModel] = List(),backUrl: String, implicitDateFormatter: ImplicitDateFormatter)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 @import implicitDateFormatter.longDate
 
 @main_template(
@@ -55,7 +55,7 @@
                         <div class="font-small text--right link-style form-group" id="bills-link-@{transaction.taxPeriodTo.get.getYear}">
                             <a href="@controllers.routes.CalculationController.renderTaxYearOverviewPage(transaction.taxPeriodTo.get.getYear).url" aria-label='@messages("paymentDue.view-bill-aria", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)'>@messages("paymentDue.viewBill")</a>
                         </div>
-                       @if(paymentEnabled && transaction.outstandingAmount.isDefined){
+                       @if(transaction.outstandingAmount.isDefined){
                            <div id="payment-link-@{transaction.taxPeriodTo.get.getYear}" class="font-small text--right link-style">
                                <a href="@controllers.routes.PaymentController.paymentHandoff(transaction.outstandingAmount.get.toPence)" aria-label='@messages("paymentDue.pay-now-aria", transaction.taxPeriodFrom.get.getYear.toString, transaction.taxPeriodTo.get.getYear.toString)'>@messages("paymentDue.payNow")</a>
                            </div>
@@ -78,7 +78,7 @@
                         <div class="font-small text--right link-style form-group" id="bills-link-@{documentDetailWithDueDate.documentDetail.taxYear}">
                             <a href="@controllers.routes.CalculationController.renderTaxYearOverviewPage(documentDetailWithDueDate.documentDetail.taxYear.toInt).url" aria-label='@messages("paymentDue.view-bill-aria", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)'>@messages("paymentDue.viewBill")</a>
                         </div>
-                        @if(paymentEnabled && documentDetailWithDueDate.documentDetail.remainingToPay > 0){
+                        @if(documentDetailWithDueDate.documentDetail.remainingToPay > 0){
                         <div id="payment-link-@{documentDetailWithDueDate.documentDetail.taxYear}" class="font-small text--right link-style">
                             <a href="@controllers.routes.PaymentController.paymentHandoff(documentDetailWithDueDate.documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (documentDetailWithDueDate.documentDetail.taxYear.toInt - 1).toString, documentDetailWithDueDate.documentDetail.taxYear)'>@messages("paymentDue.payNow")</a>
                         </div>

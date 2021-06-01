@@ -18,7 +18,7 @@ package models
 
 import java.time.LocalDate
 
-import config.featureswitch.{FeatureSwitching, Payment}
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.financialTransactions.{SubItemModel, TransactionModel}
 import org.scalatest.Matchers
@@ -92,22 +92,16 @@ class TransactionModelSpec extends TestSupport with Matchers with FeatureSwitchi
 
     "return a true" when {
 
-      "payment is enabled and has not been made" in {
-        enable(Payment)
-        TransactionModel(outstandingAmount = Some(1)).eligibleToPay(true) shouldBe true
+      "payment  has not been made" in {
+        TransactionModel(outstandingAmount = Some(1)).eligibleToPay() shouldBe true
       }
     }
 
     "return a false" when {
 
-      "payment is disabled" in {
-        disable(Payment)
-        TransactionModel(outstandingAmount = Some(1)).eligibleToPay(false) shouldBe false
-      }
 
       "payment has been made" in {
-        enable(Payment)
-        TransactionModel(outstandingAmount = Some(0)).eligibleToPay(true) shouldBe false
+        TransactionModel(outstandingAmount = Some(0)).eligibleToPay() shouldBe false
 
       }
     }

@@ -28,14 +28,13 @@ import views.html.agent.ChargeSummary
 
 class ChargeSummarySpec extends TestSupport with FeatureSwitching with ViewSpec {
 
-  class Setup(documentDetailWithDueDate: DocumentDetailWithDueDate, paymentEnabled: Boolean = true) {
+  class Setup(documentDetailWithDueDate: DocumentDetailWithDueDate) {
 
     val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
 
     val chargeSummaryView: Html = chargeSummary(
       documentDetailWithDueDate = documentDetailWithDueDate,
       implicitDateFormatter = mockImplicitDateFormatter,
-      paymentEnabled = paymentEnabled,
       backUrl = "testBackURL"
     )
 
@@ -86,15 +85,11 @@ class ChargeSummarySpec extends TestSupport with FeatureSwitching with ViewSpec 
         .text shouldBe "£1,700.00"
     }
 
-    "have a payment link when an outstanding amount is to be paid and payments are enabled" in new Setup(documentDetailWithDueDateModel(), true) {
+    "have a payment link when an outstanding amount is to be paid and payments are enabled" in new Setup(documentDetailWithDueDateModel()) {
       document.select("div#payment-link-2018").text() shouldBe "Pay now"
     }
 
-    "not have a payment link when an outstanding amount is to be paid but payments are disabled" in new Setup(documentDetailWithDueDateModel(), false) {
-      document.select("div#payment-link-2018").text() shouldBe ""
-    }
-
-    "not have a payment link when there is an outstanding amount of 0" in new Setup(documentDetailWithDueDateModel(outstandingAmount = Some(0)), true) {
+    "not have a payment link when there is an outstanding amount of 0" in new Setup(documentDetailWithDueDateModel(outstandingAmount = Some(0))) {
       document.select("div#payment-link-2018").text() shouldBe ""
     }
 

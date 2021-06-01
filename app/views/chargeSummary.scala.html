@@ -21,7 +21,7 @@
 @import views.html.templates.main_template
 
 @import java.time.LocalDate
-@(documentDetail: DocumentDetail, dueDate: Option[LocalDate], implicitDateFormatter: ImplicitDateFormatter, paymentEnabled: Boolean, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(documentDetail: DocumentDetail, dueDate: Option[LocalDate], implicitDateFormatter: ImplicitDateFormatter, backUrl: String)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
 
@@ -62,7 +62,7 @@
 		@messages("chargeSummary.whatYouOwe.textTwo")
 	</p>
 
-	@if(paymentEnabled && documentDetail.remainingToPay > 0){
+	@if(documentDetail.remainingToPay > 0){
 		<div id="payment-link-@{documentDetail.taxYear}">
 			<a class="button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence)" aria-label='@messages("paymentDue.pay-now-aria", (documentDetail.taxYear.toInt - 1).toString, documentDetail.taxYear)'>@messages("paymentDue.payNow")</a>
 		</div>
