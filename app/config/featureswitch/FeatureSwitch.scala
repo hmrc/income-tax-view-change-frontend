@@ -37,7 +37,8 @@ object FeatureSwitch {
     PaymentHistory,
 		IvUplift,
 		ChargeHistory,
-    TxmEventsApproved
+    TxmEventsApproved,
+    PaymentAllocation
   )
 
   def apply(str: String): FeatureSwitch =
@@ -98,6 +99,11 @@ case object IvUplift extends FeatureSwitch {
 case object ChargeHistory extends FeatureSwitch {
 	override val name: String = s"$prefix.enable-charge-history"
 	override val displayText: String = "Charge History"
+}
+
+case object PaymentAllocation extends FeatureSwitch {
+  override val name: String = s"$prefix-.enable-payment-allocation"
+  override val displayText: String = "Payment Allocation"
 }
 
 case object TxmEventsApproved extends FeatureSwitch {
